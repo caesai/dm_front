@@ -1,0 +1,70 @@
+.selectWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.optionWrapper {
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.select {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 8px;
+}
+
+.arrow {
+    display: flex;
+    transform: rotate(180deg);
+    padding-left: 4px;
+    padding-right: 0;
+}
+
+.arrow__active {
+    transform: rotate(0deg);
+    padding-left: 0;
+    padding-right: 4px;
+}
+
+.textWrap {
+    display: flex;
+    flex-direction: column;
+    font-family: Mont, sans-serif;
+    font-weight: 700;
+}
+
+.title {
+    color: var(--grey);
+    font-size: 12px;
+}
+
+.currentValue {
+    font-size: 16px;
+}
+
+.option {
+    display: flex;
+    justify-content: space-between;
+}
+
+.option_title {
+    font-family: Mont, sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.option_checkbox {
+    width: 24px;
+    height: 24px;
+    border-radius: 100%;
+    border: 1px solid var(--grey);
+}
+
+.option_checkbox__checked {
+    border: 6px solid var(--red);
+}

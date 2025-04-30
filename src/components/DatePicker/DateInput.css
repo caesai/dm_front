@@ -1,0 +1,114 @@
+/* Общий контейнер */
+.datepicker-container {
+    display: inline-block; /* или block, в зависимости от дизайна */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 280px; /* Подстройте под ваш дизайн */
+    font-family: sans-serif; /* Замените на ваш шрифт */
+    background-color: #fff; /* Цвет фона, подогнать под дизайн */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+}
+
+/* Шапка с кнопками перехода и селектором года */
+.datepicker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+/* Кнопки переключения месяца */
+.nav-button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+/* Блок с именем месяца и выбором года */
+.month-year-select {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.month-name {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.year-select {
+    font-family: 'Mont', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    /*padding: 2px 4px;*/
+    border: 0px solid #ccc;
+    outline: none;
+    border-radius: 4px;
+    background-color: white;
+}
+
+/* Сетка названий дней недели */
+.datepicker-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.datepicker-weekday {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--light-grey);
+}
+
+/* Сетка дней */
+.datepicker-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    gap: 4px;
+}
+
+/* Отдельная ячейка дня */
+.datepicker-day {
+    padding: 8px 0;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+}
+
+/* Стили для дней текущего месяца */
+.datepicker-day.in-month {
+    color: var(--dark-grey);
+}
+
+/* Стили для дней вне текущего месяца */
+.datepicker-day.out-month {
+    color: var(--light-grey);
+}
+
+/* Подсветка сегодняшнего дня */
+.datepicker-day.today {
+    border: 1px solid var(--red);
+    border-radius: 6px;
+}
+
+/* Выбранный день */
+.datepicker-day.selected {
+    background-color: var(--red);
+    color: #fff;
+}
+
+/* Ховер по ячейке */
+.datepicker-day.in-month:hover {
+    background-color: var(--red);
+    color: #ffffff
+}

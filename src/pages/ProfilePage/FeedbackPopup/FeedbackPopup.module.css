@@ -1,0 +1,110 @@
+
+.popup {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 15px 30px;
+    gap: 32px;
+}
+
+.title {
+    font-family: 'Heading Pro Ultracompressed', sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.rating {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stars {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    justify-content: center;
+}
+
+.ratingStatus {
+    font-family: "Mont", sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    text-align: center;
+}
+
+
+.tags {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tags_list {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tags_title {
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--grey);
+    text-align: center;
+}
+
+.tag {
+    background-color: var(--secondary-background);
+    padding: 11px 16px;
+    border-radius: 20px;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    width: max-content;
+    cursor: pointer;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                     supported by Chrome, Edge, Opera and Firefox */
+}
+
+.tag__selected {
+    background-color: var(--red);
+    color: white;
+}
+
+.feedback_text {
+    padding-bottom: 8px;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid var(--medium-grey);
+}
+
+.button {
+    background-color: var(--red);
+    border: none;
+    outline: none;
+    border-radius: 15px;
+    padding: 15px;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.button__disabled {
+    background-color: var(--third-background);
+    color: black;
+    cursor: not-allowed;
+}

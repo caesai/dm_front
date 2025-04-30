@@ -1,0 +1,237 @@
+.page {
+    /*padding-bottom: 30px;*/
+    display: flex;
+    flex-direction: column;
+}
+
+.absoluteBottom {
+    position: fixed;
+    bottom: 30px;
+    width: 100%;
+    z-index: 2;
+}
+
+.absoluteBottom_wrapper {
+    display: flex;
+    padding: 0 15px;
+}
+
+.redButton {
+    cursor: pointer;
+    display: flex;
+    padding: 15px 0;
+    background-color: var(--red);
+    border-radius: 15px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+
+    .text {
+        font-family: 'Mont', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--primary-background);
+    }
+
+    &.loadingButton {
+        pointer-events: none;
+
+        .text {
+            opacity: 0;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            width: 1em;
+            height: 1em;
+            border: 2px solid #fff;
+            border-top: 2px solid transparent; /* Прозрачная часть для анимации */
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.disabledButton {
+    background-color: var(--medium-grey) !important;
+    color: white !important;
+}
+
+.headerContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.headerNav {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.headerInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    /*width: 100%;*/
+
+    h3, p {
+        padding: 0;
+        margin: 0;
+    }
+}
+
+.headerInfo__title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.headerInfo__subtitle {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--grey);
+}
+
+.header_bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bookingInfo {
+    font-size: 14px;
+    font-optical-sizing: auto;
+    font-family: "Cormorant", serif;
+    font-weight: 700;
+    line-height: 150%;
+    color: var(--grey);
+}
+
+.bookingInfo__phone {
+    font-family: Mont, sans-serif;
+    color: var(--black);
+}
+
+.header__selector {
+    display: flex;
+    gap: 8px;
+}
+
+.header__select {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 13px 16px;
+    background-color: var(--secondary-background);
+    border-radius: 12px;
+    height: 50px;
+    box-sizing: border-box;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.2s ease-in-out;
+}
+
+.invalid {
+    border-bottom: 1px solid var(--red);
+}
+
+.header__select__left {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.header__select__left_text {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.header__select__arrow {
+    transform: rotate(180deg);
+}
+
+.timeOfDayContainer {
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+.select_timeOfDay {
+    display: flex;
+    gap: 0;
+}
+
+.noTimeSlotsText {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.timeOfDay {
+    border-radius: 20px;
+    padding: 11px 16px;
+
+    span {
+        font-family: 'Mont', sans-serif;
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--grey);
+    }
+}
+
+.timeOfDay__active {
+    background-color: var(--secondary-background);
+
+    span {
+        color: var(--black);
+    }
+}
+
+.timeList {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    width: 100%;
+}
+
+.timeList_button {
+    padding: 11px 30px;
+    border: 2px solid var(--secondary-background, #F4F4F4);
+    border-radius: 20px;
+    width: min-content;
+
+    span {
+        font-family: 'Mont', sans-serif;
+        font-size: 14px;
+        font-weight: 800;
+    }
+}
+
+.timeList_button__active {
+    border-color: var(--black);
+}
+
+.commentary_options {
+    width: 100%;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}

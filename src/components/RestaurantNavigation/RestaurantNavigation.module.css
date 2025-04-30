@@ -1,0 +1,19 @@
+.navigationSlider {
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    height: 26px;
+    width: 100%;
+}
+
+.navigationLink {
+    /*color: var(--grey);*/
+    font-size: 14px;
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    color: var(--black);
+}
+
+.navigationLinkActive {
+    color: var(--black);
+    border-bottom: 1px var(--black) solid;
+}

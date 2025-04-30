@@ -1,0 +1,213 @@
+From 2d56879a3e41e5befb53ddbaa4e2ddf302f475ed Mon Sep 17 00:00:00 2001
+From: Litinsci <litovchenko.73@list.ru>
+Date: Sat, 15 Mar 2025 20:47:22 +0400
+Subject: [PATCH] labalabdabb
+
+---
+ .../BookingGuestCountSelectorPopup.tsx        | 29 ++++++++++++-------
+ .../react-mobile-picker/components/Picker.tsx | 15 ++++++++--
+ .../components/PickerItem.tsx                 | 26 ++++++++++++-----
+ src/pages/BookingPage/BookingPage.tsx         |  8 ++++-
+ 4 files changed, 56 insertions(+), 22 deletions(-)
+
+diff --git a/src/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx b/src/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx
+index 02c244b..78cb3a5 100644
+--- a/src/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx
++++ b/src/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx
+@@ -13,8 +13,15 @@ interface Props {
+     setGuestCount: (value: PickerValue) => void;
+ }
+ 
++// const values = {
++//     value: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
++// };
++
+ const values = {
+-    value: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
++    value: [
++        { title: 'string', value: 'string' },
++        { title: 'string 1', value: 'string 2' },
++    ],
+ };
+ const StyledPopup = styled(Popup)`
+     &-overlay {
+@@ -34,14 +41,14 @@ const StyledPopup = styled(Popup)`
+ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
+     const onClose = () => p.setOpen(false);
+ 
+-    useEffect(() => {
+-        console.log(p.guestCount.value);
+-        if (p.isOpen && p.guestCount.value == 'Гости') {
+-            p.setGuestCount({
+-                value: '1',
+-            });
+-        }
+-    }, [p.isOpen]);
++    // useEffect(() => {
++    //     console.log(p.guestCount.value);
++    //     if (p.isOpen && p.guestCount.value == 'Гости') {
++    //         p.setGuestCount({
++    //             value: '1',
++    //         });
++    //     }
++    // }, [p.isOpen]);
+ 
+     return (
+         <StyledPopup open={p.isOpen} onClose={onClose} modal>
+@@ -60,7 +67,7 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
+                     >
+                         <Picker.Column name={'value'}>
+                             {values.value.map((option) => (
+-                                <Picker.Item key={option} value={option}>
++                                <Picker.Item key={option.value} value={option}>
+                                     {({ selected }) => (
+                                         <div className={css.selectorItem}>
+                                             <span
+@@ -71,7 +78,7 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
+                                                         : null
+                                                 )}
+                                             >
+-                                                {option}
++                                                {option.title} {option.value}
+                                             </span>
+                                         </div>
+                                     )}
+diff --git a/src/lib/react-mobile-picker/components/Picker.tsx b/src/lib/react-mobile-picker/components/Picker.tsx
+index de6f110..2d73ad2 100644
+--- a/src/lib/react-mobile-picker/components/Picker.tsx
++++ b/src/lib/react-mobile-picker/components/Picker.tsx
+@@ -13,13 +13,22 @@ const DEFAULT_HEIGHT = 216;
+ const DEFAULT_ITEM_HEIGHT = 36;
+ const DEFAULT_WHEEL_MODE = 'off';
+ 
++export type PickerValueData =
++    | string
++    | number
++    | { title: string; value: string };
++
+ interface Option {
+-    value: string | number;
++    value: PickerValueData;
+     element: MutableRefObject<HTMLElement | null>;
+ }
+ 
++// export interface PickerValue {
++//     [key: string]: string | number;
++// }
++
+ export interface PickerValue {
+-    [key: string]: string | number;
++    [key: string]: PickerValueData;
+ }
+ 
+ export interface PickerRootProps<TType extends PickerValue>
+@@ -56,7 +65,7 @@ export function usePickerData(componentName: string) {
+ 
+ const PickerActionsContext = createContext<{
+     registerOption(key: string, option: Option): () => void;
+-    change(key: string, value: string | number): boolean;
++    change(key: string, value: PickerValueData): boolean;
+ } | null>(null);
+ PickerActionsContext.displayName = 'PickerActionsContext';
+ 
+diff --git a/src/lib/react-mobile-picker/components/PickerItem.tsx b/src/lib/react-mobile-picker/components/PickerItem.tsx
+index 9786282..3f6702e 100644
+--- a/src/lib/react-mobile-picker/components/PickerItem.tsx
++++ b/src/lib/react-mobile-picker/components/PickerItem.tsx
+@@ -6,7 +6,7 @@ import {
+     useMemo,
+     useRef,
+ } from 'react';
+-import { usePickerActions, usePickerData } from './Picker';
++import { PickerValueData, usePickerActions, usePickerData } from './Picker';
+ import { useColumnData } from './PickerColumn';
+ 
+ interface PickerItemRenderProps {
+@@ -16,7 +16,7 @@ interface PickerItemRenderProps {
+ export interface PickerItemProps
+     extends Omit<HTMLProps<HTMLDivElement>, 'value' | 'children'> {
+     children: ReactNode | ((renderProps: PickerItemRenderProps) => ReactNode);
+-    value: string | number;
++    value: PickerValueData;
+ }
+ 
+ // eslint-disable-next-line
+@@ -30,10 +30,15 @@ function PickerItem({ style, children, value, ...restProps }: PickerItemProps) {
+     const pickerActions = usePickerActions('Picker.Item');
+     const { key } = useColumnData('Picker.Item');
+ 
+-    useEffect(
+-        () => pickerActions.registerOption(key, { value, element: optionRef }),
+-        [key, pickerActions, value]
+-    );
++    useEffect(() => {
++        console.log('pickerActions.registerOption');
++        const isSimple = typeof value === 'string' || typeof value === 'number';
++
++        return pickerActions.registerOption(key, {
++            value: isSimple ? value : value.value,
++            element: optionRef,
++        });
++    }, [key, pickerActions, value]);
+ 
+     const itemStyle = useMemo(
+         () => ({
+@@ -49,6 +54,8 @@ function PickerItem({ style, children, value, ...restProps }: PickerItemProps) {
+         pickerActions.change(key, value);
+     }, [pickerActions, key, value]);
+ 
++    const isSimple = typeof value === 'string' || typeof value === 'number';
++
+     return (
+         <div
+             style={{
+@@ -60,7 +67,12 @@ function PickerItem({ style, children, value, ...restProps }: PickerItemProps) {
+             {...restProps}
+         >
+             {isFunction(children)
+-                ? children({ selected: pickerValue[key] === value })
++                ? children({
++                      selected: isSimple
++                          ? pickerValue[key] === value
++                          : pickerValue[key] === value.title ||
++                            pickerValue[key] === value.value,
++                  })
+                 : children}
+         </div>
+     );
+diff --git a/src/pages/BookingPage/BookingPage.tsx b/src/pages/BookingPage/BookingPage.tsx
+index 464c4ae..2636fe2 100644
+--- a/src/pages/BookingPage/BookingPage.tsx
++++ b/src/pages/BookingPage/BookingPage.tsx
+@@ -47,7 +47,8 @@ export const BookingPage: FC = () => {
+     const navigate = useNavigate();
+ 
+     const [guestCount, setGuestCount] = useState<PickerValue>({
+-        value: 'Гости',
++        title: 'string',
++        value: 'string',
+     });
+     const [guestCountPopup, setGuestCountPopup] = useState(false);
+ 
+@@ -58,6 +59,10 @@ export const BookingPage: FC = () => {
+         id: 'telegram',
+         text: 'В Telegram',
+     });
++
++    useEffect(() => {
++        console.log(guestCount, 'guestCount');
++    }, [guestCount]);
+     //
+     // const [bookingDate, setBookingDate] = useState<Date | null>(null);
+     // const [bookingDatePopup, setBookingDatePopup] = useState(false);
+@@ -119,6 +124,7 @@ export const BookingPage: FC = () => {
+         <Page back={true}>
+             <BookingGuestCountSelectorPopup
+                 guestCount={guestCount}
++                // @ts-ignore
+                 setGuestCount={setGuestCount}
+                 isOpen={guestCountPopup}
+                 setOpen={setGuestCountPopup}
+-- 
+2.47.1.windows.1
+

@@ -1,0 +1,59 @@
+
+.page {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px 60px 15px;
+    height: max-content;
+    min-height: 100vh;
+    background-color: #fff;
+    gap: 18px;
+}
+
+.floatingButton {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    padding: 0 15px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.header_spacer {
+    width: 44px;
+    height: 44px;
+}
+
+.fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.datePicker {
+    display: flex;
+    justify-content: space-between;
+    padding: 13px 20px;
+    margin: 0;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    background-color: var(--secondary-background);
+    font-family: 'Mont', 'sans-serif';
+    font-size: 14px;
+    font-weight: 700;
+
+    .datePicker__placeholder {
+        color: var(--grey);
+    }
+}

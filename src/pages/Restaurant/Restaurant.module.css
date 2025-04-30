@@ -1,0 +1,439 @@
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 64px;
+    background-color: transparent;
+    z-index: 1000;
+    box-sizing: border-box;
+    display: flex;
+
+}
+
+.yaTaxi {
+    padding: 0 15px;
+}
+
+.mapPoint {
+    position: relative;
+    transform: translate(-50%, -50%);
+}
+
+.relativeRestInfo {
+    /*display: block;*/
+    position: relative;
+    width: 100%;
+    padding: 0 8px;
+    z-index: 999;
+    top: -64px;
+    box-sizing: border-box;
+}
+
+.mapInfo {
+    background-color: white;
+    border-radius: 12px;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.mapInfoMetro {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.mapInfoMetroCircle {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+}
+
+.mapInfoMetroText {
+    font-family: 'Mont', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.mapInfoAddress {
+    font-size: 12px;
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    color: var(--dark-grey);
+}
+
+.mapContainer {
+    width: 100%;
+
+    .map {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+.header.scrolled {
+    background-color: var(--primary-background) !important;
+    height: 128px !important;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: -4px 4px 15px 0 #CACACA59;
+}
+
+.headerNav {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px 0 15px;
+    width: 100%;
+    gap: 18px;
+}
+
+.headerTitle {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.headerTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.headerNavBlock {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.floatingFooter {
+    position: fixed;
+    width: 100%;
+    height: 50px;
+    z-index: 1000;
+    bottom: 30px;
+}
+
+.floatingFooterWrapper {
+    display: flex;
+    padding: 0 15px;
+    gap: 4px;
+    align-items: center;
+}
+
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--secondary-background);
+    gap: 4px;
+    margin-bottom: 160px;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.pageContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.smallPhotoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.contentContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primary-background);
+    width: 100%;
+    padding: 20px 15px;
+    border-radius: 20px;
+    box-sizing: border-box;
+    gap: 26px;
+}
+
+
+.navSliderAndBookingContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.bookingContaner {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+.bookingButton {
+    cursor: pointer;
+    display: flex;
+    padding: 15px 0;
+    background-color: var(--red);
+    border-radius: 15px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+
+    .text {
+        font-family: 'Mont', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--primary-background);
+    }
+}
+
+/*===================================================*/
+
+.photoSliderNavigationContainer {
+    margin-top: 10px;
+    color: var(--secondary-background);
+    width: 100%;
+}
+
+.photoSliderNavigationItem {
+    padding: 11px 16px;
+    border-radius: 20px;
+    width: max-content;
+    font-family: "Mont", sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--grey);
+}
+
+.photoSliderNavigationActive {
+    color: var(--black);
+    background-color: var(--secondary-background);
+}
+
+.photoSliderContainer {
+    width: 100%;
+}
+
+.photoBig {
+    width: 243px;
+    height: 226px;
+}
+
+.photoSmall {
+    width: 135px;
+    height: 111px;
+}
+
+.smallPhotoSlideContainer {
+    width: 135px;
+}
+
+.photo {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-radius: 16px;
+}
+
+.bgImage {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.menuItem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .menuItemPhoto {
+        width: 162px;
+        aspect-ratio: 1/1;
+        border-radius: 12px;
+    }
+
+    .menuItemInfo {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+
+        .title {
+            font-family: 'Mont', sans-serif;
+            font-weight: 800;
+            font-size: 12px;
+
+        }
+
+        .subtitle {
+            font-family: 'Mont', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--dark-grey);
+        }
+    }
+
+}
+
+.aboutContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.chefInfoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.chefInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .title {
+        font-family: 'Mont', sans-serif;
+        font-weight: 800;
+        font-size: 14px;
+    }
+
+    .subTitle {
+        font-family: 'Mont', sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        color: var(--grey);
+    }
+}
+
+.chefImage {
+    width: 100%;
+    aspect-ratio: 115/103;
+    border-radius: 12px;
+}
+
+.aboutText {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.trimLines {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.trimLinesButton {
+    .text {
+        font-size: 14px;
+        font-family: 'Mont', sans-serif;
+        font-weight: 800;
+        color: var(--red);
+    }
+}
+
+.infoBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .socialRow {
+        display: flex;
+        gap: 8px;
+
+        .socialLink {
+            font-family: 'Mont', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+        }
+    }
+
+    .textRow {
+        font-family: 'Mont', sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+
+        .title {
+
+            color: var(--grey);
+            padding-right: 4px;
+        }
+
+        .value {
+            color: var(--black);
+        }
+
+    }
+
+    .collapse {
+        transition: height 500ms;
+    }
+
+    .top {
+        display: flex;
+        justify-content: space-between;
+
+        .title {
+            font-family: 'Mont', sans-serif;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .expandButton {
+            font-family: 'Mont', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--grey);
+        }
+
+        .right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .opened {
+            transform: rotate(180deg);
+        }
+
+        .closed {
+            transform: rotate(0deg);
+        }
+    }
+
+    .workHours {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .text {
+            font-family: 'Mont', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--grey);
+        }
+    }
+}
+
+.events {
+    display: flex;
+    padding: 0 15px;
+    flex-direction: column;
+}
+
+.timeItem {
+    display: flex;
+    gap: 8px;
+    padding: 11px 16px;
+    border-radius: 20px;
+    width: max-content;
+    font-family: "Mont", sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--black);
+    background-color: var(--secondary-background);
+    cursor: pointer;
+    align-items: center;
+}
+
+.timeItemActive {
+    border: 1px solid var(--black);
+}

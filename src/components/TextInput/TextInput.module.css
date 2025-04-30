@@ -1,0 +1,21 @@
+.text_input {
+    padding: 13px 20px;
+    margin: 0;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    background-color: var(--secondary-background);
+    font-family: 'Mont', 'sans-serif';
+    font-size: 14px;
+    font-weight: 700;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.2s ease-in-out;
+}
+
+.text_input::placeholder {
+    color: var(--grey);
+}
+
+.failed {
+    border-bottom: 1px solid var(--red);
+}

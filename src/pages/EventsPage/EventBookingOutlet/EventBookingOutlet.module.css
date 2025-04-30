@@ -1,0 +1,155 @@
+.hr {
+    height: 1px;
+    width: 100%;
+    background-color: var(--light-grey);
+}
+
+.contentContainer__top {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primary-background);
+    width: 100%;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-sizing: border-box;
+    gap: 26px;
+}
+
+.contentContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primary-background);
+    width: 100%;
+    padding: 20px 0;
+    border-radius: 20px;
+    box-sizing: border-box;
+    gap: 26px;
+}
+
+.contentItem {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.contentItem__title {
+    font-family: "Heading Pro Ultracompressed", sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    text-transform: uppercase;
+    padding: 0;
+    margin: 0;
+}
+
+.cubicIconContainer {
+    padding: 12px;
+    background-color: var(--secondary-background);
+    border-radius: 16px;
+}
+
+.dateInfoContainer {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.dateInfoContainer_dates {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.dateInfoContainer_dates__date {
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--grey);
+}
+
+.dateInfoContainer_dates__times {
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--black);
+}
+
+.goodsItems {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.itemContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.goodsItems_item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.goodsItems_item__title {
+    max-width: 70%;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    vertical-align: bottom;
+}
+
+.aic {
+    align-items: center;
+}
+
+.goodsItems_item__total {
+    max-width: 70%;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--grey);
+}
+
+.goodsItems_item__price {
+    font-family: "Mont", sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.roundedText {
+    padding: 6px 8px;
+    display: flex;
+    border-radius: 8px;
+    border: 1px solid var(--light-grey);
+    width: max-content;
+    align-items: center;
+    height: min-content;
+
+    span {
+        color: var(--grey);
+        font-family: "Mont", sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 0;
+        padding: 0;
+        margin: 0;
+    }
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.absoluteBottom {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
+}
+
+.bottomWrapper {
+    padding: 0 15px;
+    display: flex;
+}

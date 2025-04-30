@@ -1,0 +1,66 @@
+.outlet {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.card {
+    width: 100%;
+    aspect-ratio: 3/2;
+    background-color: var(--secondary-background);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.bgImage {
+    background-size: cover;
+    background-position: center;
+}
+
+.card_date {
+    margin: 15px 0 0 15px;
+    padding: 5px 10px;
+    background-color: var(--red);
+    border-radius: 16px;
+    width: fit-content;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--secondary-background);
+}
+
+.event_info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.title {
+    font-family: "Heading Pro Ultracompressed", sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    text-transform: uppercase;
+}
+
+.description {
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 150%;
+    color: var(--grey);
+}
+
+.absoluteBottom {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
+}
+
+.bottomWrapper {
+    padding: 0 15px;
+    display: flex;
+}

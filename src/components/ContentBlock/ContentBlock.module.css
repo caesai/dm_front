@@ -1,0 +1,38 @@
+
+.contentBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.headerContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+.contentHeader {
+    margin: 0;
+    padding: 0;
+    font-size: 30px;
+    font-family: "Heading Pro Ultracompressed", sans-serif;
+    font-weight: 800;
+    height: 36px;
+    line-height: 36px;
+    text-transform: uppercase;
+}
+
+.headerSubText {
+    margin-top: 4px;
+    font-family: 'Mont', sans-serif;
+    font-size: 12px;
+    color: var(--dark-grey);
+    font-weight: 700;
+}
+
+
+.smallPhotoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}

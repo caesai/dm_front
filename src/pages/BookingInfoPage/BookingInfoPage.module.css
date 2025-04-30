@@ -1,0 +1,219 @@
+.absolute_footer {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+}
+
+.absolute_footer_wrapper {
+    padding: 0 15px;
+    gap: 4px;
+}
+
+.fc {
+    display: flex;
+    flex-direction: column;
+}
+
+.fr {
+    display: flex;
+    flex-direction: row;
+}
+
+.page {
+    gap: 4px;
+    height: 100vh;
+}
+
+.border__top {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.border__bottom {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    background-color: var(--primary-background);
+    padding: 20px 15px;
+}
+
+.about__text {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--grey);
+}
+
+.underline {
+    font-family: Mont, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0px;
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-offset: 0%;
+    text-decoration-thickness: 0%;
+    text-decoration-skip-ink: auto;
+    color: var(--grey);
+
+}
+
+.about {
+
+}
+
+.wh44 {
+    width: 44px;
+    height: 44px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.headerContent {
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    /*width: 100%;*/
+}
+
+.headerContent__title {
+    margin: 0;
+    padding: 0;
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.headerContent__subtitle {
+    margin: 0;
+    padding: 0;
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--grey);
+}
+
+.headerButtons {
+    display: flex;
+    gap: 4px;
+}
+
+.content {
+    gap: 12px;
+}
+
+.calendarContainer {
+    align-items: center;
+}
+
+.calendar {
+    width: 45px;
+    padding: 4px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.calendar__month {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border: 1px solid var(--light-grey, #D0D0D0);
+    border-bottom: none;
+
+    span {
+        font-family: Mont, sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        color: var(--grey);
+    }
+}
+
+.calendar__day {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border: 1px solid var(--light-grey, #D0D0D0);
+
+    span {
+        height: 23px;
+        line-height: 23px;
+        font-family: Mont, sans-serif;
+        font-weight: 700;
+        font-size: 18px;
+    }
+}
+
+.bookingInfo_restaurant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.bookingInfo_restaurant__title {
+    padding: 0;
+    margin: 0;
+    font-family: "Heading Pro Ultracompressed", sans-serif;
+    font-weight: 800;
+    font-size: 42px;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 50px;
+}
+
+.bookingInfo_restaurant__subtitle {
+    padding: 0;
+    margin: 0;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--dark-grey);
+    text-align: center;
+}
+
+.bookingInfoDetails {
+    gap: 9px;
+    align-items: center;
+}
+
+.bookingInfoDetails_container {
+    gap: 12px;
+}
+
+.bookingInfoDetails_item {
+    gap: 4px;
+}
+
+.bookingInfoDetails_item__text {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--dark-grey);
+}
+
+.redButton {
+    cursor: pointer;
+    display: flex;
+    padding: 15px 0;
+    background-color: var(--red);
+    border-radius: 15px;
+    width: -webkit-fill-available;
+    justify-content: center;
+    align-items: center;
+
+    .text {
+        font-family: 'Mont', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--primary-background);
+    }
+}

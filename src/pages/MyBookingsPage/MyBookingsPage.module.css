@@ -1,0 +1,37 @@
+.fc {
+    display: flex;
+    flex-direction: column;
+}
+
+.fr {
+    display: flex;
+    flex-direction: row;
+}
+
+.wh44 {
+    width: 44px;
+    height: 44px;
+}
+
+.page {
+    padding: 20px 15px;
+    gap: 18px;
+}
+
+.header {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header__title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.bookingList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+

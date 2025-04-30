@@ -1,0 +1,109 @@
+.restaurant {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.bgImage {
+    background-size: cover;
+    background-position: center;
+}
+
+.imaged {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background-color: var(--secondary-background);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.floatingBadges {
+    position: relative;
+    bottom: -6px;
+    /*left: 15px;*/
+    z-index: 9999;
+    width: 100%;
+    /*padding: 0 15px 0 0;*/
+    box-sizing: border-box;
+}
+
+.imagedBottom {
+    display: flex;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    height: 66px;
+    border-radius: 0 0 16px 16px;
+    align-items: center;
+    padding: 15px;
+    box-sizing: border-box;
+    gap: 8px;
+}
+
+.chefPhoto {
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    /*background-size: 56px;*/
+}
+
+.chefInfo {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.chefTitle {
+    font-size: 12px;
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    color: var(--light-grey);
+}
+
+.chefName {
+    font-size: 14px;
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    color: var(--primary-background);
+}
+
+.tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.resInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.resTitleWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.resTitle {
+    font-family: 'Heading Pro Ultracompressed', sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+}
+
+.resSlogan {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--grey);
+}
+
+.swiperSlide {
+    width: 130px;
+    height: 130px;
+}

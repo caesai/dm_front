@@ -1,0 +1,7 @@
+.badge {
+    width: 130px;
+    height: 130px;
+    border-radius: 16px;
+    background-size: cover;
+    background-position: center;
+}

@@ -1,0 +1,29 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+    gap: 18px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.header_spacer {
+    width: 44px;
+    height: 44px;
+}
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}

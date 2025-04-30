@@ -1,0 +1,25 @@
+.badge {
+    width: 130px;
+    height: 130px;
+    background-color: var(--primary-background);
+    border-radius: 16px;
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-radius: 16px;
+}
+
+.slogan {
+    font-size: 14px;
+    font-family: 'Mont', sans-serif;
+    color: var(--dark-grey);
+}

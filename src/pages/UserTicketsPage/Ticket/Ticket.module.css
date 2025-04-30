@@ -1,0 +1,62 @@
+.card {
+    width: 100%;
+    aspect-ratio: 3/2;
+    background-color: var(--secondary-background);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.bgImage {
+    background-size: cover;
+    background-position: center;
+}
+
+.card_date {
+    margin: 15px 0 0 15px;
+    padding: 5px 10px;
+    background-color: #CA0E11;
+    backdrop-filter: blur(18px);
+    border-radius: 16px;
+    width: fit-content;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--secondary-background);
+}
+
+.card_date__notActive {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+    linear-gradient(0deg, rgba(85, 85, 85, 0.18), rgba(85, 85, 85, 0.18));
+    backdrop-filter: blur(18px)
+}
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    backdrop-filter: blur(18px);
+    padding: 10px 15px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.footer__title {
+    font-family: "Mont", sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: white;
+}
+
+.footer__address {
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--extralight-grey);
+}
+
+.notActive {
+    opacity: 0.7;
+}

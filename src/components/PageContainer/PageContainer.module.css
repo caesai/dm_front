@@ -1,0 +1,13 @@
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--secondary-background);
+    gap: 4px;
+    margin-bottom: 160px;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.pageContainer::-webkit-scrollbar {
+    display: none;
+}

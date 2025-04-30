@@ -1,0 +1,23 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    gap: 14px;
+}
+
+.nav {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.text {
+    text-align: center;
+    font-family: "Mont", sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    padding-bottom: 58px;
+}
+
+.dontBreak {
+    white-space: nowrap;
+}

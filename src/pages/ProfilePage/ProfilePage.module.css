@@ -1,0 +1,49 @@
+.page {
+    height: 100vh;
+    background-color: var(--primary-background);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.pageWrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+    gap: 32px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.headerTitle {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.navLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.navLink {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.navLinkTitle {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.spacer {
+    width: 44px;
+    height: 44px;
+}

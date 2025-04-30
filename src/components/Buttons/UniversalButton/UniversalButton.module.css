@@ -1,0 +1,27 @@
+.universalButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--third-background);
+    padding: 15px 0;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.redTheme {
+    background-color: #CA0E11;
+
+    span {
+        color: var(--primary-background);
+    }
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+.text {
+    font-family: 'Mont', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+}

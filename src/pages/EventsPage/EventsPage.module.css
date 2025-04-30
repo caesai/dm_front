@@ -1,0 +1,38 @@
+/*body{*/
+/*    background-color: white;*/
+/*}*/
+
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 15px 90px;
+    min-height: 100vh;
+    background-color: white;
+}
+
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.header_spacer {
+    width: 44px;
+    height: 44px;
+}
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+

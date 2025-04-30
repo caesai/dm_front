@@ -1,0 +1,66 @@
+.planSwitch,
+.planSwitch * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    font-family: "Mont", sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.planSwitch {
+    display: block;
+    width: 100%;
+    height: 40px;
+    font-size: 14px;
+    border-radius: 8px;
+    background: var(--secondary-background);
+    position: relative;
+}
+
+.planSwitch input {
+    display: none;
+}
+
+.planSwitch label {
+    width: 50%;
+    float: left;
+    text-align: center;
+    font-family: "Mont", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 40px;
+    color: var(--grey);
+    position: relative;
+    z-index: 500;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+
+.planSwitch input:checked + label {
+    color: #fff;
+    text-shadow: rgba(0, 0, 0, .1) 0 -1px 2px;
+}
+
+.indicator {
+    display: block;
+    width: calc(50% - 6px);
+    height: 34px;
+    background: var(--red);
+    border-radius: 8px;
+    position: absolute;
+    top: 3px;
+    z-index: 250;
+    transition: left .2s ease-in-out;
+}
+
+.planSwitch input:first-of-type:checked ~ .indicator {
+    left: calc(0% + 5px);
+}
+
+.planSwitch input:nth-of-type(2):checked ~ .indicator {
+    left: 50%;
+}

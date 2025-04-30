@@ -1,0 +1,19 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+}
+
+.header {
+    font-family: Mont, sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.content {
+    font-family: Mont, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dark-grey);
+}

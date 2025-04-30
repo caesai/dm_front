@@ -1,0 +1,35 @@
+.element {
+    width: 100px;
+    height: 100px;
+    background-color: var(--secondary-background);
+    border-radius: 20px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.newsText {
+    padding: 12px 11px 12px 12px;
+}
+
+.newsText span {
+    font-size: 12px;
+    line-height: 14px;
+    font-family: 'Mont';
+    color: var(--black);
+}
+
+.newsImage {
+    width: 100%;
+    height: 100px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+.newsImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
