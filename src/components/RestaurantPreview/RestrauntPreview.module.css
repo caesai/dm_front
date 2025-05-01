@@ -33,7 +33,8 @@
     display: flex;
     width: 100%;
     backdrop-filter: blur(10px);
-    height: 66px;
+    background-color: rgba(0, 0, 0, 0.6);
+    height: 76px;
     border-radius: 0 0 16px 16px;
     align-items: center;
     padding: 15px;
@@ -42,8 +43,8 @@
 }
 
 .chefPhoto {
-    width: 36px;
-    height: 36px;
+    width: 54px;
+    height: 54px;
     border-radius: 9999px;
     /*background-size: 56px;*/
 }
@@ -57,14 +58,14 @@
 .chefTitle {
     font-size: 12px;
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     color: var(--light-grey);
 }
 
 .chefName {
     font-size: 14px;
     font-family: 'Mont', sans-serif;
-    font-weight: 800;
+    font-weight: 400;
     color: var(--primary-background);
 }
 
@@ -89,7 +90,7 @@
 
 .resTitle {
     font-family: 'Heading Pro Ultracompressed', sans-serif;
-    font-weight: 800;
+    font-weight: 400;
     font-size: 30px;
     text-transform: uppercase;
     margin: 0;
@@ -98,7 +99,7 @@
 
 .resSlogan {
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     font-size: 14px;
     color: var(--grey);
 }

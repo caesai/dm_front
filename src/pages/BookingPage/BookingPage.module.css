@@ -95,13 +95,13 @@
 
 .headerInfo__title {
     font-family: 'Mont', sans-serif;
-    font-weight: 800;
+    font-weight: 400;
     font-size: 14px;
 }
 
 .headerInfo__subtitle {
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     font-size: 12px;
     color: var(--grey);
 }
@@ -116,7 +116,7 @@
     font-size: 14px;
     font-optical-sizing: auto;
     font-family: "Cormorant", serif;
-    font-weight: 700;
+    font-weight: 400;
     line-height: 150%;
     color: var(--grey);
 }
@@ -156,7 +156,7 @@
 
 .header__select__left_text {
     font-family: 'Mont', sans-serif;
-    font-weight: 800;
+    font-weight: 400;
     font-size: 14px;
 }
 
@@ -178,7 +178,7 @@
 
 .noTimeSlotsText {
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     font-size: 14px;
 }
 
@@ -189,7 +189,7 @@
     span {
         font-family: 'Mont', sans-serif;
         font-size: 14px;
-        font-weight: 800;
+        font-weight: 400;
         color: var(--grey);
     }
 }
@@ -218,7 +218,7 @@
     span {
         font-family: 'Mont', sans-serif;
         font-size: 14px;
-        font-weight: 800;
+        font-weight: 400;
     }
 }
 

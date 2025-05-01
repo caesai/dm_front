@@ -52,13 +52,13 @@
 .mapInfoMetroText {
     font-family: 'Mont', sans-serif;
     font-size: 14px;
-    font-weight: 800;
+    font-weight: 400;
 }
 
 .mapInfoAddress {
     font-size: 12px;
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     color: var(--dark-grey);
 }
 
@@ -89,7 +89,7 @@
 
 .headerTitle {
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     font-size: 14px;
 }
 
@@ -176,7 +176,7 @@
 
     .text {
         font-family: 'Mont', sans-serif;
-        font-weight: 700;
+        font-weight: 400;
         font-size: 16px;
         color: var(--primary-background);
     }
@@ -195,7 +195,7 @@
     border-radius: 20px;
     width: max-content;
     font-family: "Mont", sans-serif;
-    font-weight: 800;
+    font-weight: 400;
     font-size: 14px;
     color: var(--grey);
 }
@@ -255,14 +255,14 @@
 
         .title {
             font-family: 'Mont', sans-serif;
-            font-weight: 800;
+            font-weight: 400;
             font-size: 12px;
 
         }
 
         .subtitle {
             font-family: 'Mont', sans-serif;
-            font-weight: 700;
+            font-weight: 400;
             font-size: 12px;
             color: var(--dark-grey);
         }
@@ -289,13 +289,13 @@
 
     .title {
         font-family: 'Mont', sans-serif;
-        font-weight: 800;
+        font-weight: 400;
         font-size: 14px;
     }
 
     .subTitle {
         font-family: 'Mont', sans-serif;
-        font-weight: 700;
+        font-weight: 400;
         font-size: 12px;
         color: var(--grey);
     }
@@ -309,7 +309,7 @@
 
 .aboutText {
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     font-size: 14px;
 }
 
@@ -317,7 +317,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
 }
 
@@ -325,7 +325,7 @@
     .text {
         font-size: 14px;
         font-family: 'Mont', sans-serif;
-        font-weight: 800;
+        font-weight: 400;
         color: var(--red);
     }
 }
@@ -341,14 +341,14 @@
 
         .socialLink {
             font-family: 'Mont', sans-serif;
-            font-weight: 700;
+            font-weight: 400;
             font-size: 14px;
         }
     }
 
     .textRow {
         font-family: 'Mont', sans-serif;
-        font-weight: 700;
+        font-weight: 400;
         font-size: 12px;
 
         .title {
@@ -373,13 +373,13 @@
 
         .title {
             font-family: 'Mont', sans-serif;
-            font-weight: 800;
+            font-weight: 400;
             font-size: 16px;
         }
 
         .expandButton {
             font-family: 'Mont', sans-serif;
-            font-weight: 700;
+            font-weight: 400;
             font-size: 14px;
             color: var(--grey);
         }
@@ -406,7 +406,7 @@
 
         .text {
             font-family: 'Mont', sans-serif;
-            font-weight: 700;
+            font-weight: 400;
             font-size: 12px;
             color: var(--grey);
         }
@@ -426,7 +426,7 @@
     border-radius: 20px;
     width: max-content;
     font-family: "Mont", sans-serif;
-    font-weight: 800;
+    font-weight: 400;
     font-size: 14px;
     color: var(--black);
     background-color: var(--secondary-background);

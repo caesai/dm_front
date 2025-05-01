@@ -743,15 +743,9 @@ export const Restaurant = () => {
                             </div>
                             <div className={css.infoBlock}>
                                 <div className={css.textRow}>
-                                    <span className={css.title}>Блюда:</span>
-                                    <span className={css.value}>
-                                        {restaurant?.about_dishes}
-                                    </span>
-                                </div>
-                                <div className={css.textRow}>
                                     <span className={css.title}>Кухня:</span>
                                     <span className={css.value}>
-                                        {restaurant?.about_kitchen}
+                                        {restaurant?.about_kitchen} {restaurant?.about_dishes}
                                     </span>
                                 </div>
                                 <div className={css.textRow}>
