@@ -241,6 +241,18 @@ export const BOOKINGCOMMENTMOCK = [
         text: 'Семейный ужин',
         emoji: '☕️',
     },
+    {
+        text: 'Буду с животным',
+        emoji: '🐶',
+    },
+    {
+        text: 'Нужен детский стульчик',
+        emoji: '👶',
+    },
+    {
+        text: 'Стол в тихой зоне',
+        emoji: '😴',
+    },
 ];
 
 export const BOOKING_DATE_VALUES = <PickerValueObj[]>[

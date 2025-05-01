@@ -54,7 +54,7 @@
 .extraTop {
     font-family: "Mont", serif;
     font-size: 14px;
-    font-weight: 800;
+    font-weight: 400;
     color: var(--primary-background);
 }
 
@@ -74,7 +74,7 @@
     margin: 0;
     padding: 0;
     font-family: "Heading Pro Ultracompressed", serif;
-    font-weight: 800;
+    font-weight: 400;
     font-size: 48px;
     color: var(--primary-background);
     height: 58px;
@@ -84,7 +84,7 @@
 .location {
     font-size: 12px;
     font-family: 'Mont', serif;
-    font-weight: 700;
+    font-weight: 400;
     color: var(--light-grey);
 }
 
