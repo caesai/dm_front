@@ -5,6 +5,7 @@
 }
 
 .bgImage {
+    position: relative;
     background-size: cover;
     background-position: center;
 }
@@ -19,6 +20,22 @@
     justify-content: flex-end;
 }
 
+.imaged:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    content: "";
+    z-index: 0;
+    background-image: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0),
+            rgb(0, 0, 0, 0.8)
+    );
+    border-radius: 16px;
+}
+
 .floatingBadges {
     position: relative;
     bottom: -6px;
@@ -30,10 +47,13 @@
 }
 
 .imagedBottom {
+    position: relative;
+    z-index: 1;
     display: flex;
     width: 100%;
-    backdrop-filter: blur(10px);
-    background-color: rgba(0, 0, 0, 0.6);
+    /*backdrop-filter: blur(10px);*/
+    /*background-color: rgba(0, 0, 0, 0.6);*/
+
     height: 76px;
     border-radius: 0 0 16px 16px;
     align-items: center;

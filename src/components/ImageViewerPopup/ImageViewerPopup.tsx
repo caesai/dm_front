@@ -2,6 +2,7 @@ import Popup from 'reactjs-popup';
 import { FC, useEffect, useState } from 'react';
 import css from './ImageViewerPopup.module.css';
 import 'reactjs-popup/dist/index.css';
+import "swiper/css/zoom";
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import classNames from 'classnames';
@@ -43,7 +44,6 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
         // Если элемент найден и индекс отличается от текущего, обновляем стейт
         if (index !== -1 && index !== currentSlide) {
             setCurrentSlide(index);
-            console.log(index);
         }
     }, [p.currentItem]);
     // hack to prevent from scrolling on page
@@ -72,6 +72,7 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                     </div>
                     <div className={css.swiper_container}>
                         <Swiper
+                            zoom
                             slidesPerView={1}
                             spaceBetween={8}
                             style={{ width: '100%' }}

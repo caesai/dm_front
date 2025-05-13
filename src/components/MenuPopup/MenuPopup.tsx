@@ -2,13 +2,15 @@ import Popup from 'reactjs-popup';
 import { FC, useEffect, useState } from 'react';
 import css from './MenuPopup.module.css';
 import 'reactjs-popup/dist/index.css';
+import 'swiper/css/thumbs';
+import "swiper/css/zoom";
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
-// import { FreeMode } from 'swiper/modules';
+import { Thumbs } from 'swiper/modules';
 import styled from 'styled-components';
-// import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 interface IFullScreenPopup {
     isOpen: boolean;
@@ -30,7 +32,8 @@ const StyledPopup = styled(Popup)`
 export const MenuPopup: FC<IFullScreenPopup> = (p) => {
     const onClose = () => p.setOpen(false);
     const [menuItems] = useState<string[]>(p.menuItems);
-    // const [currentImage, setCurrentImage] = useState(menuItems[0]);
+    const [currentImage, setCurrentImage] = useState<string>(menuItems[0]);
+    const [thumbsSwiper, setThumbsSwiper] = useState(null);
     // hack to prevent from scrolling on page
     useEffect(() => {
         if (p.isOpen) {
@@ -44,6 +47,7 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
         };
     }, [p.isOpen]);
 
+    // @ts-ignore
     return (
         <StyledPopup open={p.isOpen} onClose={onClose} position={'top center'}>
             <div className={css.popup}>
@@ -57,34 +61,75 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                         />
                     </div>
                     <div className={css.swiper_container}>
-                        {/*<div className={css.imageViewer}>*/}
-                        {/*<div*/}
-                        {/*    style={{*/}
-                        {/*        height: '100%',*/}
-                        {/*        width: '100%',*/}
-                        {/*    }}*/}
-                        {/*>*/}
+                            <TransformWrapper initialScale={1}>
+                                <TransformComponent
+                                    wrapperStyle={{
+                                        width: '100%',
+                                        height: '100%',
+                                    }}
+                                    contentStyle={{
+                                        width: '100%',
+                                        height: '100%',
+                                    }}
+                                >
+                                    <Swiper
+                                        slidesPerView={1}
+                                        spaceBetween={5}
+                                        zoom
+                                        modules={[Thumbs]}
+                                        style={{ width: '100%' }}
+                                        thumbs={{ swiper: thumbsSwiper }}
+                                    >
+                                        {menuItems.map((slide, index) => {
+                                            return (
+                                                <SwiperSlide
+                                                    zoom
+                                                    style={{width: '100px'}}
+                                                    key={index}
+                                                    // virtualIndex={index}
+                                                    // virtualIndex={menuItems.findIndex(element => element === currentImage)}
+                                                >
+                                                    <div
+                                                        className={classNames(
+                                                            css.bgImage,
+                                                            css.currentImage
+                                                        )}
+                                                        style={{
+                                                            backgroundImage: `url(${slide})`,
+                                                        }}
+                                                    ></div>
+                                                </SwiperSlide>
+                                            )
+                                        })}
+                                    </Swiper>
+                                </TransformComponent>
+                            </TransformWrapper>
+                        </div>
+                        <div className={css.imageSelector}>
                             <Swiper
-                                slidesPerView={1}
-                                spaceBetween={8}
-                                // navigation
                                 zoom
-                                freeMode
-                                style={{ width: '100%' }}
+                                slidesPerView="auto"
+                                modules={[Thumbs]}
+                                spaceBetween={5}
+                                watchSlidesProgress
+                                // @ts-ignore
+                                onSwiper={setThumbsSwiper}
                             >
                                 {menuItems.map((slide) => (
                                     <SwiperSlide
-                                        zoom
                                         style={{ width: '100px' }}
                                         key={slide}
-                                        // onClick={() => {
-                                        //     setCurrentImage(slide);
-                                        // }}
+                                        onClick={() => {
+                                            setCurrentImage(slide);
+                                        }}
                                     >
                                         <div
                                             className={classNames(
                                                 css.bgImage,
-                                                css.currentImage
+                                                css.slideImage,
+                                                css.slideImageCurrent
+                                                    ? currentImage == slide
+                                                    : null
                                             )}
                                             style={{
                                                 backgroundImage: `url(${slide})`,
@@ -92,64 +137,11 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                                         ></div>
                                     </SwiperSlide>
                                 ))}
+                                <SwiperSlide
+                                    style={{ width: '100px' }}
+                                ></SwiperSlide>
                             </Swiper>
-                            {/*<TransformWrapper initialScale={1}>*/}
-                            {/*    <TransformComponent*/}
-                            {/*        wrapperStyle={{*/}
-                            {/*            width: '100%',*/}
-                            {/*            height: '100%',*/}
-                            {/*        }}*/}
-                            {/*        contentStyle={{*/}
-                            {/*            width: '100%',*/}
-                            {/*            height: '100%',*/}
-                            {/*        }}*/}
-                            {/*    >*/}
-                            {/*        <div*/}
-                            {/*            className={classNames(*/}
-                            {/*                css.bgImage,*/}
-                            {/*                css.currentImage*/}
-                            {/*            )}*/}
-                            {/*            style={{*/}
-                            {/*                backgroundImage: `url(${currentImage})`,*/}
-                            {/*            }}*/}
-                            {/*        ></div>*/}
-                            {/*    </TransformComponent>*/}
-                            {/*</TransformWrapper>*/}
                         </div>
-                        {/*<div className={css.imageSelector}>*/}
-                            {/*<Swiper*/}
-                            {/*    slidesPerView="auto"*/}
-                            {/*    modules={[FreeMode]}*/}
-                            {/*    freeMode={true}*/}
-                            {/*    spaceBetween={5}*/}
-                            {/*>*/}
-                            {/*    {menuItems.map((slide) => (*/}
-                            {/*        <SwiperSlide*/}
-                            {/*            style={{ width: '100px' }}*/}
-                            {/*            key={slide}*/}
-                            {/*            onClick={() => {*/}
-                            {/*                setCurrentImage(slide);*/}
-                            {/*            }}*/}
-                            {/*        >*/}
-                            {/*            <div*/}
-                            {/*                className={classNames(*/}
-                            {/*                    css.bgImage,*/}
-                            {/*                    css.slideImage,*/}
-                            {/*                    css.slideImageCurrent*/}
-                            {/*                        ? currentImage == slide*/}
-                            {/*                        : null*/}
-                            {/*                )}*/}
-                            {/*                style={{*/}
-                            {/*                    backgroundImage: `url(${slide})`,*/}
-                            {/*                }}*/}
-                            {/*            ></div>*/}
-                            {/*        </SwiperSlide>*/}
-                            {/*    ))}*/}
-                            {/*    <SwiperSlide*/}
-                            {/*        style={{ width: '100px' }}*/}
-                            {/*    ></SwiperSlide>*/}
-                            {/*</Swiper>*/}
-                        {/*</div>*/}
                     {/*</div>*/}
                 </div>
             </div>
