@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { UnmountClosed } from 'react-collapse';
 import 'swiper/css/bundle';
+import 'swiper/css/zoom';
 
 import { FreeMode } from 'swiper/modules';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
@@ -40,7 +41,7 @@ import {
     YMapDefaultSchemeLayer,
     YMapMarker,
 } from 'ymap3-components';
-import { LogoMapIcon } from '@/components/Icons/LogoMapIcon.tsx';
+// import { LogoMapIcon } from '@/components/Icons/LogoMapIcon.tsx';
 import { ImageViewerPopup } from '@/components/ImageViewerPopup/ImageViewerPopup.tsx';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import {
@@ -351,8 +352,9 @@ export const Restaurant = () => {
                     ></div>
                 </div>
                 <ContentContainer>
+                    <ContentBlock id={'booking'}>
                     <div
-                        id={'booking'}
+                        // id={'booking'}
                         className={css.navSliderAndBookingContainer}
                     >
                         <RestaurantNavigation />
@@ -452,6 +454,7 @@ export const Restaurant = () => {
                             </Swiper>
                         </div>
                     </div>
+                    </ContentBlock>
                     <ContentBlock id={'gallery'}>
                         <HeaderContainer>
                             <HeaderContent title={'Галерея'} />
@@ -482,10 +485,10 @@ export const Restaurant = () => {
                                             Все фото
                                         </div>
                                     </SwiperSlide>
-                                    {gallery.map((d) => (
+                                    {gallery.map((d, i) => (
                                         <SwiperSlide
                                             style={{ width: 'max-content' }}
-                                            key={d.title}
+                                            key={i}
                                             onClick={() =>
                                                 setCurrentGalleryCategory(
                                                     d.title
@@ -745,7 +748,7 @@ export const Restaurant = () => {
                                 <div className={css.textRow}>
                                     <span className={css.title}>Кухня:</span>
                                     <span className={css.value}>
-                                        {restaurant?.about_kitchen} {restaurant?.about_dishes}
+                                        {restaurant?.about_kitchen}, {restaurant?.about_dishes}
                                     </span>
                                 </div>
                                 <div className={css.textRow}>
@@ -891,9 +894,7 @@ export const Restaurant = () => {
                                             draggable={false}
                                         >
                                             <div className={css.mapPoint}>
-                                                <LogoMapIcon
-                                                    size={26}
-                                                ></LogoMapIcon>
+                                                <img width={50} src={restaurant?.logo_url} alt={''}/>
                                             </div>
                                         </YMapMarker>
                                     </YMap>
@@ -919,7 +920,7 @@ export const Restaurant = () => {
                                                         }
                                                     >
                                                         {
-                                                            restaurant?.address_station
+                                                            restaurant?.address
                                                         }
                                                     </span>
                                                 </div>

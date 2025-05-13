@@ -2,10 +2,11 @@ import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import react from '@vitejs/plugin-react-swc';
 import mkcert from 'vite-plugin-mkcert';
+import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: '/',
+    base: '/dm_front/',
     plugins: [
         // Allows using React dev server along with building a React application with Vite.
         // https://npmjs.com/package/@vitejs/plugin-react-swc
@@ -25,5 +26,11 @@ export default defineConfig({
     },
     build: {
         target: 'ES2022',
+        rollupOptions: {
+            input: {
+                main: resolve(__dirname, "index.html"),
+                404: resolve(__dirname, "public/404.html"),
+            },
+        },
     },
 });

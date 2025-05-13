@@ -77,8 +77,8 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                             style={{ width: '100%' }}
                             initialSlide={currentSlide}
                         >
-                            {menuItems.map((slide) => (
-                                <SwiperSlide key={slide}>
+                            {menuItems.map((slide, index) => (
+                                <SwiperSlide key={index}>
                                     <div
                                         className={classNames(
                                             css.bgImage,

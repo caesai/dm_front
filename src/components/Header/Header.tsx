@@ -19,7 +19,7 @@ export const Header = () => {
         <div className={css.header}>
             <img
                 className={css.logo}
-                src="/img/logoFull.png"
+                src={import.meta.env.BASE_URL + "/img/logoFull.png"}
                 alt="DreamTeam logo"
             />
             <div className={css.buttons}>

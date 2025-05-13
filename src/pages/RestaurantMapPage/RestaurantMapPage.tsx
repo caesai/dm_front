@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { InputSlider } from '@/pages/RestaurantMapPage/InputSlider/InputSlider.tsx';
-import { RestaurantOnMapIcon } from '@/components/Icons/RestaurantOnMapIcon.tsx';
+// import { RestaurantOnMapIcon } from '@/components/Icons/RestaurantOnMapIcon.tsx';
 import { RestaurantOnMapSelectedIcon } from '@/components/Icons/RestaurantOnMapIconSelected.tsx';
 import {
     YMap,
@@ -358,7 +358,8 @@ export const RestaurantMapPage = () => {
                     </div>
                 ) : (
                     <div className={css.mapPoint}>
-                        <RestaurantOnMapIcon size={24} />
+                        {/*<RestaurantOnMapIcon size={24} />*/}
+                        <img width={50} src={restaurants.find((v) => v.id == Number(feature.id))?.logo_url} alt={''} />
                     </div>
                 )}
             </YMapMarker>

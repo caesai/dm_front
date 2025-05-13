@@ -76,7 +76,7 @@ export const RestaurantPreview: FC<IProps> = ({ restaurant }) => {
                 <div className={css.resTitleWrapper}>
                     <h2 className={css.resTitle}>{restaurant.title}</h2>
                     <span className={css.resSlogan}>{restaurant.slogan}</span>
-                    <span className={css.resSlogan}>{restaurant.address_station}</span>
+                    <span className={css.resSlogan}>{restaurant.address}</span>
                 </div>
                 <div className={css.tags}>
                     <InfoTag

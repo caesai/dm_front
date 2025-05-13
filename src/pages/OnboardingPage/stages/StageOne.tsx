@@ -28,7 +28,7 @@ export const StageOne = () => {
                 <div className={css.stageOne_wrapper}>
                     <div className={css.stageOne_icons}>
                         <img
-                            src="/img/onboarding/blackchops.png"
+                            src={"/img/onboarding/blackchops.png"}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -36,7 +36,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/anchovys.png"
+                            src={"/img/onboarding/anchovys.png"}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -44,7 +44,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/smoke.png"
+                            src={"/img/onboarding/smoke.png"}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -52,7 +52,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/trappist.png"
+                            src={"/img/onboarding/trappist.png"}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -60,7 +60,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/poly.png"
+                            src={"/img/onboarding/poly.png"}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -68,7 +68,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/pame.png"
+                            src={"/img/onboarding/pame.png"}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -76,7 +76,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/beer.png"
+                            src={"/img/onboarding/beer.png"}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -84,7 +84,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/self.png"
+                            src={"/img/onboarding/self.png"}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,

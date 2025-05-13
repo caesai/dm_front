@@ -27,7 +27,7 @@ export function EnvUnsupported() {
             >
                 <img
                     alt="Telegram sticker"
-                    src="/icons/telegram.gif"
+                    src={import.meta.env.BASE_URL + "/icons/telegram.gif"}
                     style={{
                         display: 'block',
                         width: '144px',

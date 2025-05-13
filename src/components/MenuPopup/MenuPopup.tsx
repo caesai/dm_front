@@ -6,9 +6,9 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode } from 'swiper/modules';
+// import { FreeMode } from 'swiper/modules';
 import styled from 'styled-components';
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+// import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 interface IFullScreenPopup {
     isOpen: boolean;
@@ -30,7 +30,7 @@ const StyledPopup = styled(Popup)`
 export const MenuPopup: FC<IFullScreenPopup> = (p) => {
     const onClose = () => p.setOpen(false);
     const [menuItems] = useState<string[]>(p.menuItems);
-    const [currentImage, setCurrentImage] = useState(menuItems[0]);
+    // const [currentImage, setCurrentImage] = useState(menuItems[0]);
     // hack to prevent from scrolling on page
     useEffect(() => {
         if (p.isOpen) {
@@ -56,58 +56,35 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                             action={() => onClose()}
                         />
                     </div>
-                    <div className={css.imageViewer}>
-                        <div
-                            style={{
-                                height: '100%',
-                                width: '100%',
-                            }}
-                        >
-                            <TransformWrapper initialScale={1}>
-                                <TransformComponent
-                                    wrapperStyle={{
-                                        width: '100%',
-                                        height: '100%',
-                                    }}
-                                    contentStyle={{
-                                        width: '100%',
-                                        height: '100%',
-                                    }}
-                                >
-                                    <div
-                                        className={classNames(
-                                            css.bgImage,
-                                            css.currentImage
-                                        )}
-                                        style={{
-                                            backgroundImage: `url(${currentImage})`,
-                                        }}
-                                    ></div>
-                                </TransformComponent>
-                            </TransformWrapper>
-                        </div>
-                        <div className={css.imageSelector}>
+                    <div className={css.swiper_container}>
+                        {/*<div className={css.imageViewer}>*/}
+                        {/*<div*/}
+                        {/*    style={{*/}
+                        {/*        height: '100%',*/}
+                        {/*        width: '100%',*/}
+                        {/*    }}*/}
+                        {/*>*/}
                             <Swiper
-                                slidesPerView="auto"
-                                modules={[FreeMode]}
-                                freeMode={true}
-                                spaceBetween={5}
+                                slidesPerView={1}
+                                spaceBetween={8}
+                                // navigation
+                                zoom
+                                freeMode
+                                style={{ width: '100%' }}
                             >
                                 {menuItems.map((slide) => (
                                     <SwiperSlide
+                                        zoom
                                         style={{ width: '100px' }}
                                         key={slide}
-                                        onClick={() => {
-                                            setCurrentImage(slide);
-                                        }}
+                                        // onClick={() => {
+                                        //     setCurrentImage(slide);
+                                        // }}
                                     >
                                         <div
                                             className={classNames(
                                                 css.bgImage,
-                                                css.slideImage,
-                                                css.slideImageCurrent
-                                                    ? currentImage == slide
-                                                    : null
+                                                css.currentImage
                                             )}
                                             style={{
                                                 backgroundImage: `url(${slide})`,
@@ -115,12 +92,65 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                                         ></div>
                                     </SwiperSlide>
                                 ))}
-                                <SwiperSlide
-                                    style={{ width: '100px' }}
-                                ></SwiperSlide>
                             </Swiper>
+                            {/*<TransformWrapper initialScale={1}>*/}
+                            {/*    <TransformComponent*/}
+                            {/*        wrapperStyle={{*/}
+                            {/*            width: '100%',*/}
+                            {/*            height: '100%',*/}
+                            {/*        }}*/}
+                            {/*        contentStyle={{*/}
+                            {/*            width: '100%',*/}
+                            {/*            height: '100%',*/}
+                            {/*        }}*/}
+                            {/*    >*/}
+                            {/*        <div*/}
+                            {/*            className={classNames(*/}
+                            {/*                css.bgImage,*/}
+                            {/*                css.currentImage*/}
+                            {/*            )}*/}
+                            {/*            style={{*/}
+                            {/*                backgroundImage: `url(${currentImage})`,*/}
+                            {/*            }}*/}
+                            {/*        ></div>*/}
+                            {/*    </TransformComponent>*/}
+                            {/*</TransformWrapper>*/}
                         </div>
-                    </div>
+                        {/*<div className={css.imageSelector}>*/}
+                            {/*<Swiper*/}
+                            {/*    slidesPerView="auto"*/}
+                            {/*    modules={[FreeMode]}*/}
+                            {/*    freeMode={true}*/}
+                            {/*    spaceBetween={5}*/}
+                            {/*>*/}
+                            {/*    {menuItems.map((slide) => (*/}
+                            {/*        <SwiperSlide*/}
+                            {/*            style={{ width: '100px' }}*/}
+                            {/*            key={slide}*/}
+                            {/*            onClick={() => {*/}
+                            {/*                setCurrentImage(slide);*/}
+                            {/*            }}*/}
+                            {/*        >*/}
+                            {/*            <div*/}
+                            {/*                className={classNames(*/}
+                            {/*                    css.bgImage,*/}
+                            {/*                    css.slideImage,*/}
+                            {/*                    css.slideImageCurrent*/}
+                            {/*                        ? currentImage == slide*/}
+                            {/*                        : null*/}
+                            {/*                )}*/}
+                            {/*                style={{*/}
+                            {/*                    backgroundImage: `url(${slide})`,*/}
+                            {/*                }}*/}
+                            {/*            ></div>*/}
+                            {/*        </SwiperSlide>*/}
+                            {/*    ))}*/}
+                            {/*    <SwiperSlide*/}
+                            {/*        style={{ width: '100px' }}*/}
+                            {/*    ></SwiperSlide>*/}
+                            {/*</Swiper>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
                 </div>
             </div>
         </StyledPopup>

@@ -47,7 +47,7 @@ const AppRouter = () => {
     const [auth] = useAtom(authAtom);
     const [cities, setCities] = useAtom(cityListAtom);
     const [restaurants, setRestaurants] = useAtom(restaurantsListAtom);
-    const [earlyAccess, setEarlyAccess] = useState(false);
+    const [earlyAccess, setEarlyAccess] = useState(true);
     const [loadingComplete, setLoadingComplete] = useState<boolean>();
     const [, setReview] = useAtom(reviewAtom);
 
@@ -56,7 +56,6 @@ const AppRouter = () => {
         if (!loadingComplete && auth?.access_token) {
             APIGetCityList().then((res) => setCities(res.data));
             APIGetRestaurants().then((res) => {
-                console.log(res.data);
                 setRestaurants(res.data);
             });
         }
@@ -86,7 +85,7 @@ const AppRouter = () => {
     }, [cities, restaurants]);
 
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
             <ScrollToTop />
             <Redirecter />
             {earlyAccess && !user?.early_access ? (
@@ -174,7 +173,6 @@ export function App() {
         swipeBehavior.mount();
     }, []);
     const [userState] = useAtom(userAtom);
-    console.log(lp)
     return (
         <AppRoot
             appearance={'light'}

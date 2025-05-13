@@ -56,14 +56,14 @@
 }
 
 .chefTitle {
-    font-size: 12px;
+    font-size: 14px;
     font-family: 'Mont', sans-serif;
     font-weight: 400;
     color: var(--light-grey);
 }
 
 .chefName {
-    font-size: 14px;
+    font-size: 16px;
     font-family: 'Mont', sans-serif;
     font-weight: 400;
     color: var(--primary-background);

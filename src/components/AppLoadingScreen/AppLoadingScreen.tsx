@@ -14,7 +14,6 @@ export const AppLoadingScreen = () => {
     const [auth, setAuth] = useAtom(authAtom);
     const lp = useLaunchParams();
     const rawLp = useRawInitData();
-    console.log(rawLp);
     useEffect(() => {
         if (!auth?.access_token) {
             APIUserAuth(rawLp, lp.tgWebAppStartParam)
@@ -24,7 +23,8 @@ export const AppLoadingScreen = () => {
                 })
                 .then((token) => {
                     APIUserInfo(token).then((res) => setUser(res.data));
-                });
+                })
+                .catch(err => console.error('auth', err));
         }
     }, []);
 
