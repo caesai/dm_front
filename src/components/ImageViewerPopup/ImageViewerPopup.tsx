@@ -71,7 +71,7 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                             action={() => onClose()}
                         />
                     </div>
-                    {/*<div className={css.swiper_container}>*/}
+                    <div className={css.swiper_container}>
                         <Swiper
                             modules={[Zoom]}
                             zoom
@@ -94,7 +94,7 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                                 </SwiperSlide>
                             ))}
                         </Swiper>
-                    {/*</div>*/}
+                    </div>
                 </div>
             </div>
         </StyledPopup>

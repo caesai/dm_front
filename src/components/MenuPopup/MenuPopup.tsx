@@ -61,18 +61,18 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                             action={() => onClose()}
                         />
                     </div>
-                    {/*<div className={css.swiper_container}>*/}
-                            {/*<TransformWrapper initialScale={1}>*/}
-                            {/*    <TransformComponent*/}
-                            {/*        wrapperStyle={{*/}
-                            {/*            width: '100%',*/}
-                            {/*            height: '100%',*/}
-                            {/*        }}*/}
-                            {/*        contentStyle={{*/}
-                            {/*            width: '100%',*/}
-                            {/*            height: '100%',*/}
-                            {/*        }}*/}
-                            {/*    >*/}
+                    <div className={css.swiper_container}>
+                    {/*        <TransformWrapper initialScale={1}>*/}
+                    {/*            <TransformComponent*/}
+                    {/*                wrapperStyle={{*/}
+                    {/*                    width: '100%',*/}
+                    {/*                    height: '100%',*/}
+                    {/*                }}*/}
+                    {/*                contentStyle={{*/}
+                    {/*                    width: '100%',*/}
+                    {/*                    height: '100%',*/}
+                    {/*                }}*/}
+                    {/*            >*/}
                                     <Swiper
                                         slidesPerView={1}
                                         spaceBetween={5}
@@ -102,7 +102,7 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                                     </Swiper>
                             {/*    </TransformComponent>*/}
                             {/*</TransformWrapper>*/}
-                        {/*</div>*/}
+                        </div>
                         <div className={css.imageSelector}>
                             <Swiper
                                 zoom
