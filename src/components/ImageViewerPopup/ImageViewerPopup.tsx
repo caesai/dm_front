@@ -7,9 +7,9 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Zoom } from 'swiper/modules';
 import styled from 'styled-components';
 import { IPhotoCard } from '@/types/restaurant.ts';
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 interface IFullScreenPopup {
     isOpen: boolean;
@@ -72,18 +72,8 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                         />
                     </div>
                     {/*<div className={css.swiper_container}>*/}
-                    <TransformWrapper initialScale={1}>
-                        <TransformComponent
-                            wrapperStyle={{
-                                width: '100%',
-                                height: '100%',
-                            }}
-                            contentStyle={{
-                                width: '100%',
-                                height: '100%',
-                            }}
-                        >
                         <Swiper
+                            modules={[Zoom]}
                             zoom
                             slidesPerView={1}
                             spaceBetween={5}
@@ -105,8 +95,6 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                             ))}
                         </Swiper>
                     {/*</div>*/}
-                        </TransformComponent>
-                    </TransformWrapper>
                 </div>
             </div>
         </StyledPopup>

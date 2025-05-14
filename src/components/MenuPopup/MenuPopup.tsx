@@ -9,9 +9,9 @@ import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import classNames from 'classnames';
 import {type Swiper as SwiperRef} from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Thumbs } from 'swiper/modules';
+import { Thumbs, Zoom } from 'swiper/modules';
 import styled from 'styled-components';
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+// import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 interface IFullScreenPopup {
     isOpen: boolean;
@@ -61,23 +61,23 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                             action={() => onClose()}
                         />
                     </div>
-                    <div className={css.swiper_container}>
-                            <TransformWrapper initialScale={1}>
-                                <TransformComponent
-                                    wrapperStyle={{
-                                        width: '100%',
-                                        height: '100%',
-                                    }}
-                                    contentStyle={{
-                                        width: '100%',
-                                        height: '100%',
-                                    }}
-                                >
+                    {/*<div className={css.swiper_container}>*/}
+                            {/*<TransformWrapper initialScale={1}>*/}
+                            {/*    <TransformComponent*/}
+                            {/*        wrapperStyle={{*/}
+                            {/*            width: '100%',*/}
+                            {/*            height: '100%',*/}
+                            {/*        }}*/}
+                            {/*        contentStyle={{*/}
+                            {/*            width: '100%',*/}
+                            {/*            height: '100%',*/}
+                            {/*        }}*/}
+                            {/*    >*/}
                                     <Swiper
                                         slidesPerView={1}
                                         spaceBetween={5}
                                         zoom
-                                        modules={[Thumbs]}
+                                        modules={[Thumbs, Zoom]}
                                         style={{ width: '100%' }}
                                         thumbs={{swiper: thumbsSwiper.current && !thumbsSwiper.current?.destroyed ? thumbsSwiper.current : null}}
                                     >
@@ -100,9 +100,9 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                                             )
                                         })}
                                     </Swiper>
-                                </TransformComponent>
-                            </TransformWrapper>
-                        </div>
+                            {/*    </TransformComponent>*/}
+                            {/*</TransformWrapper>*/}
+                        {/*</div>*/}
                         <div className={css.imageSelector}>
                             <Swiper
                                 zoom
