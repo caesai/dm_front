@@ -70,12 +70,13 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                             action={() => onClose()}
                         />
                     </div>
-                    <div className={css.swiper_container}>
+                    {/*<div className={css.swiper_container}>*/}
                         <Swiper
                             zoom
                             slidesPerView={1}
-                            spaceBetween={8}
+                            spaceBetween={5}
                             style={{ width: '100%' }}
+                            resistanceRatio={0}
                             initialSlide={currentSlide}
                         >
                             {menuItems.map((slide, index) => (
@@ -92,7 +93,7 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                                 </SwiperSlide>
                             ))}
                         </Swiper>
-                    </div>
+                    {/*</div>*/}
                 </div>
             </div>
         </StyledPopup>

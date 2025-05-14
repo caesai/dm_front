@@ -1,5 +1,5 @@
 import Popup from 'reactjs-popup';
-import { FC, useEffect, useState } from 'react';
+import {FC, useEffect, useRef, useState} from 'react';
 import css from './MenuPopup.module.css';
 import 'reactjs-popup/dist/index.css';
 import 'swiper/css/thumbs';
@@ -7,6 +7,7 @@ import "swiper/css/zoom";
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import classNames from 'classnames';
+import {type Swiper as SwiperRef} from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Thumbs } from 'swiper/modules';
 import styled from 'styled-components';
@@ -33,7 +34,7 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
     const onClose = () => p.setOpen(false);
     const [menuItems] = useState<string[]>(p.menuItems);
     const [currentImage, setCurrentImage] = useState<string>(menuItems[0]);
-    const [thumbsSwiper, setThumbsSwiper] = useState(null);
+    const thumbsSwiper = useRef<SwiperRef>();
     // hack to prevent from scrolling on page
     useEffect(() => {
         if (p.isOpen) {
@@ -78,7 +79,7 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                                         zoom
                                         modules={[Thumbs]}
                                         style={{ width: '100%' }}
-                                        thumbs={{ swiper: thumbsSwiper }}
+                                        thumbs={{swiper: thumbsSwiper && !thumbsSwiper.current?.destroyed ? thumbsSwiper.current : null}}
                                     >
                                         {menuItems.map((slide, index) => {
                                             return (
@@ -112,8 +113,13 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                                 modules={[Thumbs]}
                                 spaceBetween={5}
                                 watchSlidesProgress
+                                onSwiper={(swiper) => {
+                                    if(thumbsSwiper) {
+                                        thumbsSwiper.current = swiper;
+                                    }
+                                }}
                                 // @ts-ignore
-                                onSwiper={setThumbsSwiper}
+                                // onSwiper={setThumbsSwiper}
                             >
                                 {menuItems.map((slide) => (
                                     <SwiperSlide
