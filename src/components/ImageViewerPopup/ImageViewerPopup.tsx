@@ -5,7 +5,7 @@ import 'reactjs-popup/dist/index.css';
 import "swiper/css/zoom";
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Zoom } from 'swiper/modules';
 import styled from 'styled-components';
@@ -81,16 +81,19 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                             initialSlide={currentSlide}
                         >
                             {menuItems.map((slide, index) => (
-                                <SwiperSlide key={index} zoom>
-                                    <div
-                                        className={classNames(
-                                            css.bgImage,
-                                            css.currentImage
-                                        )}
-                                        style={{
-                                            backgroundImage: `url(${slide})`,
-                                        }}
-                                    ></div>
+                                <SwiperSlide key={index}>
+                                    <div className="swiper-zoom-container">
+                                        <img src={slide} alt={'slide'} className={css.currentImage}/>
+                                    </div>
+                                    {/*<div*/}
+                                    {/*    className={classNames(*/}
+                                    {/*        css.bgImage,*/}
+                                    {/*        css.currentImage*/}
+                                    {/*    ) + " swiper-zoom-target"}*/}
+                                    {/*    style={{*/}
+                                    {/*        backgroundImage: `url(${slide})`,*/}
+                                    {/*    }}*/}
+                                    {/*></div>*/}
                                 </SwiperSlide>
                             ))}
                         </Swiper>

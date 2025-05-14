@@ -87,15 +87,18 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                                                     zoom
                                                     key={index}
                                                 >
-                                                    <div
-                                                        className={classNames(
-                                                            css.bgImage,
-                                                            css.currentImage
-                                                        )}
-                                                        style={{
-                                                            backgroundImage: `url(${slide})`,
-                                                        }}
-                                                    ></div>
+                                                    <div className="swiper-zoom-container">
+                                                        <img src={slide} alt={'slide'} />
+                                                    </div>
+                                                    {/*<div*/}
+                                                    {/*    className={classNames(*/}
+                                                    {/*        css.bgImage,*/}
+                                                    {/*        css.currentImage*/}
+                                                    {/*    ) + " swiper-zoom-target"}*/}
+                                                    {/*    style={{*/}
+                                                    {/*        backgroundImage: `url(${slide})`,*/}
+                                                    {/*    }}*/}
+                                                    {/*></div>*/}
                                                 </SwiperSlide>
                                             )
                                         })}
