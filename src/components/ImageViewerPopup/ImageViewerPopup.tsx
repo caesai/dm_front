@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import styled from 'styled-components';
 import { IPhotoCard } from '@/types/restaurant.ts';
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 interface IFullScreenPopup {
     isOpen: boolean;
@@ -71,16 +72,26 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                         />
                     </div>
                     {/*<div className={css.swiper_container}>*/}
+                    <TransformWrapper initialScale={1}>
+                        <TransformComponent
+                            wrapperStyle={{
+                                width: '100%',
+                                height: '100%',
+                            }}
+                            contentStyle={{
+                                width: '100%',
+                                height: '100%',
+                            }}
+                        >
                         <Swiper
                             zoom
                             slidesPerView={1}
                             spaceBetween={5}
                             style={{ width: '100%' }}
-                            resistanceRatio={0}
                             initialSlide={currentSlide}
                         >
                             {menuItems.map((slide, index) => (
-                                <SwiperSlide key={index}>
+                                <SwiperSlide key={index} zoom>
                                     <div
                                         className={classNames(
                                             css.bgImage,
@@ -94,6 +105,8 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                             ))}
                         </Swiper>
                     {/*</div>*/}
+                        </TransformComponent>
+                    </TransformWrapper>
                 </div>
             </div>
         </StyledPopup>

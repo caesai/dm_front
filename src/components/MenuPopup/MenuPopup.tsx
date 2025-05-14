@@ -79,16 +79,13 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                                         zoom
                                         modules={[Thumbs]}
                                         style={{ width: '100%' }}
-                                        thumbs={{swiper: thumbsSwiper && !thumbsSwiper.current?.destroyed ? thumbsSwiper.current : null}}
+                                        thumbs={{swiper: thumbsSwiper.current && !thumbsSwiper.current?.destroyed ? thumbsSwiper.current : null}}
                                     >
                                         {menuItems.map((slide, index) => {
                                             return (
                                                 <SwiperSlide
                                                     zoom
-                                                    style={{width: '100px'}}
                                                     key={index}
-                                                    // virtualIndex={index}
-                                                    // virtualIndex={menuItems.findIndex(element => element === currentImage)}
                                                 >
                                                     <div
                                                         className={classNames(
