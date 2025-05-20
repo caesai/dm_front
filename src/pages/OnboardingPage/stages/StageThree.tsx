@@ -33,7 +33,7 @@ export const StageThree = () => {
                 <div className={css.stageThree_wrapper}>
                     <div className={css.stageThree_images}>
                         <img
-                            src={import.meta.env.BASE_URL + "/img/onboarding/event1.png"}
+                            src={"/img/onboarding/event1.png"}
                             alt=""
                             className={classNames(
                                 css.stageThree_image,
@@ -41,7 +41,7 @@ export const StageThree = () => {
                             )}
                         />
                         <img
-                            src={import.meta.env.BASE_URL + "/img/onboarding/event2.jpg"}
+                            src={"/img/onboarding/event2.jpg"}
                             alt=""
                             className={classNames(
                                 css.stageThree_image,
@@ -49,7 +49,7 @@ export const StageThree = () => {
                             )}
                         />
                         <img
-                            src={import.meta.env.BASE_URL + "/img/onboarding/event2.png"}
+                            src={"/img/onboarding/event2.png"}
                             alt=""
                             className={classNames(
                                 css.stageThree_image,

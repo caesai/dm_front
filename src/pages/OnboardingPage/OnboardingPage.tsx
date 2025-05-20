@@ -66,7 +66,7 @@ export const OnboardingPage = () => {
                     <div className={css.logo_container}>
                         <img
                             className={css.logo}
-                            src={import.meta.env.BASE_URL + "/img/logoFull.png"}
+                            src={"/img/logoFull.png"}
                             alt="DreamTeam logo"
                         />
                     </div>

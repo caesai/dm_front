@@ -69,7 +69,7 @@ export const StageFive = () => {
                 <div className={css.stageFive_wrapper}>
                     {/*<div className={css.stageFive_image}>*/}
                     <img
-                        src={import.meta.env.BASE_URL + "/img/onboarding/phone.png"}
+                        src={"/img/onboarding/phone.png"}
                         className={css.stageFive_phone}
                         alt=""
                     />

@@ -85,7 +85,7 @@ const AppRouter = () => {
     }, [cities, restaurants]);
 
     return (
-        <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <BrowserRouter>
             <ScrollToTop />
             <Redirecter />
             {earlyAccess && !user?.early_access ? (

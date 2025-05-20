@@ -28,7 +28,7 @@ export const BookingCard: FC<BookingCardProps> = ({
                 css.bgImage,
                 !active ? css.notActive : null
             )}
-            style={{ backgroundImage: `url('${import.meta.env.BASE_URL}/img/bookingCard.png')` }}
+            style={{ backgroundImage: `url('/img/bookingCard.png')` }}
             onClick={() => click_callback(booking_id)}
         >
             <span
