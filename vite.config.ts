@@ -23,12 +23,12 @@ export default defineConfig({
     server: {
         // Exposes your dev server and makes it accessible for the devices in the same network.
         host: true,
-        // proxy: {
-        //     '/api': {
-        //         target: 'https://devsoko.ru',
-        //         changeOrigin: true,
-        //     }
-        // }
+        proxy: {
+            '/api': {
+                target: 'https://devsoko.ru',
+                changeOrigin: true,
+            }
+        }
     },
     build: {
         target: 'ES2022',
