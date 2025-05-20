@@ -6,7 +6,7 @@ import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: '/dm-front/',
+    base: '/dm_front/',
     plugins: [
         // Allows using React dev server along with building a React application with Vite.
         // https://npmjs.com/package/@vitejs/plugin-react-swc
