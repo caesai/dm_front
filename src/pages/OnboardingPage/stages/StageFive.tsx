@@ -1,6 +1,7 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
+import phone from "/img/onboarding/phone.png";
 
 export const StageFive = () => {
     const navigate = useNavigate();
@@ -69,7 +70,7 @@ export const StageFive = () => {
                 <div className={css.stageFive_wrapper}>
                     {/*<div className={css.stageFive_image}>*/}
                     <img
-                        src={"/img/onboarding/phone.png"}
+                        src={phone}
                         className={css.stageFive_phone}
                         alt=""
                     />

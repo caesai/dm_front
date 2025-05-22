@@ -1,6 +1,14 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
+import blackChops from "/img/onboarding/blackchops.png";
+import anchovus from "/img/onboarding/anchovys.png";
+import smoke from "/img/onboarding/smoke.png";
+import trappist from "/img/onboarding/trappist.png";
+import poly from "/img/onboarding/poly.png"
+import pame from "/img/onboarding/pame.png";
+import beer from "/img/onboarding/beer.png";
+import self from "/img/onboarding/self.png";
 
 export const StageOne = () => {
     const navigate = useNavigate();
@@ -28,7 +36,7 @@ export const StageOne = () => {
                 <div className={css.stageOne_wrapper}>
                     <div className={css.stageOne_icons}>
                         <img
-                            src={"/img/onboarding/blackchops.png"}
+                            src={blackChops}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -36,7 +44,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src={"/img/onboarding/anchovys.png"}
+                            src={anchovus}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -44,7 +52,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src={"/img/onboarding/smoke.png"}
+                            src={smoke}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -52,7 +60,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src={"/img/onboarding/trappist.png"}
+                            src={trappist}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -60,7 +68,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src={"/img/onboarding/poly.png"}
+                            src={poly}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -68,7 +76,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src={"/img/onboarding/pame.png"}
+                            src={pame}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -76,7 +84,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src={"/img/onboarding/beer.png"}
+                            src={beer}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -84,7 +92,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src={"/img/onboarding/self.png"}
+                            src={self}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,

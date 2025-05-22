@@ -3,6 +3,7 @@ import css from './OnboardingPage.module.css';
 import classNames from 'classnames';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import imgFull from "/img/logoFull.png";
 
 export const OnboardingPage = () => {
     const navigate = useNavigate();
@@ -66,7 +67,7 @@ export const OnboardingPage = () => {
                     <div className={css.logo_container}>
                         <img
                             className={css.logo}
-                            src={"/img/logoFull.png"}
+                            src={imgFull}
                             alt="DreamTeam logo"
                         />
                     </div>

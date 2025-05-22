@@ -1,6 +1,9 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
+import event1 from "/img/onboarding/event1.png";
+import event2 from "/img/onboarding/event2.jpg";
+import event3 from "/img/onboarding/event3.jpg"
 
 export const StageThree = () => {
     const navigate = useNavigate();
@@ -33,7 +36,7 @@ export const StageThree = () => {
                 <div className={css.stageThree_wrapper}>
                     <div className={css.stageThree_images}>
                         <img
-                            src={"/img/onboarding/event1.png"}
+                            src={event1}
                             alt=""
                             className={classNames(
                                 css.stageThree_image,
@@ -41,7 +44,7 @@ export const StageThree = () => {
                             )}
                         />
                         <img
-                            src={"/img/onboarding/event2.jpg"}
+                            src={event2}
                             alt=""
                             className={classNames(
                                 css.stageThree_image,
@@ -49,7 +52,7 @@ export const StageThree = () => {
                             )}
                         />
                         <img
-                            src={"/img/onboarding/event2.png"}
+                            src={event3}
                             alt=""
                             className={classNames(
                                 css.stageThree_image,
