@@ -1,49 +1,51 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import {FC, useEffect, useMemo, useState} from 'react';
 import css from './BookingPage.module.css';
 
-import { Page } from '@/components/Page.tsx';
-import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
-import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
-import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import {Page} from '@/components/Page.tsx';
+import {PageContainer} from '@/components/PageContainer/PageContainer.tsx';
+import {ContentContainer} from '@/components/ContentContainer/ContentContainer.tsx';
+import {CrossIcon} from '@/components/Icons/CrossIcon.tsx';
+import {RoundedButton} from '@/components/RoundedButton/RoundedButton.tsx';
+import {useNavigate, useParams} from 'react-router-dom';
 import classNames from 'classnames';
-import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
-import { DownArrow } from '@/components/Icons/DownArrow.tsx';
-import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
+import {CalendarIcon} from '@/components/Icons/CalendarIcon.tsx';
+import {DownArrow} from '@/components/Icons/DownArrow.tsx';
+import {UsersIcon} from '@/components/Icons/UsersIcon.tsx';
 import {
     formatDate,
     formatDateShort,
     getGuestsString,
     getTimeShort,
 } from '@/utils.ts';
-import { BookingGuestCountSelectorPopup } from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode } from 'swiper/modules';
-import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
-import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { BOOKINGCOMMENTMOCK } from '@/mockData.ts';
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import {
+    BookingGuestCountSelectorPopup
+} from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {FreeMode} from 'swiper/modules';
+import {HeaderContainer} from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
+import {HeaderContent} from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
+import {TextInput} from '@/components/TextInput/TextInput.tsx';
+import {CommentaryOptionButton} from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
+import {BOOKINGCOMMENTMOCK} from '@/mockData.ts';
+import {IConfirmationType} from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+import {ConfirmationSelect} from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
+import {ITimeSlot} from '@/pages/BookingPage/BookingPage.types.ts';
+import {BookingDateSelectorPopup} from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
+import {PickerValueObj} from '@/lib/react-mobile-picker/components/Picker.tsx';
 import {
     APICreateBooking,
     APIGetAvailableDays,
     APIGetAvailableTimeSlots,
 } from '@/api/restaurants.ts';
-import { useAtom } from 'jotai';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { commAtom } from '@/atoms/bookingCommAtom.ts';
+import {useAtom} from 'jotai';
+import {authAtom, userAtom} from '@/atoms/userAtom.ts';
+import {commAtom} from '@/atoms/bookingCommAtom.ts';
 import {
     bookingDateAtom,
     guestCountAtom,
     timeslotAtom,
 } from '@/atoms/bookingInfoAtom.ts';
-import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -62,7 +64,7 @@ const confirmationList: IConfirmationType[] = [
 
 export const BookingPage: FC = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const {id} = useParams();
 
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
@@ -78,9 +80,9 @@ export const BookingPage: FC = () => {
     const [userPhone, setUserPhone] = useState<string>(
         user?.phone_number ? user.phone_number : ''
     );
-    const [userEmail, setUserEmail] = useState<string>(
-        user?.email ? user.email : ''
-    );
+    // const [userEmail, setUserEmail] = useState<string>(
+    //     user?.email ? user.email : ''
+    // );
     const [confirmation, setConfirmation] = useState<IConfirmationType>({
         id: 'telegram',
         text: 'В Telegram',
@@ -101,7 +103,7 @@ export const BookingPage: FC = () => {
 
     const [phoneValidated, setPhoneValidated] = useState(true);
     const [nameValidated, setNameValidated] = useState(true);
-    const [emailValidated, setEmailValidated] = useState(true);
+    // const [emailValidated, setEmailValidated] = useState(true);
     const [dateValidated, setDateValidated] = useState(true);
     const [guestsValidated, setGuestsValidated] = useState(true);
     const [requestLoading, setRequestLoading] = useState(false);
@@ -109,14 +111,14 @@ export const BookingPage: FC = () => {
     useEffect(() => {
         auth?.access_token && id
             ? APIGetAvailableDays(auth?.access_token, parseInt(id), 1).then(
-                  (res) =>
-                      setBookingDates(
-                          res.data.map((v) => ({
-                              title: formatDate(v),
-                              value: v,
-                          }))
-                      )
-              )
+                (res) =>
+                    setBookingDates(
+                        res.data.map((v) => ({
+                            title: formatDate(v),
+                            value: v,
+                        }))
+                    )
+            )
             : null;
     }, [guestCount]);
 
@@ -227,11 +229,11 @@ export const BookingPage: FC = () => {
                 .match('^\\+?[78][-\\(]?\\d{3}\\)?-?\\d{3}-?\\d{2}-?\\d{2}$')
         );
     }, [userPhone]);
-    const emailValidate = useMemo(() => {
-        const EMAIL_REGEXP =
-            /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
-        return Boolean(userEmail.trim().match(EMAIL_REGEXP));
-    }, [userEmail]);
+    // const emailValidate = useMemo(() => {
+    //     const EMAIL_REGEXP =
+    //         /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
+    //     return Boolean(userEmail.trim().match(EMAIL_REGEXP));
+    // }, [userEmail]);
     const timeslotValidate = useMemo(() => {
         return !!currentSelectedTime;
     }, [currentSelectedTime]);
@@ -243,14 +245,14 @@ export const BookingPage: FC = () => {
         return [
             nameValidate,
             phoneValidate,
-            emailValidate,
+            // emailValidate,
             currentSelectedTime,
             guestCount,
         ].every(Boolean);
     }, [
         nameValidate,
         phoneValidate,
-        emailValidate,
+        // emailValidate,
         currentSelectedTime,
         guestCount,
     ]);
@@ -269,12 +271,12 @@ export const BookingPage: FC = () => {
                 setPhoneValidated(true);
             }, 5000);
         }
-        if (!emailValidate) {
-            setEmailValidated(false);
-            setTimeout(() => {
-                setEmailValidated(true);
-            }, 5000);
-        }
+        // if (!emailValidate) {
+        //     setEmailValidated(false);
+        //     setTimeout(() => {
+        //         setEmailValidated(true);
+        //     }, 5000);
+        // }
         if (!timeslotValidate) {
             setDateValidated(false);
             setTimeout(() => {
@@ -301,7 +303,7 @@ export const BookingPage: FC = () => {
                 Number(guestCount.value),
                 userName,
                 userPhone,
-                userEmail,
+                // userEmail,
                 commentary,
                 comms,
                 confirmation.text
@@ -338,7 +340,7 @@ export const BookingPage: FC = () => {
                     <ContentContainer>
                         <div className={css.headerContainer}>
                             <div className={css.headerNav}>
-                                <div style={{ width: '44px' }}></div>
+                                <div style={{width: '44px'}}></div>
                                 <div className={css.headerInfo}>
                                     <h3 className={css.headerInfo__title}>
                                         Бронирование
@@ -346,7 +348,7 @@ export const BookingPage: FC = () => {
                                 </div>
                                 <div>
                                     <RoundedButton
-                                        icon={<CrossIcon size={44} />}
+                                        icon={<CrossIcon size={44}/>}
                                         isBack={true}
                                     />
                                 </div>
@@ -377,8 +379,8 @@ export const BookingPage: FC = () => {
                                             >
                                                 {bookingDate.value !== 'unset'
                                                     ? formatDateShort(
-                                                          bookingDate.value
-                                                      )
+                                                        bookingDate.value
+                                                    )
                                                     : 'Дата'}
                                             </span>
                                         </div>
@@ -412,8 +414,8 @@ export const BookingPage: FC = () => {
                                             >
                                                 {guestCount
                                                     ? getGuestsString(
-                                                          guestCount.value
-                                                      )
+                                                        guestCount.value
+                                                    )
                                                     : 'Гости'}
                                             </span>
                                         </div>
@@ -525,7 +527,7 @@ export const BookingPage: FC = () => {
                                                             className={classNames(
                                                                 css.timeList_button,
                                                                 currentSelectedTime?.start_datetime ==
-                                                                    v.start_datetime
+                                                                v.start_datetime
                                                                     ? css.timeList_button__active
                                                                     : null
                                                             )}
@@ -536,7 +538,12 @@ export const BookingPage: FC = () => {
                                                             }
                                                         >
                                                             <span>
-                                                                {getTimeShort(
+                                                                {currentSelectedTime?.start_datetime ==
+                                                                v.start_datetime ? `${getTimeShort(
+                                                                    v.start_datetime
+                                                                )} - ${getTimeShort(
+                                                                    v.end_datetime
+                                                                )}` : getTimeShort(
                                                                     v.start_datetime
                                                                 )}
                                                             </span>
@@ -559,7 +566,7 @@ export const BookingPage: FC = () => {
                     )}
                     <ContentContainer>
                         <HeaderContainer>
-                            <HeaderContent title={'Пожелания к брони'} />
+                            <HeaderContent title={'Пожелания к брони'}/>
                         </HeaderContainer>
                         <TextInput
                             value={commentary}
@@ -576,7 +583,7 @@ export const BookingPage: FC = () => {
                                 {BOOKINGCOMMENTMOCK.map((obj) => (
                                     <SwiperSlide
                                         key={obj.text}
-                                        style={{ width: 'max-content' }}
+                                        style={{width: 'max-content'}}
                                     >
                                         <CommentaryOptionButton
                                             text={obj.text}
@@ -589,7 +596,7 @@ export const BookingPage: FC = () => {
                     </ContentContainer>
                     <ContentContainer>
                         <HeaderContainer>
-                            <HeaderContent title={'Контакты'} />
+                            <HeaderContent title={'Контакты'}/>
                         </HeaderContainer>
                         <div className={css.form}>
                             <TextInput
@@ -604,17 +611,17 @@ export const BookingPage: FC = () => {
                                 placeholder={'Телефон'}
                                 validation_failed={!phoneValidated}
                             />
-                            <TextInput
-                                value={userEmail}
-                                onChange={setUserEmail}
-                                placeholder={'Email'}
-                                validation_failed={!emailValidated}
-                            />
+                            {/*<TextInput*/}
+                            {/*    value={userEmail}*/}
+                            {/*    onChange={setUserEmail}*/}
+                            {/*    placeholder={'Email'}*/}
+                            {/*    validation_failed={!emailValidated}*/}
+                            {/*/>*/}
                         </div>
                     </ContentContainer>
                     <ContentContainer>
                         <HeaderContainer>
-                            <HeaderContent title={'Способ подтверждения'} />
+                            <HeaderContent title={'Способ подтверждения'}/>
                         </HeaderContainer>
                         <ConfirmationSelect
                             options={confirmationList}

@@ -1,39 +1,39 @@
-import { Page } from '@/components/Page.tsx';
+import {Page} from '@/components/Page.tsx';
 import css from './Restaurant.module.css';
-import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { IconlyProfile } from '@/components/Icons/Profile.tsx';
-import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import {RoundedButton} from '@/components/RoundedButton/RoundedButton.tsx';
+import {BackIcon} from '@/components/Icons/BackIcon.tsx';
+import {IconlyProfile} from '@/components/Icons/Profile.tsx';
+import {RestaurantTopPreview} from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
+import {useNavigate, useParams, useSearchParams} from 'react-router-dom';
 import classNames from 'classnames';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { UnmountClosed } from 'react-collapse';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {UnmountClosed} from 'react-collapse';
 import 'swiper/css/bundle';
 import 'swiper/css/zoom';
 
-import { FreeMode } from 'swiper/modules';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { useEffect, useState } from 'react';
-import { DownArrow } from '@/components/Icons/DownArrow.tsx';
-import { InstagramIcon } from '@/components/Icons/Instagram.tsx';
-import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
-import { PhoneCallIcon } from '@/components/Icons/PhoneCallIcon.tsx';
-import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
-import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
-import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
-import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import { HeaderSubText } from '@/components/ContentBlock/HeaderContainer/HeaderSubText/HeaderContainer.tsx';
-import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
+import {FreeMode} from 'swiper/modules';
+import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import {useEffect, useState} from 'react';
+import {DownArrow} from '@/components/Icons/DownArrow.tsx';
+import {InstagramIcon} from '@/components/Icons/Instagram.tsx';
+import {GoToPathIcon} from '@/components/Icons/GoToPathIcon.tsx';
+import {PhoneCallIcon} from '@/components/Icons/PhoneCallIcon.tsx';
+import {RestaurantNavigation} from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
+import {ContentBlock} from '@/components/ContentBlock/ContentBlock.tsx';
+import {ContentContainer} from '@/components/ContentContainer/ContentContainer.tsx';
+import {HeaderContainer} from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
+import {HeaderContent} from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
+import {HeaderSubText} from '@/components/ContentBlock/HeaderContainer/HeaderSubText/HeaderContainer.tsx';
+import {MenuPopup} from '@/components/MenuPopup/MenuPopup.tsx';
 import {
     GalleryCollection,
     GalleryPhoto,
 } from '@/pages/Restaurant/Restaurant.types.ts';
-import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
+import {CallRestaurantPopup} from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
 // import { EventCard } from '@/components/EventCard/EventCard.tsx';
-import { useAtom } from 'jotai';
-import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
-import { IPhotoCard, IRestaurant } from '@/types/restaurant.ts';
+import {useAtom} from 'jotai';
+import {backButtonAtom} from '@/atoms/backButtonAtom.ts';
+import {IPhotoCard, IRestaurant} from '@/types/restaurant.ts';
 import {
     YMap,
     YMapComponentsProvider,
@@ -42,8 +42,8 @@ import {
     YMapMarker,
 } from 'ymap3-components';
 // import { LogoMapIcon } from '@/components/Icons/LogoMapIcon.tsx';
-import { ImageViewerPopup } from '@/components/ImageViewerPopup/ImageViewerPopup.tsx';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import {ImageViewerPopup} from '@/components/ImageViewerPopup/ImageViewerPopup.tsx';
+import {restaurantsListAtom} from '@/atoms/restaurantsListAtom.ts';
 import {
     formatDate,
     formatDateAlt,
@@ -52,11 +52,11 @@ import {
     getRestaurantStatus,
     getTimeShort,
 } from '@/utils.ts';
-import { Calendar } from 'react-iconly';
-import { FaAngleRight } from 'react-icons/fa';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { authAtom } from '@/atoms/userAtom.ts';
+import {Calendar} from 'react-iconly';
+import {FaAngleRight} from 'react-icons/fa';
+import {PickerValueObj} from '@/lib/react-mobile-picker/components/Picker.tsx';
+import {ITimeSlot} from '@/pages/BookingPage/BookingPage.types.ts';
+import {authAtom} from '@/atoms/userAtom.ts';
 import {
     APIGetAvailableDays,
     APIGetAvailableTimeSlots,
@@ -67,10 +67,10 @@ import {
     guestCountAtom,
     timeslotAtom,
 } from '@/atoms/bookingInfoAtom.ts';
-import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
-import { EventCard } from '@/components/EventCard/EventCard.tsx';
-import { IEventInRestaurant } from '@/types/events.ts';
+import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import {BookingDateSelectorPopup} from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
+import {EventCard} from '@/components/EventCard/EventCard.tsx';
+import {IEventInRestaurant} from '@/types/events.ts';
 
 export const transformGallery = (
     gallery: IPhotoCard[]
@@ -83,7 +83,7 @@ export const transformGallery = (
         if (!groupedByCategory[photo.category]) {
             groupedByCategory[photo.category] = [];
         }
-        groupedByCategory[photo.category].push({ link: photo.url });
+        groupedByCategory[photo.category].push({link: photo.url});
     });
 
     // Преобразуем объект в массив GalleryCollection
@@ -95,7 +95,7 @@ export const transformGallery = (
 
 export const Restaurant = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const {id} = useParams();
     const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
@@ -135,7 +135,7 @@ export const Restaurant = () => {
     useEffect(() => {
         setRestaurant(restaurants.find((v) => v.id === Number(id)));
         setCurrentSelectedTime(null);
-        setBookingDate({ value: 'unset', title: 'unset' });
+        setBookingDate({value: 'unset', title: 'unset'});
         APIGetEventsInRestaurant(Number(id)).then((res) => setEvents(res.data));
     }, [id]);
 
@@ -172,12 +172,13 @@ export const Restaurant = () => {
                 );
                 return res;
             })
-            .then((res) =>
-                setBookingDate({
-                    title: formatDate(res.data[0]),
-                    value: res.data[0],
-                })
-            );
+            .then((res) => {
+                    setBookingDate({
+                        title: formatDate(res.data[0]),
+                        value: res.data[0],
+                    });
+                }
+            )
     }, []);
     useEffect(() => {
         if (!auth?.access_token || bookingDate.value == 'unset') {
@@ -276,7 +277,7 @@ export const Restaurant = () => {
                     <div className={css.headerTop}>
                         <div className={css.headerNavBlock}>
                             <RoundedButton
-                                icon={<BackIcon color={'var(--dark-grey)'} />}
+                                icon={<BackIcon color={'var(--dark-grey)'}/>}
                                 action={() => navigate('/')}
                             ></RoundedButton>
                         </div>
@@ -288,13 +289,13 @@ export const Restaurant = () => {
                         <div className={css.headerNavBlock}>
                             <RoundedButton
                                 icon={
-                                    <IconlyProfile color={'var(--dark-grey)'} />
+                                    <IconlyProfile color={'var(--dark-grey)'}/>
                                 }
                                 action={() => goToProfile()}
                             />
                         </div>
                     </div>
-                    {headerScrolled ? <RestaurantNavigation /> : null}
+                    {headerScrolled ? <RestaurantNavigation/> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
@@ -331,7 +332,7 @@ export const Restaurant = () => {
                 </div>
             </div>
             <div className={css.pageContainer}>
-                <RestaurantTopPreview rest={restaurant} />
+                <RestaurantTopPreview rest={restaurant}/>
                 <div className={css.yaTaxi}>
                     <div
                         key={'taxi1'}
@@ -353,111 +354,115 @@ export const Restaurant = () => {
                 </div>
                 <ContentContainer>
                     <ContentBlock id={'booking'}>
-                    <div
-                        // id={'booking'}
-                        className={css.navSliderAndBookingContainer}
-                    >
-                        <RestaurantNavigation />
-                        <div className={css.bookingContaner}>
-                            <Swiper
-                                slidesPerView={'auto'}
-                                spaceBetween={8}
-                                freeMode={true}
-                                modules={[FreeMode]}
-                                style={{
-                                    marginLeft: '0',
-                                }}
-                            >
-                                {bookingDate.value == 'unset' ||
-                                !bookingDates.length ? (
-                                    <SwiperSlide
-                                        style={{ width: 'min-content' }}
-                                    >
-                                        <PlaceholderBlock
-                                            width={'150px'}
-                                            height={'41px'}
-                                            rounded={'20px'}
-                                        />
-                                    </SwiperSlide>
-                                ) : (
-                                    <SwiperSlide
-                                        style={{ width: 'min-content' }}
-                                        onClick={() =>
-                                            setBookingDatePopup(true)
-                                        }
-                                    >
-                                        <div className={css.timeItem}>
-                                            <Calendar size={18} />
-                                            {formatDateAlt(bookingDate.value)}
-                                            <FaAngleRight size={16} />
-                                        </div>
-                                    </SwiperSlide>
-                                )}
-                                {timeslotLoading ? (
-                                    <>
+                        <div
+                            // id={'booking'}
+                            className={css.navSliderAndBookingContainer}
+                        >
+                            <RestaurantNavigation/>
+                            <div className={css.bookingContaner}>
+                                <Swiper
+                                    slidesPerView={'auto'}
+                                    spaceBetween={8}
+                                    freeMode={true}
+                                    modules={[FreeMode]}
+                                    style={{
+                                        marginLeft: '0',
+                                    }}
+                                >
+                                    {bookingDate.value == 'unset' ||
+                                    !bookingDates.length ? (
                                         <SwiperSlide
-                                            style={{ width: 'min-content' }}
+                                            style={{width: 'min-content'}}
                                         >
                                             <PlaceholderBlock
-                                                width={'68px'}
+                                                width={'150px'}
                                                 height={'41px'}
                                                 rounded={'20px'}
                                             />
                                         </SwiperSlide>
+                                    ) : (
                                         <SwiperSlide
-                                            style={{ width: 'min-content' }}
+                                            style={{width: 'min-content'}}
+                                            onClick={() =>
+                                                setBookingDatePopup(true)
+                                            }
                                         >
-                                            <PlaceholderBlock
-                                                width={'68px'}
-                                                height={'41px'}
-                                                rounded={'20px'}
-                                            />
-                                        </SwiperSlide>
-                                        <SwiperSlide
-                                            style={{ width: 'min-content' }}
-                                        >
-                                            <PlaceholderBlock
-                                                width={'68px'}
-                                                height={'41px'}
-                                                rounded={'20px'}
-                                            />
-                                        </SwiperSlide>
-                                    </>
-                                ) : (
-                                    availableTimeslots.map((ts, i) => (
-                                        <SwiperSlide
-                                            key={i}
-                                            style={{ width: 'min-content' }}
-                                            onClick={() => {
-                                                setCurrentSelectedTime(ts);
-                                                setGuestCount({
-                                                    title: '1 гость',
-                                                    value: '1',
-                                                });
-                                            }}
-                                        >
-                                            <div
-                                                className={classNames(
-                                                    css.timeItem,
-                                                    currentSelectedTime == ts
-                                                        ? css.timeItemActive
-                                                        : null
-                                                )}
-                                            >
-                                                {getTimeShort(
-                                                    ts.start_datetime
-                                                )}
+                                            <div className={css.timeItem}>
+                                                <Calendar size={18}/>
+                                                {formatDateAlt(bookingDate.value)}
+                                                <FaAngleRight size={16}/>
                                             </div>
                                         </SwiperSlide>
-                                    ))
-                                )}
-                            </Swiper>
+                                    )}
+                                    {timeslotLoading ? (
+                                        <>
+                                            <SwiperSlide
+                                                style={{width: 'min-content'}}
+                                            >
+                                                <PlaceholderBlock
+                                                    width={'68px'}
+                                                    height={'41px'}
+                                                    rounded={'20px'}
+                                                />
+                                            </SwiperSlide>
+                                            <SwiperSlide
+                                                style={{width: 'min-content'}}
+                                            >
+                                                <PlaceholderBlock
+                                                    width={'68px'}
+                                                    height={'41px'}
+                                                    rounded={'20px'}
+                                                />
+                                            </SwiperSlide>
+                                            <SwiperSlide
+                                                style={{width: 'min-content'}}
+                                            >
+                                                <PlaceholderBlock
+                                                    width={'68px'}
+                                                    height={'41px'}
+                                                    rounded={'20px'}
+                                                />
+                                            </SwiperSlide>
+                                        </>
+                                    ) : (
+                                        availableTimeslots.map((ts, i) => (
+                                            <SwiperSlide
+                                                key={i}
+                                                style={{width: 'min-content'}}
+                                                onClick={() => {
+                                                    setCurrentSelectedTime(ts);
+                                                    setGuestCount({
+                                                        title: '1 гость',
+                                                        value: '1',
+                                                    });
+                                                }}
+                                            >
+                                                <div
+                                                    className={classNames(
+                                                        css.timeItem,
+                                                        currentSelectedTime == ts
+                                                            ? css.timeItemActive
+                                                            : null
+                                                    )}
+                                                >
+                                                    {currentSelectedTime == ts ? `${getTimeShort(
+                                                        ts.start_datetime
+                                                    )} -  ${getTimeShort(
+                                                        ts.end_datetime
+                                                    )}` : getTimeShort(
+                                                        ts.start_datetime
+                                                    )}
+                                                </div>
+                                            </SwiperSlide>
+                                        ))
+                                    )}
+                                </Swiper>
+                            </div>
                         </div>
-                    </div>
                     </ContentBlock>
                     <ContentBlock id={'gallery'}>
                         <HeaderContainer>
-                            <HeaderContent title={'Галерея'} />
+                            <HeaderContent title={'Галерея'}/>
                             <div className={css.photoSliderNavigationContainer}>
                                 <Swiper
                                     modules={[FreeMode]}
@@ -466,7 +471,7 @@ export const Restaurant = () => {
                                     spaceBetween={4}
                                 >
                                     <SwiperSlide
-                                        style={{ width: 'max-content' }}
+                                        style={{width: 'max-content'}}
                                         onClick={() =>
                                             setCurrentGalleryCategory(
                                                 'Все фото'
@@ -477,7 +482,7 @@ export const Restaurant = () => {
                                             className={classNames(
                                                 css.photoSliderNavigationItem,
                                                 currentGalleryCategory ==
-                                                    'Все фото'
+                                                'Все фото'
                                                     ? css.photoSliderNavigationActive
                                                     : null
                                             )}
@@ -487,7 +492,7 @@ export const Restaurant = () => {
                                     </SwiperSlide>
                                     {gallery.map((d, i) => (
                                         <SwiperSlide
-                                            style={{ width: 'max-content' }}
+                                            style={{width: 'max-content'}}
                                             key={i}
                                             onClick={() =>
                                                 setCurrentGalleryCategory(
@@ -499,7 +504,7 @@ export const Restaurant = () => {
                                                 className={classNames(
                                                     css.photoSliderNavigationItem,
                                                     currentGalleryCategory ==
-                                                        d.title
+                                                    d.title
                                                         ? css.photoSliderNavigationActive
                                                         : null
                                                 )}
@@ -580,8 +585,8 @@ export const Restaurant = () => {
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer id={'menu'}>
-                            <HeaderContent title={'Меню'} />
-                            <HeaderSubText text={'Рекомендуем'} />
+                            <HeaderContent title={'Меню'}/>
+                            <HeaderSubText text={'Рекомендуем'}/>
                         </HeaderContainer>
                         <div className={css.photoSliderContainer}>
                             <Swiper
@@ -594,7 +599,7 @@ export const Restaurant = () => {
                                     .sort((a, b) => (a.id > b.id ? 1 : -1))
                                     .map((menu, index) => (
                                         <SwiperSlide
-                                            style={{ width: '162px' }}
+                                            style={{width: '162px'}}
                                             key={`${index}${menu.photo_url}`}
                                         >
                                             <div className={css.menuItem}>
@@ -634,7 +639,7 @@ export const Restaurant = () => {
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
-                            <HeaderContent id={'about'} title={'О месте'} />
+                            <HeaderContent id={'about'} title={'О месте'}/>
                         </HeaderContainer>
                         <div className={css.aboutContainer}>
                             <span
@@ -661,10 +666,10 @@ export const Restaurant = () => {
                                 <span className={css.title}>
                                     {restaurant?.worktime
                                         ? getRestaurantStatus(
-                                              restaurant.worktime,
-                                              getCurrentWeekdayShort(),
-                                              getCurrentTimeShort()
-                                          )
+                                            restaurant.worktime,
+                                            getCurrentWeekdayShort(),
+                                            getCurrentTimeShort()
+                                        )
                                         : ''}
                                 </span>
                                 <div
@@ -774,7 +779,7 @@ export const Restaurant = () => {
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
-                            <HeaderContent id={'chef'} title={'О шефе'} />
+                            <HeaderContent id={'chef'} title={'О шефе'}/>
                         </HeaderContainer>
                         <div className={css.aboutContainer}>
                             <span
@@ -848,7 +853,7 @@ export const Restaurant = () => {
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
-                            <HeaderContent title={'Адрес'} />
+                            <HeaderContent title={'Адрес'}/>
                         </HeaderContainer>
                         <div className={css.mapContainer}>
                             <div className={css.map}>
@@ -876,8 +881,8 @@ export const Restaurant = () => {
                                             zoom: 17,
                                         }}
                                     >
-                                        <YMapDefaultSchemeLayer />
-                                        <YMapDefaultFeaturesLayer />
+                                        <YMapDefaultSchemeLayer/>
+                                        <YMapDefaultFeaturesLayer/>
                                         <YMapMarker
                                             coordinates={[
                                                 Number(

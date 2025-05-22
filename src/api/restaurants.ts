@@ -59,7 +59,7 @@ export const APICreateBooking = (
     guests_count: number,
     name: string,
     phone: string,
-    email: string,
+    // email: string,
     comment: string,
     prepared_comments: string[],
     confirmation: string
@@ -72,7 +72,7 @@ export const APICreateBooking = (
             guests_count,
             name,
             phone,
-            email,
+            // email,
             comment,
             prepared_comments,
             confirmation,
