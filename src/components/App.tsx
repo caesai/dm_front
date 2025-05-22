@@ -85,7 +85,7 @@ const AppRouter = () => {
     }, [cities, restaurants]);
 
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={'/dm_front/'}>
             <ScrollToTop />
             <Redirecter />
             {earlyAccess && !user?.early_access ? (
