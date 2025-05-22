@@ -80,9 +80,9 @@ export const BookingPage: FC = () => {
     const [userPhone, setUserPhone] = useState<string>(
         user?.phone_number ? user.phone_number : ''
     );
-    // const [userEmail, setUserEmail] = useState<string>(
-    //     user?.email ? user.email : ''
-    // );
+    const [userEmail, ] = useState<string>(
+        user?.email ? user.email : ''
+    );
     const [confirmation, setConfirmation] = useState<IConfirmationType>({
         id: 'telegram',
         text: 'В Telegram',
@@ -303,7 +303,7 @@ export const BookingPage: FC = () => {
                 Number(guestCount.value),
                 userName,
                 userPhone,
-                // userEmail,
+                userEmail,
                 commentary,
                 comms,
                 confirmation.text
