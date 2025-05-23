@@ -820,18 +820,16 @@ export const Restaurant = () => {
                         </div>
                     </ContentBlock>
                 </ContentContainer>
-                {events.length ? (
-                    <>
-                        <ContentContainer>
-                            <ContentBlock>
-                                <HeaderContainer>
-                                    <HeaderContent
-                                        title={'Мероприятия'}
-                                        id={'events'}
-                                    />
-                                </HeaderContainer>
-
-                                {events.map((e) => (
+                <ContentContainer>
+                    <ContentBlock>
+                        <HeaderContainer>
+                            <HeaderContent
+                                title={'Мероприятия'}
+                                id={'events'}
+                            />
+                        </HeaderContainer>
+                        {events.length ?
+                            events.map((e) => (
                                     <EventCard
                                         key={e.name}
                                         onClick={() =>
@@ -844,11 +842,18 @@ export const Restaurant = () => {
                                         event_desc={e.description}
                                         event_img={e.image_url}
                                     />
-                                ))}
-                            </ContentBlock>
-                        </ContentContainer>
-                    </>
-                ) : null}
+                                )
+                            ) : (
+                                <span
+                                    className={classNames(
+                                        css.aboutText
+                                    )}
+                                >
+                                Пока нет мероприятий
+                            </span>
+                            )}
+                    </ContentBlock>
+                </ContentContainer>
 
                 <ContentContainer>
                     <ContentBlock>

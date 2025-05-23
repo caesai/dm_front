@@ -309,6 +309,7 @@ export const BookingPage: FC = () => {
                 commentary,
                 comms,
                 confirmation.text
+                // tg_id: user.
             )
                 .then((res) => {
                     navigate(`/myBookings/${res.data.id}`);

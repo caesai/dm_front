@@ -14,7 +14,6 @@ export function init(): void {
     initSDK();
 
     if (!backButton.isSupported() || !miniApp.isSupported()) {
-        console.error('wtf')
         throw new Error('ERR_NOT_SUPPORTED');
     }
 
