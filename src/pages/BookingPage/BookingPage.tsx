@@ -80,7 +80,9 @@ export const BookingPage: FC = () => {
     const [userPhone, setUserPhone] = useState<string>(
         user?.phone_number ? user.phone_number : ''
     );
-    const [userEmail, setUserEmail] = useState<string>(
+    const [userEmail,
+        // setUserEmail
+    ] = useState<string>(
         user?.email ? user.email : ''
     );
     const [confirmation, setConfirmation] = useState<IConfirmationType>({
@@ -103,7 +105,7 @@ export const BookingPage: FC = () => {
 
     const [phoneValidated, setPhoneValidated] = useState(true);
     const [nameValidated, setNameValidated] = useState(true);
-    const [emailValidated, setEmailValidated] = useState(true);
+    // const [emailValidated, setEmailValidated] = useState(true);
     const [dateValidated, setDateValidated] = useState(true);
     const [guestsValidated, setGuestsValidated] = useState(true);
     const [requestLoading, setRequestLoading] = useState(false);
@@ -229,11 +231,11 @@ export const BookingPage: FC = () => {
                 .match('^\\+?[78][-\\(]?\\d{3}\\)?-?\\d{3}-?\\d{2}-?\\d{2}$')
         );
     }, [userPhone]);
-    const emailValidate = useMemo(() => {
-        const EMAIL_REGEXP =
-            /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
-        return Boolean(userEmail.trim().match(EMAIL_REGEXP));
-    }, [userEmail]);
+    // const emailValidate = useMemo(() => {
+    //     const EMAIL_REGEXP =
+    //         /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
+    //     return Boolean(userEmail.trim().match(EMAIL_REGEXP));
+    // }, [userEmail]);
     const timeslotValidate = useMemo(() => {
         return !!currentSelectedTime;
     }, [currentSelectedTime]);
@@ -245,14 +247,14 @@ export const BookingPage: FC = () => {
         return [
             nameValidate,
             phoneValidate,
-            emailValidate,
+            // emailValidate,
             currentSelectedTime,
             guestCount,
         ].every(Boolean);
     }, [
         nameValidate,
         phoneValidate,
-        emailValidate,
+        // emailValidate,
         currentSelectedTime,
         guestCount,
     ]);
@@ -271,12 +273,12 @@ export const BookingPage: FC = () => {
                 setPhoneValidated(true);
             }, 5000);
         }
-        if (!emailValidate) {
-            setEmailValidated(false);
-            setTimeout(() => {
-                setEmailValidated(true);
-            }, 5000);
-        }
+        // if (!emailValidate) {
+        //     setEmailValidated(false);
+        //     setTimeout(() => {
+        //         setEmailValidated(true);
+        //     }, 5000);
+        // }
         if (!timeslotValidate) {
             setDateValidated(false);
             setTimeout(() => {
@@ -611,12 +613,12 @@ export const BookingPage: FC = () => {
                                 placeholder={'Телефон'}
                                 validation_failed={!phoneValidated}
                             />
-                            <TextInput
-                                value={userEmail}
-                                onChange={setUserEmail}
-                                placeholder={'Email'}
-                                validation_failed={!emailValidated}
-                            />
+                            {/*<TextInput*/}
+                            {/*    value={userEmail}*/}
+                            {/*    onChange={setUserEmail}*/}
+                            {/*    placeholder={'Email'}*/}
+                            {/*    validation_failed={!emailValidated}*/}
+                            {/*/>*/}
                         </div>
                     </ContentContainer>
                     <ContentContainer>

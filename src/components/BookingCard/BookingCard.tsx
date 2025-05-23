@@ -1,6 +1,7 @@
 import css from './BookingCard.module.css';
 import { FC } from 'react';
 import classNames from 'classnames';
+import bookingCard from '/img/bookingCard.png';
 
 interface BookingCardProps {
     booking_id: number;
@@ -28,7 +29,7 @@ export const BookingCard: FC<BookingCardProps> = ({
                 css.bgImage,
                 !active ? css.notActive : null
             )}
-            style={{ backgroundImage: `url('/img/bookingCard.png')` }}
+            style={{ backgroundImage: `url(${bookingCard})` }}
             onClick={() => click_callback(booking_id)}
         >
             <span
