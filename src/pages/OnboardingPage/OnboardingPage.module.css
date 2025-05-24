@@ -2,8 +2,8 @@
     position: absolute;
     width: 100%;
     z-index: 999;
-    /*background: transparent;*/
-    background: rgba(255, 255, 255, 0.8);
+    background: transparent;
+    /*background: rgba(255, 255, 255, 0.8);*/
 }
 
 
@@ -350,6 +350,7 @@
 .agreeCheckbox_container {
     display: flex;
     gap: 8px;
+    padding-top: 15px;
 }
 
 .agreeCheckbox {

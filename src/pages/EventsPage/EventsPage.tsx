@@ -2,7 +2,9 @@ import { Page } from '@/components/Page.tsx';
 import css from './EventsPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import {
+    // Outlet,
+    useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { useAtom } from 'jotai/index';
@@ -55,7 +57,9 @@ export const EventsPage = () => {
     const isRestaurantsPage = useMemo(() => {
         return location.pathname.split('/').at(-1) === 'restaurant';
     }, [location.pathname]);
-    const [bookingInfo, setBookingInfo] = useState<IEventBooking>({});
+    const [bookingInfo,
+        // setBookingInfo
+    ] = useState<IEventBooking>({});
 
     useEffect(() => {
         console.log(bookingInfo);
@@ -75,7 +79,8 @@ export const EventsPage = () => {
                     </span>
                     <div className={css.header_spacer} />
                 </div>
-                <Outlet context={[bookingInfo, setBookingInfo]} />
+                {/*<Outlet context={[bookingInfo, setBookingInfo]} />*/}
+                <p className={css.span_title}>Пока нет мероприятий</p>
             </div>
         </Page>
     );

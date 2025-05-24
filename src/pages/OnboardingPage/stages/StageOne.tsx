@@ -7,7 +7,7 @@ import smoke from "/img/onboarding/smoke.png";
 import trappist from "/img/onboarding/trappist.png";
 import poly from "/img/onboarding/poly.png"
 import pame from "/img/onboarding/pame.png";
-import beer from "/img/onboarding/beer.png";
+// import beer from "/img/onboarding/beer.png";
 import self from "/img/onboarding/self.png";
 
 export const StageOne = () => {
@@ -37,6 +37,7 @@ export const StageOne = () => {
                     <div className={css.stageOne_icons}>
                         <img
                             src={blackChops}
+                            style={{ visibility: "hidden" }}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -84,7 +85,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src={beer}
+                            src={blackChops}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
