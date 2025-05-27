@@ -253,7 +253,7 @@ const BOOKINGCOMMENTMOCK = [
 
 export const getBookingCommentMock = (restaurant_id: string) => {
   // Self Edge Japanese
-  if (restaurant_id === '4' || restaurant_id == '10') {
+  if (restaurant_id === '4' || restaurant_id === '10') {
     return BOOKINGCOMMENTMOCK;
   }
   // Other restaurants
