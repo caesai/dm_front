@@ -45,7 +45,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src={anchovus}
+                            src={self}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -90,14 +90,6 @@ export const StageOne = () => {
                             className={classNames(
                                 css.stageOne_icon,
                                 css.stageOne_icons_7
-                            )}
-                        />
-                        <img
-                            src={self}
-                            alt=""
-                            className={classNames(
-                                css.stageOne_icon,
-                                css.stageOne_icons_8
                             )}
                         />
                     </div>
