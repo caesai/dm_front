@@ -252,10 +252,13 @@ const BOOKINGCOMMENTMOCK = [
 ];
 
 export const getBookingCommentMock = (restaurant_id: string) => {
+  const SELF_EDGE_JAPANESE_RESTAURANT_IDS = ['4', '10'];
+
   // Self Edge Japanese
-  if (restaurant_id === '4' || restaurant_id === '10') {
+  if (SELF_EDGE_JAPANESE_RESTAURANT_IDS.includes(restaurant_id)) {
     return BOOKINGCOMMENTMOCK;
   }
+  
   // Other restaurants
   return [...BOOKINGCOMMENTMOCK, {
     text: 'Нужен детский стульчик',
