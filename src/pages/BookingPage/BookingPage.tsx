@@ -26,7 +26,7 @@ import {HeaderContainer} from '@/components/ContentBlock/HeaderContainer/HeaderC
 import {HeaderContent} from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import {TextInput} from '@/components/TextInput/TextInput.tsx';
 import {CommentaryOptionButton} from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import {BOOKINGCOMMENTMOCK} from '@/mockData.ts';
+import {getBookingCommentMock} from '@/mockData.ts';
 import {IConfirmationType} from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import {ConfirmationSelect} from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import {ITimeSlot} from '@/pages/BookingPage/BookingPage.types.ts';
@@ -583,7 +583,7 @@ export const BookingPage: FC = () => {
                                 freeMode={true}
                                 spaceBetween={8}
                             >
-                                {BOOKINGCOMMENTMOCK.map((obj) => (
+                                {id !== undefined && getBookingCommentMock(id).map((obj) => (
                                     <SwiperSlide
                                         key={obj.text}
                                         style={{width: 'max-content'}}

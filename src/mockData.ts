@@ -220,7 +220,7 @@ export const mockBookingDate = new Date();
 //     },
 // ];
 
-export const BOOKINGCOMMENTMOCK = [
+const BOOKINGCOMMENTMOCK = [
     {
         text: 'День рождения',
         emoji: '🥞',
@@ -246,14 +246,22 @@ export const BOOKINGCOMMENTMOCK = [
         emoji: '🐶',
     },
     {
-        text: 'Нужен детский стульчик',
-        emoji: '👶',
-    },
-    {
         text: 'Стол в тихой зоне',
         emoji: '😴',
     },
 ];
+
+export const getBookingCommentMock = (restaurant_id: string) => {
+  // Self Edge Japanese
+  if (restaurant_id === '4' || restaurant_id == '10') {
+    return BOOKINGCOMMENTMOCK;
+  }
+  // Other restaurants
+  return [...BOOKINGCOMMENTMOCK, {
+    text: 'Нужен детский стульчик',
+    emoji: '👶',
+  }]
+} 
 
 export const BOOKING_DATE_VALUES = <PickerValueObj[]>[
     {
