@@ -220,7 +220,7 @@ export const mockBookingDate = new Date();
 //     },
 // ];
 
-export const BOOKINGCOMMENTMOCK = [
+const BOOKINGCOMMENTMOCK = [
     {
         text: 'День рождения',
         emoji: '🥞',
@@ -246,14 +246,34 @@ export const BOOKINGCOMMENTMOCK = [
         emoji: '🐶',
     },
     {
-        text: 'Нужен детский стульчик',
-        emoji: '👶',
-    },
-    {
         text: 'Стол в тихой зоне',
         emoji: '😴',
     },
 ];
+
+/**
+ * Returns a list of booking comments based on the restaurant ID.
+ * 
+ * @param {string} restaurant_id - The ID of the restaurant. If the ID is '4' or '10',
+ * the function returns a predefined set of comments. For other IDs, an additional
+ * comment is appended to the list.
+ * @returns {Array<{text: string, emoji: string}>} An array of booking comments, where
+ * each comment contains a text description and an associated emoji.
+ */
+export const getBookingCommentMock = (restaurant_id: string) => {
+  const SELF_EDGE_JAPANESE_RESTAURANT_IDS = ['4', '10'];
+
+  // Self Edge Japanese
+  if (SELF_EDGE_JAPANESE_RESTAURANT_IDS.includes(restaurant_id)) {
+    return BOOKINGCOMMENTMOCK;
+  }
+  
+  // Other restaurants
+  return [...BOOKINGCOMMENTMOCK, {
+    text: 'Нужен детский стульчик',
+    emoji: '👶',
+  }]
+} 
 
 export const BOOKING_DATE_VALUES = <PickerValueObj[]>[
     {

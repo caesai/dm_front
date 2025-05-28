@@ -1,9 +1,9 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
-import event1 from "/img/onboarding/event1.png";
-import event2 from "/img/onboarding/event2.jpg";
-import event3 from "/img/onboarding/event3.jpg"
+import event1 from '/img/onboarding/event1.png';
+import event2 from '/img/onboarding/event2.jpg';
+import event3 from '/img/onboarding/event3.jpg';
 
 export const StageThree = () => {
     const navigate = useNavigate();
@@ -20,8 +20,8 @@ export const StageThree = () => {
                                 css.stage_description_subtitle
                             )}
                         >
-                            Омакасе-ужины, Beef Steak Club, тематические бранчи
-                            и многое другое.
+                            Омакасе-ужины, Blackchops Steak Club, тематические
+                            бранчи и многое другое.
                         </span>
                     </div>
                     <div className={css.button_container}>
