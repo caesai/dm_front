@@ -18,8 +18,8 @@ describe('getRestaurantStatus', () => {
   test('Monday at 17:00 - should be open until 23:00', () => {
     expect(getRestaurantStatus(worktime, 'пн', '17:00')).toBe('Открыто до 23:00');
   });
-  test('Monday at 23:00 - should report not working today', () => {
-    expect(getRestaurantStatus(worktime, 'пн', '23:00')).toBe('Сегодня не работает');
+  test('Monday at 23:00 - should report will open at 17:00', () => {
+    expect(getRestaurantStatus(worktime, 'пн', '23:00')).toBe('Откроется в 17:00');
   });
   test('Monday at 12:00 - should report opening at 17:00', () => {
     expect(getRestaurantStatus(worktime, 'пн', '12:00')).toBe('Откроется в 17:00');
@@ -38,8 +38,8 @@ describe('getRestaurantStatus', () => {
   test('Saturday at 00:30 - should be open until 01:00 (from Friday overnight)', () => {
     expect(getRestaurantStatus(worktime, 'сб', '00:30')).toBe('Открыто до 01:00');
   });
-  test('Saturday at 01:00 - should report not working today', () => {
-    expect(getRestaurantStatus(worktime, 'сб', '01:00')).toBe('Сегодня не работает');
+  test('Saturday at 01:00 - should report will open at 13:00', () => {
+    expect(getRestaurantStatus(worktime, 'сб', '01:00')).toBe('Откроется в 13:00');
   });
 
   // Saturday
@@ -60,10 +60,10 @@ describe('getRestaurantStatus', () => {
   test('Sunday at 13:00 - should be open until 23:00', () => {
     expect(getRestaurantStatus(worktime, 'вс', '13:00')).toBe('Открыто до 23:00');
   });
-  test('Sunday at 23:00 - should report not working today', () => {
-    expect(getRestaurantStatus(worktime, 'вс', '23:00')).toBe('Сегодня не работает');
+  test('Sunday at 23:00 - should report will open at 17:00', () => {
+    expect(getRestaurantStatus(worktime, 'вс', '23:00')).toBe('Откроется в 17:00');
   });
-  test('Monday at 00:30 - should report not working today (no overnight from Sunday)', () => {
-    expect(getRestaurantStatus(worktime, 'пн', '00:30')).toBe('Сегодня не работает');
+  test('Monday at 00:30 - should report will open at 17:00', () => {
+    expect(getRestaurantStatus(worktime, 'пн', '00:30')).toBe('Откроется в 17:00');
   });
 });
