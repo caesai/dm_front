@@ -38,8 +38,11 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
         return;
     }
 
-    // Create selector values
-    const values = Array.from({ length: p.maxGuestsNumber }, (_, i) => (i + 1).toString());
+    // Create selector values as objects with 'title' and 'value' properties
+    const selectorOptions = Array.from({ length: p.maxGuestsNumber }, (_, i) => {
+      const value = (i + 1).toString();
+      return { title: value, value };
+    });
 
     const onClose = () => p.setOpen(false);
 
@@ -68,8 +71,8 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
                         height={120}
                     >
                         <Picker.Column name={'value'}>
-                            {values.map((value) => (
-                                <Picker.Item key={value} value={{ title: value, value }}>
+                            {selectorOptions.map((option) => (
+                                <Picker.Item key={option.value} value={option}>
                                     {({ selected }) => (
                                         <div className={css.selectorItem}>
                                             <span
@@ -80,7 +83,7 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
                                                         : null
                                                 )}
                                             >
-                                                {value}
+                                                {option.title}
                                             </span>
                                         </div>
                                     )}
