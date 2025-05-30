@@ -37,8 +37,8 @@ import { AdminScannerPage } from '@/pages/AdminScannerPage/AdminScannerPage.tsx'
 import { OnboardingPage } from '@/pages/OnboardingPage/OnboardingPage.tsx';
 import { StageOne } from '@/pages/OnboardingPage/stages/StageOne.tsx';
 import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
-import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
-import { StageFour } from '@/pages/OnboardingPage/stages/StageFour.tsx';
+// import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
+// import { StageFour } from '@/pages/OnboardingPage/stages/StageFour.tsx';
 import { StageFive } from '@/pages/OnboardingPage/stages/StageFive.tsx';
 import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
 
