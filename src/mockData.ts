@@ -259,7 +259,7 @@ const BOOKINGCOMMENTMOCK = [
  * где каждый комментарий содержит текстовое описание и соответствующий emoji.
  */
 export const getBookingCommentMock = (restaurant_id: string) => {
-  const SELF_EDGE_JAPANESE_RESTAURANT_IDS = ['4', '10'];
+  const SELF_EDGE_JAPANESE_RESTAURANT_IDS = ['4', '7', '10'];
 
   // Self Edge Japanese
   if (SELF_EDGE_JAPANESE_RESTAURANT_IDS.includes(restaurant_id)) {
