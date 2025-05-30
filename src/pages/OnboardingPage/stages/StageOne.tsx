@@ -2,7 +2,7 @@ import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import blackChops from "/img/onboarding/blackchops.png";
-import anchovus from "/img/onboarding/anchovys.png";
+// import anchovus from "/img/onboarding/anchovys.png";
 import smoke from "/img/onboarding/smoke.png";
 import trappist from "/img/onboarding/trappist.png";
 import poly from "/img/onboarding/poly.png"
