@@ -196,7 +196,7 @@ export const getCurrentWeekdayShort = (): string => {
 
 export const getCurrentTimeShort = (): string => {
     const today = new Date();
-    const t = today.toLocaleTimeString();
+    const t = today.toTimeString();
     return `${t.split(':')[0]}:${t.split(':')[1]}`;
 };
 export const getTimeShort = (dt: string): string => {

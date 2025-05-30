@@ -64,7 +64,7 @@ export const RestaurantTopPreview = ({rest}: Props) => {
                                 ) : (
                                     <div className={css.extraItemContent}>
                                         <span className={css.extraTop}>
-                                            Закрыто до
+                                            Закрыто
                                         </span>
                                         <span className={css.extraBottom}>
                                             до{' '}

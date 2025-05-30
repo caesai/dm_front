@@ -1,7 +1,7 @@
 .badge {
     width: 130px;
     height: 130px;
-    background-color: var(--primary-background);
+    /*background-color: var(--primary-background);*/
     border-radius: 16px;
     display: flex;
     box-sizing: border-box;
