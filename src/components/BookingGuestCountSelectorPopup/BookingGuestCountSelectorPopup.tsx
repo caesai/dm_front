@@ -15,7 +15,8 @@ interface Props {
     setOpen: (x: boolean) => void;
     guestCount: PickerValueData;
     setGuestCount: Dispatch<SetStateAction<PickerValueObj>>;
-    maxGuestsNumber: number
+    maxGuestsNumber: number;
+    serviceFeeMessage: string;
 }
 
 const StyledPopup = styled(Popup)`
@@ -60,8 +61,7 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
                 <div className={css.content}>
                     <h3>Количество гостей</h3>
                     <h5>
-                        Для бронирования на 10+ гостей свяжитесь с рестораном по
-                        телефону <span>+7 (926) 041 53 72</span>
+                        {p.serviceFeeMessage ?? p.serviceFeeMessage}
                     </h5>
 
                     <Picker

@@ -329,6 +329,28 @@ export const getGuestMaxNumber = (restaurant_id: string | undefined) => {
   return res ?? defaultValue;
 }
 
+export const SERVICE_FEE_DATA: Record<string, {persons: number, fee: number}> = {
+  // У ресторана Pame SPb нет сервисного сбора за гостей
+  '1': {persons: 8, fee: 10},  // Blackchops SPb
+  '2': {persons: 8, fee: 10},  // Poly SPb
+  '3': {persons: 8, fee: 10},  // Trappist SPb
+  '4': {persons: 6, fee: 10},  // Self Edge SPb
+  '6': {persons: 8, fee: 10},  // Smoke BBQ SPb
+  '7': {persons: 6, fee: 10},  // Self Edge Ekat
+  '9': {persons: 8, fee: 10},  // Smoke BBQ Msc
+  '10': {persons: 6, fee: 10},  // Self Edge Msc  
+}
+
+export const getServiceFeeData = (restaurant_id: string | undefined) => {
+  if (restaurant_id !== undefined) {
+    const feeData = SERVICE_FEE_DATA[restaurant_id];
+    if (feeData !== undefined) {
+      return `Для компаний от ${feeData.persons} и более гостей мы включаем сервисный сбор ${feeData.fee}% к общей сумме чека. Дети до 6 лет не в счет.`
+    }
+  }
+  return '';
+}
+
 // const MOCK_MSK = <ICity>{
 //     id: 1,
 //     name: 'Москва',
