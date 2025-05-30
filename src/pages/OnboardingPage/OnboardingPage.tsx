@@ -51,7 +51,7 @@ export const OnboardingPage = () => {
                             })}
                             onClick={() => navigate('/onboarding/4')}
                         ></div>
-                        <div
+                        {/* <div
                             className={classNames(css.stage, {
                                 [css.stage__active]: checkIsPageActive(5),
                             })}
@@ -62,7 +62,7 @@ export const OnboardingPage = () => {
                                 [css.stage__active]: checkIsPageActive(6),
                             })}
                             onClick={() => navigate('/onboarding/6')}
-                        ></div>
+                        ></div> */}
                     </div>
                     <div className={css.logo_container}>
                         <img
