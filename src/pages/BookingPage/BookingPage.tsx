@@ -26,7 +26,7 @@ import {HeaderContainer} from '@/components/ContentBlock/HeaderContainer/HeaderC
 import {HeaderContent} from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import {TextInput} from '@/components/TextInput/TextInput.tsx';
 import {CommentaryOptionButton} from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import {getBookingCommentMock} from '@/mockData.ts';
+import {getBookingCommentMock, getGuestMaxNumber} from '@/mockData.ts';
 import {IConfirmationType} from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import {ConfirmationSelect} from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import {ITimeSlot} from '@/pages/BookingPage/BookingPage.types.ts';
@@ -331,6 +331,7 @@ export const BookingPage: FC = () => {
                 setGuestCount={setGuestCount}
                 isOpen={guestCountPopup}
                 setOpen={setGuestCountPopup}
+                maxGuestsNumber={getGuestMaxNumber(id)}
             />
             <BookingDateSelectorPopup
                 isOpen={bookingDatePopup}

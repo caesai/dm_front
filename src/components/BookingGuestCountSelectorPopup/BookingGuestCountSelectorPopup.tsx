@@ -15,25 +15,9 @@ interface Props {
     setOpen: (x: boolean) => void;
     guestCount: PickerValueData;
     setGuestCount: Dispatch<SetStateAction<PickerValueObj>>;
+    maxGuestsNumber: number
 }
 
-// const values = {
-//     value: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-// };
-
-const values = {
-    value: [
-        { title: '1', value: '1' },
-        { title: '2', value: '2' },
-        { title: '3', value: '3' },
-        { title: '4', value: '4' },
-        { title: '5', value: '5' },
-        { title: '6', value: '6' },
-        { title: '7', value: '7' },
-        { title: '8', value: '8' },
-        { title: '9', value: '9' },
-    ],
-};
 const StyledPopup = styled(Popup)`
     &-overlay {
         background: #58585869;
@@ -53,6 +37,12 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
     if (typeof p.guestCount !== 'object') {
         return;
     }
+
+    // Create selector values as objects with 'title' and 'value' properties
+    const selectorOptions = Array.from({ length: p.maxGuestsNumber }, (_, i) => {
+      const value = (i + 1).toString();
+      return { title: value, value };
+    });
 
     const onClose = () => p.setOpen(false);
 
@@ -81,7 +71,7 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
                         height={120}
                     >
                         <Picker.Column name={'value'}>
-                            {values.value.map((option) => (
+                            {selectorOptions.map((option) => (
                                 <Picker.Item key={option.value} value={option}>
                                     {({ selected }) => (
                                         <div className={css.selectorItem}>

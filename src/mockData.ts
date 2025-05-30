@@ -252,13 +252,11 @@ const BOOKINGCOMMENTMOCK = [
 ];
 
 /**
- * Returns a list of booking comments based on the restaurant ID.
+ * Возвращает список комментариев к бронированию на основе ID ресторана.
  * 
- * @param {string} restaurant_id - The ID of the restaurant. If the ID is '4' or '10',
- * the function returns a predefined set of comments. For other IDs, an additional
- * comment is appended to the list.
- * @returns {Array<{text: string, emoji: string}>} An array of booking comments, where
- * each comment contains a text description and an associated emoji.
+ * @param {string} restaurant_id - Идентификатор ресторана.
+ * @returns {Array<{text: string, emoji: string}>} - Массив комментариев к бронированию,
+ * где каждый комментарий содержит текстовое описание и соответствующий emoji.
  */
 export const getBookingCommentMock = (restaurant_id: string) => {
   const SELF_EDGE_JAPANESE_RESTAURANT_IDS = ['4', '10'];
@@ -309,6 +307,27 @@ export const BOOKING_DATE_VALUES = <PickerValueObj[]>[
         value: '2025-03-24',
     },
 ];
+
+const GUESTS_MAX_NUMBER: Record<string, number> = {
+  '1': 12,  // Blackchops SPb
+  '2': 8,  // Poly SPb
+  '3': 12,  // Trappist SPb
+  '4': 8,  // Self Edge SPb
+  '5': 12,  // Pame SPb
+  '6': 8,  // Smoke BBQ SPb
+  '7': 8,  // Self Edge Ekat
+  '9': 8,  // Smoke BBQ Msc
+  '10': 8,  // Self Edge Msc
+}
+
+export const getGuestMaxNumber = (restaurant_id: string | undefined) => {
+  const defaultValue = 9;
+  let res;
+  if (restaurant_id !== undefined) {
+    res = GUESTS_MAX_NUMBER[restaurant_id];
+  }
+  return res ?? defaultValue;
+}
 
 // const MOCK_MSK = <ICity>{
 //     id: 1,
