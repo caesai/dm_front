@@ -152,13 +152,10 @@ const AppRouter = () => {
                     <Route path={'/onboarding'} element={<OnboardingPage />}>
                         <Route path={'/onboarding/1'} element={<StageOne />} />
                         <Route path={'/onboarding/2'} element={<StageTwo />} />
-                        <Route
-                            path={'/onboarding/3'}
-                            element={<StageThree />}
-                        />
-                        <Route path={'/onboarding/4'} element={<StageFour />} />
-                        <Route path={'/onboarding/5'} element={<StageFive />} />
-                        <Route path={'/onboarding/6'} element={<StageSix />} />
+                        {/* <Route path={'/onboarding/3'} element={<StageThree />} /> */}
+                        {/* <Route path={'/onboarding/4'} element={<StageFour />} /> */}
+                        <Route path={'/onboarding/3'} element={<StageFive />} />
+                        <Route path={'/onboarding/4'} element={<StageSix />} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/" />} />

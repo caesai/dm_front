@@ -61,7 +61,8 @@ export const StageFive = () => {
                     <div className={css.button_container}>
                         <div
                             className={css.redButton}
-                            onClick={() => navigate('/onboarding/6')}
+                            //onClick={() => navigate('/onboarding/6')}
+                            onClick={() => navigate('/onboarding/4')}
                         >
                             <span>Продолжить</span>
                         </div>
