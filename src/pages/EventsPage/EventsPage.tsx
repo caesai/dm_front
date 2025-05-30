@@ -3,7 +3,7 @@ import css from './EventsPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import {
-    // Outlet,
+    Outlet,
     useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
@@ -58,7 +58,7 @@ export const EventsPage = () => {
         return location.pathname.split('/').at(-1) === 'restaurant';
     }, [location.pathname]);
     const [bookingInfo,
-        // setBookingInfo
+        setBookingInfo
     ] = useState<IEventBooking>({});
 
     useEffect(() => {
@@ -79,8 +79,8 @@ export const EventsPage = () => {
                     </span>
                     <div className={css.header_spacer} />
                 </div>
-                {/*<Outlet context={[bookingInfo, setBookingInfo]} />*/}
-                <p className={css.span_title}>Пока нет мероприятий</p>
+                <Outlet context={[bookingInfo, setBookingInfo]} />
+                {/*<p className={css.span_title}>Пока нет мероприятий</p>*/}
             </div>
         </Page>
     );

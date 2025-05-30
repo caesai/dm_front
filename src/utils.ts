@@ -191,7 +191,7 @@ export const getCurrentTimeShort = (): string => {
 };
 export const getTimeShort = (dt: string): string => {
     const today = new Date(dt);
-    const t = today.toLocaleTimeString();
+    const t = today.toTimeString();
     return `${t.split(':')[0]}:${t.split(':')[1]}`;
 };
 

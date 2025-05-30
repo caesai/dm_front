@@ -314,7 +314,8 @@ export const BookingPage: FC = () => {
                 .then((res) => {
                     navigate(`/myBookings/${res.data.id}`);
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.log('err: ', err);
                     alert(
                         'Произошла ошибка при выполнении запроса, попробуйте еще раз.'
                     );
@@ -435,7 +436,16 @@ export const BookingPage: FC = () => {
                         </div>
                     </ContentContainer>
                     {guestCount.value === 'unset' ||
-                    bookingDate.value === 'unset' ? null : timeslotsLoading ? (
+                    bookingDate.value === 'unset' ? (
+                            <ContentContainer>
+                                <div className={css.timeOfDayContainer}>
+                                    <span className={css.noTimeSlotsText}>
+                                        Выберите дату и количество гостей
+                                    </span>
+                                </div>
+                            </ContentContainer>
+                    ) :
+                        timeslotsLoading ? (
                         <PlaceholderBlock
                             width={'100%'}
                             height={'115px'}

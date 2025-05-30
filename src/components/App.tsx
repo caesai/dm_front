@@ -56,6 +56,7 @@ const AppRouter = () => {
         if (!loadingComplete && auth?.access_token) {
             APIGetCityList().then((res) => setCities(res.data));
             APIGetRestaurants().then((res) => {
+                console.log('restaurants: ', res.data)
                 setRestaurants(res.data);
             });
         }

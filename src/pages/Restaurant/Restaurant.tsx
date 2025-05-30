@@ -140,6 +140,7 @@ export const Restaurant = () => {
     }, [id]);
 
     useEffect(() => {
+        console.log('restaurant: ', restaurant)
         if (restaurant?.gallery) {
             setGallery(transformGallery(restaurant.gallery));
         }
