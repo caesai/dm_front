@@ -326,7 +326,7 @@ export const getGuestMaxNumber = (restaurant_id: string | undefined) => {
   if (restaurant_id !== undefined) {
     res = GUESTS_MAX_NUMBER[restaurant_id];
   }
-  return res ?? defaultValue;;
+  return res ?? defaultValue;
 }
 
 // const MOCK_MSK = <ICity>{
