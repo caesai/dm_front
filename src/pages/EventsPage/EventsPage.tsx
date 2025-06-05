@@ -10,6 +10,7 @@ import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { useAtom } from 'jotai/index';
 import { eventsListAtom } from '@/atoms/eventBookingAtom.ts';
 import { APIGetEvents } from '@/api/events.ts';
+import {Share} from "@/components/Icons/Share.tsx";
 
 export interface IEventBooking {
     event?: IEvent;
@@ -61,10 +62,14 @@ export const EventsPage = () => {
         setBookingInfo
     ] = useState<IEventBooking>({});
 
+    const eventURL = useMemo(() => {
+        return location.pathname.split('/')[2];
+    }, [location.pathname]);
+
     useEffect(() => {
         console.log(bookingInfo);
     }, [bookingInfo]);
-
+    console.log('eventURL: ', eventURL)
     return (
         <Page back={true}>
             <div className={css.page}>
@@ -75,9 +80,18 @@ export const EventsPage = () => {
                         action={() => navigate(-1)}
                     />
                     <span className={css.header_title}>
-                        {isRestaurantsPage ? 'Рестораны' : 'Мероприятия'}
+                        {isRestaurantsPage ? 'Выберите ресторан' : 'Мероприятия'}
                     </span>
-                    <div className={css.header_spacer} />
+                    <div className={css.header_spacer} >
+                        {eventURL ? (
+                            <RoundedButton
+                                icon={
+                                    <Share color={'var(--dark-grey)'}/>
+                                }
+                                // action={() => goToProfile()}
+                            />
+                        ) : null}
+                    </div>
                 </div>
                 <Outlet context={[bookingInfo, setBookingInfo]} />
                 {/*<p className={css.span_title}>Пока нет мероприятий</p>*/}

@@ -42,7 +42,7 @@ export const EventBookingOutlet = () => {
     const [userInfo, setUserInfo] = useState({
         name: `${user?.first_name}`,
         phone: `${user?.phone_number}`,
-        email: `${user?.email}`,
+        // email: `${user?.email}`,
         commentary: '',
     });
 
@@ -61,7 +61,7 @@ export const EventBookingOutlet = () => {
             bookingInfo.date &&
             userInfo.name &&
             userInfo.phone &&
-            userInfo.email &&
+            // userInfo.email &&
             confirmation.text &&
             auth?.access_token
         );
@@ -74,7 +74,7 @@ export const EventBookingOutlet = () => {
             bookingInfo.date &&
             userInfo.name &&
             userInfo.phone &&
-            userInfo.email &&
+            // userInfo.email &&
             confirmation.text &&
             auth?.access_token &&
             guestCount
@@ -85,7 +85,8 @@ export const EventBookingOutlet = () => {
                 bookingInfo.date,
                 userInfo.name,
                 userInfo.phone,
-                userInfo.email,
+                // userInfo.email,
+                '',
                 userInfo.commentary,
                 confirmation.text,
                 guestCount,
@@ -179,13 +180,13 @@ export const EventBookingOutlet = () => {
                             }
                             placeholder={'Номер телефона'}
                         ></TextInput>
-                        <TextInput
-                            value={userInfo.email}
-                            onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, email: e }))
-                            }
-                            placeholder={'Email'}
-                        ></TextInput>
+                        {/*<TextInput*/}
+                        {/*    value={userInfo.email}*/}
+                        {/*    onChange={(e) =>*/}
+                        {/*        setUserInfo((p) => ({ ...p, email: e }))*/}
+                        {/*    }*/}
+                        {/*    placeholder={'Email'}*/}
+                        {/*></TextInput>*/}
                         <TextInput
                             value={userInfo.commentary}
                             onChange={(e) =>

@@ -7,6 +7,8 @@ import {
 } from '@/utils.ts';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import moment from 'moment';
+import classNames from "classnames";
+import {useState} from "react";
 // import { IEventBooking, IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
 
 export const EventConfirmationOutlet = () => {
@@ -14,6 +16,7 @@ export const EventConfirmationOutlet = () => {
     const { name, res } = useParams();
     const [bookingInfo, setBookingInfo] =
         useOutletContext<IEventBookingContext>();
+    const [hideAbout, setHideAbout] = useState(true);
 
     const next = () => {
         setBookingInfo((prev) => ({ ...prev }));
@@ -32,9 +35,20 @@ export const EventConfirmationOutlet = () => {
                 <h2 className={css.content_description__title}>
                     {bookingInfo.event?.name}
                 </h2>
-                <span className={css.content_description__info}>
+                <span className={classNames(
+                    css.content_description__info,
+                    hideAbout ? css.trimLines : null
+                )}>
                     {bookingInfo.event?.description}
                 </span>
+                <div
+                    className={css.trimLinesButton}
+                    onClick={() => setHideAbout((prev) => !prev)}
+                >
+                                <span className={css.text}>
+                                    {hideAbout ? 'Читать больше' : 'Скрыть'}
+                                </span>
+                </div>
             </div>
             <div className={css.event_params}>
                 <div className={css.event_params_row}>

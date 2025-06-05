@@ -74,14 +74,14 @@ export const RestaurantNavigation: FC = () => {
                         )}>О шефе</div>
                     </AnchorLink>
                 </SwiperSlide>
-                <SwiperSlide style={{ width: 'fit-content' }}>
-                    <AnchorLink href="#events" offset={128}>
-                        <div className={classNames(
-                            css.navigationLink,
-                            hash === 'events' ? css.navigationLinkActive : ''
-                        )}>Мероприятия</div>
-                    </AnchorLink>
-                </SwiperSlide>
+                {/*<SwiperSlide style={{ width: 'fit-content' }}>*/}
+                {/*    <AnchorLink href="#events" offset={128}>*/}
+                {/*        <div className={classNames(*/}
+                {/*            css.navigationLink,*/}
+                {/*            hash === 'events' ? css.navigationLinkActive : ''*/}
+                {/*        )}>Мероприятия</div>*/}
+                {/*    </AnchorLink>*/}
+                {/*</SwiperSlide>*/}
                 <SwiperSlide style={{ width: '48px' }}></SwiperSlide>
             </Swiper>
         </div>

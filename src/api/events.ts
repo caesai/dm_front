@@ -5,7 +5,7 @@ import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { EventTicket } from '@/types/events.ts';
 
 export const APIGetEvents = async () => {
-    return await axios.get<IEvent[]>(`${BASE_URL}/events`);
+    return await axios.get<IEvent[]>(`${BASE_URL}/events/`);
 };
 
 export const APIGetAvailableEventTimeslots = async (

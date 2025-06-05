@@ -26,6 +26,9 @@ export const EventListOutlet = () => {
                     event_name={event.name}
                     event_desc={event.description}
                     event_img={event.image_url}
+                    event_address={event.restaurants[0].address}
+                    event_dates={event.restaurants[0].dates}
+                    event_restaurant={event.restaurants[0].title}
                 />
             ))}
         </div>

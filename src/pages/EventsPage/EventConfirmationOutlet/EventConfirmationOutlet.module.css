@@ -23,17 +23,34 @@
     margin: 0;
     padding: 0;
     font-family: 'Heading Pro Ultracompressed', sans-serif;
-    font-weight: 800;
+    font-weight: 400;
     font-size: 30px;
     text-transform: uppercase;
 }
 
 .content_description__info {
     font-family: "Mont", sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     font-size: 14px;
     line-height: 150%;
     color: var(--grey);
+}
+
+.trimLines {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+.trimLinesButton {
+    .text {
+        font-size: 14px;
+        font-family: 'Mont', sans-serif;
+        font-weight: 400;
+        color: var(--red);
+    }
 }
 
 .event_params {
@@ -58,7 +75,7 @@
 
 .event_params_col__title {
     color: var(--grey);
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .event_params_col__data {
@@ -78,7 +95,7 @@
     span {
         color: var(--grey);
         font-family: "Mont", sans-serif;
-        font-weight: 700;
+        font-weight: 400;
         font-size: 12px;
         letter-spacing: 0;
         padding: 0;

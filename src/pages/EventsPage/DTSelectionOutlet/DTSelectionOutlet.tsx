@@ -211,9 +211,14 @@ export const DTSelectionOutlet = () => {
                                               onClick={() => setTime(v)}
                                           >
                                               <span>
-                                                  {moment(
+                                                  {currentSelectedTime !== v ? moment(
                                                       v.start_datetime
-                                                  ).format('HH:mm')}
+                                                  ).format('HH:mm') :
+                                                  `${moment(
+                                                      v.start_datetime
+                                                  ).format('HH:mm')} - ${moment(
+                                                      v.end_datetime
+                                                  ).format('HH:mm')}`}
                                               </span>
                                           </div>
                                       </SwiperSlide>
