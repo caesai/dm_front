@@ -8,6 +8,7 @@ interface UniversalButtonProps {
     title: string;
     color?: string;
     link?: string;
+    target?: string;
     action?: () => void;
     theme?: string;
 }
@@ -17,6 +18,7 @@ export const UniversalButton: FC<UniversalButtonProps> = (p) => {
         <>
             {p.link ? (
                 <Link
+                    target={p.target}
                     to={p.link}
                     className={classNames(
                         css.universalButton,

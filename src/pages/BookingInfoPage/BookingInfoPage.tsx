@@ -98,6 +98,7 @@ export const BookingInfoPage = () => {
                                 <UniversalButton
                                     width={'full'}
                                     title={'Изменить'}
+                                    target={'_blank'}
                                     // action={() => alert('В разработке')}
                                     link={'https://t.me/dmdev1bot?start=reserve_id-' + booking.id}
                                 />
