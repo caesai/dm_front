@@ -1,24 +1,24 @@
-import { FC, useEffect, useState } from 'react';
+import {FC, useEffect, useState} from 'react';
 import css from './IndexPage.module.css';
 
-import { Page } from '@/components/Page.tsx';
-import { Header } from '@/components/Header/Header.tsx';
-import { OptionsNavigation } from '@/components/OptionsNavigation/OptionsNavigation.tsx';
-import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
-import { BookingReminder } from '@/components/BookingReminder/BookingReminder.tsx';
-import { useAtom } from 'jotai';
+import {Page} from '@/components/Page.tsx';
+import {Header} from '@/components/Header/Header.tsx';
+import {OptionsNavigation} from '@/components/OptionsNavigation/OptionsNavigation.tsx';
+import {RestaurantPreview} from '@/components/RestaurantPreview/RestrauntPreview.tsx';
+import {BookingReminder} from '@/components/BookingReminder/BookingReminder.tsx';
+import {useAtom} from 'jotai';
 import {
     currentCityAtom,
     setCurrentCityAtom,
 } from '@/atoms/currentCityAtom.ts';
-import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
-import { IBookingInfo, IRestaurant } from '@/types/restaurant.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { APIGetCurrentBookings } from '@/api/restaurants.ts';
-import { authAtom } from '@/atoms/userAtom.ts';
-import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import {cityListAtom, ICity} from '@/atoms/cityListAtom.ts';
+import {IConfirmationType} from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+import {CitySelect} from '@/components/CitySelect/CitySelect.tsx';
+import {IBookingInfo, IRestaurant} from '@/types/restaurant.ts';
+import {restaurantsListAtom} from '@/atoms/restaurantsListAtom.ts';
+import {APIGetCurrentBookings} from '@/api/restaurants.ts';
+import {authAtom} from '@/atoms/userAtom.ts';
+import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -83,9 +83,9 @@ export const IndexPage: FC = () => {
     return (
         <Page back={false}>
             <div className={css.pageContainer}>
-                <Header />
+                <Header/>
                 {currentBookingsLoading ? (
-                    <div style={{ marginRight: '15px' }}>
+                    <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock
                             width={'100%'}
                             height={'108px'}
@@ -93,7 +93,7 @@ export const IndexPage: FC = () => {
                         />
                     </div>
                 ) : (
-                    currentBookings.map((book) => (
+                    currentBookings.filter((book) => new Date() < new Date(book.booking_date)).map((book) => (
                         <BookingReminder
                             key={book.id}
                             id={book.id}
@@ -106,7 +106,7 @@ export const IndexPage: FC = () => {
                     ))
                 )}
                 {/*<NewsStories />*/}
-                <OptionsNavigation />
+                <OptionsNavigation/>
                 <div className={css.restaurants}>
                     <CitySelect
                         options={cityListConfirm}

@@ -151,12 +151,12 @@ export const DTSelectionOutlet = () => {
                     Количество мест
                 </span>
                 <div className={css.personCounter}>
-                    <span className={css.clickableSpan} onClick={incCounter}>
-                        +
-                    </span>
-                    <span>{guestCount}</span>
                     <span className={css.clickableSpan} onClick={decCounter}>
                         -
+                    </span>
+                    <span>{guestCount}</span>
+                    <span className={css.clickableSpan} onClick={incCounter}>
+                        +
                     </span>
                 </div>
             </div>

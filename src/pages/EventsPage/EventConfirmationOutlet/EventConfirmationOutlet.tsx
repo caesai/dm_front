@@ -1,11 +1,11 @@
-import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import {useNavigate, useOutletContext, useParams} from 'react-router-dom';
 import css from './EventConfirmationOutlet.module.css';
 import {
     findCurrentDate,
     formatDateDT,
     IEventBookingContext,
 } from '@/utils.ts';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import moment from 'moment';
 import classNames from "classnames";
 import {useState} from "react";
@@ -13,13 +13,13 @@ import {useState} from "react";
 
 export const EventConfirmationOutlet = () => {
     const navigate = useNavigate();
-    const { name, res } = useParams();
+    const {name, res} = useParams();
     const [bookingInfo, setBookingInfo] =
         useOutletContext<IEventBookingContext>();
     const [hideAbout, setHideAbout] = useState(true);
 
     const next = () => {
-        setBookingInfo((prev) => ({ ...prev }));
+        setBookingInfo((prev) => ({...prev}));
         navigate(`/events/${name}/restaurant/${res}/confirm`);
     };
 
@@ -41,14 +41,16 @@ export const EventConfirmationOutlet = () => {
                 )}>
                     {bookingInfo.event?.description}
                 </span>
-                <div
-                    className={css.trimLinesButton}
-                    onClick={() => setHideAbout((prev) => !prev)}
-                >
+                {bookingInfo.event?.description && bookingInfo.event?.description.length > 180 &&
+                    (<div
+                        className={css.trimLinesButton}
+                        onClick={() => setHideAbout((prev) => !prev)}
+                    >
                                 <span className={css.text}>
                                     {hideAbout ? 'Читать больше' : 'Скрыть'}
                                 </span>
-                </div>
+                    </div>)
+                }
             </div>
             <div className={css.event_params}>
                 <div className={css.event_params_row}>
@@ -59,8 +61,8 @@ export const EventConfirmationOutlet = () => {
                         <span className={css.event_params_col__data}>
                             {bookingInfo.date
                                 ? formatDateDT(
-                                      new Date(bookingInfo.date.start_datetime)
-                                  )
+                                    new Date(bookingInfo.date.start_datetime)
+                                )
                                 : null}
                         </span>
                     </div>
@@ -71,8 +73,8 @@ export const EventConfirmationOutlet = () => {
                         <span className={css.event_params_col__data}>
                             {bookingInfo.date
                                 ? moment(
-                                      bookingInfo.date.start_datetime
-                                  ).format('HH:mm')
+                                    bookingInfo.date.start_datetime
+                                ).format('HH:mm')
                                 : null}
                         </span>
                     </div>
@@ -85,7 +87,7 @@ export const EventConfirmationOutlet = () => {
                         <span className={css.event_params_col__data}>
                             {bookingInfo.date
                                 ? findCurrentDate(bookingInfo, bookingInfo.date)
-                                      ?.tickets_left
+                                    ?.tickets_left
                                 : null}
                         </span>
                     </div>

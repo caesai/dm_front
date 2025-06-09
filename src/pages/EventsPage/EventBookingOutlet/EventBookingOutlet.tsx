@@ -45,6 +45,7 @@ export const EventBookingOutlet = () => {
         // email: `${user?.email}`,
         commentary: '',
     });
+    const [iframeSrc, setIframeSrc] = useState<string | null>(null);
 
     const calculateTotal = useMemo(() => {
         const ticketPrice = bookingInfo.event_date?.ticket_price;
@@ -93,11 +94,20 @@ export const EventBookingOutlet = () => {
                 auth?.access_token
             ).then((res) => {
                 res.data.payment_url
-                    ? window.location.replace(res.data.payment_url)
+                    ? setIframeSrc(res.data.payment_url)
                     : navigate('/events');
             });
         }
     };
+
+    if (iframeSrc) {
+        window.parent.location.replace(iframeSrc + '&embedded=true');
+        return (
+            <iframe src={iframeSrc} style={{width: '100%', height: '500px'}} frameBorder="0"
+                    sandbox="allow-scripts allow-popups"
+                    allowFullScreen/>
+        )
+    }
 
     return (
         <div>

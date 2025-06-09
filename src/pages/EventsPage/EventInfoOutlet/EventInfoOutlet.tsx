@@ -11,9 +11,12 @@ export const EventInfoOutlet = () => {
 
     const next = () => {
         // setBookingInfo((prev) => ({ ...prev, eventId: id }));
-        navigate(`/events/${name}/restaurant`);
+        if (bookingInfo.event?.restaurants && bookingInfo.event?.restaurants.length > 1) {
+            navigate(`/events/${name}/restaurant`);
+        } else {
+            navigate(`/events/${name}/restaurant/${bookingInfo.event?.restaurants[0].id}`);
+        }
     };
-
     return (
         <div className={css.outlet}>
             <div
