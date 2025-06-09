@@ -17,18 +17,16 @@ export const EventConfirmationOutlet = () => {
     const [bookingInfo, setBookingInfo] =
         useOutletContext<IEventBookingContext>();
     const [hideAbout, setHideAbout] = useState(true);
-
     const next = () => {
         setBookingInfo((prev) => ({...prev}));
         navigate(`/events/${name}/restaurant/${res}/confirm`);
     };
-
     return (
         <div className={css.content}>
             <div
                 className={css.event_img}
                 style={{
-                    backgroundImage: `url(${bookingInfo.event?.image_url})`,
+                    backgroundImage: `url(${bookingInfo.event?.image_url ? bookingInfo.event.image_url : 'https://storage.yandexcloud.net/bottec-dreamteam/event_placeholder.png'})`,
                 }}
             />
             <div className={css.content_description}>

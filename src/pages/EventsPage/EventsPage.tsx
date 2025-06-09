@@ -49,7 +49,7 @@ export const EventsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [, setEvents] = useAtom<IEvent[]>(eventsListAtom);
+    const [events, setEvents] = useAtom<IEvent[]>(eventsListAtom);
 
     useEffect(() => {
         APIGetEvents().then((res) => setEvents(res.data));
@@ -66,10 +66,16 @@ export const EventsPage = () => {
         return location.pathname.split('/')[2];
     }, [location.pathname]);
 
+    const shareEvent = () => {
+        window.open(`https://t.me/${import.meta.env.PRODAPP ? 'dt_concierge_bot' : 'dmdev1bot'}?start=event_${bookingInfo.restaurant?.dates[0].id}`, '_blank');
+    };
+
+    console.log('events: ', events)
+
     useEffect(() => {
-        console.log(bookingInfo);
+        console.log('bookingInfo: ', bookingInfo);
     }, [bookingInfo]);
-    console.log('eventURL: ', eventURL)
+
     return (
         <Page back={true}>
             <div className={css.page}>
@@ -88,7 +94,7 @@ export const EventsPage = () => {
                                 icon={
                                     <Share color={'var(--dark-grey)'}/>
                                 }
-                                // action={() => goToProfile()}
+                                action={() => shareEvent()}
                             />
                         ) : null}
                     </div>

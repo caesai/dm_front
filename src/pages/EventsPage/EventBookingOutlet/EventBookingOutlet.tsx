@@ -1,8 +1,8 @@
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+// import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import classNames from 'classnames';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
+// import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from './EventBookingOutlet.module.css';
 import { useNavigate, useOutletContext } from 'react-router-dom';
@@ -14,29 +14,29 @@ import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { guestCountAtom } from '@/atoms/eventBookingAtom.ts';
 
-const confirmationList: IConfirmationType[] = [
-    {
-        id: 'telegram',
-        text: 'В Telegram',
-    },
-    {
-        id: 'phone',
-        text: 'По телефону',
-    },
-    {
-        id: 'none',
-        text: 'Без подтверждения',
-    },
-];
+// const confirmationList: IConfirmationType[] = [
+//     {
+//         id: 'telegram',
+//         text: 'В Telegram',
+//     },
+//     {
+//         id: 'phone',
+//         text: 'По телефону',
+//     },
+//     {
+//         id: 'none',
+//         text: 'Без подтверждения',
+//     },
+// ];
 
 export const EventBookingOutlet = () => {
     const navigate = useNavigate();
     const [bookingInfo] = useOutletContext<IEventBookingContext>();
     const [guestCount] = useAtom(guestCountAtom);
-    const [confirmation, setConfirmation] = useState<IConfirmationType>({
-        id: 'telegram',
-        text: 'В Telegram',
-    });
+    // const [confirmation, setConfirmation] = useState<IConfirmationType>({
+    //     id: 'telegram',
+    //     text: 'В Telegram',
+    // });
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [userInfo, setUserInfo] = useState({
@@ -48,14 +48,24 @@ export const EventBookingOutlet = () => {
     const [iframeSrc, setIframeSrc] = useState<string | null>(null);
 
     const calculateTotal = useMemo(() => {
-        const ticketPrice = bookingInfo.event_date?.ticket_price;
+        const ticketPrice = bookingInfo.event?.ticket_price;
         if (!ticketPrice) {
             return null;
         }
         return guestCount * ticketPrice;
     }, [bookingInfo]);
-
+    console.log(
+        bookingInfo.restaurant,
+        bookingInfo.event_date,
+        bookingInfo.date,
+        userInfo.name,
+        userInfo.phone,
+        // userInfo.email &&
+        // confirmation.text,
+        auth?.access_token
+    )
     const validate = useMemo(() => {
+
         return (
             bookingInfo.restaurant &&
             bookingInfo.event_date &&
@@ -63,10 +73,10 @@ export const EventBookingOutlet = () => {
             userInfo.name &&
             userInfo.phone &&
             // userInfo.email &&
-            confirmation.text &&
+            // confirmation.text &&
             auth?.access_token
         );
-    }, [bookingInfo, userInfo, confirmation, auth]);
+    }, [bookingInfo, userInfo, auth]);
 
     const createInvoice = () => {
         if (
@@ -76,7 +86,7 @@ export const EventBookingOutlet = () => {
             userInfo.name &&
             userInfo.phone &&
             // userInfo.email &&
-            confirmation.text &&
+            // confirmation.text &&
             auth?.access_token &&
             guestCount
         ) {
@@ -89,7 +99,8 @@ export const EventBookingOutlet = () => {
                 // userInfo.email,
                 '',
                 userInfo.commentary,
-                confirmation.text,
+                // confirmation.text,
+                'В Telegram',
                 guestCount,
                 auth?.access_token
             ).then((res) => {
@@ -205,11 +216,11 @@ export const EventBookingOutlet = () => {
                             placeholder={'Комментарий'}
                         ></TextInput>
                     </div>
-                    <ConfirmationSelect
-                        options={confirmationList}
-                        currentValue={confirmation}
-                        onChange={setConfirmation}
-                    />
+                    {/*<ConfirmationSelect*/}
+                    {/*    options={confirmationList}*/}
+                    {/*    currentValue={confirmation}*/}
+                    {/*    onChange={setConfirmation}*/}
+                    {/*/>*/}
                 </div>
             </div>
             <div className={css.absoluteBottom}>

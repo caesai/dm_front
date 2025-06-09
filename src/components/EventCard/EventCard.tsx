@@ -28,7 +28,7 @@ export const EventCard: FC<IEventCard> = ({
                                               onClick,
                                           }) => {
     return (
-        <div onClick={() => onClick()} style={{ cursor: 'pointer'}}>
+        <div onClick={() => onClick()} style={{ cursor: 'pointer', marginBottom: 5}}>
             <div
                 className={classNames(css.card, css.bgImage)}
                 style={{
@@ -36,7 +36,7 @@ export const EventCard: FC<IEventCard> = ({
                 }}
             >
                 <div className={css.footer}>
-                    <span className={classNames(css.card_date)}>{event_price} ₽</span>
+                    <span className={classNames(css.card_price)}>{event_price} ₽</span>
                     {/*<span className={css.footer__title}>{event_name}</span>*/}
                     {/*<span className={css.footer__address}>{event_desc}</span>*/}
                 </div>
@@ -45,7 +45,7 @@ export const EventCard: FC<IEventCard> = ({
                 <div className={css.resTitleWrapper}>
                     <h2 className={css.resTitle}>{event_name}</h2>
                     <span className={css.resSlogan}>
-                        {moment(event_dates[0].date_start).format('DD.MM.YYYY')} {event_restaurant}
+                        {moment(event_dates[0].date_start).format('DD.MM.YYYY')} &bull; {event_restaurant}
                     </span>
                     <span className={css.resAddress}>{event_address}</span>
                     {/*<span className={css.resSlogan}>{restaurant.address}</span>*/}

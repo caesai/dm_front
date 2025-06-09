@@ -116,7 +116,6 @@ export const DTSelectionOutlet = () => {
     }, [bookingInfo.event]);
 
     const isValid = useMemo(() => {
-        console.log(bookingInfo);
         return (
             value &&
             currentSelectedTime &&
@@ -143,7 +142,7 @@ export const DTSelectionOutlet = () => {
     const next = () => {
         isValid ? navigate(`/events/${name}/restaurant/${res}/guests`) : null;
     };
-
+    console.log('availableDates: ', availableDates)
     return (
         <div className={css.frame}>
             <div className={css.personsContainer}>
@@ -179,6 +178,7 @@ export const DTSelectionOutlet = () => {
                     minDetail={'month'}
                     prevLabel={<ArrowLeft />}
                     nextLabel={<ArrowRight />}
+                    defaultActiveStartDate={availableDates[0]}
                 />
             </div>
             {value ? (
@@ -242,7 +242,7 @@ export const DTSelectionOutlet = () => {
                         </Swiper>
                     </div>
                     {!timeslotsLoading && !restaurantTimeslots.length ? (
-                        <span>Нет доступных столиков</span>
+                        <span className={css.personsContainer__title}>Нет доступных столиков</span>
                     ) : null}
                 </div>
             ) : null}

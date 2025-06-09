@@ -18,7 +18,11 @@ export const EventListOutlet = () => {
 
     return (
         <div className={css.cards}>
-            {events.map((event) => (
+            {events.sort(function(a, b) {
+                const aDate = new Date(a.restaurants[0].dates[0].date_start);
+                const bDate = new Date(b.restaurants[0].dates[0].date_start);
+                return aDate.getTime() - bDate.getTime();
+            }).map((event) => (
                 <EventCard
                     key={event.name}
                     onClick={() => next(event)}
