@@ -66,50 +66,34 @@ export const BookingPage: FC = () => {
     const navigate = useNavigate();
     const {id} = useParams();
 
+    // Global state atoms
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [comms] = useAtom(commAtom);
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
+    const [currentSelectedTime, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
+
+    // Local state
     const [guestCountPopup, setGuestCountPopup] = useState(false);
     const [bookingDatePopup, setBookingDatePopup] = useState(false);
     const [timeslotsLoading, setTimeslotsLoading] = useState(true);
-    const [userName, setUserName] = useState<string>(
-        user?.first_name ? user.first_name : ''
-    );
-    const [userPhone, setUserPhone] = useState<string>(
-        user?.phone_number ? user.phone_number : ''
-    );
-    const [userEmail,
-        // setUserEmail
-    ] = useState<string>(
-        user?.email ? user.email : ''
-    );
-    const [confirmation, setConfirmation] = useState<IConfirmationType>({
-        id: 'telegram',
-        text: 'В Telegram',
-    });
-    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>(
-        []
-    );
-    const [filteredTimeslots, setFilteredTimeslots] = useState<ITimeSlot[]>([]);
-    const [currentPartOfDay, setCurrentPartOfDay] = useState({
-        morning: true,
-        day: false,
-        evening: false,
-    });
+    const [userName, setUserName] = useState<string>(user?.first_name ? user.first_name : '');
+    const [userPhone, setUserPhone] = useState<string>(user?.phone_number ? user.phone_number : '');
+    const [userEmail, ] = useState<string>(user?.email ? user.email : '');
     const [commentary, setCommentary] = useState('');
-    const [currentSelectedTime, setCurrentSelectedTime] =
-        useAtom<ITimeSlot | null>(timeslotAtom);
+    const [confirmation, setConfirmation] = useState<IConfirmationType>({ id: 'telegram', text: 'В Telegram'});
+    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
+    const [currentPartOfDay, setCurrentPartOfDay] = useState<'morning' | 'day' | 'evening' | null>(null);
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
 
     const [phoneValidated, setPhoneValidated] = useState(true);
     const [nameValidated, setNameValidated] = useState(true);
-    // const [emailValidated, setEmailValidated] = useState(true);
     const [dateValidated, setDateValidated] = useState(true);
     const [guestsValidated, setGuestsValidated] = useState(true);
     const [requestLoading, setRequestLoading] = useState(false);
 
+    // Update bookingDates when guestCount changes
     useEffect(() => {
         auth?.access_token && id
             ? APIGetAvailableDays(auth?.access_token, parseInt(id), 1).then(
@@ -128,37 +112,7 @@ export const BookingPage: FC = () => {
         console.log(currentSelectedTime);
     }, [currentSelectedTime]);
 
-    useEffect(() => {
-        if (currentSelectedTime) {
-            const part = findPartOfDay(
-                new Date(currentSelectedTime.start_datetime)
-            );
-            switch (part) {
-                case 'morning':
-                    setCurrentPartOfDay({
-                        morning: true,
-                        day: false,
-                        evening: false,
-                    });
-                    break;
-                case 'evening':
-                    setCurrentPartOfDay({
-                        morning: false,
-                        day: false,
-                        evening: true,
-                    });
-                    break;
-                case 'day':
-                    setCurrentPartOfDay({
-                        morning: false,
-                        day: true,
-                        evening: false,
-                    });
-                    break;
-            }
-        }
-    }, [currentSelectedTime, availableTimeslots]);
-
+    // Update availableTimeslots when bookingDate or guestCount changes
     useEffect(() => {
         if (
             !id ||
@@ -179,51 +133,88 @@ export const BookingPage: FC = () => {
             .finally(() => setTimeslotsLoading(false));
     }, [bookingDate, guestCount]);
 
+    const morningTimeslots = useMemo(
+      () => availableTimeslots.filter(
+        v => {
+          const h = new Date(v.start_datetime).getHours();
+          return h >= 8 && h < 12;
+        }
+      ),
+      [availableTimeslots]
+    );
+    const dayTimeslots = useMemo(
+      () => availableTimeslots.filter(
+        v => {
+          const h = new Date(v.start_datetime).getHours();
+          return h >= 12 && h < 18;
+        }
+      ),
+      [availableTimeslots]
+    );
+    const eveningTimeslots = useMemo(
+      () => availableTimeslots.filter(
+        v => {
+          const h = new Date(v.start_datetime).getHours();
+          return h >= 18 && h <= 23;
+        }
+      ),
+      [availableTimeslots]
+    );
+    
+    // Find the first part of the day with available timeslots and update currentPartOfDay
     useEffect(() => {
-        if (currentPartOfDay.morning) {
-            setFilteredTimeslots(
-                availableTimeslots.filter(
-                    (v) =>
-                        new Date(v.start_datetime).getHours() >= 8 &&
-                        new Date(v.start_datetime).getHours() < 12
-                )
-            );
-        } else if (currentPartOfDay.day) {
-            setFilteredTimeslots(
-                availableTimeslots.filter(
-                    (v) =>
-                        new Date(v.start_datetime).getHours() >= 12 &&
-                        new Date(v.start_datetime).getHours() < 18
-                )
-            );
-        } else if (currentPartOfDay.evening) {
-            setFilteredTimeslots(
-                availableTimeslots.filter(
-                    (v) =>
-                        new Date(v.start_datetime).getHours() >= 18 &&
-                        new Date(v.start_datetime).getHours() <= 23
-                )
-            );
-        }
-    }, [availableTimeslots, currentPartOfDay]);
+      if (morningTimeslots.length > 0) setCurrentPartOfDay('morning');
+      else if (dayTimeslots.length > 0) setCurrentPartOfDay('day');
+      else if (eveningTimeslots.length > 0) setCurrentPartOfDay('evening');
+      else setCurrentPartOfDay(null); // Нет слотов вовсе
+    }, [morningTimeslots, dayTimeslots, eveningTimeslots]);
 
+    // Update currentPartOfDay when currentSelectedTime changes
+    useEffect(() => {
+      if (currentSelectedTime) {
+          const part = findPartOfDay(new Date(currentSelectedTime.start_datetime));
+          setCurrentPartOfDay(part);
+      }
+    }, [currentSelectedTime]);
+
+    // Set currentPartOfDay based on available timeslots if currentSelectedTime is not set
+    useEffect(() => {
+    if (!currentSelectedTime) {
+        if (morningTimeslots.length > 0) setCurrentPartOfDay('morning');
+        else if (dayTimeslots.length > 0) setCurrentPartOfDay('day');
+        else if (eveningTimeslots.length > 0) setCurrentPartOfDay('evening');
+        else setCurrentPartOfDay(null);
+    }
+}, [availableTimeslots, morningTimeslots, dayTimeslots, eveningTimeslots, currentSelectedTime]);
+
+    // Create filtered timeslots
+    const filteredTimeslots = useMemo(() => {
+        if (currentPartOfDay === 'morning') return morningTimeslots;
+        if (currentPartOfDay === 'day') return dayTimeslots;
+        if (currentPartOfDay === 'evening') return eveningTimeslots;
+        return [];
+    }, [currentPartOfDay, morningTimeslots, dayTimeslots, eveningTimeslots]);
+
+    // Function to find part of the day based on the time
     const findPartOfDay = (dt: Date): 'morning' | 'day' | 'evening' => {
-        const hours = dt.getHours();
-        if (hours >= 8 && hours < 12) {
-            return 'morning';
-        }
-        if (hours >= 12 && hours < 18) {
-            return 'day';
-        }
-        if (hours >= 18 && hours <= 23) {
-            return 'evening';
-        }
+      const hours = dt.getHours();
+      if (hours >= 8 && hours < 12) {
+        return 'morning';
+      }
+      if (hours >= 12 && hours < 18) {
         return 'day';
+      }
+      if (hours >= 18 && hours <= 23) {
+        return 'evening';
+      }
+      return 'day';
     };
 
+    // Validation methods
     const nameValidate = useMemo(() => {
         return Boolean(userName?.trim().length);
     }, [userName]);
+
     const phoneValidate = useMemo(() => {
         return Boolean(
             userPhone
@@ -231,14 +222,11 @@ export const BookingPage: FC = () => {
                 .match('^\\+?[78][-\\(]?\\d{3}\\)?-?\\d{3}-?\\d{2}-?\\d{2}$')
         );
     }, [userPhone]);
-    // const emailValidate = useMemo(() => {
-    //     const EMAIL_REGEXP =
-    //         /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
-    //     return Boolean(userEmail.trim().match(EMAIL_REGEXP));
-    // }, [userEmail]);
+
     const timeslotValidate = useMemo(() => {
         return !!currentSelectedTime;
     }, [currentSelectedTime]);
+
     const guestsValidate = useMemo(() => {
         return !(guestCount.value == 'unset');
     }, [guestCount]);
@@ -463,59 +451,41 @@ export const BookingPage: FC = () => {
                                     </span>
                                 ) : (
                                     <>
-                                        <div className={css.select_timeOfDay}>
-                                            <div
-                                                className={classNames(
-                                                    css.timeOfDay,
-                                                    currentPartOfDay.morning
-                                                        ? css.timeOfDay__active
-                                                        : null
-                                                )}
-                                                onClick={() =>
-                                                    setCurrentPartOfDay(() => ({
-                                                        morning: true,
-                                                        day: false,
-                                                        evening: false,
-                                                    }))
-                                                }
-                                            >
-                                                <span>Утро</span>
-                                            </div>
-                                            <div
-                                                className={classNames(
-                                                    css.timeOfDay,
-                                                    currentPartOfDay.day
-                                                        ? css.timeOfDay__active
-                                                        : null
-                                                )}
-                                                onClick={() =>
-                                                    setCurrentPartOfDay(() => ({
-                                                        morning: false,
-                                                        day: true,
-                                                        evening: false,
-                                                    }))
-                                                }
-                                            >
-                                                <span>День</span>
-                                            </div>
-                                            <div
-                                                className={classNames(
-                                                    css.timeOfDay,
-                                                    currentPartOfDay.evening
-                                                        ? css.timeOfDay__active
-                                                        : null
-                                                )}
-                                                onClick={() =>
-                                                    setCurrentPartOfDay(() => ({
-                                                        morning: false,
-                                                        day: false,
-                                                        evening: true,
-                                                    }))
-                                                }
-                                            >
-                                                <span>Вечер</span>
-                                            </div>
-                                        </div>
+                                      <div className={css.select_timeOfDay}>
+                                          {morningTimeslots.length > 0 && (
+                                              <div
+                                                  className={classNames(
+                                                      css.timeOfDay,
+                                                      currentPartOfDay === 'morning' && css.timeOfDay__active
+                                                  )}
+                                                  onClick={() => setCurrentPartOfDay('morning')}
+                                              >
+                                                  <span>Утро</span>
+                                              </div>
+                                          )}
+                                          {dayTimeslots.length > 0 && (
+                                              <div
+                                                  className={classNames(
+                                                      css.timeOfDay,
+                                                      currentPartOfDay === 'day' && css.timeOfDay__active
+                                                  )}
+                                                  onClick={() => setCurrentPartOfDay('day')}
+                                              >
+                                                  <span>День</span>
+                                              </div>
+                                          )}
+                                          {eveningTimeslots.length > 0 && (
+                                              <div
+                                                  className={classNames(
+                                                      css.timeOfDay,
+                                                      currentPartOfDay === 'evening' && css.timeOfDay__active
+                                                  )}
+                                                  onClick={() => setCurrentPartOfDay('evening')}
+                                              >
+                                                  <span>Вечер</span>
+                                              </div>
+                                          )}
+                                      </div>
                                     </>
                                 )}
 
