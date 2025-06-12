@@ -1,26 +1,76 @@
 import {useNavigate, useOutletContext, useParams} from 'react-router-dom';
 import css from './EventConfirmationOutlet.module.css';
 import {
-    findCurrentDate,
+    // findCurrentDate,
     formatDateDT,
     IEventBookingContext,
 } from '@/utils.ts';
 import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import moment from 'moment';
 import classNames from "classnames";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useAtom} from "jotai/index";
+import {guestCountAtom} from "@/atoms/eventBookingAtom.ts";
+import {APIGetAvailableEventTimeslots} from "@/api/events.ts";
+import {authAtom} from "@/atoms/userAtom.ts";
+// import {ITimeSlot} from "@/pages/BookingPage/BookingPage.types.ts";
 // import { IEventBooking, IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
 
 export const EventConfirmationOutlet = () => {
     const navigate = useNavigate();
+    const [auth] = useAtom(authAtom);
     const {name, res} = useParams();
     const [bookingInfo, setBookingInfo] =
         useOutletContext<IEventBookingContext>();
     const [hideAbout, setHideAbout] = useState(true);
+    const [guestCount, setGuestCount] = useAtom(guestCountAtom);
+    // const [restaurantTimeslots, setRestaurantTimeslots] = useState<ITimeSlot[]>(
+    //     []
+    // );
+
+    const incCounter = () => {
+        setGuestCount((prev: number) => (prev < 9 ? prev + 1 : prev));
+    };
+    const decCounter = () => {
+        setGuestCount((prev: number) => (prev - 1 >= 1 ? prev - 1 : prev));
+    };
     const next = () => {
         setBookingInfo((prev) => ({...prev}));
         navigate(`/events/${name}/restaurant/${res}/confirm`);
     };
+
+    useEffect(() => {
+        const eventId = bookingInfo.restaurant?.dates[0].id;
+        if (!auth?.access_token || !eventId || !bookingInfo.restaurant?.id) {
+            return;
+        }
+        APIGetAvailableEventTimeslots(
+            eventId,
+            bookingInfo.restaurant?.id,
+            guestCount,
+            auth.access_token
+        )
+            .then((res) => {
+                // setRestaurantTimeslots(res.data)
+                console.log('timeSlots: ', res.data);
+                // setBookingInfo((prev) => ({...prev, date: res.data[0] }))
+            })
+    }, []);
+
+    useEffect(() => {
+        // if (restaurantTimeslots.length) {
+            setBookingInfo((prev) => ({
+                ...prev,
+                // event_date: findCurrentDate(bookingInfo, restaurantTimeslots[0]),
+                event_date: bookingInfo.restaurant?.dates[0],
+                date: {
+                    start_datetime: String(bookingInfo.restaurant?.dates[0].date_start),
+                    end_datetime: String(bookingInfo.restaurant?.dates[0].date_end),
+                    is_free: true
+                }
+            }));
+        // }
+    },[]);
     return (
         <div className={css.content}>
             <div
@@ -37,8 +87,15 @@ export const EventConfirmationOutlet = () => {
                     css.content_description__info,
                     hideAbout ? css.trimLines : null
                 )}>
-                    {bookingInfo.event?.description}
+                    {/*{bookingInfo.event?.description}*/}
+                    {bookingInfo.event?.description.split(/\n|\r\n/).map((segment, index) => (
+                        <>
+                            {index > 0 && <br />}
+                            {segment}
+                        </>
+                    ))}
                 </span>
+
                 {bookingInfo.event?.description && bookingInfo.event?.description.length > 180 &&
                     (<div
                         className={css.trimLinesButton}
@@ -57,11 +114,14 @@ export const EventConfirmationOutlet = () => {
                             Дата
                         </span>
                         <span className={css.event_params_col__data}>
-                            {bookingInfo.date
-                                ? formatDateDT(
-                                    new Date(bookingInfo.date.start_datetime)
-                                )
-                                : null}
+                            {/*{bookingInfo.date*/}
+                            {/*    ? formatDateDT(*/}
+                            {/*        new Date(bookingInfo.date.start_datetime)*/}
+                            {/*    )*/}
+                            {/*    : null}*/}
+                            {bookingInfo.event_date && formatDateDT(
+                                new Date(bookingInfo.event_date.date_start)
+                            )}
                         </span>
                     </div>
                     <div className={css.event_params_col}>
@@ -69,11 +129,14 @@ export const EventConfirmationOutlet = () => {
                             Время
                         </span>
                         <span className={css.event_params_col__data}>
-                            {bookingInfo.date
-                                ? moment(
-                                    bookingInfo.date.start_datetime
-                                ).format('HH:mm')
-                                : null}
+                            {/*{bookingInfo.date*/}
+                            {/*    ? moment(*/}
+                            {/*        bookingInfo.date.start_datetime*/}
+                            {/*    ).format('HH:mm')*/}
+                            {/*    : null}*/}
+                            {moment(
+                                bookingInfo.event_date?.date_start
+                            ).format('HH:mm')}
                         </span>
                     </div>
                 </div>
@@ -83,10 +146,11 @@ export const EventConfirmationOutlet = () => {
                             Осталось мест
                         </span>
                         <span className={css.event_params_col__data}>
-                            {bookingInfo.date
-                                ? findCurrentDate(bookingInfo, bookingInfo.date)
-                                    ?.tickets_left
-                                : null}
+                            {/*{bookingInfo.date*/}
+                            {/*    ? findCurrentDate(bookingInfo, bookingInfo.date)*/}
+                            {/*        ?.tickets_left*/}
+                            {/*    : null}*/}
+                            {bookingInfo.restaurant?.dates[0].tickets_left}
                         </span>
                     </div>
                 </div>
@@ -122,6 +186,20 @@ export const EventConfirmationOutlet = () => {
                 </div>
                 <div className={css.roundedText}>
                     <span>✓ 100% предоплата</span>
+                </div>
+                <div className={css.personsContainer}>
+                <span className={css.personsContainer__title}>
+                    Количество мест
+                </span>
+                    <div className={css.personCounter}>
+                    <span className={css.clickableSpan} onClick={decCounter}>
+                        -
+                    </span>
+                        <span>{guestCount}</span>
+                        <span className={css.clickableSpan} onClick={incCounter}>
+                        +
+                    </span>
+                    </div>
                 </div>
             </div>
             <div className={css.absoluteBottom}>

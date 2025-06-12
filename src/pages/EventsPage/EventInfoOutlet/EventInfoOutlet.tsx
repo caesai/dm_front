@@ -7,16 +7,23 @@ import { IEventBookingContext } from '@/utils.ts';
 export const EventInfoOutlet = () => {
     const { name } = useParams();
     const navigate = useNavigate();
-    const [bookingInfo] = useOutletContext<IEventBookingContext>();
+    const [bookingInfo, setBookingInfo] = useOutletContext<IEventBookingContext>();
 
     const next = () => {
         // setBookingInfo((prev) => ({ ...prev, eventId: id }));
         if (bookingInfo.event?.restaurants && bookingInfo.event?.restaurants.length > 1) {
             navigate(`/events/${name}/restaurant`);
         } else {
-            navigate(`/events/${name}/restaurant/${bookingInfo.event?.restaurants[0].id}`);
+            setBookingInfo((p) => ({
+                ...p,
+                restaurantId: String(bookingInfo.event?.restaurants[0].id),
+                restaurant: bookingInfo.event?.restaurants[0],
+            }));
+            // navigate(`/events/${name}/restaurant/${bookingInfo.event?.restaurants[0].id}`);
+            navigate(`/events/${name}/restaurant/${bookingInfo.event?.restaurants[0].id}/guests`)
         }
     };
+    console.log('bookingInfo.: ', bookingInfo);
     return (
         <div className={css.outlet}>
             <div
@@ -32,7 +39,12 @@ export const EventInfoOutlet = () => {
             <div className={css.event_info}>
                 <span className={css.title}>{bookingInfo.event?.name}</span>
                 <span className={css.description}>
-                    {bookingInfo.event?.description}
+                {bookingInfo.event?.description.split(/\n|\r\n/).map((segment, index) => (
+                    <>
+                        {index > 0 && <br />}
+                        {segment}
+                    </>
+                ))}
                 </span>
             </div>
             <div className={css.absoluteBottom}>

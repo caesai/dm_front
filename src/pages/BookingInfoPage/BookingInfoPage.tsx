@@ -100,7 +100,8 @@ export const BookingInfoPage = () => {
                                     title={'Изменить'}
                                     target={'_blank'}
                                     // action={() => alert('В разработке')}
-                                    link={`https://t.me/${import.meta.env.PRODAPP ? 'dt_concierge_bot' : 'dmdev1bot'}?start=reserve_id-${booking.id}`}
+                                    // link={`https://t.me/${import.meta.env.PROD ? 'dt_concierge_bot' : 'dmdev1bot'}?start=reserve_id-${booking.id}`}
+                                    link={`https://t.me/dt_concierge_bot?start=reserve_id-${booking.id}`}
                                 />
                             ) : null
                         ) : (

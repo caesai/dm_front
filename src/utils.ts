@@ -473,7 +473,6 @@ export const findCurrentDate = (
     bookingInfo: IEventBooking,
     date: ITimeSlot
 ): IEventDate | undefined => {
-    console.log('date: ', date, bookingInfo)
     return bookingInfo.restaurant?.dates.find((v) => {
         return (
             moment(date.start_datetime).isSameOrAfter(moment(v.date_start)) ||

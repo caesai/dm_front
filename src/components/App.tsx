@@ -20,7 +20,7 @@ import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { APIGetCityList } from '@/api/city.ts';
 import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { APIGetEA } from '@/api/config.ts';
+// import { APIGetEA } from '@/api/config.ts';
 import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.tsx';
 import { EventListOutlet } from '@/pages/EventsPage/EventListOutlet/EventListOutlet.tsx';
 import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
@@ -43,11 +43,11 @@ import { StageFive } from '@/pages/OnboardingPage/stages/StageFive.tsx';
 import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
 
 const AppRouter = () => {
-    const [user] = useAtom(userAtom);
+    // const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const [cities, setCities] = useAtom(cityListAtom);
     const [restaurants, setRestaurants] = useAtom(restaurantsListAtom);
-    const [earlyAccess, setEarlyAccess] = useState(true);
+    // const [earlyAccess, setEarlyAccess] = useState(true);
     const [loadingComplete, setLoadingComplete] = useState<boolean>();
     const [, setReview] = useAtom(reviewAtom);
 
@@ -62,9 +62,9 @@ const AppRouter = () => {
         }
     }, [loadingComplete]);
 
-    useEffect(() => {
-        APIGetEA().then((res) => setEarlyAccess(res.data.result));
-    }, []);
+    // useEffect(() => {
+    //     APIGetEA().then((res) => setEarlyAccess(res.data.result));
+    // }, []);
 
     useEffect(() => {
         if (auth?.access_token)
@@ -89,13 +89,15 @@ const AppRouter = () => {
         <BrowserRouter basename={'/dm_front/'}>
             <ScrollToTop />
             <Redirecter />
-            {earlyAccess && !user?.early_access ? (
-                <div>
-                    <span>
-                        Вход в приложение пока доступен только по приглашению
-                    </span>
-                </div>
-            ) : !loadingComplete ? (
+            {
+            //     earlyAccess && !user?.early_access ? (
+            //     <div>
+            //         <span>
+            //             Вход в приложение пока доступен только по приглашению
+            //         </span>
+            //     </div>
+            // ) :
+                !loadingComplete ? (
                 <AppLoadingScreen />
             ) : (
                 <Routes>

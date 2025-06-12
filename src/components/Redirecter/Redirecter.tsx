@@ -20,7 +20,7 @@ export const Redirecter = () => {
         '/onboarding/6',
         '/onboarding/7',
     ];
-
+    console.log('location.pathname: ', location.pathname)
     useEffect(() => {
         if (
             auth?.access_token &&
@@ -36,6 +36,13 @@ export const Redirecter = () => {
             !ONBOARDING_EXCLUDED.includes(location.pathname)
         ) {
             navigate('/onboarding');
+        }
+        if (
+            auth?.access_token &&
+            location.pathname.includes('/paymentReturn')
+        ) {
+            console.log('location.pathname: ', location);
+            navigate(location.pathname + location.search);
         }
     }, [auth, user, location.pathname]);
 

@@ -45,7 +45,7 @@ export const EventBookingOutlet = () => {
         // email: `${user?.email}`,
         commentary: '',
     });
-    const [iframeSrc, setIframeSrc] = useState<string | null>(null);
+    // const [iframeSrc, setIframeSrc] = useState<string | null>(null);
 
     const calculateTotal = useMemo(() => {
         const ticketPrice = bookingInfo.event?.ticket_price;
@@ -105,20 +105,20 @@ export const EventBookingOutlet = () => {
                 auth?.access_token
             ).then((res) => {
                 res.data.payment_url
-                    ? setIframeSrc(res.data.payment_url)
+                    ? window.location.replace(res.data.payment_url)
                     : navigate('/events');
             });
         }
     };
 
-    if (iframeSrc) {
-        window.parent.location.replace(iframeSrc + '&embedded=true');
-        return (
-            <iframe src={iframeSrc} style={{width: '100%', height: '500px'}} frameBorder="0"
-                    sandbox="allow-scripts allow-popups"
-                    allowFullScreen/>
-        )
-    }
+    // if (iframeSrc) {
+    //     window.parent.location.replace(iframeSrc + '&embedded=true');
+    //     return (
+    //         <iframe src={iframeSrc} style={{width: '100%', height: '500px'}} frameBorder="0"
+    //                 sandbox="allow-scripts allow-popups"
+    //                 allowFullScreen/>
+    //     )
+    // }
 
     return (
         <div>
@@ -131,13 +131,16 @@ export const EventBookingOutlet = () => {
                         </div>
                         <div className={css.dateInfoContainer_dates}>
                             <span className={css.dateInfoContainer_dates__date}>
-                                {bookingInfo.date
-                                    ? formatDateDT(
-                                          new Date(
-                                              bookingInfo.date.start_datetime
-                                          )
-                                      )
-                                    : '...'}
+                                {/*{bookingInfo.date*/}
+                                {/*    ? formatDateDT(*/}
+                                {/*          new Date(*/}
+                                {/*              bookingInfo.date.start_datetime*/}
+                                {/*          )*/}
+                                {/*      )*/}
+                                {/*    : '...'}*/}
+                                {bookingInfo.event?.restaurants[0].dates[0] && formatDateDT(
+                                    new Date(bookingInfo.event?.restaurants[0].dates[0].date_start)
+                                )}
                             </span>
                             <span
                                 className={css.dateInfoContainer_dates__times}
@@ -164,7 +167,7 @@ export const EventBookingOutlet = () => {
                                     {bookingInfo.event?.name}
                                 </span>
                                 <span className={css.goodsItems_item__price}>
-                                    {bookingInfo.event_date?.ticket_price} ₽
+                                    {bookingInfo.event?.ticket_price} ₽
                                 </span>
                             </div>
                             <div className={css.roundedText}>
