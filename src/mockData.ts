@@ -345,7 +345,7 @@ export const getServiceFeeData = (restaurant_id: string | undefined) => {
   if (restaurant_id !== undefined) {
     const feeData = SERVICE_FEE_DATA[restaurant_id];
     if (feeData !== undefined) {
-      return `Для компаний от ${feeData.persons} и более гостей мы включаем сервисный сбор ${feeData.fee}% к общей сумме чека. Дети до 6 лет не в счет.`
+      return `Для компаний от ${feeData.persons} и более гостей мы включаем сервисный сбор ${feeData.fee}% к общей сумме чека. Дети до 12 лет не в счет.`
     }
   }
   return '';
