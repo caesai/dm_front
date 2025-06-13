@@ -1,9 +1,11 @@
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-import { FC, useState } from 'react';
+import {FC, useEffect, useState} from 'react';
 import css from './CitySelect.module.css';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
 import { Collapse } from 'react-collapse';
 import classNames from 'classnames';
+// import {UserLocation} from "@/utils.ts";
+import { locationManager } from '@telegram-apps/sdk-react'
 
 interface IConfirmationSelect {
     options: IConfirmationType[];
@@ -25,6 +27,47 @@ export const CitySelect: FC<IConfirmationSelect> = ({
         onChange(newValue);
         setCollapse((prev) => !prev);
     };
+
+    const getLocation = async () => {
+        if (locationManager.requestLocation.isAvailable()) {
+            console.log('wtf')
+            locationManager.openSettings();
+            const location = await locationManager.requestLocation();
+            alert('location: ' + location?.latitude);
+        }
+    }
+    useEffect(() => {
+        const f = async () => {
+            try {
+                const promise = locationManager.mount();
+                locationManager.isMounting(); // true
+                await promise;
+                locationManager.isMounting(); // false
+                locationManager.isMounted(); // true
+            } catch (err) {
+                console.log("error", err);
+                locationManager.mountError(); // equals "err"
+                locationManager.isMounting(); // false
+                locationManager.isMounted(); // false
+            }
+        }
+        if (locationManager.mount.isAvailable()) {
+            f().then();
+        }
+    }, [locationManager]);
+
+
+    useEffect(() => {
+        // window.onload = function() {
+            // HTML5/W3C Geolocation
+        getLocation().then();
+            // if (navigator.geolocation) {
+            //     navigator.geolocation.getCurrentPosition(UserLocation);
+            // } else {
+            //     alert("Геолокация не поддерживается.");
+            // }
+        // }
+    }, []);
 
     return (
         <div className={classNames(css.selectWrapper)}>

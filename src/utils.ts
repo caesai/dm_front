@@ -480,3 +480,51 @@ export const findCurrentDate = (
         );
     });
 };
+
+
+// Callback function for asynchronous call to HTML5 geolocation
+export function UserLocation(position: any) {
+    console.log('position', position);
+    NearestCity(position.coords.latitude, position.coords.longitude);
+}
+
+
+// Convert Degress to Radians
+function Deg2Rad(deg: number) {
+    return deg * Math.PI / 180;
+}
+
+function PythagorasEquirectangular(lat1: number, lon1: number, lat2: number, lon2: number) {
+    lat1 = Deg2Rad(lat1);
+    lat2 = Deg2Rad(lat2);
+    lon1 = Deg2Rad(lon1);
+    lon2 = Deg2Rad(lon2);
+    const R = 6371; // km
+    const x = (lon2 - lon1) * Math.cos((lat1 + lat2) / 2);
+    const y = (lat2 - lat1);
+    const d = Math.sqrt(x * x + y * y) * R;
+    return d;
+}
+
+const cities = [
+    ["Москва", 55.76293912619414, 37.59123129965203, "blah"],
+    ["Санкт-Петербург", 59.95940058217715, 30.308801930651814, "blah"],
+    ["Екатеринбург", 56.85459740069718, 60.60638624410648, "blah"],
+    ["Ростов-на-Дону", 47.24551013674296, 39.66094881139558, "blah"]
+];
+
+function NearestCity(latitude: number, longitude: number) {
+    let minDif = 99999;
+    let closest;
+
+    for (let index = 0; index < cities.length; ++index) {
+        const dif = PythagorasEquirectangular(latitude, longitude, Number(cities[index][1]), Number(cities[index][2]));
+        if (dif < minDif) {
+            closest = index;
+            minDif = dif;
+        }
+    }
+
+    // echo the nearest city
+    alert(cities[Number(closest)]);
+}

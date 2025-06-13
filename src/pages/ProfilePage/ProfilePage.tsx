@@ -54,8 +54,6 @@ export const ProfilePage = () => {
                                 Мои бронирования
                             </span>
                         </Link>
-                        {!import.meta.env.PROD &&
-                            (
                                 <span
                                     className={css.navLink}
                                     onClick={() => navigate('/tickets')}
@@ -63,8 +61,6 @@ export const ProfilePage = () => {
                                     <TicketsIcon size={24} color={'black'}/>
                                     <span className={css.navLinkTitle}>Мои билеты</span>
                                 </span>
-                            )
-                        }
                         {review.available ? (
                             <span
                                 className={css.navLink}

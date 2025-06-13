@@ -41,7 +41,6 @@ export const Redirecter = () => {
             auth?.access_token &&
             location.pathname.includes('/paymentReturn')
         ) {
-            console.log('location.pathname: ', location);
             navigate(location.pathname + location.search);
         }
     }, [auth, user, location.pathname]);

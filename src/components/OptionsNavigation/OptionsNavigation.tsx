@@ -20,11 +20,11 @@ export const OptionsNavigation = () => {
 
     return (
         <div className={css.optionsNavigation}>
-            {import.meta.env.PROD && <OptionsNavigationElement
+            <OptionsNavigationElement
                 icon={<CalendarIcon size={20} color={'var(--light-grey)'} />}
                 title={'Мероприятия'}
                 link={'/events'}
-            />}
+            />
             {review.loading ? (
                 <PlaceholderBlock
                     width={'100%'}

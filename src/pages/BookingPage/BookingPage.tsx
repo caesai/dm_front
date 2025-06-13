@@ -579,6 +579,18 @@ export const BookingPage: FC = () => {
                             </div>
                         </ContentContainer>
                     )}
+                    {/*<ContentContainer>*/}
+                    {/*    <div className={css.timeOfDayContainer}>*/}
+                    {/*        <div className={css.timeList}>*/}
+                    {/*            <span*/}
+                    {/*                className={css.noTimeSlotsText}*/}
+                    {/*            >*/}
+                    {/*                            К сожалению, доступных столов на*/}
+                    {/*                            выбранную часть дня не осталось*/}
+                    {/*            </span></div>*/}
+                    {/*    </div>*/}
+                    {/*</ContentContainer>*/}
+
                     <ContentContainer>
                         <HeaderContainer>
                             <HeaderContent title={'Пожелания к брони'}/>
