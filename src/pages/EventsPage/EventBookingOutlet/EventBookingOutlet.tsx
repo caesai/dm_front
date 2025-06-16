@@ -236,7 +236,7 @@ export const EventBookingOutlet = () => {
                         title={'Оплатить'}
                         theme={'red'}
                         action={() => {
-                            if (!auth?.access_token || !userInfo.name) {
+                            if (!auth?.access_token || auth?.access_token.length == 0 || userInfo.name.length == 0) {
                                 navigate('/onboarding');
                                 return;
                             }
