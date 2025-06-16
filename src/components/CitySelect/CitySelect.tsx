@@ -42,7 +42,7 @@ export const CitySelect: FC<IConfirmationSelect> = ({
         if (locationManager.openSettings.isAvailable() && !locationManager.isAccessRequested()) {
             locationManager.openSettings();
         }
-        if(!locationManager.isAccessRequested() && locationManager.isAccessGranted()) {
+        if (!locationManager.isAccessRequested() && locationManager.isAccessGranted()) {
             getLocation().then();
         }
     }, []);

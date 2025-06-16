@@ -28,18 +28,6 @@ export const AppLoadingScreen = () => {
                 })
                 .catch(err => {
                     console.error('auth', err);
-                    // setUser({
-                    //     email: 'caesai@yandex.ru',
-                    //     first_name: 'V',
-                    //     last_name: 'K',
-                    //     phone_number: '998797897',
-                    //     early_access: true,
-                    //     license_agreement: true,
-                    //     advertisement_agreement: true,
-                    //     gdpr_agreement: true,
-                    //     date_of_birth: '24.04.1988',
-                    //     complete_onboarding: true,
-                    // });
                 });
         }
     }, []);

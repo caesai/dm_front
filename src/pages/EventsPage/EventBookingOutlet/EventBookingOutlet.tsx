@@ -56,11 +56,6 @@ export const EventBookingOutlet = () => {
     }, [bookingInfo]);
 
     const validate = useMemo(() => {
-        console.log('!auth?.access_token || userInfo.name: ', auth?.access_token, userInfo.name)
-        if (!auth?.access_token || (!user?.license_agreement || !user.complete_onboarding)) {
-            navigate('/onboarding');
-            return;
-        }
         return (
             bookingInfo.restaurant &&
             bookingInfo.event_date &&
@@ -236,10 +231,6 @@ export const EventBookingOutlet = () => {
                         title={'Оплатить'}
                         theme={'red'}
                         action={() => {
-                            if (!auth?.access_token || (!user?.license_agreement || !user.complete_onboarding)) {
-                                navigate('/onboarding');
-                                return;
-                            }
                             if (validate) {
                                 createInvoice()
                             } else {

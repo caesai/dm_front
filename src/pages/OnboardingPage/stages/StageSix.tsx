@@ -1,7 +1,7 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 import {APICompleteOnboarding} from '@/api/user.ts';
 import {useAtom} from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
@@ -11,6 +11,7 @@ export const StageSix = () => {
     const [user, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
+    const [params] = useSearchParams();
 
     const handleConfirm = () => {
         if (!agree || !user || !auth?.access_token) {
@@ -18,7 +19,13 @@ export const StageSix = () => {
         }
         APICompleteOnboarding(auth.access_token, agree)
             .then((d) => setUser(d.data))
-            .then(() => navigate('/'))
+            .then(() => {
+                if(params.get('event') && params.get('restaurant_id')) {
+                    navigate(`/events/${params.get('event')}/restaurant/${params.get('restaurant_id')}/guests`)
+                } else {
+                    navigate('/');
+                }
+            })
             .catch(() =>
                 alert(
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'

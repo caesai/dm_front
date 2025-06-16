@@ -11,6 +11,7 @@ import classNames from "classnames";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 import {guestCountAtom} from "@/atoms/eventBookingAtom.ts";
+import {userAtom} from "@/atoms/userAtom.ts";
 // import {APIGetAvailableEventTimeslots} from "@/api/events.ts";
 // import {authAtom} from "@/atoms/userAtom.ts";
 // import {ITimeSlot} from "@/pages/BookingPage/BookingPage.types.ts";
@@ -24,6 +25,8 @@ export const EventConfirmationOutlet = () => {
         useOutletContext<IEventBookingContext>();
     const [hideAbout, setHideAbout] = useState(true);
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
+    const [user] = useAtom(userAtom);
+
     // const [restaurantTimeslots, setRestaurantTimeslots] = useState<ITimeSlot[]>(
     //     []
     // );
@@ -36,8 +39,12 @@ export const EventConfirmationOutlet = () => {
         setGuestCount((prev: number) => (prev - 1 >= 1 ? prev - 1 : prev));
     };
     const next = () => {
-        setBookingInfo((prev) => ({...prev}));
-        navigate(`/events/${name}/restaurant/${res}/confirm`);
+        if (user?.complete_onboarding && user.gdpr_agreement) {
+            setBookingInfo((prev) => ({...prev}));
+            navigate(`/events/${name}/restaurant/${res}/confirm`);
+        } else {
+            navigate(`/onboarding/4?event=${name}&restaurant_id=${res}`);
+        }
     };
 
     // useEffect(() => {
