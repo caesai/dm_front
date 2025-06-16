@@ -70,7 +70,7 @@ export const EventsPage = () => {
     }, [location.pathname]);
 
     const shareEvent = () => {
-        navigator.clipboard.writeText(`https://t.me/dmdev1bot?startapp=event_${bookingInfo.restaurant?.dates[0].id}`);
+        navigator.clipboard.writeText(`https://t.me/dmdev1bot?startapp=eventId_${bookingInfo.restaurant?.dates[0].id}`);
         setToastShow(true);
         setToastMessage('Ссылка скопирована')
         setTimeout(function(){ setToastShow(false); setToastMessage(null);}, 3000);

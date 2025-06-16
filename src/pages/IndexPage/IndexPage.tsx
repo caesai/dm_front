@@ -93,7 +93,9 @@ export const IndexPage: FC = () => {
                         />
                     </div>
                 ) : (
-                    currentBookings.filter((book) => new Date() < new Date(book.booking_date)).map((book) => (
+                    currentBookings.filter((book) => {
+                        return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime()
+                    }).map((book) => (
                         <BookingReminder
                             key={book.id}
                             id={book.id}

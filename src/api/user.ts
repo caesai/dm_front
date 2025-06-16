@@ -40,7 +40,7 @@ export const APIUpdateUserInfo = async (
 export const APIDeleteUser = async (
                                         access_token: string
                                     ) => {
-    return await axios.patch<IUser>(`${BASE_URL}/user/delete_me`, {}, {
+    return await axios.post<IUser>(`${BASE_URL}/user/delete_me`, {}, {
         headers: {
             Authorization: `Bearer ${access_token}`,
         },

@@ -47,7 +47,11 @@ export const MyBookingsPage = () => {
                     {!loading ? (
                         <>
                             {!bookings.length && <h2>Список пуст</h2>}
-                            {bookings.map((booking) => (
+                            {bookings.sort(function(a, b) {
+                                const aDate = new Date(a.booking_date);
+                                const bDate = new Date(b.booking_date);
+                                return bDate.getTime() - aDate.getTime();
+                            }).map((booking) => (
                                 <BookingCard
                                     key={booking.id}
                                     date={booking.booking_date}

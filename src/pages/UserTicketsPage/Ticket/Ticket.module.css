@@ -30,7 +30,7 @@
 .card_date__notActive {
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
     linear-gradient(0deg, rgba(85, 85, 85, 0.18), rgba(85, 85, 85, 0.18));
-    backdrop-filter: blur(18px)
+    backdrop-filter: blur(18px);
 }
 
 .footer {
