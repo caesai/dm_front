@@ -44,11 +44,11 @@ export const Redirecter = () => {
         ) {
             navigate(location.pathname + location.search);
         }
-        if (
-            location.search.includes('event')
-        ) {
-            navigate('/events/' + location.search.slice(location.search.lastIndexOf('_')+1) + '/restaurant/1/guests/')
-        }
+        // if (
+        //     location.search.includes('event')
+        // ) {
+        //     navigate('/events/' + location.search.slice(location.search.lastIndexOf('_')+1) + '/restaurant/1/guests/')
+        // }
     }, [auth, user, location.pathname]);
 
     return <></>;
