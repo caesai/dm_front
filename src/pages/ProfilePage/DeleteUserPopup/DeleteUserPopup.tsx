@@ -33,7 +33,7 @@ interface Props {
 export const DeleteUserPopup: FC<Props> = (props) => {
     const close = () => props.setOpen(false);
     const [isClosing, setIsClosing] = useState(false);
-    const [authInfo] = useAtom(authAtom);
+    const [authInfo, setAuth] = useAtom(authAtom);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
     const [, setUser] = useAtom(userAtom);
@@ -70,19 +70,9 @@ export const DeleteUserPopup: FC<Props> = (props) => {
         }
         APIDeleteUser(authInfo.access_token).then((res) => {
             console.log('response: ', res);
-            setUser({
-                administrator: undefined,
-                advertisement_agreement: false,
-                allergies: "",
-                complete_onboarding: false,
-                date_of_birth: "",
-                early_access: false,
-                email: "",
-                first_name: "",
-                gdpr_agreement: false,
-                last_name: "",
-                license_agreement: false,
-                phone_number: ""
+            setAuth({
+                access_token: "",
+                expires_in: 0
             });
         }).catch((err) => {
             if (err.response) {
