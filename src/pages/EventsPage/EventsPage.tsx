@@ -55,7 +55,30 @@ export const EventsPage = () => {
     const [toastShow, setToastShow] = useState<boolean>(false);
 
         useEffect(() => {
-            APIGetEvents().then((res) => setEvents(res.data));
+            APIGetEvents().then((res) => {
+                if (
+                    location.search.includes('fromlink')
+                ) {
+                    const pathname = window.location.pathname;
+                    const pathSegments = pathname.split('/').filter(segment => segment !== '');
+                    const eventState = res.data.filter((ev) => {
+                        return ev.name === decodeURIComponent(pathSegments[2])
+                    })
+                    console.log('eventState: ', eventState);
+                    setBookingInfo((prev) => ({
+                        ...prev,
+                        event: eventState[0],
+                        event_date: eventState[0]?.restaurants[0].dates[0],
+                        date: {
+                            start_datetime: String(eventState[0]?.restaurants[0].dates[0].date_start),
+                            end_datetime: String(eventState[0]?.restaurants[0].dates[0].date_end),
+                            is_free: true
+                        }
+                    }));
+                } else {
+                    setEvents(res.data);
+                }
+            });
         }, []);
 
     const isRestaurantsPage = useMemo(() => {
@@ -82,29 +105,29 @@ export const EventsPage = () => {
         console.log('bookingInfo: ', bookingInfo);
     }, [bookingInfo]);
 
-    useEffect(() => {
-        console.log('what')
-        if (
-            location.search.includes('fromlink')
-        ) {
-            const pathname = window.location.pathname;
-            const pathSegments = pathname.split('/').filter(segment => segment !== '');
-            const eventState = events.filter((ev) => {
-                return ev.name === decodeURIComponent(pathSegments[2])
-            })
-            console.log('eventState: ', eventState);
-            setBookingInfo((prev) => ({
-                ...prev,
-                event: eventState[0],
-                event_date: eventState[0]?.restaurants[0].dates[0],
-                date: {
-                    start_datetime: String(eventState[0]?.restaurants[0].dates[0].date_start),
-                    end_datetime: String(eventState[0]?.restaurants[0].dates[0].date_end),
-                    is_free: true
-                }
-            }));
-        }
-    }, []);
+    // useEffect(() => {
+    //     console.log('what')
+    //     if (
+    //         location.search.includes('fromlink')
+    //     ) {
+    //         const pathname = window.location.pathname;
+    //         const pathSegments = pathname.split('/').filter(segment => segment !== '');
+    //         const eventState = events.filter((ev) => {
+    //             return ev.name === decodeURIComponent(pathSegments[2])
+    //         })
+    //         console.log('eventState: ', eventState);
+    //         setBookingInfo((prev) => ({
+    //             ...prev,
+    //             event: eventState[0],
+    //             event_date: eventState[0]?.restaurants[0].dates[0],
+    //             date: {
+    //                 start_datetime: String(eventState[0]?.restaurants[0].dates[0].date_start),
+    //                 end_datetime: String(eventState[0]?.restaurants[0].dates[0].date_end),
+    //                 is_free: true
+    //             }
+    //         }));
+    //     }
+    // }, []);
 
     return (
         <Page back={true}>

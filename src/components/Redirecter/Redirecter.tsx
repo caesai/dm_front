@@ -37,18 +37,11 @@ export const Redirecter = () => {
                 );
                 console.log('event: ', event);
                 navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
-                // setBookingInfo((p) => ({
-                //     ...p,
-                //     event: event[0],
-                //     restaurantId: String(event[0]?.restaurants[0].id),
-                //     restaurant: event[0]?.restaurants[0],
-                // }));
             });
 
         }
     }, [location.search]);
 
-    // console.log('params: ', location.search.includes('event'), location.search.slice(location.search.lastIndexOf('_')+1));
     useEffect(() => {
         if (
             auth?.access_token &&
