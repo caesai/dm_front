@@ -39,9 +39,9 @@ export const CitySelect: FC<IConfirmationSelect> = ({
     }
 
     useEffect(() => {
-        if (locationManager.openSettings.isAvailable() && !locationManager.isAccessRequested()) {
-            locationManager.openSettings();
-        }
+        // if (locationManager.openSettings.isAvailable() && !locationManager.isAccessRequested()) {
+        //     locationManager.openSettings();
+        // }
         if (!locationManager.isAccessRequested() && locationManager.isAccessGranted()) {
             getLocation().then();
         }
