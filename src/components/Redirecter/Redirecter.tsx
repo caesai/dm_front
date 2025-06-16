@@ -22,7 +22,7 @@ export const Redirecter = () => {
         '/onboarding/7',
     ];
     console.log('location.pathname: ', location.pathname)
-    console.log('params: ', params);
+    console.log('params: ', location.search.includes('event'), location.search.slice(location.search.lastIndexOf('_')+1));
     useEffect(() => {
         if (
             auth?.access_token &&
@@ -44,6 +44,11 @@ export const Redirecter = () => {
             location.pathname.includes('/paymentReturn')
         ) {
             navigate(location.pathname + location.search);
+        }
+        if (
+            location.search.includes('event')
+        ) {
+            navigate('/events/' + location.search.slice(location.search.lastIndexOf('_')+1))
         }
     }, [auth, user, location.pathname]);
 

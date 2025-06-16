@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { CalendarPopup } from '@/pages/UserProfilePage/CalendarPopup/CalendarPopup.tsx';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APIUpdateUserInfo } from '@/api/user.ts';
+import {APIDeleteUser, APIUpdateUserInfo} from '@/api/user.ts';
 import { mainButton } from '@telegram-apps/sdk-react';
 import {Toast} from "@/components/Toast/Toast.tsx";
 
@@ -109,6 +109,22 @@ export const UserProfilePage = () => {
             });
     };
 
+    const deleteUser = () => {
+        if (!authInfo?.access_token) {
+            return;
+        }
+        APIDeleteUser(authInfo.access_token).then((res) => {
+            console.log('response: ', res)
+        }).catch((err) => {
+            if (err.response) {
+                // alert(err.response.data);
+                setToastMessage('Возникла ошибка: ' + err.response.data)
+                setToastShow(true);
+                setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
+            }
+        });
+    }
+
     return (
         <Page back={true}>
             <div className={css.page}>
@@ -178,6 +194,14 @@ export const UserProfilePage = () => {
                         }
                         placeholder={'Аллергия'}
                     />
+                    <div
+                        className={css.delete}
+                        onClick={deleteUser}
+                    >
+                        <span className={css.delete}>
+                            Удалить учетную запись
+                        </span>
+                    </div>
                 </div>
             </div>
             <Toast message={toastMessage} showClose={toastShow} />
