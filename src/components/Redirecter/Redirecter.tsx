@@ -38,6 +38,7 @@ export const Redirecter = () => {
                         }
                     )
                 );
+                console.log('filteredEvent: ', event);
                 navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
             });
 
