@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import {useLocation, useNavigate,
+import {
+    useLocation, useNavigate, useSearchParams,
 } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
@@ -10,6 +11,7 @@ export const Redirecter = () => {
     const navigate = useNavigate();
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
+    const [params] = useSearchParams();
 
     const EXCLUDED_URLS = ['/phoneConfirmation', '/onboarding', '/gdpr'];
     const ONBOARDING_EXCLUDED = [
@@ -45,8 +47,7 @@ export const Redirecter = () => {
             if (
                 location.search.includes('event')
             ) {
-                console.log('location.search: ', location.search);
-                navigate('/phoneConfirmation' + location.search)
+                navigate(`/phoneConfirmation?event=${params.get('event')}&restaurant_id=${params.get('restaurant_id')}`)
             } else {
                 navigate('/phoneConfirmation');
             }
