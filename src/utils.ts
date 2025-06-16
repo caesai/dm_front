@@ -483,9 +483,8 @@ export const findCurrentDate = (
 
 
 // Callback function for asynchronous call to HTML5 geolocation
-export function UserLocation(position: any) {
-    console.log('position', position);
-    NearestCity(position.coords.latitude, position.coords.longitude);
+export function UserLocation(latitude: number, longitude: number) {
+    return NearestCity(latitude, longitude);
 }
 
 
@@ -513,7 +512,7 @@ const cities = [
     ["Ростов-на-Дону", 47.24551013674296, 39.66094881139558, "blah"]
 ];
 
-function NearestCity(latitude: number, longitude: number) {
+export function NearestCity(latitude: number, longitude: number) {
     let minDif = 99999;
     let closest;
 
@@ -526,5 +525,5 @@ function NearestCity(latitude: number, longitude: number) {
     }
 
     // echo the nearest city
-    alert(cities[Number(closest)]);
+    return cities[Number(closest)];
 }

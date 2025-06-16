@@ -11,14 +11,14 @@ import classNames from "classnames";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 import {guestCountAtom} from "@/atoms/eventBookingAtom.ts";
-import {APIGetAvailableEventTimeslots} from "@/api/events.ts";
-import {authAtom} from "@/atoms/userAtom.ts";
+// import {APIGetAvailableEventTimeslots} from "@/api/events.ts";
+// import {authAtom} from "@/atoms/userAtom.ts";
 // import {ITimeSlot} from "@/pages/BookingPage/BookingPage.types.ts";
 // import { IEventBooking, IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
 
 export const EventConfirmationOutlet = () => {
     const navigate = useNavigate();
-    const [auth] = useAtom(authAtom);
+    // const [auth] = useAtom(authAtom);
     const {name, res} = useParams();
     const [bookingInfo, setBookingInfo] =
         useOutletContext<IEventBookingContext>();
@@ -29,6 +29,7 @@ export const EventConfirmationOutlet = () => {
     // );
 
     const incCounter = () => {
+        if (guestCount !== bookingInfo.event_date?.tickets_left)
         setGuestCount((prev: number) => (prev < 9 ? prev + 1 : prev));
     };
     const decCounter = () => {
@@ -39,23 +40,23 @@ export const EventConfirmationOutlet = () => {
         navigate(`/events/${name}/restaurant/${res}/confirm`);
     };
 
-    useEffect(() => {
-        const eventId = bookingInfo.restaurant?.dates[0].id;
-        if (!auth?.access_token || !eventId || !bookingInfo.restaurant?.id) {
-            return;
-        }
-        APIGetAvailableEventTimeslots(
-            eventId,
-            bookingInfo.restaurant?.id,
-            guestCount,
-            auth.access_token
-        )
-            .then((res) => {
-                // setRestaurantTimeslots(res.data)
-                console.log('timeSlots: ', res.data);
-                // setBookingInfo((prev) => ({...prev, date: res.data[0] }))
-            })
-    }, []);
+    // useEffect(() => {
+    //     const eventId = bookingInfo.restaurant?.dates[0].id;
+    //     if (!auth?.access_token || !eventId || !bookingInfo.restaurant?.id) {
+    //         return;
+    //     }
+    //     APIGetAvailableEventTimeslots(
+    //         eventId,
+    //         bookingInfo.restaurant?.id,
+    //         guestCount,
+    //         auth.access_token
+    //     )
+    //         .then((res) => {
+    //             setRestaurantTimeslots(res.data)
+    //             console.log('timeSlots: ', res.data);
+    //             setBookingInfo((prev) => ({...prev, date: res.data[0] }))
+    //         })
+    // }, []);
 
     useEffect(() => {
         // if (restaurantTimeslots.length) {
@@ -151,7 +152,7 @@ export const EventConfirmationOutlet = () => {
                             {/*    ? findCurrentDate(bookingInfo, bookingInfo.date)*/}
                             {/*        ?.tickets_left*/}
                             {/*    : null}*/}
-                            {bookingInfo.restaurant?.dates[0].tickets_left}
+                            {bookingInfo.event_date?.tickets_left}
                         </span>
                     </div>
                 </div>

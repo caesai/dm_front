@@ -4,7 +4,7 @@ import css from './CitySelect.module.css';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
 import { Collapse } from 'react-collapse';
 import classNames from 'classnames';
-// import {UserLocation} from "@/utils.ts";
+import {NearestCity} from "@/utils.ts";
 import { locationManager } from '@telegram-apps/sdk-react'
 
 interface IConfirmationSelect {
@@ -33,6 +33,9 @@ export const CitySelect: FC<IConfirmationSelect> = ({
             // locationManager.openSettings();
             const location = await locationManager.requestLocation();
             console.log(location)
+            const city = NearestCity(location.latitude, location.longitude);
+            const closestCity = options.filter((option) => option.text === city.toString());
+            onChange(closestCity[0]);
         }
     }
     useEffect(() => {
@@ -59,7 +62,31 @@ export const CitySelect: FC<IConfirmationSelect> = ({
     useEffect(() => {
         // window.onload = function() {
             // HTML5/W3C Geolocation
-        getLocation().then();
+        navigator.permissions.query({name:'geolocation'}).then(function(result) {
+            if (result.state == 'granted') {
+                console.log(result.state);
+                getLocation().then();
+            } else if (result.state == 'prompt') {
+                console.log(result.state);
+                if (locationManager.openSettings.isAvailable()) {
+                    locationManager.openSettings();
+                }
+                // navigator.geolocation.getCurrentPosition(revealPosition,positionDenied,geoSettings);
+            } else if (result.state == 'denied') {
+                console.log(result.state);
+                const city = NearestCity(59.95940058217715, 30.308801930651814);
+                const closestCity = options.filter((option) => option.text === city.toString());
+                onChange(closestCity[0]);
+            }
+            result.onchange = function() {
+                console.log(result.state);
+            }
+        });
+
+        // if (locationManager.openSettings.isAvailable()) {
+        //     locationManager.openSettings();
+        // }
+        // getLocation().then();
             // if (navigator.geolocation) {
             //     navigator.geolocation.getCurrentPosition(UserLocation);
             // } else {

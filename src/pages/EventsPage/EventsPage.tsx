@@ -69,6 +69,8 @@ export const EventsPage = () => {
                         ...prev,
                         event: eventState[0],
                         event_date: eventState[0]?.restaurants[0].dates[0],
+                        restaurantId: String(eventState[0]?.restaurants[0].id),
+                        restaurant: eventState[0]?.restaurants[0],
                         date: {
                             start_datetime: String(eventState[0]?.restaurants[0].dates[0].date_start),
                             end_datetime: String(eventState[0]?.restaurants[0].dates[0].date_end),
