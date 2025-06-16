@@ -71,6 +71,7 @@ export const EventConfirmationOutlet = () => {
             }));
         // }
     },[]);
+
     return (
         <div className={css.content}>
             <div
