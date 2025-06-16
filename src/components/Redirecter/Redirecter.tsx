@@ -23,27 +23,17 @@ export const Redirecter = () => {
         '/onboarding/7',
     ];
 
-    useEffect(() => {
-
-        if (
-            location.search.includes('eventId')
-        ) {
-            console.log('eventId: ', location.search.slice(location.search.lastIndexOf('_') + 1));
-
-            APIGetEvents().then((res) => {
-                const event = res.data.filter((event) =>
-                    event.restaurants.some((restaurant) => {
-                            console.log('restaurant.dates[0].id: ', restaurant)
-                            return restaurant.dates[0].id.toString() === location.search.slice(location.search.lastIndexOf('_') + 1)
-                        }
-                    )
-                );
-                console.log('filteredEvent: ', event);
-                navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
-            });
-
-        }
-    }, [location.search]);
+    const redirectToEvent = () => {
+        APIGetEvents().then((res) => {
+            const event = res.data.filter((event) =>
+                event.restaurants.some((restaurant) => {
+                        return restaurant.dates[0].id.toString() === location.search.slice(location.search.lastIndexOf('_') + 1)
+                    }
+                )
+            );
+            navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
+        });
+    }
 
     useEffect(() => {
         if (
@@ -63,15 +53,7 @@ export const Redirecter = () => {
             if (
                 location.search.includes('eventId')
             ) {
-                APIGetEvents().then((res) => {
-                    const event = res.data.filter((event) =>
-                        event.restaurants.filter((restaurant) => {
-                                return restaurant.dates[0].id.toString() === location.search.slice(location.search.lastIndexOf('_') + 1)
-                            }
-                        )
-                    );
-                    navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
-                });
+                redirectToEvent();
             } else {
                 navigate('/onboarding');
             }
@@ -82,19 +64,11 @@ export const Redirecter = () => {
         ) {
             navigate(location.pathname + location.search);
         }
-        // if (
-        //     location.search.includes('eventId')
-        // ) {
-        //     const event = events.filter((event) =>
-        //         event.restaurants.filter((restaurant) => {
-        //                 console.log('restaurant.dates[0].id: ', restaurant)
-        //                 return restaurant.dates[0].id.toString() === location.search.slice(location.search.lastIndexOf('_') + 1)
-        //             }
-        //         )
-        //     );
-        //     console.log('event: ', event);
-        //     navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].title + '/guests/')
-        // }
+        if (
+            location.search.includes('eventId')
+        ) {
+            redirectToEvent();
+        }
     }, [auth, user, location.pathname, location.search]);
 
     return <></>;
