@@ -5,7 +5,7 @@ import css from './DeleteUserPopup.module.css';
 import classNames from 'classnames';
 // import './FeedbackPopup.css';
 import { useAtom } from 'jotai';
-import {authAtom} from '@/atoms/userAtom.ts';
+import {authAtom, userAtom} from '@/atoms/userAtom.ts';
 import {Toast} from "@/components/Toast/Toast.tsx";
 import {APIDeleteUser} from "@/api/user.ts";
 import {useNavigate} from "react-router-dom";
@@ -36,6 +36,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
     const navigate = useNavigate();
     const [isClosing, setIsClosing] = useState(false);
     const [authInfo, setAuth] = useAtom(authAtom);
+    const [, setUser] = useAtom(userAtom);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
 
@@ -74,7 +75,21 @@ export const DeleteUserPopup: FC<Props> = (props) => {
                 access_token: '',
                 expires_in: 0
             });
-            navigate('/');
+            setUser({
+                administrator: undefined,
+                advertisement_agreement: false,
+                allergies: "",
+                complete_onboarding: false,
+                date_of_birth: "",
+                early_access: false,
+                email: "",
+                first_name: "",
+                gdpr_agreement: false,
+                last_name: "",
+                license_agreement: false,
+                phone_number: ""
+            })
+            navigate('/onboarding');
         }).catch((err) => {
             if (err.response) {
                 // alert(err.response.data);
