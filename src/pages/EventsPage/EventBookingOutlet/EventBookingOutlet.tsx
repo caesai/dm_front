@@ -57,7 +57,7 @@ export const EventBookingOutlet = () => {
 
     const validate = useMemo(() => {
         console.log('!auth?.access_token || userInfo.name: ', auth?.access_token, userInfo.name)
-        if (!auth?.access_token || !userInfo.name) {
+        if (!auth?.access_token || auth?.access_token.length == 0 || userInfo.name.length == 0) {
             navigate('/onboarding');
             return;
         }
