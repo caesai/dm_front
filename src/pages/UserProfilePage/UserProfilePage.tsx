@@ -9,9 +9,10 @@ import { useEffect, useState } from 'react';
 import { CalendarPopup } from '@/pages/UserProfilePage/CalendarPopup/CalendarPopup.tsx';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import {APIDeleteUser, APIUpdateUserInfo} from '@/api/user.ts';
+import { APIUpdateUserInfo} from '@/api/user.ts';
 import { mainButton } from '@telegram-apps/sdk-react';
 import {Toast} from "@/components/Toast/Toast.tsx";
+import {DeleteUserPopup} from "@/pages/ProfilePage/DeleteUserPopup/DeleteUserPopup.tsx";
 
 interface IUserInfo {
     first_name?: string;
@@ -27,6 +28,7 @@ export const UserProfilePage = () => {
     const [authInfo] = useAtom(authAtom);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
+    const [deletePopup, setDeletePopup] = useState(false);
 
     const [userInfo, setUserInfo] = useState<IUserInfo>({
         first_name: user?.first_name,
@@ -109,25 +111,14 @@ export const UserProfilePage = () => {
             });
     };
 
-    const deleteUser = () => {
-        if (!authInfo?.access_token) {
-            return;
-        }
-        APIDeleteUser(authInfo.access_token).then((res) => {
-            console.log('response: ', res)
-        }).catch((err) => {
-            if (err.response) {
-                // alert(err.response.data);
-                setToastMessage('Возникла ошибка: ' + err.response.data)
-                setToastShow(true);
-                setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
-            }
-        });
+    const openDeletePopup = () => {
+        setDeletePopup(true);
     }
 
     return (
         <Page back={true}>
             <div className={css.page}>
+                <DeleteUserPopup isOpen={deletePopup} setOpen={setDeletePopup} />
                 <CalendarPopup
                     isOpen={calendarOpen}
                     setIsOpen={setCalendarOpen}
@@ -196,7 +187,7 @@ export const UserProfilePage = () => {
                     />
                     <div
                         className={css.delete}
-                        onClick={deleteUser}
+                        onClick={openDeletePopup}
                     >
                         <span className={css.delete}>
                             Удалить учетную запись
