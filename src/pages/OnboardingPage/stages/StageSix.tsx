@@ -12,7 +12,6 @@ export const StageSix = () => {
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
     const [params] = useSearchParams();
-    console.log('params: ', params.get('event'), params.get('restaurant_id'));
 
     const handleConfirm = () => {
         if (!agree || !user || !auth?.access_token) {
@@ -23,9 +22,9 @@ export const StageSix = () => {
             .then(() => {
                 console.log('params: ', params.get('event'));
                 if(params.get('event') && params.get('restaurant_id')) {
-                    navigate(`/events/${params.get('event')}/restaurant/${params.get('restaurant_id')}/guests`)
+                    navigate(`/?event=${params.get('event')}&restaurant_id=${params.get('restaurant_id')}`);
                 } else {
-                    navigate('/');
+                    navigate(`/${params.get('event')}`);
                 }
             })
             .catch(() =>

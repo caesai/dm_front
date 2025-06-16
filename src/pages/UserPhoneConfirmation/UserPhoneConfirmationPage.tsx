@@ -6,12 +6,13 @@ import { requestPhone } from '@/components/RequestPermissions/utils.ts';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { APIUserInfo } from '@/api/auth.ts';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 
 export const UserPhoneConfirmationPage = () => {
     const [user, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
+    const [params] = useSearchParams();
 
     const updateUser = () => {
         if (!auth?.access_token) {
@@ -29,10 +30,15 @@ export const UserPhoneConfirmationPage = () => {
             5000
         );
     };
+    console.log('params: ', params.get('event'), params.get('restaurant_id'));
 
     useEffect(() => {
         if (user?.phone_number) {
-            navigate('/');
+            if(params.get('event') && params.get('restaurant_id')) {
+                navigate(`/event=${params.get('event')}/restaurant/${params.get('restaurant_id')}/guests`);
+            } else {
+                navigate('/');
+            }
         }
     }, [user]);
 
