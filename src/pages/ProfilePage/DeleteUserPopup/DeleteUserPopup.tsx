@@ -8,6 +8,7 @@ import { useAtom } from 'jotai';
 import {authAtom} from '@/atoms/userAtom.ts';
 import {Toast} from "@/components/Toast/Toast.tsx";
 import {APIDeleteUser} from "@/api/user.ts";
+import {useNavigate} from "react-router-dom";
 
 
 const StyledPopup = styled(Popup)`
@@ -32,6 +33,7 @@ interface Props {
 
 export const DeleteUserPopup: FC<Props> = (props) => {
     const close = () => props.setOpen(false);
+    const navigate = useNavigate();
     const [isClosing, setIsClosing] = useState(false);
     const [authInfo, setAuth] = useAtom(authAtom);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -58,7 +60,6 @@ export const DeleteUserPopup: FC<Props> = (props) => {
 
     useEffect(() => {
         if (props.isOpen) {
-            console.log('isOpen');
             setIsClosing(false);
         }
     }, [props.isOpen]);
@@ -70,13 +71,14 @@ export const DeleteUserPopup: FC<Props> = (props) => {
         APIDeleteUser(authInfo.access_token).then((res) => {
             console.log('response: ', res);
             setAuth({
-                access_token: "",
+                access_token: null,
                 expires_in: 0
             });
+            navigate('/');
         }).catch((err) => {
             if (err.response) {
                 // alert(err.response.data);
-                setToastMessage('Возникла ошибка: ' + err.response.data)
+                setToastMessage('Возникла ошибка: ' + err.response.data.message);
                 setToastShow(true);
                 setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
             }
