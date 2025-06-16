@@ -39,8 +39,7 @@ export const EventConfirmationOutlet = () => {
         setGuestCount((prev: number) => (prev - 1 >= 1 ? prev - 1 : prev));
     };
     const next = () => {
-        console.log('user?.complete_onboarding && user.gdpr_agreement: ', user?.complete_onboarding, user?.gdpr_agreement);
-        if (user?.complete_onboarding && user?.gdpr_agreement) {
+        if (user?.complete_onboarding) {
             setBookingInfo((prev) => ({...prev}));
             navigate(`/events/${name}/restaurant/${res}/confirm`);
         } else {
