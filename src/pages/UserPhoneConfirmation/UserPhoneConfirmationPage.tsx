@@ -35,7 +35,7 @@ export const UserPhoneConfirmationPage = () => {
     useEffect(() => {
         if (user?.phone_number) {
             if(params.get('event') && params.get('restaurant_id')) {
-                navigate(`/event=${params.get('event')}/restaurant/${params.get('restaurant_id')}/guests`);
+                navigate(`/events/${params.get('event')}/restaurant/${params.get('restaurant_id')}/guests`);
             } else {
                 navigate('/');
             }

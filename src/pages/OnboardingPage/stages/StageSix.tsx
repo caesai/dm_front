@@ -24,7 +24,7 @@ export const StageSix = () => {
                 if(params.get('event') && params.get('restaurant_id')) {
                     navigate(`/?event=${params.get('event')}&restaurant_id=${params.get('restaurant_id')}`);
                 } else {
-                    navigate(`/${params.get('event')}`);
+                    navigate('/');
                 }
             })
             .catch(() =>
