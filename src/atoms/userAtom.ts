@@ -25,7 +25,7 @@ interface IReviewAtom {
 }
 
 export interface IAuthInfo {
-    access_token: string | null;
+    access_token: string;
     expires_in: number;
 }
 

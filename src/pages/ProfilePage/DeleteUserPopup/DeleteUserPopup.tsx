@@ -71,7 +71,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
         APIDeleteUser(authInfo.access_token).then((res) => {
             console.log('response: ', res);
             setAuth({
-                access_token: null,
+                access_token: '',
                 expires_in: 0
             });
             navigate('/');
