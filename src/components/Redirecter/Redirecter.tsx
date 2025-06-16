@@ -23,23 +23,23 @@ export const Redirecter = () => {
         '/onboarding/7',
     ];
 
-    // useEffect(() => {
-    //     if (
-    //         location.search.includes('eventId')
-    //     ) {
-    //         APIGetEvents().then((res) => {
-    //             const event = res.data.filter((event) =>
-    //                 event.restaurants.filter((restaurant) => {
-    //                         console.log('restaurant.dates[0].id: ', restaurant)
-    //                         return restaurant.dates[0].id.toString() === location.search.slice(location.search.lastIndexOf('_') + 1)
-    //                     }
-    //                 )
-    //             );
-    //             navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
-    //         });
-    //
-    //     }
-    // }, [location.search]);
+    useEffect(() => {
+        if (
+            location.search.includes('eventId')
+        ) {
+            APIGetEvents().then((res) => {
+                const event = res.data.filter((event) =>
+                    event.restaurants.filter((restaurant) => {
+                            console.log('restaurant.dates[0].id: ', restaurant)
+                            return restaurant.dates[0].id.toString() === location.search.slice(location.search.lastIndexOf('_') + 1)
+                        }
+                    )
+                );
+                navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
+            });
+
+        }
+    }, [location.search]);
 
     useEffect(() => {
         if (
