@@ -42,7 +42,14 @@ export const Redirecter = () => {
             user?.complete_onboarding &&
             !EXCLUDED_URLS.includes(location.pathname)
         ) {
-            navigate('/phoneConfirmation');
+            if (
+                location.search.includes('event')
+            ) {
+                console.log('location.search: ', location.search);
+                navigate('/phoneConfirmation' + location.search)
+            } else {
+                navigate('/phoneConfirmation');
+            }
         }
         if (
             auth?.access_token &&
