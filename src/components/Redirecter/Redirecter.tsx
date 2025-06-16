@@ -59,10 +59,10 @@ export const Redirecter = () => {
             if (
                 location.search.includes('eventId')
             ) {
+                console.log('eventId: ', location.search.slice(location.search.lastIndexOf('_') + 1));
                 APIGetEvents().then((res) => {
                     const event = res.data.filter((event) =>
                         event.restaurants.filter((restaurant) => {
-                                console.log('eventId: ', location.search.slice(location.search.lastIndexOf('_') + 1));
                                 return restaurant.dates[0].id.toString() === location.search.slice(location.search.lastIndexOf('_') + 1)
                             }
                         )
