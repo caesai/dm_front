@@ -11,6 +11,7 @@ import { useAtom } from 'jotai/index';
 import { eventsListAtom } from '@/atoms/eventBookingAtom.ts';
 import { APIGetEvents } from '@/api/events.ts';
 import {Share} from "@/components/Icons/Share.tsx";
+import {Toast} from "@/components/Toast/Toast.tsx";
 
 export interface IEventBooking {
     event?: IEvent;
@@ -50,6 +51,8 @@ export const EventsPage = () => {
     const location = useLocation();
 
     const [events, setEvents] = useAtom<IEvent[]>(eventsListAtom);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastShow, setToastShow] = useState<boolean>(false);
 
     useEffect(() => {
         APIGetEvents().then((res) => setEvents(res.data));
@@ -67,7 +70,10 @@ export const EventsPage = () => {
     }, [location.pathname]);
 
     const shareEvent = () => {
-        window.open(`https://t.me/${import.meta.env.PRODAPP ? 'dt_concierge_bot' : 'dmdev1bot'}?start=event_${bookingInfo.restaurant?.dates[0].id}`, '_blank');
+        navigator.clipboard.writeText(`https://t.me/dmdev1bot?start=event_${bookingInfo.restaurant?.dates[0].id}`);
+        setToastShow(true);
+        setToastMessage('Ссылка скопирована')
+        setTimeout(function(){ setToastShow(false); setToastMessage(null);}, 3000);
     };
 
     console.log('events: ', events)
@@ -100,6 +106,8 @@ export const EventsPage = () => {
                     </div>
                 </div>
                 <Outlet context={[bookingInfo, setBookingInfo]} />
+                <Toast message={toastMessage} showClose={toastShow} />
+
                 {/*<p className={css.span_title}>Пока нет мероприятий</p>*/}
             </div>
         </Page>

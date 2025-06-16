@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 
@@ -8,6 +8,7 @@ export const Redirecter = () => {
     const navigate = useNavigate();
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
+    const [params] = useSearchParams();
 
     const EXCLUDED_URLS = ['/phoneConfirmation', '/onboarding', '/gdpr'];
     const ONBOARDING_EXCLUDED = [
@@ -21,6 +22,7 @@ export const Redirecter = () => {
         '/onboarding/7',
     ];
     console.log('location.pathname: ', location.pathname)
+    console.log('params: ', params);
     useEffect(() => {
         if (
             auth?.access_token &&

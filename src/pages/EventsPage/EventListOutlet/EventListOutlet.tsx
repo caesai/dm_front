@@ -12,8 +12,15 @@ export const EventListOutlet = () => {
     const [events] = useAtom<IEvent[]>(eventsListAtom);
 
     const next = (event: IEvent) => {
-        setBookingInfo((prev) => ({ ...prev, event: event }));
-        navigate(`/events/${event.name}`);
+        // setBookingInfo((prev) => ({ ...prev, event: event }));
+        // navigate(`/events/${event.name}`);
+        setBookingInfo((p) => ({
+            ...p,
+            event: event,
+            restaurantId: String(event?.restaurants[0].id),
+            restaurant: event?.restaurants[0],
+        }));
+        navigate(`/events/${event.name}/restaurant/${event?.restaurants[0].id}/guests`)
     };
 
     return (

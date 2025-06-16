@@ -30,10 +30,9 @@ export const CitySelect: FC<IConfirmationSelect> = ({
 
     const getLocation = async () => {
         if (locationManager.requestLocation.isAvailable()) {
-            console.log('wtf')
-            locationManager.openSettings();
+            // locationManager.openSettings();
             const location = await locationManager.requestLocation();
-            alert('location: ' + location?.latitude);
+            console.log(location)
         }
     }
     useEffect(() => {

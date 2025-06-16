@@ -11,6 +11,7 @@ import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { APIUpdateUserInfo } from '@/api/user.ts';
 import { mainButton } from '@telegram-apps/sdk-react';
+import {Toast} from "@/components/Toast/Toast.tsx";
 
 interface IUserInfo {
     first_name?: string;
@@ -24,6 +25,8 @@ export const UserProfilePage = () => {
     const navigate = useNavigate();
     const [user, setUser] = useAtom(userAtom);
     const [authInfo] = useAtom(authAtom);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastShow, setToastShow] = useState<boolean>(false);
 
     const [userInfo, setUserInfo] = useState<IUserInfo>({
         first_name: user?.first_name,
@@ -92,10 +95,16 @@ export const UserProfilePage = () => {
             .then((res) => {
                 setUser(res.data);
                 setMainButtonLoader(false);
+                setToastMessage('Изменения сохранены');
+                setToastShow(true);
+                setTimeout(function(){ setToastShow(false); setToastMessage(null);}, 3000);
             })
             .catch((err) => {
                 if (err.response) {
-                    alert(err.response.data);
+                    // alert(err.response.data);
+                    setToastMessage('Возникла ошибка: ' + err.response.data)
+                    setToastShow(true);
+                    setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
                 }
             });
     };
@@ -171,6 +180,7 @@ export const UserProfilePage = () => {
                     />
                 </div>
             </div>
+            <Toast message={toastMessage} showClose={toastShow} />
         </Page>
     );
 };

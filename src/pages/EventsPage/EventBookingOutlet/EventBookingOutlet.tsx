@@ -148,10 +148,10 @@ export const EventBookingOutlet = () => {
                                 {moment(
                                     bookingInfo.date?.start_datetime
                                 ).format('HH:mm')}{' '}
-                                -{' '}
-                                {moment(bookingInfo.date?.end_datetime).format(
-                                    'HH:mm'
-                                )}
+                                {/*-{' '}*/}
+                                {/*{moment(bookingInfo.date?.end_datetime).format(*/}
+                                {/*    'HH:mm'*/}
+                                {/*)}*/}
                             </span>
                         </div>
                     </div>
@@ -176,6 +176,14 @@ export const EventBookingOutlet = () => {
                         </div>
                     </div>
                     <div className={css.hr} />
+                    <div className={classNames(css.goodsItems_item, css.aic)}>
+                        <span className={css.goodsItems_item__total}>
+                            Количество билетов
+                        </span>
+                        <span className={css.goodsItems_item__price}>
+                            {guestCount}
+                        </span>
+                    </div>
                     <div className={classNames(css.goodsItems_item, css.aic)}>
                         <span className={css.goodsItems_item__total}>
                             Предоплата
