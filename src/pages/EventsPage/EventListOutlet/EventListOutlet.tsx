@@ -29,6 +29,8 @@ export const EventListOutlet = () => {
                 const aDate = new Date(a.restaurants[0].dates[0].date_start);
                 const bDate = new Date(b.restaurants[0].dates[0].date_start);
                 return aDate.getTime() - bDate.getTime();
+            }).filter((event) =>{
+                return new Date().getTime() <= new Date(event.restaurants[0].dates[0].date_start).getTime();
             }).map((event) => (
                 <EventCard
                     key={event.name}

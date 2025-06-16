@@ -1,6 +1,6 @@
 import css from './OptionsNavigation.module.css';
 import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
-import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
+// import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { useAtom } from 'jotai/index';
 import { reviewAtom } from '@/atoms/userAtom.ts';
