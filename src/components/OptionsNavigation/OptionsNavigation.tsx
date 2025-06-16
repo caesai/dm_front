@@ -32,11 +32,12 @@ export const OptionsNavigation = () => {
                     rounded={'16px'}
                 />
             ) : review.available ? (
-                <OptionsNavigationElement
-                    icon={<ChatIcon size={20} color={'var(--light-grey)'} />}
-                    title={'Оставить отзыв'}
-                    link={'/profile?feedback=1'}
-                />
+                // <OptionsNavigationElement
+                //     icon={<ChatIcon size={20} color={'var(--light-grey)'} />}
+                //     title={'Оставить отзыв'}
+                //     link={'/profile?feedback=1'}
+                // />
+                null
             ) : (
                 <div style={{ width: '100%' }} />
             )}
