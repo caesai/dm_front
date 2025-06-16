@@ -23,24 +23,23 @@ export const Redirecter = () => {
         '/onboarding/7',
     ];
 
-    useEffect(() => {
-        if (
-            location.search.includes('eventId')
-        ) {
-            APIGetEvents().then((res) => {
-                const event = res.data.filter((event) =>
-                    event.restaurants.filter((restaurant) => {
-                            console.log('restaurant.dates[0].id: ', restaurant)
-                            return restaurant.dates[0].id.toString() === location.search.slice(location.search.lastIndexOf('_') + 1)
-                        }
-                    )
-                );
-                console.log('event: ', event);
-                navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
-            });
-
-        }
-    }, [location.search]);
+    // useEffect(() => {
+    //     if (
+    //         location.search.includes('eventId')
+    //     ) {
+    //         APIGetEvents().then((res) => {
+    //             const event = res.data.filter((event) =>
+    //                 event.restaurants.filter((restaurant) => {
+    //                         console.log('restaurant.dates[0].id: ', restaurant)
+    //                         return restaurant.dates[0].id.toString() === location.search.slice(location.search.lastIndexOf('_') + 1)
+    //                     }
+    //                 )
+    //             );
+    //             navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
+    //         });
+    //
+    //     }
+    // }, [location.search]);
 
     useEffect(() => {
         if (
@@ -54,9 +53,25 @@ export const Redirecter = () => {
         if (
             auth?.access_token &&
             (!user?.license_agreement || !user.complete_onboarding) &&
-            !ONBOARDING_EXCLUDED.includes(location.pathname)
+            !ONBOARDING_EXCLUDED.includes(location.pathname) &&
+            !location.pathname.includes('events')
         ) {
-            navigate('/onboarding');
+            if (
+                location.search.includes('eventId')
+            ) {
+                APIGetEvents().then((res) => {
+                    const event = res.data.filter((event) =>
+                        event.restaurants.filter((restaurant) => {
+                                console.log('restaurant.dates[0].id: ', restaurant)
+                                return restaurant.dates[0].id.toString() === location.search.slice(location.search.lastIndexOf('_') + 1)
+                            }
+                        )
+                    );
+                    navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
+                });
+            } else {
+                navigate('/onboarding');
+            }
         }
         if (
             auth?.access_token &&
@@ -77,7 +92,7 @@ export const Redirecter = () => {
         //     console.log('event: ', event);
         //     navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].title + '/guests/')
         // }
-    }, [auth, user, location.pathname]);
+    }, [auth, user, location.pathname, location.search]);
 
     return <></>;
 };

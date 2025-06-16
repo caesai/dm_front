@@ -30,7 +30,6 @@ export const CitySelect: FC<IConfirmationSelect> = ({
 
     const getLocation = async () => {
         if (locationManager.requestLocation.isAvailable()) {
-            // locationManager.openSettings();
             const location = await locationManager.requestLocation();
             console.log(location)
             const city = NearestCity(location.latitude, location.longitude);
@@ -38,26 +37,6 @@ export const CitySelect: FC<IConfirmationSelect> = ({
             onChange(closestCity[0]);
         }
     }
-    // useEffect(() => {
-    //     const f = async () => {
-    //         try {
-    //             const promise = locationManager.mount();
-    //             locationManager.isMounting(); // true
-    //             await promise;
-    //             locationManager.isMounting(); // false
-    //             locationManager.isMounted(); // true
-    //         } catch (err) {
-    //             console.log("error", err);
-    //             locationManager.mountError(); // equals "err"
-    //             locationManager.isMounting(); // false
-    //             locationManager.isMounted(); // false
-    //         }
-    //     }
-    //     if (locationManager.mount.isAvailable()) {
-    //         f().then();
-    //     }
-    // }, [locationManager]);
-
 
     useEffect(() => {
         if (locationManager.openSettings.isAvailable() && !locationManager.isAccessRequested()) {

@@ -5,7 +5,7 @@ import css from './DeleteUserPopup.module.css';
 import classNames from 'classnames';
 // import './FeedbackPopup.css';
 import { useAtom } from 'jotai';
-import { authAtom } from '@/atoms/userAtom.ts';
+import {authAtom, userAtom} from '@/atoms/userAtom.ts';
 import {Toast} from "@/components/Toast/Toast.tsx";
 import {APIDeleteUser} from "@/api/user.ts";
 
@@ -36,6 +36,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
     const [authInfo] = useAtom(authAtom);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
+    const [, setUser] = useAtom(userAtom);
 
     useEffect(() => {
         if (isClosing) {
@@ -68,7 +69,21 @@ export const DeleteUserPopup: FC<Props> = (props) => {
             return;
         }
         APIDeleteUser(authInfo.access_token).then((res) => {
-            console.log('response: ', res)
+            console.log('response: ', res);
+            setUser({
+                administrator: undefined,
+                advertisement_agreement: false,
+                allergies: "",
+                complete_onboarding: false,
+                date_of_birth: "",
+                early_access: false,
+                email: "",
+                first_name: "",
+                gdpr_agreement: false,
+                last_name: "",
+                license_agreement: false,
+                phone_number: ""
+            });
         }).catch((err) => {
             if (err.response) {
                 // alert(err.response.data);

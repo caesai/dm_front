@@ -1,18 +1,18 @@
 // import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
+import {CalendarIcon} from '@/components/Icons/CalendarIcon.tsx';
 import classNames from 'classnames';
-import { TextInput } from '@/components/TextInput/TextInput.tsx';
+import {TextInput} from '@/components/TextInput/TextInput.tsx';
 // import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from './EventBookingOutlet.module.css';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { formatDateDT, IEventBookingContext } from '@/utils.ts';
-import { useMemo, useState } from 'react';
+import {useNavigate, useOutletContext} from 'react-router-dom';
+import {formatDateDT, IEventBookingContext} from '@/utils.ts';
+import {useMemo, useState} from 'react';
 import moment from 'moment';
-import { APICreateInvoice } from '@/api/events.ts';
-import { useAtom } from 'jotai';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { guestCountAtom } from '@/atoms/eventBookingAtom.ts';
+import {APICreateInvoice} from '@/api/events.ts';
+import {useAtom} from 'jotai';
+import {authAtom, userAtom} from '@/atoms/userAtom.ts';
+import {guestCountAtom} from '@/atoms/eventBookingAtom.ts';
 
 // const confirmationList: IConfirmationType[] = [
 //     {
@@ -54,18 +54,13 @@ export const EventBookingOutlet = () => {
         }
         return guestCount * ticketPrice;
     }, [bookingInfo]);
-    console.log(
-        bookingInfo.restaurant,
-        bookingInfo.event_date,
-        bookingInfo.date,
-        userInfo.name,
-        userInfo.phone,
-        // userInfo.email &&
-        // confirmation.text,
-        auth?.access_token
-    )
-    const validate = useMemo(() => {
 
+    const validate = useMemo(() => {
+        console.log('!auth?.access_token || userInfo.name: ', auth?.access_token, userInfo.name)
+        if (!auth?.access_token || userInfo.name) {
+            navigate('/onboarding');
+            return;
+        }
         return (
             bookingInfo.restaurant &&
             bookingInfo.event_date &&
@@ -127,7 +122,7 @@ export const EventBookingOutlet = () => {
                     <h2 className={css.contentItem__title}>Детали заказа</h2>
                     <div className={css.dateInfoContainer}>
                         <div className={css.cubicIconContainer}>
-                            <CalendarIcon size={22} />
+                            <CalendarIcon size={22}/>
                         </div>
                         <div className={css.dateInfoContainer_dates}>
                             <span className={css.dateInfoContainer_dates__date}>
@@ -175,7 +170,7 @@ export const EventBookingOutlet = () => {
                             </div>
                         </div>
                     </div>
-                    <div className={css.hr} />
+                    <div className={css.hr}/>
                     <div className={classNames(css.goodsItems_item, css.aic)}>
                         <span className={css.goodsItems_item__total}>
                             Количество билетов
@@ -201,14 +196,14 @@ export const EventBookingOutlet = () => {
                         <TextInput
                             value={userInfo.name}
                             onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, name: e }))
+                                setUserInfo((p) => ({...p, name: e}))
                             }
                             placeholder={'Имя'}
                         ></TextInput>
                         <TextInput
                             value={userInfo.phone}
                             onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, phone: e }))
+                                setUserInfo((p) => ({...p, phone: e}))
                             }
                             placeholder={'Номер телефона'}
                         ></TextInput>
@@ -222,7 +217,7 @@ export const EventBookingOutlet = () => {
                         <TextInput
                             value={userInfo.commentary}
                             onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, commentary: e }))
+                                setUserInfo((p) => ({...p, commentary: e}))
                             }
                             placeholder={'Комментарий'}
                         ></TextInput>
@@ -240,10 +235,17 @@ export const EventBookingOutlet = () => {
                         width={'full'}
                         title={'Оплатить'}
                         theme={'red'}
-                        action={() =>
-                            validate
-                                ? createInvoice()
-                                : alert('TODO: Validation alert')
+                        action={() => {
+                            if (!auth?.access_token || userInfo.name) {
+                                navigate('/onboarding');
+                                return;
+                            }
+                            if (validate) {
+                                createInvoice()
+                            } else {
+                                alert('TODO: Validation alert')
+                            }
+                        }
                         }
                     />
                 </div>
