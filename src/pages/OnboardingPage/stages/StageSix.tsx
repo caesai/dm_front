@@ -12,6 +12,7 @@ export const StageSix = () => {
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
     const [params] = useSearchParams();
+    console.log('params: ', params.get('event'), params.get('restaurant_id'));
 
     const handleConfirm = () => {
         if (!agree || !user || !auth?.access_token) {
