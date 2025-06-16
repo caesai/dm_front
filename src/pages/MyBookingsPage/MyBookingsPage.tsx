@@ -55,6 +55,7 @@ export const MyBookingsPage = () => {
                                 <BookingCard
                                     key={booking.id}
                                     date={booking.booking_date}
+                                    image={booking.restaurant.thumbnail_photo}
                                     time={booking.time}
                                     active={[
                                         'new',

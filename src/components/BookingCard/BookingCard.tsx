@@ -11,6 +11,7 @@ interface BookingCardProps {
     date: string;
     time: string;
     click_callback: (id: number) => void;
+    image: string;
 }
 
 export const BookingCard: FC<BookingCardProps> = ({
@@ -21,6 +22,7 @@ export const BookingCard: FC<BookingCardProps> = ({
     date,
     time,
     click_callback,
+    image,
 }) => {
     return (
         <div
@@ -29,7 +31,7 @@ export const BookingCard: FC<BookingCardProps> = ({
                 css.bgImage,
                 !active || new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() > new Date(date).getTime() ? css.notActive : null
             )}
-            style={{ backgroundImage: `url(${bookingCard})` }}
+            style={{ backgroundImage: `url(${image ? image : bookingCard})` }}
             onClick={() => click_callback(booking_id)}
         >
             <span
