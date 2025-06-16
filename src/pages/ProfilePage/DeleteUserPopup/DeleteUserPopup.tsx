@@ -5,7 +5,7 @@ import css from './DeleteUserPopup.module.css';
 import classNames from 'classnames';
 // import './FeedbackPopup.css';
 import { useAtom } from 'jotai';
-import {authAtom, userAtom} from '@/atoms/userAtom.ts';
+import {authAtom} from '@/atoms/userAtom.ts';
 import {Toast} from "@/components/Toast/Toast.tsx";
 import {APIDeleteUser} from "@/api/user.ts";
 
@@ -36,7 +36,6 @@ export const DeleteUserPopup: FC<Props> = (props) => {
     const [authInfo, setAuth] = useAtom(authAtom);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
-    const [, setUser] = useAtom(userAtom);
 
     useEffect(() => {
         if (isClosing) {
