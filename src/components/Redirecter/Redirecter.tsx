@@ -24,6 +24,8 @@ export const Redirecter = () => {
     ];
 
     useEffect(() => {
+        console.log('eventId: ', location.search.slice(location.search.lastIndexOf('_') + 1));
+
         if (
             location.search.includes('eventId')
         ) {
@@ -59,7 +61,6 @@ export const Redirecter = () => {
             if (
                 location.search.includes('eventId')
             ) {
-                console.log('eventId: ', location.search.slice(location.search.lastIndexOf('_') + 1));
                 APIGetEvents().then((res) => {
                     const event = res.data.filter((event) =>
                         event.restaurants.filter((restaurant) => {
