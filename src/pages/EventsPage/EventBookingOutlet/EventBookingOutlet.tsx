@@ -57,7 +57,7 @@ export const EventBookingOutlet = () => {
 
     const validate = useMemo(() => {
         console.log('!auth?.access_token || userInfo.name: ', auth?.access_token, userInfo.name)
-        if (!auth?.access_token || auth?.access_token.length == 0 || userInfo.name.length == 0) {
+        if (!auth?.access_token || (!user?.license_agreement || !user.complete_onboarding)) {
             navigate('/onboarding');
             return;
         }
@@ -236,7 +236,7 @@ export const EventBookingOutlet = () => {
                         title={'Оплатить'}
                         theme={'red'}
                         action={() => {
-                            if (!auth?.access_token || auth?.access_token.length == 0 || userInfo.name.length == 0) {
+                            if (!auth?.access_token || (!user?.license_agreement || !user.complete_onboarding)) {
                                 navigate('/onboarding');
                                 return;
                             }
