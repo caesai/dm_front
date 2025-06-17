@@ -34,7 +34,7 @@ export const UserPhoneConfirmationPage = () => {
         if (user?.phone_number) {
             if(params.get('eventId')) {
                 console.log('should work: ', params.get('eventId'));
-                navigate(`/?eventId_${params.get('eventId')}&?fromlink`);
+                navigate(`/?eventId_${params.get('eventId')}&fromlink`);
             } else {
                 navigate('/');
             }
