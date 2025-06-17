@@ -1,4 +1,4 @@
-import {useNavigate, useOutletContext, useParams} from 'react-router-dom';
+import {useNavigate, useOutletContext, useParams, useSearchParams} from 'react-router-dom';
 import css from './EventConfirmationOutlet.module.css';
 import {
     // findCurrentDate,
@@ -26,6 +26,7 @@ export const EventConfirmationOutlet = () => {
     const [hideAbout, setHideAbout] = useState(true);
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
     const [user] = useAtom(userAtom);
+    const [params] = useSearchParams();
 
     // const [restaurantTimeslots, setRestaurantTimeslots] = useState<ITimeSlot[]>(
     //     []
@@ -43,7 +44,7 @@ export const EventConfirmationOutlet = () => {
             setBookingInfo((prev) => ({...prev}));
             navigate(`/events/${name}/restaurant/${res}/confirm`);
         } else {
-            navigate(`/onboarding/4?eventId=${name}`);
+            navigate(`/onboarding/4?eventId_${params.get('eventId')}`);
         }
     };
 
