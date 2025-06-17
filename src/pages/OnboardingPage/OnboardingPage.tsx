@@ -27,7 +27,7 @@ export const OnboardingPage = () => {
         <Page back={false}>
             <div className={classNames(css.header)}>
                 <div className={css.header_wrapper}>
-                    {params.get('event') && params.get('restaurant_id') ? null :
+                    {params.get('eventId') ? null :
                         (
                             <div className={css.stage_container}>
                                 <div

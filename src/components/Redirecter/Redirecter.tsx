@@ -59,7 +59,7 @@ export const Redirecter = () => {
             if (
                 location.search.includes('event')
             ) {
-                navigate(`/phoneConfirmation?event=${params.get('event')}&restaurant_id=${params.get('restaurant_id')}`)
+                navigate(`/phoneConfirmation?eventId=${params.get('eventId')}`);
             } else {
                 navigate('/phoneConfirmation');
             }
