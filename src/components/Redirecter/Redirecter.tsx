@@ -45,7 +45,7 @@ export const Redirecter = () => {
                     }
                 )
             );
-            navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink')
+            navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink&eventId_' + eventId);
         });
     }
 
