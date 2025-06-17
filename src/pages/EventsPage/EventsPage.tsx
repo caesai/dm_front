@@ -4,7 +4,8 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import {
     Outlet,
-    useLocation, useNavigate } from 'react-router-dom';
+    useLocation, useNavigate,
+} from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { useAtom } from 'jotai/index';

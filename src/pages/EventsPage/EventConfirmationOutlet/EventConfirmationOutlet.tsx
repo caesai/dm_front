@@ -43,7 +43,7 @@ export const EventConfirmationOutlet = () => {
             setBookingInfo((prev) => ({...prev}));
             navigate(`/events/${name}/restaurant/${res}/confirm`);
         } else {
-            navigate(`/onboarding/4?event=${name}&restaurant_id=${res}`);
+            navigate(`/onboarding/4?eventId=${name}`);
         }
     };
 

@@ -20,9 +20,9 @@ export const StageSix = () => {
         APICompleteOnboarding(auth.access_token, agree)
             .then((d) => setUser(d.data))
             .then(() => {
-                console.log('params: ', params.get('event'));
-                if(params.get('event') && params.get('restaurant_id')) {
-                    navigate(`/?event=${params.get('event')}&restaurant_id=${params.get('restaurant_id')}`);
+                console.log('Onboarding params: ', params.get('eventId'));
+                if(params.get('eventId')) {
+                    navigate(`/?eventId=${params.get('eventId')}`);
                 } else {
                     navigate('/');
                 }
