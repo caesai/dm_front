@@ -22,7 +22,7 @@ export const StageSix = () => {
             .then(() => {
                 console.log('Onboarding params: ', params.get('eventId'));
                 if(params.get('eventId')) {
-                    navigate(`/?eventId=${params.get('eventId')}`);
+                    navigate(`/?eventId_${params.get('eventId')}`);
                 } else {
                     navigate('/');
                 }

@@ -33,8 +33,8 @@ export const UserPhoneConfirmationPage = () => {
     useEffect(() => {
         if (user?.phone_number) {
             if(params.get('eventId')) {
-                console.log('should work')
-                navigate(`/?eventId=${decodeURIComponent(String(params.get('eventId')))}&?fromlink`);
+                console.log('should work: ', params.get('eventId'));
+                navigate(`/?eventId_${decodeURIComponent(String(params.get('eventId')))}&?fromlink`);
             } else {
                 navigate('/');
             }
