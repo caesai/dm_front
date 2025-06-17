@@ -40,7 +40,7 @@ export const UserPhoneConfirmationPage = () => {
             }
         }
     }, [user]);
-
+    console.log('Phone confirm params: ', Object.fromEntries([...params]));
     useEffect(() => {
         if (mainButton.mount.isAvailable()) {
             mainButton.mount();

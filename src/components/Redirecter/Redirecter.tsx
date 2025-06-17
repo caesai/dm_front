@@ -36,6 +36,7 @@ export const Redirecter = () => {
     const redirectToEvent = () => {
         APIGetEvents().then((res) => {
             const paramsObject = Object.fromEntries([...params]);
+            console.log('Params Object In Redirecter: ', paramsObject);
             const eventId = getEventIdFromParams(paramsObject);
             console.log('eventId', eventId);
             const event = res.data.filter((event) =>

@@ -33,7 +33,7 @@ export const StageSix = () => {
                 )
             );
     };
-
+    console.log('Onboarding params: ', Object.fromEntries([...params]));
     return (
         <div className={css.stage_page}>
             <div className={css.stage_page_wrapper}>
