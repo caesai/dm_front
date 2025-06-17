@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import {useCallback, useEffect} from 'react';
 import {
     useLocation, useNavigate, useSearchParams,
 } from 'react-router-dom';
@@ -25,12 +25,22 @@ export const Redirecter = () => {
         '/onboarding/7',
     ];
 
+    const getEventIdFromParams = useCallback((paramsObject: {[k:string]: string}) => {
+        for (let key in paramsObject) {
+            if (paramsObject[key].includes('eventId')) {
+                return paramsObject[key].replace('eventId_', '');
+            }
+        }
+    }, []);
+
     const redirectToEvent = () => {
         APIGetEvents().then((res) => {
-            console.log('Params Entries: ', Object.fromEntries([...params]));
+            const paramsObject = Object.fromEntries([...params]);
+            const eventId = getEventIdFromParams(paramsObject);
+            console.log('eventId', eventId);
             const event = res.data.filter((event) =>
                 event.restaurants.some((restaurant) => {
-                        return restaurant.dates[0].id.toString() === decodeURIComponent(String(params.get('eventId')));
+                        return restaurant.dates[0].id.toString() === eventId;
                     }
                 )
             );
