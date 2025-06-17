@@ -44,11 +44,11 @@ export const EventConfirmationOutlet = () => {
             setBookingInfo((prev) => ({...prev}));
             navigate(`/events/${name}/restaurant/${res}/confirm`);
         } else {
-            navigate(`/onboarding/4?eventId_${params.get('eventId')}`);
+            navigate(`/onboarding/4?eventId=${params.get('eventId')}`);
         }
     };
     console.log('Event Confirmation Params Object: ', Object.fromEntries([...params]));
-    console.log('Event Confiramtion Event ID: ', params.get('eventId'));
+    console.log('Event Confirmation Event ID: ', params.get('eventId'));
     // useEffect(() => {
     //     const eventId = bookingInfo.restaurant?.dates[0].id;
     //     if (!auth?.access_token || !eventId || !bookingInfo.restaurant?.id) {
