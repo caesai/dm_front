@@ -27,9 +27,10 @@ export const Redirecter = () => {
 
     const redirectToEvent = () => {
         APIGetEvents().then((res) => {
+            console.log('why: ', params.get('eventId'));
             const event = res.data.filter((event) =>
                 event.restaurants.some((restaurant) => {
-                        return restaurant.dates[0].id.toString() === params.get('eventId');
+                        return restaurant.dates[0].id.toString() === decodeURIComponent(String(params.get('eventId')));
                     }
                 )
             );
