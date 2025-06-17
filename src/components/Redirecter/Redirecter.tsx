@@ -27,7 +27,7 @@ export const Redirecter = () => {
 
     const redirectToEvent = () => {
         APIGetEvents().then((res) => {
-            console.log('why: ', params.get('eventId'));
+            console.log('why: ', params);
             const event = res.data.filter((event) =>
                 event.restaurants.some((restaurant) => {
                         return restaurant.dates[0].id.toString() === decodeURIComponent(String(params.get('eventId')));
