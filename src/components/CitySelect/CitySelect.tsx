@@ -39,7 +39,7 @@ export const CitySelect: FC<IConfirmationSelect> = ({
     }
 
     useEffect(() => {
-        if (locationManager.openSettings.isAvailable() && !locationManager.isAccessRequested() && navigator.userAgent.includes("iPhone") ) {
+        if (locationManager.openSettings.isAvailable() && !locationManager.isAccessRequested() && navigator.platform.startsWith("iP") ) {
             locationManager.openSettings();
         }
         if (!locationManager.isAccessRequested() && locationManager.isAccessGranted()) {
