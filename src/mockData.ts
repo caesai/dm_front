@@ -268,7 +268,7 @@ export const getBookingCommentMock = (restaurant_id: string) => {
   
   // Other restaurants
   return [...BOOKINGCOMMENTMOCK, {
-    text: 'Нужен детский стульчик',
+    text: 'Нужен детский стул',
     emoji: '👶',
   }]
 } 
