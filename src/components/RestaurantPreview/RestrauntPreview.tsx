@@ -31,6 +31,9 @@ export const RestaurantPreview: FC<IProps> = ({ restaurant }) => {
                     backgroundImage: `url(${restaurant.thumbnail_photo})`,
                 }}
             >
+                {restaurant.title === 'Self Edge Japanese' && (
+                    <span className={css.discount}>Скидка 10%</span>
+                )}
                 <div className={css.floatingBadges}>
                     <Swiper
                         slidesPerView="auto"

@@ -296,7 +296,7 @@ body::-webkit-scrollbar {
 }
 
 .popup-overlay {
-    z-index: 1000 !important;
+    z-index: 100000 !important;
 }
 
 @keyframes slideUp {

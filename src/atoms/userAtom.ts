@@ -17,6 +17,7 @@ export interface IUser {
     date_of_birth?: string;
     administrator?: IUserAdmin;
     complete_onboarding: boolean;
+    username?: string;
 }
 
 interface IReviewAtom {

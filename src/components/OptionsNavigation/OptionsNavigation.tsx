@@ -2,12 +2,19 @@ import css from './OptionsNavigation.module.css';
 import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
 // import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
+import {PrivelegiesPopup} from "@/components/PrivelegiesPopup/PrivelegiesPopup.tsx";
+import {useState} from "react";
 import { useAtom } from 'jotai/index';
-import { reviewAtom } from '@/atoms/userAtom.ts';
-import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import {userAtom} from "@/atoms/userAtom.ts";
+import {StarPrivelegyIcon} from "@/components/Icons/StarPrivelegy.tsx";
+// import { reviewAtom } from '@/atoms/userAtom.ts';
+// import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
 export const OptionsNavigation = () => {
-    const [review] = useAtom(reviewAtom);
+    // const [review] = useAtom(reviewAtom);
+    const [isOpen, setIsOpen] = useState(false);
+    const [user] = useAtom(userAtom);
+    console.log(user?.first_name);
 
     // useEffect(() => {
     //     if (!auth?.access_token) {
@@ -20,27 +27,36 @@ export const OptionsNavigation = () => {
 
     return (
         <div className={css.optionsNavigation}>
+            <PrivelegiesPopup isOpen={isOpen} setOpen={setIsOpen} />
             <OptionsNavigationElement
                 icon={<CalendarIcon size={20} color={'var(--light-grey)'} />}
                 title={'Мероприятия'}
                 link={'/events'}
             />
-            {review.loading ? (
-                <PlaceholderBlock
-                    width={'100%'}
-                    height={'44px'}
-                    rounded={'16px'}
+            {user?.username && ['martyad','w0esofwit','egormk','burovburov', 'Sushkazzlo', 'iliathoughts'].includes(user?.username) && (
+                <OptionsNavigationElement
+                    icon={<StarPrivelegyIcon size={23} color={'var(--light-grey)'}  />}
+                    title={'Привилегии'}
+                    onClick={() => setIsOpen(!isOpen)}
+                    // link={'/events'}
                 />
-            ) : review.available ? (
-                // <OptionsNavigationElement
-                //     icon={<ChatIcon size={20} color={'var(--light-grey)'} />}
-                //     title={'Оставить отзыв'}
-                //     link={'/profile?feedback=1'}
-                // />
-                null
-            ) : (
-                <div style={{ width: '100%' }} />
             )}
+
+            {/*{review.loading ? (*/}
+            {/*    <PlaceholderBlock*/}
+            {/*        width={'100%'}*/}
+            {/*        height={'44px'}*/}
+            {/*        rounded={'16px'}*/}
+            {/*    />*/}
+            {/*) : review.available ? (*/}
+            {/*    <OptionsNavigationElement*/}
+            {/*        icon={<ChatIcon size={20} color={'var(--light-grey)'} />}*/}
+            {/*        title={'Оставить отзыв'}*/}
+            {/*        link={'/profile?feedback=1'}*/}
+            {/*    />*/}
+            {/*) : (*/}
+                <div style={{ width: '100%' }} />
+            {/*)}*/}
         </div>
     );
 };

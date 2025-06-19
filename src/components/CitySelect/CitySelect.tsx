@@ -40,7 +40,7 @@ export const CitySelect: FC<IConfirmationSelect> = ({
 
     useEffect(() => {
         if (locationManager.openSettings.isAvailable() && !locationManager.isAccessRequested() && navigator.platform.startsWith("iP") ) {
-            locationManager.openSettings();
+            // locationManager.openSettings();
         }
         if (!locationManager.isAccessRequested() && locationManager.isAccessGranted()) {
             getLocation().then();
