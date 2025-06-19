@@ -1,8 +1,9 @@
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { APIValidatePayment } from '@/api/events.ts';
+import {AppLoadingScreen} from "@/components/AppLoadingScreen/AppLoadingScreen.tsx";
 
 export const PaymentReturnPage = () => {
     const [searchParams] = useSearchParams();
@@ -28,8 +29,6 @@ export const PaymentReturnPage = () => {
     }, [searchParams]);
 
     return (
-        <div>
-            Обработка...<Link to={'/'}>Home</Link>
-        </div>
+        <AppLoadingScreen />
     );
 };
