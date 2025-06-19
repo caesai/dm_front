@@ -27,6 +27,7 @@ export const TicketInfoPage = () => {
             return;
         }
         APIGetTicket(Number(id), auth.access_token).then((res) => {
+            alert(JSON.stringify(res.data, null, 2));
             setTicket(res.data);
         });
     }, [id]);
