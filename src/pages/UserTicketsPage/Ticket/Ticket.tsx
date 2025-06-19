@@ -10,7 +10,6 @@ interface Props {
 
 export const Ticket = ({ ticket }: Props) => {
     const navigate = useNavigate();
-    console.log('Dates: ', new Date().getTime() > new Date(ticket.date_start).getTime())
     return (
         <div
             className={classNames(
