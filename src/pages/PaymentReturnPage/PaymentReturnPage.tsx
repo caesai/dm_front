@@ -26,7 +26,8 @@ export const PaymentReturnPage = () => {
                 //     ? alert('Платеж все еще не обработан.')
                 //     : null;
         }).catch((err) => {
-            alert(JSON.stringify(err));
+            alert(JSON.stringify(err.message));
+            navigate('/');
         });
     }, [searchParams]);
 
