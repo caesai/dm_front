@@ -67,8 +67,10 @@ export const APICreateInvoice = async (
 };
 
 interface IValidatePayment {
-    status: 'new' | 'finished' | 'cancelled';
-    booking_id?: number;
+    // status: 'new' | 'finished' | 'cancelled';
+    // booking_id?: number;
+    event_id?: number;
+    paid: boolean;
 }
 
 export const APIValidatePayment = async (id: number, token: string) => {

@@ -16,15 +16,14 @@ export const PaymentReturnPage = () => {
         }
         APIValidatePayment(Number(id), auth.access_token).then((res) => {
             alert(JSON.stringify(res.data, null, 2));
-            res.data.status == 'finished'
-                ? navigate(`/tickets/${res.data.booking_id}`)
-                : res.data.status == 'cancelled'
-                  ? alert(
-                        'При покупке билета произошла ошибка, платеж отменен, денежные средства будут возвращены автоматически.'
-                    )
-                  : res.data.status == 'new'
-                    ? alert('Платеж все еще не обработан.')
-                    : null;
+            res.data.paid && navigate(`/tickets/${res.data.event_id}`)
+                // : res.data.status == 'cancelled'
+                //   ? alert(
+                //         'При покупке билета произошла ошибка, платеж отменен, денежные средства будут возвращены автоматически.'
+                //     )
+                //   : res.data.status == 'new'
+                //     ? alert('Платеж все еще не обработан.')
+                //     : null;
         });
     }, [searchParams]);
 
