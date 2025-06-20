@@ -28,7 +28,8 @@ export const PaymentReturnPage = () => {
                 //   : res.data.status == 'new'
                 //     ? alert('Платеж все еще не обработан.')
                 //     : null;
-        }).catch(() => {
+        }).catch((err) => {
+            console.log('err on validate payment: ', err);
             navigate('/');
         });
     }, [searchParams]);
