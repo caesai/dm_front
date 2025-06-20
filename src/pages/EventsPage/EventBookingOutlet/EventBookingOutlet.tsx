@@ -12,7 +12,7 @@ import moment from 'moment';
 import {APICreateInvoice} from '@/api/events.ts';
 import {useAtom} from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
-import {guestCountAtom} from '@/atoms/eventBookingAtom.ts';
+import {guestCountAtom, selectedEventAtom} from '@/atoms/eventBookingAtom.ts';
 import {AppLoadingScreen} from "@/components/AppLoadingScreen/AppLoadingScreen.tsx";
 
 // const confirmationList: IConfirmationType[] = [
@@ -47,7 +47,9 @@ export const EventBookingOutlet = () => {
         commentary: '',
     });
     const [loading, setLoading] = useState(false);
+    const [eventAtom] = useAtom(selectedEventAtom);
 
+    console.log('eventAtom: ', eventAtom);
     // const [iframeSrc, setIframeSrc] = useState<string | null>(null);
 
     const calculateTotal = useMemo(() => {
