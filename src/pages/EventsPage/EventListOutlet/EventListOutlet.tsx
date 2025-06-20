@@ -40,6 +40,7 @@ export const EventListOutlet = () => {
                     event_address={event.restaurants[0].address}
                     event_dates={event.restaurants[0].dates}
                     event_restaurant={event.restaurants[0].title}
+                    sold={event.restaurants[0].dates[0].tickets_left === 0}
                 />
             ))}
         </div>

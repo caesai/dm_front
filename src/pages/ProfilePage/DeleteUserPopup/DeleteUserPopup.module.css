@@ -1,9 +1,66 @@
-
 .popup {
     display: flex;
     flex-direction: column;
-    padding: 40px 15px 30px;
-    gap: 32px;
+    padding: 30px 15px 20px 15px;
+    gap: 15px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    text-align: center;
+
+    span {
+        font-family: 'Mont', sans-serif;
+        font-weight: 800;
+        font-size: 20px;
+    }
+}
+
+.discount {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    text-align: center;
+    span {
+        font-family: 'Mont', sans-serif;
+        font-weight: 400;
+        font-size: 12px;
+    }
+}
+
+.buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.closeIcon {
+    position: absolute;
+    top: 6px;
+    right: 16px;
+
+}
+
+.button {
+    background-color: var(--red);
+    border: none;
+    outline: none;
+    border-radius: 15px;
+    padding: 15px;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.button__disabled {
+    background-color: var(--third-background);
+    color: black;
+    /*cursor: not-allowed;*/
 }
 
 .title {
@@ -14,24 +71,32 @@
     text-align: center;
 }
 
-.rating {
+
+.info {
     display: flex;
     flex-direction: column;
     gap: 12px;
-}
-
-.stars {
-    display: flex;
-    flex-direction: row;
-    gap: 14px;
-    justify-content: center;
-}
-
-.ratingStatus {
-    font-family: "Mont", sans-serif;
-    font-weight: 800;
-    font-size: 18px;
+    align-items: center;
     text-align: center;
+
+    span {
+        font-family: 'Mont', sans-serif;
+        font-weight: 800;
+        font-size: 20px;
+    }
+}
+
+.discount {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    text-align: center;
+    span {
+        font-family: 'Mont', sans-serif;
+        font-weight: 400;
+        font-size: 12px;
+    }
 }
 
 
@@ -88,23 +153,4 @@
     border: none;
     outline: none;
     border-bottom: 1px solid var(--medium-grey);
-}
-
-.button {
-    background-color: var(--red);
-    border: none;
-    outline: none;
-    border-radius: 15px;
-    padding: 15px;
-    font-family: "Mont", sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    color: white;
-    cursor: pointer;
-}
-
-.button__disabled {
-    background-color: var(--third-background);
-    color: black;
-    /*cursor: not-allowed;*/
 }

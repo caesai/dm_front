@@ -13,16 +13,15 @@ import {useNavigate} from "react-router-dom";
 
 const StyledPopup = styled(Popup)`
     &-overlay {
+        background: #58585869;
     }
 
+    // use your custom style for ".popup-content"
+
     &-content {
-        position: absolute !important;
-        bottom: 0;
-        width: 100vw;
         padding: 0;
-        animation: slideUp 0.2s ease-out forwards;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
+        width: calc(100vw - 30px);
+        border-radius: 12px;
     }
 `;
 

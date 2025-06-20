@@ -15,6 +15,7 @@ interface IEventCard {
     event_dates: IEventDate[];
     event_restaurant: string;
     onClick: () => void;
+    sold?: boolean;
 }
 
 export const EventCard: FC<IEventCard> = ({
@@ -26,11 +27,20 @@ export const EventCard: FC<IEventCard> = ({
                                               event_address,
                                               event_restaurant,
                                               onClick,
+                                              sold,
                                           }) => {
+    console.log('sold: ', sold);
     return (
-        <div onClick={() => onClick()} style={{ cursor: 'pointer', marginBottom: 5}}>
+        <div onClick={() => {
+            if (sold) {
+                return;
+            }
+            onClick();
+        }} style={{cursor: 'pointer', marginBottom: 5}}>
             <div
-                className={classNames(css.card, css.bgImage)}
+                className={classNames(css.card, css.bgImage,
+                    sold ? css.notActive : null
+                )}
                 style={{
                     backgroundImage: `url(${event_img ? event_img : 'https://storage.yandexcloud.net/bottec-dreamteam/event_placeholder.png'})`,
                 }}

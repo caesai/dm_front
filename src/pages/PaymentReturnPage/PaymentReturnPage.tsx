@@ -10,14 +10,12 @@ export const PaymentReturnPage = () => {
     const navigate = useNavigate();
     const [auth] = useAtom(authAtom);
     useEffect(() => {
-        alert(JSON.stringify(Object.fromEntries([...searchParams])));
         const id = searchParams.get('id');
         if (!id || !auth?.access_token) {
             navigate('/');
             return;
         }
         APIValidatePayment(Number(id), auth.access_token).then((res) => {
-            alert(JSON.stringify(res.data));
             res.data.paid ? navigate(`/tickets/${res.data.event_id}`) : navigate('/');
                 // : res.data.status == 'cancelled'
                 //   ? alert(
@@ -26,8 +24,7 @@ export const PaymentReturnPage = () => {
                 //   : res.data.status == 'new'
                 //     ? alert('Платеж все еще не обработан.')
                 //     : null;
-        }).catch((err) => {
-            alert(JSON.stringify(err.message));
+        }).catch(() => {
             navigate('/');
         });
     }, [searchParams]);

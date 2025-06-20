@@ -54,9 +54,13 @@ export const UserTicketsPage = () => {
                               ))
                         : null}
                     {!tickets.length && !eventsLoading ? (
-                        <span>Список билетов пуст</span>
+                        <span className={css.empty}>Список билетов пуст</span>
                     ) : null}
-                    {tickets.map((ticket, i) => (
+                    {tickets.sort(function(a, b) {
+                        const aDate = new Date(a.date_start);
+                        const bDate = new Date(b.date_start);
+                        return aDate.getTime() - bDate.getTime();
+                    }).map((ticket, i) => (
                         <Ticket key={i} ticket={ticket} />
                     ))}
                 </div>

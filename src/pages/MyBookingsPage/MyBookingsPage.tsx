@@ -46,7 +46,7 @@ export const MyBookingsPage = () => {
                 <div className={css.bookingList}>
                     {!loading ? (
                         <>
-                            {!bookings.length && <h2>Список пуст</h2>}
+                            {!bookings.length && <h2 className={css.header__title}>Список пуст</h2>}
                             {bookings.sort(function(a, b) {
                                 const aDate = new Date(a.booking_date);
                                 const bDate = new Date(b.booking_date);
