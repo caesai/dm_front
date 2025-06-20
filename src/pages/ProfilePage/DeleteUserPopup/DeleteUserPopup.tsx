@@ -30,6 +30,16 @@ interface Props {
     setOpen: (x: boolean) => void;
 }
 
+declare global {
+    interface Window {
+        Telegram: {
+            WebApp: {
+                close: () => void;
+            }
+        };
+    }
+}
+
 export const DeleteUserPopup: FC<Props> = (props) => {
     const close = () => props.setOpen(false);
     const navigate = useNavigate();
@@ -68,6 +78,10 @@ export const DeleteUserPopup: FC<Props> = (props) => {
         if (!authInfo?.access_token) {
             return;
         }
+        // if (window.Telegram && window.Telegram.WebApp) {
+        //         window.Telegram.WebApp.close();
+        // }
+        // return;
         APIDeleteUser(authInfo.access_token).then((res) => {
             console.log('response: ', res);
             setAuth({
@@ -89,6 +103,9 @@ export const DeleteUserPopup: FC<Props> = (props) => {
                 phone_number: ""
             })
             navigate('/onboarding');
+            if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.close();
+            }
         }).catch((err) => {
             if (err.response) {
                 // alert(err.response.data);

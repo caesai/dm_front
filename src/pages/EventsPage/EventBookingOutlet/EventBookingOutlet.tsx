@@ -13,6 +13,7 @@ import {APICreateInvoice} from '@/api/events.ts';
 import {useAtom} from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
 import {guestCountAtom} from '@/atoms/eventBookingAtom.ts';
+import {AppLoadingScreen} from "@/components/AppLoadingScreen/AppLoadingScreen.tsx";
 
 // const confirmationList: IConfirmationType[] = [
 //     {
@@ -45,6 +46,8 @@ export const EventBookingOutlet = () => {
         // email: `${user?.email}`,
         commentary: '',
     });
+    const [loading, setLoading] = useState(false);
+
     // const [iframeSrc, setIframeSrc] = useState<string | null>(null);
 
     const calculateTotal = useMemo(() => {
@@ -80,6 +83,7 @@ export const EventBookingOutlet = () => {
             auth?.access_token &&
             guestCount
         ) {
+            setLoading(true);
             APICreateInvoice(
                 bookingInfo.restaurant.id,
                 bookingInfo.event_date?.id,
@@ -109,6 +113,10 @@ export const EventBookingOutlet = () => {
     //                 allowFullScreen/>
     //     )
     // }
+
+    if (loading) {
+        return <AppLoadingScreen />;
+    }
 
     return (
         <div>
