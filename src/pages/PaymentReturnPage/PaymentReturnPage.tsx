@@ -11,7 +11,7 @@ export const PaymentReturnPage = () => {
     const [auth] = useAtom(authAtom);
     useEffect(() => {
         alert(JSON.stringify(Object.fromEntries([...searchParams])));
-        const id = searchParams.get('order_id');
+        const id = searchParams.get('id');
         if (!id || !auth?.access_token) {
             navigate('/');
             return;
