@@ -17,12 +17,15 @@ import {
     getCurrentWeekdayShort,
     getRestaurantStatus,
 } from '@/utils.ts';
+import {useAtom} from "jotai/index";
+import {userAtom} from "@/atoms/userAtom.ts";
 
 interface IProps {
     restaurant: IRestaurant;
 }
 
 export const RestaurantPreview: FC<IProps> = ({ restaurant }) => {
+    const [user] = useAtom(userAtom);
     return (
         <Link className={css.restaurant} to={`/restaurant/${restaurant.id}`}>
             <div
@@ -31,7 +34,8 @@ export const RestaurantPreview: FC<IProps> = ({ restaurant }) => {
                     backgroundImage: `url(${restaurant.thumbnail_photo})`,
                 }}
             >
-                {restaurant.title === 'Self Edge Japanese' && (
+
+                {user?.username && ['martyad','w0esofwit','egormk','burovburov', 'Sushkazzlo', 'iliathoughts'].includes(user?.username) && restaurant.title === 'Self Edge Japanese' && (
                     <span className={css.discount}>Скидка 10%</span>
                 )}
                 <div className={css.floatingBadges}>
