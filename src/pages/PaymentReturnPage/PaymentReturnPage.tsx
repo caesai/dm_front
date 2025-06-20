@@ -16,6 +16,7 @@ export const PaymentReturnPage = () => {
             return;
         }
         APIValidatePayment(Number(id), auth.access_token).then((res) => {
+            console.log('res.data: ', res.data);
             res.data.paid ? navigate(`/tickets/${res.data.event_id}`) : navigate('/');
                 // : res.data.status == 'cancelled'
                 //   ? alert(
