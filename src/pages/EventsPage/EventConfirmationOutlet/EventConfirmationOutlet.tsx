@@ -10,7 +10,7 @@ import moment from 'moment';
 import classNames from "classnames";
 import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
-import {guestCountAtom} from "@/atoms/eventBookingAtom.ts";
+import {guestCountAtom, selectedEventAtom} from "@/atoms/eventBookingAtom.ts";
 import {userAtom} from "@/atoms/userAtom.ts";
 // import {APIGetAvailableEventTimeslots} from "@/api/events.ts";
 // import {authAtom} from "@/atoms/userAtom.ts";
@@ -27,6 +27,7 @@ export const EventConfirmationOutlet = () => {
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
     const [user] = useAtom(userAtom);
     const [params] = useSearchParams();
+    const [, setEventAtom] = useAtom(selectedEventAtom);
 
     // const [restaurantTimeslots, setRestaurantTimeslots] = useState<ITimeSlot[]>(
     //     []
@@ -77,6 +78,7 @@ export const EventConfirmationOutlet = () => {
                     is_free: true
                 }
             }));
+        setEventAtom({ id: Number(bookingInfo.restaurant?.dates[0].id) });
         // }
     },[]);
 
