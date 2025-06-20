@@ -9,7 +9,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { useAtom } from 'jotai/index';
-import { eventsListAtom } from '@/atoms/eventBookingAtom.ts';
+import {eventsListAtom, selectedEventAtom} from '@/atoms/eventBookingAtom.ts';
 import { APIGetEvents } from '@/api/events.ts';
 import {Share} from "@/components/Icons/Share.tsx";
 import {Toast} from "@/components/Toast/Toast.tsx";
@@ -54,6 +54,7 @@ export const EventsPage = () => {
     const [events, setEvents] = useAtom<IEvent[]>(eventsListAtom);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
+    const [, setEventAtom] = useAtom(selectedEventAtom);
 
         useEffect(() => {
             APIGetEvents().then((res) => {
@@ -78,6 +79,9 @@ export const EventsPage = () => {
                             is_free: true
                         }
                     }));
+                    setEventAtom({
+                        id: eventState[0]?.restaurants[0].dates[0].id,
+                    });
                 } else {
                     setEvents(res.data);
                 }
