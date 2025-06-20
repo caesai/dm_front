@@ -47,8 +47,6 @@ export const EventConfirmationOutlet = () => {
             navigate(`/onboarding/4?eventId=${params.get('eventId')}`);
         }
     };
-    console.log('Event Confirmation Params Object: ', Object.fromEntries([...params]));
-    console.log('Event Confirmation Event ID: ', params.get('eventId'));
     // useEffect(() => {
     //     const eventId = bookingInfo.restaurant?.dates[0].id;
     //     if (!auth?.access_token || !eventId || !bookingInfo.restaurant?.id) {

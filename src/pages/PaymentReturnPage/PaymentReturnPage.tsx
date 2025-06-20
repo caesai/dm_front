@@ -17,7 +17,7 @@ export const PaymentReturnPage = () => {
         }
         APIValidatePayment(Number(id), auth.access_token).then((res) => {
             console.log('res.data: ', res.data);
-            res.data.paid ? navigate(`/tickets/${res.data.event_id}`) : navigate('/');
+            res.data.paid ? navigate(`/tickets/${res.data.event_id}`) : res.data.event_id ? navigate('/') : navigate('/?eventId=eventId_' + id);
                 // : res.data.status == 'cancelled'
                 //   ? alert(
                 //         'При покупке билета произошла ошибка, платеж отменен, денежные средства будут возвращены автоматически.'
