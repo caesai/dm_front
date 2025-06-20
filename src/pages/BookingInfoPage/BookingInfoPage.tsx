@@ -10,7 +10,7 @@ import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CancelBookingPopup } from '@/pages/BookingInfoPage/CancelBookingPopup/CancelBookingPopup.tsx';
 import { InformationPopup } from '@/components/InformationPopup/InformationPopup.tsx';
 import { IBookingInfo } from '@/types/restaurant.ts';
@@ -26,6 +26,7 @@ import {
     formatDateMonthShort,
 } from '@/utils.ts';
 import classNames from 'classnames';
+import { BOOKING_DURATION } from '../../mockData.ts';
 
 export const BookingInfoPage = () => {
     const { id } = useParams();
@@ -34,6 +35,16 @@ export const BookingInfoPage = () => {
     const [canceledPopup, setCanceledPopup] = useState(false);
     const [booking, setBooking] = useState<IBookingInfo>();
     const [auth] = useAtom(authAtom);
+
+    // Return the end time of the booking based on the start time and duration
+    // start is in format 'HH:mm'
+    // duration is in minutes (from BOOKING_DURATION mock data)
+    const getEndTime = useCallback((start: string): string => {
+        const [hours, minutes] = start.split(':').map(Number);
+        const endDate = new Date();
+        endDate.setHours(hours, minutes + BOOKING_DURATION, 0);
+        return endDate.toTimeString().slice(0, 5); // Returns in 'HH:mm' format
+    }, []);
 
     useEffect(() => {
         document.body.style.overflow = 'hidden';
@@ -297,7 +308,7 @@ export const BookingInfoPage = () => {
                                                 css.bookingInfoDetails_item__text
                                             }
                                         >
-                                            {booking.time}
+                                            {`${booking.time}-${getEndTime(booking.time)}`}
                                         </span>
                                     ) : (
                                         <PlaceholderBlock
