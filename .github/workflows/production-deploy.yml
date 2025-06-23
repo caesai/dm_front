@@ -1,24 +1,13 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+# Workflow for deploying TMA to production server
+name: Deploy static content to Production Server
 
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ['dev']
+    branches: ['main']
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
-# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow one concurrent deployment
-concurrency:
-  group: 'pages'
-  cancel-in-progress: true
 
 jobs:
   # Single deploy job since we're just deploying
@@ -41,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build:dev
+        run: npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -52,6 +41,13 @@ jobs:
           # Upload dist repository
           path: './dist'
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Copy folder content recursively to remote
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: dist
+          remote: scp/var/www
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.PASSWORD }}
+          rmRemote: true
+
