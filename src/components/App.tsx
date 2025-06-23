@@ -86,7 +86,7 @@ const AppRouter = () => {
     }, [cities, restaurants]);
 
     return (
-        <BrowserRouter basename={'/dm_front/'}>
+        <BrowserRouter basename={import.meta.env.PROD ? undefined : '/dm_front'}>
             <ScrollToTop />
             <Redirecter />
             {
