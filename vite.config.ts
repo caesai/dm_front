@@ -7,7 +7,7 @@ import {resolve} from 'path'
 // const BASE_URL = process.env.NODE_ENV == 'production' ? '/dm_front/' : '/';
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => ({
-        base: mode === 'development' ? '/' : '/dm_front/',
+        base: mode !== 'development' ? '/' : '/dm_front/',
         plugins: [
             // Allows using React dev server along with building a React application with Vite.
             // https://npmjs.com/package/@vitejs/plugin-react-swc
