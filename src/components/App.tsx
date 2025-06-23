@@ -86,7 +86,7 @@ const AppRouter = () => {
     }, [cities, restaurants]);
 
     return (
-        <BrowserRouter basename={process.env.NODE_ENV !== 'development' ? undefined : '/dm_front'}>
+        <BrowserRouter basename={process.env.PUBLIC_URL}>
             <ScrollToTop />
             <Redirecter />
             {

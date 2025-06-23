@@ -9,7 +9,7 @@
     "dev": "vite --port 3050",
     "dev:https": "cross-env HTTPS=true vite --port 8090",
     "build:prod": "tsc --noEmit && cross-env PROD=true vite build",
-    "build:dev": "tsc --noEmit && cross-env NODE_ENV=development vite build --mode development",
+    "build:dev": "tsc --noEmit && cross-env PUBLIC_URL='/dm_front/' vite build --mode development",
     "build": "tsc --noEmit && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
