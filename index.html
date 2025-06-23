@@ -26,7 +26,7 @@
         }
       })(window.location);
     </script>
-    <base href="%BASE_URL%" />
+    <base href="%PUBLIC_URL%" />
     <style>
       .app_mode {
         visibility: hidden;
@@ -40,7 +40,7 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <div class="app_mode">
-      %MODE% %VITE_API_URL%
+      %MODE% %PUBLIC_URL%
     </div>
     <script src="/src/index.tsx" type="module"></script>
   </body>
