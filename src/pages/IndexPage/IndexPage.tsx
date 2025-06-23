@@ -1,4 +1,4 @@
-import {FC, useEffect, useState} from 'react';
+import {FC, useEffect, useMemo, useState} from 'react';
 import css from './IndexPage.module.css';
 
 import {Page} from '@/components/Page.tsx';
@@ -80,6 +80,11 @@ export const IndexPage: FC = () => {
         setCurrentCityA(city.id);
     };
 
+    const cityOptions = useMemo(
+        () => cityListConfirm.filter(v => v.id !== currentCityS.id),
+        [cityListConfirm, currentCityS.id]
+    );
+
     return (
         <Page back={false}>
             <div className={css.pageContainer}>
@@ -111,7 +116,7 @@ export const IndexPage: FC = () => {
                 <OptionsNavigation/>
                 <div className={css.restaurants}>
                     <CitySelect
-                        options={cityListConfirm}
+                        options={cityOptions}
                         currentValue={currentCityS}
                         onChange={updateCurrentCity}
                     />
