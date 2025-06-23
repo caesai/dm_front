@@ -3,7 +3,7 @@ import css from './ProfilePage.module.css';
 import {RoundedButton} from '@/components/RoundedButton/RoundedButton.tsx';
 import {BackIcon} from '@/components/Icons/BackIcon.tsx';
 import {Link, useNavigate, useSearchParams} from 'react-router-dom';
-// import {TicketsIcon} from '@/components/Icons/TicketsIcon.tsx';
+import {TicketsIcon} from '@/components/Icons/TicketsIcon.tsx';
 import {BookIcon} from '@/components/Icons/BookIcon.tsx';
 import {PenIcon} from '@/components/Icons/PenIcon.tsx';
 import {UserProfileIcon} from '@/components/Icons/UserProfileIcon.tsx';
@@ -14,6 +14,7 @@ import {useState} from 'react';
 import {useAtom} from 'jotai';
 import {backButtonAtom} from '@/atoms/backButtonAtom.ts';
 import {reviewAtom, userAtom} from '@/atoms/userAtom.ts';
+import {DEV_MODE} from "@/api/base.ts";
 
 export const ProfilePage = () => {
     const [params] = useSearchParams();
@@ -54,13 +55,15 @@ export const ProfilePage = () => {
                                 Мои бронирования
                             </span>
                         </Link>
-                                {/*<span*/}
-                                {/*    className={css.navLink}*/}
-                                {/*    onClick={() => navigate('/tickets')}*/}
-                                {/*>*/}
-                                {/*    <TicketsIcon size={24} color={'black'}/>*/}
-                                {/*    <span className={css.navLinkTitle}>Мои билеты</span>*/}
-                                {/*</span>*/}
+                        {DEV_MODE && (
+                            <span
+                                className={css.navLink}
+                                onClick={() => navigate('/tickets')}
+                            >
+                                    <TicketsIcon size={24} color={'black'}/>
+                                    <span className={css.navLinkTitle}>Мои билеты</span>
+                                </span>
+                        )}
                         {review.available ? (
                             <span
                                 className={css.navLink}

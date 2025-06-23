@@ -1,12 +1,13 @@
 import css from './OptionsNavigation.module.css';
 import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
 // import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
-// import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
+import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import {PrivelegiesPopup} from "@/components/PrivelegiesPopup/PrivelegiesPopup.tsx";
 import {useState} from "react";
 import { useAtom } from 'jotai/index';
 import {userAtom} from "@/atoms/userAtom.ts";
 import {StarPrivelegyIcon} from "@/components/Icons/StarPrivelegy.tsx";
+import {DEV_MODE} from "@/api/base.ts";
 // import { reviewAtom } from '@/atoms/userAtom.ts';
 // import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
@@ -28,11 +29,11 @@ export const OptionsNavigation = () => {
     return (
         <div className={css.optionsNavigation}>
             <PrivelegiesPopup isOpen={isOpen} setOpen={setIsOpen} />
-            {/*<OptionsNavigationElement*/}
-            {/*    icon={<CalendarIcon size={20} color={'var(--light-grey)'} />}*/}
-            {/*    title={'Мероприятия'}*/}
-            {/*    link={'/events'}*/}
-            {/*/>*/}
+            {DEV_MODE && <OptionsNavigationElement
+                icon={<CalendarIcon size={20} color={'var(--light-grey)'}/>}
+                title={'Мероприятия'}
+                link={'/events'}
+            />}
             {user?.username && ['martyad','w0esofwit','egormk','burovburov', 'Sushkazzlo', 'iliathoughts'].includes(user?.username) && (
                 <OptionsNavigationElement
                     icon={<StarPrivelegyIcon size={23} color={'var(--light-grey)'}  />}
