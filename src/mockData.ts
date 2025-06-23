@@ -4,6 +4,8 @@ import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx'
 // import { IRestaurant } from '@/types/restaurant.ts';
 // import { ICity } from '@/atoms/cityListAtom.ts';
 
+export const BOOKING_DURATION = 120; // in minutes
+
 export const mockMenu: IMenuItem[] = [
     {
         title: 'Крем - суп из пастернака 1',
