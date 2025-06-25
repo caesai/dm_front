@@ -125,6 +125,16 @@
     color: var(--grey);
 }
 
+.resFirst {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: white;
+    background-color: red;
+    border-radius: 16px;
+    padding: 3px 10px;
+}
+
 .swiperSlide {
     width: 130px;
     height: 130px;
