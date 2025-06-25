@@ -10,7 +10,7 @@ import {SwiperSlide} from 'swiper/react';
 import {RestaurantBadgePhoto} from '@/components/RestaurantPreview/RestaurantBadgePhoto/RestaurantBadgePhoto.tsx';
 import {InfoTag} from '@/components/InfoTag/InfoTag.tsx';
 import {Link} from 'react-router-dom';
-import {FC} from 'react';
+import {FC, useState} from 'react';
 import {IRestaurant} from '@/types/restaurant.ts';
 import {
     getCurrentTimeShort,
@@ -18,8 +18,10 @@ import {
     getRestaurantStatus,
 } from '@/utils.ts';
 import {useAtom} from "jotai/index";
-import {userAtom} from "@/atoms/userAtom.ts";
+import {authAtom, userAtom} from "@/atoms/userAtom.ts";
 import BBQNEW from '/img/BBQNEW.png';
+import {APIPostNewRestaurant} from "@/api/restaurants.ts";
+import {Toast} from "@/components/Toast/Toast.tsx";
 
 interface IProps {
     restaurant: IRestaurant;
@@ -27,8 +29,28 @@ interface IProps {
 
 export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
     const [user] = useAtom(userAtom);
+    const [auth] = useAtom(authAtom);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastShow, setToastShow] = useState<boolean>(false);
+
     const wantToBeFirst = () => {
         //
+        if (!auth?.access_token) {
+            return;
+        }
+        APIPostNewRestaurant(auth?.access_token).then((res) => {
+            console.log('res: ', res);
+            setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
+            setToastShow(true);
+            setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
+        }).catch((err) => {
+            if (err.response) {
+                // alert(err.response.data);
+                setToastMessage('Возникла ошибка: ' + err.response.data.message);
+                setToastShow(true);
+                setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
+            }
+        });
     }
     return (
         <Link className={css.restaurant} to={restaurant.id === 11 ? '' : `/restaurant/${restaurant.id}`}>
@@ -108,6 +130,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                         </>
                     )}
                 </div>
+                <Toast message={toastMessage} showClose={toastShow} />
             </div>
         </Link>
     );
