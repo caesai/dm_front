@@ -6,13 +6,13 @@ import { requestPhone } from '@/components/RequestPermissions/utils.ts';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { APIUserInfo } from '@/api/auth.ts';
-import { useNavigate, useSearchParams} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {getDataFromLocalStorage} from "@/utils.ts";
 
 export const UserPhoneConfirmationPage = () => {
     const [user, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
-    const [params] = useSearchParams();
 
     const updateUser = () => {
         if (!auth?.access_token) {
@@ -30,16 +30,18 @@ export const UserPhoneConfirmationPage = () => {
             5000
         );
     };
+
     useEffect(() => {
         if (user?.phone_number) {
-            if(params.get('eventId')) {
-                navigate(`/?eventId=eventId_${params.get('eventId')}&fromlink&details`);
+            const sharedEvent = getDataFromLocalStorage('sharedEvent');
+            if(sharedEvent) {
+                navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
             } else {
                 navigate('/');
             }
         }
     }, [user]);
-    console.log('Phone confirm params: ', Object.fromEntries([...params]));
+
     useEffect(() => {
         if (mainButton.mount.isAvailable()) {
             mainButton.mount();

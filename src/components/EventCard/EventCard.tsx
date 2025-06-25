@@ -46,7 +46,10 @@ export const EventCard: FC<IEventCard> = ({
                 }}
             >
                 <div className={css.footer}>
-                    <span className={classNames(css.card_price)}>{event_price} ₽</span>
+                    {!sold ? <span className={classNames(css.card_price)}>{event_price} ₽</span> :
+                        (
+                            <span className={classNames(css.card_price)}>Sold out</span>
+                        )}
                     {/*<span className={css.footer__title}>{event_name}</span>*/}
                     {/*<span className={css.footer__address}>{event_desc}</span>*/}
                 </div>

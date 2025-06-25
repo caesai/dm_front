@@ -1,56 +1,31 @@
-// import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import {CalendarIcon} from '@/components/Icons/CalendarIcon.tsx';
 import classNames from 'classnames';
 import {TextInput} from '@/components/TextInput/TextInput.tsx';
-// import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from './EventBookingOutlet.module.css';
 import {useNavigate, useOutletContext} from 'react-router-dom';
-import {formatDateDT, IEventBookingContext} from '@/utils.ts';
+import {formatDateDT, getDataFromLocalStorage, IEventBookingContext, removeDataFromLocalStorage} from '@/utils.ts';
 import {useMemo, useState} from 'react';
 import moment from 'moment';
 import {APICreateInvoice} from '@/api/events.ts';
 import {useAtom} from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
-import {guestCountAtom, selectedEventAtom} from '@/atoms/eventBookingAtom.ts';
+import {guestCountAtom} from '@/atoms/eventBookingAtom.ts';
 import {AppLoadingScreen} from "@/components/AppLoadingScreen/AppLoadingScreen.tsx";
-
-// const confirmationList: IConfirmationType[] = [
-//     {
-//         id: 'telegram',
-//         text: 'В Telegram',
-//     },
-//     {
-//         id: 'phone',
-//         text: 'По телефону',
-//     },
-//     {
-//         id: 'none',
-//         text: 'Без подтверждения',
-//     },
-// ];
 
 export const EventBookingOutlet = () => {
     const navigate = useNavigate();
     const [bookingInfo] = useOutletContext<IEventBookingContext>();
     const [guestCount] = useAtom(guestCountAtom);
-    // const [confirmation, setConfirmation] = useState<IConfirmationType>({
-    //     id: 'telegram',
-    //     text: 'В Telegram',
-    // });
+
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [userInfo, setUserInfo] = useState({
         name: `${user?.first_name}`,
         phone: `${user?.phone_number}`,
-        // email: `${user?.email}`,
         commentary: '',
     });
     const [loading, setLoading] = useState(false);
-    const [eventAtom] = useAtom(selectedEventAtom);
-
-    console.log('eventAtom: ', eventAtom);
-    // const [iframeSrc, setIframeSrc] = useState<string | null>(null);
 
     const calculateTotal = useMemo(() => {
         const ticketPrice = bookingInfo.event?.ticket_price;
@@ -67,8 +42,6 @@ export const EventBookingOutlet = () => {
             bookingInfo.date &&
             userInfo.name &&
             userInfo.phone &&
-            // userInfo.email &&
-            // confirmation.text &&
             auth?.access_token
         );
     }, [bookingInfo, userInfo, auth]);
@@ -80,8 +53,6 @@ export const EventBookingOutlet = () => {
             bookingInfo.date &&
             userInfo.name &&
             userInfo.phone &&
-            // userInfo.email &&
-            // confirmation.text &&
             auth?.access_token &&
             guestCount
         ) {
@@ -92,14 +63,16 @@ export const EventBookingOutlet = () => {
                 bookingInfo.date,
                 userInfo.name,
                 userInfo.phone,
-                // userInfo.email,
                 '',
                 userInfo.commentary,
-                // confirmation.text,
                 'В Telegram',
                 guestCount,
                 auth?.access_token
             ).then((res) => {
+                const sharedEvent = getDataFromLocalStorage('sharedEvent');
+                if (sharedEvent) {
+                    removeDataFromLocalStorage('sharedEvent');
+                }
                 res.data.payment_url
                     ? window.location.replace(res.data.payment_url)
                     : navigate('/events');
@@ -107,19 +80,9 @@ export const EventBookingOutlet = () => {
         }
     };
 
-    // if (iframeSrc) {
-    //     window.parent.location.replace(iframeSrc + '&embedded=true');
-    //     return (
-    //         <iframe src={iframeSrc} style={{width: '100%', height: '500px'}} frameBorder="0"
-    //                 sandbox="allow-scripts allow-popups"
-    //                 allowFullScreen/>
-    //     )
-    // }
-
     if (loading) {
         return <AppLoadingScreen />;
     }
-
     return (
         <div>
             <div className={css.contentContainer__top}>

@@ -527,3 +527,15 @@ export function NearestCity(latitude: number, longitude: number) {
     // echo the nearest city
     return cities[Number(closest)];
 }
+
+export const setDataToLocalStorage = (itemKey: string, data: object) => {
+    localStorage.setItem(itemKey, JSON.stringify(data));
+}
+
+export const getDataFromLocalStorage = (itemKey: string) => {
+    return localStorage.getItem(itemKey);
+}
+
+export const removeDataFromLocalStorage = (itemKey: string) => {
+    localStorage.removeItem(itemKey);
+}

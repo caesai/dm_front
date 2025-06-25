@@ -5,6 +5,7 @@ import {
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import {APIGetEvents} from "@/api/events.ts";
+import {setDataToLocalStorage} from "@/utils.ts";
 
 export const Redirecter = () => {
     const location = useLocation();
@@ -36,17 +37,15 @@ export const Redirecter = () => {
     const redirectToEvent = () => {
         APIGetEvents().then((res) => {
             const paramsObject = Object.fromEntries([...params]);
-            console.log('Params Object In Redirecter: ', paramsObject);
             const eventId = getEventIdFromParams(paramsObject);
-            console.log('eventId', eventId);
             const event = res.data.filter((event) =>
                 event.restaurants.some((restaurant) => {
                         return restaurant.dates[0].id.toString() === eventId;
                     }
                 )
             );
-            console.log('event in redirecter: ', event);
-            navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests/?fromlink&eventId=' + eventId);
+            navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests');
+            setDataToLocalStorage('sharedEvent', { eventId, resId: event[0].restaurants[0].id, eventName: event[0].name });
         });
     }
 
@@ -57,13 +56,7 @@ export const Redirecter = () => {
             user?.complete_onboarding &&
             !EXCLUDED_URLS.includes(location.pathname)
         ) {
-            if (
-                location.search.includes('event')
-            ) {
-                navigate(`/phoneConfirmation?eventId=${params.get('eventId')}`);
-            } else {
-                navigate('/phoneConfirmation');
-            }
+            navigate('/phoneConfirmation');
         }
         if (
             auth?.access_token &&

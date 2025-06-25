@@ -48,7 +48,7 @@
 .footer {
     display: flex;
     position: relative;
-    flex-direction: column;
+    flex-direction: row;
     gap: 2px;
     /*backdrop-filter: blur(18px);*/
     padding: 10px 15px;

@@ -15,7 +15,6 @@ export const OptionsNavigation = () => {
     // const [review] = useAtom(reviewAtom);
     const [isOpen, setIsOpen] = useState(false);
     const [user] = useAtom(userAtom);
-    console.log(user?.first_name);
 
     // useEffect(() => {
     //     if (!auth?.access_token) {

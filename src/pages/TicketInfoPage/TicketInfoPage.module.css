@@ -44,6 +44,7 @@
 
 .ticket_header {
     display: flex;
+    flex-direction: column;
     gap: 12px;
     padding-bottom: 16px;
     border-bottom: 1px dashed #e7e7e7;
@@ -52,8 +53,8 @@
 .ticket_header_img {
     border-radius: 12px;
     /*width: 85px;*/
-    min-width: 85px;
-    height: 85px;
+    /*min-width: 85px;*/
+    height: 165px;
 }
 
 .ticket_header_details {

@@ -1,17 +1,17 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import {useState} from 'react';
-import {useNavigate, useSearchParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {APICompleteOnboarding} from '@/api/user.ts';
 import {useAtom} from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
+import {getDataFromLocalStorage} from "@/utils.ts";
 
 export const StageSix = () => {
     const [agree, setAgree] = useState(false);
     const [user, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
-    const [params] = useSearchParams();
 
     const handleConfirm = () => {
         if (!agree || !user || !auth?.access_token) {
@@ -20,9 +20,9 @@ export const StageSix = () => {
         APICompleteOnboarding(auth.access_token, agree)
             .then((d) => setUser(d.data))
             .then(() => {
-                console.log('Onboarding params: ', params.get('eventId'));
-                if(params.get('eventId')) {
-                    navigate(`/?eventId=${params.get('eventId')}`);
+                const sharedEvent = getDataFromLocalStorage('sharedEvent');
+                if(sharedEvent) {
+                    navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
                 } else {
                     navigate('/');
                 }
@@ -33,7 +33,6 @@ export const StageSix = () => {
                 )
             );
     };
-    console.log('Onboarding params: ', Object.fromEntries([...params]));
     return (
         <div className={css.stage_page}>
             <div className={css.stage_page_wrapper}>
