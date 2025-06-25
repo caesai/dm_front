@@ -159,9 +159,14 @@ export const APIGetEventsInRestaurant = async (restaurant_id: number) => {
 };
 
 export const APIPostNewRestaurant = (token: string) => {
-    return axios.post<IBookingInfo>(`${BASE_URL}/restaurant/new`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
+    return axios.post(
+        `${BASE_URL}/restaurant/new`,
+        {
         },
-    });
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
 };
