@@ -38,10 +38,10 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
         if (!auth?.access_token) {
             return;
         }
+        setToastShow(true);
         APIPostNewRestaurant(auth?.access_token).then((res) => {
             console.log('res: ', res);
             // setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
-            setToastShow(true);
             // setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
         }).catch((err) => {
             if (err.response) {
