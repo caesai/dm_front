@@ -101,7 +101,7 @@ export const IndexPage: FC = () => {
             title: "Smoke BBQ",
             worktime: [],
         }
-        const restaurantList = [...restaurants, mockedRes];
+        const restaurantList = [mockedRes, ...restaurants];
         setRestaurantsList(
             restaurantList.filter((v) => v.city.name_english == currentCityA)
         );
