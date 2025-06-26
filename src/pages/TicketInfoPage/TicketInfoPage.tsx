@@ -15,6 +15,11 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import { formatDateDT } from '@/utils.ts';
 import moment from 'moment';
 import QRCode from 'react-qr-code';
+import jsPDF from "jspdf";
+// import {BASE_BOT} from "@/api/base.ts";
+import {Buffer} from 'buffer';
+import {MontFont} from "@/components/MontFont/Montfont.ts";
+
 
 export const TicketInfoPage = () => {
     const navigate = useNavigate();
@@ -30,6 +35,31 @@ export const TicketInfoPage = () => {
             setTicket(res.data);
         });
     }, [id]);
+
+    const sharePdf = () => {
+        const doc = new jsPDF("p","pt","a4");
+        doc.html(document.getElementById('ticket'), {
+            callback: function (doc) {
+                // doc.save('doc.pdf');
+                doc.addFileToVFS('/fonts/mont/Mont-Regular.ttf', MontFont);
+                doc.addFont('/fonts/mont/Mont-Regular.ttf', 'Mont-Regular', 'normal');
+                doc.setFont('Mont-Regular');
+                // const jpegUrl = document.getElementById('qr').toDataURL("image/jpeg");
+                // doc.addImage(jpegUrl, 'JPEG', 0, 0);
+                const buffer = Buffer.from(doc.output(), 'utf-8')
+                const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
+                const files = [pdf];
+                navigator.share({
+                    files
+                }).then();
+            },
+            html2canvas: {
+                scale: 0.8, // Adjust scaling factor if needed
+                encoding: 'utf-8',
+            },
+            // fontFaces: ['Mont']
+        });
+    }
     return (
         <Page back={true}>
             <div className={css.body}>
@@ -57,13 +87,13 @@ export const TicketInfoPage = () => {
 
                         <RoundedButton
                             icon={<DownloadIcon />}
-                            action={() => alert('download')}
+                            action={sharePdf}
                             bgColor={'var(--primary-background)'}
                         />
                     </div>
                 </div>
 
-                <div className={css.ticket}>
+                <div className={css.ticket} id={'ticket'}>
                     <div className={css.ticket_header}>
                         <div
                             className={classNames(
@@ -243,7 +273,7 @@ export const TicketInfoPage = () => {
                         }}
                     >
                         {ticket ? (
-                            <QRCode size={128} value={String(`${ticket.id}`)} />
+                            <QRCode size={128} value={String(`${ticket.id}`)} id={'qr'} />
                         ) : (
                             <PlaceholderBlock
                                 width={'128px'}

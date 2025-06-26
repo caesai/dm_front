@@ -21,7 +21,7 @@ import {useAtom} from "jotai/index";
 import {authAtom, userAtom} from "@/atoms/userAtom.ts";
 import BBQNEW from '/img/BBQNEW.png';
 import {APIPostNewRestaurant} from "@/api/restaurants.ts";
-import {Toast} from "@/components/Toast/Toast.tsx";
+// import {Toast} from "@/components/Toast/Toast.tsx";
 
 interface IProps {
     restaurant: IRestaurant;
@@ -30,7 +30,7 @@ interface IProps {
 export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    // const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
 
     const wantToBeFirst = () => {
@@ -40,22 +40,22 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
         }
         APIPostNewRestaurant(auth?.access_token).then((res) => {
             console.log('res: ', res);
-            setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
+            // setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
             setToastShow(true);
-            setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
+            // setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
         }).catch((err) => {
             if (err.response) {
                 // alert(err.response.data);
-                setToastMessage('Возникла ошибка: ' + err.response.data.message);
-                setToastShow(true);
-                setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
+                // setToastMessage('Возникла ошибка: ' + err.response.data.message);
+                // setToastShow(true);
+                // setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
             }
         });
     }
     return (
         <Link className={css.restaurant} to={restaurant.id === 11 ? '' : `/restaurant/${restaurant.id}`}>
             <div
-                className={classNames(css.imaged, css.bgImage)}
+                className={classNames(css.bgImage, restaurant.id !== 11 ? css.imaged : css.bgNoImaged)}
                 style={{
                     backgroundImage: `url(${restaurant.id === 11 ? BBQNEW : restaurant.thumbnail_photo})`,
                 }}
@@ -117,12 +117,19 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                     <span className={css.resSlogan}>{restaurant.address}</span>
                 </div>
                 <div className={css.tags}>
-                    {restaurant.id === 11 ? <span onClick={wantToBeFirst} className={css.resFirst}>Хочу побывать первым</span> : (
+                    {restaurant.id === 11 ? toastShow ? (
+                        <div className={css.success_animation}>
+                            <svg className={css.checkmark} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                <circle className={css.checkmark__circle} cx="26" cy="26" r="25" fill="none"/>
+                                <path className={css.checkmark__check} fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                            </svg>
+                        </div>
+                    ) : <span onClick = {wantToBeFirst} className = {css.resFirst} > Хочу побывать первым</span> : (
                         <>
-                            <InfoTag
-                                text={getRestaurantStatus(
-                                    restaurant.worktime,
-                                    getCurrentWeekdayShort(),
+                        <InfoTag
+                        text={getRestaurantStatus(
+                        restaurant.worktime,
+                        getCurrentWeekdayShort(),
                                     getCurrentTimeShort()
                                 )}
                             />
@@ -130,7 +137,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                         </>
                     )}
                 </div>
-                <Toast message={toastMessage} showClose={toastShow} />
+                {/*<Toast message={toastMessage} showClose={toastShow} />*/}
             </div>
         </Link>
     );
