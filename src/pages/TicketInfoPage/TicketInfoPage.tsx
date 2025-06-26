@@ -38,7 +38,7 @@ export const TicketInfoPage = () => {
 
     const sharePdf = () => {
         const doc = new jsPDF("p","pt","a4");
-        doc.html(document.getElementById('ticket'), {
+        doc.html(document.getElementById('ticket') as HTMLElement, {
             callback: function (doc) {
                 // doc.save('doc.pdf');
                 doc.addFileToVFS('/fonts/mont/Mont-Regular.ttf', MontFont);
@@ -55,7 +55,6 @@ export const TicketInfoPage = () => {
             },
             html2canvas: {
                 scale: 0.8, // Adjust scaling factor if needed
-                encoding: 'utf-8',
             },
             // fontFaces: ['Mont']
         });
