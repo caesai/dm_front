@@ -40,7 +40,7 @@ export const BookingCard: FC<BookingCardProps> = ({
                     !active || new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() > new Date(date).getTime() ? css.card_date__notActive : null
                 )}
             >
-                {new Date(date).toLocaleDateString()} в {time}
+                {new Date(date).toLocaleDateString('ru-RU')} в {time}
             </span>
             <div className={css.footer}>
                 <span className={css.footer__title}>{title}</span>
