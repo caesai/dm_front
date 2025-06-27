@@ -39,6 +39,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
             return;
         }
         setToastShow(true);
+
         APIPostNewRestaurant(auth?.access_token).then((res) => {
             console.log('res: ', res);
             // setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
