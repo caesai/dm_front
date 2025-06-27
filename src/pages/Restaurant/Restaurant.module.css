@@ -111,8 +111,11 @@
     height: 80px;
     z-index: 1000;
     bottom: 0;
-    background-color: rgba(255, 255, 255, 1);
+    background-color: #fff;
     padding: 15px 0;
+    border-top-right-radius: 16px;
+    border-top-left-radius: 16px;
+    box-shadow: 1px 0 1px;
 }
 
 .floatingFooterWrapper {
