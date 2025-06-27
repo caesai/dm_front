@@ -225,23 +225,23 @@ export const mockBookingDate = new Date();
 const BOOKINGCOMMENTMOCK = [
     {
         text: 'День рождения',
-        emoji: '🥞',
+        emoji: '🎂',
     },
     {
         text: 'Свидание',
-        emoji: '☕️',
+        emoji: '❤️',
     },
     {
         text: 'Деловая встреча',
-        emoji: '☕️',
+        emoji: '🤝',
     },
     {
         text: 'Годовщина',
-        emoji: '☕️',
+        emoji: '🥂',
     },
     {
         text: 'Семейный ужин',
-        emoji: '☕️',
+        emoji: '🫶',
     },
     {
         text: 'Буду с животным',
