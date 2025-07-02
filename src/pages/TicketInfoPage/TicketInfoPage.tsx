@@ -15,10 +15,13 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import { formatDateDT } from '@/utils.ts';
 import moment from 'moment';
 import QRCode from 'react-qr-code';
-import jsPDF from "jspdf";
+// import jsPDF from "jspdf";
 // import {BASE_BOT} from "@/api/base.ts";
 import {Buffer} from 'buffer';
-import {MontFont} from "@/components/MontFont/Montfont.ts";
+// import {MontFont} from "@/components/MontFont/Montfont.ts";
+// import '../../../public/'
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
 
 
 export const TicketInfoPage = () => {
@@ -37,27 +40,44 @@ export const TicketInfoPage = () => {
     }, [id]);
 
     const sharePdf = () => {
-        const doc = new jsPDF("p","pt","a4");
-        doc.html(document.getElementById('ticket') as HTMLElement, {
-            callback: function (doc) {
-                // doc.save('doc.pdf');
-                doc.addFileToVFS('/fonts/mont/Mont-Regular.ttf', MontFont);
-                doc.addFont('/fonts/mont/Mont-Regular.ttf', 'Mont-Regular', 'normal');
-                doc.setFont('Mont-Regular');
-                // const jpegUrl = document.getElementById('qr').toDataURL("image/jpeg");
-                // doc.addImage(jpegUrl, 'JPEG', 0, 0);
-                const buffer = Buffer.from(doc.output(), 'utf-8')
-                const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
-                const files = [pdf];
-                navigator.share({
-                    files
-                }).then();
-            },
-            html2canvas: {
-                scale: 0.8, // Adjust scaling factor if needed
-            },
-            // fontFaces: ['Mont']
+        // const doc = new jsPDF("p","px","a4");
+        // doc.addFileToVFS('Mont-Regular.ttf', MontFont);
+        // doc.addFont('Mont-Regular.ttf', 'Mont-Regular', 'normal');
+        // doc.setFont('Mont-Regular');
+        const ticketEl = document.getElementById('ticket');
+        html2pdf().from(ticketEl).output('blob').then((pdfAsString:string) => {
+            console.log('pdfAsString: ', pdfAsString);
+            const buffer = Buffer.from(pdfAsString, 'utf-8')
+            const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
+            const files = [pdf];
+            navigator.share({
+                files
+            }).then();
         });
+        // const buffer = Buffer.from(pdfOutput, 'utf-8')
+        // const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
+        // const files = [pdf];
+        // navigator.share({
+        //     files
+        // }).then();
+        // doc.html(document.getElementById('ticket') as HTMLElement, {
+        //     callback: function (res) {
+        //         // doc.save('doc.pdf');
+        //
+        //         // const jpegUrl = document.getElementById('qr').toDataURL("image/jpeg");
+        //         // doc.addImage(jpegUrl, 'JPEG', 0, 0);
+        //         const buffer = Buffer.from(res.output(), 'utf-8')
+        //         const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
+        //         const files = [pdf];
+        //         navigator.share({
+        //             files
+        //         }).then();
+        //     },
+        //     html2canvas: {
+        //         scale: 1, // Adjust scaling factor if needed
+        //     },
+        //     // fontFaces: ['Mont']
+        // });
     }
     return (
         <Page back={true}>

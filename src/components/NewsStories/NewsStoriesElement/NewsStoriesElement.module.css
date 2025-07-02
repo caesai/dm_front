@@ -5,17 +5,24 @@
     border-radius: 20px;
     overflow: hidden;
     text-align: center;
+    position: relative;
 }
 
 .newsText {
-    padding: 12px 11px 12px 12px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    backdrop-filter: blur(20px);
+    /*padding: 12px 11px 12px 12px;*/
+    padding: 8px;
+    width: 100%;
 }
 
 .newsText span {
     font-size: 12px;
     line-height: 14px;
     font-family: 'Mont';
-    color: var(--black);
+    color: var(--tgui--white);
 }
 
 .newsImage {
@@ -32,4 +39,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+.isClicked {
+    border: 2px solid var(--red);
 }

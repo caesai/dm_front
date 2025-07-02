@@ -3,7 +3,10 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import phone from "/img/onboarding/phone.png";
 
-export const StageFive = () => {
+interface StageFiveProps {
+    isStory?: boolean;
+}
+export const StageFive: React.FC<StageFiveProps> = ({isStory}) => {
     const navigate = useNavigate();
 
     return (
@@ -58,7 +61,7 @@ export const StageFive = () => {
                             </span>
                         </div>
                     </div>
-                    <div className={css.button_container}>
+                    {!isStory && (<div className={css.button_container}>
                         <div
                             className={css.redButton}
                             //onClick={() => navigate('/onboarding/6')}
@@ -66,7 +69,7 @@ export const StageFive = () => {
                         >
                             <span>Продолжить</span>
                         </div>
-                    </div>
+                    </div>)}
                 </div>
                 <div className={css.stageFive_wrapper}>
                     {/*<div className={css.stageFive_image}>*/}

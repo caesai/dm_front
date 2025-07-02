@@ -126,7 +126,9 @@
 
 .stageOne_icons {
     width: 375px;
-    height: 434px;
+    /*width: 100%;*/
+    height: 400px;
+    position: relative;
 
     .stageOne_icons_1 {
         left: 110px;
@@ -134,38 +136,38 @@
     }
 
     .stageOne_icons_2 {
-        left: -131px;
-        top: 50px;
+        left: 0;
+        top: 0;
         z-index: 1;
     }
 
     .stageOne_icons_3 {
-        left: 259px;
-        top: -113px;
+        right: 0;
+        top: -23px;
         z-index: 1;
     }
 
     .stageOne_icons_4 {
-        left: 35px;
-        top: -33px;
+        left: 145px;
+        top: 43px;
         z-index: 2;
     }
 
     .stageOne_icons_5 {
-        left: 50px;
-        top: -113px;
+        left: 40px;
+        top: 93px;
         z-index: 1;
     }
 
     .stageOne_icons_6 {
-        left: 127px;
-        top: -71px;
+        right: 40px;
+        top: 151px;
         z-index: 1;
     }
 
     .stageOne_icons_7 {
         left: 11px;
-        top: -141px;
+        top: 201px;
         z-index: 0;
     }
 
@@ -179,7 +181,7 @@
 
 .stageOne_icon {
     filter: drop-shadow(8px 8px 17px rgba(86, 85, 85, 0.5));
-    position: relative;
+    position: absolute;
     width: 130px;
     height: 130px;
 }

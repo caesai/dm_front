@@ -5,7 +5,11 @@ import event1 from '/img/onboarding/event1.png';
 import event2 from '/img/onboarding/event2.jpg';
 import event3 from '/img/onboarding/event3.jpg';
 
-export const StageThree = () => {
+interface StageThreeProps {
+    isStory?: boolean;
+}
+
+export const StageThree: React.FC<StageThreeProps> = ({isStory}) => {
     const navigate = useNavigate();
     return (
         <div className={classNames(css.stage_page)}>
@@ -24,7 +28,8 @@ export const StageThree = () => {
                             бранчи и многое другое.
                         </span>
                     </div>
-                    <div className={css.button_container}>
+                    {!isStory && (
+                        <div className={css.button_container}>
                         <div
                             className={css.redButton}
                             onClick={() => navigate('/onboarding/4')}
@@ -32,6 +37,7 @@ export const StageThree = () => {
                             <span>Продолжить</span>
                         </div>
                     </div>
+                    )}
                 </div>
                 <div className={css.stageThree_wrapper}>
                     <div className={css.stageThree_images}>

@@ -3,7 +3,11 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { Star } from 'react-iconly';
 
-export const StageFour = () => {
+interface StageFourProps {
+    isStory?: boolean;
+}
+
+export const StageFour: React.FC<StageFourProps> = ({isStory}) => {
     const navigate = useNavigate();
     return (
         <div className={classNames(css.stage_page)}>
@@ -21,14 +25,14 @@ export const StageFour = () => {
                             Чтобы стать лучше, нам важно ваше мнение.
                         </span>
                     </div>
-                    <div className={css.button_container}>
+                    {!isStory && (<div className={css.button_container}>
                         <div
                             className={css.redButton}
                             onClick={() => navigate('/onboarding/5')}
                         >
                             <span>Продолжить</span>
                         </div>
-                    </div>
+                    </div>)}
                 </div>
                 <div className={css.stageFour_wrapper}>
                     <div className={css.stageFour_content}>

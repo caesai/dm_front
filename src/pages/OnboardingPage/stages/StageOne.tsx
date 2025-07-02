@@ -9,8 +9,13 @@ import poly from "/img/onboarding/poly.png"
 import pame from "/img/onboarding/pame.png";
 // import beer from "/img/onboarding/beer.png";
 import self from "/img/onboarding/self.png";
+// import restaurants_logo from "/img/onboarding/restaurants_logo.png";
 
-export const StageOne = () => {
+interface StageOneProps {
+    isStory?: boolean;
+}
+
+export const StageOne: React.FC<StageOneProps> = ({ isStory }) => {
     const navigate = useNavigate();
     return (
         <div className={css.stage_page}>
@@ -24,7 +29,8 @@ export const StageOne = () => {
                             Собрали все рестораны Dreamteam в одном месте.
                         </span>
                     </div>
-                    <div className={css.button_container}>
+                    {!isStory && (
+                        <div className={css.button_container}>
                         <div
                             className={css.redButton}
                             onClick={() => navigate('/onboarding/2')}
@@ -32,9 +38,12 @@ export const StageOne = () => {
                             <span>Продолжить</span>
                         </div>
                     </div>
+                    )}
                 </div>
                 <div className={css.stageOne_wrapper}>
-                    <div className={css.stageOne_icons}>
+                    {/*<div className={css.stageOne_icons} style={{ backgroundImage: `url(${restaurants_logo})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}  >*/}
+                        <div className={css.stageOne_icons} >
+                        {/*<img src={restaurants_logo} className={css.stageOne_icon} style={{ maxWidth: '100%'}} alt="restaurants_logo" />*/}
                         <img
                             src={blackChops}
                             style={{ visibility: "hidden" }}

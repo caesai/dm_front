@@ -3,36 +3,48 @@ import { NewsStoriesElement } from '@/components/NewsStories/NewsStoriesElement/
 import css from './NewsStories.module.css';
 import { FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import {useState} from "react";
+import StoriesContainer from "@/components/NewsStories/StoriesContainer/StoriesContainer.tsx";
 
 export const NewsStories = () => {
+    const [activeIndex, setActiveIndex] = useState<number>();
+    const openStory = (index: number) => {
+        setActiveIndex(index);
+    }
+    const closeStory = () => {
+        setActiveIndex(undefined);
+    }
     return (
-        <div className={css.newsSlider}>
+        <>
+            <StoriesContainer onClose={closeStory} activeIndex={activeIndex} />
+            <div className={css.newsSlider}>
             <Swiper
                 slidesPerView="auto"
                 modules={[FreeMode]}
                 freeMode={true}
                 spaceBetween={0}
             >
-                <SwiperSlide style={{ width: '100px' }}>
-                    <NewsStoriesElement />
+                <SwiperSlide style={{ width: '100px', marginRight: 10 }}>
+                    <NewsStoriesElement onClick={openStory} index={0} />
                 </SwiperSlide>
-                <SwiperSlide style={{ width: '100px' }}>
-                    <NewsStoriesElement />
-                </SwiperSlide>
-                <SwiperSlide style={{ width: '100px' }}>
-                    <NewsStoriesElement />
-                </SwiperSlide>
-                <SwiperSlide style={{ width: '100px' }}>
-                    <NewsStoriesElement />
-                </SwiperSlide>
-                <SwiperSlide style={{ width: '100px' }}>
-                    <NewsStoriesElement />
-                </SwiperSlide>
+                {/*<SwiperSlide style={{ width: '100px', marginRight: 10 }}>*/}
+                {/*    <NewsStoriesElement onClick={openStory} index={0}  />*/}
+                {/*</SwiperSlide>*/}
+                {/*<SwiperSlide style={{ width: '100px', marginRight: 10 }}>*/}
+                {/*    <NewsStoriesElement onClick={openStory} index={0}  />*/}
+                {/*</SwiperSlide>*/}
+                {/*<SwiperSlide style={{ width: '100px', marginRight: 10 }}>*/}
+                {/*    <NewsStoriesElement onClick={openStory} index={0}  />*/}
+                {/*</SwiperSlide>*/}
+                {/*<SwiperSlide style={{ width: '100px', marginRight: 10 }}>*/}
+                {/*    <NewsStoriesElement onClick={openStory} index={0}  />*/}
+                {/*</SwiperSlide>*/}
                 {/*
                     Пустой слайд для корректного отображения последнего слайда
                 */}
                 <SwiperSlide></SwiperSlide>
             </Swiper>
-        </div>
+            </div>
+        </>
     );
 };

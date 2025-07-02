@@ -2,7 +2,11 @@ import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 
-export const StageTwo = () => {
+interface StageTwoProps {
+    isStory?: boolean;
+}
+
+export const StageTwo: React.FC<StageTwoProps> = ({isStory}) => {
     const navigate = useNavigate();
     return (
         <div className={classNames(css.stage_page, css.stageTwo__background)}>
@@ -27,7 +31,8 @@ export const StageTwo = () => {
                             ждем встречи с вами.
                         </span>
                     </div>
-                    <div className={css.button_container}>
+                    {!isStory && (
+                        <div className={css.button_container}>
                         <div
                             className={css.redButton}
                             onClick={() => navigate('/onboarding/3')}
@@ -35,6 +40,7 @@ export const StageTwo = () => {
                             <span>Продолжить</span>
                         </div>
                     </div>
+                    )}
                 </div>
             </div>
         </div>
