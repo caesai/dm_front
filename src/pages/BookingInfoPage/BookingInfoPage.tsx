@@ -29,6 +29,17 @@ import classNames from 'classnames';
 import { BOOKING_DURATION } from '../../mockData.ts';
 import {BASE_BOT} from "@/api/base.ts";
 
+
+declare global {
+    interface Window {
+        Telegram: {
+            WebApp: {
+                close: () => void;
+            }
+        };
+    }
+}
+
 export const BookingInfoPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -82,6 +93,9 @@ export const BookingInfoPage = () => {
     }, []);
     const hideApp = () => {
         booking && window.open(`https://t.me/${BASE_BOT}?start=reserve_id-${booking.id}`, '_blank');
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.close();
+        }
     }
 
     return (
