@@ -27,6 +27,7 @@ import {
 } from '@/utils.ts';
 import classNames from 'classnames';
 import { BOOKING_DURATION } from '../../mockData.ts';
+import {BASE_BOT} from "@/api/base.ts";
 
 export const BookingInfoPage = () => {
     const { id } = useParams();
@@ -79,6 +80,9 @@ export const BookingInfoPage = () => {
             setBooking(res.data)
         );
     }, []);
+    const hideApp = () => {
+        booking && window.open(`https://t.me/${BASE_BOT}?start=reserve_id-${booking.id}`, '_blank');
+    }
 
     return (
         <Page back={true}>
@@ -109,10 +113,10 @@ export const BookingInfoPage = () => {
                                 <UniversalButton
                                     width={'full'}
                                     title={'Изменить'}
-                                    target={'_blank'}
-                                    // action={() => alert('В разработке')}
+                                    // target={'_blank'}
+                                    action={hideApp}
                                     // link={`https://t.me/${import.meta.env.PROD ? 'dt_concierge_bot' : 'dmdev1bot'}?start=reserve_id-${booking.id}`}
-                                    link={`https://t.me/dt_concierge_bot?start=reserve_id-${booking.id}`}
+                                    // link={`https://t.me/${BASE_BOT}?start=reserve_id-${booking.id}`}
                                 />
                             ) : null
                         ) : (
