@@ -29,7 +29,6 @@ import classNames from 'classnames';
 import { BOOKING_DURATION } from '../../mockData.ts';
 import {BASE_BOT} from "@/api/base.ts";
 
-
 declare global {
     interface Window {
         Telegram: {
@@ -91,12 +90,6 @@ export const BookingInfoPage = () => {
             setBooking(res.data)
         );
     }, []);
-    const hideApp = () => {
-        booking && window.open(`https://t.me/${BASE_BOT}?start=reserve_id-${booking.id}`, '_blank');
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.close();
-        }
-    }
 
     return (
         <Page back={true}>
@@ -128,9 +121,7 @@ export const BookingInfoPage = () => {
                                     width={'full'}
                                     title={'Изменить'}
                                     // target={'_blank'}
-                                    action={hideApp}
-                                    // link={`https://t.me/${import.meta.env.PROD ? 'dt_concierge_bot' : 'dmdev1bot'}?start=reserve_id-${booking.id}`}
-                                    // link={`https://t.me/${BASE_BOT}?start=reserve_id-${booking.id}`}
+                                    link={`https://t.me/${BASE_BOT}?start=reserve_id-${booking.id}`}
                                 />
                             ) : null
                         ) : (
