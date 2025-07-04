@@ -2,13 +2,15 @@
     /*padding-bottom: 30px;*/
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .absoluteBottom {
     position: fixed;
     bottom: 30px;
     width: 100%;
-    z-index: 2;
+    left: 0;
+    /*z-index: 2;*/
 }
 
 .absoluteBottom_wrapper {
@@ -40,16 +42,16 @@
             opacity: 0;
         }
 
-        &::after {
-            content: "";
-            position: absolute;
-            width: 1em;
-            height: 1em;
-            border: 2px solid #fff;
-            border-top: 2px solid transparent; /* Прозрачная часть для анимации */
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
+        /*&::after {*/
+        /*    content: "";*/
+        /*    position: absolute;*/
+        /*    width: 1em;*/
+        /*    height: 1em;*/
+        /*    border: 2px solid #fff;*/
+        /*    border-top: 2px solid transparent; !* Прозрачная часть для анимации *!*/
+        /*    border-radius: 50%;*/
+        /*    animation: spin 0.6s linear infinite;*/
+        /*}*/
     }
 }
 
