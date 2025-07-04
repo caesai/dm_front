@@ -6,7 +6,7 @@ import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import {Link, useNavigate, useParams} from 'react-router-dom';
 import classNames from 'classnames';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
@@ -48,6 +48,7 @@ import {
     timeslotAtom,
 } from '@/atoms/bookingInfoAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import {BASE_BOT} from "@/api/base.ts";
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -452,6 +453,13 @@ export const BookingPage: FC = () => {
                                 <span className={css.noTimeSlotsText}>
                                     Выберите дату и количество гостей
                                 </span>
+                                <Link
+                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}}
+                                    target={'_blank'}
+                                    to={`https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`}
+                                >
+                                    Не нашли стол на желаемую дату и время?
+                                </Link>
                             </div>
                         </ContentContainer>
                     ) : timeslotsLoading ? (
@@ -585,9 +593,17 @@ export const BookingPage: FC = () => {
                                         )}
                                     </div>
                                 ) : null}
+                                <Link
+                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}}
+                                    target={'_blank'}
+                                    to={`https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`}
+                                >
+                                    Не нашли стол на желаемую дату и время?
+                                </Link>
                             </div>
                         </ContentContainer>
                     )}
+
                     {/*<ContentContainer>*/}
                     {/*    <div className={css.timeOfDayContainer}>*/}
                     {/*        <div className={css.timeList}>*/}

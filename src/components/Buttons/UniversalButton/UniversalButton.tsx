@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import {CSSProperties, FC} from 'react';
 import css from './UniversalButton.module.css';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
@@ -9,6 +9,7 @@ interface UniversalButtonProps {
     color?: string;
     link?: string;
     target?: string;
+    style?: CSSProperties;
     action?: () => void;
     theme?: string;
 }
@@ -26,7 +27,7 @@ export const UniversalButton: FC<UniversalButtonProps> = (p) => {
                         p.width == 'full' ? css.fullWidth : null
                     )}
                 >
-                    <span className={css.text}>{p.title}</span>
+                    <span className={css.text} style={p.style}>{p.title}</span>
                 </Link>
             ) : (
                 <div

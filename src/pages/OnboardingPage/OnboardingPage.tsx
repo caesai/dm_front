@@ -3,7 +3,8 @@ import css from './OnboardingPage.module.css';
 import classNames from 'classnames';
 import {Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import {useEffect} from 'react';
-import imgFull from "/img/logoFull.png";
+// import imgFull from "/img/logoFull.png";
+import logoNew from "/img/DT_concierge_logo_1.svg";
 
 export const OnboardingPage = () => {
     const navigate = useNavigate();
@@ -71,7 +72,7 @@ export const OnboardingPage = () => {
                     <div className={css.logo_container}>
                         <img
                             className={css.logo}
-                            src={imgFull}
+                            src={logoNew}
                             alt="DreamTeam logo"
                         />
                     </div>

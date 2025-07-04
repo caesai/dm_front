@@ -5,7 +5,7 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
-import logoFull from "/img/logoFull.png";
+import logoNew from "/img/DT_concierge_logo_1.svg";
 
 export const Header = () => {
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ export const Header = () => {
         <div className={css.header}>
             <img
                 className={css.logo}
-                src={logoFull}
+                src={logoNew}
                 alt="DreamTeam logo"
             />
             <div className={css.buttons}>
