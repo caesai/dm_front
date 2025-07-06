@@ -7,7 +7,7 @@ import "swiper/css";
 import {StageOne} from "@/pages/OnboardingPage/stages/StageOne.tsx";
 import {StageTwo} from "@/pages/OnboardingPage/stages/StageTwo.tsx";
 import {StageThree} from "@/pages/OnboardingPage/stages/StageThree.tsx";
-import {StageFour} from "@/pages/OnboardingPage/stages/StageFour.tsx";
+// import {StageFour} from "@/pages/OnboardingPage/stages/StageFour.tsx";
 import {StageFive} from "@/pages/OnboardingPage/stages/StageFive.tsx";
 import {CloseIcon} from "@/components/Icons/CloseIcon.tsx";
 
