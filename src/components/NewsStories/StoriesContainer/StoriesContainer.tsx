@@ -27,7 +27,7 @@ const StoriesContainer: React.FC<StoriesContainerInterface> = ({ onClose, active
         { name: "2 slide" },
         { name: "3 slide" },
         { name: "4 slide" },
-        { name: "5 slide" },
+        // { name: "5 slide" },
     ];
 
     const [sliderId, setSliderId] = useState(1);
@@ -77,9 +77,9 @@ const StoriesContainer: React.FC<StoriesContainerInterface> = ({ onClose, active
                 <SwiperSlide className={css.slide}>
                     <StageThree isStory/>
                 </SwiperSlide>
-                <SwiperSlide className={css.slide}>
-                    <StageFour isStory/>
-                </SwiperSlide>
+                {/*<SwiperSlide className={css.slide}>*/}
+                {/*    <StageFour isStory/>*/}
+                {/*</SwiperSlide>*/}
                 <SwiperSlide className={css.slide}>
                     <StageFive isStory/>
                 </SwiperSlide>
