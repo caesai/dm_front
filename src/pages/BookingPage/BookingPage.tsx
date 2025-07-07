@@ -317,7 +317,12 @@ export const BookingPage: FC = () => {
     const hideApp = () => {
         //
         // window.location.href = "tg:resolve";
-        window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`
+        if (window.Telegram.WebApp) {
+            window.Telegram.WebApp.close();
+            window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`
+        } else {
+            window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`
+        }
     }
 
     const createBooking = () => {
