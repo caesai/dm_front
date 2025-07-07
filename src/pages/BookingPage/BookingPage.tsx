@@ -455,7 +455,7 @@ export const BookingPage: FC = () => {
                                 </span>
                                 <Link
                                     style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}}
-                                    target={'_blank'}
+                                    // target={'_blank'}
                                     to={`https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`}
                                 >
                                     Не нашли стол на желаемую дату и время?
