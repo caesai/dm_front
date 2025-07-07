@@ -49,6 +49,7 @@ import {
 } from '@/atoms/bookingInfoAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import {BASE_BOT} from "@/api/base.ts";
+import {UniversalButton} from "@/components/Buttons/UniversalButton/UniversalButton.tsx";
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -64,6 +65,16 @@ const confirmationList: IConfirmationType[] = [
         text: 'Без подтверждения',
     },
 ];
+
+declare global {
+    interface Window {
+        Telegram: {
+            WebApp: {
+                close: () => void;
+            }
+        };
+    }
+}
 
 export const BookingPage: FC = () => {
     const navigate = useNavigate();
@@ -303,6 +314,11 @@ export const BookingPage: FC = () => {
         return validateFormMemo;
     };
 
+    const hideApp = () => {
+        //
+        window.location.href = "tg:resolve";
+    }
+
     const createBooking = () => {
         if (validateForm() && auth?.access_token && currentSelectedTime) {
             setRequestLoading(true);
@@ -453,13 +469,18 @@ export const BookingPage: FC = () => {
                                 <span className={css.noTimeSlotsText}>
                                     Выберите дату и количество гостей
                                 </span>
-                                <Link
-                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}}
-                                    // target={'_blank'}
-                                    to={`https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`}
-                                >
-                                    Не нашли стол на желаемую дату и время?
-                                </Link>
+                                {/*<Link*/}
+                                {/*    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}}*/}
+                                {/*    // target={'_blank'}*/}
+                                {/*    to={`https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`}*/}
+                                {/*>*/}
+                                <UniversalButton
+                                    action={hideApp}
+                                    width={'full'}
+                                    title={'Не нашли стол на желаемую дату и время?'}
+                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />
+                                    {/*<span>Не нашли стол на желаемую дату и время?</span>*/}
+                                {/*</Link>*/}
                             </div>
                         </ContentContainer>
                     ) : timeslotsLoading ? (

@@ -38,7 +38,7 @@ export const UniversalButton: FC<UniversalButtonProps> = (p) => {
                     )}
                     onClick={() => (p.action !== undefined ? p.action() : null)}
                 >
-                    <span className={css.text}>{p.title}</span>
+                    <span className={css.text} style={{ ...p.style }}>{p.title}</span>
                 </div>
             )}
         </>
