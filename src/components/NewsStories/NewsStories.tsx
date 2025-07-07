@@ -27,6 +27,9 @@ export const NewsStories = () => {
                 <SwiperSlide style={{ width: '100px', marginRight: 10 }}>
                     <NewsStoriesElement onClick={openStory} index={0} />
                 </SwiperSlide>
+                <SwiperSlide style={{ width: '100px', marginRight: 10 }}>
+                    <NewsStoriesElement onClick={openStory} index={1} />
+                </SwiperSlide>
                 {/*<SwiperSlide style={{ width: '100px', marginRight: 10 }}>*/}
                 {/*    <NewsStoriesElement onClick={openStory} index={0}  />*/}
                 {/*</SwiperSlide>*/}

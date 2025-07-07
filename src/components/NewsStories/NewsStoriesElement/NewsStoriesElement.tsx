@@ -16,10 +16,10 @@ export const NewsStoriesElement: React.FC<NewsStoriesElementInterface> = ({ onCl
     return (
         <div className={classNames(css.element, !isClicked ? css.isClicked : null)} onClick={handleClick}>
             <div className={css.newsText}>
-                <span>Новое меню</span>
+                <span>{index === 0 ? 'Знакомство' : 'Новое место'}</span>
             </div>
             <div className={css.newsImage}>
-                <img src="./img/placeholder_1.png" alt="" />
+                <img src={index === 0 ? "./img/placeholder_1.png" : "./img/BBQNEW.png"} alt="" />
             </div>
         </div>
     );
