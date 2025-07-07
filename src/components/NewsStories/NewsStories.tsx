@@ -1,6 +1,6 @@
 import { NewsStoriesElement } from '@/components/NewsStories/NewsStoriesElement/NewsStoriesElement.tsx';
 
-import css from './NewsStories.module.css';
+// import css from './NewsStories.module.css';
 import { FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {useState} from "react";
