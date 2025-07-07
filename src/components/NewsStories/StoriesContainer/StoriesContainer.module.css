@@ -41,13 +41,13 @@
 
         &.progress {
             &:before {
-                background-color: rgba(239, 239, 244, 0.8);
+                background-color: rgba(245, 42, 45, 0.8);
             }
         }
 
         &.active {
             &:before {
-                background-color: rgba(239, 239, 244, 0.8);
+                background-color: rgba(245, 42, 45, 0.8);
                 width: 100%;
             }
         }
