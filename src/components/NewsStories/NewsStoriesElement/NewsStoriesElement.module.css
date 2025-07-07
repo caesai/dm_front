@@ -6,6 +6,7 @@
     overflow: hidden;
     text-align: center;
     position: relative;
+    margin-right: 10px;
 }
 
 .newsText {
