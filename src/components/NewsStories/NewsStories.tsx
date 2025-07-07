@@ -17,12 +17,12 @@ export const NewsStories = () => {
     return (
         <>
             <StoriesContainer onClose={closeStory} activeIndex={activeIndex} />
-            <div className={css.newsSlider}>
             <Swiper
                 slidesPerView="auto"
                 modules={[FreeMode]}
                 freeMode={true}
                 spaceBetween={0}
+                wrapperClass={css.newsSlider}
             >
                 <SwiperSlide style={{ width: '100px', marginRight: 10 }}>
                     <NewsStoriesElement onClick={openStory} index={0} />
@@ -47,7 +47,6 @@ export const NewsStories = () => {
                 */}
                 <SwiperSlide></SwiperSlide>
             </Swiper>
-            </div>
         </>
     );
 };
