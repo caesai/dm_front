@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import {FC, useEffect, useMemo, useRef, useState} from 'react';
 import css from './BookingPage.module.css';
 
 import { Page } from '@/components/Page.tsx';
@@ -118,6 +118,8 @@ export const BookingPage: FC = () => {
     const [dateValidated, setDateValidated] = useState(true);
     const [guestsValidated, setGuestsValidated] = useState(true);
     const [requestLoading, setRequestLoading] = useState(false);
+
+    const bookingBtn = useRef<HTMLDivElement>(null);
 
     // Update bookingDates when guestCount changes
     useEffect(() => {
@@ -649,7 +651,19 @@ export const BookingPage: FC = () => {
                         </HeaderContainer>
                         <TextInput
                             value={commentary}
-                            onChange={(e) => setCommentary(e)}
+                            onFocus={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'relative';
+                                }
+                            }}
+                            onBlur={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'fixed';
+                                }
+                            }}
+                            onChange={(e) => {
+                                setCommentary(e);
+                            }}
                             placeholder={'Комментарий к брони'}
                         />
                         <div className={css.commentary_options}>
@@ -714,6 +728,7 @@ export const BookingPage: FC = () => {
             <div className={css.absoluteBottom}>
                 <div className={css.absoluteBottom_wrapper}>
                     <div
+                        ref={bookingBtn}
                         className={classNames(
                             css.redButton,
                             validateFormMemo ? null : css.disabledButton,

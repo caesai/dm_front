@@ -6,6 +6,8 @@ interface ITextInput {
     placeholder?: string;
     value: string | undefined;
     onChange: (value: string) => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
     validation_failed?: boolean;
 }
 
@@ -17,6 +19,8 @@ export const TextInput: FC<ITextInput> = (p) => {
             type={'text'}
             placeholder={p.placeholder}
             value={p.value}
+            onFocus={p.onFocus}
+            onBlur={p.onBlur}
             onChange={(e) => p.onChange(e.target.value)}
             className={classNames(
                 css.text_input,
