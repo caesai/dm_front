@@ -725,10 +725,9 @@ export const BookingPage: FC = () => {
                     </ContentContainer>
                 </PageContainer>
             </div>
-            <div className={css.absoluteBottom}>
+            <div className={css.absoluteBottom} ref={bookingBtn}>
                 <div className={css.absoluteBottom_wrapper}>
                     <div
-                        ref={bookingBtn}
                         className={classNames(
                             css.redButton,
                             validateFormMemo ? null : css.disabledButton,
