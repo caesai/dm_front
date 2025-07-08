@@ -5,7 +5,7 @@ import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalBut
 import css from './EventBookingOutlet.module.css';
 import {useNavigate, useOutletContext} from 'react-router-dom';
 import {formatDateDT, getDataFromLocalStorage, IEventBookingContext, removeDataFromLocalStorage} from '@/utils.ts';
-import {useMemo, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 import moment from 'moment';
 import {APICreateInvoice} from '@/api/events.ts';
 import {useAtom} from 'jotai';
@@ -26,6 +26,8 @@ export const EventBookingOutlet = () => {
         commentary: '',
     });
     const [loading, setLoading] = useState(false);
+
+    const bookingBtn = useRef<HTMLDivElement>(null);
 
     const calculateTotal = useMemo(() => {
         const ticketPrice = bookingInfo.event?.ticket_price;
@@ -187,6 +189,16 @@ export const EventBookingOutlet = () => {
                             onChange={(e) =>
                                 setUserInfo((p) => ({...p, commentary: e}))
                             }
+                            onFocus={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'relative';
+                                }
+                            }}
+                            onBlur={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'fixed';
+                                }
+                            }}
                             placeholder={'Комментарий'}
                         ></TextInput>
                     </div>
@@ -197,7 +209,7 @@ export const EventBookingOutlet = () => {
                     {/*/>*/}
                 </div>
             </div>
-            <div className={css.absoluteBottom}>
+            <div className={css.absoluteBottom} ref={bookingBtn}>
                 <div className={css.bottomWrapper}>
                     <UniversalButton
                         width={'full'}
