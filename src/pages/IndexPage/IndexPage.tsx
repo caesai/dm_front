@@ -20,6 +20,7 @@ import {APIGetCurrentBookings} from '@/api/restaurants.ts';
 import {authAtom} from '@/atoms/userAtom.ts';
 import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import {NewsStories} from "@/components/NewsStories/NewsStories.tsx";
+import {DEV_MODE} from "@/api/base.ts";
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -122,7 +123,7 @@ export const IndexPage: FC = () => {
         <Page back={false}>
             <div className={css.pageContainer}>
                 <Header/>
-                <NewsStories />
+                {DEV_MODE && <NewsStories />}
                 {currentBookingsLoading ? (
                     <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock
