@@ -127,7 +127,7 @@
 .stageOne_icons {
     width: 375px;
     /*width: 100%;*/
-    height: 400px;
+    height: 300px;
     position: relative;
 
     .stageOne_icons_1 {
@@ -344,7 +344,7 @@
 }
 
 .stageFive_phone {
-    width: 256px;
+    width: 220px;
     filter: drop-shadow(14px 14px 24px rgba(101, 94, 94, 0.5));
     -webkit-transform: rotateZ(360deg);
 }
