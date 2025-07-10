@@ -43,10 +43,11 @@ const StoriesContainer: React.FC<StoriesContainerInterface> = ({ onClose, active
     return (
         <>
             <Swiper
-                onTap={(swiper) => {
-                    console.log('swiper: ', swiper);
-                    setSliderId(sliderId + 1);
-                }}
+                // onTap={(swiper) => {
+                //     console.log('swiper: ', swiper);
+                //     setSliderId(sliderId + 1);
+                // }}
+                allowTouchMove
                 style={{ width: "100%", position: "fixed", zIndex: 10000, top: 0, left: 0, height: "100vh" }}
                 slidesPerView={"auto"}
                 centeredSlides={true}
