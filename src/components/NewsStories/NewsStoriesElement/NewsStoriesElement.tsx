@@ -15,11 +15,11 @@ export const NewsStoriesElement: React.FC<NewsStoriesElementInterface> = ({ onCl
     }
     return (
         <div className={classNames(css.element, !isClicked ? css.isClicked : null)} onClick={handleClick}>
-            <div className={css.newsText}>
-                <span>{index === 0 ? 'Знакомство' : 'Новое место'}</span>
-            </div>
+            {/*<div className={css.newsText}>*/}
+            {/*    <span>{index === 0 ? 'Знакомство' : 'Новое место'}</span>*/}
+            {/*</div>*/}
             <div className={css.newsImage}>
-                <img src={index === 0 ? "./img/placeholder_1.png" : "./img/BBQNEW.png"} alt="" />
+                <img src={index === 1 ? "./img/BBQNEW.png" : "./img/placeholder_1.png"} alt="" />
             </div>
         </div>
     );

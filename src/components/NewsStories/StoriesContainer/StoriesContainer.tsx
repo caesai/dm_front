@@ -44,7 +44,7 @@ const StoriesContainer: React.FC<StoriesContainerInterface> = ({ onClose, active
         <>
             <Swiper
                 onTap={(swiper) => {
-                    if (sliderId + 1 > testArray.length - 1) {
+                    if (sliderId + 1 > testArray.length) {
                         setSliderId(1);
                         onClose();
                         return;
