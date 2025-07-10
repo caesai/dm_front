@@ -43,10 +43,10 @@ const StoriesContainer: React.FC<StoriesContainerInterface> = ({ onClose, active
     return (
         <>
             <Swiper
-                // onTap={(swiper) => {
-                //     swiper.slideNext(0);
-                //     setSliderId(sliderId + 1);
-                // }}
+                onTap={(swiper) => {
+                    swiper.slideNext(0);
+                    setSliderId(sliderId + 1);
+                }}
                 style={{ width: "100%", position: "fixed", zIndex: 10000, top: 0, left: 0, height: "100vh" }}
                 slidesPerView={"auto"}
                 centeredSlides={true}
@@ -56,7 +56,7 @@ const StoriesContainer: React.FC<StoriesContainerInterface> = ({ onClose, active
                 }}
                 modules={[Autoplay]}
                 onAutoplayTimeLeft={onAutoplayTimeLeft}
-                onReachBeginning={() => setSliderId(1)}
+                onReachBeginning={() => { console.log("begin click"); setSliderId(1); onClose();}}
                 onSlideNextTransitionStart={() => {
                     console.log("next click", );
                     setSliderId(sliderId + 1);
