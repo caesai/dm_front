@@ -91,6 +91,17 @@ export const BookingInfoPage = () => {
         );
     }, []);
 
+    const hideApp = () => {
+        //
+        // window.location.href = "tg:resolve";
+        if (window.Telegram.WebApp) {
+            window.Telegram.WebApp.close();
+            window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`
+        } else {
+            window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`
+        }
+    }
+
     return (
         <Page back={true}>
             <CancelBookingPopup
@@ -121,7 +132,8 @@ export const BookingInfoPage = () => {
                                     width={'full'}
                                     title={'Изменить'}
                                     // target={'_blank'}
-                                    link={`https://t.me/${BASE_BOT}?start=reserve_id-${booking.id}`}
+                                    action={hideApp}
+                                    // link={`https://t.me/${BASE_BOT}?start=reserve_id-${booking.id}`}
                                 />
                             ) : null
                         ) : (
