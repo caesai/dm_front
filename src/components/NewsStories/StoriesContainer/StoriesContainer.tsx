@@ -43,10 +43,10 @@ const StoriesContainer: React.FC<StoriesContainerInterface> = ({ onClose, active
     return (
         <>
             <Swiper
-                onTap={(swiper) => {
-                    swiper.slideNext(0);
-                    setSliderId(sliderId + 1);
-                }}
+                // onTap={(swiper) => {
+                //     swiper.slideNext(0);
+                //     setSliderId(sliderId + 1);
+                // }}
                 style={{ width: "100%", position: "fixed", zIndex: 10000, top: 0, left: 0, height: "100vh" }}
                 slidesPerView={"auto"}
                 centeredSlides={true}
