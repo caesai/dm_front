@@ -176,17 +176,17 @@ export const EventConfirmationOutlet = () => {
                     <span>✓ 100% предоплата</span>
                 </div>
                 <div className={css.personsContainer}>
-                <span className={css.personsContainer__title}>
-                    Количество мест
-                </span>
-                    <div className={css.personCounter}>
-                    <span className={css.clickableSpan} onClick={decCounter}>
-                        -
+                    <span className={css.personsContainer__title}>
+                        Количество мест
                     </span>
+                    <div className={css.personCounter}>
+                        <span className={css.clickableSpan} onClick={decCounter}>
+                            -
+                        </span>
                         <span>{guestCount}</span>
                         <span className={css.clickableSpan} onClick={incCounter}>
                         +
-                    </span>
+                        </span>
                     </div>
                 </div>
             </div>
