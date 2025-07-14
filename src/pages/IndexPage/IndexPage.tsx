@@ -72,40 +72,40 @@ export const IndexPage: FC = () => {
     }, [cityListA]);
 
     useEffect(() => {
-        console.log('currentCityA: ', restaurants[6]);
-        const mockedRes: IRestaurant = {
-            about_dishes: "Мясо, Рыба и морепродукты↵",
-            about_features: "Обеды, Бранчи, Веранда↵",
-            about_kitchen: "Американская, Европейская",
-            about_text: "Ресторан с концепцией ultimate firewood cooking с грилем, печью и смокером. Это настоящая мясная достопримечательность Петербурга. Главны…",
-            address: "Санкт-Петербург, ул. Лодейнопольская, 5Б",
-            address_lonlng: "30.344282,59.929824",
-            address_station: "м. Достоевская",
-            address_station_color: "rgb(234, 113, 37)",
-            openTime: '',
-            avg_cheque: 1500,
-            brand_chef: {
-                name: "Алексей Каневский",
-                photo_url: "https://storage.yandexcloud.net/bottec-dreamteam/SmokeBBQ/SPB/chef1.jpg",
-                about: "Алексей Каневский, шеф-повар во втором поколении, … собрал 40 000 поклонников барбекю в Петербурге.↵"
-            },
-            city: {id: 2, name: "Санкт-Петербург", name_english: "spb", name_dative: "Санкт-Петербурге"},
-            gallery: [],
-            id: 11,
-            logo_url: "https://storage.yandexcloud.net/bottec-dreamteam/SmokeBBQ/SPB/logo.jpg",
-            menu: [],
-            menu_imgs: [],
-            phone_number: "+7 (921) 905-53-72",
-            photo_cards: [],
-            slogan: "Загородный ресторан в центре города",
-            socials: [],
-            thumbnail_photo: "/img/BBQNEW.png",
-            title: "Smoke BBQ",
-            worktime: [],
-        }
-        const restaurantList = [mockedRes, ...restaurants];
+        // console.log('currentCityA: ', restaurants[6]);
+        // const mockedRes: IRestaurant = {
+        //     about_dishes: "Мясо, Рыба и морепродукты↵",
+        //     about_features: "Обеды, Бранчи, Веранда↵",
+        //     about_kitchen: "Американская, Европейская",
+        //     about_text: "Ресторан с концепцией ultimate firewood cooking с грилем, печью и смокером. Это настоящая мясная достопримечательность Петербурга. Главны…",
+        //     address: "Санкт-Петербург, ул. Лодейнопольская, 5Б",
+        //     address_lonlng: "30.344282,59.929824",
+        //     address_station: "м. Достоевская",
+        //     address_station_color: "rgb(234, 113, 37)",
+        //     openTime: '',
+        //     avg_cheque: 1500,
+        //     brand_chef: {
+        //         name: "Алексей Каневский",
+        //         photo_url: "https://storage.yandexcloud.net/bottec-dreamteam/SmokeBBQ/SPB/chef1.jpg",
+        //         about: "Алексей Каневский, шеф-повар во втором поколении, … собрал 40 000 поклонников барбекю в Петербурге.↵"
+        //     },
+        //     city: {id: 2, name: "Санкт-Петербург", name_english: "spb", name_dative: "Санкт-Петербурге"},
+        //     gallery: [],
+        //     id: 11,
+        //     logo_url: "https://storage.yandexcloud.net/bottec-dreamteam/SmokeBBQ/SPB/logo.jpg",
+        //     menu: [],
+        //     menu_imgs: [],
+        //     phone_number: "+7 (921) 905-53-72",
+        //     photo_cards: [],
+        //     slogan: "Загородный ресторан в центре города",
+        //     socials: [],
+        //     thumbnail_photo: "/img/BBQNEW.png",
+        //     title: "Smoke BBQ",
+        //     worktime: [],
+        // }
+        // const restaurantList = [mockedRes, ...restaurants];
         setRestaurantsList(
-            restaurantList.filter((v) => v.city.name_english == currentCityA)
+            restaurants.filter((v) => v.city.name_english == currentCityA)
         );
     }, [currentCityA, cityListA]);
 

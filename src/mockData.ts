@@ -247,15 +247,15 @@ const BOOKINGCOMMENTMOCK = [
         text: 'Буду с животным',
         emoji: '🐶',
     },
-    {
-        text: 'Стол в тихой зоне',
-        emoji: '😴',
-    },
+    // {
+    //     text: 'Стол в тихой зоне',
+    //     emoji: '😴',
+    // },
 ];
 
 /**
  * Возвращает список комментариев к бронированию на основе ID ресторана.
- * 
+ *
  * @param {string} restaurant_id - Идентификатор ресторана.
  * @returns {Array<{text: string, emoji: string}>} - Массив комментариев к бронированию,
  * где каждый комментарий содержит текстовое описание и соответствующий emoji.
@@ -267,13 +267,13 @@ export const getBookingCommentMock = (restaurant_id: string) => {
   if (SELF_EDGE_JAPANESE_RESTAURANT_IDS.includes(restaurant_id)) {
     return BOOKINGCOMMENTMOCK;
   }
-  
+
   // Other restaurants
   return [...BOOKINGCOMMENTMOCK, {
     text: 'Нужен детский стул',
     emoji: '👶',
   }]
-} 
+}
 
 export const BOOKING_DATE_VALUES = <PickerValueObj[]>[
     {
@@ -340,7 +340,7 @@ export const SERVICE_FEE_DATA: Record<string, {persons: number, fee: number}> = 
   '6': {persons: 8, fee: 10},  // Smoke BBQ SPb
   '7': {persons: 6, fee: 10},  // Self Edge Ekat
   '9': {persons: 8, fee: 10},  // Smoke BBQ Msc
-  '10': {persons: 6, fee: 10},  // Self Edge Msc  
+  '10': {persons: 6, fee: 10},  // Self Edge Msc
 }
 
 export const getServiceFeeData = (restaurant_id: string | undefined) => {
