@@ -29,16 +29,6 @@ import classNames from 'classnames';
 import { BOOKING_DURATION } from '../../mockData.ts';
 import {BASE_BOT} from "@/api/base.ts";
 
-declare global {
-    interface Window {
-        Telegram: {
-            WebApp: {
-                close: () => void;
-            }
-        };
-    }
-}
-
 export const BookingInfoPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -96,10 +86,10 @@ export const BookingInfoPage = () => {
         // window.location.href = "tg:resolve";
         console.log('booking?.id: ', booking?.id);
         if (window.Telegram.WebApp) {
+            window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`;
             window.Telegram.WebApp.close();
-            window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`
         } else {
-            window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`
+            window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`;
         }
     }
 

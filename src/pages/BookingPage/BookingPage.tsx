@@ -66,16 +66,6 @@ const confirmationList: IConfirmationType[] = [
     },
 ];
 
-declare global {
-    interface Window {
-        Telegram: {
-            WebApp: {
-                close: () => void;
-            }
-        };
-    }
-}
-
 export const BookingPage: FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -321,8 +311,8 @@ export const BookingPage: FC = () => {
         //
         // window.location.href = "tg:resolve";
         if (window.Telegram.WebApp) {
-            window.Telegram.WebApp.close();
             window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`
+            window.Telegram.WebApp.close();
         } else {
             window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`
         }
