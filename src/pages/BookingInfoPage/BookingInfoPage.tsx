@@ -94,6 +94,7 @@ export const BookingInfoPage = () => {
     const hideApp = () => {
         //
         // window.location.href = "tg:resolve";
+        console.log('booking?.id: ', booking?.id);
         if (window.Telegram.WebApp) {
             window.Telegram.WebApp.close();
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`
