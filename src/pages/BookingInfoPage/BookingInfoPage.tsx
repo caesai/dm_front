@@ -84,12 +84,12 @@ export const BookingInfoPage = () => {
     const hideApp = () => {
         //
         // window.location.href = "tg:resolve";
-        console.log('booking?.id: ', `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`);
+        console.log('booking?.id: ', `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`);
         if (window.Telegram.WebApp) {
-            // window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`;
-            // window.Telegram.WebApp.close();
+            window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`;
+            window.Telegram.WebApp.close();
         } else {
-            // window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`;
+            window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`;
         }
     }
 
