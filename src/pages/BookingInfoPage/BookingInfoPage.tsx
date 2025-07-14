@@ -87,7 +87,7 @@ export const BookingInfoPage = () => {
         console.log('booking?.id: ', booking?.id);
         if (window.Telegram.WebApp) {
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`;
-            window.Telegram.WebApp.close();
+            // window.Telegram.WebApp.close();
         } else {
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${booking?.id}`;
         }
