@@ -465,7 +465,8 @@ export const BookingPage: FC = () => {
                             </div>
                         </div>
                     </ContentContainer>
-                    {bookingDate.value === 'unset' ? (
+                    {guestCount.value === 'unset' ||
+                        bookingDate.value === 'unset' ? (
                         <ContentContainer>
                             <div className={css.timeOfDayContainer}>
                                 <span className={css.noTimeSlotsText}>
