@@ -10,7 +10,7 @@ import {SwiperSlide} from 'swiper/react';
 import {RestaurantBadgePhoto} from '@/components/RestaurantPreview/RestaurantBadgePhoto/RestaurantBadgePhoto.tsx';
 import {InfoTag} from '@/components/InfoTag/InfoTag.tsx';
 import {Link} from 'react-router-dom';
-import {FC, useState} from 'react';
+import {FC} from 'react';
 import {IRestaurant} from '@/types/restaurant.ts';
 import {
     getCurrentTimeShort,
@@ -18,10 +18,8 @@ import {
     getRestaurantStatus,
 } from '@/utils.ts';
 import {useAtom} from "jotai/index";
-import {authAtom, userAtom} from "@/atoms/userAtom.ts";
-// import BBQNEW from '/img/BBQNEW.png';
-import {APIPostNewRestaurant} from "@/api/restaurants.ts";
-import {Toast} from "@/components/Toast/Toast.tsx";
+import {userAtom} from "@/atoms/userAtom.ts";
+// import {Toast} from "@/components/Toast/Toast.tsx";
 
 interface IProps {
     restaurant: IRestaurant;
@@ -29,29 +27,10 @@ interface IProps {
 
 export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
     const [user] = useAtom(userAtom);
-    const [auth] = useAtom(authAtom);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastShow, setToastShow] = useState<boolean>(false);
-
-    const wantToBeFirst = () => {
-        //
-        if (!auth?.access_token) {
-            return;
-        }
-        setToastShow(true);
-
-        APIPostNewRestaurant(auth?.access_token).then((res) => {
-            console.log('res: ', res);
-            setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
-        }).catch((err) => {
-            if (err.response) {
-                setToastMessage('Возникла ошибка: ' + err.response.data.message);
-            }
-        });
-    }
+    // const [auth] = useAtom(authAtom);
 
     return (
-        <Link className={css.restaurant} to={restaurant.id === 11 ? '' : `/restaurant/${restaurant.id}`}>
+        <Link className={css.restaurant} to={`/restaurant/${restaurant.id}`}>
             <div
                 className={classNames(css.bgImage, css.imaged)}
                 style={{
@@ -111,15 +90,6 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                     <span className={css.resSlogan}>{restaurant.address}</span>
                 </div>
                 <div className={css.tags}>
-                    {restaurant.id === 11 ? toastShow ? (
-                        <div className={css.success_animation}>
-                            <svg className={css.checkmark} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                                <circle className={css.checkmark__circle} cx="26" cy="26" r="25" fill="none"/>
-                                <path className={css.checkmark__check} fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                            </svg>
-                        </div>
-                    ) : <span onClick = {wantToBeFirst} className = {css.resFirst} > Хочу побывать первым</span> : (
-                        <>
                             <InfoTag
                                 text={getRestaurantStatus(
                                     restaurant.worktime,
@@ -128,10 +98,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                                 )}
                             />
                             <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`}/>
-                        </>
-                    )}
                 </div>
-                <Toast message={toastMessage} showClose={toastShow} />
             </div>
         </Link>
     );
