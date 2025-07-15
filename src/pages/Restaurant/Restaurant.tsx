@@ -23,7 +23,7 @@ import {ContentBlock} from '@/components/ContentBlock/ContentBlock.tsx';
 import {ContentContainer} from '@/components/ContentContainer/ContentContainer.tsx';
 import {HeaderContainer} from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import {HeaderContent} from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import {HeaderSubText} from '@/components/ContentBlock/HeaderContainer/HeaderSubText/HeaderContainer.tsx';
+// import {HeaderSubText} from '@/components/ContentBlock/HeaderContainer/HeaderSubText/HeaderContainer.tsx';
 import {MenuPopup} from '@/components/MenuPopup/MenuPopup.tsx';
 import {
     GalleryCollection,
