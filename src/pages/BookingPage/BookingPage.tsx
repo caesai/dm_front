@@ -6,7 +6,7 @@ import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import {Link, useNavigate, useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import classNames from 'classnames';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
@@ -615,13 +615,11 @@ export const BookingPage: FC = () => {
                                         )}
                                     </div>
                                 ) : null}
-                                <Link
-                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}}
-                                    target={'_blank'}
-                                    to={`https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`}
-                                >
-                                    Не нашли стол на желаемую дату и время?
-                                </Link>
+                                <UniversalButton
+                                    action={hideApp}
+                                    width={'full'}
+                                    title={'Не нашли стол на желаемую дату и время?'}
+                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />
                             </div>
                         </ContentContainer>
                     )}
