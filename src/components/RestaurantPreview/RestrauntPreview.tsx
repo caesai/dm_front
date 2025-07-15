@@ -36,7 +36,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
     return (
         <Link className={css.restaurant} to={`/restaurant/${restaurant.id}`}>
             <div
-                className={classNames(css.bgImage, css.bgNoImaged)}
+                className={classNames(css.bgImage, css.imaged)}
                 style={{
                     backgroundImage: `url(${restaurant.thumbnail_photo})`,
                 }}

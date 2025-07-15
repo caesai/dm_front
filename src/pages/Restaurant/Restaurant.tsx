@@ -590,7 +590,7 @@ export const Restaurant = () => {
                     <ContentBlock>
                         <HeaderContainer id={'menu'}>
                             <HeaderContent title={'Меню'}/>
-                            <HeaderSubText text={'Рекомендуем'}/>
+                            {/*<HeaderSubText text={'Рекомендуем'}/>*/}
                         </HeaderContainer>
                         <div className={css.photoSliderContainer}>
                             <Swiper
