@@ -44,13 +44,13 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { commAtom } from '@/atoms/bookingCommAtom.ts';
 import {
     bookingDateAtom,
-    guestCountAtom,
+    // guestCountAtom,
     timeslotAtom,
 } from '@/atoms/bookingInfoAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import {BASE_BOT} from "@/api/base.ts";
 import {UniversalButton} from "@/components/Buttons/UniversalButton/UniversalButton.tsx";
-// import { childrenCountAtom, guestCountAtom} from "@/atoms/eventBookingAtom.ts";
+import { childrenCountAtom, guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -76,7 +76,7 @@ export const BookingPage: FC = () => {
     const [user] = useAtom(userAtom);
     const [comms] = useAtom(commAtom);
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
-    // const [childrenCount, setChildrenCount] = useAtom(childrenCountAtom);
+    const [childrenCount, setChildrenCount] = useAtom(childrenCountAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
     const [currentSelectedTime, setCurrentSelectedTime] =
         useAtom<ITimeSlot | null>(timeslotAtom);
@@ -138,7 +138,7 @@ export const BookingPage: FC = () => {
             !id ||
             !auth?.access_token ||
             bookingDate.value === 'unset' ||
-            guestCount.value === 'unset'
+            !guestCount
         ) {
             return;
         }
@@ -147,7 +147,7 @@ export const BookingPage: FC = () => {
             auth.access_token,
             parseInt(id),
             bookingDate.value,
-            parseInt(guestCount.value)
+            guestCount
         )
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotsLoading(false));
@@ -254,7 +254,7 @@ export const BookingPage: FC = () => {
     }, [currentSelectedTime]);
 
     const guestsValidate = useMemo(() => {
-        return !(guestCount.value == 'unset');
+        return !guestCount;
     }, [guestCount]);
 
     const validateFormMemo = useMemo(() => {
@@ -327,8 +327,8 @@ export const BookingPage: FC = () => {
                 Number(id),
                 bookingDate.value,
                 getTimeShort(currentSelectedTime.start_datetime),
-                Number(guestCount.value),
-                // childrenCount,
+                guestCount,
+                childrenCount,
                 userName,
                 userPhone,
                 userEmail,
@@ -354,9 +354,9 @@ export const BookingPage: FC = () => {
         <Page back={true}>
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
-                // childrenCount={childrenCount}
+                childrenCount={childrenCount}
                 setGuestCount={setGuestCount}
-                // setChildrenCount={setChildrenCount}
+                setChildrenCount={setChildrenCount}
                 isOpen={guestCountPopup}
                 setOpen={setGuestCountPopup}
                 maxGuestsNumber={getGuestMaxNumber(id)}
@@ -448,7 +448,7 @@ export const BookingPage: FC = () => {
                                             >
                                                 {guestCount
                                                     ? getGuestsString(
-                                                          guestCount.value
+                                                          guestCount
                                                       )
                                                     : 'Гости'}
                                             </span>
@@ -465,7 +465,7 @@ export const BookingPage: FC = () => {
                             </div>
                         </div>
                     </ContentContainer>
-                    {guestCount.value === 'unset' ||
+                    {!guestCount ||
                         bookingDate.value === 'unset' ? (
                         <ContentContainer>
                             <div className={css.timeOfDayContainer}>
