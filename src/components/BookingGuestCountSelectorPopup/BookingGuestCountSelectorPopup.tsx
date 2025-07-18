@@ -106,14 +106,15 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
                         <span className={css.personsContainer__title}>
                             Количество гостей:
                         </span>
+                        <br/>
                         <div className={css.personCounter}>
-                        <span className={css.clickableSpan} onClick={decGuests}>
-                            -
-                        </span>
+                            <span className={css.clickableSpan} onClick={decGuests}>
+                                -
+                            </span>
                             <span>{p.guestCount}</span>
                             <span className={css.clickableSpan} onClick={incGuests}>
-                        +
-                        </span>
+                            +
+                            </span>
                         </div>
                     </div>
 
@@ -121,14 +122,16 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
                         <span className={css.personsContainer__title}>
                             Включая количество детей:
                         </span>
+                        <br/>
+
                         <div className={css.personCounter}>
-                        <span className={css.clickableSpan} onClick={decChildren}>
-                            -
-                        </span>
+                            <span className={css.clickableSpan} onClick={decChildren}>
+                                -
+                            </span>
                             <span>{p.childrenCount}</span>
                             <span className={css.clickableSpan} onClick={incChildren}>
-                        +
-                        </span>
+                            +
+                            </span>
                         </div>
                     </div>
 
