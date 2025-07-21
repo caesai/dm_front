@@ -16,7 +16,7 @@ export const StageSeven = () => {
     const [surname, setSurname] = useState<string>();
 
     const handleConfirm = () => {
-        if (!user || !auth?.access_token || !name || !surname) {
+        if (!user || !auth?.access_token || !name ) {
             return;
         }
         APIUserName(auth.access_token, name, surname).then();
@@ -47,7 +47,7 @@ export const StageSeven = () => {
                             })}
                             onClick={() => handleConfirm()}
                         >
-                            <span>Сохранить</span>
+                            <span>Продолжить</span>
                         </div>
                     </div>
                 </div>

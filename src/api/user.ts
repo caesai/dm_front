@@ -61,7 +61,7 @@ export const APICompleteOnboarding = async (token: string, agree: boolean) => {
     );
 };
 
-export const APIUserName = async (token: string, first_name: string, last_name: string) => {
+export const APIUserName = async (token: string, first_name: string, last_name: string = '') => {
     return await axios.patch<IUser>(
         `${BASE_URL}/user/me`,
         {

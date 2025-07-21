@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 import { IEvent } from '@/pages/EventsPage/EventsPage.tsx';
 
-export const guestCountAtom = atom<number>(1);
+export const guestCountAtom = atom<number>(0);
 export const childrenCountAtom = atom<number>(0);
 
 interface ISelectedEvent {

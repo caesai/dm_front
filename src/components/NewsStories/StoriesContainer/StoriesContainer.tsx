@@ -7,9 +7,10 @@ import "swiper/css";
 import {StageOne} from "@/pages/OnboardingPage/stages/StageOne.tsx";
 import {StageTwo} from "@/pages/OnboardingPage/stages/StageTwo.tsx";
 import {StageThree} from "@/pages/OnboardingPage/stages/StageThree.tsx";
-// import {StageFour} from "@/pages/OnboardingPage/stages/StageFour.tsx";
+import {StageFour} from "@/pages/OnboardingPage/stages/StageFour.tsx";
 import {StageFive} from "@/pages/OnboardingPage/stages/StageFive.tsx";
 import {CloseIcon} from "@/components/Icons/CloseIcon.tsx";
+import logoNew from "/img/DT_concierge_logo_1.png";
 
 interface StoriesContainerInterface {
     activeIndex: number | undefined;
@@ -27,7 +28,7 @@ const StoriesContainer: React.FC<StoriesContainerInterface> = ({ onClose, active
         { name: "2 slide" },
         { name: "3 slide" },
         { name: "4 slide" },
-        // { name: "5 slide" },
+        { name: "5 slide" },
     ];
 
     const [sliderId, setSliderId] = useState(1);
@@ -78,19 +79,57 @@ const StoriesContainer: React.FC<StoriesContainerInterface> = ({ onClose, active
                 {/*    <SwiperSlide className={css.slide} key={index}>{item.name}</SwiperSlide>*/}
                 {/*))}*/}
                 <SwiperSlide className={css.slide}>
+                    <div className={css.logo_container}>
+                        <img
+                            className={css.logo}
+                            src={logoNew}
+                            alt="DreamTeam logo"
+                        />
+                    </div>
                     <StageOne isStory/>
                 </SwiperSlide>
                 <SwiperSlide className={css.slide}>
+                    <div className={css.logo_container}>
+                        <img
+                            className={css.logo}
+                            src={logoNew}
+                            alt="DreamTeam logo"
+                        />
+                    </div>
                     <StageTwo isStory/>
                 </SwiperSlide>
                 <SwiperSlide className={css.slide}>
+                    <div className={css.logo_container}>
+                        <img
+                            className={css.logo}
+                            src={logoNew}
+                            alt="DreamTeam logo"
+                        />
+                    </div>
                     <StageThree isStory/>
                 </SwiperSlide>
                 {/*<SwiperSlide className={css.slide}>*/}
                 {/*    <StageFour isStory/>*/}
                 {/*</SwiperSlide>*/}
                 <SwiperSlide className={css.slide}>
+                    <div className={css.logo_container}>
+                        <img
+                            className={css.logo}
+                            src={logoNew}
+                            alt="DreamTeam logo"
+                        />
+                    </div>
                     <StageFive isStory/>
+                </SwiperSlide>
+                <SwiperSlide className={css.slide}>
+                    <div className={css.logo_container}>
+                        <img
+                            className={css.logo}
+                            src={logoNew}
+                            alt="DreamTeam logo"
+                        />
+                    </div>
+                    <StageFour isStory/>
                 </SwiperSlide>
                 <div className={css.progressCont} ref={progressBar}>
                     {testArray.map((_item, idx) => (

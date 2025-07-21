@@ -7,6 +7,7 @@
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
+    flex-direction: column;
 }
 
 .progressCont {
@@ -59,4 +60,15 @@
     top: 16px;
     right: 16px;
     z-index: 1;
+}
+
+.logo_container {
+    position: absolute;
+    top: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+.logo {
+    width: 160px;
 }
