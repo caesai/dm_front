@@ -43,7 +43,7 @@ export const StageSeven = () => {
                     <div className={css.button_container}>
                         <div
                             className={classNames(css.redButton, {
-                                [css.redButton__disabled]: false,
+                                [css.redButton__disabled]: !name,
                             })}
                             onClick={() => handleConfirm()}
                         >
