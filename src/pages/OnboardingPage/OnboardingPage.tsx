@@ -55,13 +55,19 @@ export const OnboardingPage = () => {
                                     })}
                                     onClick={() => navigate('/onboarding/4')}
                                 ></div>
-                                {/* <div
-                            className={classNames(css.stage, {
-                                [css.stage__active]: checkIsPageActive(5),
-                            })}
-                            onClick={() => navigate('/onboarding/5')}
-                        ></div>
-                        <div
+                                <div
+                                    className={classNames(css.stage, {
+                                        [css.stage__active]: checkIsPageActive(5),
+                                    })}
+                                    onClick={() => navigate('/onboarding/5')}
+                                ></div>
+                                <div
+                                    className={classNames(css.stage, {
+                                        [css.stage__active]: checkIsPageActive(6),
+                                    })}
+                                    // onClick={() => navigate('/onboarding/6')}
+                                ></div>
+                                {/*  <div
                             className={classNames(css.stage, {
                                 [css.stage__active]: checkIsPageActive(6),
                             })}

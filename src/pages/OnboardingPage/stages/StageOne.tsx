@@ -7,7 +7,7 @@ import smoke from "/img/onboarding/smoke.png";
 import trappist from "/img/onboarding/trappist.png";
 import poly from "/img/onboarding/poly.png"
 import pame from "/img/onboarding/pame.png";
-// import beer from "/img/onboarding/beer.png";
+import BBQNEW from "/img/onboarding/bbqnew.png";
 import self from "/img/onboarding/self.png";
 // import restaurants_logo from "/img/onboarding/restaurants_logo.png";
 
@@ -101,6 +101,14 @@ export const StageOne: React.FC<StageOneProps> = ({ isStory }) => {
                                 css.stageOne_icons_7
                             )}
                         />
+                            <img
+                                src={BBQNEW}
+                                alt=""
+                                className={classNames(
+                                    css.stageOne_icon,
+                                    css.stageOne_icons_8
+                                )}
+                            />
                     </div>
                 </div>
             </div>

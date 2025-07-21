@@ -73,17 +73,19 @@
 
 
 .personsContainer {
-    display: flex;
+    display: block;
     /*justify-content: space-between;*/
     align-items: flex-start;
     flex-direction: column;
 }
 
 .personsContainer__title {
+    display: block;
     font-family: "Mont", sans-serif;
     font-size: 14px;
     color: var(--black);
-    font-weight: 400
+    font-weight: 400;
+    margin-bottom: 5px;
 }
 
 .clickableSpan {
@@ -99,11 +101,14 @@
     border-radius: 8px;
     border: 1px solid var(--light-grey);
     height: min-content;
+    width: 90px;
 
     span {
         font-family: "Mont", sans-serif;
         font-weight: 400;
         font-size: 14px;
         letter-spacing: 0;
+        width: 20px;
+        text-align: center;
     }
 }

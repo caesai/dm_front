@@ -340,7 +340,8 @@ export const SERVICE_FEE_DATA: Record<string, {persons: number, fee: number}> = 
   '6': {persons: 8, fee: 10},  // Smoke BBQ SPb
   '7': {persons: 6, fee: 10},  // Self Edge Ekat
   '9': {persons: 8, fee: 10},  // Smoke BBQ Msc
-  '10': {persons: 6, fee: 10},  // Self Edge Msc
+  '10': {persons: 6, fee: 10}, // Self Edge Msc
+  '11': {persons: 8, fee: 10}, // Smoke BBQ SPb New
 }
 
 export const getServiceFeeData = (restaurant_id: string | undefined) => {

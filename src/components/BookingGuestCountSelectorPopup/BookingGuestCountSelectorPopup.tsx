@@ -82,13 +82,13 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
     }, [p.isOpen]);
 
     const incGuests = () => {
-        p.setGuestCount((prev: number) => prev < 9 ? prev + 1 : prev);
+        p.setGuestCount((prev: number) => prev + p.childrenCount < 9 ? prev + 1 : prev);
     };
     const decGuests = () => {
         p.setGuestCount((prev: number) => (prev - 1 >= 1 ? prev - 1 : prev));
     };
     const incChildren = () => {
-        p.setChildrenCount((prev: number) => prev < 9 ? prev + 1 : prev);
+        p.setChildrenCount((prev: number) => prev + p.guestCount < 9 ? prev + 1 : prev);
     };
     const decChildren = () => {
         p.setChildrenCount((prev: number) => (prev - 1 >= 0 ? prev - 1 : prev));
@@ -106,7 +106,6 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
                         <span className={css.personsContainer__title}>
                             Количество гостей:
                         </span>
-                        <br/>
                         <div className={css.personCounter}>
                             <span className={css.clickableSpan} onClick={decGuests}>
                                 -
@@ -122,8 +121,6 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
                         <span className={css.personsContainer__title}>
                             Включая количество детей:
                         </span>
-                        <br/>
-
                         <div className={css.personCounter}>
                             <span className={css.clickableSpan} onClick={decChildren}>
                                 -
