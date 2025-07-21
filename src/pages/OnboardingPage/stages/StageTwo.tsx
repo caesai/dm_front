@@ -13,9 +13,7 @@ export const StageTwo: React.FC<StageTwoProps> = ({isStory}) => {
         <div className={classNames(css.stage_page)}>
             <div className={css.stage_page_wrapper}>
                 <div className={css.stage_footer}>
-                    <div style={{ borderRadius: 12 }}>
-                        <img src={bg} alt={''} style={{maxWidth: '100%', borderRadius: 12}} />
-                    </div>
+
                     <div className={css.stage_description}>
                         <h2
                             className={classNames(
@@ -43,6 +41,9 @@ export const StageTwo: React.FC<StageTwoProps> = ({isStory}) => {
                         </div>
                     </div>
                     )}
+                </div>
+                <div className={css.stageTwo_wrapper} style={{ borderRadius: 12 }}>
+                    <img src={bg} alt={''} style={{maxWidth: '100%', borderRadius: 12}} />
                 </div>
             </div>
         </div>

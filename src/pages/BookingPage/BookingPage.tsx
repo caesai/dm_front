@@ -477,11 +477,11 @@ export const BookingPage: FC = () => {
                                 {/*    // target={'_blank'}*/}
                                 {/*    to={`https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`}*/}
                                 {/*>*/}
-                                <UniversalButton
-                                    action={hideApp}
-                                    width={'full'}
-                                    title={'Не нашли стол на желаемую дату и время?'}
-                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />
+                                {/*<UniversalButton*/}
+                                {/*    action={hideApp}*/}
+                                {/*    width={'full'}*/}
+                                {/*    title={'Не нашли стол на желаемую дату и время?'}*/}
+                                {/*    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />*/}
                                     {/*<span>Не нашли стол на желаемую дату и время?</span>*/}
                                 {/*</Link>*/}
                             </div>
