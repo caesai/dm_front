@@ -51,6 +51,8 @@ export const MyBookingsPage = () => {
                                 const aDate = new Date(a.booking_date);
                                 const bDate = new Date(b.booking_date);
                                 return bDate.getTime() - aDate.getTime();
+                            }).sort((a, b) => {
+                                return Number(b.booking_status !== 'canceled') - Number(a.booking_status !== 'canceled');
                             }).map((booking) => (
                                 <BookingCard
                                     key={booking.id}

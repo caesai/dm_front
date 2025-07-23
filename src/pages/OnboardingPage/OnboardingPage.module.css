@@ -52,7 +52,7 @@
     padding-top: 88px;
     height: 100vh;
     flex-direction: column-reverse;
-    justify-content: center;
+    /*justify-content: center;*/
 }
 
 .stage_footer {
