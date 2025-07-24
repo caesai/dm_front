@@ -5,9 +5,10 @@ import classNames from 'classnames';
 interface NewsStoriesElementInterface {
     onClick: (index: number) => void;
     index: number;
+    thumbnail: string;
 }
 
-export const NewsStoriesElement: React.FC<NewsStoriesElementInterface> = ({ onClick, index }) => {
+export const NewsStoriesElement: React.FC<NewsStoriesElementInterface> = ({ onClick, thumbnail, index }) => {
     const [isClicked, setIsClicked] = useState(false);
     const handleClick = () => {
         onClick(index);
@@ -15,11 +16,8 @@ export const NewsStoriesElement: React.FC<NewsStoriesElementInterface> = ({ onCl
     }
     return (
         <div className={classNames(css.element, !isClicked ? css.isClicked : null)} onClick={handleClick}>
-            {/*<div className={css.newsText}>*/}
-            {/*    <span>{index === 0 ? 'Знакомство' : 'Новое место'}</span>*/}
-            {/*</div>*/}
             <div className={css.newsImage}>
-                <img src={index === 1 ? "./img/BBQNEW.png" : "./img/placeholder_1.png"} alt="" />
+                <img src={thumbnail} alt="" />
             </div>
         </div>
     );
