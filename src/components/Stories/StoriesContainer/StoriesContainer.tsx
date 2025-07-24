@@ -14,7 +14,6 @@ interface IStoriesContainerProps {
 }
 
 const StoriesContainer: React.FC<IStoriesContainerProps> = ({stories, onClose}) => {
-
     return (
         <div className={css.stories_container}>
             <span className={css.closeIcon} onClick={onClose}>

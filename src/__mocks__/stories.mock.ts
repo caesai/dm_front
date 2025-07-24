@@ -26,6 +26,17 @@ const mockedStories: IStory[] = [
         type: "component",
         duration: 5000,
     },
+    {
+        id: "random-id",
+        title: "",
+        url: stage3,
+        description: "",
+        button_url: "",
+        button_text: "",
+        button_color: "",
+        type: "image",
+        duration: 5000,
+    },
 ];
 
 export const mockedResponseFromFutureRequest: IStoriesBlockResponse[] = [
@@ -35,6 +46,14 @@ export const mockedResponseFromFutureRequest: IStoriesBlockResponse[] = [
         stories: mockedStories,
         active: false,
         users: []
+    },
+    {
+        id: 'random-story-id',
+        thumbnail: placeholder,
+        stories: mockedStories,
+        active: false,
+        users: [],
+        cities: [],
     },
     {
         id: 'random-story-id',

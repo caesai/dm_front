@@ -43,4 +43,5 @@
 }
 .isClicked {
     border: 2px solid var(--red);
+    align-self: flex-end;
 }

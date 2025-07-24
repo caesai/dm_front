@@ -373,7 +373,7 @@ export const BookingInfoPage = () => {
                                                 css.bookingInfoDetails_item__text
                                             }
                                         >
-                                            {booking.guests_count}
+                                            {Number(booking.guests_count + booking.children_count)}
                                         </span>
                                     ) : (
                                         <PlaceholderBlock

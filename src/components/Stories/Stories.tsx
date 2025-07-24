@@ -1,6 +1,6 @@
 import {StoriesBlock} from '@/components/Stories/StoriesBlock/StoriesBlock.tsx';
 
-import css from './NewsStories.module.css';
+import css from './Stories.module.css';
 import {FreeMode} from 'swiper/modules';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {useEffect, useState} from "react";
@@ -45,7 +45,40 @@ export const Stories = () => {
     }, []);
     return (
         <>
-            {activeIndex !== null && <StoriesContainer onClose={closeStory} stories={storiesBlock[Number(activeIndex)].stories}/>}
+            {activeIndex !== null && (
+
+                <Swiper
+                    freeMode
+                    onTouchStart={(_swiper, event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        const el = event.target as HTMLElement;
+                        console.log(el);
+                        el.click();
+                        // el.dispatchEvent(
+                        //     new MouseEvent("click", { bubbles: false, view: window, cancelable: true }),
+                        // )
+                    }}
+                    style={{ width: "100%",
+                        position: "fixed", zIndex: 10,
+                        top: 0, left: 0, height: "100vh" }}
+                    slidesPerView={"auto"}
+                    centeredSlides={true}
+                    onSlideNextTransitionStart={() => {
+                        console.log("next click", );
+                    }}
+                    onSlidePrevTransitionStart={() => {
+                        console.log("prev click");
+                    }}
+                    initialSlide={activeIndex}
+                >
+                    {storiesBlock.map((block, index) => (
+                        <SwiperSlide className={css.slide} key={index}>
+                            <StoriesContainer onClose={closeStory} stories={block.stories}/>
+                        </SwiperSlide>
+                    ))}
+                 </Swiper>
+            )}
             <div>
                 <Swiper
                     slidesPerView="auto"
@@ -55,7 +88,7 @@ export const Stories = () => {
                     wrapperClass={css.newsSlider}
                 >
                     {storiesBlock.map(({thumbnail}, index) => (
-                        <SwiperSlide style={{width: '100px',}}>
+                        <SwiperSlide style={{width: '100px',}} key={index}>
                             <StoriesBlock onClick={openStory} index={index} thumbnail={thumbnail}/>
                         </SwiperSlide>
                     ))}
