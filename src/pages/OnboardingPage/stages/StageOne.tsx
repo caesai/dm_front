@@ -1,8 +1,21 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
+import blackChops from "/img/onboarding/blackchops.png";
+// import anchovus from "/img/onboarding/anchovys.png";
+import smoke from "/img/onboarding/smoke.png";
+import trappist from "/img/onboarding/trappist.png";
+import poly from "/img/onboarding/poly.png"
+import pame from "/img/onboarding/pame.png";
+import BBQNEW from "/img/onboarding/bbqnew.png";
+import self from "/img/onboarding/self.png";
+// import restaurants_logo from "/img/onboarding/restaurants_logo.png";
 
-export const StageOne = () => {
+interface StageOneProps {
+    isStory?: boolean;
+}
+
+export const StageOne: React.FC<StageOneProps> = ({ isStory }) => {
     const navigate = useNavigate();
     return (
         <div className={css.stage_page}>
@@ -16,7 +29,8 @@ export const StageOne = () => {
                             Собрали все рестораны Dreamteam в одном месте.
                         </span>
                     </div>
-                    <div className={css.button_container}>
+                    {!isStory && (
+                        <div className={css.button_container}>
                         <div
                             className={css.redButton}
                             onClick={() => navigate('/onboarding/2')}
@@ -24,11 +38,15 @@ export const StageOne = () => {
                             <span>Продолжить</span>
                         </div>
                     </div>
+                    )}
                 </div>
                 <div className={css.stageOne_wrapper}>
-                    <div className={css.stageOne_icons}>
+                    {/*<div className={css.stageOne_icons} style={{ backgroundImage: `url(${restaurants_logo})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}  >*/}
+                        <div className={css.stageOne_icons} >
+                        {/*<img src={restaurants_logo} className={css.stageOne_icon} style={{ maxWidth: '100%'}} alt="restaurants_logo" />*/}
                         <img
-                            src="/img/onboarding/blackchops.png"
+                            src={blackChops}
+                            style={{ visibility: "hidden" }}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -36,7 +54,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/anchovys.png"
+                            src={self}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -44,7 +62,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/smoke.png"
+                            src={smoke}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -52,7 +70,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/trappist.png"
+                            src={trappist}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -60,7 +78,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/poly.png"
+                            src={poly}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -68,7 +86,7 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/pame.png"
+                            src={pame}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
@@ -76,21 +94,21 @@ export const StageOne = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/beer.png"
+                            src={blackChops}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
                                 css.stageOne_icons_7
                             )}
                         />
-                        <img
-                            src="/img/onboarding/self.png"
-                            alt=""
-                            className={classNames(
-                                css.stageOne_icon,
-                                css.stageOne_icons_8
-                            )}
-                        />
+                            <img
+                                src={BBQNEW}
+                                alt=""
+                                className={classNames(
+                                    css.stageOne_icon,
+                                    css.stageOne_icons_8
+                                )}
+                            />
                     </div>
                 </div>
             </div>

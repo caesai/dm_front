@@ -1,14 +1,17 @@
 import Popup from 'reactjs-popup';
-import { FC, useEffect, useState } from 'react';
+import {FC, useEffect, useRef, useState} from 'react';
 import css from './MenuPopup.module.css';
 import 'reactjs-popup/dist/index.css';
+import 'swiper/css/thumbs';
+import "swiper/css/zoom";
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import classNames from 'classnames';
+import {type Swiper as SwiperRef} from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode } from 'swiper/modules';
+import { Thumbs, Zoom } from 'swiper/modules';
 import styled from 'styled-components';
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+// import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 interface IFullScreenPopup {
     isOpen: boolean;
@@ -30,7 +33,8 @@ const StyledPopup = styled(Popup)`
 export const MenuPopup: FC<IFullScreenPopup> = (p) => {
     const onClose = () => p.setOpen(false);
     const [menuItems] = useState<string[]>(p.menuItems);
-    const [currentImage, setCurrentImage] = useState(menuItems[0]);
+    const [currentImage, setCurrentImage] = useState<string>(menuItems[0]);
+    const thumbsSwiper = useRef<SwiperRef>();
     // hack to prevent from scrolling on page
     useEffect(() => {
         if (p.isOpen) {
@@ -44,6 +48,7 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
         };
     }, [p.isOpen]);
 
+    // @ts-ignore
     return (
         <StyledPopup open={p.isOpen} onClose={onClose} position={'top center'}>
             <div className={css.popup}>
@@ -56,42 +61,65 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                             action={() => onClose()}
                         />
                     </div>
-                    <div className={css.imageViewer}>
-                        <div
-                            style={{
-                                height: '100%',
-                                width: '100%',
-                            }}
-                        >
-                            <TransformWrapper initialScale={1}>
-                                <TransformComponent
-                                    wrapperStyle={{
-                                        width: '100%',
-                                        height: '100%',
-                                    }}
-                                    contentStyle={{
-                                        width: '100%',
-                                        height: '100%',
-                                    }}
-                                >
-                                    <div
-                                        className={classNames(
-                                            css.bgImage,
-                                            css.currentImage
-                                        )}
-                                        style={{
-                                            backgroundImage: `url(${currentImage})`,
-                                        }}
-                                    ></div>
-                                </TransformComponent>
-                            </TransformWrapper>
+                    <div className={css.swiper_container}>
+                    {/*        <TransformWrapper initialScale={1}>*/}
+                    {/*            <TransformComponent*/}
+                    {/*                wrapperStyle={{*/}
+                    {/*                    width: '100%',*/}
+                    {/*                    height: '100%',*/}
+                    {/*                }}*/}
+                    {/*                contentStyle={{*/}
+                    {/*                    width: '100%',*/}
+                    {/*                    height: '100%',*/}
+                    {/*                }}*/}
+                    {/*            >*/}
+                                    <Swiper
+                                        slidesPerView={1}
+                                        spaceBetween={5}
+                                        zoom
+                                        modules={[Thumbs, Zoom]}
+                                        style={{ width: '100%' }}
+                                        thumbs={{swiper: thumbsSwiper.current && !thumbsSwiper.current?.destroyed ? thumbsSwiper.current : null}}
+                                    >
+                                        {menuItems.map((slide, index) => {
+                                            return (
+                                                <SwiperSlide
+                                                    zoom
+                                                    key={index}
+                                                >
+                                                    <div className="swiper-zoom-container">
+                                                        <img src={slide} alt={'slide'} />
+                                                    </div>
+                                                    {/*<div*/}
+                                                    {/*    className={classNames(*/}
+                                                    {/*        css.bgImage,*/}
+                                                    {/*        css.currentImage*/}
+                                                    {/*    ) + " swiper-zoom-target"}*/}
+                                                    {/*    style={{*/}
+                                                    {/*        backgroundImage: `url(${slide})`,*/}
+                                                    {/*    }}*/}
+                                                    {/*></div>*/}
+                                                </SwiperSlide>
+                                            )
+                                        })}
+                                    </Swiper>
+                            {/*    </TransformComponent>*/}
+                            {/*</TransformWrapper>*/}
                         </div>
                         <div className={css.imageSelector}>
                             <Swiper
+                                zoom
                                 slidesPerView="auto"
-                                modules={[FreeMode]}
-                                freeMode={true}
+                                modules={[Thumbs]}
                                 spaceBetween={5}
+                                watchSlidesProgress
+                                onSwiper={(swiper) => {
+                                    if(thumbsSwiper) {
+                                        thumbsSwiper.current = swiper;
+                                    }
+                                }}
+                                // @ts-ignore
+                                // onSwiper={setThumbsSwiper}
                             >
                                 {menuItems.map((slide) => (
                                     <SwiperSlide
@@ -120,7 +148,7 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
                                 ></SwiperSlide>
                             </Swiper>
                         </div>
-                    </div>
+                    {/*</div>*/}
                 </div>
             </div>
         </StyledPopup>

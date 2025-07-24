@@ -20,7 +20,7 @@ import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { APIGetCityList } from '@/api/city.ts';
 import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { APIGetEA } from '@/api/config.ts';
+// import { APIGetEA } from '@/api/config.ts';
 import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.tsx';
 import { EventListOutlet } from '@/pages/EventsPage/EventListOutlet/EventListOutlet.tsx';
 import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
@@ -37,17 +37,18 @@ import { AdminScannerPage } from '@/pages/AdminScannerPage/AdminScannerPage.tsx'
 import { OnboardingPage } from '@/pages/OnboardingPage/OnboardingPage.tsx';
 import { StageOne } from '@/pages/OnboardingPage/stages/StageOne.tsx';
 import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
-import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
+// import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
 import { StageFour } from '@/pages/OnboardingPage/stages/StageFour.tsx';
 import { StageFive } from '@/pages/OnboardingPage/stages/StageFive.tsx';
 import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
+import {StageSeven} from "@/pages/OnboardingPage/stages/StageSeven.tsx";
 
 const AppRouter = () => {
-    const [user] = useAtom(userAtom);
+    // const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const [cities, setCities] = useAtom(cityListAtom);
     const [restaurants, setRestaurants] = useAtom(restaurantsListAtom);
-    const [earlyAccess, setEarlyAccess] = useState(false);
+    // const [earlyAccess, setEarlyAccess] = useState(true);
     const [loadingComplete, setLoadingComplete] = useState<boolean>();
     const [, setReview] = useAtom(reviewAtom);
 
@@ -56,15 +57,15 @@ const AppRouter = () => {
         if (!loadingComplete && auth?.access_token) {
             APIGetCityList().then((res) => setCities(res.data));
             APIGetRestaurants().then((res) => {
-                console.log(res.data);
+                console.log('restaurants: ', res.data)
                 setRestaurants(res.data);
             });
         }
     }, [loadingComplete]);
 
-    useEffect(() => {
-        APIGetEA().then((res) => setEarlyAccess(res.data.result));
-    }, []);
+    // useEffect(() => {
+    //     APIGetEA().then((res) => setEarlyAccess(res.data.result));
+    // }, []);
 
     useEffect(() => {
         if (auth?.access_token)
@@ -86,16 +87,18 @@ const AppRouter = () => {
     }, [cities, restaurants]);
 
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.MODE !== 'development' ? undefined : '/dm_front/'}>
             <ScrollToTop />
             <Redirecter />
-            {earlyAccess && !user?.early_access ? (
-                <div>
-                    <span>
-                        Вход в приложение пока доступен только по приглашению
-                    </span>
-                </div>
-            ) : !loadingComplete ? (
+            {
+            //     earlyAccess && !user?.early_access ? (
+            //     <div>
+            //         <span>
+            //             Вход в приложение пока доступен только по приглашению
+            //         </span>
+            //     </div>
+            // ) :
+                !loadingComplete ? (
                 <AppLoadingScreen />
             ) : (
                 <Routes>
@@ -152,13 +155,11 @@ const AppRouter = () => {
                     <Route path={'/onboarding'} element={<OnboardingPage />}>
                         <Route path={'/onboarding/1'} element={<StageOne />} />
                         <Route path={'/onboarding/2'} element={<StageTwo />} />
-                        <Route
-                            path={'/onboarding/3'}
-                            element={<StageThree />}
-                        />
+                         {/*<Route path={'/onboarding/3'} element={<StageThree />} />*/}
                         <Route path={'/onboarding/4'} element={<StageFour />} />
-                        <Route path={'/onboarding/5'} element={<StageFive />} />
-                        <Route path={'/onboarding/6'} element={<StageSix />} />
+                        <Route path={'/onboarding/3'} element={<StageFive />} />
+                        <Route path={'/onboarding/5'} element={<StageSix />} />
+                        <Route path={'/onboarding/6'} element={<StageSeven />} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/" />} />
@@ -174,7 +175,6 @@ export function App() {
         swipeBehavior.mount();
     }, []);
     const [userState] = useAtom(userAtom);
-    console.log(lp)
     return (
         <AppRoot
             appearance={'light'}

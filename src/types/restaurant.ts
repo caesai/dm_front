@@ -88,6 +88,7 @@ export interface IBookingInfo {
     booking_date: string;
     time: string;
     guests_count: number;
+    children_count: number;
     booking_status: string;
     user_comments: string;
 }

@@ -15,6 +15,14 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import { formatDateDT } from '@/utils.ts';
 import moment from 'moment';
 import QRCode from 'react-qr-code';
+// import jsPDF from "jspdf";
+// import {BASE_BOT} from "@/api/base.ts";
+import {Buffer} from 'buffer';
+// import {MontFont} from "@/components/MontFont/Montfont.ts";
+// import '../../../public/'
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
+
 
 export const TicketInfoPage = () => {
     const navigate = useNavigate();
@@ -30,6 +38,47 @@ export const TicketInfoPage = () => {
             setTicket(res.data);
         });
     }, [id]);
+
+    const sharePdf = () => {
+        // const doc = new jsPDF("p","px","a4");
+        // doc.addFileToVFS('Mont-Regular.ttf', MontFont);
+        // doc.addFont('Mont-Regular.ttf', 'Mont-Regular', 'normal');
+        // doc.setFont('Mont-Regular');
+        const ticketEl = document.getElementById('ticket');
+        html2pdf().from(ticketEl).output('blob').then((pdfAsString:string) => {
+            console.log('pdfAsString: ', pdfAsString);
+            const buffer = Buffer.from(pdfAsString, 'utf-8')
+            const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
+            const files = [pdf];
+            navigator.share({
+                files
+            }).then();
+        });
+        // const buffer = Buffer.from(pdfOutput, 'utf-8')
+        // const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
+        // const files = [pdf];
+        // navigator.share({
+        //     files
+        // }).then();
+        // doc.html(document.getElementById('ticket') as HTMLElement, {
+        //     callback: function (res) {
+        //         // doc.save('doc.pdf');
+        //
+        //         // const jpegUrl = document.getElementById('qr').toDataURL("image/jpeg");
+        //         // doc.addImage(jpegUrl, 'JPEG', 0, 0);
+        //         const buffer = Buffer.from(res.output(), 'utf-8')
+        //         const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
+        //         const files = [pdf];
+        //         navigator.share({
+        //             files
+        //         }).then();
+        //     },
+        //     html2canvas: {
+        //         scale: 1, // Adjust scaling factor if needed
+        //     },
+        //     // fontFaces: ['Mont']
+        // });
+    }
     return (
         <Page back={true}>
             <div className={css.body}>
@@ -57,13 +106,13 @@ export const TicketInfoPage = () => {
 
                         <RoundedButton
                             icon={<DownloadIcon />}
-                            action={() => alert('download')}
+                            action={sharePdf}
                             bgColor={'var(--primary-background)'}
                         />
                     </div>
                 </div>
 
-                <div className={css.ticket}>
+                <div className={css.ticket} id={'ticket'}>
                     <div className={css.ticket_header}>
                         <div
                             className={classNames(
@@ -243,7 +292,7 @@ export const TicketInfoPage = () => {
                         }}
                     >
                         {ticket ? (
-                            <QRCode size={128} value={String(`${ticket.id}`)} />
+                            <QRCode size={128} value={String(`${ticket.id}`)} id={'qr'} />
                         ) : (
                             <PlaceholderBlock
                                 width={'128px'}

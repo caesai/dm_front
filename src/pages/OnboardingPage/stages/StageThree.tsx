@@ -1,8 +1,15 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
+import event1 from '/img/onboarding/event1.png';
+import event2 from '/img/onboarding/event2.jpg';
+import event3 from '/img/onboarding/event3.jpg';
 
-export const StageThree = () => {
+interface StageThreeProps {
+    isStory?: boolean;
+}
+
+export const StageThree: React.FC<StageThreeProps> = ({isStory}) => {
     const navigate = useNavigate();
     return (
         <div className={classNames(css.stage_page)}>
@@ -17,11 +24,12 @@ export const StageThree = () => {
                                 css.stage_description_subtitle
                             )}
                         >
-                            Омакасе-ужины, Beef Steak Club, тематические бранчи
-                            и многое другое.
+                            Омакасе-ужины, Blackchops Steak Club, тематические
+                            бранчи и многое другое.
                         </span>
                     </div>
-                    <div className={css.button_container}>
+                    {!isStory && (
+                        <div className={css.button_container}>
                         <div
                             className={css.redButton}
                             onClick={() => navigate('/onboarding/4')}
@@ -29,11 +37,12 @@ export const StageThree = () => {
                             <span>Продолжить</span>
                         </div>
                     </div>
+                    )}
                 </div>
                 <div className={css.stageThree_wrapper}>
                     <div className={css.stageThree_images}>
                         <img
-                            src="/img/onboarding/event1.png"
+                            src={event1}
                             alt=""
                             className={classNames(
                                 css.stageThree_image,
@@ -41,7 +50,7 @@ export const StageThree = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/event2.jpg"
+                            src={event2}
                             alt=""
                             className={classNames(
                                 css.stageThree_image,
@@ -49,7 +58,7 @@ export const StageThree = () => {
                             )}
                         />
                         <img
-                            src="/img/onboarding/event2.png"
+                            src={event3}
                             alt=""
                             className={classNames(
                                 css.stageThree_image,

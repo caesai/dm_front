@@ -57,6 +57,7 @@ export const APICreateBooking = (
     date: string,
     time: string,
     guests_count: number,
+    children_count: number,
     name: string,
     phone: string,
     email: string,
@@ -70,10 +71,11 @@ export const APICreateBooking = (
             date,
             time,
             guests_count,
+            children_count,
             name,
             phone,
             email,
-            comment,
+            comment: import.meta.env.MODE === 'development' ? 'ТЕСТОВОЕ БРОНИРОВАНИЕ! НЕ ОТВЕЧАТЬ!' : comment ,
             prepared_comments,
             confirmation,
         },
@@ -155,5 +157,18 @@ export const APISendReview = (
 export const APIGetEventsInRestaurant = async (restaurant_id: number) => {
     return await axios.get<IEventInRestaurant[]>(
         `${BASE_URL}/restaurant/${restaurant_id}/events`
+    );
+};
+
+export const APIPostNewRestaurant = (token: string) => {
+    return axios.post(
+        `${BASE_URL}/restaurant/new`,
+        {
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
     );
 };

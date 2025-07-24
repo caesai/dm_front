@@ -5,6 +5,7 @@
 }
 
 .bgImage {
+    position: relative;
     background-size: cover;
     background-position: center;
 }
@@ -17,6 +18,34 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    position: relative;
+}
+
+.imaged:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    content: "";
+    z-index: 0;
+    background-image: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0),
+            rgb(0, 0, 0, 0.8)
+    );
+    border-radius: 16px;
+}
+
+.bgNoImaged {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background-color: var(--secondary-background);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
 }
 
 .floatingBadges {
@@ -30,10 +59,13 @@
 }
 
 .imagedBottom {
+    position: relative;
+    z-index: 1;
     display: flex;
     width: 100%;
-    backdrop-filter: blur(10px);
-    background-color: rgba(0, 0, 0, 0.6);
+    /*backdrop-filter: blur(10px);*/
+    /*background-color: rgba(0, 0, 0, 0.6);*/
+
     height: 76px;
     border-radius: 0 0 16px 16px;
     align-items: center;
@@ -56,14 +88,14 @@
 }
 
 .chefTitle {
-    font-size: 12px;
+    font-size: 14px;
     font-family: 'Mont', sans-serif;
     font-weight: 400;
     color: var(--light-grey);
 }
 
 .chefName {
-    font-size: 14px;
+    font-size: 16px;
     font-family: 'Mont', sans-serif;
     font-weight: 400;
     color: var(--primary-background);
@@ -104,7 +136,89 @@
     color: var(--grey);
 }
 
+.resFirst {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: white;
+    background-color: var(--red);
+    border-radius: 16px;
+    padding: 3px 10px;
+}
+
 .swiperSlide {
     width: 130px;
     height: 130px;
+}
+
+.discount {
+    /*margin: 15px 0 0 15px;*/
+    padding: 5px 10px;
+    background-color: red;
+    border-radius: 16px;
+    width: fit-content;
+    font-family: "Mont", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--secondary-background);
+    position: absolute;
+    top: 20px;
+    left: 15px;
+}
+
+.success_animation { }
+
+.checkmark {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #4bb71b;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px #4bb71b;
+    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    position:relative;
+    top: 5px;
+    right: 5px;
+    margin: 0 auto;
+}
+.checkmark__circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: #4bb71b;
+    fill: #fff;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+
+}
+
+.checkmark__check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes scale {
+    0%, 100% {
+        transform: none;
+    }
+
+    50% {
+        transform: scale3d(1.1, 1.1, 1);
+    }
+}
+
+@keyframes fill {
+    100% {
+        box-shadow: inset 0px 0px 0px 30px #4bb71b;
+    }
 }

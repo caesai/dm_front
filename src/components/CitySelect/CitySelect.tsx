@@ -1,9 +1,11 @@
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-import { FC, useState } from 'react';
+import {IConfirmationType} from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+import {FC, useEffect, useState} from 'react';
 import css from './CitySelect.module.css';
-import { DownArrow } from '@/components/Icons/DownArrow.tsx';
-import { Collapse } from 'react-collapse';
+import {DownArrow} from '@/components/Icons/DownArrow.tsx';
+import {Collapse} from 'react-collapse';
 import classNames from 'classnames';
+import {NearestCity} from "@/utils.ts";
+import {locationManager} from '@telegram-apps/sdk-react'
 
 interface IConfirmationSelect {
     options: IConfirmationType[];
@@ -12,10 +14,10 @@ interface IConfirmationSelect {
 }
 
 export const CitySelect: FC<IConfirmationSelect> = ({
-    options,
-    currentValue,
-    onChange,
-}) => {
+                                                        options,
+                                                        currentValue,
+                                                        onChange,
+                                                    }) => {
     const [collapse, setCollapse] = useState(false);
     const selectOnChange = (id: string, text: string) => {
         const newValue: IConfirmationType = {
@@ -23,7 +25,27 @@ export const CitySelect: FC<IConfirmationSelect> = ({
             text: text,
         };
         onChange(newValue);
+        setCollapse((prev) => !prev);
     };
+
+    const getLocation = async () => {
+        if (locationManager.requestLocation.isAvailable()) {
+            const location = await locationManager.requestLocation();
+            console.log(location)
+            const city = NearestCity(location.latitude, location.longitude);
+            const closestCity = options.filter((option) => option.text === city.toString());
+            onChange(closestCity[0]);
+        }
+    }
+
+    useEffect(() => {
+        if (locationManager.openSettings.isAvailable() && !locationManager.isAccessRequested() && navigator.platform.startsWith("iP") ) {
+            // locationManager.openSettings();
+        }
+        if (!locationManager.isAccessRequested() && locationManager.isAccessGranted()) {
+            getLocation().then();
+        }
+    }, []);
 
     return (
         <div className={classNames(css.selectWrapper)}>

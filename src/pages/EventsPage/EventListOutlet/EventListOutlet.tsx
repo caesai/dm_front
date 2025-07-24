@@ -12,13 +12,24 @@ export const EventListOutlet = () => {
     const [events] = useAtom<IEvent[]>(eventsListAtom);
 
     const next = (event: IEvent) => {
-        setBookingInfo((prev) => ({ ...prev, event: event }));
-        navigate(`/events/${event.name}`);
+        setBookingInfo((p) => ({
+            ...p,
+            event: event,
+            restaurantId: String(event?.restaurants[0].id),
+            restaurant: event?.restaurants[0],
+        }));
+        navigate(`/events/${event.name}/restaurant/${event?.restaurants[0].id}/guests`)
     };
 
     return (
         <div className={css.cards}>
-            {events.map((event) => (
+            {events.sort(function(a, b) {
+                const aDate = new Date(a.restaurants[0].dates[0].date_start);
+                const bDate = new Date(b.restaurants[0].dates[0].date_start);
+                return aDate.getTime() - bDate.getTime();
+            }).filter((event) =>{
+                return new Date().getTime() <= new Date(event.restaurants[0].dates[0].date_start).getTime();
+            }).map((event) => (
                 <EventCard
                     key={event.name}
                     onClick={() => next(event)}
@@ -26,6 +37,10 @@ export const EventListOutlet = () => {
                     event_name={event.name}
                     event_desc={event.description}
                     event_img={event.image_url}
+                    event_address={event.restaurants[0].address}
+                    event_dates={event.restaurants[0].dates}
+                    event_restaurant={event.restaurants[0].title}
+                    sold={event.restaurants[0].dates[0].tickets_left === 0}
                 />
             ))}
         </div>

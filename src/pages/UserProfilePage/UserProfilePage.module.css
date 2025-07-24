@@ -57,3 +57,16 @@
         color: var(--grey);
     }
 }
+
+.delete {
+    display: flex;
+    padding: 13px 20px;
+    margin: 0;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    font-family: 'Mont', 'sans-serif';
+    font-size: 14px;
+    font-weight: 700;
+    justify-content: center;
+}

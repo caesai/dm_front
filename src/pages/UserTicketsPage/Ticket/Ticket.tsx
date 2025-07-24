@@ -12,13 +12,19 @@ export const Ticket = ({ ticket }: Props) => {
     const navigate = useNavigate();
     return (
         <div
-            className={classNames(css.card, css.bgImage)}
+            className={classNames(
+                css.card,
+                css.bgImage,
+                new Date().getTime() > new Date(ticket.date_start).getTime() ? css.card_date__notActive : null
+                )}
             style={{
-                backgroundImage: `url(${ticket.event_img || 'https://storage.yandexcloud.net/bottec-dreamteam/event_placeholder.png'})`,
+                backgroundImage: `url(${ticket.restaurant.thumbnail_photo || 'https://storage.yandexcloud.net/bottec-dreamteam/event_placeholder.png'})`,
             }}
             onClick={() => navigate(`/tickets/${ticket.id}`)}
         >
-            <span className={classNames(css.card_date)}>
+            <span className={classNames(css.card_date,
+                new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() > new Date(ticket.date_start).getTime() ? css.card_date__notActive : null
+                )}>
                 {moment(ticket.date_start).format('DD.MM.YYYY')} в{' '}
                 {moment(ticket.date_start).format('HH:mm')}
             </span>

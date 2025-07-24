@@ -1,8 +1,12 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
+import phone from "/img/onboarding/phone.png";
 
-export const StageFive = () => {
+interface StageFiveProps {
+    isStory?: boolean;
+}
+export const StageFive: React.FC<StageFiveProps> = ({isStory}) => {
     const navigate = useNavigate();
 
     return (
@@ -57,19 +61,20 @@ export const StageFive = () => {
                             </span>
                         </div>
                     </div>
-                    <div className={css.button_container}>
+                    {!isStory && (<div className={css.button_container}>
                         <div
                             className={css.redButton}
-                            onClick={() => navigate('/onboarding/6')}
+                            //onClick={() => navigate('/onboarding/6')}
+                            onClick={() => navigate('/onboarding/4')}
                         >
                             <span>Продолжить</span>
                         </div>
-                    </div>
+                    </div>)}
                 </div>
                 <div className={css.stageFive_wrapper}>
                     {/*<div className={css.stageFive_image}>*/}
                     <img
-                        src="/img/onboarding/phone.png"
+                        src={phone}
                         className={css.stageFive_phone}
                         alt=""
                     />

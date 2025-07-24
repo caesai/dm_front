@@ -2,10 +2,12 @@ import Popup from 'reactjs-popup';
 import { FC, useEffect, useState } from 'react';
 import css from './ImageViewerPopup.module.css';
 import 'reactjs-popup/dist/index.css';
+import "swiper/css/zoom";
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Zoom } from 'swiper/modules';
 import styled from 'styled-components';
 import { IPhotoCard } from '@/types/restaurant.ts';
 
@@ -43,7 +45,6 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
         // Если элемент найден и индекс отличается от текущего, обновляем стейт
         if (index !== -1 && index !== currentSlide) {
             setCurrentSlide(index);
-            console.log(index);
         }
     }, [p.currentItem]);
     // hack to prevent from scrolling on page
@@ -72,22 +73,27 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                     </div>
                     <div className={css.swiper_container}>
                         <Swiper
+                            modules={[Zoom]}
+                            zoom
                             slidesPerView={1}
-                            spaceBetween={8}
+                            spaceBetween={5}
                             style={{ width: '100%' }}
                             initialSlide={currentSlide}
                         >
-                            {menuItems.map((slide) => (
-                                <SwiperSlide key={slide}>
-                                    <div
-                                        className={classNames(
-                                            css.bgImage,
-                                            css.currentImage
-                                        )}
-                                        style={{
-                                            backgroundImage: `url(${slide})`,
-                                        }}
-                                    ></div>
+                            {menuItems.map((slide, index) => (
+                                <SwiperSlide key={index}>
+                                    <div className="swiper-zoom-container">
+                                        <img src={slide} alt={'slide'} className={css.currentImage}/>
+                                    </div>
+                                    {/*<div*/}
+                                    {/*    className={classNames(*/}
+                                    {/*        css.bgImage,*/}
+                                    {/*        css.currentImage*/}
+                                    {/*    ) + " swiper-zoom-target"}*/}
+                                    {/*    style={{*/}
+                                    {/*        backgroundImage: `url(${slide})`,*/}
+                                    {/*    }}*/}
+                                    {/*></div>*/}
                                 </SwiperSlide>
                             ))}
                         </Swiper>

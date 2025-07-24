@@ -7,6 +7,7 @@ import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { APIUserInfo } from '@/api/auth.ts';
 import { useNavigate } from 'react-router-dom';
+import {getDataFromLocalStorage} from "@/utils.ts";
 
 export const UserPhoneConfirmationPage = () => {
     const [user, setUser] = useAtom(userAtom);
@@ -32,7 +33,12 @@ export const UserPhoneConfirmationPage = () => {
 
     useEffect(() => {
         if (user?.phone_number) {
-            navigate('/');
+            const sharedEvent = getDataFromLocalStorage('sharedEvent');
+            if(sharedEvent) {
+                navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
+            } else {
+                navigate('/');
+            }
         }
     }, [user]);
 

@@ -116,7 +116,6 @@ export const DTSelectionOutlet = () => {
     }, [bookingInfo.event]);
 
     const isValid = useMemo(() => {
-        console.log(bookingInfo);
         return (
             value &&
             currentSelectedTime &&
@@ -143,7 +142,7 @@ export const DTSelectionOutlet = () => {
     const next = () => {
         isValid ? navigate(`/events/${name}/restaurant/${res}/guests`) : null;
     };
-
+    console.log('availableDates: ', availableDates)
     return (
         <div className={css.frame}>
             <div className={css.personsContainer}>
@@ -151,12 +150,12 @@ export const DTSelectionOutlet = () => {
                     Количество мест
                 </span>
                 <div className={css.personCounter}>
-                    <span className={css.clickableSpan} onClick={incCounter}>
-                        +
-                    </span>
-                    <span>{guestCount}</span>
                     <span className={css.clickableSpan} onClick={decCounter}>
                         -
+                    </span>
+                    <span>{guestCount}</span>
+                    <span className={css.clickableSpan} onClick={incCounter}>
+                        +
                     </span>
                 </div>
             </div>
@@ -179,6 +178,7 @@ export const DTSelectionOutlet = () => {
                     minDetail={'month'}
                     prevLabel={<ArrowLeft />}
                     nextLabel={<ArrowRight />}
+                    defaultActiveStartDate={availableDates[0]}
                 />
             </div>
             {value ? (
@@ -211,9 +211,14 @@ export const DTSelectionOutlet = () => {
                                               onClick={() => setTime(v)}
                                           >
                                               <span>
-                                                  {moment(
+                                                  {currentSelectedTime !== v ? moment(
                                                       v.start_datetime
-                                                  ).format('HH:mm')}
+                                                  ).format('HH:mm') :
+                                                  `${moment(
+                                                      v.start_datetime
+                                                  ).format('HH:mm')} - ${moment(
+                                                      v.end_datetime
+                                                  ).format('HH:mm')}`}
                                               </span>
                                           </div>
                                       </SwiperSlide>
@@ -237,7 +242,7 @@ export const DTSelectionOutlet = () => {
                         </Swiper>
                     </div>
                     {!timeslotsLoading && !restaurantTimeslots.length ? (
-                        <span>Нет доступных столиков</span>
+                        <span className={css.personsContainer__title}>Нет доступных столиков</span>
                     ) : null}
                 </div>
             ) : null}

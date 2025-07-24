@@ -23,7 +23,7 @@
     span {
         font-family: 'Mont', sans-serif;
         font-size: 14px;
-        font-weight: 800;
+        font-weight: 400;
         color: var(--grey);
     }
 }
@@ -46,12 +46,12 @@
     padding: 11px 30px;
     border: 2px solid var(--secondary-background, #F4F4F4);
     border-radius: 20px;
-    width: min-content;
+    /*width: min-content;*/
 
     span {
         font-family: 'Mont', sans-serif;
         font-size: 14px;
-        font-weight: 800;
+        font-weight: 400;
     }
 }
 
@@ -87,7 +87,7 @@
     font-family: "Mont", sans-serif;
     font-size: 14px;
     color: var(--black);
-    font-weight: 800
+    font-weight: 400
 }
 
 .clickableSpan {
@@ -106,7 +106,7 @@
 
     span {
         font-family: "Mont", sans-serif;
-        font-weight: 800;
+        font-weight: 400;
         font-size: 12px;
         letter-spacing: 0;
     }

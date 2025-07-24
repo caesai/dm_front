@@ -1,13 +1,18 @@
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {useCallback, useEffect} from 'react';
+import {
+    useLocation, useNavigate, useSearchParams,
+} from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import {APIGetEvents} from "@/api/events.ts";
+import {setDataToLocalStorage} from "@/utils.ts";
 
 export const Redirecter = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
+    const [params] = useSearchParams();
 
     const EXCLUDED_URLS = ['/phoneConfirmation', '/onboarding', '/gdpr'];
     const ONBOARDING_EXCLUDED = [
@@ -21,6 +26,29 @@ export const Redirecter = () => {
         '/onboarding/7',
     ];
 
+    const getEventIdFromParams = useCallback((paramsObject: {[k:string]: string}) => {
+        for (let key in paramsObject) {
+            if (paramsObject[key].includes('eventId')) {
+                return paramsObject[key].replace('eventId_', '');
+            }
+        }
+    }, []);
+
+    const redirectToEvent = () => {
+        APIGetEvents().then((res) => {
+            const paramsObject = Object.fromEntries([...params]);
+            const eventId = getEventIdFromParams(paramsObject);
+            const event = res.data.filter((event) =>
+                event.restaurants.some((restaurant) => {
+                        return restaurant.dates[0].id.toString() === eventId;
+                    }
+                )
+            );
+            navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests');
+            setDataToLocalStorage('sharedEvent', { eventId, resId: event[0].restaurants[0].id, eventName: event[0].name });
+        });
+    }
+
     useEffect(() => {
         if (
             auth?.access_token &&
@@ -33,11 +61,29 @@ export const Redirecter = () => {
         if (
             auth?.access_token &&
             (!user?.license_agreement || !user.complete_onboarding) &&
-            !ONBOARDING_EXCLUDED.includes(location.pathname)
+            !ONBOARDING_EXCLUDED.includes(location.pathname) &&
+            !location.pathname.includes('events')
         ) {
-            navigate('/onboarding');
+            if (
+                location.search.includes('eventId')
+            ) {
+                redirectToEvent();
+            } else {
+                navigate('/onboarding');
+            }
         }
-    }, [auth, user, location.pathname]);
+        if (
+            auth?.access_token &&
+            location.pathname.includes('/paymentReturn')
+        ) {
+            navigate(location.pathname + location.search);
+        }
+        if (
+            location.search.includes('eventId')
+        ) {
+            redirectToEvent();
+        }
+    }, [auth, user, location.pathname, location.search]);
 
     return <></>;
 };

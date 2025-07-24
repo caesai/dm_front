@@ -1,6 +1,7 @@
 import { Placeholder, AppRoot } from '@telegram-apps/telegram-ui';
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 import { useMemo } from 'react';
+import telegramGif from "/icons/telegram.gif";
 
 export function EnvUnsupported() {
     const [platform, isDark] = useMemo(() => {
@@ -27,7 +28,7 @@ export function EnvUnsupported() {
             >
                 <img
                     alt="Telegram sticker"
-                    src="/icons/telegram.gif"
+                    src={telegramGif}
                     style={{
                         display: 'block',
                         width: '144px',

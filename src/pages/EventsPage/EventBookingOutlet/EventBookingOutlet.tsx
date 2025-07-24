@@ -1,53 +1,36 @@
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
+import {CalendarIcon} from '@/components/Icons/CalendarIcon.tsx';
 import classNames from 'classnames';
-import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import {TextInput} from '@/components/TextInput/TextInput.tsx';
+import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from './EventBookingOutlet.module.css';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { formatDateDT, IEventBookingContext } from '@/utils.ts';
-import { useMemo, useState } from 'react';
+import {useNavigate, useOutletContext} from 'react-router-dom';
+import {formatDateDT, getDataFromLocalStorage, IEventBookingContext, removeDataFromLocalStorage} from '@/utils.ts';
+import {useMemo, useRef, useState} from 'react';
 import moment from 'moment';
-import { APICreateInvoice } from '@/api/events.ts';
-import { useAtom } from 'jotai';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { guestCountAtom } from '@/atoms/eventBookingAtom.ts';
-
-const confirmationList: IConfirmationType[] = [
-    {
-        id: 'telegram',
-        text: 'В Telegram',
-    },
-    {
-        id: 'phone',
-        text: 'По телефону',
-    },
-    {
-        id: 'none',
-        text: 'Без подтверждения',
-    },
-];
+import {APICreateInvoice} from '@/api/events.ts';
+import {useAtom} from 'jotai';
+import {authAtom, userAtom} from '@/atoms/userAtom.ts';
+import {guestCountAtom} from '@/atoms/eventBookingAtom.ts';
+import {AppLoadingScreen} from "@/components/AppLoadingScreen/AppLoadingScreen.tsx";
 
 export const EventBookingOutlet = () => {
     const navigate = useNavigate();
     const [bookingInfo] = useOutletContext<IEventBookingContext>();
     const [guestCount] = useAtom(guestCountAtom);
-    const [confirmation, setConfirmation] = useState<IConfirmationType>({
-        id: 'telegram',
-        text: 'В Telegram',
-    });
+
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [userInfo, setUserInfo] = useState({
         name: `${user?.first_name}`,
         phone: `${user?.phone_number}`,
-        email: `${user?.email}`,
         commentary: '',
     });
+    const [loading, setLoading] = useState(false);
+
+    const bookingBtn = useRef<HTMLDivElement>(null);
 
     const calculateTotal = useMemo(() => {
-        const ticketPrice = bookingInfo.event_date?.ticket_price;
+        const ticketPrice = bookingInfo.event?.ticket_price;
         if (!ticketPrice) {
             return null;
         }
@@ -61,11 +44,9 @@ export const EventBookingOutlet = () => {
             bookingInfo.date &&
             userInfo.name &&
             userInfo.phone &&
-            userInfo.email &&
-            confirmation.text &&
             auth?.access_token
         );
-    }, [bookingInfo, userInfo, confirmation, auth]);
+    }, [bookingInfo, userInfo, auth]);
 
     const createInvoice = () => {
         if (
@@ -74,23 +55,26 @@ export const EventBookingOutlet = () => {
             bookingInfo.date &&
             userInfo.name &&
             userInfo.phone &&
-            userInfo.email &&
-            confirmation.text &&
             auth?.access_token &&
             guestCount
         ) {
+            setLoading(true);
             APICreateInvoice(
                 bookingInfo.restaurant.id,
                 bookingInfo.event_date?.id,
                 bookingInfo.date,
                 userInfo.name,
                 userInfo.phone,
-                userInfo.email,
+                '',
                 userInfo.commentary,
-                confirmation.text,
+                'В Telegram',
                 guestCount,
                 auth?.access_token
             ).then((res) => {
+                const sharedEvent = getDataFromLocalStorage('sharedEvent');
+                if (sharedEvent) {
+                    removeDataFromLocalStorage('sharedEvent');
+                }
                 res.data.payment_url
                     ? window.location.replace(res.data.payment_url)
                     : navigate('/events');
@@ -98,6 +82,9 @@ export const EventBookingOutlet = () => {
         }
     };
 
+    if (loading) {
+        return <AppLoadingScreen />;
+    }
     return (
         <div>
             <div className={css.contentContainer__top}>
@@ -105,17 +92,20 @@ export const EventBookingOutlet = () => {
                     <h2 className={css.contentItem__title}>Детали заказа</h2>
                     <div className={css.dateInfoContainer}>
                         <div className={css.cubicIconContainer}>
-                            <CalendarIcon size={22} />
+                            <CalendarIcon size={22}/>
                         </div>
                         <div className={css.dateInfoContainer_dates}>
                             <span className={css.dateInfoContainer_dates__date}>
-                                {bookingInfo.date
-                                    ? formatDateDT(
-                                          new Date(
-                                              bookingInfo.date.start_datetime
-                                          )
-                                      )
-                                    : '...'}
+                                {/*{bookingInfo.date*/}
+                                {/*    ? formatDateDT(*/}
+                                {/*          new Date(*/}
+                                {/*              bookingInfo.date.start_datetime*/}
+                                {/*          )*/}
+                                {/*      )*/}
+                                {/*    : '...'}*/}
+                                {bookingInfo.event?.restaurants[0].dates[0] && formatDateDT(
+                                    new Date(bookingInfo.event?.restaurants[0].dates[0].date_start)
+                                )}
                             </span>
                             <span
                                 className={css.dateInfoContainer_dates__times}
@@ -123,10 +113,10 @@ export const EventBookingOutlet = () => {
                                 {moment(
                                     bookingInfo.date?.start_datetime
                                 ).format('HH:mm')}{' '}
-                                -{' '}
-                                {moment(bookingInfo.date?.end_datetime).format(
-                                    'HH:mm'
-                                )}
+                                {/*-{' '}*/}
+                                {/*{moment(bookingInfo.date?.end_datetime).format(*/}
+                                {/*    'HH:mm'*/}
+                                {/*)}*/}
                             </span>
                         </div>
                     </div>
@@ -142,7 +132,7 @@ export const EventBookingOutlet = () => {
                                     {bookingInfo.event?.name}
                                 </span>
                                 <span className={css.goodsItems_item__price}>
-                                    {bookingInfo.event_date?.ticket_price} ₽
+                                    {bookingInfo.event?.ticket_price} ₽
                                 </span>
                             </div>
                             <div className={css.roundedText}>
@@ -150,7 +140,15 @@ export const EventBookingOutlet = () => {
                             </div>
                         </div>
                     </div>
-                    <div className={css.hr} />
+                    <div className={css.hr}/>
+                    <div className={classNames(css.goodsItems_item, css.aic)}>
+                        <span className={css.goodsItems_item__total}>
+                            Количество билетов
+                        </span>
+                        <span className={css.goodsItems_item__price}>
+                            {guestCount}
+                        </span>
+                    </div>
                     <div className={classNames(css.goodsItems_item, css.aic)}>
                         <span className={css.goodsItems_item__total}>
                             Предоплата
@@ -168,49 +166,62 @@ export const EventBookingOutlet = () => {
                         <TextInput
                             value={userInfo.name}
                             onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, name: e }))
+                                setUserInfo((p) => ({...p, name: e}))
                             }
                             placeholder={'Имя'}
                         ></TextInput>
                         <TextInput
                             value={userInfo.phone}
                             onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, phone: e }))
+                                setUserInfo((p) => ({...p, phone: e}))
                             }
                             placeholder={'Номер телефона'}
                         ></TextInput>
-                        <TextInput
-                            value={userInfo.email}
-                            onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, email: e }))
-                            }
-                            placeholder={'Email'}
-                        ></TextInput>
+                        {/*<TextInput*/}
+                        {/*    value={userInfo.email}*/}
+                        {/*    onChange={(e) =>*/}
+                        {/*        setUserInfo((p) => ({ ...p, email: e }))*/}
+                        {/*    }*/}
+                        {/*    placeholder={'Email'}*/}
+                        {/*></TextInput>*/}
                         <TextInput
                             value={userInfo.commentary}
                             onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, commentary: e }))
+                                setUserInfo((p) => ({...p, commentary: e}))
                             }
+                            onFocus={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'relative';
+                                }
+                            }}
+                            onBlur={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'fixed';
+                                }
+                            }}
                             placeholder={'Комментарий'}
                         ></TextInput>
                     </div>
-                    <ConfirmationSelect
-                        options={confirmationList}
-                        currentValue={confirmation}
-                        onChange={setConfirmation}
-                    />
+                    {/*<ConfirmationSelect*/}
+                    {/*    options={confirmationList}*/}
+                    {/*    currentValue={confirmation}*/}
+                    {/*    onChange={setConfirmation}*/}
+                    {/*/>*/}
                 </div>
             </div>
-            <div className={css.absoluteBottom}>
+            <div className={css.absoluteBottom} ref={bookingBtn}>
                 <div className={css.bottomWrapper}>
                     <UniversalButton
                         width={'full'}
                         title={'Оплатить'}
                         theme={'red'}
-                        action={() =>
-                            validate
-                                ? createInvoice()
-                                : alert('TODO: Validation alert')
+                        action={() => {
+                            if (validate) {
+                                createInvoice()
+                            } else {
+                                alert('TODO: Validation alert')
+                            }
+                        }
                         }
                     />
                 </div>

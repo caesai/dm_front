@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import {FC, useEffect, useMemo, useRef, useState} from 'react';
 import css from './BookingPage.module.css';
 
 import { Page } from '@/components/Page.tsx';
@@ -6,7 +6,7 @@ import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import classNames from 'classnames';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
@@ -24,7 +24,11 @@ import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/Heade
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { BOOKINGCOMMENTMOCK } from '@/mockData.ts';
+import {
+    getBookingCommentMock,
+    getGuestMaxNumber,
+    getServiceFeeData,
+} from '@/mockData.ts';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
@@ -40,10 +44,13 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { commAtom } from '@/atoms/bookingCommAtom.ts';
 import {
     bookingDateAtom,
-    guestCountAtom,
+    // guestCountAtom,
     timeslotAtom,
 } from '@/atoms/bookingInfoAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import {BASE_BOT} from "@/api/base.ts";
+import {UniversalButton} from "@/components/Buttons/UniversalButton/UniversalButton.tsx";
+import { childrenCountAtom, guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -64,11 +71,17 @@ export const BookingPage: FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
 
+    // Global state atoms
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [comms] = useAtom(commAtom);
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
+    const [childrenCount, setChildrenCount] = useAtom(childrenCountAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
+    const [currentSelectedTime, setCurrentSelectedTime] =
+        useAtom<ITimeSlot | null>(timeslotAtom);
+
+    // Local state
     const [guestCountPopup, setGuestCountPopup] = useState(false);
     const [bookingDatePopup, setBookingDatePopup] = useState(false);
     const [timeslotsLoading, setTimeslotsLoading] = useState(true);
@@ -78,9 +91,8 @@ export const BookingPage: FC = () => {
     const [userPhone, setUserPhone] = useState<string>(
         user?.phone_number ? user.phone_number : ''
     );
-    const [userEmail, setUserEmail] = useState<string>(
-        user?.email ? user.email : ''
-    );
+    const [userEmail] = useState<string>(user?.email ? user.email : '');
+    const [commentary, setCommentary] = useState('');
     const [confirmation, setConfirmation] = useState<IConfirmationType>({
         id: 'telegram',
         text: 'В Telegram',
@@ -88,24 +100,20 @@ export const BookingPage: FC = () => {
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>(
         []
     );
-    const [filteredTimeslots, setFilteredTimeslots] = useState<ITimeSlot[]>([]);
-    const [currentPartOfDay, setCurrentPartOfDay] = useState({
-        morning: true,
-        day: false,
-        evening: false,
-    });
-    const [commentary, setCommentary] = useState('');
-    const [currentSelectedTime, setCurrentSelectedTime] =
-        useAtom<ITimeSlot | null>(timeslotAtom);
+    const [currentPartOfDay, setCurrentPartOfDay] = useState<
+        'morning' | 'day' | 'evening' | null
+    >(null);
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
 
     const [phoneValidated, setPhoneValidated] = useState(true);
     const [nameValidated, setNameValidated] = useState(true);
-    const [emailValidated, setEmailValidated] = useState(true);
     const [dateValidated, setDateValidated] = useState(true);
     const [guestsValidated, setGuestsValidated] = useState(true);
     const [requestLoading, setRequestLoading] = useState(false);
 
+    const bookingBtn = useRef<HTMLDivElement>(null);
+
+    // Update bookingDates when guestCount changes
     useEffect(() => {
         auth?.access_token && id
             ? APIGetAvailableDays(auth?.access_token, parseInt(id), 1).then(
@@ -124,43 +132,13 @@ export const BookingPage: FC = () => {
         console.log(currentSelectedTime);
     }, [currentSelectedTime]);
 
-    useEffect(() => {
-        if (currentSelectedTime) {
-            const part = findPartOfDay(
-                new Date(currentSelectedTime.start_datetime)
-            );
-            switch (part) {
-                case 'morning':
-                    setCurrentPartOfDay({
-                        morning: true,
-                        day: false,
-                        evening: false,
-                    });
-                    break;
-                case 'evening':
-                    setCurrentPartOfDay({
-                        morning: false,
-                        day: false,
-                        evening: true,
-                    });
-                    break;
-                case 'day':
-                    setCurrentPartOfDay({
-                        morning: false,
-                        day: true,
-                        evening: false,
-                    });
-                    break;
-            }
-        }
-    }, [currentSelectedTime, availableTimeslots]);
-
+    // Update availableTimeslots when bookingDate or guestCount changes
     useEffect(() => {
         if (
             !id ||
             !auth?.access_token ||
             bookingDate.value === 'unset' ||
-            guestCount.value === 'unset'
+            !guestCount
         ) {
             return;
         }
@@ -169,40 +147,81 @@ export const BookingPage: FC = () => {
             auth.access_token,
             parseInt(id),
             bookingDate.value,
-            parseInt(guestCount.value)
+            guestCount
         )
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotsLoading(false));
     }, [bookingDate, guestCount]);
 
-    useEffect(() => {
-        if (currentPartOfDay.morning) {
-            setFilteredTimeslots(
-                availableTimeslots.filter(
-                    (v) =>
-                        new Date(v.start_datetime).getHours() >= 8 &&
-                        new Date(v.start_datetime).getHours() < 12
-                )
-            );
-        } else if (currentPartOfDay.day) {
-            setFilteredTimeslots(
-                availableTimeslots.filter(
-                    (v) =>
-                        new Date(v.start_datetime).getHours() >= 12 &&
-                        new Date(v.start_datetime).getHours() < 18
-                )
-            );
-        } else if (currentPartOfDay.evening) {
-            setFilteredTimeslots(
-                availableTimeslots.filter(
-                    (v) =>
-                        new Date(v.start_datetime).getHours() >= 18 &&
-                        new Date(v.start_datetime).getHours() <= 23
-                )
-            );
-        }
-    }, [availableTimeslots, currentPartOfDay]);
+    const morningTimeslots = useMemo(
+        () =>
+            availableTimeslots.filter((v) => {
+                const h = new Date(v.start_datetime).getHours();
+                return h >= 8 && h < 12;
+            }),
+        [availableTimeslots]
+    );
+    const dayTimeslots = useMemo(
+        () =>
+            availableTimeslots.filter((v) => {
+                const h = new Date(v.start_datetime).getHours();
+                return h >= 12 && h < 18;
+            }),
+        [availableTimeslots]
+    );
+    const eveningTimeslots = useMemo(
+        () =>
+            availableTimeslots.filter((v) => {
+                const h = new Date(v.start_datetime).getHours();
+                return h >= 18 && h <= 23;
+            }),
+        [availableTimeslots]
+    );
 
+    // Find the first part of the day with available timeslots and update currentPartOfDay
+    useEffect(() => {
+        if (morningTimeslots.length > 0) setCurrentPartOfDay('morning');
+        else if (dayTimeslots.length > 0) setCurrentPartOfDay('day');
+        else if (eveningTimeslots.length > 0) setCurrentPartOfDay('evening');
+        else setCurrentPartOfDay(null); // Нет слотов вовсе
+    }, [morningTimeslots, dayTimeslots, eveningTimeslots]);
+
+    // Update currentPartOfDay when currentSelectedTime changes
+    useEffect(() => {
+        if (currentSelectedTime) {
+            const part = findPartOfDay(
+                new Date(currentSelectedTime.start_datetime)
+            );
+            setCurrentPartOfDay(part);
+        }
+    }, [currentSelectedTime]);
+
+    // Set currentPartOfDay based on available timeslots if currentSelectedTime is not set
+    useEffect(() => {
+        if (!currentSelectedTime) {
+            if (morningTimeslots.length > 0) setCurrentPartOfDay('morning');
+            else if (dayTimeslots.length > 0) setCurrentPartOfDay('day');
+            else if (eveningTimeslots.length > 0)
+                setCurrentPartOfDay('evening');
+            else setCurrentPartOfDay(null);
+        }
+    }, [
+        availableTimeslots,
+        morningTimeslots,
+        dayTimeslots,
+        eveningTimeslots,
+        currentSelectedTime,
+    ]);
+
+    // Create filtered timeslots
+    const filteredTimeslots = useMemo(() => {
+        if (currentPartOfDay === 'morning') return morningTimeslots;
+        if (currentPartOfDay === 'day') return dayTimeslots;
+        if (currentPartOfDay === 'evening') return eveningTimeslots;
+        return [];
+    }, [currentPartOfDay, morningTimeslots, dayTimeslots, eveningTimeslots]);
+
+    // Function to find part of the day based on the time
     const findPartOfDay = (dt: Date): 'morning' | 'day' | 'evening' => {
         const hours = dt.getHours();
         if (hours >= 8 && hours < 12) {
@@ -217,9 +236,11 @@ export const BookingPage: FC = () => {
         return 'day';
     };
 
+    // Validation methods
     const nameValidate = useMemo(() => {
         return Boolean(userName?.trim().length);
     }, [userName]);
+
     const phoneValidate = useMemo(() => {
         return Boolean(
             userPhone
@@ -227,30 +248,27 @@ export const BookingPage: FC = () => {
                 .match('^\\+?[78][-\\(]?\\d{3}\\)?-?\\d{3}-?\\d{2}-?\\d{2}$')
         );
     }, [userPhone]);
-    const emailValidate = useMemo(() => {
-        const EMAIL_REGEXP =
-            /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
-        return Boolean(userEmail.trim().match(EMAIL_REGEXP));
-    }, [userEmail]);
+
     const timeslotValidate = useMemo(() => {
         return !!currentSelectedTime;
     }, [currentSelectedTime]);
+
     const guestsValidate = useMemo(() => {
-        return !(guestCount.value == 'unset');
+        return !guestCount;
     }, [guestCount]);
 
     const validateFormMemo = useMemo(() => {
         return [
             nameValidate,
             phoneValidate,
-            emailValidate,
+            // emailValidate,
             currentSelectedTime,
             guestCount,
         ].every(Boolean);
     }, [
         nameValidate,
         phoneValidate,
-        emailValidate,
+        // emailValidate,
         currentSelectedTime,
         guestCount,
     ]);
@@ -269,12 +287,12 @@ export const BookingPage: FC = () => {
                 setPhoneValidated(true);
             }, 5000);
         }
-        if (!emailValidate) {
-            setEmailValidated(false);
-            setTimeout(() => {
-                setEmailValidated(true);
-            }, 5000);
-        }
+        // if (!emailValidate) {
+        //     setEmailValidated(false);
+        //     setTimeout(() => {
+        //         setEmailValidated(true);
+        //     }, 5000);
+        // }
         if (!timeslotValidate) {
             setDateValidated(false);
             setTimeout(() => {
@@ -290,6 +308,17 @@ export const BookingPage: FC = () => {
         return validateFormMemo;
     };
 
+    const hideApp = () => {
+        //
+        // window.location.href = "tg:resolve";
+        if (window.Telegram.WebApp) {
+            window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`
+            window.Telegram.WebApp.close();
+        } else {
+            window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`
+        }
+    }
+
     const createBooking = () => {
         if (validateForm() && auth?.access_token && currentSelectedTime) {
             setRequestLoading(true);
@@ -298,18 +327,21 @@ export const BookingPage: FC = () => {
                 Number(id),
                 bookingDate.value,
                 getTimeShort(currentSelectedTime.start_datetime),
-                Number(guestCount.value),
+                (guestCount - childrenCount),
+                childrenCount,
                 userName,
                 userPhone,
                 userEmail,
                 commentary,
                 comms,
                 confirmation.text
+                // tg_id: user.
             )
                 .then((res) => {
                     navigate(`/myBookings/${res.data.id}`);
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.log('err: ', err);
                     alert(
                         'Произошла ошибка при выполнении запроса, попробуйте еще раз.'
                     );
@@ -322,9 +354,13 @@ export const BookingPage: FC = () => {
         <Page back={true}>
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
+                childrenCount={childrenCount}
                 setGuestCount={setGuestCount}
+                setChildrenCount={setChildrenCount}
                 isOpen={guestCountPopup}
                 setOpen={setGuestCountPopup}
+                maxGuestsNumber={getGuestMaxNumber(id)}
+                serviceFeeMessage={getServiceFeeData(id)}
             />
             <BookingDateSelectorPopup
                 isOpen={bookingDatePopup}
@@ -412,7 +448,7 @@ export const BookingPage: FC = () => {
                                             >
                                                 {guestCount
                                                     ? getGuestsString(
-                                                          guestCount.value
+                                                          guestCount
                                                       )
                                                     : 'Гости'}
                                             </span>
@@ -429,8 +465,28 @@ export const BookingPage: FC = () => {
                             </div>
                         </div>
                     </ContentContainer>
-                    {guestCount.value === 'unset' ||
-                    bookingDate.value === 'unset' ? null : timeslotsLoading ? (
+                    {!guestCount ||
+                        bookingDate.value === 'unset' ? (
+                        <ContentContainer>
+                            <div className={css.timeOfDayContainer}>
+                                <span className={css.noTimeSlotsText}>
+                                    Выберите дату и количество гостей
+                                </span>
+                                {/*<Link*/}
+                                {/*    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}}*/}
+                                {/*    // target={'_blank'}*/}
+                                {/*    to={`https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`}*/}
+                                {/*>*/}
+                                {/*<UniversalButton*/}
+                                {/*    action={hideApp}*/}
+                                {/*    width={'full'}*/}
+                                {/*    title={'Не нашли стол на желаемую дату и время?'}*/}
+                                {/*    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />*/}
+                                    {/*<span>Не нашли стол на желаемую дату и время?</span>*/}
+                                {/*</Link>*/}
+                            </div>
+                        </ContentContainer>
+                    ) : timeslotsLoading ? (
                         <PlaceholderBlock
                             width={'100%'}
                             height={'115px'}
@@ -447,57 +503,57 @@ export const BookingPage: FC = () => {
                                 ) : (
                                     <>
                                         <div className={css.select_timeOfDay}>
-                                            <div
-                                                className={classNames(
-                                                    css.timeOfDay,
-                                                    currentPartOfDay.morning
-                                                        ? css.timeOfDay__active
-                                                        : null
-                                                )}
-                                                onClick={() =>
-                                                    setCurrentPartOfDay(() => ({
-                                                        morning: true,
-                                                        day: false,
-                                                        evening: false,
-                                                    }))
-                                                }
-                                            >
-                                                <span>Утро</span>
-                                            </div>
-                                            <div
-                                                className={classNames(
-                                                    css.timeOfDay,
-                                                    currentPartOfDay.day
-                                                        ? css.timeOfDay__active
-                                                        : null
-                                                )}
-                                                onClick={() =>
-                                                    setCurrentPartOfDay(() => ({
-                                                        morning: false,
-                                                        day: true,
-                                                        evening: false,
-                                                    }))
-                                                }
-                                            >
-                                                <span>День</span>
-                                            </div>
-                                            <div
-                                                className={classNames(
-                                                    css.timeOfDay,
-                                                    currentPartOfDay.evening
-                                                        ? css.timeOfDay__active
-                                                        : null
-                                                )}
-                                                onClick={() =>
-                                                    setCurrentPartOfDay(() => ({
-                                                        morning: false,
-                                                        day: false,
-                                                        evening: true,
-                                                    }))
-                                                }
-                                            >
-                                                <span>Вечер</span>
-                                            </div>
+                                            {morningTimeslots.length > 0 && (
+                                                <div
+                                                    className={classNames(
+                                                        css.timeOfDay,
+                                                        currentPartOfDay ===
+                                                            'morning' &&
+                                                            css.timeOfDay__active
+                                                    )}
+                                                    onClick={() =>
+                                                        setCurrentPartOfDay(
+                                                            'morning'
+                                                        )
+                                                    }
+                                                >
+                                                    <span>Утро</span>
+                                                </div>
+                                            )}
+                                            {dayTimeslots.length > 0 && (
+                                                <div
+                                                    className={classNames(
+                                                        css.timeOfDay,
+                                                        currentPartOfDay ===
+                                                            'day' &&
+                                                            css.timeOfDay__active
+                                                    )}
+                                                    onClick={() =>
+                                                        setCurrentPartOfDay(
+                                                            'day'
+                                                        )
+                                                    }
+                                                >
+                                                    <span>День</span>
+                                                </div>
+                                            )}
+                                            {eveningTimeslots.length > 0 && (
+                                                <div
+                                                    className={classNames(
+                                                        css.timeOfDay,
+                                                        currentPartOfDay ===
+                                                            'evening' &&
+                                                            css.timeOfDay__active
+                                                    )}
+                                                    onClick={() =>
+                                                        setCurrentPartOfDay(
+                                                            'evening'
+                                                        )
+                                                    }
+                                                >
+                                                    <span>Вечер</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </>
                                 )}
@@ -536,9 +592,16 @@ export const BookingPage: FC = () => {
                                                             }
                                                         >
                                                             <span>
-                                                                {getTimeShort(
-                                                                    v.start_datetime
-                                                                )}
+                                                                {currentSelectedTime?.start_datetime ==
+                                                                v.start_datetime
+                                                                    ? `${getTimeShort(
+                                                                          v.start_datetime
+                                                                      )} - ${getTimeShort(
+                                                                          v.end_datetime
+                                                                      )}`
+                                                                    : getTimeShort(
+                                                                          v.start_datetime
+                                                                      )}
                                                             </span>
                                                         </div>
                                                     </SwiperSlide>
@@ -554,16 +617,46 @@ export const BookingPage: FC = () => {
                                         )}
                                     </div>
                                 ) : null}
+                                <UniversalButton
+                                    action={hideApp}
+                                    width={'full'}
+                                    title={'Не нашли стол на желаемую дату и время?'}
+                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />
                             </div>
                         </ContentContainer>
                     )}
+
+                    {/*<ContentContainer>*/}
+                    {/*    <div className={css.timeOfDayContainer}>*/}
+                    {/*        <div className={css.timeList}>*/}
+                    {/*            <span*/}
+                    {/*                className={css.noTimeSlotsText}*/}
+                    {/*            >*/}
+                    {/*                            К сожалению, доступных столов на*/}
+                    {/*                            выбранную часть дня не осталось*/}
+                    {/*            </span></div>*/}
+                    {/*    </div>*/}
+                    {/*</ContentContainer>*/}
+
                     <ContentContainer>
                         <HeaderContainer>
                             <HeaderContent title={'Пожелания к брони'} />
                         </HeaderContainer>
                         <TextInput
                             value={commentary}
-                            onChange={(e) => setCommentary(e)}
+                            onFocus={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'relative';
+                                }
+                            }}
+                            onBlur={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'fixed';
+                                }
+                            }}
+                            onChange={(e) => {
+                                setCommentary(e);
+                            }}
                             placeholder={'Комментарий к брони'}
                         />
                         <div className={css.commentary_options}>
@@ -573,17 +666,18 @@ export const BookingPage: FC = () => {
                                 freeMode={true}
                                 spaceBetween={8}
                             >
-                                {BOOKINGCOMMENTMOCK.map((obj) => (
-                                    <SwiperSlide
-                                        key={obj.text}
-                                        style={{ width: 'max-content' }}
-                                    >
-                                        <CommentaryOptionButton
-                                            text={obj.text}
-                                            icon={obj.emoji}
-                                        />
-                                    </SwiperSlide>
-                                ))}
+                                {id !== undefined &&
+                                    getBookingCommentMock(id).map((obj) => (
+                                        <SwiperSlide
+                                            key={obj.text}
+                                            style={{ width: 'max-content' }}
+                                        >
+                                            <CommentaryOptionButton
+                                                text={obj.text}
+                                                icon={obj.emoji}
+                                            />
+                                        </SwiperSlide>
+                                    ))}
                             </Swiper>
                         </div>
                     </ContentContainer>
@@ -604,12 +698,12 @@ export const BookingPage: FC = () => {
                                 placeholder={'Телефон'}
                                 validation_failed={!phoneValidated}
                             />
-                            <TextInput
-                                value={userEmail}
-                                onChange={setUserEmail}
-                                placeholder={'Email'}
-                                validation_failed={!emailValidated}
-                            />
+                            {/*<TextInput*/}
+                            {/*    value={userEmail}*/}
+                            {/*    onChange={setUserEmail}*/}
+                            {/*    placeholder={'Email'}*/}
+                            {/*    validation_failed={!emailValidated}*/}
+                            {/*/>*/}
                         </div>
                     </ContentContainer>
                     <ContentContainer>
@@ -624,7 +718,7 @@ export const BookingPage: FC = () => {
                     </ContentContainer>
                 </PageContainer>
             </div>
-            <div className={css.absoluteBottom}>
+            <div className={css.absoluteBottom} ref={bookingBtn}>
                 <div className={css.absoluteBottom_wrapper}>
                     <div
                         className={classNames(

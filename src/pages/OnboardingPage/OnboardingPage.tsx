@@ -1,12 +1,15 @@
-import { Page } from '@/components/Page.tsx';
+import {Page} from '@/components/Page.tsx';
 import css from './OnboardingPage.module.css';
 import classNames from 'classnames';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import {Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
+import {useEffect} from 'react';
+// import imgFull from "/img/logoFull.png";
+import logoNew from "/img/DT_concierge_logo_1.png";
 
 export const OnboardingPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [params] = useSearchParams();
 
     useEffect(() => {
         if (location.pathname == '/onboarding') {
@@ -25,54 +28,63 @@ export const OnboardingPage = () => {
         <Page back={false}>
             <div className={classNames(css.header)}>
                 <div className={css.header_wrapper}>
-                    <div className={css.stage_container}>
-                        <div
-                            className={classNames(css.stage, {
-                                [css.stage__active]: checkIsPageActive(1),
-                            })}
-                            onClick={() => navigate('/onboarding/1')}
-                        ></div>
-                        <div
-                            className={classNames(css.stage, {
-                                [css.stage__active]: checkIsPageActive(2),
-                            })}
-                            onClick={() => navigate('/onboarding/2')}
-                        ></div>
-                        <div
-                            className={classNames(css.stage, {
-                                [css.stage__active]: checkIsPageActive(3),
-                            })}
-                            onClick={() => navigate('/onboarding/3')}
-                        ></div>
-                        <div
-                            className={classNames(css.stage, {
-                                [css.stage__active]: checkIsPageActive(4),
-                            })}
-                            onClick={() => navigate('/onboarding/4')}
-                        ></div>
-                        <div
-                            className={classNames(css.stage, {
-                                [css.stage__active]: checkIsPageActive(5),
-                            })}
-                            onClick={() => navigate('/onboarding/5')}
-                        ></div>
-                        <div
+                    {params.get('eventId') ? null :
+                        (
+                            <div className={css.stage_container}>
+                                <div
+                                    className={classNames(css.stage, {
+                                        [css.stage__active]: checkIsPageActive(1),
+                                    })}
+                                    onClick={() => navigate('/onboarding/1')}
+                                ></div>
+                                <div
+                                    className={classNames(css.stage, {
+                                        [css.stage__active]: checkIsPageActive(2),
+                                    })}
+                                    onClick={() => navigate('/onboarding/2')}
+                                ></div>
+                                <div
+                                    className={classNames(css.stage, {
+                                        [css.stage__active]: checkIsPageActive(3),
+                                    })}
+                                    onClick={() => navigate('/onboarding/3')}
+                                ></div>
+                                <div
+                                    className={classNames(css.stage, {
+                                        [css.stage__active]: checkIsPageActive(4),
+                                    })}
+                                    onClick={() => navigate('/onboarding/4')}
+                                ></div>
+                                <div
+                                    className={classNames(css.stage, {
+                                        [css.stage__active]: checkIsPageActive(5),
+                                    })}
+                                    onClick={() => navigate('/onboarding/5')}
+                                ></div>
+                                <div
+                                    className={classNames(css.stage, {
+                                        [css.stage__active]: checkIsPageActive(6),
+                                    })}
+                                    // onClick={() => navigate('/onboarding/6')}
+                                ></div>
+                                {/*  <div
                             className={classNames(css.stage, {
                                 [css.stage__active]: checkIsPageActive(6),
                             })}
                             onClick={() => navigate('/onboarding/6')}
-                        ></div>
-                    </div>
+                        ></div> */}
+                            </div>
+                        )}
                     <div className={css.logo_container}>
                         <img
                             className={css.logo}
-                            src="/img/logoFull.png"
+                            src={logoNew}
                             alt="DreamTeam logo"
                         />
                     </div>
                 </div>
             </div>
-            <Outlet />
+            <Outlet/>
         </Page>
     );
 };

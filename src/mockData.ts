@@ -4,6 +4,8 @@ import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx'
 // import { IRestaurant } from '@/types/restaurant.ts';
 // import { ICity } from '@/atoms/cityListAtom.ts';
 
+export const BOOKING_DURATION = 120; // in minutes
+
 export const mockMenu: IMenuItem[] = [
     {
         title: 'Крем - суп из пастернака 1',
@@ -220,40 +222,58 @@ export const mockBookingDate = new Date();
 //     },
 // ];
 
-export const BOOKINGCOMMENTMOCK = [
+const BOOKINGCOMMENTMOCK = [
     {
         text: 'День рождения',
-        emoji: '🥞',
+        emoji: '🎂',
     },
     {
         text: 'Свидание',
-        emoji: '☕️',
+        emoji: '❤️',
     },
     {
         text: 'Деловая встреча',
-        emoji: '☕️',
+        emoji: '🤝',
     },
     {
         text: 'Годовщина',
-        emoji: '☕️',
+        emoji: '🥂',
     },
     {
         text: 'Семейный ужин',
-        emoji: '☕️',
+        emoji: '🫶',
     },
     {
         text: 'Буду с животным',
         emoji: '🐶',
     },
-    {
-        text: 'Нужен детский стульчик',
-        emoji: '👶',
-    },
-    {
-        text: 'Стол в тихой зоне',
-        emoji: '😴',
-    },
+    // {
+    //     text: 'Стол в тихой зоне',
+    //     emoji: '😴',
+    // },
 ];
+
+/**
+ * Возвращает список комментариев к бронированию на основе ID ресторана.
+ *
+ * @param {string} restaurant_id - Идентификатор ресторана.
+ * @returns {Array<{text: string, emoji: string}>} - Массив комментариев к бронированию,
+ * где каждый комментарий содержит текстовое описание и соответствующий emoji.
+ */
+export const getBookingCommentMock = (restaurant_id: string) => {
+  const SELF_EDGE_JAPANESE_RESTAURANT_IDS = ['4', '7', '10'];
+
+  // Self Edge Japanese
+  if (SELF_EDGE_JAPANESE_RESTAURANT_IDS.includes(restaurant_id)) {
+    return BOOKINGCOMMENTMOCK;
+  }
+
+  // Other restaurants
+  return [...BOOKINGCOMMENTMOCK, {
+    text: 'Нужен детский стул',
+    emoji: '👶',
+  }]
+}
 
 export const BOOKING_DATE_VALUES = <PickerValueObj[]>[
     {
@@ -289,6 +309,50 @@ export const BOOKING_DATE_VALUES = <PickerValueObj[]>[
         value: '2025-03-24',
     },
 ];
+
+const GUESTS_MAX_NUMBER: Record<string, number> = {
+  '1': 12,  // Blackchops SPb
+  '2': 8,  // Poly SPb
+  '3': 12,  // Trappist SPb
+  '4': 8,  // Self Edge SPb
+  '5': 12,  // Pame SPb
+  '6': 8,  // Smoke BBQ SPb
+  '7': 8,  // Self Edge Ekat
+  '9': 8,  // Smoke BBQ Msc
+  '10': 8,  // Self Edge Msc
+}
+
+export const getGuestMaxNumber = (restaurant_id: string | undefined) => {
+  const defaultValue = 9;
+  let res;
+  if (restaurant_id !== undefined) {
+    res = GUESTS_MAX_NUMBER[restaurant_id];
+  }
+  return res ?? defaultValue;
+}
+
+export const SERVICE_FEE_DATA: Record<string, {persons: number, fee: number}> = {
+  // У ресторана Pame SPb нет сервисного сбора за гостей
+  '1': {persons: 8, fee: 10},  // Blackchops SPb
+  '2': {persons: 8, fee: 10},  // Poly SPb
+  '3': {persons: 8, fee: 10},  // Trappist SPb
+  '4': {persons: 6, fee: 10},  // Self Edge SPb
+  '6': {persons: 8, fee: 10},  // Smoke BBQ SPb
+  '7': {persons: 6, fee: 10},  // Self Edge Ekat
+  '9': {persons: 8, fee: 10},  // Smoke BBQ Msc
+  '10': {persons: 6, fee: 10}, // Self Edge Msc
+  '11': {persons: 8, fee: 10}, // Smoke BBQ SPb New
+}
+
+export const getServiceFeeData = (restaurant_id: string | undefined) => {
+  if (restaurant_id !== undefined) {
+    const feeData = SERVICE_FEE_DATA[restaurant_id];
+    if (feeData !== undefined) {
+      return `Для компаний от ${feeData.persons} и более гостей мы включаем сервисный сбор ${feeData.fee}% к общей сумме чека. Дети до 12 лет включительно не учитываются.`
+    }
+  }
+  return '';
+}
 
 // const MOCK_MSK = <ICity>{
 //     id: 1,

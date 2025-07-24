@@ -22,18 +22,35 @@
 .content_description__title {
     margin: 0;
     padding: 0;
-    font-family: 'Heading Pro Ultracompressed', sans-serif;
-    font-weight: 800;
-    font-size: 30px;
-    text-transform: uppercase;
+    font-family: "Mont", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    /*text-transform: uppercase;*/
 }
 
 .content_description__info {
     font-family: "Mont", sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     font-size: 14px;
     line-height: 150%;
     color: var(--grey);
+}
+
+.trimLines {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+.trimLinesButton {
+    .text {
+        font-size: 14px;
+        font-family: 'Mont', sans-serif;
+        font-weight: 400;
+        color: var(--red);
+    }
 }
 
 .event_params {
@@ -58,7 +75,7 @@
 
 .event_params_col__title {
     color: var(--grey);
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .event_params_col__data {
@@ -78,7 +95,7 @@
     span {
         color: var(--grey);
         font-family: "Mont", sans-serif;
-        font-weight: 700;
+        font-weight: 400;
         font-size: 12px;
         letter-spacing: 0;
         padding: 0;
@@ -96,4 +113,39 @@
 .bottomWrapper {
     padding: 0 15px;
     display: flex;
+}
+
+.personsContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.personsContainer__title {
+    font-family: "Mont", sans-serif;
+    font-size: 14px;
+    color: var(--black);
+    font-weight: 400
+}
+
+.clickableSpan {
+    padding: 0 4px;
+    cursor: pointer;
+}
+
+.personCounter {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    padding: 11px;
+    border-radius: 8px;
+    border: 1px solid var(--light-grey);
+    height: min-content;
+
+    span {
+        font-family: "Mont", sans-serif;
+        font-weight: 400;
+        font-size: 12px;
+        letter-spacing: 0;
+    }
 }

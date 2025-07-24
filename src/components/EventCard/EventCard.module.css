@@ -1,11 +1,12 @@
 .card {
+    position: relative;
     width: 100%;
     aspect-ratio: 3/2;
-    background-color: var(--secondary-background);
+    /*background-color: var(--secondary-background);*/
     border-radius: 16px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
     cursor: pointer;
 }
 
@@ -15,13 +16,25 @@
 }
 
 .card_date {
-    margin: 15px 0 0 15px;
+    /*margin: 15px 0 0 15px;*/
     padding: 5px 10px;
     background-color: var(--red);
     border-radius: 16px;
     width: fit-content;
     font-family: "Mont", sans-serif;
-    font-weight: 700;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--secondary-background);
+}
+
+.card_price {
+    /*margin: 15px 0 0 15px;*/
+    padding: 5px 10px;
+    background-color: rgba(0,0,0,0.555);
+    border-radius: 16px;
+    width: fit-content;
+    font-family: "Mont", sans-serif;
+    font-weight: 400;
     font-size: 14px;
     color: var(--secondary-background);
 }
@@ -34,24 +47,42 @@
 
 .footer {
     display: flex;
-    flex-direction: column;
+    position: relative;
+    flex-direction: row;
     gap: 2px;
-    backdrop-filter: blur(18px);
+    /*backdrop-filter: blur(18px);*/
     padding: 10px 15px;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
+    z-index: 1;
 }
+
+/*.card:after {*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    content: "";*/
+/*    z-index: 0;*/
+/*    background-image: linear-gradient(*/
+/*            180deg,*/
+/*            rgba(0, 0, 0, 0),*/
+/*            rgb(0, 0, 0, 0.8)*/
+/*    );*/
+/*    border-radius: 16px;*/
+/*}*/
 
 .footer__title {
     font-family: "Mont", sans-serif;
-    font-weight: 800;
+    font-weight: 400;
     font-size: 18px;
     color: white;
 }
 
 .footer__address {
     font-family: "Mont", sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     font-size: 12px;
     line-height: 100%;
     /*letter-spacing: 0;*/
@@ -59,7 +90,52 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+.notActive {
+    opacity: 0.7;
+}
+
+.resInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.resTitleWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.resTitle {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    /*text-transform: uppercase;*/
+    margin-top: 10px;
+    margin-bottom: 5px;
+    padding: 0;
+}
+
+.resSlogan {
+    font-family: 'Mont', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--dark-grey);
+}
+
+.resAddress {
+    font-family: 'Mont', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    color: var(--dark-grey);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
 }
 

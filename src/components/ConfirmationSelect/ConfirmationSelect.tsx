@@ -48,23 +48,27 @@ export const ConfirmationSelect: FC<IConfirmationSelect> = ({
             </div>
             <Collapse isOpened={collapse}>
                 <div className={classNames(css.optionWrapper)}>
-                    {options.map((v) => (
-                        <div
-                            key={v.id}
-                            className={css.option}
-                            onClick={() => selectOnChange(v.id, v.text)}
-                        >
-                            <span className={css.option_title}>{v.text}</span>
+                    {options
+                        .filter((v) => v.id !== currentValue.id)
+                        .map((v) => (
                             <div
-                                className={classNames(
-                                    css.option_checkbox,
-                                    currentValue.id == v.id
-                                        ? css.option_checkbox__checked
-                                        : null
-                                )}
-                            ></div>
-                        </div>
-                    ))}
+                                key={v.id}
+                                className={css.option}
+                                onClick={() => selectOnChange(v.id, v.text)}
+                            >
+                                <span className={css.option_title}>
+                                    {v.text}
+                                </span>
+                                <div
+                                    className={classNames(
+                                        css.option_checkbox,
+                                        currentValue.id == v.id
+                                            ? css.option_checkbox__checked
+                                            : null
+                                    )}
+                                ></div>
+                            </div>
+                        ))}
                 </div>
             </Collapse>
         </div>
