@@ -1,3 +1,48 @@
 .story_component {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+}
 
+.story_wrapper {
+    display: flex;
+    padding-top: 88px;
+    height: 100vh;
+    flex-direction: column-reverse;
+}
+
+.story_footer {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding-bottom: 32px;
+    margin-right: 15px;
+    margin-left: 15px;
+    z-index: 10;
+}
+
+.story_description {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+
+.story_description_title {
+    padding: 0;
+    margin: 0;
+    font-family: "Heading Pro Ultracompressed", sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.story_description_subtitle {
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--grey);
+    text-align: center;
 }

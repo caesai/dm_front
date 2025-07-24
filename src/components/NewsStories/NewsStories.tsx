@@ -6,12 +6,12 @@ import {Swiper, SwiperSlide} from 'swiper/react';
 import {useEffect, useState} from "react";
 import StoriesContainer from "@/components/NewsStories/StoriesContainer/StoriesContainer.tsx";
 import {ApiGetStoriesBlocks} from "@/api/stories.ts";
-import {IStoryGroup} from "@/types/stories.ts";
+import {IStoryBlock} from "@/types/stories.ts";
 import {StoryComponent} from "@/components/NewsStories/StoryComponent/StoryComponent.tsx";
 
 export const NewsStories = () => {
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
-    const [storiesGroup, setStoriesGroup] = useState<IStoryGroup[]>([]);
+    const [storiesBlock, setStoriesBlock] = useState<IStoryBlock[]>([]);
 
     const openStory = (index: number) => {
         setActiveIndex(index);
@@ -21,9 +21,9 @@ export const NewsStories = () => {
     }
     useEffect(() => {
         // TODO: Endpoint to get array of stories objects sets state of stories
-        ApiGetStoriesBlocks().then((storiesResponse) => {
-            const group = storiesResponse().map((story) => {
-                const convertedStories = story.stories.map(({ description, title, url }) => {
+        ApiGetStoriesBlocks().then((storiesBlockResponse) => {
+            const blocks = storiesBlockResponse().map((block) => {
+                const convertedStories = block.stories.map(({ description, title, url }) => {
                     const storyContainer = () => <StoryComponent img={url} title={title} description={description}/>;
                     return {
                         type: 'component',
@@ -33,16 +33,16 @@ export const NewsStories = () => {
                     }
                 })
                 return {
-                    ...story,
+                    ...block,
                     stories: convertedStories,
                 }
             })
-            setStoriesGroup(group);
+            setStoriesBlock(blocks);
         });
     }, []);
     return (
         <>
-            {activeIndex !== null && <StoriesContainer onClose={closeStory} stories={storiesGroup[Number(activeIndex)].stories}/>}
+            {activeIndex !== null && <StoriesContainer onClose={closeStory} stories={storiesBlock[Number(activeIndex)].stories}/>}
             <div>
                 <Swiper
                     slidesPerView="auto"
@@ -51,7 +51,7 @@ export const NewsStories = () => {
                     spaceBetween={10}
                     wrapperClass={css.newsSlider}
                 >
-                    {storiesGroup.map(({thumbnail}, index) => (
+                    {storiesBlock.map(({thumbnail}, index) => (
                         <SwiperSlide style={{width: '100px',}}>
                             <NewsStoriesElement onClick={openStory} index={index} thumbnail={thumbnail}/>
                         </SwiperSlide>

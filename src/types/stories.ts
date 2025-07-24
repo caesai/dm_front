@@ -1,28 +1,31 @@
 import {IStoryObject} from "stories-react/src/types";
+import {TCityList} from "@/atoms/cityListAtom.ts";
 
-export interface IStoriesBlock {
-    stories: IStoryObject[];
-    thumbnail: string;
-}
-
-//TODO: describe stories response data from endpoint
-export interface IStoriesGroupResponse {
+export interface IStoriesBlockResponse {
     id: string;
     thumbnail: string;
     stories: IStory[];
+    cities?: TCityList;
+    active: boolean;
+    users: IStoryUsers;
 }
 
-interface IStory {
+type IStoryUsers = number[];
+
+export interface IStory {
     id: string;
-    title: string;
+    type: IStoryType;
     url: string;
+    title: string;
     description: string;
     button_url: string;
     button_text: string;
     button_color: string;
 }
 
-export interface IStoryGroup {
+type IStoryType = 'image' | 'video' | 'component';
+
+export interface IStoryBlock {
     id: string;
     thumbnail: string;
     stories: IStoryObject[];
