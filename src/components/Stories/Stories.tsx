@@ -23,15 +23,18 @@ export const Stories = () => {
         // TODO: Endpoint to get array of stories objects sets state of stories
         ApiGetStoriesBlocks().then((storiesBlockResponse) => {
             const blocks = storiesBlockResponse().map((block) => {
-                const convertedStories = block.stories.map(({ description, title, url }) => {
-                    const storyContainer = () => <StoryComponent img={url} title={title} description={description}/>;
-                    return {
-                        type: 'component',
-                        duration: 5000,
-                        url: '',
-                        component: storyContainer
+                const convertedStories = block.stories.map((story) => {
+                    const { description, title, url, type } = story;
+                    if (type === 'component') {
+                        const storyContainer = () => <StoryComponent img={url} title={title}
+                                                                     description={description}/>;
+                        return {
+                            ...story,
+                            component: storyContainer
+                        }
                     }
-                })
+                    return story;
+                });
                 return {
                     ...block,
                     stories: convertedStories,

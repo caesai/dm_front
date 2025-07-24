@@ -15,6 +15,7 @@ type IStoryUsers = number[];
 export interface IStory {
     id: string;
     type: IStoryType;
+    duration: number;
     url: string;
     title: string;
     description: string;

@@ -13,6 +13,7 @@ const mockedStories: IStory[] = [
         button_text: "",
         button_color: "",
         type: "component",
+        duration: 5000,
     },
     {
         id: "random-id",
@@ -23,6 +24,7 @@ const mockedStories: IStory[] = [
         button_text: "",
         button_color: "",
         type: "component",
+        duration: 5000,
     },
 ];
 
