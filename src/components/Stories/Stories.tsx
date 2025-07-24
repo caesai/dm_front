@@ -1,15 +1,15 @@
-import {NewsStoriesElement} from '@/components/NewsStories/NewsStoriesElement/NewsStoriesElement.tsx';
+import {StoriesBlock} from '@/components/Stories/StoriesBlock/StoriesBlock.tsx';
 
 import css from './NewsStories.module.css';
 import {FreeMode} from 'swiper/modules';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {useEffect, useState} from "react";
-import StoriesContainer from "@/components/NewsStories/StoriesContainer/StoriesContainer.tsx";
+import StoriesContainer from "@/components/Stories/StoriesContainer/StoriesContainer.tsx";
 import {ApiGetStoriesBlocks} from "@/api/stories.ts";
 import {IStoryBlock} from "@/types/stories.ts";
-import {StoryComponent} from "@/components/NewsStories/StoryComponent/StoryComponent.tsx";
+import {StoryComponent} from "@/components/Stories/StoryComponent/StoryComponent.tsx";
 
-export const NewsStories = () => {
+export const Stories = () => {
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [storiesBlock, setStoriesBlock] = useState<IStoryBlock[]>([]);
 
@@ -53,7 +53,7 @@ export const NewsStories = () => {
                 >
                     {storiesBlock.map(({thumbnail}, index) => (
                         <SwiperSlide style={{width: '100px',}}>
-                            <NewsStoriesElement onClick={openStory} index={index} thumbnail={thumbnail}/>
+                            <StoriesBlock onClick={openStory} index={index} thumbnail={thumbnail}/>
                         </SwiperSlide>
                     ))}
                 </Swiper>

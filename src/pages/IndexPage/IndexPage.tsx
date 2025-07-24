@@ -19,7 +19,7 @@ import {restaurantsListAtom} from '@/atoms/restaurantsListAtom.ts';
 import {APIGetCurrentBookings} from '@/api/restaurants.ts';
 import {authAtom} from '@/atoms/userAtom.ts';
 import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import {NewsStories} from "@/components/NewsStories/NewsStories.tsx";
+import {Stories} from "@/components/Stories/Stories.tsx";
 import {DEV_MODE} from "@/api/base.ts";
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
@@ -106,7 +106,7 @@ export const IndexPage: FC = () => {
         <Page back={false}>
             <div className={css.pageContainer}>
                 <Header/>
-                {DEV_MODE && <NewsStories />}
+                {DEV_MODE && <Stories />}
                 {currentBookingsLoading ? (
                     <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock
@@ -130,7 +130,6 @@ export const IndexPage: FC = () => {
                         />
                     ))
                 )}
-                {/*<NewsStories />*/}
                 <OptionsNavigation/>
                 <div className={css.restaurants}>
                     <CitySelect
