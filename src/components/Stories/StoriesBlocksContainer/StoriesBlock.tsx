@@ -1,4 +1,4 @@
-import css from './NewsStoriesElement.module.css';
+import css from './StoriesBlock.module.css';
 import React, {useState} from "react";
 import classNames from 'classnames';
 
@@ -15,8 +15,8 @@ export const StoriesBlock: React.FC<StoriesBlockProps> = ({ onClick, thumbnail, 
         setIsClicked(true);
     }
     return (
-        <div className={classNames(css.element, !isClicked ? css.isClicked : null)} onClick={handleClick}>
-            <div className={css.newsImage}>
+        <div className={classNames(css.storyBlock, !isClicked ? css.isClicked : null)} onClick={handleClick}>
+            <div className={css.storyBlockImage}>
                 <img src={thumbnail} alt="" />
             </div>
         </div>

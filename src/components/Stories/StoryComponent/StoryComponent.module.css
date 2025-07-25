@@ -1,18 +1,18 @@
-.story_component {
+.storyComponent {
     height: 100vh;
     display: flex;
     flex-direction: column;
     overflow-y: hidden;
 }
 
-.story_wrapper {
+.storyWrapper {
     display: flex;
     padding-top: 88px;
     height: 100vh;
     flex-direction: column-reverse;
 }
 
-.story_footer {
+.storyFooter {
     display: flex;
     flex-direction: column;
     gap: 32px;
@@ -22,14 +22,13 @@
     z-index: 10;
 }
 
-.story_description {
+.storyDescription {
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
-
-.story_description_title {
+.storyDescriptionTitle {
     padding: 0;
     margin: 0;
     font-family: "Heading Pro Ultracompressed", sans-serif;
@@ -39,10 +38,24 @@
     text-transform: uppercase;
 }
 
-.story_description_subtitle {
+.storyDescriptionSubtitle {
     font-family: "Mont", sans-serif;
     font-weight: 700;
     font-size: 14px;
     color: var(--grey);
     text-align: center;
+}
+
+.storyImageWrapper {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+
+    img {
+        max-width: 100%;
+        width: 100%;
+        border-radius: 12px;
+    }
 }

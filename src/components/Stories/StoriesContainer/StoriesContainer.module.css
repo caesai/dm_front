@@ -8,12 +8,23 @@
     width: 100%;
 }
 
+.storiesSlider {
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    height: 100vh;
+}
+
 .slide {
-    /*position: relative;*/
-    /*z-index: 10000 !important;*/
+    position: relative;
+    z-index: 9999;
     text-align: center;
     font-size: 18px;
-    background-color: #fff!important;
+    background: #fff!important;
+    /*width: 400px !important;*/
+    /*height: 400px !important;*/
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;

@@ -309,7 +309,6 @@ export const BookingPage: FC = () => {
     };
 
     const hideApp = () => {
-        //
         // window.location.href = "tg:resolve";
         if (window.Telegram.WebApp) {
             window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`

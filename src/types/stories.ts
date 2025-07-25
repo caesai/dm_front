@@ -8,6 +8,7 @@ export interface IStoriesBlockResponse {
     cities?: TCityList;
     active: boolean;
     users: IStoryUsers;
+    name: string;
 }
 
 type IStoryUsers = number[];
@@ -30,4 +31,5 @@ export interface IStoryBlock {
     id: string;
     thumbnail: string;
     stories: IStoryObject[];
+    name: string;
 }
