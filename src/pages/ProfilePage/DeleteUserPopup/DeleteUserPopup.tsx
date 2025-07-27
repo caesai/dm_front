@@ -134,7 +134,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
 
                 <button
                     className={classNames(
-                        css.button,
+                        css.button, css.button__disabled
                     )}
                     onClick={deleteUser}
                 >
