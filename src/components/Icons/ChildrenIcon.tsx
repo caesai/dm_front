@@ -3,7 +3,7 @@ type IconProps = {
     color?: string;
 };
 
-export const ChildrenIcon = ({ size = 24, color = '#000000' }: IconProps) => {
+export const ChildrenIcon = ({ size = 24 }: IconProps) => {
     return (
         <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6.66675 10.6665C7.00008 10.8665 7.46675 10.9998 8.00008 10.9998C8.53341 10.9998 9.00008 10.8665 9.33341 10.6665" stroke="#545454" stroke-linecap="round" stroke-linejoin="round"/>
