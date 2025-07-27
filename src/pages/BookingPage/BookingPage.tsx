@@ -51,6 +51,7 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import {BASE_BOT} from "@/api/base.ts";
 import {UniversalButton} from "@/components/Buttons/UniversalButton/UniversalButton.tsx";
 import { childrenCountAtom, guestCountAtom} from "@/atoms/eventBookingAtom.ts";
+import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -110,6 +111,7 @@ export const BookingPage: FC = () => {
     const [dateValidated, setDateValidated] = useState(true);
     const [guestsValidated, setGuestsValidated] = useState(true);
     const [requestLoading, setRequestLoading] = useState(false);
+    const [errorPopup, setErrorPopup] = useState(false);
 
     const bookingBtn = useRef<HTMLDivElement>(null);
 
@@ -274,7 +276,6 @@ export const BookingPage: FC = () => {
     ]);
 
     const validateForm = () => {
-        console.log('Click');
         if (!nameValidate) {
             setNameValidated(false);
             setTimeout(() => {
@@ -341,9 +342,10 @@ export const BookingPage: FC = () => {
                 })
                 .catch((err) => {
                     console.log('err: ', err);
-                    alert(
-                        'Произошла ошибка при выполнении запроса, попробуйте еще раз.'
-                    );
+                    // alert(
+                    //     'Произошла ошибка при выполнении запроса, попробуйте еще раз.'
+                    // );
+                    setErrorPopup(true);
                 })
                 .finally(() => setRequestLoading(false));
         }
@@ -351,6 +353,7 @@ export const BookingPage: FC = () => {
 
     return (
         <Page back={true}>
+            <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)}/>
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
                 childrenCount={childrenCount}

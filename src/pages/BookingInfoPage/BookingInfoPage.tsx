@@ -28,6 +28,7 @@ import {
 import classNames from 'classnames';
 import { BOOKING_DURATION } from '../../mockData.ts';
 import {BASE_BOT} from "@/api/base.ts";
+import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
 
 export const BookingInfoPage = () => {
     const { id } = useParams();
@@ -366,15 +367,28 @@ export const BookingInfoPage = () => {
                                         size={16}
                                         color={'var(--dark-grey)'}
                                     ></UsersIcon>
-
                                     {booking ? (
-                                        <span
-                                            className={
-                                                css.bookingInfoDetails_item__text
-                                            }
-                                        >
-                                            {Number(booking.guests_count + booking.children_count)}
-                                        </span>
+                                        <>
+                                            <span
+                                                className={
+                                                    css.bookingInfoDetails_item__text
+                                                }
+                                            >
+                                                {Number(booking.guests_count)}
+                                            </span>
+                                            {Number(booking.children_count) && (
+                                                <>
+                                                    <ChildrenIcon size={16}/>
+                                                    <span
+                                                        className={
+                                                            css.bookingInfoDetails_item__text
+                                                        }
+                                                    >
+                                                        {Number(booking.children_count)}
+                                                    </span>
+                                                </>
+                                            )}
+                                        </>
                                     ) : (
                                         <PlaceholderBlock
                                             width={'20px'}

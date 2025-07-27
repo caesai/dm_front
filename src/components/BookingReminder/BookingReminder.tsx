@@ -4,6 +4,7 @@ import { TimeCircle } from '@/components/Icons/TimeCircle.tsx';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import { useNavigate } from 'react-router-dom';
+import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
 
 interface BookingReminderProps {
     id: number;
@@ -12,6 +13,7 @@ interface BookingReminderProps {
     time: string;
     address: string;
     persons: number;
+    children: number;
 }
 
 const formatDate = (dateStr: string): string => {
@@ -56,6 +58,12 @@ export const BookingReminder: FC<BookingReminderProps> = (p) => {
                             color={'var(--dark-grey)'}
                         ></UsersIcon>
                         <span className={css.subText}>{p.persons}</span>
+                        {p.children && (
+                            <>
+                                <ChildrenIcon size={16} />
+                                <span className={css.subText}>{p.children}</span>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

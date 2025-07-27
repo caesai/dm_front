@@ -127,6 +127,7 @@ export const IndexPage: FC = () => {
                             date={book.booking_date}
                             time={book.time}
                             persons={book.guests_count}
+                            children={book.children_count}
                         />
                     ))
                 )}

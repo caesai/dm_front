@@ -41,7 +41,7 @@ const mockedStories: IStory[] = [
 
 export const mockedResponseFromFutureRequest: IStoriesBlockResponse[] = [
     {
-        id: 'random-story-id',
+        id: '0',
         thumbnail: bbqlogo,
         stories: mockedStories,
         active: false,
@@ -49,7 +49,7 @@ export const mockedResponseFromFutureRequest: IStoriesBlockResponse[] = [
         name: "random-story-name"
     },
     {
-        id: 'random-story-id',
+        id: '1',
         thumbnail: placeholder,
         stories: mockedStories,
         active: false,
@@ -58,7 +58,34 @@ export const mockedResponseFromFutureRequest: IStoriesBlockResponse[] = [
         name: "random-story-name"
     },
     {
-        id: 'random-story-id',
+        id: '2',
+        thumbnail: placeholder,
+        stories: mockedStories,
+        active: false,
+        users: [],
+        cities: [],
+        name: "random-story-name"
+    },
+    {
+        id: '3',
+        thumbnail: placeholder,
+        stories: mockedStories,
+        active: false,
+        users: [],
+        cities: [],
+        name: "random-story-name"
+    },
+    {
+        id: '4',
+        thumbnail: placeholder,
+        stories: mockedStories,
+        active: false,
+        users: [],
+        cities: [],
+        name: "random-story-name"
+    },
+    {
+        id: '5',
         thumbnail: placeholder,
         stories: mockedStories,
         active: false,

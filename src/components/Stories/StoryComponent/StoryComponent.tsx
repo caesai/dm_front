@@ -1,6 +1,8 @@
 import React from 'react';
 import css from './StoryComponent.module.css';
 import classNames from 'classnames';
+import classnames from 'classnames';
+import logoNew from '/img/DT_concierge_logo_1.png';
 
 interface StoryComponentProps {
     title: string;
@@ -24,6 +26,13 @@ export const StoryComponent: React.FC<StoryComponentProps> = ({ title, descripti
                 </div>
                 <div className={css.storyImageWrapper}>
                     <img src={img} alt={description} />
+                </div>
+                <div className={classnames(css.logo_container)}>
+                    <img
+                        className={classnames(css.logo)}
+                        src={logoNew}
+                        alt="DreamTeam logo"
+                    />
                 </div>
             </div>
         </div>
