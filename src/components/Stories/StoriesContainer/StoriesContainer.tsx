@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import classnames from 'classnames';
 import css from './StoriesContainer.module.css';
 import Stories from 'stories-react';
@@ -8,11 +8,9 @@ import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { IStoryBlock } from '@/types/stories.ts';
 import { useAtom } from 'jotai';
-import {
-    // storyLocalAtomsAtom,
-    storiesLocalCountAtom,
-} from '@/atoms/storiesLocalAtom.ts';
+import { storiesLocalCountAtom } from '@/atoms/storiesLocalAtom.ts';
 import { IStoryObject } from 'stories-react/src/types';
+import type { Swiper as SwiperClass } from 'swiper';
 
 interface StoriesContainerProps {
     storiesBlocks: IStoryBlock[];
@@ -21,38 +19,57 @@ interface StoriesContainerProps {
 }
 
 export const StoriesContainer: React.FC<StoriesContainerProps> = ({ storiesBlocks, onClose, activeStoryIndex }) => {
-    const [,setActiveIndex] = useState(activeStoryIndex);
+    const [realSwiperIndex, setRealSwiperIndex] = useState(activeStoryIndex);
+    const swiperRef = useRef<SwiperClass | null>(null);
+    const onTouchStart = (_swiper: SwiperClass, event: MouseEvent | TouchEvent | PointerEvent) => {
+        try {
+            event.preventDefault();
+            event.stopPropagation();
+            console.log('onTouchStart: ', event.target);
+            const el = event.target as HTMLElement;
+            el.click();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const onRealIndexChange = (swiper: SwiperClass) => {
+        setRealSwiperIndex(swiper.activeIndex);
+    };
+    const onSwiper = (swiper: SwiperClass) => {
+        if (!swiperRef.current) {
+            swiperRef.current = swiper;
+        }
+    };
+    const onAllStoriesEnd = () => {
+        if (realSwiperIndex < storiesBlocks[realSwiperIndex].stories.length) {
+            if (swiperRef.current) {
+                swiperRef.current.slideNext();
+            }
+        } else {
+            onClose();
+        }
+    };
     return (
         <Swiper
             freeMode
-            onTouchStart={(_swiper, event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                const el = event.target as HTMLElement;
-                el.click();
-            }}
+            onSwiper={onSwiper}
+            onTouchStart={onTouchStart}
             className={classnames(css.storiesSlider)}
             slidesPerView={'auto'}
             centeredSlides={true}
-            onSlideNextTransitionStart={() => {
-                console.log('next click');
-            }}
-            onSlidePrevTransitionStart={() => {
-                console.log('prev click');
-            }}
             initialSlide={activeStoryIndex}
-            onRealIndexChange={(swiper) => {
-                console.log('real index', swiper.activeIndex);
-                setActiveIndex(swiper.activeIndex);
-            }}
+            onRealIndexChange={onRealIndexChange}
         >
             {storiesBlocks.map((block, index) => (
-                <StorySlide
-                    key={index}
-                    storyId={block.id}
-                    stories={block.stories}
-                    onClose={onClose}
-                />
+                <SwiperSlide className={css.slide} key={index}>
+                    <StorySlide
+                        storyId={block.id}
+                        shouldRender={Number(realSwiperIndex) === Number(index)}
+                        stories={block.stories}
+                        onAllStoriesEnd={onAllStoriesEnd}
+                        onClose={onClose}
+                    />
+                </SwiperSlide>
             ))}
         </Swiper>
     );
@@ -60,49 +77,56 @@ export const StoriesContainer: React.FC<StoriesContainerProps> = ({ storiesBlock
 
 interface StorySlideProps {
     // index: number;
+    onAllStoriesEnd: () => void;
     onClose: () => void;
     storyId: string;
     stories: IStoryObject[];
+    shouldRender: boolean;
 }
 
-const StorySlide: React.FC<StorySlideProps> = ({ onClose, storyId, stories }) => {
+const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stories, onClose, shouldRender }) => {
     const [storiesLocalCount, setStoriesLocalCount] = useAtom(storiesLocalCountAtom);
     const storyLocalCount = storiesLocalCount.find((item) => item.id === storyId);
-
+    const onStoryChange = (index: number) => {
+        if (storyLocalCount && storyLocalCount.count !== index && storyLocalCount.count !== stories.length) {
+            setStoriesLocalCount((prevItems) => {
+                const index = prevItems.findIndex(item => item.id === storyId);
+                if (index === -1) return prevItems; // Item not found
+                const updatedItem = {
+                    ...prevItems[index],
+                    count: prevItems[index].count + 1,
+                    isSeen: prevItems[index].count + 1 === stories.length - 1,
+                };
+                return [
+                    ...prevItems.slice(0, index),
+                    updatedItem,
+                    ...prevItems.slice(index + 1),
+                ];
+            });
+        } else {
+            const newStoryLocalCount = {
+                id: storyId,
+                count: 0,
+                isSeen: false,
+            };
+            setStoriesLocalCount((prevItems) => [...prevItems, newStoryLocalCount]);
+        }
+    };
     return (
-        <SwiperSlide className={css.slide}>
-            <div className={classnames(css.stories_container)}>
-                <span className={classnames(css.closeIcon)} onClick={onClose}>
-                    <CloseIcon size={44} />
-                </span>
+        <div className={classnames(css.stories_container)}>
+            <span className={classnames(css.closeIcon)} onClick={onClose}>
+                <CloseIcon size={44} />
+            </span>
+            {shouldRender && (
                 <Stories
                     width="100%"
                     height="100%"
-                    onStoryChange={() => {
-                        if (storyLocalCount && storyLocalCount.count !== stories.length) {
-                            setStoriesLocalCount((prevItems) => {
-                                const index = prevItems.findIndex(item => item.id === storyId);
-                                if (index === -1) return prevItems; // Item not found
-                                const updatedItem = { ...prevItems[index], count: prevItems[index].count + 1 };
-                                return [
-                                    ...prevItems.slice(0, index),
-                                    updatedItem,
-                                    ...prevItems.slice(index + 1)
-                                ];
-                            });
-                        } else {
-                            const newStoryLocalCount = {
-                                id: storyId,
-                                count: 1,
-                            }
-                            setStoriesLocalCount((prevItems) => [...prevItems, newStoryLocalCount]);
-                        }
-                    }}
+                    onStoryChange={onStoryChange}
                     stories={stories}
-                    onAllStoriesEnd={onClose}
+                    onAllStoriesEnd={onAllStoriesEnd}
                     classNames={{ progressBar: css.progressBar, main: css.slide }}
                 />
-            </div>
-        </SwiperSlide>
+            )}
+        </div>
     );
 };

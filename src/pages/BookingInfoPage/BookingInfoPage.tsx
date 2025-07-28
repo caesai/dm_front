@@ -376,7 +376,7 @@ export const BookingInfoPage = () => {
                                             >
                                                 {Number(booking.guests_count)}
                                             </span>
-                                            {Number(booking.children_count) && (
+                                            {!!booking.children_count && (
                                                 <>
                                                     <ChildrenIcon size={16}/>
                                                     <span

@@ -39,6 +39,32 @@ const mockedStories: IStory[] = [
     },
 ];
 
+const mockedStories1: IStory[] = [
+    {
+        id: "random-id",
+        title: "",
+        url: bbqlogo,
+        description: "",
+        button_url: "",
+        button_text: "",
+        button_color: "",
+        type: "image",
+        duration: 5000,
+    },
+    {
+        id: "random-id",
+        title: "Будьте в курсе всех мероприятий",
+        url: bbqlogo,
+        description: "Учтем все пожелания, отправим подтверждение в чат и\n ждем встречи с вами.",
+        button_url: "",
+        button_text: "",
+        button_color: "",
+        type: "component",
+        duration: 5000,
+    },
+
+];
+
 export const mockedResponseFromFutureRequest: IStoriesBlockResponse[] = [
     {
         id: '0',
@@ -51,7 +77,7 @@ export const mockedResponseFromFutureRequest: IStoriesBlockResponse[] = [
     {
         id: '1',
         thumbnail: placeholder,
-        stories: mockedStories,
+        stories: mockedStories1,
         active: false,
         users: [],
         cities: [],
@@ -59,7 +85,7 @@ export const mockedResponseFromFutureRequest: IStoriesBlockResponse[] = [
     },
     {
         id: '2',
-        thumbnail: placeholder,
+        thumbnail: 'https://storage.yandexcloud.net/bottec-dreamteam/Blackchops/logo.jpg',
         stories: mockedStories,
         active: false,
         users: [],
@@ -68,7 +94,7 @@ export const mockedResponseFromFutureRequest: IStoriesBlockResponse[] = [
     },
     {
         id: '3',
-        thumbnail: placeholder,
+        thumbnail: 'https://storage.yandexcloud.net/bottec-dreamteam/Poly/dish9.jpg',
         stories: mockedStories,
         active: false,
         users: [],

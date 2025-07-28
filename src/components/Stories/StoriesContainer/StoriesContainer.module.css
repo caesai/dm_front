@@ -9,7 +9,7 @@
 }
 
 .storiesSlider {
-    /*position: fixed;*/
+    position: fixed;
     width: 100%;
     z-index: 10;
     top: 0;
@@ -19,10 +19,10 @@
 
 .slide {
     /*position: relative;*/
-    z-index: 9999;
-    position: fixed;
-    top: 0;
-    left: 0;
+    /*z-index: 9999;*/
+    /*position: fixed;*/
+    /*top: 0;*/
+    /*left: 0;*/
     text-align: center;
     font-size: 18px;
     background: #fff!important;

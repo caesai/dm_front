@@ -58,7 +58,7 @@ export const BookingReminder: FC<BookingReminderProps> = (p) => {
                             color={'var(--dark-grey)'}
                         ></UsersIcon>
                         <span className={css.subText}>{p.persons}</span>
-                        {p.children && (
+                        {!!p.children && (
                             <>
                                 <ChildrenIcon size={16} />
                                 <span className={css.subText}>{p.children}</span>

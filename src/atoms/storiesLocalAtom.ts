@@ -4,6 +4,7 @@ import { atom } from 'jotai';
 interface IStoryLocalCount {
     id: string;
     count: number;
+    isSeen: boolean;
 }
 
 export const storiesLocalCountAtom = atom<IStoryLocalCount[]>([]);

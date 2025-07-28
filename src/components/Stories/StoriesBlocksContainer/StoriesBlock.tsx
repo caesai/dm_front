@@ -1,21 +1,25 @@
 import css from './StoriesBlock.module.css';
-import React, {useState} from "react";
+import React from "react";
 import classNames from 'classnames';
+import { useAtom } from 'jotai/index';
+import { storiesLocalCountAtom } from '@/atoms/storiesLocalAtom.ts';
 
 interface StoriesBlockProps {
     onClick: (index: number) => void;
     index: number;
     thumbnail: string;
+    storyId: string;
 }
 
-export const StoriesBlock: React.FC<StoriesBlockProps> = ({ onClick, thumbnail, index }) => {
-    const [isClicked, setIsClicked] = useState(false);
+export const StoriesBlock: React.FC<StoriesBlockProps> = ({ onClick, thumbnail, index, storyId }) => {
+    const [storiesLocalCount] = useAtom(storiesLocalCountAtom);
     const handleClick = () => {
         onClick(index);
-        setIsClicked(true);
     }
+    const storyLocal = storiesLocalCount.find((item) => item.id === storyId);
+    console.log('is: ', storyLocal?.isSeen);
     return (
-        <div className={classNames(css.storyBlock, !isClicked ? css.isClicked : null)} onClick={handleClick}>
+        <div className={classNames(css.storyBlock, !storyLocal?.isSeen ? css.isClicked : null)} onClick={handleClick}>
             <div className={css.storyBlockImage}>
                 <img src={thumbnail} alt="" />
             </div>

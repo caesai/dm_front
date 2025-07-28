@@ -43,8 +43,7 @@ export const Stories: React.FC = () => {
     return (
         <>
             {activeStoryIndex !== null &&
-                <StoriesContainer storiesBlocks={storiesBlocks} activeStoryIndex={activeStoryIndex}
-                                  onClose={closeStory} />}
+                <StoriesContainer storiesBlocks={storiesBlocks} activeStoryIndex={activeStoryIndex} onClose={closeStory} />}
             <div>
                 <StoriesBlocksContainer storiesBlocks={storiesBlocks} openStory={openStory} />
             </div>

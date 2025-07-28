@@ -108,11 +108,11 @@
 .floatingFooter {
     position: fixed;
     width: 100%;
-    height: 140px;
+    height: 100px;
     z-index: 1000;
     bottom: 0;
     background-color: #fff;
-    padding: 45px 0;
+    padding: 25px 0;
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
     box-shadow: 1px 0 1px;
