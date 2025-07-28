@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import css from '../BookingErrorPopup/BookingErrorPopup.module.css';
-import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
-import specialMenu from '/img/specialMenu.jpg';
-import specialMenu2 from '/img/specialMenu2.jpg';
+
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 // import { BASE_BOT } from '@/api/base.ts';
@@ -29,12 +27,12 @@ interface BookingSpecialPopupProps {
     setOpen: (x: boolean) => void;
     resId: number;
     createBooking: () => void;
+    setMenuPopupOpen: (x: boolean) => void;
 }
 
 export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) => {
     const close = () => props.setOpen(false);
     // const [isClosing, setIsClosing] = useState(false);
-    const [menuPopupOpen, setMenuPopupOpen] = useState(false);
     // hack to prevent from scrolling on page
     useEffect(() => {
         if (props.isOpen) {
@@ -60,7 +58,7 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
     // }, [props.isOpen]);
 
     const showMenuPopup = () => {
-        setMenuPopupOpen(true);
+        props.setMenuPopupOpen(true);
     }
 
     return (
@@ -71,11 +69,7 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
             className={'popup'}
 
         >
-            <MenuPopup
-                isOpen={menuPopupOpen}
-                setOpen={setMenuPopupOpen}
-                menuItems={[specialMenu, specialMenu2]}
-            />
+
             <div
                 className={classNames(
                     css.popup,

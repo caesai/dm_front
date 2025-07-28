@@ -53,6 +53,9 @@ import {UniversalButton} from "@/components/Buttons/UniversalButton/UniversalBut
 import { childrenCountAtom, guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
 import { BookingSpecialPopup } from '@/components/BookingSpecialPopup/BookingSpecialPopup.tsx';
+import specialMenu from '*.jpg';
+import specialMenu2 from '*.jpg';
+import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -115,6 +118,7 @@ export const BookingPage: FC = () => {
     const [errorPopup, setErrorPopup] = useState(false);
     const [errorPopupCount, setErrorPopupCount] = useState(0);
     const [specPopup, setSpecPopup] = useState(false);
+    const [menuPopupOpen, setMenuPopupOpen] = useState(false);
 
     const bookingBtn = useRef<HTMLDivElement>(null);
 
@@ -354,8 +358,13 @@ export const BookingPage: FC = () => {
     const isSpecialPopup = new Date(bookingDate.value).getTime() && new Date('2025-07-30').getTime() && currentPartOfDay === 'evening' && id == '1';
     return (
         <Page back={true}>
+            <MenuPopup
+                isOpen={menuPopupOpen}
+                setOpen={setMenuPopupOpen}
+                menuItems={[specialMenu, specialMenu2]}
+            />
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount}/>
-            <BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(id)} />
+            <BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(id)} setMenuPopupOpen={setMenuPopupOpen}/>
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
                 childrenCount={childrenCount}
