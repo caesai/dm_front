@@ -23,6 +23,7 @@ interface BookingErrorPopupProps {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
     resId: number;
+    count: number;
 }
 
 export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
@@ -76,22 +77,36 @@ export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
             >
                 <span className={css.title}>Произошла ошибка бронирования</span>
                 <span className={css.tags_title}>Попробуйте еще раз или свяжитесь с нами</span>
-                <button
-                    className={classNames(
-                        css.button,
-                    )}
-                    onClick={sendToTelegram}
-                >
-                    Написать в Telegram
-                </button>
-                <button
-                    className={classNames(
-                        css.button, css.button__disabled,
-                    )}
-                    // onClick={close}
-                >
-                    Позвонить
-                </button>
+                {Number(props.count) == 1 ? (
+                    <button
+                        className={classNames(
+                            css.button, css.button__disabled
+                        )}
+                        onClick={close}
+                    >
+                        Повторить попытку
+                    </button>
+                ) : (
+                    <>
+                        <button
+                            className={classNames(
+                                css.button, css.button__disabled,
+                            )}
+                            onClick={close}
+                        >
+                            Повторить попытку
+                        </button>
+                        <button
+                            className={classNames(
+                                css.button,
+                            )}
+                            onClick={sendToTelegram}
+                        >
+                            Связаться с рестораном
+                        </button>
+                    </>
+                )}
+
             </div>
         </StyledPopup>
     );

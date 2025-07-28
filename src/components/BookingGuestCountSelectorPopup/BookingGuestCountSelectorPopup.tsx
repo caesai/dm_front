@@ -85,10 +85,15 @@ export const BookingGuestCountSelectorPopup: FC<Props> = (p) => {
         p.setGuestCount((prev: number) => prev + p.childrenCount < 9 ? prev + 1 : prev);
     };
     const decGuests = () => {
-        p.setGuestCount((prev: number) => (prev - 1 >= 0 ? prev - 1 : prev));
+        p.setGuestCount((prev: number) => {
+            if (prev - 1 == p.childrenCount) {
+                decChildren();
+            }
+            return (prev - 1 >= 0 ? prev - 1 : prev)
+        });
     };
     const incChildren = () => {
-        p.setChildrenCount((prev: number) => prev + p.guestCount < 9 ? prev + 1 : prev);
+        p.setChildrenCount((prev: number) => prev + p.guestCount < 9 && p.guestCount >= 2 && prev < p.guestCount - 1 ? prev + 1 : prev);
     };
     const decChildren = () => {
         p.setChildrenCount((prev: number) => (prev - 1 >= 0 ? prev - 1 : prev));

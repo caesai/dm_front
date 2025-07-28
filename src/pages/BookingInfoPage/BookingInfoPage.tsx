@@ -27,8 +27,10 @@ import {
 } from '@/utils.ts';
 import classNames from 'classnames';
 import { BOOKING_DURATION } from '../../mockData.ts';
-import {BASE_BOT} from "@/api/base.ts";
+import { BASE_BOT } from '@/api/base.ts';
 import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
+import { DoubleCheckIcon } from '@/components/Icons/DoubleCheckIcon.tsx';
+import { PhoneCallIcon } from '@/components/Icons/PhoneCallIcon.tsx';
 
 export const BookingInfoPage = () => {
     const { id } = useParams();
@@ -78,7 +80,7 @@ export const BookingInfoPage = () => {
             return;
         }
         APIGetBooking(auth.access_token, Number(id)).then((res) =>
-            setBooking(res.data)
+            setBooking(res.data),
         );
     }, []);
 
@@ -92,7 +94,7 @@ export const BookingInfoPage = () => {
         } else {
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`;
         }
-    }
+    };
 
     return (
         <Page back={true}>
@@ -113,12 +115,12 @@ export const BookingInfoPage = () => {
                     <div
                         className={classNames(
                             css.fr,
-                            css.bookingInfoDetails_item
+                            css.bookingInfoDetails_item,
                         )}
                     >
                         {booking ? (
                             ['new', 'waiting', 'confirmed'].some(
-                                (v) => v == booking.booking_status
+                                (v) => v == booking.booking_status,
                             ) ? (
                                 <UniversalButton
                                     width={'full'}
@@ -137,7 +139,7 @@ export const BookingInfoPage = () => {
                         )}
                         {booking ? (
                             ['new', 'waiting', 'confirmed'].some(
-                                (v) => v == booking.booking_status
+                                (v) => v == booking.booking_status,
                             ) ? (
                                 <UniversalButton
                                     width={'full'}
@@ -156,7 +158,7 @@ export const BookingInfoPage = () => {
                     <div
                         className={classNames(
                             css.fr,
-                            css.bookingInfoDetails_item
+                            css.bookingInfoDetails_item,
                         )}
                     >
                         {booking ? (
@@ -164,7 +166,7 @@ export const BookingInfoPage = () => {
                                 className={css.redButton}
                                 onClick={() =>
                                     navigate(
-                                        `/restaurant/${booking?.restaurant.id}?menuOpen=true`
+                                        `/restaurant/${booking?.restaurant.id}?menuOpen=true`,
                                     )
                                 }
                             >
@@ -183,7 +185,7 @@ export const BookingInfoPage = () => {
                                 action={() =>
                                     openLink(
                                         `https://yandex.ru/maps/?text=${booking?.restaurant.address}`,
-                                        { tryInstantView: false }
+                                        { tryInstantView: false },
                                     )
                                 }
                                 icon={
@@ -226,7 +228,7 @@ export const BookingInfoPage = () => {
                         <div
                             className={classNames(
                                 css.fc,
-                                css.calendarContainer
+                                css.calendarContainer,
                             )}
                         >
                             {booking ? (
@@ -234,24 +236,24 @@ export const BookingInfoPage = () => {
                                     <div
                                         className={classNames(
                                             css.calendar,
-                                            css.calendar__month
+                                            css.calendar__month,
                                         )}
                                     >
                                         <span>
                                             {formatDateMonthShort(
-                                                booking.booking_date
+                                                booking.booking_date,
                                             )}
                                         </span>
                                     </div>
                                     <div
                                         className={classNames(
                                             css.calendar,
-                                            css.calendar__day
+                                            css.calendar__day,
                                         )}
                                     >
                                         <span>
                                             {formatDateDayShort(
-                                                booking.booking_date
+                                                booking.booking_date,
                                             )}
                                         </span>
                                     </div>
@@ -267,7 +269,7 @@ export const BookingInfoPage = () => {
                         <div
                             className={classNames(
                                 css.fc,
-                                css.bookingInfo_restaurant
+                                css.bookingInfo_restaurant,
                             )}
                         >
                             <h2 className={css.bookingInfo_restaurant__title}>
@@ -296,19 +298,44 @@ export const BookingInfoPage = () => {
                         <div
                             className={classNames(
                                 css.fc,
-                                css.bookingInfoDetails
+                                css.bookingInfoDetails,
                             )}
                         >
                             <div
                                 className={classNames(
                                     css.fr,
-                                    css.bookingInfoDetails_container
+                                    css.bookingInfoDetails_container,
+                                )}
+                            >
+                                {booking?.booking_status == 'waiting' ? (
+                                    <>
+                                        <PhoneCallIcon size={24} />
+                                        <h3>Мы свяжемся с вами для <br />подтверждения бронирования</h3>
+                                    </>
+                                ) : (
+                                    <>
+                                        <DoubleCheckIcon />
+                                        <h3>Ваше бронирование подтверждено</h3>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        <div
+                            className={classNames(
+                                css.fc,
+                                css.bookingInfoDetails,
+                            )}
+                        >
+                            <div
+                                className={classNames(
+                                    css.fr,
+                                    css.bookingInfoDetails_container,
                                 )}
                             >
                                 <div
                                     className={classNames(
                                         css.fr,
-                                        css.bookingInfoDetails_item
+                                        css.bookingInfoDetails_item,
                                     )}
                                 >
                                     <TimeCircle
@@ -333,7 +360,7 @@ export const BookingInfoPage = () => {
                                 <div
                                     className={classNames(
                                         css.fr,
-                                        css.bookingInfoDetails_item
+                                        css.bookingInfoDetails_item,
                                     )}
                                 >
                                     <CalendarIcon
@@ -347,7 +374,7 @@ export const BookingInfoPage = () => {
                                             }
                                         >
                                             {formatDateDayMonthLong(
-                                                booking.booking_date
+                                                booking.booking_date,
                                             )}
                                         </span>
                                     ) : (
@@ -360,7 +387,7 @@ export const BookingInfoPage = () => {
                                 <div
                                     className={classNames(
                                         css.fr,
-                                        css.bookingInfoDetails_item
+                                        css.bookingInfoDetails_item,
                                     )}
                                 >
                                     <UsersIcon
@@ -378,7 +405,7 @@ export const BookingInfoPage = () => {
                                             </span>
                                             {!!booking.children_count && (
                                                 <>
-                                                    <ChildrenIcon size={16}/>
+                                                    <ChildrenIcon size={16} />
                                                     <span
                                                         className={
                                                             css.bookingInfoDetails_item__text
@@ -401,19 +428,19 @@ export const BookingInfoPage = () => {
                         <div
                             className={classNames(
                                 css.fc,
-                                css.bookingInfoDetails
+                                css.bookingInfoDetails,
                             )}
                         >
                             <div
                                 className={classNames(
                                     css.fr,
-                                    css.bookingInfoDetails_container
+                                    css.bookingInfoDetails_container,
                                 )}
                             >
                                 <div
                                     className={classNames(
                                         css.fr,
-                                        css.bookingInfoDetails_item
+                                        css.bookingInfoDetails_item,
                                     )}
                                 >
                                     <ChatIcon

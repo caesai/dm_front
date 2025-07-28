@@ -52,6 +52,7 @@ import {BASE_BOT} from "@/api/base.ts";
 import {UniversalButton} from "@/components/Buttons/UniversalButton/UniversalButton.tsx";
 import { childrenCountAtom, guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
+import { BookingSpecialPopup } from '@/components/BookingSpecialPopup/BookingSpecialPopup.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -112,6 +113,8 @@ export const BookingPage: FC = () => {
     const [guestsValidated, setGuestsValidated] = useState(true);
     const [requestLoading, setRequestLoading] = useState(false);
     const [errorPopup, setErrorPopup] = useState(false);
+    const [errorPopupCount, setErrorPopupCount] = useState(0);
+    const [specPopup, setSpecPopup] = useState(false);
 
     const bookingBtn = useRef<HTMLDivElement>(null);
 
@@ -342,18 +345,17 @@ export const BookingPage: FC = () => {
                 })
                 .catch((err) => {
                     console.log('err: ', err);
-                    // alert(
-                    //     'Произошла ошибка при выполнении запроса, попробуйте еще раз.'
-                    // );
                     setErrorPopup(true);
+                    setErrorPopupCount((prev) => prev + 1);
                 })
                 .finally(() => setRequestLoading(false));
         }
     };
-
+    const isSpecialPopup = new Date(bookingDate.value).getTime() && new Date('2025-07-30').getTime() && currentPartOfDay === 'evening';
     return (
         <Page back={true}>
-            <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)}/>
+            <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount}/>
+            <BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(id)} />
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
                 childrenCount={childrenCount}
@@ -728,7 +730,13 @@ export const BookingPage: FC = () => {
                             validateFormMemo ? null : css.disabledButton,
                             requestLoading && css.loadingButton
                         )}
-                        onClick={() => createBooking()}
+                        onClick={() => {
+                            if (isSpecialPopup) {
+                                setSpecPopup(true);
+                                return;
+                            }
+                            createBooking();
+                        }}
                     >
                         <span className={css.text}>Забронировать</span>
                     </div>
