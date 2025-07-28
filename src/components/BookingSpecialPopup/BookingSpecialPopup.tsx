@@ -6,6 +6,8 @@ import css from '../BookingErrorPopup/BookingErrorPopup.module.css';
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
 import specialMenu from '/img/specialMenu.jpg';
 import specialMenu2 from '/img/specialMenu2.jpg';
+import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
+import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 // import { BASE_BOT } from '@/api/base.ts';
 
 const StyledPopup = styled(Popup)`
@@ -31,7 +33,7 @@ interface BookingSpecialPopupProps {
 
 export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) => {
     const close = () => props.setOpen(false);
-    const [isClosing, setIsClosing] = useState(false);
+    // const [isClosing, setIsClosing] = useState(false);
     const [menuPopupOpen, setMenuPopupOpen] = useState(false);
     // hack to prevent from scrolling on page
     useEffect(() => {
@@ -44,18 +46,18 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
             document.body.style.overflow = 'scroll';
         };
     }, [props]);
-
-    useEffect(() => {
-        if (isClosing) {
-            setTimeout(() => close(), 200);
-        }
-    }, [isClosing]);
-
-    useEffect(() => {
-        if (props.isOpen) {
-            setIsClosing(false);
-        }
-    }, [props.isOpen]);
+    //
+    // useEffect(() => {
+    //     if (isClosing) {
+    //         setTimeout(() => close(), 200);
+    //     }
+    // }, [isClosing]);
+    //
+    // useEffect(() => {
+    //     if (props.isOpen) {
+    //         setIsClosing(false);
+    //     }
+    // }, [props.isOpen]);
 
     const showMenuPopup = () => {
         setMenuPopupOpen(true);
@@ -66,7 +68,7 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
             open={props.isOpen}
             // onClose={close}
             // closeOnDocumentClick={true}
-            className={isClosing ? 'popupClose' : 'popup'}
+            className={'popup'}
 
         >
             <MenuPopup
@@ -77,9 +79,16 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
             <div
                 className={classNames(
                     css.popup,
-                    isClosing ? css.popup__closing : null,
+                    // isClosing ? css.popup__closing : null,
                 )}
             >
+                <div style={{position: 'absolute', top: 10, right: 10}}>
+                    <RoundedButton
+                        icon={<CrossIcon size={44} color={'black'} />}
+                        bgColor={'var(--primary-background) !important'}
+                        action={() => close()}
+                    />
+                </div>
                 <span className={css.title}>Обращаем ваше внимание. </span>
                 <span className={css.tags_title}>В это время будет действовать специальное меню, посвящённое Blackchops Steak Club.</span>
 
