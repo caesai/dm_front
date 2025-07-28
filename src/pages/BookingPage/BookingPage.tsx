@@ -351,7 +351,7 @@ export const BookingPage: FC = () => {
                 .finally(() => setRequestLoading(false));
         }
     };
-    const isSpecialPopup = new Date(bookingDate.value).getTime() && new Date('2025-07-30').getTime() && currentPartOfDay === 'evening';
+    const isSpecialPopup = new Date(bookingDate.value).getTime() && new Date('2025-07-30').getTime() && currentPartOfDay === 'evening' && id == '1';
     return (
         <Page back={true}>
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount}/>

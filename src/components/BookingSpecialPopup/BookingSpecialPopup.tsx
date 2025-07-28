@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import css from '../BookingErrorPopup/BookingErrorPopup.module.css';
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
-import { useAtom } from 'jotai/index';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import specialMenu from '/img/specialMenu.pdf';
 // import { BASE_BOT } from '@/api/base.ts';
 
 const StyledPopup = styled(Popup)`
@@ -33,8 +32,6 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
     const close = () => props.setOpen(false);
     const [isClosing, setIsClosing] = useState(false);
     const [menuPopupOpen, setMenuPopupOpen] = useState(false);
-    const [restaurants] = useAtom(restaurantsListAtom);
-    const restaurant = restaurants.find((v) => v.id === Number(props.resId));
     // hack to prevent from scrolling on page
     useEffect(() => {
         if (props.isOpen) {
@@ -71,13 +68,11 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
             className={isClosing ? 'popupClose' : 'popup'}
 
         >
-            {restaurant && <MenuPopup
+            <MenuPopup
                 isOpen={menuPopupOpen}
                 setOpen={setMenuPopupOpen}
-                menuItems={restaurant.menu_imgs
-                    .sort((a, b) => (a.order > b.order ? 1 : -1))
-                    .map((v) => v.image_url)}
-            />}
+                menuItems={[specialMenu]}
+            />
             <div
                 className={classNames(
                     css.popup,
