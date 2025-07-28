@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import css from '../BookingErrorPopup/BookingErrorPopup.module.css';
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
-import specialMenu from '/img/specialMenu.pdf';
+import specialMenu from '/img/specialMenu.jpg';
+import specialMenu2 from '/img/specialMenu2.jpg';
 // import { BASE_BOT } from '@/api/base.ts';
 
 const StyledPopup = styled(Popup)`
@@ -71,7 +72,7 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
             <MenuPopup
                 isOpen={menuPopupOpen}
                 setOpen={setMenuPopupOpen}
-                menuItems={[specialMenu]}
+                menuItems={[specialMenu, specialMenu2]}
             />
             <div
                 className={classNames(
