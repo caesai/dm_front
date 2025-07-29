@@ -64,8 +64,8 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
     return (
         <StyledPopup
             open={props.isOpen}
-            // onClose={close}
-            // closeOnDocumentClick={true}
+            onClose={close}
+            closeOnDocumentClick={true}
             className={'popup'}
 
         >
