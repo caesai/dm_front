@@ -358,24 +358,24 @@ export const BookingPage: FC = () => {
         }
     };
     const isSpecialPopup = new Date(bookingDate.value).getTime() && new Date('2025-07-30').getTime() && currentPartOfDay === 'evening' && id == '1';
-    // const openMenu = (isOpen: boolean) => {
-    //     if (isOpen) {
-    //         setErrorPopup(false);
-    //         setMenuPopupOpen(true);
-    //     } else {
-    //         setErrorPopup(true);
-    //         setMenuPopupOpen(false);
-    //     }
-    // }
+    const openMenu = (isOpen: boolean) => {
+        if (isOpen) {
+            setErrorPopup(false);
+            setMenuPopupOpen(true);
+        } else {
+            setErrorPopup(true);
+            setMenuPopupOpen(false);
+        }
+    }
     return (
         <Page back={true}>
             <MenuPopup
                 isOpen={menuPopupOpen}
-                setOpen={setMenuPopupOpen}
+                setOpen={openMenu}
                 menuItems={[specialMenu, specialMenu2]}
             />
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount}/>
-            <BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(id)} setMenuPopupOpen={setMenuPopupOpen}/>
+            <BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(id)} setMenuPopupOpen={openMenu}/>
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
                 childrenCount={childrenCount}
@@ -753,9 +753,9 @@ export const BookingPage: FC = () => {
                         onClick={() => {
                             if (isSpecialPopup) {
                                 setSpecPopup(true);
-                                return;
+                            } else {
+                                createBooking();
                             }
-                            createBooking();
                         }}
                     >
                         <span className={css.text}>Забронировать</span>
