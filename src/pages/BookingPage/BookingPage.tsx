@@ -53,9 +53,11 @@ import {UniversalButton} from "@/components/Buttons/UniversalButton/UniversalBut
 import { childrenCountAtom, guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
 import { BookingSpecialPopup } from '@/components/BookingSpecialPopup/BookingSpecialPopup.tsx';
-import specialMenu from '*.jpg';
-import specialMenu2 from '*.jpg';
+
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
+
+import specialMenu from '/img/specialMenu.jpg';
+import specialMenu2 from '/img/specialMenu2.jpg';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -356,24 +358,24 @@ export const BookingPage: FC = () => {
         }
     };
     const isSpecialPopup = new Date(bookingDate.value).getTime() && new Date('2025-07-30').getTime() && currentPartOfDay === 'evening' && id == '1';
-    const openMenu = (isOpen: boolean) => {
-        if (isOpen) {
-            setErrorPopup(false);
-            setMenuPopupOpen(true);
-        } else {
-            setErrorPopup(true);
-            setMenuPopupOpen(false);
-        }
-    }
+    // const openMenu = (isOpen: boolean) => {
+    //     if (isOpen) {
+    //         setErrorPopup(false);
+    //         setMenuPopupOpen(true);
+    //     } else {
+    //         setErrorPopup(true);
+    //         setMenuPopupOpen(false);
+    //     }
+    // }
     return (
         <Page back={true}>
             <MenuPopup
                 isOpen={menuPopupOpen}
-                setOpen={openMenu}
+                setOpen={setMenuPopupOpen}
                 menuItems={[specialMenu, specialMenu2]}
             />
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount}/>
-            <BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(id)} setMenuPopupOpen={openMenu}/>
+            <BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(id)} setMenuPopupOpen={setMenuPopupOpen}/>
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
                 childrenCount={childrenCount}
