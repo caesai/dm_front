@@ -93,7 +93,7 @@ const MONTHS_LONG2 = [
     'ноября',
     'декабря',
 ];
-const weekdaysMap: Record<number, string> = {
+export const weekdaysMap: Record<number, string> = {
     0: 'вс',
     1: 'пн',
     2: 'вт',
@@ -175,8 +175,9 @@ export const formatDateShort = (inputDate: string): string => {
 
     const day = input.getDate();
     const month = MONTHS[input.getMonth()];
+    const dayNumber = input.getDay();
 
-    return `${day} ${month}`;
+    return `${day} ${month} ${weekdaysMap[dayNumber]}`;
 };
 
 export const formatDateMonthShort = (inputDate: string): string => {

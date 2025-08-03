@@ -306,7 +306,7 @@ export const Restaurant = () => {
                 <div className={css.floatingFooterWrapper}>
                     <div
                         className={css.bookingButton}
-                        onClick={() => navigate(`/booking/${restaurant?.id}`)}
+                        onClick={() => navigate(`/booking?id=${restaurant?.id}`)}
                     >
                         <span className={css.text}>Забронировать</span>
                     </div>

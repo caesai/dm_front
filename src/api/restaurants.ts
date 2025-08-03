@@ -9,8 +9,12 @@ import {
 } from '@/types/restaurant.ts';
 import { IEventInRestaurant } from '@/types/events.ts';
 
-export const APIGetRestaurants = () => {
-    return axios.get<IRestaurant[]>(`${BASE_URL}/restaurant/list`);
+export const APIGetRestaurants = (token: string) => {
+    return axios.get<IRestaurant[]>(`${BASE_URL}/restaurant/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 };
 
 export const APIGetAvailableDays = (
@@ -65,6 +69,7 @@ export const APICreateBooking = (
     prepared_comments: string[],
     confirmation: string
 ) => {
+    console.log('restaurant_id: ', restaurant_id);
     return axios.post<IBookingCreate>(
         `${BASE_URL}/restaurant/${restaurant_id}/booking`,
         {

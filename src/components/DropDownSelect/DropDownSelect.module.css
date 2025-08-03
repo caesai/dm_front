@@ -1,0 +1,33 @@
+.dropdown {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 16px;
+    background-color: var(--secondary-background);
+    border-radius: 12px;
+    height: 50px;
+    box-sizing: border-box;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.2s ease-in-out;
+}
+
+.invalid {
+    border-bottom: 1px solid var(--red);
+}
+
+.select {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.select_text {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.select__arrow {
+    /*transform: rotate(180deg);*/
+}

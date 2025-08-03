@@ -56,7 +56,7 @@ const AppRouter = () => {
     useEffect(() => {
         if (!loadingComplete && auth?.access_token) {
             APIGetCityList().then((res) => setCities(res.data));
-            APIGetRestaurants().then((res) => {
+            APIGetRestaurants(auth.access_token).then((res) => {
                 console.log('restaurants: ', res.data)
                 setRestaurants(res.data);
             });
@@ -137,7 +137,7 @@ const AppRouter = () => {
                         element={<BookingInfoPage />}
                     />
                     <Route path={'/restaurant/:id'} element={<Restaurant />} />
-                    <Route path={'/booking/:id'} element={<BookingPage />} />
+                    <Route path={'/booking'} element={<BookingPage />} />
                     <Route
                         path={'/bookingConfirmation'}
                         element={<BookingConfirmationPage />}

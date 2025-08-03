@@ -18,7 +18,7 @@ export type PickerValueData =
     | number
     | { title: string; value: string };
 
-export type PickerValueObj = { title: string; value: string };
+export type PickerValueObj = { address?: string; title: string; value: string };
 
 interface Option {
     value: PickerValueData;

@@ -24,6 +24,7 @@ interface BookingErrorPopupProps {
     setOpen: (x: boolean) => void;
     resId: number;
     count: number;
+    botError: Boolean;
 }
 
 export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
@@ -77,6 +78,7 @@ export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
             >
                 <span className={css.title}>Произошла ошибка бронирования</span>
                 <span className={css.tags_title}>Попробуйте еще раз или свяжитесь с нами</span>
+                {props.botError && (<span className={css.tags_title}>Бот {BASE_BOT} заблокирован, проверьте настройки бота в телеграме и разблокируйте его.</span>)}
                 {Number(props.count) == 1 ? (
                     <button
                         className={classNames(

@@ -5,6 +5,7 @@ import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import { useNavigate } from 'react-router-dom';
 import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
+import { weekdaysMap } from '@/utils.ts';
 
 interface BookingReminderProps {
     id: number;
@@ -49,7 +50,7 @@ export const BookingReminder: FC<BookingReminderProps> = (p) => {
                             color={'var(--dark-grey)'}
                         ></CalendarIcon>
                         <span className={css.subText}>
-                            {formatDate(p.date)}
+                            {formatDate(p.date)} {weekdaysMap[new Date(p.date).getDay()]}
                         </span>
                     </div>
                     <div className={css.subItem}>

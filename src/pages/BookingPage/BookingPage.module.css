@@ -163,7 +163,7 @@
 }
 
 .header__select__arrow {
-    transform: rotate(180deg);
+    /*transform: rotate(180deg);*/
 }
 
 .timeOfDayContainer {

@@ -21,6 +21,8 @@ import {authAtom} from '@/atoms/userAtom.ts';
 import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import {Stories} from "@/components/Stories/Stories.tsx";
 import {DEV_MODE} from "@/api/base.ts";
+import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { useNavigate } from 'react-router-dom';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -51,6 +53,8 @@ export const IndexPage: FC = () => {
 
     const [currentBookings, setCurrentBookings] = useState<IBookingInfo[]>([]);
     const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -146,6 +150,8 @@ export const IndexPage: FC = () => {
                     ))}
                 </div>
             </div>
+
+            <BottomButtonWrapper onClick={() => navigate('/booking/')}/>
         </Page>
     );
 };
