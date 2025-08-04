@@ -656,7 +656,7 @@ export const BookingPage: FC = () => {
                         <HeaderContainer>
                             <HeaderContent title={'Пожелания к брони'} />
                         </HeaderContainer>
-                        <CheckBoxInput checked={preOrder} toggle={() => setPreOrder(!preOrder)} label={'Предзаказ блюд'} />
+                        <CheckBoxInput checked={preOrder} toggle={() => setPreOrder(!preOrder)} label={'Оформить предзаказ блюд и напитков'} />
                         <TextInput
                             value={commentary}
                             onFocus={() => {

@@ -7,7 +7,7 @@ import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { TimeCircle } from '@/components/Icons/TimeCircle.tsx';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
+// import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { useCallback, useEffect, useState } from 'react';
