@@ -57,7 +57,7 @@ export const BookingRestaurantsSelectorPopup: FC<Props> = ({
             >
                 <Picker.Column name={'value'}>
                     {values.map((option) => (
-                        <Picker.Item key={option.value} value={option}>
+                        <Picker.Item key={option.value} value={option} style={{ marginBottom: 15 }}>
                             {({ selected }) => (
                                 <div className={css.selectorItem}>
                                     <span

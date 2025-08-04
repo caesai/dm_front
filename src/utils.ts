@@ -113,14 +113,15 @@ export const formatDate = (inputDate: string): string => {
 
     const day = input.getDate();
     const month = MONTHS_LONG2[input.getMonth()];
+    const dayNumber = weekdaysMap[input.getDay()];
 
     if (input.getTime() === today.getTime()) {
-        return `Сегодня, ${day} ${month}`;
+        return `Сегодня, ${day} ${month} ${dayNumber}`;
     } else if (input.getTime() === today.getTime() + 86400000) {
         // 86400000 миллисекунд в одном дне
-        return `Завтра, ${day} ${month}`;
+        return `Завтра, ${day} ${month} ${dayNumber}`;
     } else {
-        return `${day} ${month}`;
+        return `${day} ${month} ${dayNumber}`;
     }
 };
 export const formatDateAlt = (inputDate: string): string => {
