@@ -26,10 +26,10 @@ export const Redirecter = () => {
         '/onboarding/7',
     ];
 
-    const getEventIdFromParams = useCallback((paramsObject: {[k:string]: string}) => {
+    const getEventIdFromParams = useCallback((paramsObject: {[k:string]: string}, searchString: string) => {
         for (let key in paramsObject) {
-            if (paramsObject[key].includes('eventId')) {
-                return paramsObject[key].replace('eventId_', '');
+            if (paramsObject[key].includes(searchString)) {
+                return paramsObject[key].replace(`${searchString}_`, '');
             }
         }
     }, []);
@@ -37,7 +37,7 @@ export const Redirecter = () => {
     const redirectToEvent = () => {
         APIGetEvents().then((res) => {
             const paramsObject = Object.fromEntries([...params]);
-            const eventId = getEventIdFromParams(paramsObject);
+            const eventId = getEventIdFromParams(paramsObject, 'eventId');
             const event = res.data.filter((event) =>
                 event.restaurants.some((restaurant) => {
                         return restaurant.dates[0].id.toString() === eventId;
@@ -47,6 +47,18 @@ export const Redirecter = () => {
             navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests');
             setDataToLocalStorage('sharedEvent', { eventId, resId: event[0].restaurants[0].id, eventName: event[0].name });
         });
+    }
+
+    const redirectToRestaurant = () => {
+        const paramsObject = Object.fromEntries([...params]);
+        const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
+        navigate('/restaurant/' + restaurantId);
+    }
+
+    const redirectToBooking = () => {
+        const paramsObject = Object.fromEntries([...params]);
+        const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
+        navigate('/booking/?id=' + bookingId);
     }
 
     useEffect(() => {
@@ -64,10 +76,12 @@ export const Redirecter = () => {
             !ONBOARDING_EXCLUDED.includes(location.pathname) &&
             !location.pathname.includes('events')
         ) {
-            if (
-                location.search.includes('eventId')
-            ) {
+            if (location.search.includes('eventId')) {
                 redirectToEvent();
+            } else if (location.search.includes('restaurantId')) {
+                redirectToRestaurant();
+            } else if (location.search.includes('bookingId')) {
+                redirectToBooking();
             } else {
                 navigate('/onboarding');
             }
@@ -82,6 +96,12 @@ export const Redirecter = () => {
             location.search.includes('eventId')
         ) {
             redirectToEvent();
+        }
+        if (location.search.includes('restaurantId')) {
+            redirectToRestaurant();
+        }
+        if (location.search.includes('bookingId')) {
+            redirectToBooking();
         }
     }, [auth, user, location.pathname, location.search]);
 

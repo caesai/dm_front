@@ -129,7 +129,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
                     isClosing ? css.popup__closing : null
                 )}
             >
-                <span className={css.title}>Подвтердите удаление учетной записи</span>
+                <span className={css.title}>Подтвердите удаление учетной записи</span>
                 <span className={css.tags_title}>Все данные, связанные с ней, также будут удалены. Удалить учетную запись?</span>
 
                 <button
