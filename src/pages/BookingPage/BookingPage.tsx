@@ -195,12 +195,13 @@ export const BookingPage: FC = () => {
     );
 
     // Find the first part of the day with available timeslots and update currentPartOfDay
-    useEffect(() => {
-        if (morningTimeslots.length > 0) setCurrentPartOfDay('morning');
-        else if (dayTimeslots.length > 0) setCurrentPartOfDay('day');
-        else if (eveningTimeslots.length > 0) setCurrentPartOfDay('evening');
-        else setCurrentPartOfDay(null); // Нет слотов вовсе
-    }, [morningTimeslots, dayTimeslots, eveningTimeslots]);
+    // useEffect(() => {
+    //     if (morningTimeslots.length > 0) setCurrentPartOfDay('morning');
+    //     else if (dayTimeslots.length > 0) setCurrentPartOfDay('day');
+    //     else if (eveningTimeslots.length > 0) setCurrentPartOfDay('evening');
+    //     else setCurrentPartOfDay(null); // Нет слотов вовсе
+    //     // console.log('??')
+    // }, [morningTimeslots, dayTimeslots, eveningTimeslots]);
 
     // Update currentPartOfDay when currentSelectedTime changes
     useEffect(() => {
@@ -208,13 +209,15 @@ export const BookingPage: FC = () => {
             const part = findPartOfDay(
                 new Date(currentSelectedTime.start_datetime)
             );
+            console.log('wtf: ', part)
             setCurrentPartOfDay(part);
         }
-    }, [currentSelectedTime]);
+    }, [currentSelectedTime, guestCount]);
 
     // Set currentPartOfDay based on available timeslots if currentSelectedTime is not set
     useEffect(() => {
         if (!currentSelectedTime) {
+            console.log('?')
             if (morningTimeslots.length > 0) setCurrentPartOfDay('morning');
             else if (dayTimeslots.length > 0) setCurrentPartOfDay('day');
             else if (eveningTimeslots.length > 0)
@@ -237,11 +240,13 @@ export const BookingPage: FC = () => {
                 value: String(v.id),
             };
         });
-        // if (idFromParams) {
+        if (idFromParams) {
         //     setBookingRestaurant(restaurantList[0]);
-        // } else {
-        setBookingRestaurants(restaurantList);
-        // }
+            const restaurant = restaurantList.find(item => item.value === idFromParams);
+            restaurant !== undefined && setBookingRestaurant(restaurant);
+        } else {
+            setBookingRestaurants(restaurantList);
+        }
     }, [restaurants]);
 
     // Create filtered timeslots
@@ -438,7 +443,11 @@ export const BookingPage: FC = () => {
                                     <h3 className={css.headerInfo__title}>
                                         Бронирование
                                     </h3>
-                                    {idFromParams && <h3 className={css.headerInfo__title}><b>{String(bookingRestaurants.find((item) => item.value === bookingRestaurant.value)?.title)}</b></h3>}
+                                    {idFromParams && (
+                                        <h3 className={css.headerInfo__title}>
+                                            <b>{String(bookingRestaurant.title)}</b>
+                                        </h3>
+                                    )}
                                 </div>
                                 <div>
                                     <RoundedButton
@@ -583,6 +592,7 @@ export const BookingPage: FC = () => {
                                                 style={{
                                                     width: '100%',
                                                 }}
+                                                initialSlide={filteredTimeslots.findIndex(item => item.start_datetime === currentSelectedTime?.start_datetime)}
                                             >
                                                 {filteredTimeslots.map((v) => (
                                                     <SwiperSlide
