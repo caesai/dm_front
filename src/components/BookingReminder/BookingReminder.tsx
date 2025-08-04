@@ -50,7 +50,7 @@ export const BookingReminder: FC<BookingReminderProps> = (p) => {
                             color={'var(--dark-grey)'}
                         ></CalendarIcon>
                         <span className={css.subText}>
-                            {formatDate(p.date)} {weekdaysMap[new Date(p.date).getDay()]}
+                            {formatDate(p.date)}, {weekdaysMap[new Date(p.date).getDay()]}
                         </span>
                     </div>
                     <div className={css.subItem}>

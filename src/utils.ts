@@ -121,7 +121,7 @@ export const formatDate = (inputDate: string): string => {
         // 86400000 миллисекунд в одном дне
         return `Завтра, ${day} ${month} ${dayNumber}`;
     } else {
-        return `${day} ${month} ${dayNumber}`;
+        return `${day} ${month}, ${dayNumber}`;
     }
 };
 export const formatDateAlt = (inputDate: string): string => {
@@ -178,7 +178,7 @@ export const formatDateShort = (inputDate: string): string => {
     const month = MONTHS[input.getMonth()];
     const dayNumber = input.getDay();
 
-    return `${day} ${month} ${weekdaysMap[dayNumber]}`;
+    return `${day} ${month}, ${weekdaysMap[dayNumber]}`;
 };
 
 export const formatDateMonthShort = (inputDate: string): string => {

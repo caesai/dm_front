@@ -67,7 +67,8 @@ export const APICreateBooking = (
     email: string,
     comment: string,
     prepared_comments: string[],
-    confirmation: string
+    confirmation: string,
+    pre_order_dishes: boolean,
 ) => {
     console.log('restaurant_id: ', restaurant_id);
     return axios.post<IBookingCreate>(
@@ -83,6 +84,7 @@ export const APICreateBooking = (
             comment: import.meta.env.MODE === 'development' ? 'ТЕСТОВОЕ БРОНИРОВАНИЕ! НЕ ОТВЕЧАТЬ!' : comment ,
             prepared_comments,
             confirmation,
+            pre_order_dishes,
         },
         {
             headers: {

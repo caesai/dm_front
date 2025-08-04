@@ -52,8 +52,8 @@ export const BookingRestaurantsSelectorPopup: FC<Props> = ({
                 value={bookingRestaurant}
                 // @ts-expect-error broken-lib
                 onChange={setBookingRestaurant}
-                // wheelMode="natural"
-                height={120}
+                wheelMode="natural"
+                height={300}
             >
                 <Picker.Column name={'value'}>
                     {values.map((option) => (

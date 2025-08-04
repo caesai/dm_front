@@ -244,7 +244,6 @@ export const BookingInfoPage = () => {
                                             {formatDateMonthShort(
                                                 booking.booking_date,
                                             )}
-                                             {weekdaysMap[new Date(booking.booking_date).getDay()]}
                                         </span>
                                     </div>
                                     <div
@@ -377,7 +376,7 @@ export const BookingInfoPage = () => {
                                         >
                                             {formatDateDayMonthLong(
                                                 booking.booking_date,
-                                            )}
+                                            )}, {weekdaysMap[new Date(booking.booking_date).getDay()]}
                                         </span>
                                     ) : (
                                         <PlaceholderBlock
@@ -439,31 +438,31 @@ export const BookingInfoPage = () => {
                                     css.bookingInfoDetails_container,
                                 )}
                             >
-                                <div
-                                    className={classNames(
-                                        css.fr,
-                                        css.bookingInfoDetails_item,
-                                    )}
-                                >
-                                    <ChatIcon
-                                        size={16}
-                                        color={'var(--dark-grey)'}
-                                    ></ChatIcon>
-                                    {booking ? (
-                                        <span
-                                            className={
-                                                css.bookingInfoDetails_item__text
-                                            }
-                                        >
-                                            {booking.user_comments}
-                                        </span>
-                                    ) : (
-                                        <PlaceholderBlock
-                                            width={'120px'}
-                                            height={'17px'}
-                                        />
-                                    )}
-                                </div>
+                                {/*<div*/}
+                                {/*    className={classNames(*/}
+                                {/*        css.fr,*/}
+                                {/*        css.bookingInfoDetails_item,*/}
+                                {/*    )}*/}
+                                {/*>*/}
+                                {/*    <ChatIcon*/}
+                                {/*        size={16}*/}
+                                {/*        color={'var(--dark-grey)'}*/}
+                                {/*    ></ChatIcon>*/}
+                                {/*    {booking ? (*/}
+                                {/*        <span*/}
+                                {/*            className={*/}
+                                {/*                css.bookingInfoDetails_item__text*/}
+                                {/*            }*/}
+                                {/*        >*/}
+                                {/*            {booking.user_comments}*/}
+                                {/*        </span>*/}
+                                {/*    ) : (*/}
+                                {/*        <PlaceholderBlock*/}
+                                {/*            width={'120px'}*/}
+                                {/*            height={'17px'}*/}
+                                {/*        />*/}
+                                {/*    )}*/}
+                                {/*</div>*/}
                             </div>
                         </div>
                         {booking ? (

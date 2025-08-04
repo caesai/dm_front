@@ -64,6 +64,7 @@ import { bookingRestaurantAtom, restaurantsListAtom } from '@/atoms/restaurantsL
 import {
     BookingRestaurantsSelectorPopup
 } from '@/components/BookingRestaurantsSelectorPopup/BookingRestaurantsSelectorPopup.tsx';
+import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -124,6 +125,7 @@ export const BookingPage: FC = () => {
     const [errorPopupCount, setErrorPopupCount] = useState(0);
     const [specPopup, setSpecPopup] = useState(false);
     const [menuPopupOpen, setMenuPopupOpen] = useState(false);
+    const [preOrder, setPreOrder] = useState(false);
 
     const bookingBtn = useRef<HTMLDivElement>(null);
 
@@ -361,7 +363,8 @@ export const BookingPage: FC = () => {
                 userEmail,
                 commentary,
                 comms,
-                confirmation.text
+                confirmation.text,
+                preOrder,
                 // tg_id: user.
             )
                 .then((res) => {
@@ -435,6 +438,7 @@ export const BookingPage: FC = () => {
                                     <h3 className={css.headerInfo__title}>
                                         Бронирование
                                     </h3>
+                                    {idFromParams && <h3 className={css.headerInfo__title}><b>{String(bookingRestaurants.find((item) => item.value === bookingRestaurant.value)?.title)}</b></h3>}
                                 </div>
                                 <div>
                                     <RoundedButton
@@ -652,6 +656,7 @@ export const BookingPage: FC = () => {
                         <HeaderContainer>
                             <HeaderContent title={'Пожелания к брони'} />
                         </HeaderContainer>
+                        <CheckBoxInput checked={preOrder} toggle={() => setPreOrder(!preOrder)} label={'Предзаказ блюд'} />
                         <TextInput
                             value={commentary}
                             onFocus={() => {
