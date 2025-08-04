@@ -40,7 +40,7 @@ export const StageSix = () => {
             <div className={css.stage_page_wrapper}>
                 <div className={css.stage_footer}>
                     <CheckBoxInput checked={agree} toggle={() => setAgree(!agree)} label={(
-                        <>
+                        <div>
                             Принимаю{' '}
                             <span className={css.redUnderline}>
                                 Условия пользовательского соглашения
@@ -49,7 +49,7 @@ export const StageSix = () => {
                             <span className={css.redUnderline}>
                                 Политику конфиденциальности
                             </span>
-                        </>
+                        </div>
                     )} />
                     <div className={css.button_container}>
                         <div
