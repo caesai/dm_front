@@ -23,7 +23,7 @@ import { Taxi } from '@/components/YandexTaxi/Taxi.tsx';
 import {
     formatDateDayMonthLong,
     formatDateDayShort,
-    formatDateMonthShort,
+    formatDateMonthShort, getCurrentWeekdayShort, weekdaysMap,
 } from '@/utils.ts';
 import classNames from 'classnames';
 import { BOOKING_DURATION } from '../../mockData.ts';
@@ -243,6 +243,7 @@ export const BookingInfoPage = () => {
                                             {formatDateMonthShort(
                                                 booking.booking_date,
                                             )}
+                                             {weekdaysMap[new Date(booking.booking_date).getDay()]}
                                         </span>
                                     </div>
                                     <div
