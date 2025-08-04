@@ -23,7 +23,8 @@ import { Taxi } from '@/components/YandexTaxi/Taxi.tsx';
 import {
     formatDateDayMonthLong,
     formatDateDayShort,
-    formatDateMonthShort, getCurrentWeekdayShort, weekdaysMap,
+    formatDateMonthShort,
+    weekdaysMap,
 } from '@/utils.ts';
 import classNames from 'classnames';
 import { BOOKING_DURATION } from '../../mockData.ts';
