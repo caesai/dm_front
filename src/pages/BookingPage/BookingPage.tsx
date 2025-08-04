@@ -65,6 +65,8 @@ import {
     BookingRestaurantsSelectorPopup
 } from '@/components/BookingRestaurantsSelectorPopup/BookingRestaurantsSelectorPopup.tsx';
 import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
+import { InfoIcon } from '@/components/Icons/InfoIcon.tsx';
+import { BookingInfoPopup } from '@/components/BookingInfoPopup/BookingInfoPopup.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -126,6 +128,7 @@ export const BookingPage: FC = () => {
     const [specPopup, setSpecPopup] = useState(false);
     const [menuPopupOpen, setMenuPopupOpen] = useState(false);
     const [preOrder, setPreOrder] = useState(false);
+    const [infoPopup, setInfoPopup] = useState(false);
 
     const bookingBtn = useRef<HTMLDivElement>(null);
 
@@ -408,6 +411,7 @@ export const BookingPage: FC = () => {
             />
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(bookingRestaurant.value)} count={errorPopupCount} botError={botError}/>
             <BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(bookingRestaurant.value)} setMenuPopupOpen={openMenu}/>
+            <BookingInfoPopup isOpen={infoPopup} setOpen={setInfoPopup} />
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
                 childrenCount={childrenCount}
@@ -673,7 +677,15 @@ export const BookingPage: FC = () => {
                         <HeaderContainer>
                             <HeaderContent title={'Пожелания к брони'} />
                         </HeaderContainer>
-                        <CheckBoxInput checked={preOrder} toggle={() => setPreOrder(!preOrder)} label={'Оформить предзаказ блюд и напитков'} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5}}>
+                        <CheckBoxInput
+                            checked={preOrder}
+                            toggle={() => setPreOrder(!preOrder)}
+                            label={'Оформить предзаказ блюд и напитков'} />
+                        <span onClick={() => setInfoPopup(true)}>
+                            <InfoIcon size={14}/>
+                        </span>
+                        </div>
                         <TextInput
                             value={commentary}
                             onFocus={() => {
