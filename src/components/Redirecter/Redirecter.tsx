@@ -58,7 +58,7 @@ export const Redirecter = () => {
     const redirectToBooking = () => {
         const paramsObject = Object.fromEntries([...params]);
         const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
-        navigate('/booking/?id=' + bookingId);
+        navigate('/booking/?id=' + bookingId + '&redirected=true');
     }
 
     useEffect(() => {

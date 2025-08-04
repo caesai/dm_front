@@ -398,7 +398,7 @@ export const BookingPage: FC = () => {
             setMenuPopupOpen(false);
         }
     }
-
+    console.log(params.get('redirected'))
     return (
         <Page back={true}>
             <MenuPopup
@@ -452,7 +452,14 @@ export const BookingPage: FC = () => {
                                 <div>
                                     <RoundedButton
                                         icon={<CrossIcon size={44} />}
-                                        isBack={true}
+                                        // isBack={true}
+                                        action={() => {
+                                            if (params.get('redirected')) {
+                                                navigate('/')
+                                            } else {
+                                                navigate(-1)
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>
