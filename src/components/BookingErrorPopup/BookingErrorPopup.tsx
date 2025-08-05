@@ -77,8 +77,7 @@ export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
                 )}
             >
                 <span className={css.title}>Произошла ошибка бронирования</span>
-                <span className={css.tags_title}>Попробуйте еще раз или свяжитесь с нами</span>
-                {props.botError && (<span className={css.tags_title}>Бот {BASE_BOT} заблокирован, проверьте настройки бота в телеграме и разблокируйте его.</span>)}
+                {!props.botError ? <span className={css.tags_title}>Попробуйте еще раз или свяжитесь с нами</span> : (<span className={css.tags_title}>Для успешного бронирования, пожалуйста, разблокируйте Telegram-бот</span>)}
                 {Number(props.count) == 1 ? (
                     <button
                         className={classNames(

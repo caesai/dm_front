@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import css from '../BookingErrorPopup/BookingErrorPopup.module.css';
+import css from './BookingInfoPopup.module.css';
 
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
