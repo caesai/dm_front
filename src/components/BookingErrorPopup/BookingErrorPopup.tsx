@@ -65,10 +65,10 @@ export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
 
     const goToTelegram = () => {
         if (window.Telegram.WebApp) {
-            window.location.href = `https://t.me/${BASE_BOT}?startapp`
+            window.location.href = `https://t.me/${BASE_BOT}?start`
             // window.Telegram.WebApp.close();
         } else {
-            window.location.href = `https://t.me/${BASE_BOT}?startapp`
+            window.location.href = `https://t.me/${BASE_BOT}?start`
         }
     }
 

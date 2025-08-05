@@ -448,9 +448,12 @@ export const BookingPage: FC = () => {
                                         Бронирование
                                     </h3>
                                     {idFromParams && (
-                                        <h3 className={css.headerInfo__title}>
-                                            <b>{String(bookingRestaurant.title)}</b>
-                                        </h3>
+                                        <>
+                                            <h3 className={css.headerInfo__title}>
+                                                <b>{String(bookingRestaurant.title)}</b>
+                                            </h3>
+                                            <h4>{String(bookingRestaurant.address)}</h4>
+                                        </>
                                     )}
                                 </div>
                                 <div>

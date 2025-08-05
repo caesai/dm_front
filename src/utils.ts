@@ -116,10 +116,10 @@ export const formatDate = (inputDate: string): string => {
     const dayNumber = weekdaysMap[input.getDay()];
 
     if (input.getTime() === today.getTime()) {
-        return `Сегодня, ${day} ${month} ${dayNumber}`;
+        return `Сегодня, ${day} ${month}, ${dayNumber}`;
     } else if (input.getTime() === today.getTime() + 86400000) {
         // 86400000 миллисекунд в одном дне
-        return `Завтра, ${day} ${month} ${dayNumber}`;
+        return `Завтра, ${day} ${month}, ${dayNumber}`;
     } else {
         return `${day} ${month}, ${dayNumber}`;
     }

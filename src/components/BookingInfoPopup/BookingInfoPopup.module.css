@@ -1,7 +1,7 @@
 .popup {
     display: flex;
     flex-direction: column;
-    padding: 50px;
+    padding: 50px 14px;
     gap: 15px;
 }
 
@@ -16,7 +16,7 @@
 .tags_title {
     font-family: "Mont", sans-serif;
     font-weight: 400;
-    font-size: 12px;
+    font-size: 16px;
     color: var(--grey);
     text-align: center;
 }
