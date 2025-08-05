@@ -452,7 +452,7 @@ export const BookingPage: FC = () => {
                                             <h3 className={css.headerInfo__title}>
                                                 <b>{String(bookingRestaurant.title)}</b>
                                             </h3>
-                                            <h4>{String(bookingRestaurant.address)}</h4>
+                                            <h4 className={css.headerInfo__subtitle}>{String(bookingRestaurant.address)}</h4>
                                         </>
                                     )}
                                 </div>
