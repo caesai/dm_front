@@ -63,6 +63,15 @@ export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
         }
     }
 
+    const goToTelegram = () => {
+        if (window.Telegram.WebApp) {
+            window.location.href = `https://t.me/${BASE_BOT}?startapp`
+            // window.Telegram.WebApp.close();
+        } else {
+            window.location.href = `https://t.me/${BASE_BOT}?startapp`
+        }
+    }
+
     return (
         <StyledPopup
             open={props.isOpen}
@@ -78,7 +87,7 @@ export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
             >
                 <span className={css.title}>Произошла ошибка бронирования</span>
                 {!props.botError ? <span className={css.tags_title}>Попробуйте еще раз или свяжитесь с нами</span> : (<span className={css.tags_title}>Для успешного бронирования, пожалуйста, разблокируйте Telegram-бот</span>)}
-                {Number(props.count) == 1 ? (
+                {!props.botError ? Number(props.count) == 1 ? (
                     <button
                         className={classNames(
                             css.button, css.button__disabled
@@ -106,6 +115,15 @@ export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
                             Связаться с рестораном
                         </button>
                     </>
+                ) : (
+                    <button
+                        className={classNames(
+                            css.button,
+                        )}
+                        onClick={goToTelegram}
+                    >
+                        Перейти в Telegram-bot
+                    </button>
                 )}
 
             </div>
