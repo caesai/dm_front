@@ -31,7 +31,7 @@ export const EventBookingOutlet = () => {
 
     const calculateTotal = useMemo(() => {
         const ticketPrice = bookingInfo.event?.ticket_price;
-        if (!ticketPrice) {
+        if (ticketPrice === undefined) {
             return null;
         }
         return guestCount * ticketPrice;
