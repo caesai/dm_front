@@ -22,6 +22,7 @@ import {Buffer} from 'buffer';
 // import '../../../public/'
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
+import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 
 
 export const TicketInfoPage = () => {
@@ -29,6 +30,7 @@ export const TicketInfoPage = () => {
     const { id } = useParams();
     const [auth] = useAtom(authAtom);
     const [ticket, setTicket] = useState<EventTicket>();
+    const [refund, setRefund] = useState<boolean>(false);
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -79,8 +81,12 @@ export const TicketInfoPage = () => {
         //     // fontFaces: ['Mont']
         // });
     }
+    const openRefundPopup = () => {
+        setRefund(true);
+    }
     return (
         <Page back={true}>
+            <ModalPopup isOpen={refund} setOpen={openRefundPopup} text={'hz'}/>
             <div className={css.body}>
                 <div className={css.header}>
                     <div className={css.header_group}>
