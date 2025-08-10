@@ -140,7 +140,7 @@ export const EventConfirmationOutlet = () => {
                         </span>
                     </div>
                 </div>
-                <div className={css.event_params_row}>
+                <div className={css.event_params_row} style={{ justifyContent: 'space-between'}}>
                     <div className={css.event_params_col}>
                         <span className={css.event_params_col__title}>
                             Осталось мест

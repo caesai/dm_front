@@ -14,7 +14,7 @@ import { authAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { formatDateDT } from '@/utils.ts';
 import moment from 'moment';
-import QRCode from 'react-qr-code';
+// import QRCode from 'react-qr-code';
 // import jsPDF from "jspdf";
 // import {BASE_BOT} from "@/api/base.ts";
 import {Buffer} from 'buffer';
@@ -285,21 +285,21 @@ export const TicketInfoPage = () => {
                             </div>
                         </div>
                     </div>
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        {ticket ? (
-                            <QRCode size={128} value={String(`${ticket.id}`)} id={'qr'} />
-                        ) : (
-                            <PlaceholderBlock
-                                width={'128px'}
-                                height={'128px'}
-                            />
-                        )}
-                    </div>
+                    {/*<div*/}
+                    {/*    style={{*/}
+                    {/*        display: 'flex',*/}
+                    {/*        justifyContent: 'center',*/}
+                    {/*    }}*/}
+                    {/*>*/}
+                    {/*    {ticket ? (*/}
+                    {/*        <QRCode size={128} value={String(`${ticket.id}`)} id={'qr'} />*/}
+                    {/*    ) : (*/}
+                    {/*        <PlaceholderBlock*/}
+                    {/*            width={'128px'}*/}
+                    {/*            height={'128px'}*/}
+                    {/*        />*/}
+                    {/*    )}*/}
+                    {/*</div>*/}
                 </div>
             </div>
         </Page>
