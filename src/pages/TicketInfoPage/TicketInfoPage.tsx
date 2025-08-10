@@ -23,6 +23,7 @@ import {Buffer} from 'buffer';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
+import { useModal } from '@/components/ModalPopup/useModal.ts';
 
 
 export const TicketInfoPage = () => {
@@ -30,7 +31,7 @@ export const TicketInfoPage = () => {
     const { id } = useParams();
     const [auth] = useAtom(authAtom);
     const [ticket, setTicket] = useState<EventTicket>();
-    const [refund, setRefund] = useState<boolean>(false);
+    const {isShowing,toggle} = useModal();
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -42,10 +43,6 @@ export const TicketInfoPage = () => {
     }, [id]);
 
     const sharePdf = () => {
-        // const doc = new jsPDF("p","px","a4");
-        // doc.addFileToVFS('Mont-Regular.ttf', MontFont);
-        // doc.addFont('Mont-Regular.ttf', 'Mont-Regular', 'normal');
-        // doc.setFont('Mont-Regular');
         const ticketEl = document.getElementById('ticket');
         html2pdf().from(ticketEl).output('blob').then((pdfAsString:string) => {
             console.log('pdfAsString: ', pdfAsString);
@@ -56,42 +53,16 @@ export const TicketInfoPage = () => {
                 files
             }).then();
         });
-        // const buffer = Buffer.from(pdfOutput, 'utf-8')
-        // const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
-        // const files = [pdf];
-        // navigator.share({
-        //     files
-        // }).then();
-        // doc.html(document.getElementById('ticket') as HTMLElement, {
-        //     callback: function (res) {
-        //         // doc.save('doc.pdf');
-        //
-        //         // const jpegUrl = document.getElementById('qr').toDataURL("image/jpeg");
-        //         // doc.addImage(jpegUrl, 'JPEG', 0, 0);
-        //         const buffer = Buffer.from(res.output(), 'utf-8')
-        //         const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
-        //         const files = [pdf];
-        //         navigator.share({
-        //             files
-        //         }).then();
-        //     },
-        //     html2canvas: {
-        //         scale: 1, // Adjust scaling factor if needed
-        //     },
-        //     // fontFaces: ['Mont']
-        // });
     }
-    const openRefundPopup = () => {
-        setRefund(true);
-    }
+
     return (
         <Page back={true}>
             <ModalPopup
-                isOpen={refund}
-                setOpen={setRefund}
-                text={'hz'}
+                isOpen={isShowing}
+                setOpen={toggle}
+                title={'Вы хотите оформить возврат?'}
                 button={true}
-                btnText={'hzbtn'}
+                btnText={'Оформить'}
                 btnAction={() => console.log('action')}
             />
             <div className={css.body}>
@@ -113,7 +84,7 @@ export const TicketInfoPage = () => {
                     <div className={css.header_group}>
                         <RoundedButton
                             icon={<RefundIcon />}
-                            action={openRefundPopup}
+                            action={toggle}
                             bgColor={'var(--primary-background)'}
                         />
 
