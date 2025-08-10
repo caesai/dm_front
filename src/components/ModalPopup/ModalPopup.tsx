@@ -59,9 +59,14 @@ export const ModalPopup: React.FC<ModalProps> = ({
                     <span className={css.text}>{text}</span>
                 </div>
                 {button && (
-                    <button className={classNames(css.button)} onClick={btnAction}>
-                        {btnText}
-                    </button>
+                    <>
+                        <button className={classNames(css.button)} onClick={btnAction}>
+                            {btnText}
+                        </button>
+                        <button className={classNames(css.button, css.button__disabled)} onClick={close}>
+                            Отменить
+                        </button>
+                    </>
                 )}
             </div>
         </StyledPopup>
