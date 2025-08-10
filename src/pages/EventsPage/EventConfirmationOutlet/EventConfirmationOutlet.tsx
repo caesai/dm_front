@@ -8,6 +8,8 @@ import {useEffect, useState} from "react";
 import {useAtom} from "jotai/index";
 import {guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 import {userAtom} from "@/atoms/userAtom.ts";
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+import { timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 // import {APIGetAvailableEventTimeslots} from "@/api/events.ts";
 // import {authAtom} from "@/atoms/userAtom.ts";
 // import {ITimeSlot} from "@/pages/BookingPage/BookingPage.types.ts";
@@ -22,6 +24,8 @@ export const EventConfirmationOutlet = () => {
     const [hideAbout, setHideAbout] = useState(true);
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
     const [user] = useAtom(userAtom);
+    const [, setCurrentSelectedTime] =
+        useAtom<ITimeSlot | null>(timeslotAtom);
 
     // const [restaurantTimeslots, setRestaurantTimeslots] = useState<ITimeSlot[]>(
     //     []
@@ -37,6 +41,15 @@ export const EventConfirmationOutlet = () => {
     const next = () => {
         if (user?.complete_onboarding) {
             setBookingInfo((prev) => ({...prev}));
+            if (bookingInfo.event?.ticket_price === 0) {
+                setCurrentSelectedTime({
+                    start_datetime: String(bookingInfo.event_date?.date_start),
+                    end_datetime: String(bookingInfo.event_date?.date_end),
+                    is_free: true
+                });
+                navigate('/booking?id=' + bookingInfo.event?.restaurants[0].id);
+                return;
+            }
             navigate(`/events/${name}/restaurant/${res}/confirm`);
         } else {
             navigate(`/onboarding/4`);

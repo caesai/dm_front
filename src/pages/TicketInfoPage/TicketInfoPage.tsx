@@ -57,8 +57,10 @@ export const TicketInfoPage = () => {
     };
 
     const refund = () => {
-        window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
         setIsRefund(true);
+        setTimeout(() => {
+            window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
+        }, 5000);
     };
 
     return (
@@ -67,9 +69,9 @@ export const TicketInfoPage = () => {
                 isOpen={isShowing}
                 setOpen={toggle}
                 title={!isRefund ? 'Вы хотите оформить возврат?' : 'Запрос принят'}
-                text={`Мы получили ваш запрос на возврат средств за покупку билета на ${ticket?.event_title}.
+                text={isRefund ? `Мы получили ваш запрос на возврат средств за покупку билета на ${ticket?.event_title}.
                 В течение 30 минут с вами свяжется сотрудник ресторана, чтобы оформить возврат. Если запрос был отправлен вне
-                рабочего времени ресторана, мы обязательно ответим сразу после открытия. Спасибо!`}
+                рабочего времени ресторана, мы обязательно ответим сразу после открытия. Спасибо!` : undefined}
                 button={!isRefund}
                 btnText={'Оформить'}
                 btnAction={refund}

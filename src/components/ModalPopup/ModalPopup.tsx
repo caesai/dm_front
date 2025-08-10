@@ -43,7 +43,10 @@ export const ModalPopup: React.FC<ModalProps> = ({
     btnAction,
     btnText,
 }) => {
-    const close = () => setOpen(false);
+    const close = () => {
+        console.log('wtf');
+        setOpen(false);
+    }
     return (
         <StyledPopup open={isOpen} onClose={close}>
             <div className={css.popup}>
