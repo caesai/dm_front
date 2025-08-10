@@ -67,6 +67,7 @@ import {
 import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
 import { InfoIcon } from '@/components/Icons/InfoIcon.tsx';
 import { BookingInfoPopup } from '@/components/BookingInfoPopup/BookingInfoPopup.tsx';
+import { Share } from '@/components/Icons/Share.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -401,7 +402,12 @@ export const BookingPage: FC = () => {
             setMenuPopupOpen(false);
         }
     }
-    console.log(params.get('redirected'))
+    const shareBooking = () => {
+        navigator.share({
+            title: bookingRestaurant.title,
+            url: `https://t.me/${BASE_BOT}?startapp=bookingId_${bookingRestaurant.value}`,
+        }).then();
+    }
     return (
         <Page back={true}>
             <MenuPopup
@@ -776,6 +782,16 @@ export const BookingPage: FC = () => {
                         createBooking();
                     }
                 }}
+                additionalBtns={(
+                    <>
+                        <RoundedButton
+                            icon={
+                                <Share color={'var(--dark-grey)'}/>
+                            }
+                            action={() => shareBooking()}
+                        />
+                    </>
+                )}
             />
         </Page>
     );

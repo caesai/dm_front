@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { Ref } from 'react';
+import React, { ReactNode, Ref } from 'react';
 import css from './BottomButtonWrapper.module.css';
 
 interface BottomButtonWrapperProps {
@@ -7,9 +7,10 @@ interface BottomButtonWrapperProps {
     isLoading?: boolean;
     onClick?: () => void;
     forwardedRef?: Ref<HTMLDivElement>;
+    additionalBtns?: ReactNode;
 }
 
-export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> = ({ isDisabled, isLoading, onClick, forwardedRef }) => {
+export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> = ({ isDisabled, isLoading, onClick, forwardedRef, additionalBtns }) => {
     return (
         <div className={css.absoluteBottom} ref={forwardedRef}>
             <div className={css.absoluteBottom_wrapper}>
@@ -23,6 +24,7 @@ export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> = ({ isDisa
                 >
                     <span className={css.text}>Забронировать</span>
                 </div>
+                {additionalBtns && additionalBtns}
             </div>
         </div>
     )

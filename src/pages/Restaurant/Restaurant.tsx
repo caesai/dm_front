@@ -71,6 +71,9 @@ import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.t
 import {BookingDateSelectorPopup} from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
 // import {EventCard} from '@/components/EventCard/EventCard.tsx';
 import {IEventInRestaurant} from '@/types/events.ts';
+import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { Share } from '@/components/Icons/Share.tsx';
+import { BASE_BOT } from '@/api/base.ts';
 
 export const transformGallery = (
     gallery: IPhotoCard[]
@@ -238,6 +241,13 @@ export const Restaurant = () => {
         return groupedPhotos;
     };
 
+    const shareRestaurant = () => {
+        navigator.share({
+            title: restaurant?.title,
+            url: `https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`,
+        }).then();
+    }
+
     return (
         <Page back={true}>
             <BookingDateSelectorPopup
@@ -303,37 +313,73 @@ export const Restaurant = () => {
                 </div>
             </div>
             <div className={css.floatingFooter}>
-                <div className={css.floatingFooterWrapper}>
-                    <div
-                        className={css.bookingButton}
-                        onClick={() => navigate(`/booking?id=${restaurant?.id}`)}
-                    >
-                        <span className={css.text}>Забронировать</span>
-                    </div>
-                    <RoundedButton
-                        icon={
-                            <GoToPathIcon
-                                size={24}
-                                color={'var(--dark-grey)'}
+                <BottomButtonWrapper
+                    onClick={() => navigate(`/booking?id=${restaurant?.id}`)}
+                    additionalBtns={(
+                        <>
+                            <RoundedButton
+                                icon={
+                                    <GoToPathIcon
+                                        size={24}
+                                        color={'var(--dark-grey)'}
+                                    />
+                                }
+                                action={() =>
+                                    // ,
+                                    window.open(
+                                        `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`
+                                    )
+                                }
                             />
-                        }
-                        action={() =>
-                            // ,
-                            window.open(
-                                `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`
-                            )
-                        }
-                    />
-                    <RoundedButton
-                        icon={
-                            <PhoneCallIcon
-                                size={24}
-                                color={'var(--dark-grey)'}
+                            <RoundedButton
+                                icon={
+                                    <PhoneCallIcon
+                                        size={24}
+                                        color={'var(--dark-grey)'}
+                                    />
+                                }
+                                action={() => setCallPopup(true)}
                             />
-                        }
-                        action={() => setCallPopup(true)}
-                    />
-                </div>
+                            <RoundedButton
+                                icon={
+                                    <Share color={'var(--dark-grey)'}/>
+                                }
+                                action={() => shareRestaurant()}
+                            />
+                        </>
+                    )}
+                />
+                {/*<div className={css.floatingFooterWrapper}>*/}
+                {/*    <div*/}
+                {/*        className={css.bookingButton}*/}
+                {/*        onClick={() => navigate(`/booking?id=${restaurant?.id}`)}*/}
+                {/*    >*/}
+                {/*        <span className={css.text}>Забронировать</span>*/}
+                {/*    </div>*/}
+                {/*    <RoundedButton*/}
+                {/*        icon={*/}
+                {/*            <GoToPathIcon*/}
+                {/*                size={24}*/}
+                {/*                color={'var(--dark-grey)'}*/}
+                {/*            />*/}
+                {/*        }*/}
+                {/*        action={() =>*/}
+                {/*            // ,*/}
+                {/*            window.open(*/}
+                {/*                `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`*/}
+                {/*            )*/}
+                {/*        }*/}
+                {/*    />*/}
+                {/*    <RoundedButton*/}
+                {/*        icon={*/}
+                {/*            <PhoneCallIcon*/}
+                {/*                size={24}*/}
+                {/*                color={'var(--dark-grey)'}*/}
+                {/*            />*/}
+                {/*        }*/}
+                {/*        action={() => setCallPopup(true)}*/}
+                {/*    />*/}
+                {/*</div>*/}
             </div>
             <div className={css.pageContainer}>
                 <RestaurantTopPreview rest={restaurant}/>
