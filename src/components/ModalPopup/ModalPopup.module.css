@@ -24,3 +24,39 @@
     justify-content: center;
     align-items: center;
 }
+
+
+.title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    /*text-transform: uppercase;*/
+    text-align: center;
+}
+
+.sub_title {
+    font-family: "Mont", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: var(--grey);
+    text-align: center;
+}
+
+.button {
+    background-color: var(--red);
+    border: none;
+    outline: none;
+    border-radius: 15px;
+    padding: 15px;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.button__disabled {
+    background-color: var(--third-background);
+    color: black;
+    /*cursor: not-allowed;*/
+}

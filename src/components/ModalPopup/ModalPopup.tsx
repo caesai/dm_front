@@ -4,6 +4,7 @@ import Popup from 'reactjs-popup';
 import css from './ModalPopup.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
+import classNames from 'classnames';
 
 const StyledPopup = styled(Popup)`
     &-overlay {
@@ -25,9 +26,23 @@ interface ModalProps {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
     text?: string;
+    title?: string;
+    subtitle?: string;
+    button?: boolean;
+    btnAction?: () => void;
+    btnText?: string;
 }
 
-export const ModalPopup: React.FC<ModalProps> = ({ isOpen, text, setOpen }) => {
+export const ModalPopup: React.FC<ModalProps> = ({
+    isOpen,
+    title,
+    subtitle,
+    text,
+    setOpen,
+    button = false,
+    btnAction,
+    btnText,
+}) => {
     const close = () => setOpen(false);
     return (
         <StyledPopup open={isOpen} onClose={close}>
@@ -38,9 +53,16 @@ export const ModalPopup: React.FC<ModalProps> = ({ isOpen, text, setOpen }) => {
                         action={close}
                     />
                 </div>
+                {title && <span className={css.title}>{title}</span>}
+                {subtitle && <span className={css.sub_title}>{subtitle}</span>}
                 <div className={css.center}>
                     <span className={css.text}>{text}</span>
                 </div>
+                {button && (
+                    <button className={classNames(css.button)} onClick={btnAction}>
+                        {btnText}
+                    </button>
+                )}
             </div>
         </StyledPopup>
     );

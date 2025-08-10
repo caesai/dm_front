@@ -86,7 +86,14 @@ export const TicketInfoPage = () => {
     }
     return (
         <Page back={true}>
-            <ModalPopup isOpen={refund} setOpen={setRefund} text={'hz'}/>
+            <ModalPopup
+                isOpen={refund}
+                setOpen={setRefund}
+                text={'hz'}
+                button={true}
+                btnText={'hzbtn'}
+                btnAction={() => console.log('action')}
+            />
             <div className={css.body}>
                 <div className={css.header}>
                     <div className={css.header_group}>
