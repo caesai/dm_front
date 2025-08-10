@@ -141,6 +141,14 @@ export const EventConfirmationOutlet = () => {
                             {bookingInfo.event_date?.tickets_left}
                         </span>
                     </div>
+                    <div className={css.event_params_col}>
+                        <span className={css.event_params_col__title}>
+                            Цена
+                        </span>
+                        <span className={css.event_params_col__data}>
+                            {bookingInfo.event?.ticket_price} ₽
+                        </span>
+                    </div>
                 </div>
                 {/*<div className={css.event_params_row}>*/}
                 {/*    <div className={css.event_params_col}>*/}
@@ -162,16 +170,7 @@ export const EventConfirmationOutlet = () => {
                 {/*        </span>*/}
                 {/*    </div>*/}
                 {/*</div>*/}
-                <div className={css.event_params_row}>
-                    <div className={css.event_params_col}>
-                        <span className={css.event_params_col__title}>
-                            Цена
-                        </span>
-                        <span className={css.event_params_col__data}>
-                            {bookingInfo.event?.ticket_price} ₽
-                        </span>
-                    </div>
-                </div>
+
                 <div className={css.roundedText}>
                     <span>✓ 100% предоплата</span>
                 </div>
