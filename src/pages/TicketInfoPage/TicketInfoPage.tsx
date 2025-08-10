@@ -86,7 +86,7 @@ export const TicketInfoPage = () => {
     }
     return (
         <Page back={true}>
-            <ModalPopup isOpen={refund} setOpen={openRefundPopup} text={'hz'}/>
+            <ModalPopup isOpen={refund} setOpen={setRefund} text={'hz'}/>
             <div className={css.body}>
                 <div className={css.header}>
                     <div className={css.header_group}>
@@ -106,7 +106,7 @@ export const TicketInfoPage = () => {
                     <div className={css.header_group}>
                         <RoundedButton
                             icon={<RefundIcon />}
-                            action={() => alert('refund')}
+                            action={openRefundPopup}
                             bgColor={'var(--primary-background)'}
                         />
 
