@@ -1,6 +1,6 @@
 import {useNavigate, useOutletContext, useParams} from 'react-router-dom';
 import css from './EventConfirmationOutlet.module.css';
-import {formatDateDT, IEventBookingContext} from '@/utils.ts';
+import { formatDate, formatDateDT, IEventBookingContext } from '@/utils.ts';
 import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import moment from 'moment';
 import classNames from "classnames";
@@ -9,7 +9,7 @@ import {useAtom} from "jotai/index";
 import {guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 import {userAtom} from "@/atoms/userAtom.ts";
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
+import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 // import {APIGetAvailableEventTimeslots} from "@/api/events.ts";
 // import {authAtom} from "@/atoms/userAtom.ts";
 // import {ITimeSlot} from "@/pages/BookingPage/BookingPage.types.ts";
@@ -19,13 +19,12 @@ export const EventConfirmationOutlet = () => {
     const navigate = useNavigate();
     // const [auth] = useAtom(authAtom);
     const {name, res} = useParams();
-    const [bookingInfo, setBookingInfo] =
-        useOutletContext<IEventBookingContext>();
+    const [bookingInfo, setBookingInfo] = useOutletContext<IEventBookingContext>();
     const [hideAbout, setHideAbout] = useState(true);
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
     const [user] = useAtom(userAtom);
-    const [, setCurrentSelectedTime] =
-        useAtom<ITimeSlot | null>(timeslotAtom);
+    const [, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
+    const [, setBookingDate] = useAtom(bookingDateAtom);
 
     // const [restaurantTimeslots, setRestaurantTimeslots] = useState<ITimeSlot[]>(
     //     []
@@ -42,6 +41,10 @@ export const EventConfirmationOutlet = () => {
         if (user?.complete_onboarding) {
             setBookingInfo((prev) => ({...prev}));
             if (bookingInfo.event?.ticket_price === 0) {
+                setBookingDate({
+                    title: formatDate(String(bookingInfo.event_date?.date_start)),
+                    value: String(bookingInfo.event_date?.date_start),
+                });
                 setCurrentSelectedTime({
                     start_datetime: String(bookingInfo.event_date?.date_start),
                     end_datetime: String(bookingInfo.event_date?.date_end),
