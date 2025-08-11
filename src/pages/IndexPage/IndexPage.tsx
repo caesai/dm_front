@@ -32,8 +32,6 @@ const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
 };
 
 export const IndexPage: FC = () => {
-    // Пиздец говно. Такого кала я еще не писал никогда.
-    // Скорее всего это можно переписать в 2 строки, но я слишком пьян и уже ничего не понимаю.
     const [currentCityA] = useAtom(currentCityAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
     const [cityListA] = useAtom(cityListAtom);
@@ -150,7 +148,6 @@ export const IndexPage: FC = () => {
                     ))}
                 </div>
             </div>
-
             {currentCityA !== 'ekb' && <BottomButtonWrapper onClick={() => navigate('/booking/')}/>}
         </Page>
     );

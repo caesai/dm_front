@@ -10,6 +10,7 @@ export const setCurrentCityAtom = atom(
     },
     (_get, set, newVal: string) => {
         set(currentCityAtom, newVal);
+        console.log('newVal: ', newVal);
         localStorage.setItem('currentCity', newVal);
     }
 );
