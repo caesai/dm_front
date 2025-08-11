@@ -27,7 +27,7 @@ import {
     weekdaysMap,
 } from '@/utils.ts';
 import classNames from 'classnames';
-import { BOOKING_DURATION } from '../../mockData.ts';
+import { BOOKING_DURATION, BOOKINGCOMMENTMOCK } from '../../mockData.ts';
 import { BASE_BOT } from '@/api/base.ts';
 import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
 import { DoubleCheckIcon } from '@/components/Icons/DoubleCheckIcon.tsx';
@@ -86,9 +86,6 @@ export const BookingInfoPage = () => {
     }, []);
 
     const hideApp = () => {
-        //
-        // window.location.href = "tg:resolve";
-        console.log('booking?.id: ', `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`);
         if (window.Telegram.WebApp) {
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`;
             window.Telegram.WebApp.close();
@@ -438,31 +435,17 @@ export const BookingInfoPage = () => {
                                     css.bookingInfoDetails_container,
                                 )}
                             >
-                                {/*<div*/}
-                                {/*    className={classNames(*/}
-                                {/*        css.fr,*/}
-                                {/*        css.bookingInfoDetails_item,*/}
-                                {/*    )}*/}
-                                {/*>*/}
-                                {/*    <ChatIcon*/}
-                                {/*        size={16}*/}
-                                {/*        color={'var(--dark-grey)'}*/}
-                                {/*    ></ChatIcon>*/}
-                                {/*    {booking ? (*/}
-                                {/*        <span*/}
-                                {/*            className={*/}
-                                {/*                css.bookingInfoDetails_item__text*/}
-                                {/*            }*/}
-                                {/*        >*/}
-                                {/*            {booking.user_comments}*/}
-                                {/*        </span>*/}
-                                {/*    ) : (*/}
-                                {/*        <PlaceholderBlock*/}
-                                {/*            width={'120px'}*/}
-                                {/*            height={'17px'}*/}
-                                {/*        />*/}
-                                {/*    )}*/}
-                                {/*</div>*/}
+
+                                {booking && booking.tags ? (
+                                    booking.tags.split(',').map((tag, i) => (
+                                            <span key={i} className={css.tag}>{tag} {BOOKINGCOMMENTMOCK.find(mock => mock.text === tag)?.emoji}</span>
+                                        ))
+                                ) : (
+                                    <PlaceholderBlock
+                                        width={'120px'}
+                                        height={'17px'}
+                                    />
+                                )}
                             </div>
                         </div>
                         {booking ? (

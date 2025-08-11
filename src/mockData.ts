@@ -222,7 +222,7 @@ export const mockBookingDate = new Date();
 //     },
 // ];
 
-const BOOKINGCOMMENTMOCK = [
+export const BOOKINGCOMMENTMOCK = [
     {
         text: 'День рождения',
         emoji: '🎂',

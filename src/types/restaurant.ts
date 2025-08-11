@@ -92,6 +92,7 @@ export interface IBookingInfo {
     children_count: number;
     booking_status: string;
     user_comments: string;
+    tags: string;
 }
 
 export interface ICurrentBookings {

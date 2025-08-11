@@ -70,7 +70,6 @@ export const APICreateBooking = (
     confirmation: string,
     pre_order_dishes: boolean,
 ) => {
-    console.log('restaurant_id: ', restaurant_id);
     return axios.post<IBookingCreate>(
         `${BASE_URL}/restaurant/${restaurant_id}/booking`,
         {
@@ -85,6 +84,7 @@ export const APICreateBooking = (
             prepared_comments,
             confirmation,
             pre_order_dishes,
+            tags: prepared_comments.join(','),
         },
         {
             headers: {
@@ -161,9 +161,14 @@ export const APISendReview = (
     );
 };
 
-export const APIGetEventsInRestaurant = async (restaurant_id: number) => {
+export const APIGetEventsInRestaurant = async (restaurant_id: number, token: string) => {
     return await axios.get<IEventInRestaurant[]>(
-        `${BASE_URL}/restaurant/${restaurant_id}/events`
+        `${BASE_URL}/restaurant/${restaurant_id}/events`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
     );
 };
 
