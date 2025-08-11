@@ -24,7 +24,7 @@ const StyledPopup = styled(Popup)`
 
 interface ModalProps {
     isOpen: boolean;
-    setOpen: (x: boolean) => void;
+    setOpen: () => void;
     text?: string;
     title?: string;
     subtitle?: string;
@@ -43,17 +43,13 @@ export const ModalPopup: React.FC<ModalProps> = ({
     btnAction,
     btnText,
 }) => {
-    const close = () => {
-        console.log('wtf');
-        setOpen(false);
-    }
     return (
-        <StyledPopup open={isOpen} onClose={close}>
+        <StyledPopup open={isOpen} >
             <div className={css.popup}>
                 <div className={css.end}>
                     <RoundedButton
                         icon={<CrossIcon size={44} color={'black'} />}
-                        action={close}
+                        action={setOpen}
                     />
                 </div>
                 {title && <span className={css.title}>{title}</span>}
@@ -62,14 +58,14 @@ export const ModalPopup: React.FC<ModalProps> = ({
                     <span className={css.text}>{text}</span>
                 </div>
                 {button && (
-                    <>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
                         <button className={classNames(css.button)} onClick={btnAction}>
                             {btnText}
                         </button>
-                        <button className={classNames(css.button, css.button__disabled)} onClick={close}>
+                        <button className={classNames(css.button, css.button__disabled)} onClick={setOpen}>
                             Отменить
                         </button>
-                    </>
+                    </div>
                 )}
             </div>
         </StyledPopup>

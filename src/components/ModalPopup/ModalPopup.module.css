@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: 32px;
-    padding: 20px;
+    padding: 50px 15px;
     min-height: 210px;
 }
 
@@ -16,6 +16,9 @@
 .end {
     display: flex;
     justify-content: flex-end;
+    position: absolute;
+    top: 10px;
+    right: 20px;
 }
 
 .center {
