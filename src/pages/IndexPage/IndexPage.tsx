@@ -151,7 +151,7 @@ export const IndexPage: FC = () => {
                 </div>
             </div>
 
-            <BottomButtonWrapper onClick={() => navigate('/booking/')}/>
+            {currentCityA !== 'ekb' && <BottomButtonWrapper onClick={() => navigate('/booking/')}/>}
         </Page>
     );
 };
