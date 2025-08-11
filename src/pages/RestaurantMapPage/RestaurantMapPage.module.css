@@ -229,6 +229,12 @@
     border-radius: 16px;
     right: 0;
     gap: 10px;
+    text-align: center;
+}
+
+.dropdown_content span {
+    padding-bottom: 3px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .dropdown_active {

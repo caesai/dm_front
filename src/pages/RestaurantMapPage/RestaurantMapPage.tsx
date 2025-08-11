@@ -403,7 +403,7 @@ export const RestaurantMapPage = () => {
                             <span className={css.red} onClick={openCityList}>{city?.name_dative}</span>
                             <div className={classNames(css.dropdown_content, isCityListOpen ? css.dropdown_active : null)}>
                                 {cityListA.map((v: ICity, i) => (
-                                    <span key={i} onClick={() => changeCity(String(v.name_english))}>{v.name}</span>
+                                    <span key={i} onClick={() => changeCity(String(v.name_english))}>{v.name_dative}</span>
                                 ))}
                             </div>
                         </span>
