@@ -404,6 +404,10 @@ export const BookingPage: FC = () => {
     }
     const shareBooking = () => {
         if (bookingRestaurant.value !== 'unset') {
+            if (!navigator.canShare() && !navigator.share) {
+                alert('Navigator Error.');
+                return;
+            }
             navigator.share({
                 title: bookingRestaurant.title,
                 url: `https://t.me/${BASE_BOT}?startapp=bookingId_${bookingRestaurant.value}`,
