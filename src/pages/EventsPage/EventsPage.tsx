@@ -1,19 +1,15 @@
-import {Page} from '@/components/Page.tsx';
+import { Page } from '@/components/Page.tsx';
 import css from './EventsPage.module.css';
-import {RoundedButton} from '@/components/RoundedButton/RoundedButton.tsx';
-import {BackIcon} from '@/components/Icons/BackIcon.tsx';
-import {
-    Outlet,
-    useLocation, useNavigate,
-} from 'react-router-dom';
-import {useEffect, useMemo, useState} from 'react';
-import {ITimeSlot} from '@/pages/BookingPage/BookingPage.types.ts';
-import {useAtom} from 'jotai/index';
-import {eventsListAtom} from '@/atoms/eventBookingAtom.ts';
-import {APIGetEvents} from '@/api/events.ts';
-import {Share} from "@/components/Icons/Share.tsx";
-import {getDataFromLocalStorage, removeDataFromLocalStorage} from "@/utils.ts";
-import {BASE_BOT} from "@/api/base.ts";
+import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
+import { BackIcon } from '@/components/Icons/BackIcon.tsx';
+import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+import { useAtom } from 'jotai/index';
+import { eventsListAtom } from '@/atoms/eventBookingAtom.ts';
+import { APIGetEvents } from '@/api/events.ts';
+import { Share } from '@/components/Icons/Share.tsx';
+import { BASE_BOT } from '@/api/base.ts';
 
 // import {Toast} from "@/components/Toast/Toast.tsx";
 
@@ -53,36 +49,40 @@ export interface IEventDate {
 export const EventsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [params] = useSearchParams();
 
-    const [, setEvents] = useAtom<IEvent[]>(eventsListAtom);
+    const [events, setEvents] = useAtom<IEvent[]>(eventsListAtom);
     const [bookingInfo, setBookingInfo] = useState<IEventBooking>({});
 
     useEffect(() => {
-        console.log('wtf')
         APIGetEvents().then((res) => {
-            const sharedEvent = getDataFromLocalStorage('sharedEvent');
-            if (sharedEvent) {
-                const eventState = res.data.filter((ev) => {
-                    return ev.name === JSON.parse(sharedEvent).eventName;
-                })
-                console.log('sharedEvent: ', eventState);
-                setBookingInfo((prev) => ({
-                    ...prev,
-                    event: eventState[0],
-                    event_date: eventState[0]?.restaurants[0].dates[0],
-                    restaurantId: String(eventState[0]?.restaurants[0].id),
-                    restaurant: eventState[0]?.restaurants[0],
-                    date: {
-                        start_datetime: String(eventState[0]?.restaurants[0].dates[0].date_start),
-                        end_datetime: String(eventState[0]?.restaurants[0].dates[0].date_end),
-                        is_free: true
-                    }
-                }));
-            } else {
-                setEvents(res.data);
-            }
+            setEvents(res.data);
         });
     }, []);
+
+    useEffect(() => {
+        const pathSegments = location.pathname.split('/');
+        if (pathSegments[2] !== undefined) {
+            console.log('params.get(\'shared\'): ');
+
+            if (events === undefined) return;
+            const event = events.find(item => item.restaurants[0].dates[0].id === Number(pathSegments[2]));
+            if (event !== undefined) {
+                setBookingInfo((prev) => ({
+                    ...prev,
+                    event: event,
+                    event_date: event?.restaurants[0].dates[0],
+                    restaurantId: String(event?.restaurants[0].id),
+                    restaurant: event?.restaurants[0],
+                    date: {
+                        start_datetime: String(event?.restaurants[0].dates[0].date_start),
+                        end_datetime: String(event?.restaurants[0].dates[0].date_end),
+                        is_free: true,
+                    },
+                }));
+            }
+        }
+    }, [location.pathname, events]);
 
     const isRestaurantsPage = useMemo(() => {
         return location.pathname.split('/').at(-1) === 'restaurant';
@@ -95,7 +95,7 @@ export const EventsPage = () => {
     const shareEvent = () => {
         navigator.share({
             title: bookingInfo.event?.name,
-            url: `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.restaurant?.dates[0].id}`,
+            url: `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.event?.restaurants[0].dates[0].id}`,
         }).then().catch((err) => {
             alert(JSON.stringify(err));
         });
@@ -105,22 +105,22 @@ export const EventsPage = () => {
         console.log('bookingInfo: ', bookingInfo);
     }, [bookingInfo]);
 
+    const goBack = () => {
+        if (Boolean(params.get('shared'))) {
+            navigate('/', { replace: true });
+        } else {
+            navigate(-1);
+        }
+    };
+
     return (
         <Page back={true}>
             <div className={css.page}>
                 <div className={css.header}>
                     <RoundedButton
                         bgColor={'var(--primary-background)'}
-                        icon={<BackIcon color={'var(--dark-grey)'}/>}
-                        action={() => {
-                            const sharedEvent = getDataFromLocalStorage('sharedEvent');
-                            if ( sharedEvent ) {
-                                removeDataFromLocalStorage('sharedEvent');
-                                navigate('/');
-                            } else {
-                                navigate(-1);
-                            }
-                        }}
+                        icon={<BackIcon color={'var(--dark-grey)'} />}
+                        action={goBack}
                     />
                     <span className={css.header_title}>
                         {isRestaurantsPage ? 'Выберите ресторан' : 'Мероприятия'}
@@ -129,14 +129,14 @@ export const EventsPage = () => {
                         {eventURL ? (
                             <RoundedButton
                                 icon={
-                                    <Share color={'var(--dark-grey)'}/>
+                                    <Share color={'var(--dark-grey)'} />
                                 }
                                 action={() => shareEvent()}
                             />
                         ) : null}
                     </div>
                 </div>
-                <Outlet context={[bookingInfo, setBookingInfo]}/>
+                <Outlet context={[bookingInfo, setBookingInfo]} />
             </div>
         </Page>
     );

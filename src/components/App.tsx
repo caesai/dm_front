@@ -24,9 +24,9 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.tsx';
 import { EventListOutlet } from '@/pages/EventsPage/EventListOutlet/EventListOutlet.tsx';
 import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
-import { EventInfoOutlet } from '@/pages/EventsPage/EventInfoOutlet/EventInfoOutlet.tsx';
-import { RestaurantsListOutlet } from '@/pages/EventsPage/RestaurantsListOutlet/RestaurantsListOutlet.tsx';
-import { DTSelectionOutlet } from '@/pages/EventsPage/DTSelectionOutlet/DTSelectionOutlet.tsx';
+// import { EventInfoOutlet } from '@/pages/EventsPage/EventInfoOutlet/EventInfoOutlet.tsx';
+// import { RestaurantsListOutlet } from '@/pages/EventsPage/RestaurantsListOutlet/RestaurantsListOutlet.tsx';
+// import { DTSelectionOutlet } from '@/pages/EventsPage/DTSelectionOutlet/DTSelectionOutlet.tsx';
 import { EventConfirmationOutlet } from '@/pages/EventsPage/EventConfirmationOutlet/EventConfirmationOutlet.tsx';
 import { EventBookingOutlet } from '@/pages/EventsPage/EventBookingOutlet/EventBookingOutlet.tsx';
 import { PaymentReturnPage } from '@/pages/PaymentReturnPage/PaymentReturnPage.tsx';
@@ -57,7 +57,6 @@ const AppRouter = () => {
         if (!loadingComplete && auth?.access_token) {
             APIGetCityList().then((res) => setCities(res.data));
             APIGetRestaurants(auth.access_token).then((res) => {
-                console.log('restaurants: ', res.data)
                 setRestaurants(res.data);
             });
         }
@@ -109,23 +108,23 @@ const AppRouter = () => {
                     <Route path={'/events'} element={<EventsPage />}>
                         <Route path={'/events'} element={<EventListOutlet />} />
                         <Route
-                            path={'/events/:name'}
-                            element={<EventInfoOutlet />}
-                        />
-                        <Route
-                            path={'/events/:name/restaurant'}
-                            element={<RestaurantsListOutlet />}
-                        />
-                        <Route
-                            path={'/events/:name/restaurant/:res'}
-                            element={<DTSelectionOutlet />}
-                        />
-                        <Route
-                            path={'/events/:name/restaurant/:res/guests'}
+                            path={'/events/:eventId'}
                             element={<EventConfirmationOutlet />}
                         />
+                        {/*<Route*/}
+                        {/*    path={'/events/:name/restaurant'}*/}
+                        {/*    element={<RestaurantsListOutlet />}*/}
+                        {/*/>*/}
+                        {/*<Route*/}
+                        {/*    path={'/events/:name/restaurant/:res'}*/}
+                        {/*    element={<DTSelectionOutlet />}*/}
+                        {/*/>*/}
+                        {/*<Route*/}
+                        {/*    path={'/events/:name/restaurant/:res/guests'}*/}
+                        {/*    element={<EventConfirmationOutlet />}*/}
+                        {/*/>*/}
                         <Route
-                            path={'/events/:id/restaurant/:res/confirm'}
+                            path={'/events/:eventId/confirm'}
                             element={<EventBookingOutlet />}
                         />
                     </Route>

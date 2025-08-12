@@ -1,18 +1,17 @@
 import classNames from 'classnames';
 import css from './EventInfoOutlet.module.css';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { IEventBookingContext } from '@/utils.ts';
 
 export const EventInfoOutlet = () => {
-    const { name } = useParams();
     const navigate = useNavigate();
     const [bookingInfo, setBookingInfo] = useOutletContext<IEventBookingContext>();
 
     const next = () => {
         // setBookingInfo((prev) => ({ ...prev, eventId: id }));
         if (bookingInfo.event?.restaurants && bookingInfo.event?.restaurants.length > 1) {
-            navigate(`/events/${name}/restaurant`);
+            navigate(`/events/${bookingInfo.event.restaurants[0].dates[0].id}/restaurant`);
         } else {
             setBookingInfo((p) => ({
                 ...p,
@@ -20,7 +19,7 @@ export const EventInfoOutlet = () => {
                 restaurant: bookingInfo.event?.restaurants[0],
             }));
             // navigate(`/events/${name}/restaurant/${bookingInfo.event?.restaurants[0].id}`);
-            navigate(`/events/${name}/restaurant/${bookingInfo.event?.restaurants[0].id}/guests`)
+            navigate(`/events/${bookingInfo.event?.restaurants[0].dates[0].id}/restaurant/${bookingInfo.event?.restaurants[0].id}/guests`)
         }
     };
     console.log('bookingInfo.: ', bookingInfo);

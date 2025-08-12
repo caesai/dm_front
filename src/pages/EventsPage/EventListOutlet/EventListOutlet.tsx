@@ -18,7 +18,7 @@ export const EventListOutlet = () => {
             restaurantId: String(event?.restaurants[0].id),
             restaurant: event?.restaurants[0],
         }));
-        navigate(`/events/${event.name}/restaurant/${event?.restaurants[0].id}/guests`)
+        navigate(`/events/${event.restaurants[0].dates[0].id}`)
     };
 
     return (

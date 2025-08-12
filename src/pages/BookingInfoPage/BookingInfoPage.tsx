@@ -32,6 +32,9 @@ import { BASE_BOT } from '@/api/base.ts';
 import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
 import { DoubleCheckIcon } from '@/components/Icons/DoubleCheckIcon.tsx';
 import { PhoneCallIcon } from '@/components/Icons/PhoneCallIcon.tsx';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper/modules';
+import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 
 export const BookingInfoPage = () => {
     const { id } = useParams();
@@ -435,17 +438,26 @@ export const BookingInfoPage = () => {
                                     css.bookingInfoDetails_container,
                                 )}
                             >
+                                <Swiper
+                                    slidesPerView="auto"
+                                    modules={[FreeMode]}
+                                    freeMode={true}
+                                    spaceBetween={8}
+                                >
+                                    {booking && booking.tags && (
+                                        booking.tags.split(',').map((tag, i) => (
+                                            <SwiperSlide
+                                                key={i}
+                                                style={{ width: 'max-content' }}
+                                            >
+                                                <CommentaryOptionButton
+                                                    text={String(BOOKINGCOMMENTMOCK.find(mock => mock.text === tag)?.text)}
+                                                    icon={String(BOOKINGCOMMENTMOCK.find(mock => mock.text === tag)?.emoji)}
+                                                />
+                                            </SwiperSlide>
+                                        )))}
+                                </Swiper>
 
-                                {booking && booking.tags ? (
-                                    booking.tags.split(',').map((tag, i) => (
-                                            <span key={i} className={css.tag}>{tag} {BOOKINGCOMMENTMOCK.find(mock => mock.text === tag)?.emoji}</span>
-                                        ))
-                                ) : (
-                                    <PlaceholderBlock
-                                        width={'120px'}
-                                        height={'17px'}
-                                    />
-                                )}
                             </div>
                         </div>
                         {booking ? (

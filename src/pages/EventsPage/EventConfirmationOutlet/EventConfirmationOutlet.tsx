@@ -1,10 +1,10 @@
-import {useNavigate, useOutletContext, useParams} from 'react-router-dom';
+import {useNavigate, useOutletContext} from 'react-router-dom';
 import css from './EventConfirmationOutlet.module.css';
-import { formatDate, formatDateDT, IEventBookingContext } from '@/utils.ts';
+import { formatDateDT, IEventBookingContext } from '@/utils.ts';
 import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import moment from 'moment';
 import classNames from "classnames";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useAtom} from "jotai/index";
 import {guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 import {userAtom} from "@/atoms/userAtom.ts";
@@ -17,18 +17,12 @@ import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 
 export const EventConfirmationOutlet = () => {
     const navigate = useNavigate();
-    // const [auth] = useAtom(authAtom);
-    const {name, res} = useParams();
     const [bookingInfo, setBookingInfo] = useOutletContext<IEventBookingContext>();
     const [hideAbout, setHideAbout] = useState(true);
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
     const [user] = useAtom(userAtom);
     const [, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
     const [, setBookingDate] = useAtom(bookingDateAtom);
-
-    // const [restaurantTimeslots, setRestaurantTimeslots] = useState<ITimeSlot[]>(
-    //     []
-    // );
 
     const incCounter = () => {
         if (guestCount !== bookingInfo.event_date?.tickets_left)
@@ -42,8 +36,8 @@ export const EventConfirmationOutlet = () => {
             setBookingInfo((prev) => ({...prev}));
             if (bookingInfo.event?.ticket_price === 0) {
                 setBookingDate({
-                    title: formatDate(String(bookingInfo.event_date?.date_start)),
-                    value: String(bookingInfo.event_date?.date_start),
+                    title: moment(bookingInfo.event.restaurants[0].dates[0].date_start).format('YYYY-MM-DD'),
+                    value: moment(bookingInfo.event.restaurants[0].dates[0].date_start).format('YYYY-MM-DD'),
                 });
                 setCurrentSelectedTime({
                     start_datetime: String(bookingInfo.event_date?.date_start),
@@ -53,7 +47,7 @@ export const EventConfirmationOutlet = () => {
                 navigate('/booking?id=' + bookingInfo.event?.restaurants[0].id);
                 return;
             }
-            navigate(`/events/${name}/restaurant/${res}/confirm`);
+            navigate(`/events/${bookingInfo.event?.restaurants[0].dates[0].id}/confirm`);
         } else {
             navigate(`/onboarding/4`);
         }
@@ -76,17 +70,6 @@ export const EventConfirmationOutlet = () => {
     //         })
     // }, []);
 
-    useEffect(() => {
-        setBookingInfo((prev) => ({
-            ...prev,
-            event_date: bookingInfo.restaurant?.dates[0],
-            date: {
-                start_datetime: String(bookingInfo.restaurant?.dates[0].date_start),
-                end_datetime: String(bookingInfo.restaurant?.dates[0].date_end),
-                is_free: true
-            }
-        }));
-    }, []);
 
     return (
         <div className={css.content}>

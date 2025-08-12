@@ -4,8 +4,6 @@ import {
 } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import {APIGetEvents} from "@/api/events.ts";
-import {setDataToLocalStorage} from "@/utils.ts";
 
 export const Redirecter = () => {
     const location = useLocation();
@@ -34,34 +32,9 @@ export const Redirecter = () => {
         }
     }, []);
 
-    const redirectToEvent = () => {
-        APIGetEvents().then((res) => {
-            const paramsObject = Object.fromEntries([...params]);
-            const eventId = getEventIdFromParams(paramsObject, 'eventId');
-            const event = res.data.filter((event) =>
-                event.restaurants.some((restaurant) => {
-                        return restaurant.dates[0].id.toString() === eventId;
-                    }
-                )
-            );
-            navigate('/events/' + event[0].name + '/restaurant/' + event[0].restaurants[0].id + '/guests');
-            setDataToLocalStorage('sharedEvent', { eventId, resId: event[0].restaurants[0].id, eventName: event[0].name });
-        });
-    }
-
-    const redirectToRestaurant = () => {
-        const paramsObject = Object.fromEntries([...params]);
-        const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
-        navigate('/restaurant/' + restaurantId);
-    }
-
-    const redirectToBooking = () => {
-        const paramsObject = Object.fromEntries([...params]);
-        const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
-        navigate('/booking/?id=' + bookingId + '&redirected=true');
-    }
-
     useEffect(() => {
+        const paramsObject = Object.fromEntries([...params]);
+
         if (
             auth?.access_token &&
             !user?.phone_number &&
@@ -77,11 +50,14 @@ export const Redirecter = () => {
             !location.pathname.includes('events')
         ) {
             if (location.search.includes('eventId')) {
-                redirectToEvent();
+                const eventId = getEventIdFromParams(paramsObject, 'eventId');
+                navigate(`/events/${eventId}?shared=true`);
             } else if (location.search.includes('restaurantId')) {
-                redirectToRestaurant();
+                const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
+                navigate('/restaurant/' + restaurantId);
             } else if (location.search.includes('bookingId')) {
-                redirectToBooking();
+                const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
+                navigate('/booking/?id=' + bookingId + '&redirected=true');
             } else {
                 navigate('/onboarding');
             }
@@ -95,13 +71,17 @@ export const Redirecter = () => {
         if (
             location.search.includes('eventId')
         ) {
-            redirectToEvent();
+            const eventId = getEventIdFromParams(paramsObject, 'eventId');
+            console.log('shared')
+            navigate(`/events/${eventId}?shared=true`);
         }
         if (location.search.includes('restaurantId')) {
-            redirectToRestaurant();
+            const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
+            navigate('/restaurant/' + restaurantId);
         }
         if (location.search.includes('bookingId')) {
-            redirectToBooking();
+            const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
+            navigate('/booking/?id=' + bookingId + '&redirected=true');
         }
     }, [auth, user, location.pathname, location.search]);
 

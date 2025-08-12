@@ -17,7 +17,6 @@ export const StoriesBlock: React.FC<StoriesBlockProps> = ({ onClick, thumbnail, 
         onClick(index);
     }
     const storyLocal = storiesLocalCount.find((item) => item.id === storyId);
-    console.log('is: ', storyLocal?.isSeen);
     return (
         <div className={classNames(css.storyBlock, !storyLocal?.isSeen ? css.isClicked : null)} onClick={handleClick}>
             <div className={css.storyBlockImage}>

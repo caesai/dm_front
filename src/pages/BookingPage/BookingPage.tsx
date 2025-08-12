@@ -629,10 +629,12 @@ export const BookingPage: FC = () => {
                                                                     ? css.timeList_button__active
                                                                     : null
                                                             )}
-                                                            onClick={() =>
+                                                            onClick={() => {
                                                                 setCurrentSelectedTime(
-                                                                    v
-                                                                )
+                                                                    v,
+                                                                );
+                                                                console.log('curtime: ', v);
+                                                            }
                                                             }
                                                         >
                                                             <span>
