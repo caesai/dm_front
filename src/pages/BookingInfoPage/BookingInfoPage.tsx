@@ -451,6 +451,7 @@ export const BookingInfoPage = () => {
                                                 style={{ width: 'max-content' }}
                                             >
                                                 <CommentaryOptionButton
+                                                    disabled={true}
                                                     text={String(BOOKINGCOMMENTMOCK.find(mock => mock.text === tag)?.text)}
                                                     icon={String(BOOKINGCOMMENTMOCK.find(mock => mock.text === tag)?.emoji)}
                                                 />

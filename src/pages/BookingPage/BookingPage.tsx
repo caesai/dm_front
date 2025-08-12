@@ -403,10 +403,12 @@ export const BookingPage: FC = () => {
         }
     }
     const shareBooking = () => {
-        navigator.share({
-            title: bookingRestaurant.title,
-            url: `https://t.me/${BASE_BOT}?startapp=bookingId_${bookingRestaurant.value}`,
-        }).then();
+        if (bookingRestaurant.value !== 'unset') {
+            navigator.share({
+                title: bookingRestaurant.title,
+                url: `https://t.me/${BASE_BOT}?startapp=bookingId_${bookingRestaurant.value}`,
+            }).then();
+        }
     }
     return (
         <Page back={true}>

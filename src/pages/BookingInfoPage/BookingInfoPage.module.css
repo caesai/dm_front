@@ -197,6 +197,10 @@
     text-align: center;
 }
 
+.bookingInfoDetails_tags {
+    width: 100%;
+}
+
 .bookingInfoDetails_item {
     gap: 4px;
 }
