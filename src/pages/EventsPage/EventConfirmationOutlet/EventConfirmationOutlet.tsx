@@ -10,14 +10,10 @@ import {guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 import {userAtom} from "@/atoms/userAtom.ts";
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
-// import {APIGetAvailableEventTimeslots} from "@/api/events.ts";
-// import {authAtom} from "@/atoms/userAtom.ts";
-// import {ITimeSlot} from "@/pages/BookingPage/BookingPage.types.ts";
-// import { IEventBooking, IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
 
 export const EventConfirmationOutlet = () => {
     const navigate = useNavigate();
-    const [bookingInfo, setBookingInfo] = useOutletContext<IEventBookingContext>();
+    const [bookingInfo] = useOutletContext<IEventBookingContext>();
     const [hideAbout, setHideAbout] = useState(true);
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
     const [user] = useAtom(userAtom);
@@ -33,43 +29,24 @@ export const EventConfirmationOutlet = () => {
     };
     const next = () => {
         if (user?.complete_onboarding) {
-            setBookingInfo((prev) => ({...prev}));
             if (bookingInfo.event?.ticket_price === 0) {
                 setBookingDate({
-                    title: moment(bookingInfo.event.restaurants[0].dates[0].date_start).format('YYYY-MM-DD'),
-                    value: moment(bookingInfo.event.restaurants[0].dates[0].date_start).format('YYYY-MM-DD'),
+                    title: moment(bookingInfo.event_date?.date_start).format('YYYY-MM-DD'),
+                    value: moment(bookingInfo.event_date?.date_start).format('YYYY-MM-DD'),
                 });
                 setCurrentSelectedTime({
                     start_datetime: String(bookingInfo.event_date?.date_start),
                     end_datetime: String(bookingInfo.event_date?.date_end),
                     is_free: true
                 });
-                navigate('/booking?id=' + bookingInfo.event?.restaurants[0].id);
+                navigate('/booking?id=' + bookingInfo.restaurant?.id);
                 return;
             }
-            navigate(`/events/${bookingInfo.event?.restaurants[0].dates[0].id}/confirm`);
+            navigate(`/events/${bookingInfo.event_date?.id}/confirm`);
         } else {
             navigate(`/onboarding/4`);
         }
     };
-    // useEffect(() => {
-    //     const eventId = bookingInfo.restaurant?.dates[0].id;
-    //     if (!auth?.access_token || !eventId || !bookingInfo.restaurant?.id) {
-    //         return;
-    //     }
-    //     APIGetAvailableEventTimeslots(
-    //         eventId,
-    //         bookingInfo.restaurant?.id,
-    //         guestCount,
-    //         auth.access_token
-    //     )
-    //         .then((res) => {
-    //             setRestaurantTimeslots(res.data)
-    //             console.log('timeSlots: ', res.data);
-    //             setBookingInfo((prev) => ({...prev, date: res.data[0] }))
-    //         })
-    // }, []);
-
 
     return (
         <div className={css.content}>
@@ -154,26 +131,6 @@ export const EventConfirmationOutlet = () => {
                         </div>
                     </div>
                 </div>
-                {/*<div className={css.event_params_row}>*/}
-                {/*    <div className={css.event_params_col}>*/}
-                {/*        <span className={css.event_params_col__title}>*/}
-                {/*            Ресторан*/}
-                {/*        </span>*/}
-                {/*        <span className={css.event_params_col__data}>*/}
-                {/*            {bookingInfo.restaurant?.title}*/}
-                {/*        </span>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
-                {/*<div className={css.event_params_row}>*/}
-                {/*    <div className={css.event_params_col}>*/}
-                {/*        <span className={css.event_params_col__title}>*/}
-                {/*            Адрес*/}
-                {/*        </span>*/}
-                {/*        <span className={css.event_params_col__data}>*/}
-                {/*            {bookingInfo.restaurant?.address}*/}
-                {/*        </span>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
                 <div className={css.personsContainer}>
                     <span className={css.personsContainer__title}>
                         Количество мест

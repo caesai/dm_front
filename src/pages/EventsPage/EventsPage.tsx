@@ -63,8 +63,6 @@ export const EventsPage = () => {
     useEffect(() => {
         const pathSegments = location.pathname.split('/');
         if (pathSegments[2] !== undefined) {
-            console.log('params.get(\'shared\'): ');
-
             if (events === undefined) return;
             const event = events.find(item => item.restaurants[0].dates[0].id === Number(pathSegments[2]));
             if (event !== undefined) {
@@ -95,7 +93,7 @@ export const EventsPage = () => {
     const shareEvent = () => {
         navigator.share({
             title: bookingInfo.event?.name,
-            url: `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.event?.restaurants[0].dates[0].id}`,
+            url: `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.event_date?.id}`,
         }).then().catch((err) => {
             alert(JSON.stringify(err));
         });

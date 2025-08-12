@@ -1,23 +1,15 @@
 import css from '@/pages/EventsPage/EventsPage.module.css';
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { IEventBookingContext } from '@/utils.ts';
+import { useNavigate } from 'react-router-dom';
 import { IEvent } from '@/pages/EventsPage/EventsPage.tsx';
 import { useAtom } from 'jotai';
 import { eventsListAtom } from '@/atoms/eventBookingAtom.ts';
 
 export const EventListOutlet = () => {
     const navigate = useNavigate();
-    const [, setBookingInfo] = useOutletContext<IEventBookingContext>();
     const [events] = useAtom<IEvent[]>(eventsListAtom);
 
     const next = (event: IEvent) => {
-        setBookingInfo((p) => ({
-            ...p,
-            event: event,
-            restaurantId: String(event?.restaurants[0].id),
-            restaurant: event?.restaurants[0],
-        }));
         navigate(`/events/${event.restaurants[0].dates[0].id}`)
     };
 
