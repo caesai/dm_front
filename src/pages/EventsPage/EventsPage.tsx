@@ -96,7 +96,9 @@ export const EventsPage = () => {
         navigator.share({
             title: bookingInfo.event?.name,
             url: `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.restaurant?.dates[0].id}`,
-        }).then();
+        }).then().catch((err) => {
+            alert(JSON.stringify(err));
+        });
     };
 
     useEffect(() => {
