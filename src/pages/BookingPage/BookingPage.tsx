@@ -799,16 +799,6 @@ export const BookingPage: FC = () => {
                         createBooking();
                     }
                 }}
-                additionalBtns={(
-                    <>
-                        <RoundedButton
-                            icon={
-                                <Share color={'var(--dark-grey)'}/>
-                            }
-                            action={() => shareBooking()}
-                        />
-                    </>
-                )}
             />
         </Page>
     );
