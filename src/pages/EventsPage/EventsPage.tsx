@@ -99,7 +99,7 @@ export const EventsPage = () => {
             title,
             url,
         }
-        if (navigator.canShare(shareData)) {
+        if (navigator && navigator.canShare(shareData)) {
             navigator.share(shareData).then().catch((err) => {
                 alert(JSON.stringify(err));
             });
