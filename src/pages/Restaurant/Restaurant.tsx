@@ -250,11 +250,13 @@ export const Restaurant = () => {
             title,
             url,
         }
-        if (navigator && navigator.canShare(shareData)) {
-            navigator.share(shareData).then().catch((err) => {
-                alert(JSON.stringify(err));
-            });
-        } else {
+        try {
+            if (navigator && navigator.canShare(shareData)) {
+                navigator.share(shareData).then().catch((err) => {
+                    alert(JSON.stringify(err));
+                });
+            }
+        } catch (e) {
             window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
         }
     }

@@ -77,7 +77,7 @@ export const EventBookingOutlet = () => {
                 }
                 res.data.payment_url
                     ? window.location.replace(res.data.payment_url)
-                    : navigate('/events');
+                    : navigate('/tickets/' + res.data.booking_id );
             });
         }
     };
