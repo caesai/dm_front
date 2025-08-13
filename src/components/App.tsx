@@ -84,7 +84,7 @@ const AppRouter = () => {
             setLoadingComplete(true);
         }
     }, [cities, restaurants]);
-
+    console.log("RENDER")
     return (
         <BrowserRouter basename={import.meta.env.MODE !== 'development' ? undefined : '/dm_front/'}>
             <ScrollToTop />
@@ -161,7 +161,7 @@ const AppRouter = () => {
                         <Route path={'/onboarding/6'} element={<StageSeven />} />
                     </Route>
 
-                    <Route path="*" element={<Navigate to="/" />} />
+                    {/*<Route path="*" element={<Navigate to="/" />} />*/}
                 </Routes>
             )}
         </BrowserRouter>

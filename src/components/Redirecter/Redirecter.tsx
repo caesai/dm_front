@@ -54,10 +54,10 @@ export const Redirecter = () => {
                 navigate(`/events/${eventId}?shared=true`);
             } else if (location.search.includes('restaurantId')) {
                 const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
-                navigate('/restaurant/' + restaurantId);
+                navigate('/restaurant/' + restaurantId + '?shared=true', { replace: true });
             } else if (location.search.includes('bookingId')) {
                 const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
-                navigate('/booking/?id=' + bookingId + '&redirected=true');
+                navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });
             } else {
                 navigate('/onboarding');
             }
@@ -73,15 +73,15 @@ export const Redirecter = () => {
         ) {
             const eventId = getEventIdFromParams(paramsObject, 'eventId');
             console.log('shared')
-            navigate(`/events/${eventId}?shared=true`);
+            navigate(`/events/${eventId}?shared=true`, { replace: true });
         }
         if (location.search.includes('restaurantId')) {
             const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
-            navigate('/restaurant/' + restaurantId);
+            navigate('/restaurant/' + restaurantId + '?shared=true', { replace: true });
         }
         if (location.search.includes('bookingId')) {
             const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
-            navigate('/booking/?id=' + bookingId + '&redirected=true');
+            navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });
         }
     }, [auth, user, location.pathname, location.search]);
 

@@ -91,12 +91,21 @@ export const EventsPage = () => {
     }, [location.pathname]);
 
     const shareEvent = () => {
-        navigator.share({
-            title: bookingInfo.event?.name,
-            url: `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.event_date?.id}`,
-        }).then().catch((err) => {
-            alert(JSON.stringify(err));
-        });
+        const url = encodeURI(
+            `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.event_date?.id}`
+        );
+        const title = encodeURI(String(bookingInfo.event?.name));
+        const shareData = {
+            title,
+            url,
+        }
+        if (navigator.canShare(shareData)) {
+            navigator.share(shareData).then().catch((err) => {
+                alert(JSON.stringify(err));
+            });
+        } else {
+            window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
+        }
     };
 
     useEffect(() => {

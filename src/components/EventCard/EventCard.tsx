@@ -19,16 +19,16 @@ interface IEventCard {
 }
 
 export const EventCard: FC<IEventCard> = ({
-                                              event_name,
-                                              event_price,
-                                              // event_desc,
-                                              event_img,
-                                              event_dates,
-                                              event_address,
-                                              event_restaurant,
-                                              onClick,
-                                              sold,
-                                          }) => {
+  event_name,
+  event_price,
+  // event_desc,
+  event_img,
+  event_dates,
+  event_address,
+  event_restaurant,
+  onClick,
+  sold,
+}) => {
     console.log('sold: ', sold);
     return (
         <div onClick={() => {

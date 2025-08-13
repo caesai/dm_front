@@ -404,14 +404,21 @@ export const BookingPage: FC = () => {
     }
     const shareBooking = () => {
         if (bookingRestaurant.value !== 'unset') {
-            if (!navigator.canShare() && !navigator.share) {
-                alert('Navigator Error.');
-                return;
+            const url = encodeURI(
+                `https://t.me/${BASE_BOT}?startapp=bookingId_${bookingRestaurant.value}`
+            );
+            const title = encodeURI(String(bookingRestaurant.title));
+            const shareData = {
+                title,
+                url,
             }
-            navigator.share({
-                title: bookingRestaurant.title,
-                url: `https://t.me/${BASE_BOT}?startapp=bookingId_${bookingRestaurant.value}`,
-            }).then();
+            if (navigator.canShare(shareData)) {
+                navigator.share(shareData).then().catch((err) => {
+                    alert(JSON.stringify(err));
+                });
+            } else {
+                window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
+            }
         }
     }
     return (
@@ -473,7 +480,7 @@ export const BookingPage: FC = () => {
                                         icon={<CrossIcon size={44} />}
                                         // isBack={true}
                                         action={() => {
-                                            if (params.get('redirected')) {
+                                            if (params.get('shared')) {
                                                 navigate('/')
                                             } else {
                                                 navigate(-1)

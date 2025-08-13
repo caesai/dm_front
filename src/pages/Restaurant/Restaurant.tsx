@@ -242,10 +242,21 @@ export const Restaurant = () => {
     };
 
     const shareRestaurant = () => {
-        navigator.share({
-            title: restaurant?.title,
-            url: `https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`,
-        }).then();
+        const url = encodeURI(
+            `https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`
+        );
+        const title = encodeURI(String(restaurant?.title));
+        const shareData = {
+            title,
+            url,
+        }
+        if (navigator.canShare(shareData)) {
+            navigator.share(shareData).then().catch((err) => {
+                alert(JSON.stringify(err));
+            });
+        } else {
+            window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
+        }
     }
 
     return (
