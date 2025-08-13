@@ -161,7 +161,7 @@ const AppRouter = () => {
                         <Route path={'/onboarding/6'} element={<StageSeven />} />
                     </Route>
 
-                    {/*<Route path="*" element={<Navigate to="/" />} />*/}
+                    <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
             )}
         </BrowserRouter>
