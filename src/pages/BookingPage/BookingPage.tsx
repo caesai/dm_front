@@ -402,27 +402,27 @@ export const BookingPage: FC = () => {
             setMenuPopupOpen(false);
         }
     }
-    const shareBooking = () => {
-        if (bookingRestaurant.value !== 'unset') {
-            const url = encodeURI(
-                `https://t.me/${BASE_BOT}?startapp=bookingId_${bookingRestaurant.value}`
-            );
-            const title = encodeURI(String(bookingRestaurant.title));
-            const shareData = {
-                title,
-                url,
-            }
-            try {
-                if (navigator && navigator.canShare(shareData)) {
-                    navigator.share(shareData).then().catch((err) => {
-                        alert(JSON.stringify(err));
-                    });
-                }
-            } catch (e) {
-                window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
-            }
-        }
-    }
+    // const shareBooking = () => {
+    //     if (bookingRestaurant.value !== 'unset') {
+    //         const url = encodeURI(
+    //             `https://t.me/${BASE_BOT}?startapp=bookingId_${bookingRestaurant.value}`
+    //         );
+    //         const title = encodeURI(String(bookingRestaurant.title));
+    //         const shareData = {
+    //             title,
+    //             url,
+    //         }
+    //         try {
+    //             if (navigator && navigator.canShare(shareData)) {
+    //                 navigator.share(shareData).then().catch((err) => {
+    //                     alert(JSON.stringify(err));
+    //                 });
+    //             }
+    //         } catch (e) {
+    //             window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
+    //         }
+    //     }
+    // }
     return (
         <Page back={true}>
             <MenuPopup

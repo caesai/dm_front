@@ -29,20 +29,8 @@ export const EventConfirmationOutlet = () => {
         setGuestCount((prev: number) => (prev - 1 >= 1 ? prev - 1 : prev));
     };
     const next = () => {
+        if (guestCount === 0) return;
         if (user?.complete_onboarding) {
-            // if (bookingInfo.event?.ticket_price === 0) {
-            //     setBookingDate({
-            //         title: moment(bookingInfo.event_date?.date_start).format('YYYY-MM-DD'),
-            //         value: moment(bookingInfo.event_date?.date_start).format('YYYY-MM-DD'),
-            //     });
-            //     setCurrentSelectedTime({
-            //         start_datetime: String(bookingInfo.event_date?.date_start),
-            //         end_datetime: String(bookingInfo.event_date?.date_end),
-            //         is_free: true,
-            //     });
-            //     navigate('/booking?id=' + bookingInfo.restaurant?.id);
-            //     return;
-            // }
             navigate(`/events/${bookingInfo.event_date?.id}/confirm`);
         } else {
             navigate(`/onboarding/4`);
