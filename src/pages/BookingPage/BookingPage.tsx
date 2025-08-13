@@ -67,7 +67,7 @@ import {
 import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
 import { InfoIcon } from '@/components/Icons/InfoIcon.tsx';
 import { BookingInfoPopup } from '@/components/BookingInfoPopup/BookingInfoPopup.tsx';
-import { Share } from '@/components/Icons/Share.tsx';
+// import { Share } from '@/components/Icons/Share.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
