@@ -119,12 +119,20 @@ export const EventBookingOutlet = () => {
                                 {/*)}*/}
                             </span>
                         </div>
+                        <div className={css.dateInfoContainer_dates}>
+                            <span
+                                className={css.dateInfoContainer_dates__times}
+                            >{bookingInfo.restaurant?.title}</span>
+                            <span className={css.dateInfoContainer_dates__date}>
+                                {bookingInfo.restaurant?.address}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
             <div className={css.contentContainer}>
                 <div className={css.contentItem}>
-                    <h2 className={css.contentItem__title}>Услуги</h2>
+                    {/*<h2 className={css.contentItem__title}>Услуги</h2>*/}
                     <div className={css.goodsItems}>
                         <div className={css.itemContainer}>
                             <div className={css.goodsItems_item}>
@@ -134,9 +142,6 @@ export const EventBookingOutlet = () => {
                                 <span className={css.goodsItems_item__price}>
                                     {bookingInfo.event?.ticket_price} ₽
                                 </span>
-                            </div>
-                            <div className={css.roundedText}>
-                                <span>✓ 100% предоплата</span>
                             </div>
                         </div>
                     </div>
@@ -184,23 +189,23 @@ export const EventBookingOutlet = () => {
                         {/*    }*/}
                         {/*    placeholder={'Email'}*/}
                         {/*></TextInput>*/}
-                        <TextInput
-                            value={userInfo.commentary}
-                            onChange={(e) =>
-                                setUserInfo((p) => ({...p, commentary: e}))
-                            }
-                            onFocus={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.position = 'relative';
-                                }
-                            }}
-                            onBlur={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.position = 'fixed';
-                                }
-                            }}
-                            placeholder={'Комментарий'}
-                        ></TextInput>
+                        {/*<TextInput*/}
+                        {/*    value={userInfo.commentary}*/}
+                        {/*    onChange={(e) =>*/}
+                        {/*        setUserInfo((p) => ({...p, commentary: e}))*/}
+                        {/*    }*/}
+                        {/*    onFocus={() => {*/}
+                        {/*        if(bookingBtn.current) {*/}
+                        {/*            bookingBtn.current.style.position = 'relative';*/}
+                        {/*        }*/}
+                        {/*    }}*/}
+                        {/*    onBlur={() => {*/}
+                        {/*        if(bookingBtn.current) {*/}
+                        {/*            bookingBtn.current.style.position = 'fixed';*/}
+                        {/*        }*/}
+                        {/*    }}*/}
+                        {/*    placeholder={'Комментарий'}*/}
+                        {/*></TextInput>*/}
                     </div>
                     {/*<ConfirmationSelect*/}
                     {/*    options={confirmationList}*/}

@@ -433,6 +433,7 @@ export const BookingInfoPage = () => {
                             )}
                         >
                             <div
+                                style={{ width: '100%'}}
                                 className={classNames(
                                     css.fr,
                                     css.bookingInfoDetails_container,

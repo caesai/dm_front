@@ -17,7 +17,7 @@ import {useEffect, useState} from 'react';
 import {DownArrow} from '@/components/Icons/DownArrow.tsx';
 import {InstagramIcon} from '@/components/Icons/Instagram.tsx';
 import {GoToPathIcon} from '@/components/Icons/GoToPathIcon.tsx';
-import {PhoneCallIcon} from '@/components/Icons/PhoneCallIcon.tsx';
+// import {PhoneCallIcon} from '@/components/Icons/PhoneCallIcon.tsx';
 import {RestaurantNavigation} from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
 import {ContentBlock} from '@/components/ContentBlock/ContentBlock.tsx';
 import {ContentContainer} from '@/components/ContentContainer/ContentContainer.tsx';
@@ -344,15 +344,15 @@ export const Restaurant = () => {
                                     )
                                 }
                             />
-                            <RoundedButton
-                                icon={
-                                    <PhoneCallIcon
-                                        size={24}
-                                        color={'var(--dark-grey)'}
-                                    />
-                                }
-                                action={() => setCallPopup(true)}
-                            />
+                            {/*<RoundedButton*/}
+                            {/*    icon={*/}
+                            {/*        <PhoneCallIcon*/}
+                            {/*            size={24}*/}
+                            {/*            color={'var(--dark-grey)'}*/}
+                            {/*        />*/}
+                            {/*    }*/}
+                            {/*    action={() => setCallPopup(true)}*/}
+                            {/*/>*/}
                             <RoundedButton
                                 icon={
                                     <Share color={'var(--dark-grey)'}/>

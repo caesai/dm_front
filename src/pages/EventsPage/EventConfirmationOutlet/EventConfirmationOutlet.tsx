@@ -8,8 +8,8 @@ import { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { guestCountAtom } from '@/atoms/eventBookingAtom.ts';
 import { userAtom } from '@/atoms/userAtom.ts';
-// import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-// import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
 export const EventConfirmationOutlet = () => {
@@ -18,8 +18,8 @@ export const EventConfirmationOutlet = () => {
     const [hideAbout, setHideAbout] = useState(true);
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
     const [user] = useAtom(userAtom);
-    // const [, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
-    // const [, setBookingDate] = useAtom(bookingDateAtom);
+    const [, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
+    const [, setBookingDate] = useAtom(bookingDateAtom);
 
     const incCounter = () => {
         if (guestCount !== bookingInfo.event_date?.tickets_left)
@@ -31,6 +31,19 @@ export const EventConfirmationOutlet = () => {
     const next = () => {
         if (guestCount === 0) return;
         if (user?.complete_onboarding) {
+            if (bookingInfo.event?.ticket_price === 0) {
+                setBookingDate({
+                    title: moment(bookingInfo.event_date?.date_start).format('YYYY-MM-DD'),
+                    value: moment(bookingInfo.event_date?.date_start).format('YYYY-MM-DD'),
+                });
+                setCurrentSelectedTime({
+                    start_datetime: String(bookingInfo.event_date?.date_start),
+                    end_datetime: String(bookingInfo.event_date?.date_end),
+                    is_free: true,
+                });
+                navigate('/booking?id=' + bookingInfo.restaurant?.id);
+                return;
+            }
             navigate(`/events/${bookingInfo.event_date?.id}/confirm`);
         } else {
             navigate(`/onboarding/4`);
@@ -75,7 +88,7 @@ export const EventConfirmationOutlet = () => {
                         </>
                     ))}
                 </span>
-                {bookingInfo.event?.description && bookingInfo.event?.description.length > 200 &&
+                {bookingInfo.event?.description && bookingInfo.event?.description.length > 100 &&
                     (
                         <div
                             className={css.trimLinesButton}
@@ -164,7 +177,7 @@ export const EventConfirmationOutlet = () => {
                     {!isNaN(Number(bookingInfo.event?.ticket_price)) && Number(bookingInfo.event?.ticket_price) !== 0 && (
                         <div className={css.event_params_col}>
                             <div className={css.roundedText}>
-                                <span>✓ 100% предоплата</span>
+                                <span>предоплата</span>
                             </div>
                         </div>
                     )}

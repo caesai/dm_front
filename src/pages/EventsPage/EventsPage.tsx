@@ -87,7 +87,7 @@ export const EventsPage = () => {
     }, [location.pathname]);
 
     const eventURL = useMemo(() => {
-        return location.pathname.split('/')[2];
+        return location.pathname.split('/')[2] && !location.pathname.includes('confirm');
     }, [location.pathname]);
 
     const shareEvent = () => {
