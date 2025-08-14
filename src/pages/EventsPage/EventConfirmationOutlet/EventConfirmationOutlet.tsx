@@ -23,7 +23,7 @@ export const EventConfirmationOutlet = () => {
 
     const incCounter = () => {
         if (guestCount !== bookingInfo.event_date?.tickets_left)
-            setGuestCount((prev: number) => (prev < 9 ? prev + 1 : prev));
+            setGuestCount((prev: number) => (prev < Number(bookingInfo.event_date?.tickets_left) ? prev + 1 : prev));
     };
     const decCounter = () => {
         setGuestCount((prev: number) => (prev - 1 >= 1 ? prev - 1 : prev));
@@ -41,7 +41,7 @@ export const EventConfirmationOutlet = () => {
                     end_datetime: String(bookingInfo.event_date?.date_end),
                     is_free: true,
                 });
-                navigate('/booking?id=' + bookingInfo.restaurant?.id);
+                navigate('/booking?id=' + bookingInfo.restaurant?.id + '&free_event=true');
                 return;
             }
             navigate(`/events/${bookingInfo.event_date?.id}/confirm`);
@@ -145,7 +145,7 @@ export const EventConfirmationOutlet = () => {
                                 Цена
                             </span>
                                 <span className={css.event_params_col__data}>
-                                {bookingInfo.event?.ticket_price} ₽
+                                {Number(bookingInfo.event?.ticket_price) == 0 ? 'Бесплатно' : bookingInfo.event?.ticket_price + ' ₽'}
                             </span>
                         </div>
                     ):(
