@@ -37,7 +37,7 @@ import { FreeMode } from 'swiper/modules';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 
 export const BookingInfoPage = () => {
-    const { id, free_event } = useParams();
+    const { id } = useParams();
     const navigate = useNavigate();
     const [cancelPopup, setCancelPopup] = useState(false);
     const [canceledPopup, setCanceledPopup] = useState(false);
@@ -96,8 +96,6 @@ export const BookingInfoPage = () => {
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`;
         }
     };
-
-    console.log('free_event: ', free_event);
 
     return (
         <Page back={true}>

@@ -41,7 +41,7 @@ export const EventConfirmationOutlet = () => {
                     end_datetime: String(bookingInfo.event_date?.date_end),
                     is_free: true,
                 });
-                navigate('/booking?id=' + bookingInfo.restaurant?.id + '&free_event=true');
+                navigate('/booking?id=' + bookingInfo.restaurant?.id + '&free_event=' + bookingInfo.event.name);
                 return;
             }
             navigate(`/events/${bookingInfo.event_date?.id}/confirm`);

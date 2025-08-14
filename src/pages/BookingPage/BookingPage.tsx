@@ -88,6 +88,7 @@ export const BookingPage: FC = () => {
     const navigate = useNavigate();
     const [params] = useSearchParams();
     const idFromParams = params.get('id');
+    const isFreeEventBooking = params.get('free_event');
 
     // Global state atoms
     const [auth] = useAtom(authAtom);
@@ -466,7 +467,7 @@ export const BookingPage: FC = () => {
                                 <div style={{ width: '44px' }}></div>
                                 <div className={css.headerInfo}>
                                     <h3 className={css.headerInfo__title}>
-                                        Бронирование
+                                        {isFreeEventBooking ? isFreeEventBooking : 'Бронирование'}
                                     </h3>
                                     {idFromParams && (
                                         <>
@@ -678,11 +679,11 @@ export const BookingPage: FC = () => {
                                         )}
                                     </div>
                                 ) : null}
-                                <UniversalButton
+                                {!isFreeEventBooking && <UniversalButton
                                     action={hideApp}
                                     width={'full'}
                                     title={'Не нашли стол на желаемую дату и время?'}
-                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />
+                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />}
                             </div>
                         </ContentContainer>
                     )}
@@ -699,7 +700,7 @@ export const BookingPage: FC = () => {
                     {/*    </div>*/}
                     {/*</ContentContainer>*/}
 
-                    <ContentContainer>
+                    {!isFreeEventBooking && <ContentContainer>
                         <HeaderContainer>
                             <HeaderContent title={'Пожелания к брони'} />
                         </HeaderContainer>
@@ -750,7 +751,7 @@ export const BookingPage: FC = () => {
                                     ))}
                             </Swiper>
                         </div>
-                    </ContentContainer>
+                    </ContentContainer>}
                     <ContentContainer>
                         <HeaderContainer>
                             <HeaderContent title={'Контакты'} />

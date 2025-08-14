@@ -4,7 +4,7 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { InputSlider } from '@/pages/RestaurantMapPage/InputSlider/InputSlider.tsx';
 // import { RestaurantOnMapIcon } from '@/components/Icons/RestaurantOnMapIcon.tsx';
 import { RestaurantOnMapSelectedIcon } from '@/components/Icons/RestaurantOnMapIconSelected.tsx';
@@ -39,13 +39,14 @@ import { Taxi } from '@/components/YandexTaxi/Taxi.tsx';
 import { Discovery } from 'react-iconly';
 import { openLink } from '@telegram-apps/sdk-react';
 import { setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { DownArrow } from '@/components/Icons/DownArrow.tsx';
 // import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 
 interface IRestaurantDetails {
     selectedRest: IRestaurant;
 }
 
-const RestaurantDetails = ({ selectedRest }: IRestaurantDetails) => {
+const RestaurantDetails: React.FC<IRestaurantDetails> = ({ selectedRest }) => {
     const navigate = useNavigate();
 
     return (
@@ -400,7 +401,7 @@ export const RestaurantMapPage = () => {
                         />
                         <span className={css.header_title}>
                             Рестораны в{' '}
-                            <span className={css.red} onClick={openCityList}>{city?.name_dative}</span>
+                            <span className={css.red} onClick={openCityList}> {city?.name_dative} <DownArrow size={16} /></span>
                             <div className={classNames(css.dropdown_content, isCityListOpen ? css.dropdown_active : null)}>
                                 {cityListA.map((v: ICity, i) => (
                                     <span key={i} onClick={() => changeCity(String(v.name_english))}>{v.name_dative}</span>

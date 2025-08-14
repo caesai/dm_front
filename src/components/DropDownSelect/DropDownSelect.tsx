@@ -36,7 +36,7 @@ export const DropDownSelect: React.FC<DropDownSelectProps> = ({title, onClick, i
                     css.select_arrow
                 }
             >
-                <DownArrow></DownArrow>
+                <DownArrow />
             </div>
         </div>
     );
