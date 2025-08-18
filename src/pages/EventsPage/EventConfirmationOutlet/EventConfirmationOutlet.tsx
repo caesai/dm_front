@@ -205,7 +205,7 @@ export const EventConfirmationOutlet: React.FC = () => {
                     />
                 )}
             </div>
-            {bookingInfo.event && (
+            {bookingInfo.event && Number(bookingInfo.event_date?.tickets_left) > 0 && (
                 <div className={css.absoluteBottom}>
                     <div className={css.bottomWrapper}>
                         <UniversalButton
