@@ -59,10 +59,10 @@ export const TicketInfoPage = () => {
     const refund = () => {
         setIsRefund(true);
         setTimeout(() => {
-            // window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
-            fetch(`https://t.me/${BASE_BOT}?start=refund-${Number(id)}`).then((res) => res.json()).catch((err) => {
-                console.log('err: ', err);
-            })
+            window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
+            // fetch(`https://t.me/${BASE_BOT}?start=refund-${Number(id)}`).then((res) => res.json()).catch((err) => {
+            //     console.log('err: ', err);
+            // })
         }, 5000);
     };
 
