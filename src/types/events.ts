@@ -1,4 +1,5 @@
 import { IUser } from '@/atoms/userAtom.ts';
+import { IRestaurantShortBooking } from '@/types/restaurant.ts';
 
 interface EventRestaurant {
     id: number;
@@ -19,12 +20,14 @@ export interface EventTicket {
 }
 
 export interface IEventInRestaurant {
+    id: string;
     name: string;
     description: string;
     ticket_price: number;
     image_url: string;
     date_start: string;
     tickets_left: number;
+    restaurant: IRestaurantShortBooking
 }
 
 export interface IEventTicketScanner extends EventTicket {

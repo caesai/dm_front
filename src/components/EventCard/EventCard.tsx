@@ -12,7 +12,7 @@ interface IEventCard {
     event_img?: string;
     event_desc: string;
     event_address?: string;
-    event_dates: IEventDate[];
+    event_dates?: IEventDate[];
     event_restaurant: string;
     onClick: () => void;
     sold?: boolean;
@@ -29,14 +29,8 @@ export const EventCard: FC<IEventCard> = ({
   onClick,
   sold,
 }) => {
-    console.log('sold: ', sold);
     return (
-        <div onClick={() => {
-            if (sold) {
-                return;
-            }
-            onClick();
-        }} style={{cursor: 'pointer', marginBottom: 5}}>
+        <div onClick={onClick} style={{cursor: 'pointer', marginBottom: 5}}>
             <div
                 className={classNames(css.card, css.bgImage,
                     sold ? css.notActive : null
@@ -51,17 +45,18 @@ export const EventCard: FC<IEventCard> = ({
                             <span className={classNames(css.card_price)}>Sold out</span>
                         )}
                     {/*<span className={css.footer__title}>{event_name}</span>*/}
-                    {/*<span className={css.footer__address}>{event_desc}</span>*/}
                 </div>
             </div>
             <div className={css.resInfo}>
                 <div className={css.resTitleWrapper}>
                     <h2 className={css.resTitle}>{event_name}</h2>
                     <span className={css.resSlogan}>
-                        {event_dates.length > 0 && moment(event_dates[0].date_start).format('DD.MM.YYYY')} &bull; {event_restaurant}
+                        {event_dates && event_dates.length > 0 && moment(event_dates[0].date_start).format('DD.MM.YYYY')} &bull; {event_restaurant}
                     </span>
                     <span className={css.resAddress}>{event_address}</span>
                     {/*<span className={css.resSlogan}>{restaurant.address}</span>*/}
+                    {/*<span className={css.footer__address}>{event_desc}</span>*/}
+
                 </div>
                 {/*<div className={css.tags}>*/}
                 {/*    <InfoTag*/}

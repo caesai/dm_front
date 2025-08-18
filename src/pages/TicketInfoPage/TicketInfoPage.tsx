@@ -59,7 +59,10 @@ export const TicketInfoPage = () => {
     const refund = () => {
         setIsRefund(true);
         setTimeout(() => {
-            window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
+            // window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
+            fetch(`https://t.me/${BASE_BOT}?start=refund-${Number(id)}`).then((res) => res.json()).catch((err) => {
+                console.log('err: ', err);
+            })
         }, 5000);
     };
 
@@ -69,11 +72,9 @@ export const TicketInfoPage = () => {
                 isOpen={isShowing}
                 setOpen={toggle}
                 title={!isRefund ? 'Вы хотите оформить возврат?' : 'Запрос принят'}
-                text={isRefund ? `Мы получили ваш запрос на возврат средств за покупку билета на ${ticket?.event_title}.
-                В течение 30 минут с вами свяжется сотрудник ресторана, чтобы оформить возврат. Если запрос был отправлен вне
-                рабочего времени ресторана, мы обязательно ответим сразу после открытия. Спасибо!` : undefined}
+                text={isRefund ? `В течении 30 минут с вами свяжется сотрудник ресторана, чтобы оформить возврат. Если запрос был отправлен вне рабочего времени ресторана, мы обязательно ответим сразу после открытия.` : undefined}
                 button={!isRefund}
-                btnText={'Оформить'}
+                btnText={'Да'}
                 btnAction={refund}
             />
             <div className={css.body}>
@@ -109,15 +110,22 @@ export const TicketInfoPage = () => {
 
                 <div className={css.ticket} id={'ticket'}>
                     <div className={css.ticket_header}>
-                        <div
-                            className={classNames(
-                                css.ticket_header_img,
-                                css.bgImage,
-                            )}
-                            style={{
-                                backgroundImage: `url(${ticket?.event_img || 'https://storage.yandexcloud.net/bottec-dreamteam/event_placeholder.png'})`,
-                            }}
-                        />
+                        {ticket?.event_img ? (
+                            <div
+                                className={classNames(
+                                    css.ticket_header_img,
+                                    css.bgImage,
+                                )}
+                                style={{
+                                    backgroundImage: `url(${ticket?.event_img})`,
+                                }}
+                            />
+                            ) : (
+                            <PlaceholderBlock
+                                width={'100%'}
+                                aspectRatio={'3/2'}
+                            />
+                        )}
                         <div className={css.ticket_header_details}>
                             <span
                                 className={classNames(

@@ -893,13 +893,13 @@ export const Restaurant = () => {
                                     <EventCard
                                         key={e.name}
                                         onClick={() => navigate(
-                                            `/events/${e.name}/restaurant/${restaurant?.id}`,
+                                            `/events/${e.name}`,
                                         )}
+                                        // navigate(`/events/${event.restaurants[0].dates[0].id}`)
                                         event_price={e.ticket_price}
                                         event_name={e.name}
                                         event_desc={e.description}
                                         event_img={e.image_url}
-                                        event_dates={[]}
                                         event_restaurant={''}
                                     />
                                 )

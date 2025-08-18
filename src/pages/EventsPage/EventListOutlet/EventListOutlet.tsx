@@ -1,3 +1,4 @@
+import React from 'react';
 import css from '@/pages/EventsPage/EventsPage.module.css';
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
 import { useNavigate } from 'react-router-dom';
@@ -5,14 +6,12 @@ import { IEvent } from '@/pages/EventsPage/EventsPage.tsx';
 import { useAtom } from 'jotai';
 import { eventsListAtom } from '@/atoms/eventBookingAtom.ts';
 
-export const EventListOutlet = () => {
+export const EventListOutlet: React.FC = () => {
     const navigate = useNavigate();
     const [events] = useAtom<IEvent[]>(eventsListAtom);
-
     const next = (event: IEvent) => {
         navigate(`/events/${event.restaurants[0].dates[0].id}`)
     };
-
     return (
         <div className={css.cards}>
             {events.sort(function(a, b) {

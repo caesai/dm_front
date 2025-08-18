@@ -63,7 +63,7 @@ export const ModalPopup: React.FC<ModalProps> = ({
                             {btnText}
                         </button>
                         <button className={classNames(css.button, css.button__disabled)} onClick={setOpen}>
-                            Отменить
+                            Нет
                         </button>
                     </div>
                 )}

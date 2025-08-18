@@ -3,13 +3,17 @@ const { createDefaultPreset } = require("ts-jest");
 const tsJestTransformCfg = createDefaultPreset().transform;
 
 module.exports = {
-  testEnvironment: "node",
+  // testEnvironment: "node",
+  testEnvironment: "jsdom",
   transform: {
     ...tsJestTransformCfg,
   },
+  preset: "ts-jest",
   globals: {
     'ts-jest': {
-      tsconfig: 'tsconfig.jest.json'
+      // tsconfig: '<rootDir>/tsconfig.jest.json'
+      tsconfig: './tsconfig.json',
+      useESM: true
     }
   },
   moduleNameMapper: {
@@ -18,4 +22,7 @@ module.exports = {
     "^.+\\.svg$": "jest-transformer-svg",
     "^@/(.*)$": "<rootDir>/src/$1",
   },
+  setupFilesAfterEnv: [
+    "<rootDir>/setupTests.ts"
+  ],
 };

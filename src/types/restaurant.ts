@@ -46,7 +46,6 @@ export interface IRestaurantShort {
     thumbnail_photo: string;
     openTime: string;
     avg_cheque: number;
-
     photo_cards: IPhotoCard[];
     brand_chef: IRestaurantChef;
     city: ICity;
@@ -68,9 +67,7 @@ export interface IRestaurant extends IRestaurantShort {
     address_lonlng: string;
     address_station: string;
     address_station_color: string;
-
     phone_number: string;
-
     gallery: IPhotoCard[];
     menu: IMenuItem[];
     menu_imgs: IMenuImg[];

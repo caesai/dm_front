@@ -1,10 +1,10 @@
+import React, { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import css from './EventConfirmationOutlet.module.css';
 import { formatDateDT, IEventBookingContext } from '@/utils.ts';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import moment from 'moment';
 import classNames from 'classnames';
-import { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { guestCountAtom } from '@/atoms/eventBookingAtom.ts';
 import { userAtom } from '@/atoms/userAtom.ts';
@@ -12,7 +12,7 @@ import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
-export const EventConfirmationOutlet = () => {
+export const EventConfirmationOutlet: React.FC = () => {
     const navigate = useNavigate();
     const [bookingInfo] = useOutletContext<IEventBookingContext>();
     const [hideAbout, setHideAbout] = useState(true);

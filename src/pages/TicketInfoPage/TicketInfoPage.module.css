@@ -51,10 +51,12 @@
 }
 
 .ticket_header_img {
+    width: 100%;
+    aspect-ratio: 3/2;
     border-radius: 12px;
     /*width: 85px;*/
     /*min-width: 85px;*/
-    height: 165px;
+    /*height: 165px;*/
 }
 
 .ticket_header_details {

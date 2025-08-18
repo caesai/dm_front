@@ -3,10 +3,10 @@ import css from './EventsPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { useAtom } from 'jotai/index';
-import { eventsListAtom } from '@/atoms/eventBookingAtom.ts';
+import { eventsListAtom, guestCountAtom } from '@/atoms/eventBookingAtom.ts';
 import { APIGetEvents } from '@/api/events.ts';
 import { Share } from '@/components/Icons/Share.tsx';
 import { BASE_BOT } from '@/api/base.ts';
@@ -46,13 +46,14 @@ export interface IEventDate {
     tickets_left: number;
 }
 
-export const EventsPage = () => {
+export const EventsPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [params] = useSearchParams();
 
     const [events, setEvents] = useAtom<IEvent[]>(eventsListAtom);
     const [bookingInfo, setBookingInfo] = useState<IEventBooking>({});
+    const [, setGuestCount] = useAtom(guestCountAtom);
 
     useEffect(() => {
         APIGetEvents().then((res) => {
@@ -115,13 +116,15 @@ export const EventsPage = () => {
     }, [bookingInfo]);
 
     const goBack = () => {
+        if (eventURL) {
+            setGuestCount(0);
+        }
         if (Boolean(params.get('shared'))) {
             navigate('/', { replace: true });
         } else {
             navigate(-1);
         }
     };
-
     return (
         <Page back={true}>
             <div className={css.page}>
@@ -145,7 +148,11 @@ export const EventsPage = () => {
                         ) : null}
                     </div>
                 </div>
-                <Outlet context={[bookingInfo, setBookingInfo]} />
+                {events.length === 0 ? (
+                    <span className={css.header_title}>Мероприятий пока нет</span>
+                ) : (
+                    <Outlet context={[bookingInfo, setBookingInfo]} />
+                )}
             </div>
         </Page>
     );
