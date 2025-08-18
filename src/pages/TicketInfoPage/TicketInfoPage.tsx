@@ -110,7 +110,7 @@ export const TicketInfoPage = () => {
 
                 <div className={css.ticket} id={'ticket'}>
                     <div className={css.ticket_header}>
-                        {ticket?.event_img ? (
+                        {ticket?.event_img && ticket?.event_img !== "" ? (
                             <div
                                 className={classNames(
                                     css.ticket_header_img,
