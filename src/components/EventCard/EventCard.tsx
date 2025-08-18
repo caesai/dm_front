@@ -58,7 +58,7 @@ export const EventCard: FC<IEventCard> = ({
                 <div className={css.resTitleWrapper}>
                     <h2 className={css.resTitle}>{event_name}</h2>
                     <span className={css.resSlogan}>
-                        {moment(event_dates[0].date_start).format('DD.MM.YYYY')} &bull; {event_restaurant}
+                        {event_dates.length > 0 && moment(event_dates[0].date_start).format('DD.MM.YYYY')} &bull; {event_restaurant}
                     </span>
                     <span className={css.resAddress}>{event_address}</span>
                     {/*<span className={css.resSlogan}>{restaurant.address}</span>*/}
