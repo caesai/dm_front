@@ -11,7 +11,7 @@ interface IEventCard {
     event_price: number;
     event_img?: string;
     event_desc: string;
-    event_address: string;
+    event_address?: string;
     event_dates: IEventDate[];
     event_restaurant: string;
     onClick: () => void;

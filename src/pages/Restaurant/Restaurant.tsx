@@ -30,7 +30,7 @@ import {
     GalleryPhoto,
 } from '@/pages/Restaurant/Restaurant.types.ts';
 import {CallRestaurantPopup} from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
-// import { EventCard } from '@/components/EventCard/EventCard.tsx';
+import { EventCard } from '@/components/EventCard/EventCard.tsx';
 import {useAtom} from 'jotai';
 import {backButtonAtom} from '@/atoms/backButtonAtom.ts';
 import {IPhotoCard, IRestaurant} from '@/types/restaurant.ts';
@@ -133,10 +133,7 @@ export const Restaurant = () => {
     const [currentGalleryPhotos, setCurrentGalleryPhotos] = useState<
         (string | string[])[]
     >([]);
-    const [
-        // events
-        ,
-        setEvents] = useState<IEventInRestaurant[]>([]);
+    const [events, setEvents] = useState<IEventInRestaurant[]>([]);
 
     useEffect(() => {
         setRestaurant(restaurants.find((v) => v.id === Number(id)));
@@ -146,7 +143,7 @@ export const Restaurant = () => {
     }, [id]);
 
     useEffect(() => {
-        console.log('restaurant: ', restaurant)
+        // console.log('restaurant: ', restaurant)
         if (restaurant?.gallery) {
             setGallery(transformGallery(restaurant.gallery));
         }
@@ -883,40 +880,40 @@ export const Restaurant = () => {
                         </div>
                     </ContentBlock>
                 </ContentContainer>
-                {/*<ContentContainer>*/}
-                {/*    <ContentBlock>*/}
-                {/*        <HeaderContainer>*/}
-                {/*            <HeaderContent*/}
-                {/*                title={'Мероприятия'}*/}
-                {/*                id={'events'}*/}
-                {/*            />*/}
-                {/*        </HeaderContainer>*/}
-                {/*        {events.length ?*/}
-                {/*            events.map((e) => (*/}
-                {/*                    <EventCard*/}
-                {/*                        key={e.name}*/}
-                {/*                        onClick={() =>*/}
-                {/*                            navigate(*/}
-                {/*                                `/events/${e.name}/restaurant/${restaurant?.id}`*/}
-                {/*                            )*/}
-                {/*                        }*/}
-                {/*                        event_price={e.ticket_price}*/}
-                {/*                        event_name={e.name}*/}
-                {/*                        event_desc={e.description}*/}
-                {/*                        event_img={e.image_url}*/}
-                {/*                    />*/}
-                {/*                )*/}
-                {/*            ) : (*/}
-                {/*                <span*/}
-                {/*                    className={classNames(*/}
-                {/*                        css.aboutText*/}
-                {/*                    )}*/}
-                {/*                >*/}
-                {/*                Пока нет мероприятий*/}
-                {/*            </span>*/}
-                {/*            )}*/}
-                {/*    </ContentBlock>*/}
-                {/*</ContentContainer>*/}
+                <ContentContainer>
+                    <ContentBlock>
+                        <HeaderContainer>
+                            <HeaderContent
+                                title={'Мероприятия'}
+                                id={'events'}
+                            />
+                        </HeaderContainer>
+                        {events.length ?
+                            events.map((e) => (
+                                    <EventCard
+                                        key={e.name}
+                                        onClick={() => navigate(
+                                            `/events/${e.name}/restaurant/${restaurant?.id}`,
+                                        )}
+                                        event_price={e.ticket_price}
+                                        event_name={e.name}
+                                        event_desc={e.description}
+                                        event_img={e.image_url}
+                                        event_dates={[]}
+                                        event_restaurant={''}
+                                    />
+                                )
+                            ) : (
+                                <span
+                                    className={classNames(
+                                        css.aboutText
+                                    )}
+                                >
+                                Пока нет мероприятий
+                            </span>
+                            )}
+                    </ContentBlock>
+                </ContentContainer>
 
                 <ContentContainer>
                     <ContentBlock>
