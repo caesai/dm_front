@@ -149,9 +149,9 @@ export const BookingPage: FC = () => {
             : null;
     }, [guestCount, bookingRestaurant]);
 
-    useEffect(() => {
-        console.log(currentSelectedTime);
-    }, [currentSelectedTime]);
+    // useEffect(() => {
+    //     console.log(currentSelectedTime);
+    // }, [currentSelectedTime]);
 
     // Update availableTimeslots when bookingDate or guestCount changes
     useEffect(() => {
@@ -214,7 +214,6 @@ export const BookingPage: FC = () => {
             const part = findPartOfDay(
                 new Date(currentSelectedTime.start_datetime)
             );
-            console.log('wtf: ', part)
             setCurrentPartOfDay(part);
         }
     }, [currentSelectedTime, guestCount]);
@@ -222,7 +221,6 @@ export const BookingPage: FC = () => {
     // Set currentPartOfDay based on available timeslots if currentSelectedTime is not set
     useEffect(() => {
         if (!currentSelectedTime) {
-            console.log('?')
             if (morningTimeslots.length > 0) setCurrentPartOfDay('morning');
             else if (dayTimeslots.length > 0) setCurrentPartOfDay('day');
             else if (eveningTimeslots.length > 0)
@@ -649,9 +647,7 @@ export const BookingPage: FC = () => {
                                                                 setCurrentSelectedTime(
                                                                     v,
                                                                 );
-                                                                console.log('curtime: ', v);
-                                                            }
-                                                            }
+                                                            }}
                                                         >
                                                             <span>
                                                                 {currentSelectedTime?.start_datetime ==

@@ -72,7 +72,6 @@ export const Redirecter = () => {
             location.search.includes('eventId')
         ) {
             const eventId = getEventIdFromParams(paramsObject, 'eventId');
-            console.log('shared')
             navigate(`/events/${eventId}?shared=true`, { replace: true });
         }
         if (location.search.includes('restaurantId')) {

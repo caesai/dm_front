@@ -38,7 +38,6 @@ export const MenuPopup: FC<IFullScreenPopup> = (p) => {
     // hack to prevent from scrolling on page
     useEffect(() => {
         if (p.isOpen) {
-            console.log('');
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'scroll';

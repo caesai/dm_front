@@ -66,7 +66,6 @@ export const EventsPage: React.FC = () => {
         const pathSegments = location.pathname.split('/');
         if (pathSegments[2] !== undefined) {
             if (events === undefined) return;
-            console.log('pathSegments[2]: ', pathSegments[2]);
             const event = events.find(item => String(item.id) === String(pathSegments[2]));
             if (event !== undefined) {
                 setBookingInfo((prev) => ({
@@ -106,9 +105,9 @@ export const EventsPage: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        console.log('bookingInfo: ', bookingInfo);
-    }, [bookingInfo]);
+    // useEffect(() => {
+    //     console.log('bookingInfo: ', bookingInfo);
+    // }, [bookingInfo]);
 
     useEffect(() => {
         // TODO: handling error through Modal Popup

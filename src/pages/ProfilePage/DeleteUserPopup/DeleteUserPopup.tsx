@@ -82,8 +82,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
         //         window.Telegram.WebApp.close();
         // }
         // return;
-        APIDeleteUser(authInfo.access_token).then((res) => {
-            console.log('response: ', res);
+        APIDeleteUser(authInfo.access_token).then(() => {
             setAuth({
                 access_token: '',
                 expires_in: 0

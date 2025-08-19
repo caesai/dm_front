@@ -49,7 +49,6 @@ export const EventConfirmationOutlet: React.FC = () => {
             navigate(`/onboarding/4`);
         }
     };
-    console.log('Number(bookingInfo.event?.ticket_price): ', Number(bookingInfo.event?.ticket_price))
     return (
         <div className={css.content}>
             {bookingInfo.event?.image_url == undefined ? (

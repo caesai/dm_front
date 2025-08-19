@@ -84,7 +84,6 @@ const AppRouter = () => {
             setLoadingComplete(true);
         }
     }, [cities, restaurants]);
-    console.log("RENDER")
     return (
         <BrowserRouter basename={import.meta.env.MODE !== 'development' ? undefined : '/dm_front/'}>
             <ScrollToTop />

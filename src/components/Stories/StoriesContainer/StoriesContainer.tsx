@@ -25,7 +25,6 @@ export const StoriesContainer: React.FC<StoriesContainerProps> = ({ storiesBlock
         try {
             event.preventDefault();
             event.stopPropagation();
-            console.log('onTouchStart: ', event.target);
             const el = event.target as HTMLElement;
             el.click();
         } catch (error) {
