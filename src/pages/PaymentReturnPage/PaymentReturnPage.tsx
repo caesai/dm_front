@@ -11,17 +11,17 @@ export const PaymentReturnPage = () => {
     const [auth] = useAtom(authAtom);
 
     useEffect(() => {
-        console.log('searchParams: ', searchParams.get('event_id'))
         const id = searchParams.get('id');
+        const event_id = searchParams.get('event_id');
         if (!id || !auth?.access_token) {
             navigate('/');
             return;
         }
         APIValidatePayment(Number(id), auth.access_token).then((res) => {
-            res.data.paid ? navigate(`/tickets/${res.data.event_id}`) : navigate('/events/' + Number(id) + '?paymentError=true');
+            res.data.paid ? navigate(`/tickets/${res.data.event_id}`) : navigate('/events/' + Number(event_id) + '?paymentError=true');
         }).catch((err) => {
             console.log('err on validate payment: ', err);
-            navigate('/events/' + Number(id) + '?error=true');
+            navigate('/events/' + Number(event_id) + '?error=true');
         });
     }, [searchParams]);
 
