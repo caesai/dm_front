@@ -11,6 +11,7 @@ export const PaymentReturnPage = () => {
     const [auth] = useAtom(authAtom);
 
     useEffect(() => {
+        console.log('searchParams: ', searchParams)
         const id = searchParams.get('id');
         if (!id || !auth?.access_token) {
             navigate('/');
