@@ -900,7 +900,7 @@ export const Restaurant = () => {
                                         event_restaurant={e.restaurant.title}
                                         event_date={e.date_start}
                                         event_address={e.restaurant.address}
-                                        sold={Boolean(e.tickets_left)}
+                                        sold={e.tickets_left == 0}
                                     />
                                 )
                             ) : (
