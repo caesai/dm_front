@@ -10,7 +10,7 @@ interface IEventCard {
     event_name: string;
     event_price: number;
     event_img?: string;
-    event_desc: string;
+    event_desc?: string;
     event_address?: string;
     event_date?: string;
     event_restaurant: string;

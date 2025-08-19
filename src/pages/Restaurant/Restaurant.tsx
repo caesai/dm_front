@@ -897,10 +897,10 @@ export const Restaurant = () => {
                                         )}
                                         event_price={e.ticket_price}
                                         event_name={e.name}
-                                        event_desc={''}
                                         event_img={e.image_url}
-                                        event_restaurant={e.description.slice(0,28) + '...'}
+                                        event_restaurant={e.restaurant.title}
                                         event_date={e.date_start}
+                                        event_address={e.restaurant.address}
                                     />
                                 )
                             ) : (
