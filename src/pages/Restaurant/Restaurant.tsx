@@ -208,7 +208,6 @@ export const Restaurant = () => {
         let photoList: string[] = [];
 
         if (currentGalleryCategory === 'Все фото') {
-            console.log(gallery);
             gallery.forEach((g) => {
                 g.photos.forEach((photo) => photoList.push(photo.link));
             });

@@ -109,6 +109,16 @@ export const EventsPage: React.FC = () => {
         console.log('bookingInfo: ', bookingInfo);
     }, [bookingInfo]);
 
+    useEffect(() => {
+        // TODO: handling error through Modal Popup
+        if (params.get('paymentError')) {
+            console.log('Или отмена или платеж еще не прошел');
+        }
+        if (params.get('error')) {
+            alert('Возникла ошибка при оплате мероприятия');
+        }
+    }, [params]);
+
     const goBack = () => {
         if (eventURL) {
             setGuestCount(0);

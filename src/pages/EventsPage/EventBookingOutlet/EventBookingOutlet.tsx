@@ -80,6 +80,10 @@ export const EventBookingOutlet = () => {
                 res.data.payment_url
                     ? window.location.replace(res.data.payment_url)
                     : navigate('/tickets/' + res.data.booking_id );
+            }).catch(error => {
+                setLoading(false);
+                // TODO: Handle Error Using Modal Popup
+                console.error(error);
             });
         }
     };
