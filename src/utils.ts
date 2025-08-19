@@ -1,8 +1,9 @@
 import { IWorkTime } from '@/types/restaurant.ts';
-import { IEventBooking, IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
+// import { IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
 import { Dispatch, SetStateAction } from 'react';
-import moment from 'moment';
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+// import moment from 'moment';
+// import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+import { IEventBooking } from '@/types/events.ts';
 // import { IEventBooking } from '@/pages/EventsPage/EventsPage.tsx';
 // import { Dispatch, SetStateAction } from 'react';
 
@@ -470,18 +471,18 @@ export type IEventBookingContext = [
     IEventBooking,
     Dispatch<SetStateAction<IEventBooking>>,
 ];
-
-export const findCurrentDate = (
-    bookingInfo: IEventBooking,
-    date: ITimeSlot
-): IEventDate | undefined => {
-    return bookingInfo.restaurant?.dates.find((v) => {
-        return (
-            moment(date.start_datetime).isSameOrAfter(moment(v.date_start)) ||
-            moment(date.start_datetime).isSameOrBefore(moment(v.date_end))
-        );
-    });
-};
+//
+// export const findCurrentDate = (
+//     bookingInfo: IEventBooking,
+//     date: ITimeSlot
+// ): IEventDate | undefined => {
+//     return bookingInfo.event?.date_start.find((v) => {
+//         return (
+//             moment(date.start_datetime).isSameOrAfter(moment(bookingInfo.event?.date_start)) ||
+//             moment(date.start_datetime).isSameOrBefore(moment(v.date_end))
+//         );
+//     });
+// };
 
 
 // Callback function for asynchronous call to HTML5 geolocation

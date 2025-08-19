@@ -893,14 +893,14 @@ export const Restaurant = () => {
                                     <EventCard
                                         key={e.name}
                                         onClick={() => navigate(
-                                            `/events/${e.name}`,
+                                            `/events/${e.id}`,
                                         )}
-                                        // navigate(`/events/${event.restaurants[0].dates[0].id}`)
                                         event_price={e.ticket_price}
                                         event_name={e.name}
-                                        event_desc={e.description}
+                                        event_desc={''}
                                         event_img={e.image_url}
-                                        event_restaurant={''}
+                                        event_restaurant={e.description.slice(0,28) + '...'}
+                                        event_date={e.date_start}
                                     />
                                 )
                             ) : (

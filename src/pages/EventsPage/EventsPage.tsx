@@ -4,23 +4,24 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import React, { useEffect, useMemo, useState } from 'react';
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+// import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { useAtom } from 'jotai/index';
 import { eventsListAtom, guestCountAtom } from '@/atoms/eventBookingAtom.ts';
 import { APIGetEvents } from '@/api/events.ts';
 import { Share } from '@/components/Icons/Share.tsx';
 import { BASE_BOT } from '@/api/base.ts';
+import { IEventBooking, IEventInRestaurant } from '@/types/events.ts';
 
 // import {Toast} from "@/components/Toast/Toast.tsx";
-
-export interface IEventBooking {
-    event?: IEvent;
-    restaurant?: IEventRestaurant;
-    date?: ITimeSlot;
-    event_date?: IEventDate;
-    time?: string;
-    guestCount?: number;
-}
+//
+// export interface IEventBooking {
+//     event?: IEvent;
+//     restaurant?: IEventRestaurant;
+//     date?: ITimeSlot;
+//     event_date?: IEventDate;
+//     time?: string;
+//     guestCount?: number;
+// }
 
 export interface IEvent {
     name: string;
@@ -51,7 +52,7 @@ export const EventsPage: React.FC = () => {
     const location = useLocation();
     const [params] = useSearchParams();
 
-    const [events, setEvents] = useAtom<IEvent[]>(eventsListAtom);
+    const [events, setEvents] = useAtom<IEventInRestaurant[]>(eventsListAtom);
     const [bookingInfo, setBookingInfo] = useState<IEventBooking>({});
     const [, setGuestCount] = useAtom(guestCountAtom);
 
@@ -65,19 +66,12 @@ export const EventsPage: React.FC = () => {
         const pathSegments = location.pathname.split('/');
         if (pathSegments[2] !== undefined) {
             if (events === undefined) return;
-            const event = events.find(item => item.restaurants[0].dates[0].id === Number(pathSegments[2]));
+            const event = events.find(item => String(item.id) === String(pathSegments[2]));
             if (event !== undefined) {
                 setBookingInfo((prev) => ({
                     ...prev,
                     event: event,
-                    event_date: event?.restaurants[0].dates[0],
-                    restaurantId: String(event?.restaurants[0].id),
-                    restaurant: event?.restaurants[0],
-                    date: {
-                        start_datetime: String(event?.restaurants[0].dates[0].date_start),
-                        end_datetime: String(event?.restaurants[0].dates[0].date_end),
-                        is_free: true,
-                    },
+                    restaurant: event?.restaurant,
                 }));
             }
         }
@@ -93,7 +87,7 @@ export const EventsPage: React.FC = () => {
 
     const shareEvent = () => {
         const url = encodeURI(
-            `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.event_date?.id}`
+            `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.event?.id}`
         );
         const title = encodeURI(String(bookingInfo.event?.name));
         const shareData = {

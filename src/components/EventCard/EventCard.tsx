@@ -1,7 +1,7 @@
 import css from './EventCard.module.css';
 import classNames from 'classnames';
 import {FC} from 'react';
-import {IEventDate} from "@/pages/EventsPage/EventsPage.tsx";
+// import {IEventDate} from "@/pages/EventsPage/EventsPage.tsx";
 import moment from "moment";
 // import {InfoTag} from "@/components/InfoTag/InfoTag.tsx";
 // import {getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatus} from "@/utils.ts";
@@ -12,7 +12,7 @@ interface IEventCard {
     event_img?: string;
     event_desc: string;
     event_address?: string;
-    event_dates?: IEventDate[];
+    event_date?: string;
     event_restaurant: string;
     onClick: () => void;
     sold?: boolean;
@@ -23,7 +23,7 @@ export const EventCard: FC<IEventCard> = ({
   event_price,
   // event_desc,
   event_img,
-  event_dates,
+  event_date,
   event_address,
   event_restaurant,
   onClick,
@@ -51,7 +51,7 @@ export const EventCard: FC<IEventCard> = ({
                 <div className={css.resTitleWrapper}>
                     <h2 className={css.resTitle}>{event_name}</h2>
                     <span className={css.resSlogan}>
-                        {event_dates && event_dates.length > 0 && moment(event_dates[0].date_start).format('DD.MM.YYYY')} &bull; {event_restaurant}
+                        {event_date && moment(event_date).format('DD.MM.YYYY')} <span style={{ fontSize: 10}}>{'\u2B24'}</span> {event_restaurant}
                     </span>
                     <span className={css.resAddress}>{event_address}</span>
                     {/*<span className={css.resSlogan}>{restaurant.address}</span>*/}

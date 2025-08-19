@@ -20,7 +20,7 @@ export interface EventTicket {
 }
 
 export interface IEventInRestaurant {
-    id: string;
+    id: number;
     name: string;
     description: string;
     ticket_price: number;
@@ -33,4 +33,10 @@ export interface IEventInRestaurant {
 export interface IEventTicketScanner extends EventTicket {
     is_confirmed: boolean;
     user: IUser;
+}
+
+export interface IEventBooking {
+    event?: IEventInRestaurant;
+    restaurant?: EventRestaurant;
+    guestCount?: number;
 }

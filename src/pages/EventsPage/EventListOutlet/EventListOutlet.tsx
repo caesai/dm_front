@@ -2,24 +2,25 @@ import React from 'react';
 import css from '@/pages/EventsPage/EventsPage.module.css';
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
 import { useNavigate } from 'react-router-dom';
-import { IEvent } from '@/pages/EventsPage/EventsPage.tsx';
+// import { IEvent } from '@/pages/EventsPage/EventsPage.tsx';
 import { useAtom } from 'jotai';
 import { eventsListAtom } from '@/atoms/eventBookingAtom.ts';
+import { IEventInRestaurant } from '@/types/events.ts';
 
 export const EventListOutlet: React.FC = () => {
     const navigate = useNavigate();
-    const [events] = useAtom<IEvent[]>(eventsListAtom);
-    const next = (event: IEvent) => {
-        navigate(`/events/${event.restaurants[0].dates[0].id}`)
+    const [events] = useAtom<IEventInRestaurant[]>(eventsListAtom);
+    const next = (event: IEventInRestaurant) => {
+        navigate(`/events/${event.id}`)
     };
     return (
         <div className={css.cards}>
             {events.sort(function(a, b) {
-                const aDate = new Date(a.restaurants[0].dates[0].date_start);
-                const bDate = new Date(b.restaurants[0].dates[0].date_start);
+                const aDate = new Date(a.date_start);
+                const bDate = new Date(b.date_start);
                 return aDate.getTime() - bDate.getTime();
             }).filter((event) =>{
-                return new Date().getTime() <= new Date(event.restaurants[0].dates[0].date_start).getTime();
+                return new Date().getTime() <= new Date(event.date_start).getTime();
             }).map((event) => (
                 <EventCard
                     key={event.name}
@@ -28,10 +29,10 @@ export const EventListOutlet: React.FC = () => {
                     event_name={event.name}
                     event_desc={event.description}
                     event_img={event.image_url}
-                    event_address={event.restaurants[0].address}
-                    event_dates={event.restaurants[0].dates}
-                    event_restaurant={event.restaurants[0].title}
-                    sold={event.restaurants[0].dates[0].tickets_left === 0}
+                    event_address={event.restaurant.address}
+                    event_date={event.date_start}
+                    event_restaurant={event.restaurant.title}
+                    sold={event.tickets_left === 0}
                 />
             ))}
         </div>

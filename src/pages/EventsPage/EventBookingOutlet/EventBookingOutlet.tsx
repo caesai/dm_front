@@ -40,8 +40,7 @@ export const EventBookingOutlet = () => {
     const validate = useMemo(() => {
         return (
             bookingInfo.restaurant &&
-            bookingInfo.event_date &&
-            bookingInfo.date &&
+            bookingInfo.event?.date_start &&
             userInfo.name &&
             userInfo.phone &&
             auth?.access_token
@@ -51,8 +50,7 @@ export const EventBookingOutlet = () => {
     const createInvoice = () => {
         if (
             bookingInfo.restaurant &&
-            bookingInfo.event_date &&
-            bookingInfo.date &&
+            bookingInfo.event?.date_start &&
             userInfo.name &&
             userInfo.phone &&
             auth?.access_token &&
@@ -61,8 +59,12 @@ export const EventBookingOutlet = () => {
             setLoading(true);
             APICreateInvoice(
                 bookingInfo.restaurant.id,
-                bookingInfo.event_date?.id,
-                bookingInfo.date,
+                bookingInfo.event?.id,
+                {
+                    start_datetime: bookingInfo.event.date_start,
+                    end_datetime: bookingInfo.event.date_start,
+                    is_free: true,
+                },
                 userInfo.name,
                 userInfo.phone,
                 '',
@@ -103,15 +105,15 @@ export const EventBookingOutlet = () => {
                                 {/*          )*/}
                                 {/*      )*/}
                                 {/*    : '...'}*/}
-                                {bookingInfo.event?.restaurants[0].dates[0] && formatDateDT(
-                                    new Date(bookingInfo.event?.restaurants[0].dates[0].date_start)
+                                {bookingInfo.event?.date_start && formatDateDT(
+                                    new Date(bookingInfo.event?.date_start)
                                 )}
                             </span>
                             <span
                                 className={css.dateInfoContainer_dates__times}
                             >
                                 {moment(
-                                    bookingInfo.date?.start_datetime
+                                    bookingInfo.event?.date_start
                                 ).format('HH:mm')}{' '}
                                 {/*-{' '}*/}
                                 {/*{moment(bookingInfo.date?.end_datetime).format(*/}

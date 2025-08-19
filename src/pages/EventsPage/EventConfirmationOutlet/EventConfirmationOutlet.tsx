@@ -22,8 +22,8 @@ export const EventConfirmationOutlet: React.FC = () => {
     const [, setBookingDate] = useAtom(bookingDateAtom);
 
     const incCounter = () => {
-        if (guestCount !== bookingInfo.event_date?.tickets_left)
-            setGuestCount((prev: number) => (prev < Number(bookingInfo.event_date?.tickets_left) ? prev + 1 : prev));
+        if (guestCount !== bookingInfo.event?.tickets_left)
+            setGuestCount((prev: number) => (prev < Number(bookingInfo.event?.tickets_left) ? prev + 1 : prev));
     };
     const decCounter = () => {
         setGuestCount((prev: number) => (prev - 1 >= 1 ? prev - 1 : prev));
@@ -33,18 +33,18 @@ export const EventConfirmationOutlet: React.FC = () => {
         if (user?.complete_onboarding) {
             if (bookingInfo.event?.ticket_price === 0) {
                 setBookingDate({
-                    title: moment(bookingInfo.event_date?.date_start).format('YYYY-MM-DD'),
-                    value: moment(bookingInfo.event_date?.date_start).format('YYYY-MM-DD'),
+                    title: moment(bookingInfo.event?.date_start).format('YYYY-MM-DD'),
+                    value: moment(bookingInfo.event?.date_start).format('YYYY-MM-DD'),
                 });
                 setCurrentSelectedTime({
-                    start_datetime: String(bookingInfo.event_date?.date_start),
-                    end_datetime: String(bookingInfo.event_date?.date_end),
+                    start_datetime: String(bookingInfo.event?.date_start),
+                    end_datetime: String(bookingInfo.event?.date_start),
                     is_free: true,
                 });
                 navigate('/booking?id=' + bookingInfo.restaurant?.id + '&free_event=' + bookingInfo.event.name);
                 return;
             }
-            navigate(`/events/${bookingInfo.event_date?.id}/confirm`);
+            navigate(`/events/${bookingInfo.event?.id}/confirm`);
         } else {
             navigate(`/onboarding/4`);
         }
@@ -103,14 +103,14 @@ export const EventConfirmationOutlet: React.FC = () => {
             </div>
             <div className={css.event_params}>
                 <div className={css.event_params_row}>
-                    {bookingInfo.event_date ? (
+                    {bookingInfo.event?.date_start ? (
                         <div className={css.event_params_col}>
                             <span className={css.event_params_col__title}>
                                 Дата
                             </span>
                             <span className={css.event_params_col__data}>
                                 {formatDateDT(
-                                    new Date(bookingInfo.event_date.date_start),
+                                    new Date(bookingInfo.event.date_start),
                                 )}
                             </span>
                         </div>
@@ -121,14 +121,14 @@ export const EventConfirmationOutlet: React.FC = () => {
                             rounded={'20px'}
                         />
                     )}
-                    {bookingInfo.event_date?.date_start ? (
+                    {bookingInfo.event?.date_start ? (
                         <div className={css.event_params_col}>
                             <span className={css.event_params_col__title}>
                                 Время
                             </span>
                                 <span className={css.event_params_col__data}>
                                 {moment(
-                                    bookingInfo.event_date?.date_start,
+                                    bookingInfo.event?.date_start,
                                 ).format('HH:mm')}
                             </span>
                         </div>
@@ -157,13 +157,13 @@ export const EventConfirmationOutlet: React.FC = () => {
                     )}
                 </div>
                 <div className={css.event_params_row} style={{ justifyContent: 'space-between' }}>
-                    {Number(bookingInfo.event_date?.tickets_left) >= 0 ? (
+                    {Number(bookingInfo.event?.tickets_left) >= 0 ? (
                         <div className={css.event_params_col}>
                             <span className={css.event_params_col__title}>
                                 Осталось мест
                             </span>
                                 <span className={css.event_params_col__data}>
-                                {bookingInfo.event_date?.tickets_left}
+                                {bookingInfo.event?.tickets_left}
                             </span>
                         </div>
                     ) : (
@@ -182,7 +182,7 @@ export const EventConfirmationOutlet: React.FC = () => {
                         </div>
                     )}
                 </div>
-                {Number(bookingInfo.event_date?.tickets_left) >= 0 ? (
+                {Number(bookingInfo.event?.tickets_left) >= 0 ? (
                     <div className={css.personsContainer}>
                     <span className={css.personsContainer__title}>
                         Количество мест
@@ -205,7 +205,7 @@ export const EventConfirmationOutlet: React.FC = () => {
                     />
                 )}
             </div>
-            {bookingInfo.event && Number(bookingInfo.event_date?.tickets_left) > 0 && (
+            {bookingInfo.event && Number(bookingInfo.event?.tickets_left) > 0 && (
                 <div className={css.absoluteBottom}>
                     <div className={css.bottomWrapper}>
                         <UniversalButton
