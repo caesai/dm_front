@@ -9,8 +9,8 @@ import 'swiper/css/free-mode';
 import {SwiperSlide} from 'swiper/react';
 import {RestaurantBadgePhoto} from '@/components/RestaurantPreview/RestaurantBadgePhoto/RestaurantBadgePhoto.tsx';
 import {InfoTag} from '@/components/InfoTag/InfoTag.tsx';
-import {Link} from 'react-router-dom';
-import {FC} from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FC, useState } from 'react';
 import {IRestaurant} from '@/types/restaurant.ts';
 import {
     getCurrentTimeShort,
@@ -19,6 +19,9 @@ import {
 } from '@/utils.ts';
 import {useAtom} from "jotai/index";
 import {userAtom} from "@/atoms/userAtom.ts";
+import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
+import { useModal } from '@/components/ModalPopup/useModal.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 // import {Toast} from "@/components/Toast/Toast.tsx";
 
 interface IProps {
@@ -27,10 +30,58 @@ interface IProps {
 
 export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
     const [user] = useAtom(userAtom);
+    const navigate = useNavigate();
+    const { isShowing, toggle } = useModal();
+    const [changeRes, setChangeRes] = useState(false)
+    const [restaurants] = useAtom(restaurantsListAtom);
+    const [selectedCity, setSelectedCity] = useState<number | null>(null);
     // const [auth] = useAtom(authAtom);
 
     return (
-        <Link className={css.restaurant} to={`/restaurant/${restaurant.id}`}>
+        <Link className={css.restaurant}
+              to={`/restaurant/${restaurant.id}`}
+              onClick={(event) => {
+                  event.preventDefault();
+                  if (restaurant.id !== 11 && restaurant.id !== 4 && restaurant.id !== 6 && restaurant.id !== 7 && restaurant.id !== 9) {
+                      navigate(`/restaurant/${restaurant.id}`);
+                  } else {
+                      toggle();
+                  }
+              }}
+        >
+            <ModalPopup
+                isOpen={isShowing}
+                setOpen={toggle}
+                title={!changeRes ? `Вас интересует ресторан ${restaurant.title}` : 'Выберите интересующий Вас ресторан'}
+                subtitle={!changeRes ? `по адресу ${restaurant.address}?` : undefined}
+                list={changeRes ? (
+                    <ul className={css.list}>
+                        {restaurants.filter((item) =>{
+                            return item.title === restaurant.title
+                        }).map((item, index) => (
+                            <li key={index} className={classNames(selectedCity === item.id ? css.active : null)} onClick={() => setSelectedCity(item.id)}>{item.address}</li>
+                        ))}
+                    </ul>
+                ) : undefined}
+                button={true}
+                btnDisabled={!Boolean(selectedCity) && changeRes}
+                btnText={!changeRes ? 'Изменить' : 'Выбрать'}
+                btnAction={() => {
+                    if (!changeRes) {
+                        setChangeRes(true);
+                    } else {
+                        navigate(`/restaurant/${selectedCity}`);
+                    }
+                }}
+                btnScndrText={!changeRes ? 'Да' : 'Отменить'}
+                btnScndrAction={() => {
+                    if (!changeRes) {
+                        navigate(`/restaurant/${restaurant.id}`);
+                    } else {
+                        setChangeRes(false)
+                    }
+                }}
+            />
             <div
                 className={classNames(css.bgImage, css.imaged)}
                 style={{

@@ -201,6 +201,18 @@
     animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
 }
 
+.list {
+    font-family: "Mont", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+}
+
+.active {
+    font-weight: bold;
+}
+
 @keyframes stroke {
     100% {
         stroke-dashoffset: 0;

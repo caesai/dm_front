@@ -30,7 +30,11 @@ interface ModalProps {
     subtitle?: string;
     button?: boolean;
     btnAction?: () => void;
+    btnDisabled?: boolean;
     btnText?: string;
+    btnScndrText?: string;
+    btnScndrAction?: () => void;
+    list?: React.ReactNode;
 }
 
 export const ModalPopup: React.FC<ModalProps> = ({
@@ -41,8 +45,19 @@ export const ModalPopup: React.FC<ModalProps> = ({
     setOpen,
     button = false,
     btnAction,
+    btnDisabled,
     btnText,
+    btnScndrText = 'Нет',
+    btnScndrAction,
+    list
 }) => {
+    const handleSecondButton = () => {
+        if (btnScndrAction) {
+            btnScndrAction();
+            return;
+        }
+        setOpen();
+    }
     return (
         <StyledPopup open={isOpen} >
             <div className={css.popup}>
@@ -57,13 +72,14 @@ export const ModalPopup: React.FC<ModalProps> = ({
                 <div className={css.center}>
                     <span className={css.text}>{text}</span>
                 </div>
+                {list && list}
                 {button && (
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                        <button className={classNames(css.button)} onClick={btnAction}>
+                        <button className={classNames(css.button)} onClick={btnAction} disabled={btnDisabled}>
                             {btnText}
                         </button>
-                        <button className={classNames(css.button, css.button__disabled)} onClick={setOpen}>
-                            Нет
+                        <button className={classNames(css.button, css.button__disabled)} onClick={handleSecondButton}>
+                            {btnScndrText}
                         </button>
                     </div>
                 )}
