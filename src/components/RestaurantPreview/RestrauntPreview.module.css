@@ -204,9 +204,13 @@
 .list {
     font-family: "Mont", sans-serif;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 16px;
     list-style: none;
     padding: 0;
+
+    li {
+        margin-bottom: 5px;
+    }
 }
 
 .active {
