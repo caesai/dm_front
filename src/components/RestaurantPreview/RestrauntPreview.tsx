@@ -38,7 +38,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                 }}
             >
 
-                {user?.username && ['martyad', 'w0esofwit', 'egormk', 'burovburov', 'Sushkazzlo', 'iliathoughts'].includes(user?.username) && restaurant.title === 'Self Edge Japanese' && (
+                {user?.username && ['martyad', 'w0esofwit', 'egormk', 'burovburov', 'iliathoughts'].includes(user?.username) && restaurant.title === 'Self Edge Japanese' && (
                     <span className={css.discount}>Скидка 10%</span>
                 )}
                     <div className={css.floatingBadges}>

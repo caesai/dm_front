@@ -33,7 +33,7 @@ export const OptionsNavigation = () => {
                 title={'Мероприятия'}
                 link={'/events'}
             />}
-            {user?.username && ['w0esofwit','egormk','burovburov', 'Sushkazzlo', 'iliathoughts'].includes(user?.username) && (
+            {user?.username && ['w0esofwit','egormk','burovburov', 'iliathoughts'].includes(user?.username) && (
                 <OptionsNavigationElement
                     icon={<StarPrivelegyIcon size={23} color={'var(--light-grey)'}  />}
                     title={'Привилегии'}
