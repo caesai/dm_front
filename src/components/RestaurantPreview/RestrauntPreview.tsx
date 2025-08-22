@@ -23,7 +23,6 @@ import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { BOOKINGCOMMENTMOCK } from '@/mockData.ts';
 // import {Toast} from "@/components/Toast/Toast.tsx";
 
 interface IProps {

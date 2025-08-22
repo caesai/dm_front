@@ -75,6 +75,7 @@ export const TicketInfoPage = () => {
                 text={isRefund ? `В течении 30 минут с вами свяжется сотрудник ресторана, чтобы оформить возврат. Если запрос был отправлен вне рабочего времени ресторана, мы обязательно ответим сразу после открытия.` : undefined}
                 button={!isRefund}
                 btnText={'Да'}
+                reverseButton={true}
                 btnAction={refund}
             />
             <div className={css.body}>
