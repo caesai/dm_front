@@ -35,6 +35,7 @@ interface ModalProps {
     btnScndrText?: string;
     btnScndrAction?: () => void;
     list?: React.ReactNode;
+    reverseButton?: boolean;
 }
 
 export const ModalPopup: React.FC<ModalProps> = ({
@@ -49,7 +50,8 @@ export const ModalPopup: React.FC<ModalProps> = ({
     btnText,
     btnScndrText = 'Нет',
     btnScndrAction,
-    list
+    list,
+    reverseButton,
 }) => {
     const handleSecondButton = () => {
         if (btnScndrAction) {
@@ -74,8 +76,8 @@ export const ModalPopup: React.FC<ModalProps> = ({
                 </div>
                 {list && list}
                 {button && (
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                        <button className={classNames(css.button)} onClick={btnAction} disabled={btnDisabled}>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexDirection: reverseButton ? 'row-reverse' : 'row' }}>
+                        <button className={classNames(css.button, btnDisabled ? css.button__disabled : '')} onClick={btnAction} disabled={btnDisabled}>
                             {btnText}
                         </button>
                         <button className={classNames(css.button, css.button__disabled)} onClick={handleSecondButton}>

@@ -14,7 +14,7 @@ import {useState} from 'react';
 import {useAtom} from 'jotai';
 import {backButtonAtom} from '@/atoms/backButtonAtom.ts';
 import {reviewAtom, userAtom} from '@/atoms/userAtom.ts';
-import {DEV_MODE} from "@/api/base.ts";
+// import {DEV_MODE} from "@/api/base.ts";
 
 export const ProfilePage = () => {
     const [params] = useSearchParams();
@@ -55,7 +55,7 @@ export const ProfilePage = () => {
                                 Мои бронирования
                             </span>
                         </Link>
-                        {DEV_MODE && (
+                        {user?.username && ['w0esofwit', 'valentinolejnik','dtconcierge_support', 'Elnikova', 'martyad', 'Tredikt', 'Sushkazzlo', 'egormk','burovburov', 'iliathoughts'].includes(user?.username) &&  (
                             <span
                                 className={css.navLink}
                                 onClick={() => navigate('/tickets')}

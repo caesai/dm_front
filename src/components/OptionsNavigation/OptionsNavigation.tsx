@@ -7,7 +7,7 @@ import {useState} from "react";
 import { useAtom } from 'jotai/index';
 import {userAtom} from "@/atoms/userAtom.ts";
 import {StarPrivelegyIcon} from "@/components/Icons/StarPrivelegy.tsx";
-import {DEV_MODE} from "@/api/base.ts";
+// import {DEV_MODE} from "@/api/base.ts";
 // import { reviewAtom } from '@/atoms/userAtom.ts';
 // import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
@@ -28,7 +28,7 @@ export const OptionsNavigation = () => {
     return (
         <div className={css.optionsNavigation}>
             <PrivelegiesPopup isOpen={isOpen} setOpen={setIsOpen} />
-            {DEV_MODE && <OptionsNavigationElement
+            {user?.username && ['w0esofwit', 'valentinolejnik','dtconcierge_support', 'Elnikova', 'martyad', 'Tredikt', 'Sushkazzlo', 'egormk','burovburov', 'iliathoughts'].includes(user?.username) && <OptionsNavigationElement
                 icon={<CalendarIcon size={20} color={'var(--light-grey)'}/>}
                 title={'Мероприятия'}
                 link={'/events'}

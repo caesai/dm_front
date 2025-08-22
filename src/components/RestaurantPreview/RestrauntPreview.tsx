@@ -22,6 +22,8 @@ import {userAtom} from "@/atoms/userAtom.ts";
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
+import { BOOKINGCOMMENTMOCK } from '@/mockData.ts';
 // import {Toast} from "@/components/Toast/Toast.tsx";
 
 interface IProps {
@@ -55,28 +57,53 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                 title={!changeRes ? `Вас интересует ресторан ${restaurant.title}` : 'Выберите интересующий Вас ресторан'}
                 subtitle={!changeRes ? `по адресу ${restaurant.address}?` : undefined}
                 list={changeRes ? (
-                    <ul className={css.list}>
-                        {restaurants.filter((item) =>{
-                            return item.title === restaurant.title
-                        }).map((item, index) => (
-                            <li key={index} className={classNames(selectedCity === item.id ? css.active : null)} onClick={() => setSelectedCity(item.id)}>{item.address}</li>
-                        ))}
-                    </ul>
+                    // <ul className={css.list}>
+                    //     {restaurants.filter((item) =>{
+                    //         return item.title === restaurant.title
+                    //     }).map((item, index) => (
+                    //         <li key={index} className={classNames(selectedCity === item.id ? css.active : null)} onClick={() => setSelectedCity(item.id)}>{item.address}</li>
+                    //     ))}
+                    // </ul>
+                    <div>
+                        <Swiper
+                            slidesPerView="auto"
+                            modules={[FreeMode]}
+                            freeMode={true}
+                            spaceBetween={8}
+                        >
+                            {restaurants.filter((item) =>{
+                                return item.title === restaurant.title
+                            }).map((item, index) => (
+                                    <SwiperSlide
+                                        key={index}
+                                        style={{ width: 'max-content' }}
+                                    >
+                                        <CommentaryOptionButton
+                                            text={item.address}
+                                            icon={''}
+                                            active={item.id === selectedCity}
+                                            onClick={() => setSelectedCity(item.id)}
+                                        />
+                                    </SwiperSlide>
+                                ))}
+                        </Swiper>
+                    </div>
                 ) : undefined}
                 button={true}
                 btnDisabled={!Boolean(selectedCity) && changeRes}
-                btnText={!changeRes ? 'Изменить' : 'Выбрать'}
+                btnText={!changeRes ? 'Да' : 'Продолжить'}
                 btnAction={() => {
                     if (!changeRes) {
-                        setChangeRes(true);
+                        navigate(`/restaurant/${restaurant.id}`);
                     } else {
                         navigate(`/restaurant/${selectedCity}`);
                     }
                 }}
-                btnScndrText={!changeRes ? 'Да' : 'Отменить'}
+                btnScndrText={!changeRes ? 'Изменить' : 'Отменить'}
+                reverseButton={!changeRes}
                 btnScndrAction={() => {
                     if (!changeRes) {
-                        navigate(`/restaurant/${restaurant.id}`);
+                        setChangeRes(true);
                     } else {
                         setChangeRes(false)
                     }
