@@ -71,9 +71,11 @@ export const ModalPopup: React.FC<ModalProps> = ({
                 </div>
                 {title && <span className={css.title}>{title}</span>}
                 {subtitle && <span className={css.sub_title}>{subtitle}</span>}
-                <div className={css.center}>
-                    <span className={css.text}>{text}</span>
-                </div>
+                {text && (
+                    <div className={css.center}>
+                        <span className={css.text}>{text}</span>
+                    </div>
+                )}
                 {list && list}
                 {button && (
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexDirection: reverseButton ? 'row-reverse' : 'row' }}>
