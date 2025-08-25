@@ -55,7 +55,7 @@ export const ProfilePage = () => {
                                 Мои бронирования
                             </span>
                         </Link>
-                        {user?.username && ['w0esofwit', 'valentinolejnik','dtconcierge_support', 'Elnikova', 'martyad', 'Tredikt', 'Sushkazzlo', 'egormk','burovburov', 'iliathoughts'].includes(user?.username) &&  (
+                        {user?.username && ['w0esofwit', 'valentinolejnik','dtconcierge_support', 'Elnikova', 'martyad', 'Tredikt', 'Sushkazzlo', 'egormk','burovburov', 'iliathoughts', 'SergantChe'].includes(user?.username) &&  (
                             <span
                                 className={css.navLink}
                                 onClick={() => navigate('/tickets')}
