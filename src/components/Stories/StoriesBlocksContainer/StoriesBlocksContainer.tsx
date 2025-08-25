@@ -4,15 +4,15 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { StoriesBlock } from '@/components/Stories/StoriesBlocksContainer/StoriesBlock.tsx';
 import { IStoryBlock } from '@/types/stories.ts';
 import { useAtom } from 'jotai/index';
-import { storiesLocalCountAtom } from '@/atoms/storiesLocalAtom.ts';
+import { localStoriesListAtom } from '@/atoms/localStoriesListAtom.ts';
 
-interface StoriesBlocksContainerProps {
+interface IStoriesBlocksContainerProps {
     storiesBlocks: IStoryBlock[];
     openStory: (index: number) => void;
 }
 
-export const StoriesBlocksContainer: React.FC<StoriesBlocksContainerProps> = ({ storiesBlocks, openStory }) => {
-    const [storiesLocalCount] = useAtom(storiesLocalCountAtom);
+export const StoriesBlocksContainer: React.FC<IStoriesBlocksContainerProps> = ({ storiesBlocks, openStory }) => {
+    const [localStories] = useAtom(localStoriesListAtom);
     return (
         <Swiper
             slidesPerView="auto"
@@ -22,8 +22,8 @@ export const StoriesBlocksContainer: React.FC<StoriesBlocksContainerProps> = ({ 
         >
             {storiesBlocks
                 .sort((a, b) => {
-                    const aRef = storiesLocalCount.find((item) => item.id === a.id);
-                    const bRef = storiesLocalCount.find((item) => item.id === b.id);
+                    const aRef = localStories.find((item) => item.id === a.id);
+                    const bRef = localStories.find((item) => item.id === b.id);
                     if (!aRef && !bRef) return 0;
                     if (bRef !== undefined) {
                         if (bRef.isSeen) {
@@ -38,10 +38,11 @@ export const StoriesBlocksContainer: React.FC<StoriesBlocksContainerProps> = ({ 
                     return 0;
                 })
                 .map(({thumbnail, id }, index) => (
-                <SwiperSlide style={{width: '100px'}} key={index}>
-                    <StoriesBlock onClick={openStory} index={index} thumbnail={thumbnail} storyId={id}/>
-                </SwiperSlide>
-            ))}
+                    <SwiperSlide style={{width: '100px'}} key={index}>
+                        <StoriesBlock onClick={openStory} index={index} thumbnail={thumbnail} isSeen={localStories.find((item) => item.id === id)?.isSeen} />
+                    </SwiperSlide>
+                ))
+            }
         </Swiper>
     )
 }

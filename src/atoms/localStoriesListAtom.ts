@@ -1,11 +1,11 @@
 import { atom } from 'jotai';
 // import { splitAtom } from 'jotai/utils';
 
-interface IStoryLocalCount {
+export interface ILocalStory {
     id: string;
-    count: number;
+    index: number;
     isSeen: boolean;
 }
 
-export const storiesLocalCountAtom = atom<IStoryLocalCount[]>([]);
+export const localStoriesListAtom = atom<ILocalStory[]>([]);
 // export const storyLocalAtomsAtom = splitAtom(storiesLocalAtom);
