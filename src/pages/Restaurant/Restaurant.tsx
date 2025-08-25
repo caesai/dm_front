@@ -318,7 +318,7 @@ export const Restaurant = () => {
                             />
                         </div>
                     </div>
-                    {headerScrolled ? <RestaurantNavigation/> : null}
+                    {headerScrolled ? <RestaurantNavigation isEvents={Boolean(events.length)}/> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
@@ -417,7 +417,7 @@ export const Restaurant = () => {
                             // id={'booking'}
                             className={css.navSliderAndBookingContainer}
                         >
-                            <RestaurantNavigation/>
+                            <RestaurantNavigation isEvents={Boolean(events.length)} />
                             <div className={css.bookingContaner}>
                                 <Swiper
                                     slidesPerView={'auto'}
@@ -879,7 +879,7 @@ export const Restaurant = () => {
                         </div>
                     </ContentBlock>
                 </ContentContainer>
-                <ContentContainer>
+                {Boolean(events.length) && (<ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
                             <HeaderContent
@@ -887,33 +887,32 @@ export const Restaurant = () => {
                                 id={'events'}
                             />
                         </HeaderContainer>
-                        {events.length ?
-                            events.map((e) => (
-                                    <EventCard
-                                        key={e.name}
-                                        onClick={() => navigate(
-                                            `/events/${e.id}`,
-                                        )}
-                                        event_price={e.ticket_price}
-                                        event_name={e.name}
-                                        event_img={e.image_url}
-                                        event_restaurant={e.restaurant.title}
-                                        event_date={e.date_start}
-                                        event_address={e.restaurant.address}
-                                        sold={e.tickets_left == 0}
-                                    />
-                                )
-                            ) : (
-                                <span
-                                    className={classNames(
-                                        css.aboutText
+                        {events.map((e) => (
+                                <EventCard
+                                    key={e.name}
+                                    onClick={() => navigate(
+                                        `/events/${e.id}`,
                                     )}
-                                >
-                                Пока нет мероприятий
-                            </span>
-                            )}
+                                    event_price={e.ticket_price}
+                                    event_name={e.name}
+                                    event_img={e.image_url}
+                                    event_restaurant={e.restaurant.title}
+                                    event_date={e.date_start}
+                                    event_address={e.restaurant.address}
+                                    sold={e.tickets_left == 0}
+                                />
+                            )
+                            // ) : (
+                            //     <span
+                            //         className={classNames(
+                            //             css.aboutText
+                            //         )}
+                            //     >
+                            //     Пока нет мероприятий
+                            // </span>
+                        )}
                     </ContentBlock>
-                </ContentContainer>
+                </ContentContainer>)}
 
                 <ContentContainer>
                     <ContentBlock>
