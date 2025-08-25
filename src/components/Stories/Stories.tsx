@@ -35,18 +35,19 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
                             const fileName = "video.mp4"; // Desired file name with .mp4 extension
                             const fileType = "video/mp4"; // MIME type for MP4
                             // getBlobFromUrl(story.url).then(videoBlob => {
-                                const myFile = new File([story.url.replace('https://', 'blob://')], fileName, { type: fileType });
-                                const newUrl = URL.createObjectURL(myFile);
-                                console.log('newUrl: ', newUrl);
-                                return {
-                                    ...story,
-                                    type: story.type.toLowerCase(),
-                                    url: newUrl,
-                                    duration: story.duration * 1000,
-                                    component: storyContainer,
-                                };
-                            // }).catch(console.error);
-                            console.log('newUrl2: ', newUrl);
+                            console.log('story.url: ', story.url);
+                            const blobUrl = story.url.replace('https://', 'blob://');
+                            console.log('blobUrl: ', blobUrl);
+                            const myFile = new File([blobUrl], fileName, { type: fileType });
+                            const newUrl = URL.createObjectURL(myFile);
+                            console.log('newUrl: ', newUrl);
+                            return {
+                                ...story,
+                                type: story.type.toLowerCase(),
+                                url: newUrl,
+                                duration: story.duration * 1000,
+                                component: storyContainer,
+                            };
                         }
                         return {
                             ...story,
