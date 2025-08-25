@@ -548,5 +548,5 @@ export const getBlobFromUrl = async (blobUrl: string) => {
     const response = await axios.get(blobUrl, {
         responseType: 'blob',
     });
-    return await response.data;
+    return response.data;
 }
