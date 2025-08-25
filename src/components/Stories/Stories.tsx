@@ -5,7 +5,7 @@ import { IStoryBlock } from '@/types/stories.ts';
 import { StoryComponent } from '@/components/Stories/StoryComponent/StoryComponent.tsx';
 import { StoriesContainer } from '@/components/Stories/StoriesContainer/StoriesContainer.tsx';
 import { StoriesBlocksContainer } from '@/components/Stories/StoriesBlocksContainer/StoriesBlocksContainer.tsx';
-import { getBlobFromUrl } from '@/utils.ts';
+// import { getBlobFromUrl } from '@/utils.ts';
 
 interface IStoriesProps {
     cityId?: number;
