@@ -2,15 +2,16 @@ import React from 'react';
 import css from './StoryComponent.module.css';
 import classNames from 'classnames';
 import { IStory } from '@/types/stories.ts';
-import { useNavigate } from 'react-router-dom';
 // import classnames from 'classnames';
 
 interface StoryComponentProps extends IStory {
 
 }
 
-export const StoryComponent: React.FC<StoryComponentProps> = ({ title, description, url, button_url, button_text }) => {
-    const navigate = useNavigate();
+export const StoryComponent: React.FC<StoryComponentProps> = ({ title, description, url, button_url, button_text, button_color }) => {
+    const openButtonUrl = () => {
+        window.open(button_url);
+    }
     return (
         <div className={classNames(css.storyComponent)}>
             <div className={css.storyWrapper}>
@@ -26,8 +27,11 @@ export const StoryComponent: React.FC<StoryComponentProps> = ({ title, descripti
                     {button_url && (
                         <div className={css.button_container}>
                             <div
-                                className={css.redButton}
-                                onClick={() => navigate(button_url)}
+                                className={css.button}
+                                style={{
+                                    backgroundColor: button_color,
+                                }}
+                                onClick={openButtonUrl}
                             >
                                 <span>{button_text}</span>
                             </div>
