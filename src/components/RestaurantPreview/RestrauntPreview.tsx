@@ -144,14 +144,14 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                     <span className={css.resSlogan}>{restaurant.address}</span>
                 </div>
                 <div className={css.tags}>
-                            <InfoTag
-                                text={getRestaurantStatus(
-                                    restaurant.worktime,
-                                    getCurrentWeekdayShort(),
-                                    getCurrentTimeShort()
-                                )}
-                            />
-                            <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`}/>
+                    <InfoTag
+                        text={getRestaurantStatus(
+                            restaurant.worktime,
+                            getCurrentWeekdayShort(),
+                            getCurrentTimeShort()
+                        )}
+                    />
+                    <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`}/>
                 </div>
             </div>
         </Link>
