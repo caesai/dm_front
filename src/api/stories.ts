@@ -1,9 +1,15 @@
 import {IStoriesBlockResponse} from "@/types/stories.ts";
-import {mockedResponseFromFutureRequest} from "@/__mocks__/stories.mock.ts";
+import axios from 'axios';
+import { BASE_URL } from '@/api/base.ts';
 
-export const ApiGetStoriesBlocks = (): Promise<() => IStoriesBlockResponse[]> => {
+export const ApiGetStoriesBlocks = (token: string, city_id: number) => {
     // TODO: return axios get request
-    return Promise.resolve(() => {
-        return mockedResponseFromFutureRequest
+    return axios.get<IStoriesBlockResponse[]>(`${BASE_URL}/user-stories`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params: {
+            city_id,
+        },
     });
 }

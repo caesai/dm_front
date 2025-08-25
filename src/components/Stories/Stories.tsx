@@ -6,7 +6,11 @@ import { StoryComponent } from '@/components/Stories/StoryComponent/StoryCompone
 import { StoriesContainer } from '@/components/Stories/StoriesContainer/StoriesContainer.tsx';
 import { StoriesBlocksContainer } from '@/components/Stories/StoriesBlocksContainer/StoriesBlocksContainer.tsx';
 
-export const Stories: React.FC = () => {
+interface IStoriesProps {
+    cityId?: number;
+    token?: string;
+}
+export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
     const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
 
@@ -18,27 +22,30 @@ export const Stories: React.FC = () => {
     };
     useEffect(() => {
         // TODO: Endpoint to get array of stories objects sets state of stories
-        ApiGetStoriesBlocks().then((storiesBlockResponse) => {
-            const blocks = storiesBlockResponse().map((block) => {
-                const convertedStories = block.stories.map((story) => {
-                    const { description, title, url, type } = story;
-                    if (type === 'component') {
-                        const storyContainer = () => <StoryComponent img={url} title={title}
-                                                                     description={description} />;
+        if (token !== undefined && cityId !== undefined) {
+            ApiGetStoriesBlocks(token, cityId).then((storiesBlockResponse) => {
+                const blocks = storiesBlockResponse.data.map((block) => {
+                    const convertedStories = block.stories.map((story) => {
+                        const { description, title, url, type } = story;
+                        let storyContainer = null;
+                        if (type.toLowerCase() === 'component') {
+                             storyContainer = () => <StoryComponent img={url} title={title} description={description} />;
+                        }
                         return {
                             ...story,
+                            type: type.toLowerCase(),
+                            duration: story.duration * 1000,
                             component: storyContainer,
                         };
-                    }
-                    return story;
+                    });
+                    return {
+                        ...block,
+                        stories: convertedStories,
+                    };
                 });
-                return {
-                    ...block,
-                    stories: convertedStories,
-                };
+                setStoriesBlocks(blocks);
             });
-            setStoriesBlocks(blocks);
-        });
+        }
     }, []);
     return (
         <>

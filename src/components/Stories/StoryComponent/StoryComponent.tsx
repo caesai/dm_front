@@ -11,6 +11,7 @@ interface StoryComponentProps {
 }
 
 export const StoryComponent: React.FC<StoryComponentProps> = ({ title, description, img }) => {
+    console.log({ title, description, img })
     return (
         <div className={classNames(css.storyComponent)}>
             <div className={css.storyWrapper}>

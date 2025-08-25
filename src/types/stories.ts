@@ -1,21 +1,23 @@
 import {IStoryObject} from "stories-react/src/types";
-import {TCityList} from "@/atoms/cityListAtom.ts";
 
 export interface IStoriesBlockResponse {
     id: string;
     thumbnail: string;
     stories: IStory[];
-    cities?: TCityList;
+    cities?: TStoriesCitiesIds;
     active: boolean;
-    users: IStoryUsers;
+    users: TStoryUsersIds;
+    views_count: number;
+    priority: number;
     name: string;
 }
 
-type IStoryUsers = number[];
+type TStoryUsersIds = number[];
+type TStoriesCitiesIds = number[]
 
 export interface IStory {
     id: string;
-    type: IStoryType;
+    type: TStory;
     duration: number;
     url: string;
     title: string;
@@ -23,9 +25,11 @@ export interface IStory {
     button_url: string;
     button_text: string;
     button_color: string;
+    views_count: number;
+    order_index: number;
 }
 
-type IStoryType = 'image' | 'video' | 'component';
+type TStory = 'image' | 'video' | 'component';
 
 export interface IStoryBlock {
     id: string;

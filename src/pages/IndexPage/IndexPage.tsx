@@ -103,12 +103,11 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter(v => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
-
     return (
         <Page back={false}>
             <div className={css.pageContainer}>
                 <Header/>
-                {DEV_MODE && <Stories />}
+                {DEV_MODE && <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
                 {currentBookingsLoading ? (
                     <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock
