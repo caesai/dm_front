@@ -89,8 +89,8 @@ const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stori
     const onStoryChange = (index: number) => {
         if (storyLocalCount && storyLocalCount.count !== index && storyLocalCount.count !== stories.length) {
             setStoriesLocalCount((prevItems) => {
-                const index = prevItems.findIndex(item => item.id === storyId);
-                if (index === -1) return prevItems; // Item not found
+                // const index = prevItems.findIndex(item => item.id === storyId);
+                // if (index === -1) return prevItems; // Item not found
                 const updatedItem = {
                     ...prevItems[index],
                     count: prevItems[index].count + 1,

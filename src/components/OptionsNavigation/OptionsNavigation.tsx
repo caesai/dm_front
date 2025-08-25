@@ -28,11 +28,13 @@ export const OptionsNavigation = () => {
     return (
         <div className={css.optionsNavigation}>
             <PrivelegiesPopup isOpen={isOpen} setOpen={setIsOpen} />
-            {user?.username && ['w0esofwit', 'valentinolejnik','dtconcierge_support', 'Elnikova', 'martyad', 'Tredikt', 'Sushkazzlo', 'egormk','burovburov', 'iliathoughts'].includes(user?.username) && <OptionsNavigationElement
-                icon={<CalendarIcon size={20} color={'var(--light-grey)'}/>}
-                title={'Мероприятия'}
-                link={'/events'}
-            />}
+            {user?.username && ['w0esofwit', 'valentinolejnik','dtconcierge_support', 'Elnikova', 'martyad', 'Tredikt', 'Sushkazzlo', 'egormk','burovburov', 'iliathoughts', 'SergantChe'].includes(user?.username) && (
+                <OptionsNavigationElement
+                    icon={<CalendarIcon size={20} color={'var(--light-grey)'}/>}
+                    title={'Мероприятия'}
+                    link={'/events'}
+                />
+            )}
             {user?.username && ['w0esofwit','egormk','burovburov', 'iliathoughts'].includes(user?.username) && (
                 <OptionsNavigationElement
                     icon={<StarPrivelegyIcon size={23} color={'var(--light-grey)'}  />}
