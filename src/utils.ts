@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction } from 'react';
 // import moment from 'moment';
 // import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { IEventBooking } from '@/types/events.ts';
+import axios from 'axios';
 // import { IEventBooking } from '@/pages/EventsPage/EventsPage.tsx';
 // import { Dispatch, SetStateAction } from 'react';
 
@@ -544,6 +545,8 @@ export const removeDataFromLocalStorage = (itemKey: string) => {
 }
 
 export const getBlobFromUrl = async (blobUrl: string) => {
-    const response = await fetch(blobUrl);
-    return await response.blob();
+    const response = await axios.get(blobUrl, {
+        responseType: 'blob',
+    });
+    return await response.data;
 }

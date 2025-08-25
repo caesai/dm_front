@@ -46,7 +46,7 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
                                     duration: story.duration * 1000,
                                     component: storyContainer,
                                 };
-                            })
+                            }).catch(console.error);
                             console.log('newUrl2: ', newUrl);
                         }
                         return {
