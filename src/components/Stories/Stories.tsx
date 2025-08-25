@@ -26,14 +26,13 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
             ApiGetStoriesBlocks(token, cityId).then((storiesBlockResponse) => {
                 const blocks = storiesBlockResponse.data.map((block) => {
                     const convertedStories = block.stories.map((story) => {
-                        const { description, title, url, type } = story;
                         let storyContainer = null;
-                        if (type.toLowerCase() === 'component') {
-                             storyContainer = () => <StoryComponent img={url} title={title} description={description} />;
+                        if (story.type.toLowerCase() === 'component') {
+                             storyContainer = () => <StoryComponent {...story} />;
                         }
                         return {
                             ...story,
-                            type: type.toLowerCase(),
+                            type: story.type.toLowerCase(),
                             duration: story.duration * 1000,
                             component: storyContainer,
                         };
