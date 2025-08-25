@@ -28,16 +28,15 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
                 const blocks = storiesBlockResponse.data.map((block) => {
                     const convertedStories = block.stories.map((story) => {
                         let storyContainer = null;
-                        let newUrl = null;
                         if (story.type.toLowerCase() === 'component') {
                              storyContainer = () => <StoryComponent {...story} />;
                         }
                         if (story.type.toLowerCase() === 'video') {
                             const fileName = "video.mp4"; // Desired file name with .mp4 extension
                             const fileType = "video/mp4"; // MIME type for MP4
-                            getBlobFromUrl(story.url).then(videoBlob => {
-                                const myFile = new File([videoBlob], fileName, { type: fileType });
-                                newUrl = URL.createObjectURL(myFile);
+                            // getBlobFromUrl(story.url).then(videoBlob => {
+                                const myFile = new File(['blob://' + story.url], fileName, { type: fileType });
+                                const newUrl = URL.createObjectURL(myFile);
                                 console.log('newUrl: ', newUrl);
                                 return {
                                     ...story,
@@ -46,7 +45,7 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
                                     duration: story.duration * 1000,
                                     component: storyContainer,
                                 };
-                            }).catch(console.error);
+                            // }).catch(console.error);
                             console.log('newUrl2: ', newUrl);
                         }
                         return {
