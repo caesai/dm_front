@@ -27,12 +27,21 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
                 const blocks = storiesBlockResponse.data.map((block) => {
                     const convertedStories = block.stories.map((story) => {
                         let storyContainer = null;
+                        let newUrl = null;
                         if (story.type.toLowerCase() === 'component') {
                              storyContainer = () => <StoryComponent {...story} />;
+                        }
+                        if (story.type.toLowerCase() === 'video') {
+                            const fileName = "video.mp4"; // Desired file name with .mp4 extension
+                            const fileType = "video/mp4"; // MIME type for MP4
+
+                            const myFile = new File([story.url], fileName, { type: fileType });
+                            newUrl = URL.createObjectURL(myFile);
                         }
                         return {
                             ...story,
                             type: story.type.toLowerCase(),
+                            url: newUrl ? newUrl : story.url,
                             duration: story.duration * 1000,
                             component: storyContainer,
                         };
