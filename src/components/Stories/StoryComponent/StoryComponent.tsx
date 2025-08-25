@@ -38,9 +38,11 @@ export const StoryComponent: React.FC<StoryComponentProps> = ({ title, descripti
                         </div>
                     )}
                 </div>
-                <div className={css.storyImageWrapper}>
-                    <img src={url} alt={description} />
-                </div>
+                {url && (
+                    <div className={css.storyImageWrapper}>
+                        <img src={url} alt={description} />
+                    </div>
+                )}
             </div>
         </div>
     );

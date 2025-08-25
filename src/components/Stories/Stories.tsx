@@ -37,6 +37,7 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
 
                             const myFile = new File([story.url], fileName, { type: fileType });
                             newUrl = URL.createObjectURL(myFile);
+                            console.log('newUrl: ', newUrl);
                         }
                         return {
                             ...story,
