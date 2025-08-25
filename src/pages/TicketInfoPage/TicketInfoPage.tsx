@@ -77,6 +77,7 @@ export const TicketInfoPage = () => {
                 btnText={'Да'}
                 reverseButton={true}
                 btnAction={refund}
+                btnScndrText={'Нет'}
             />
             <div className={css.body}>
                 <div className={css.header}>

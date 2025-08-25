@@ -22,7 +22,6 @@ import {userAtom} from "@/atoms/userAtom.ts";
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 // import {Toast} from "@/components/Toast/Toast.tsx";
 
 interface IProps {
@@ -52,41 +51,23 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
         >
             <ModalPopup
                 isOpen={isShowing}
-                setOpen={toggle}
-                title={!changeRes ? `Вас интересует ресторан ${restaurant.title}` : 'Выберите интересующий Вас ресторан'}
-                subtitle={!changeRes ? `по адресу ${restaurant.address}?` : undefined}
+                setOpen={() => {
+                    if (!changeRes) {
+                        toggle();
+                    } else {
+                        setChangeRes(false);
+                    }
+                }}
+                title={!changeRes ? undefined : 'Выберите ресторан'}
+                subtitle={!changeRes ? `Вас интересует ресторан ${restaurant.title} по адресу ${restaurant.address}?` : undefined}
                 list={changeRes ? (
-                    // <ul className={css.list}>
-                    //     {restaurants.filter((item) =>{
-                    //         return item.title === restaurant.title
-                    //     }).map((item, index) => (
-                    //         <li key={index} className={classNames(selectedCity === item.id ? css.active : null)} onClick={() => setSelectedCity(item.id)}>{item.address}</li>
-                    //     ))}
-                    // </ul>
-                    <div>
-                        <Swiper
-                            slidesPerView="auto"
-                            modules={[FreeMode]}
-                            freeMode={true}
-                            spaceBetween={8}
-                        >
-                            {restaurants.filter((item) =>{
-                                return item.title === restaurant.title
-                            }).map((item, index) => (
-                                    <SwiperSlide
-                                        key={index}
-                                        style={{ width: 'max-content' }}
-                                    >
-                                        <CommentaryOptionButton
-                                            text={item.address}
-                                            icon={''}
-                                            active={item.id === selectedCity}
-                                            onClick={() => setSelectedCity(item.id)}
-                                        />
-                                    </SwiperSlide>
-                                ))}
-                        </Swiper>
-                    </div>
+                    <ul className={css.list}>
+                        {restaurants.filter((item) =>{
+                            return item.title === restaurant.title
+                        }).map((item, index) => (
+                            <li key={index} className={classNames(selectedCity === item.id ? css.active : null)} onClick={() => setSelectedCity(item.id)}>{item.address}</li>
+                        ))}
+                    </ul>
                 ) : undefined}
                 button={true}
                 btnDisabled={!Boolean(selectedCity) && changeRes}
@@ -98,14 +79,10 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                         navigate(`/restaurant/${selectedCity}`);
                     }
                 }}
-                btnScndrText={!changeRes ? 'Изменить' : 'Отменить'}
+                btnScndrText={!changeRes ? 'Изменить' : undefined}
                 reverseButton={!changeRes}
                 btnScndrAction={() => {
-                    if (!changeRes) {
-                        setChangeRes(true);
-                    } else {
-                        setChangeRes(false)
-                    }
+                    setChangeRes(true);
                 }}
             />
             <div

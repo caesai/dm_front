@@ -16,7 +16,7 @@ const StyledPopup = styled(Popup)`
         //background-color: transparent;
         margin: 0;
         padding: 0;
-        border-radius: 10px;
+        border-radius: 15px;
         width: calc(100vw - 30px);
         max-width: 340px;
     }
@@ -48,7 +48,7 @@ export const ModalPopup: React.FC<ModalProps> = ({
     btnAction,
     btnDisabled,
     btnText,
-    btnScndrText = 'Нет',
+    btnScndrText,
     btnScndrAction,
     list,
     reverseButton,
@@ -69,6 +69,7 @@ export const ModalPopup: React.FC<ModalProps> = ({
                         action={setOpen}
                     />
                 </div>
+                <div />
                 {title && <span className={css.title}>{title}</span>}
                 {subtitle && <span className={css.sub_title}>{subtitle}</span>}
                 {text && (
@@ -82,9 +83,11 @@ export const ModalPopup: React.FC<ModalProps> = ({
                         <button className={classNames(css.button, btnDisabled ? css.button__disabled : '')} onClick={btnAction} disabled={btnDisabled}>
                             {btnText}
                         </button>
-                        <button className={classNames(css.button, css.button__disabled)} onClick={handleSecondButton}>
-                            {btnScndrText}
-                        </button>
+                        {btnScndrText !== undefined && (
+                            <button className={classNames(css.button, css.button__disabled)} onClick={handleSecondButton}>
+                                {btnScndrText}
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
