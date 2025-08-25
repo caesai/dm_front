@@ -35,7 +35,7 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
                             const fileName = "video.mp4"; // Desired file name with .mp4 extension
                             const fileType = "video/mp4"; // MIME type for MP4
                             // getBlobFromUrl(story.url).then(videoBlob => {
-                                const myFile = new File(['blob://' + story.url], fileName, { type: fileType });
+                                const myFile = new File([story.url.replace('https://', 'blob://')], fileName, { type: fileType });
                                 const newUrl = URL.createObjectURL(myFile);
                                 console.log('newUrl: ', newUrl);
                                 return {
