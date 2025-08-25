@@ -542,3 +542,8 @@ export const getDataFromLocalStorage = (itemKey: string) => {
 export const removeDataFromLocalStorage = (itemKey: string) => {
     localStorage.removeItem(itemKey);
 }
+
+export const getBlobFromUrl = async (blobUrl: string) => {
+    const response = await fetch(blobUrl);
+    return await response.blob();
+}

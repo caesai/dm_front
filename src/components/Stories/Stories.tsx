@@ -5,6 +5,7 @@ import { IStoryBlock } from '@/types/stories.ts';
 import { StoryComponent } from '@/components/Stories/StoryComponent/StoryComponent.tsx';
 import { StoriesContainer } from '@/components/Stories/StoriesContainer/StoriesContainer.tsx';
 import { StoriesBlocksContainer } from '@/components/Stories/StoriesBlocksContainer/StoriesBlocksContainer.tsx';
+import { getBlobFromUrl } from '@/utils.ts';
 
 interface IStoriesProps {
     cityId?: number;
@@ -34,15 +35,23 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
                         if (story.type.toLowerCase() === 'video') {
                             const fileName = "video.mp4"; // Desired file name with .mp4 extension
                             const fileType = "video/mp4"; // MIME type for MP4
-
-                            const myFile = new File([story.url], fileName, { type: fileType });
-                            newUrl = URL.createObjectURL(myFile);
-                            console.log('newUrl: ', newUrl);
+                            getBlobFromUrl(story.url).then(videoBlob => {
+                                const myFile = new File([videoBlob], fileName, { type: fileType });
+                                newUrl = URL.createObjectURL(myFile);
+                                console.log('newUrl: ', newUrl);
+                                return {
+                                    ...story,
+                                    type: story.type.toLowerCase(),
+                                    url: newUrl,
+                                    duration: story.duration * 1000,
+                                    component: storyContainer,
+                                };
+                            })
+                            console.log('newUrl2: ', newUrl);
                         }
                         return {
                             ...story,
                             type: story.type.toLowerCase(),
-                            url: newUrl ? newUrl : story.url,
                             duration: story.duration * 1000,
                             component: storyContainer,
                         };
