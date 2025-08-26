@@ -544,9 +544,11 @@ export const removeDataFromLocalStorage = (itemKey: string) => {
     localStorage.removeItem(itemKey);
 }
 
-// export const getBlobFromUrl = async (blobUrl: string) => {
-//     const response = await axios.get(blobUrl, {
-//         responseType: 'blob',
-//     });
-//     return response.data;
-// }
+export const getBlobFromUrl = async (blobUrl: string) => {
+    // const response = await axios.get(blobUrl, {
+    //     responseType: 'blob',
+    // });
+    // return response.data;
+    const response = await fetch(blobUrl);
+    return await response.blob();
+}

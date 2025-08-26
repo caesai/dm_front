@@ -5,6 +5,7 @@ import { IStoryBlock } from '@/types/stories.ts';
 import { StoryComponent } from '@/components/Stories/StoryComponent/StoryComponent.tsx';
 import { StoriesContainer } from '@/components/Stories/StoriesContainer/StoriesContainer.tsx';
 import { StoriesBlocksContainer } from '@/components/Stories/StoriesBlocksContainer/StoriesBlocksContainer.tsx';
+import { getBlobFromUrl } from '@/utils.ts';
 // import { getBlobFromUrl } from '@/utils.ts';
 
 interface IStoriesProps {
@@ -25,7 +26,9 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
         // TODO: Endpoint to get array of stories objects sets state of stories
         if (token !== undefined && cityId !== undefined) {
             ApiGetStoriesBlocks(token, cityId).then((storiesBlockResponse) => {
-                const blocks = storiesBlockResponse.data.map((block) => {
+                const blocks = storiesBlockResponse.data.filter((item) => (
+                    item.stories.length > 0
+                )).map((block) => {
                     const convertedStories = block.stories.map((story) => {
                         let storyContainer = null;
                         if (story.type.toLowerCase() === 'component') {
@@ -37,6 +40,7 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
                             // getBlobFromUrl(story.url).then(videoBlob => {
                             console.log('story.url: ', story.url);
                             const blobUrl = story.url.replace('https://', 'blob://');
+                            getBlobFromUrl(blobUrl)
                             console.log('blobUrl: ', blobUrl);
                             const myFile = new File([blobUrl], fileName, { type: fileType });
                             const newUrl = URL.createObjectURL(myFile);

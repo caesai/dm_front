@@ -29,7 +29,7 @@ export interface IStory {
     order_index: number;
 }
 
-type TStory = 'image' | 'video' | 'component';
+export type TStory = 'image' | 'video' | 'component';
 
 export interface IStoryBlock {
     id: string;

@@ -40,11 +40,13 @@ export const StoriesContainer: React.FC<StoriesContainerProps> = ({ storiesBlock
         }
     };
     const onAllStoriesEnd = () => {
-        if (realSwiperIndex < storiesBlocks[realSwiperIndex].stories.length) {
+        if (realSwiperIndex < storiesBlocks.length - 1) {
             if (swiperRef.current) {
                 swiperRef.current.slideNext();
             }
         } else {
+            console.log('OnClose');
+
             onClose();
         }
     };
@@ -86,16 +88,33 @@ const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stori
     const [localStories, setLocalStories] = useAtom(localStoriesListAtom);
     const localStory = localStories.find((item) => item.id === storyId);
 
+    const handleStoryEnd = () => {
+        setLocalStories((prevItems) => {
+            const localIndex = prevItems.findIndex(item => item.id === storyId);
+            if (localIndex === -1) return prevItems; // Item not found
+            const updatedItem = {
+                ...prevItems[localIndex],
+                index: 0,
+                isSeen: true,
+            };
+            return [
+                ...prevItems.slice(0, localIndex),
+                updatedItem,
+                ...prevItems.slice(localIndex + 1),
+            ];
+        });
+        onAllStoriesEnd();
+    }
+
     const onStoryChange = (index: number) => {
         if (localStory !== undefined) {
-            if (localStory.index !== stories.length) {
+            if (localStory.index <= stories.length - 1) {
                 setLocalStories((prevItems) => {
                     const localIndex = prevItems.findIndex(item => item.id === storyId);
                     if (localIndex === -1) return prevItems; // Item not found
                     const updatedItem = {
                         ...prevItems[localIndex],
                         index,
-                        isSeen: prevItems[localIndex].index === stories.length - 1,
                     };
                     return [
                         ...prevItems.slice(0, localIndex),
@@ -124,8 +143,8 @@ const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stori
                     height="100%"
                     onStoryChange={onStoryChange}
                     stories={stories}
-                    currentIndex={localStory !== undefined ? localStory?.index == stories.length - 1 ? undefined : localStory.index : undefined}
-                    onAllStoriesEnd={onAllStoriesEnd}
+                    currentIndex={localStory !== undefined ? localStory.index : undefined }
+                    onAllStoriesEnd={handleStoryEnd}
                     classNames={{ progressBar: css.progressBar, main: css.slide }}
                 />
             )}
