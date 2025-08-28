@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 // import { splitAtom } from 'jotai/utils';
 
 export interface ILocalStory {
-    id: string;
+    id: number;
     index: number;
     isSeen: boolean;
 }

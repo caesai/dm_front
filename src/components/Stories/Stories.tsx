@@ -5,7 +5,7 @@ import { IStoryBlock } from '@/types/stories.ts';
 import { StoryComponent } from '@/components/Stories/StoryComponent/StoryComponent.tsx';
 import { StoriesContainer } from '@/components/Stories/StoriesContainer/StoriesContainer.tsx';
 import { StoriesBlocksContainer } from '@/components/Stories/StoriesBlocksContainer/StoriesBlocksContainer.tsx';
-import { getBlobFromUrl } from '@/utils.ts';
+// import { getBlobFromUrl } from '@/utils.ts';
 // import { getBlobFromUrl } from '@/utils.ts';
 
 interface IStoriesProps {
@@ -35,29 +35,35 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
                              storyContainer = () => <StoryComponent {...story} />;
                         }
                         if (story.type.toLowerCase() === 'video') {
-                            const fileName = "video.mp4"; // Desired file name with .mp4 extension
-                            const fileType = "video/mp4"; // MIME type for MP4
-                            // getBlobFromUrl(story.url).then(videoBlob => {
-                            console.log('story.url: ', story.url);
-                            const blobUrl = story.url.replace('https://', 'blob://');
-                            getBlobFromUrl(blobUrl)
-                            console.log('blobUrl: ', blobUrl);
-                            const myFile = new File([blobUrl], fileName, { type: fileType });
-                            const newUrl = URL.createObjectURL(myFile);
-                            console.log('newUrl: ', newUrl);
-                            return {
-                                ...story,
-                                type: story.type.toLowerCase(),
-                                url: newUrl,
-                                duration: story.duration * 1000,
-                                component: storyContainer,
-                            };
+                            // console.log('story url: ', story.url)
+                        //     const fileName = "video.mp4"; // Desired file name with .mp4 extension
+                        //     const fileType = "video/mp4"; // MIME type for MP4
+                        //     // getBlobFromUrl(story.url).then(videoBlob => {
+                        //     console.log('story.url: ', story.url);
+                        //     const blobUrl = story.url.replace('https://', 'blob://');
+                        //     getBlobFromUrl(blobUrl)
+                        //     console.log('blobUrl: ', blobUrl);
+                        //     const myFile = new File([blobUrl], fileName, { type: fileType });
+                        //     const newUrl = URL.createObjectURL(myFile);
+                        //     console.log('newUrl: ', newUrl);
+                        //     return {
+                        //         ...story,
+                        //         type: story.type.toLowerCase(),
+                        //         url: newUrl,
+                        //         duration: story.duration,
+                        //         component: storyContainer,
+                        //     };
                         }
                         return {
                             ...story,
                             type: story.type.toLowerCase(),
-                            duration: story.duration * 1000,
                             component: storyContainer,
+                            url: story.url ? story.url : '',
+                            title: story.title ? story.title : '',
+                            description: story.description ? story.description : '',
+                            button_url: story.button_url ? story.button_url : '',
+                            button_text: story.button_text ? story.button_text : '',
+                            button_color: story.button_color ? story.button_color : '',
                         };
                     });
                     return {
@@ -68,7 +74,7 @@ export const Stories: React.FC<IStoriesProps> = ({ token, cityId }) => {
                 setStoriesBlocks(blocks);
             });
         }
-    }, []);
+    }, [cityId]);
     return (
         <>
             {activeStoryIndex !== null &&

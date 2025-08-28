@@ -1,7 +1,7 @@
 import {IStoryObject} from "stories-react/src/types";
 
 export interface IStoriesBlockResponse {
-    id: string;
+    id: number;
     thumbnail: string;
     stories: IStory[];
     cities?: TStoriesCitiesIds;
@@ -16,15 +16,15 @@ type TStoryUsersIds = number[];
 type TStoriesCitiesIds = number[]
 
 export interface IStory {
-    id: string;
+    id: number;
     type: TStory;
     duration: number;
-    url: string;
-    title: string;
-    description: string;
-    button_url: string;
-    button_text: string;
-    button_color: string;
+    url: string | null;
+    title: string | null;
+    description: string | null;
+    button_url: string | null;
+    button_text: string | null;
+    button_color: string | null;
     views_count: number;
     order_index: number;
 }
@@ -32,7 +32,7 @@ export interface IStory {
 export type TStory = 'image' | 'video' | 'component';
 
 export interface IStoryBlock {
-    id: string;
+    id: number;
     thumbnail: string;
     stories: IStoryObject[];
     name: string;
