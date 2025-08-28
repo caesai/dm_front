@@ -79,7 +79,7 @@ export const StoriesContainer: React.FC<StoriesContainerProps> = ({ storiesBlock
 interface StorySlideProps {
     onAllStoriesEnd: () => void;
     onClose: () => void;
-    storyId: string;
+    storyId: number;
     stories: IStoryObject[];
     shouldRender: boolean;
 }
