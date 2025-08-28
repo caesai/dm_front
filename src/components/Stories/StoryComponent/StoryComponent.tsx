@@ -10,7 +10,7 @@ interface StoryComponentProps extends IStory {
 
 export const StoryComponent: React.FC<StoryComponentProps> = ({ title, description, url, button_url, button_text, button_color }) => {
     const openButtonUrl = () => {
-        window.open(button_url);
+        button_url && window.open(button_url);
     }
     return (
         <div className={classNames(css.storyComponent)}>
@@ -29,7 +29,7 @@ export const StoryComponent: React.FC<StoryComponentProps> = ({ title, descripti
                             <div
                                 className={css.button}
                                 style={{
-                                    backgroundColor: button_color,
+                                    backgroundColor: button_color?.toString(),
                                 }}
                                 onClick={openButtonUrl}
                             >
@@ -40,7 +40,7 @@ export const StoryComponent: React.FC<StoryComponentProps> = ({ title, descripti
                 </div>
                 {url && (
                     <div className={css.storyImageWrapper}>
-                        <img src={url} alt={description} />
+                        <img src={url} alt={description?.toString()} />
                     </div>
                 )}
             </div>
