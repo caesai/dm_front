@@ -35,6 +35,7 @@ declare global {
         Telegram: {
             WebApp: {
                 close: () => void;
+                initDataUnsafe: any;
             }
         };
     }

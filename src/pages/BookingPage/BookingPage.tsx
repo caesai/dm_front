@@ -51,7 +51,7 @@ import {BASE_BOT} from "@/api/base.ts";
 import {UniversalButton} from "@/components/Buttons/UniversalButton/UniversalButton.tsx";
 import { childrenCountAtom, guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
-import { BookingSpecialPopup } from '@/components/BookingSpecialPopup/BookingSpecialPopup.tsx';
+// import { BookingSpecialPopup } from '@/components/BookingSpecialPopup/BookingSpecialPopup.tsx';
 
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
 
@@ -127,7 +127,7 @@ export const BookingPage: FC = () => {
     const [errorPopup, setErrorPopup] = useState(false);
     const [botError, setBotError] = useState(false);
     const [errorPopupCount, setErrorPopupCount] = useState(0);
-    const [specPopup, setSpecPopup] = useState(false);
+    // const [specPopup, setSpecPopup] = useState(false);
     const [menuPopupOpen, setMenuPopupOpen] = useState(false);
     const [preOrder, setPreOrder] = useState(false);
     const [infoPopup, setInfoPopup] = useState(false);
@@ -391,7 +391,7 @@ export const BookingPage: FC = () => {
                 .finally(() => setRequestLoading(false));
         }
     };
-    const isSpecialPopup = new Date(bookingDate.value).getTime() && new Date('2025-07-30').getTime() && currentPartOfDay === 'evening' && bookingRestaurant.value == '1';
+    // const isSpecialPopup = new Date(bookingDate.value).getTime() && new Date('2025-07-30').getTime() && currentPartOfDay === 'evening' && bookingRestaurant.value == '1';
     const openMenu = (isOpen: boolean) => {
         if (isOpen) {
             setErrorPopup(false);
@@ -422,6 +422,10 @@ export const BookingPage: FC = () => {
     //         }
     //     }
     // }
+    // TODO: make proper utils function to calculate work end time
+    const restaurantWorkEndTime = restaurants.find((item) => item.id === Number(bookingRestaurant.value))?.worktime.find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+    const nextDay = new Date();
+    const workEndDate = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) === 0 ? new Date(nextDay.setDate(new Date(bookingDate.value).getDate() + 1)).setHours(Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')), Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0'))) : new Date(bookingDate.value).getTime();
     return (
         <Page back={true}>
             <MenuPopup
@@ -430,7 +434,7 @@ export const BookingPage: FC = () => {
                 menuItems={[specialMenu, specialMenu2]}
             />
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(bookingRestaurant.value)} count={errorPopupCount} botError={botError}/>
-            <BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(bookingRestaurant.value)} setMenuPopupOpen={openMenu}/>
+            {/*<BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(bookingRestaurant.value)} setMenuPopupOpen={openMenu}/>*/}
             <BookingInfoPopup isOpen={infoPopup} setOpen={setInfoPopup} />
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
@@ -654,12 +658,13 @@ export const BookingPage: FC = () => {
                                                                 v.start_datetime
                                                                     ? `${getTimeShort(
                                                                           v.start_datetime
-                                                                      )} - ${getTimeShort(
+                                                                      )} - ${new Date(v.end_datetime).getTime() > workEndDate ?  restaurantWorkEndTime : getTimeShort(
                                                                           v.end_datetime
                                                                       )}`
                                                                     : getTimeShort(
                                                                           v.start_datetime
                                                                       )}
+
                                                             </span>
                                                         </div>
                                                     </SwiperSlide>
@@ -700,15 +705,17 @@ export const BookingPage: FC = () => {
                         <HeaderContainer>
                             <HeaderContent title={'Пожелания к брони'} />
                         </HeaderContainer>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 5}}>
-                        <CheckBoxInput
-                            checked={preOrder}
-                            toggle={() => setPreOrder(!preOrder)}
-                            label={'Оформить предзаказ блюд и напитков'} />
-                        <span onClick={() => setInfoPopup(true)}>
-                            <InfoIcon size={14}/>
-                        </span>
-                        </div>
+                        {guestCount >= 8 && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 5}}>
+                                <CheckBoxInput
+                                    checked={preOrder}
+                                    toggle={() => setPreOrder(!preOrder)}
+                                    label={'Оформить предзаказ блюд и напитков'} />
+                                <span onClick={() => setInfoPopup(true)}>
+                                    <InfoIcon size={14}/>
+                                </span>
+                            </div>
+                        )}
                         <TextInput
                             value={commentary}
                             onFocus={() => {
@@ -789,13 +796,7 @@ export const BookingPage: FC = () => {
                 forwardedRef={bookingBtn}
                 isDisabled={validateFormMemo}
                 isLoading={requestLoading}
-                onClick={() => {
-                    if (isSpecialPopup) {
-                        setSpecPopup(true);
-                    } else {
-                        createBooking();
-                    }
-                }}
+                onClick={createBooking}
             />
         </Page>
     );

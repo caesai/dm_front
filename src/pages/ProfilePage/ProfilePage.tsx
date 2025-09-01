@@ -2,36 +2,38 @@ import {Page} from '@/components/Page.tsx';
 import css from './ProfilePage.module.css';
 import {RoundedButton} from '@/components/RoundedButton/RoundedButton.tsx';
 import {BackIcon} from '@/components/Icons/BackIcon.tsx';
-import {Link, useNavigate, useSearchParams} from 'react-router-dom';
+import {Link, useNavigate,
+    // useSearchParams
+} from 'react-router-dom';
 import {TicketsIcon} from '@/components/Icons/TicketsIcon.tsx';
 import {BookIcon} from '@/components/Icons/BookIcon.tsx';
 import {PenIcon} from '@/components/Icons/PenIcon.tsx';
 import {UserProfileIcon} from '@/components/Icons/UserProfileIcon.tsx';
 // import { SupportIcon } from '@/components/Icons/SupportIcon.tsx';
 // import { QRCodeIcon } from '@/components/Icons/QRCodeIcon.tsx';
-import {FeedbackPopup} from '@/pages/ProfilePage/FeedbackPopup/FeedbackPopup.tsx';
-import {useState} from 'react';
+// import {FeedbackPopup} from '@/pages/ProfilePage/FeedbackPopup/FeedbackPopup.tsx';
+// import {useState} from 'react';
 import {useAtom} from 'jotai';
 import {backButtonAtom} from '@/atoms/backButtonAtom.ts';
 import {reviewAtom, userAtom} from '@/atoms/userAtom.ts';
 // import {DEV_MODE} from "@/api/base.ts";
 
 export const ProfilePage = () => {
-    const [params] = useSearchParams();
-    const [feedbackPopup, setFeedbackPopup] = useState(
-        !!params.get('feedback')
-    );
+    // const [params] = useSearchParams();
+    // const [feedbackPopup, setFeedbackPopup] = useState(
+    //     !!params.get('feedback')
+    // );
     const navigate = useNavigate();
     const [review] = useAtom(reviewAtom);
     const [user] = useAtom(userAtom);
     const [backUrlAtom] = useAtom(backButtonAtom);
     return (
         <Page back={true}>
-            <FeedbackPopup
-                isOpen={feedbackPopup}
-                setOpen={setFeedbackPopup}
-                booking_id={1}
-            />
+            {/*<FeedbackPopup*/}
+            {/*    isOpen={feedbackPopup}*/}
+            {/*    setOpen={setFeedbackPopup}*/}
+            {/*    booking_id={1}*/}
+            {/*/>*/}
 
             <div className={css.page}>
                 <div className={css.pageWrapper}>
@@ -67,7 +69,7 @@ export const ProfilePage = () => {
                         {review.available ? (
                             <span
                                 className={css.navLink}
-                                onClick={() => setFeedbackPopup(true)}
+                                // onClick={() => setFeedbackPopup(true)}
                             >
                                 <PenIcon size={24} color={'black'}/>
                                 <span className={css.navLinkTitle}>

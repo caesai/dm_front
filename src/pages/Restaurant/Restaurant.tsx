@@ -15,7 +15,7 @@ import {FreeMode} from 'swiper/modules';
 import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import {useEffect, useState} from 'react';
 import {DownArrow} from '@/components/Icons/DownArrow.tsx';
-import {InstagramIcon} from '@/components/Icons/Instagram.tsx';
+// import {InstagramIcon} from '@/components/Icons/Instagram.tsx';
 import {GoToPathIcon} from '@/components/Icons/GoToPathIcon.tsx';
 // import {PhoneCallIcon} from '@/components/Icons/PhoneCallIcon.tsx';
 import {RestaurantNavigation} from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
@@ -781,26 +781,26 @@ export const Restaurant = () => {
                                     Социальные сети
                                 </span>
                             </div>
-                            <div className={css.infoBlock}>
-                                {restaurant?.socials.map((social) => (
-                                    <a
-                                        key={social.name}
-                                        href={social.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <div className={css.socialRow}>
-                                            <InstagramIcon
-                                                color={'black'}
-                                                size={20}
-                                            />
-                                            <span className={css.socialLink}>
-                                                {social.name}
-                                            </span>
-                                        </div>
-                                    </a>
-                                ))}
-                            </div>
+                            {/*<div className={css.infoBlock}>*/}
+                            {/*    {restaurant?.socials.map((social) => (*/}
+                            {/*        <a*/}
+                            {/*            key={social.name}*/}
+                            {/*            href={social.url}*/}
+                            {/*            target="_blank"*/}
+                            {/*            rel="noopener noreferrer"*/}
+                            {/*        >*/}
+                            {/*            <div className={css.socialRow}>*/}
+                            {/*                <InstagramIcon*/}
+                            {/*                    color={'black'}*/}
+                            {/*                    size={20}*/}
+                            {/*                />*/}
+                            {/*                <span className={css.socialLink}>*/}
+                            {/*                    {social.name}*/}
+                            {/*                </span>*/}
+                            {/*            </div>*/}
+                            {/*        </a>*/}
+                            {/*    ))}*/}
+                            {/*</div>*/}
                         </div>
                     </ContentBlock>
                     <ContentBlock>

@@ -11,6 +11,7 @@ import { useAtom } from 'jotai';
 import { localStoriesListAtom } from '@/atoms/localStoriesListAtom.ts';
 import { IStoryObject } from 'stories-react/src/types';
 import type { Swiper as SwiperClass } from 'swiper';
+import moment from 'moment';
 
 interface StoriesContainerProps {
     storiesBlocks: IStoryBlock[];
@@ -89,13 +90,15 @@ const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stori
     const localStory = localStories.find((item) => item.id === storyId);
 
     const handleStoryEnd = () => {
+        if (localStory == undefined) return;
         setLocalStories((prevItems) => {
             const localIndex = prevItems.findIndex(item => item.id === storyId);
             if (localIndex === -1) return prevItems; // Item not found
             const updatedItem = {
                 ...prevItems[localIndex],
                 index: 0,
-                isSeen: true,
+                isSeen: !localStory?.isSeen && true,
+                lastSeenDate: !localStory?.isSeen ? localStory.lastSeenDate : moment(new Date()).format('YYYY-MM-DD'),
             };
             return [
                 ...prevItems.slice(0, localIndex),
@@ -128,6 +131,7 @@ const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stori
                 id: storyId,
                 index,
                 isSeen: false,
+                lastSeenDate: moment(new Date()).format('YYYY-MM-DD'),
             };
             setLocalStories((prevItems) => [...prevItems, newStoryLocalCount]);
         }
