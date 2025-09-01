@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import css from './EventConfirmationOutlet.module.css';
-import {
-    // formatDateDT,
-    IEventBookingContext } from '@/utils.ts';
+import { IEventBookingContext } from '@/utils.ts';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import moment from 'moment';
 import classNames from 'classnames';
@@ -110,9 +108,7 @@ export const EventConfirmationOutlet: React.FC = () => {
                                 Дата
                             </span>
                             <span className={css.event_params_col__data}>
-                                {/*{formatDateDT(*/}
-                                {new Date(bookingInfo.event.date_start).toLocaleDateString()}
-                                {/*)}*/}
+                                {moment(bookingInfo.event.date_start).format('DD.MM.YYYY')}
                             </span>
                         </div>
                     ) : (

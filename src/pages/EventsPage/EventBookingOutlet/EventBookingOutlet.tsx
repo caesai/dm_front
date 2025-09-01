@@ -4,7 +4,7 @@ import {TextInput} from '@/components/TextInput/TextInput.tsx';
 import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from './EventBookingOutlet.module.css';
 import {useNavigate, useOutletContext} from 'react-router-dom';
-import {formatDateDT, getDataFromLocalStorage, IEventBookingContext, removeDataFromLocalStorage} from '@/utils.ts';
+import {getDataFromLocalStorage, IEventBookingContext, removeDataFromLocalStorage} from '@/utils.ts';
 import {useMemo, useRef, useState} from 'react';
 import moment from 'moment';
 import {APICreateInvoice} from '@/api/events.ts';
@@ -109,9 +109,7 @@ export const EventBookingOutlet = () => {
                                 {/*          )*/}
                                 {/*      )*/}
                                 {/*    : '...'}*/}
-                                {bookingInfo.event?.date_start && formatDateDT(
-                                    new Date(bookingInfo.event?.date_start)
-                                )}
+                                {bookingInfo.event?.date_start && moment(bookingInfo.event?.date_start).format('DD.MM.YYYY')}
                             </span>
                             <span
                                 className={css.dateInfoContainer_dates__times}

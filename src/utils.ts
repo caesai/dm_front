@@ -161,6 +161,14 @@ export const formatDateDT = (inputDate: Date): string => {
     return `${day} ${month}`;
 };
 
+export const formatDateDTY = (inputDate: Date): string => {
+    const day = inputDate.getDate();
+    const month = inputDate.getMonth();
+    const year = inputDate.getFullYear();
+
+    return `${day}.${month}.${year}`;
+};
+
 export const formatDateDayMonthLong = (inputDate: string): string => {
     const input = new Date(inputDate);
     const day = input.getDate();
