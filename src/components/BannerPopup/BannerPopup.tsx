@@ -6,6 +6,7 @@ import css from './BannerPopup.module.css';
 import banner from '/img/banner.jpg'
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
+import { getCookie, setShortCookie } from '@/utils.ts';
 
 const StyledPopup = styled(Popup)`
     &-overlay {
@@ -27,10 +28,12 @@ const StyledPopup = styled(Popup)`
 `;
 
 export const BannerPopup: React.FC = () => {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const closeBtnRef = useRef<HTMLDivElement | null>(null);
+    const bannerCookie = getCookie('banner');
     const closeBanner = () => {
         setOpen(false);
+        setShortCookie('banner','show', 600);
     }
     useEffect(() => {
         if (closeBtnRef.current) {
@@ -39,7 +42,13 @@ export const BannerPopup: React.FC = () => {
                 closeBtnRef.current.style.visibility = 'visible';
             }, 3000);
         }
+    }, [closeBtnRef.current]);
+    useEffect(() => {
+        if (bannerCookie !== 'show') {
+            setOpen(true);
+        }
     }, []);
+    if (!open) return null;
     return (
         <StyledPopup
             open={open}

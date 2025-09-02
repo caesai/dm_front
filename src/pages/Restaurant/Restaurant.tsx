@@ -260,10 +260,15 @@ export const Restaurant = () => {
         .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
     const nextDay = new Date();
     const workEndDate = Number(String(restaurantWorkEndTime).split(':')[0]
-        .replace(new RegExp('00', 'g'), '0')) === 0 ? new Date(nextDay.setDate(new Date(bookingDate.value).getDate() + 1))
-        .setHours(Number(String(restaurantWorkEndTime)
-            .split(':')[0].replace(new RegExp('00', 'g'), '0')), Number(String(restaurantWorkEndTime)
-            .split(':')[1].replace(new RegExp('00', 'g'), '0'))) : new Date(bookingDate.value).getTime();
+        .replace(new RegExp('00', 'g'), '0')) === 0 ?
+        new Date(nextDay.setDate(new Date(bookingDate.value).getDate() + 1))
+        : new Date(bookingDate.value);
+    if (restaurantWorkEndTime !== undefined) {
+        workEndDate.setHours(
+            Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
+            Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0')),
+        );
+    }
     return (
         <Page back={true}>
             <BookingDateSelectorPopup
@@ -514,7 +519,7 @@ export const Restaurant = () => {
                                                     {/*{console.log('wtf: ', new Date(ts.end_datetime).getTime(), workEndDate)}*/}
                                                     {currentSelectedTime == ts ? `${getTimeShort(
                                                         ts.start_datetime
-                                                    )} -  ${new Date(ts.end_datetime).getTime() > workEndDate ?  restaurantWorkEndTime : getTimeShort(
+                                                    )} -  ${new Date(ts.end_datetime).getTime() > workEndDate.getTime() ?  restaurantWorkEndTime : getTimeShort(
                                                         ts.end_datetime
                                                     )}` : getTimeShort(
                                                         ts.start_datetime

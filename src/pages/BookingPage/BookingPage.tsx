@@ -372,7 +372,7 @@ export const BookingPage: FC = () => {
                 commentary,
                 comms,
                 confirmation.text,
-                preOrder,
+                guestCount + childrenCount < 8 ? false : preOrder,
                 // tg_id: user.
             )
                 .then((res) => {
@@ -428,10 +428,15 @@ export const BookingPage: FC = () => {
         .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
     const nextDay = new Date();
     const workEndDate = Number(String(restaurantWorkEndTime).split(':')[0]
-        .replace(new RegExp('00', 'g'), '0')) === 0 ? new Date(nextDay.setDate(new Date(bookingDate.value).getDate() + 1))
-        .setHours(Number(String(restaurantWorkEndTime)
-            .split(':')[0].replace(new RegExp('00', 'g'), '0')), Number(String(restaurantWorkEndTime)
-            .split(':')[1].replace(new RegExp('00', 'g'), '0'))) : new Date(bookingDate.value).getTime();
+        .replace(new RegExp('00', 'g'), '0')) === 0 ?
+        new Date(nextDay.setDate(new Date(bookingDate.value).getDate() + 1))
+        : new Date(bookingDate.value);
+    if (restaurantWorkEndTime !== undefined) {
+        workEndDate.setHours(
+            Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
+            Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0')),
+        );
+    }
     return (
         <Page back={true}>
             <MenuPopup
@@ -521,7 +526,7 @@ export const BookingPage: FC = () => {
                                         }
                                     />
                                     <DropDownSelect
-                                        title={guestCount ? getGuestsString(guestCount) : 'Гости'}
+                                        title={guestCount ? getGuestsString(guestCount + childrenCount) : 'Гости'}
                                         isValid={guestsValidated}
                                         icon={<UsersIcon size={24}/>}
                                         onClick={() =>
@@ -664,7 +669,7 @@ export const BookingPage: FC = () => {
                                                                     v.start_datetime
                                                                         ? `${getTimeShort(
                                                                               v.start_datetime
-                                                                          )} - ${new Date(v.end_datetime).getTime() > workEndDate ?  restaurantWorkEndTime : getTimeShort(
+                                                                          )} - ${new Date(v.end_datetime).getTime() > workEndDate.getTime() ?  restaurantWorkEndTime : getTimeShort(
                                                                               v.end_datetime
                                                                           )}`
                                                                         : getTimeShort(
@@ -710,7 +715,7 @@ export const BookingPage: FC = () => {
                         <HeaderContainer>
                             <HeaderContent title={'Пожелания к брони'} />
                         </HeaderContainer>
-                        {guestCount >= 8 && (
+                        {guestCount >= 8 || guestCount + childrenCount >= 8 && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: 5}}>
                                 <CheckBoxInput
                                     checked={preOrder}

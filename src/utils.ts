@@ -560,3 +560,24 @@ export const getBlobFromUrl = async (blobUrl: string) => {
     const response = await fetch(blobUrl);
     return await response.blob();
 }
+
+export const getCookie = (name: string) => {
+    const nameExpression = `${name}=`;
+    const cookies = document.cookie.split(';');
+    const cookie = cookies.find(currentCookie => currentCookie.includes(nameExpression));
+    return cookie ? cookie.trim().substring(nameExpression.length, cookie.length) : null;
+}
+
+export const setCookie = (name: string, value: string, expire = 365, path = '/') => {
+    const date = new Date();
+    date.setTime(date.getTime() + (expire * 24 * 3600 * 1000));
+    const expires = date.toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=${path}`;
+};
+
+export const setShortCookie = (name: string, value: string, seconds: number, path = '/') => {
+    const date = new Date();
+    date.setTime(date.getTime() + (seconds * 1000));
+    const expires = date.toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=${path}`;
+};
