@@ -42,7 +42,7 @@ export const APIGetAvailableTimeSlots = (
     guests: number
 ) => {
     return axios.get(
-        `${BASE_URL}/restaurant/${restaurant_id}/availableTimeslots`,
+            `${BASE_URL}/restaurant/${restaurant_id}/availableTimeslots`,
         {
             headers: {
                 Authorization: `Bearer ${token}`,

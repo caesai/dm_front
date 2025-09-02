@@ -12,7 +12,7 @@ import { APIGetTicket } from '@/api/events.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { formatDateDT } from '@/utils.ts';
+// import { formatDateDT } from '@/utils.ts';
 import moment from 'moment';
 // import QRCode from 'react-qr-code';
 // import jsPDF from "jspdf";
@@ -200,9 +200,7 @@ export const TicketInfoPage = () => {
                                     )}
                                 >
                                     {ticket ? (
-                                        formatDateDT(
-                                            new Date(ticket?.date_start),
-                                        )
+                                        moment(ticket?.date_start).format('DD.MM.YYYY')
                                     ) : (
                                         <PlaceholderBlock
                                             width={'50px'}
@@ -288,6 +286,33 @@ export const TicketInfoPage = () => {
                                     )}
                                 </span>
                             </div>
+                        </div>
+                    </div>
+                    <div className={css.ticket_details_row}>
+                        <div className={css.ticket_details_row_obj}>
+                                <span
+                                    className={classNames(
+                                        css.mont,
+                                        css.ticket_details_row_obj__title,
+                                    )}
+                                >
+                                    Номер телефона
+                                </span>
+                            <span
+                                className={classNames(
+                                    css.mont,
+                                    css.ticket_details_row_obj_cont,
+                                )}
+                            >
+                                    {ticket ? (
+                                        `${ticket?.phone} `
+                                    ) : (
+                                        <PlaceholderBlock
+                                            width={'70px'}
+                                            height={'19px'}
+                                        />
+                                    )}
+                                </span>
                         </div>
                     </div>
                     {/*<div*/}
