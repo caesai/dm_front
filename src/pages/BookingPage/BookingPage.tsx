@@ -364,7 +364,7 @@ export const BookingPage: FC = () => {
                 Number(bookingRestaurant.value),
                 bookingDate.value,
                 getTimeShort(currentSelectedTime.start_datetime),
-                (guestCount - childrenCount),
+                guestCount,
                 childrenCount,
                 userName,
                 userPhone,
