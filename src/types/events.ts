@@ -16,6 +16,7 @@ export interface EventTicket {
     date_start: string;
     guest_count: number;
     total: number;
+    phone?: string;
     restaurant: EventRestaurant;
 }
 
