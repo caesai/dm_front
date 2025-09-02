@@ -20,7 +20,7 @@ import {APIGetCurrentBookings} from '@/api/restaurants.ts';
 import {authAtom} from '@/atoms/userAtom.ts';
 import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import {Stories} from "@/components/Stories/Stories.tsx";
-import {DEV_MODE} from "@/api/base.ts";
+// import {DEV_MODE} from "@/api/base.ts";
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { useNavigate } from 'react-router-dom';
 

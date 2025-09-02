@@ -24,6 +24,7 @@ const StyledPopup = styled(Popup)`
         margin: 0!important;
         width: 100%;
         height: 100vh;
+        border: none;
     }
 `;
 
