@@ -10,14 +10,19 @@ import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 const StyledPopup = styled(Popup)`
     &-overlay {
         background: #58585869;
+        width: 100%;
+        margin: 0;
+        height: 100vh;
     }
 
     // use your custom style for ".popup-content"
 
     &-content {
         padding: 0;
-        width: calc(100vw - 30px);
         border-radius: 12px;
+        margin: 0!important;
+        width: 100%;
+        height: 100vh;
     }
 `;
 
@@ -40,7 +45,7 @@ export const BannerPopup: React.FC = () => {
             open={open}
             onClose={closeBanner}
             closeOnDocumentClick={true}
-            className={'popup'}
+            className={css.popup}
         >
             <div ref={closeBtnRef} style={{position: 'absolute', top: 10, right: 10, visibility: 'hidden'}}>
                 <RoundedButton
