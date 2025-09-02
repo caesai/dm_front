@@ -52,7 +52,7 @@ export const IndexPage: FC = () => {
     const [currentBookings, setCurrentBookings] = useState<IBookingInfo[]>([]);
     const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
     const navigate = useNavigate();
-
+    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -107,7 +107,7 @@ export const IndexPage: FC = () => {
         <Page back={false}>
             <div className={css.pageContainer}>
                 <Header/>
-                {DEV_MODE && <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
+                {tg_id && [84327932, 115555014, 118832541, 153495524].includes(tg_id) &&  <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
                 {currentBookingsLoading ? (
                     <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock
