@@ -256,7 +256,14 @@ export const Restaurant = () => {
             window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
         }
     }
-
+    const restaurantWorkEndTime = restaurant?.worktime
+        .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+    const nextDay = new Date();
+    const workEndDate = Number(String(restaurantWorkEndTime).split(':')[0]
+        .replace(new RegExp('00', 'g'), '0')) === 0 ? new Date(nextDay.setDate(new Date(bookingDate.value).getDate() + 1))
+        .setHours(Number(String(restaurantWorkEndTime)
+            .split(':')[0].replace(new RegExp('00', 'g'), '0')), Number(String(restaurantWorkEndTime)
+            .split(':')[1].replace(new RegExp('00', 'g'), '0'))) : new Date(bookingDate.value).getTime();
     return (
         <Page back={true}>
             <BookingDateSelectorPopup
@@ -504,9 +511,10 @@ export const Restaurant = () => {
                                                             : null
                                                     )}
                                                 >
+                                                    {/*{console.log('wtf: ', new Date(ts.end_datetime).getTime(), workEndDate)}*/}
                                                     {currentSelectedTime == ts ? `${getTimeShort(
                                                         ts.start_datetime
-                                                    )} -  ${getTimeShort(
+                                                    )} -  ${new Date(ts.end_datetime).getTime() > workEndDate ?  restaurantWorkEndTime : getTimeShort(
                                                         ts.end_datetime
                                                     )}` : getTimeShort(
                                                         ts.start_datetime
@@ -774,13 +782,13 @@ export const Restaurant = () => {
                             </UnmountClosed>
                         </div>
                     </ContentBlock>
-                    <ContentBlock>
-                        <div className={css.infoBlock}>
-                            <div className={css.top}>
-                                <span className={css.title}>
-                                    Социальные сети
-                                </span>
-                            </div>
+                    {/*<ContentBlock>*/}
+                    {/*    <div className={css.infoBlock}>*/}
+                    {/*        <div className={css.top}>*/}
+                    {/*            <span className={css.title}>*/}
+                    {/*                Социальные сети*/}
+                    {/*            </span>*/}
+                    {/*        </div>*/}
                             {/*<div className={css.infoBlock}>*/}
                             {/*    {restaurant?.socials.map((social) => (*/}
                             {/*        <a*/}
@@ -801,8 +809,8 @@ export const Restaurant = () => {
                             {/*        </a>*/}
                             {/*    ))}*/}
                             {/*</div>*/}
-                        </div>
-                    </ContentBlock>
+                    {/*    </div>*/}
+                    {/*</ContentBlock>*/}
                     <ContentBlock>
                         <div className={css.infoBlock}>
                             <div className={css.top}>

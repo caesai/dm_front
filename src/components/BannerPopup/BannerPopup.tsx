@@ -54,7 +54,15 @@ export const BannerPopup: React.FC = () => {
                     action={closeBanner}
                 />
             </div>
-            <img src={banner} alt="banner" className={css.banner} />
+            <div style={{
+                backgroundImage: 'url(' + banner + ')',
+                backgroundSize: '100%',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                height: '100%',
+                width: '100%',
+                display: 'flex',
+            }} />
         </StyledPopup>
     )
 }
