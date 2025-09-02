@@ -372,7 +372,7 @@ export const BookingPage: FC = () => {
                 commentary,
                 comms,
                 confirmation.text,
-                guestCount + childrenCount < 8 ? false : preOrder,
+                (guestCount + childrenCount) < 8 ? false : preOrder,
                 // tg_id: user.
             )
                 .then((res) => {
@@ -715,7 +715,7 @@ export const BookingPage: FC = () => {
                         <HeaderContainer>
                             <HeaderContent title={'Пожелания к брони'} />
                         </HeaderContainer>
-                        {guestCount >= 8 || guestCount + childrenCount >= 8 && (
+                        {(guestCount + childrenCount) >= 8 && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: 5}}>
                                 <CheckBoxInput
                                     checked={preOrder}
