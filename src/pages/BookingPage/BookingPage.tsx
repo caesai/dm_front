@@ -423,9 +423,15 @@ export const BookingPage: FC = () => {
     //     }
     // }
     // TODO: make proper utils function to calculate work end time
-    const restaurantWorkEndTime = restaurants.find((item) => item.id === Number(bookingRestaurant.value))?.worktime.find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+    const restaurantWorkEndTime = restaurants
+        .find((item) => item.id === Number(bookingRestaurant.value))?.worktime
+        .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
     const nextDay = new Date();
-    const workEndDate = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) === 0 ? new Date(nextDay.setDate(new Date(bookingDate.value).getDate() + 1)).setHours(Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')), Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0'))) : new Date(bookingDate.value).getTime();
+    const workEndDate = Number(String(restaurantWorkEndTime).split(':')[0]
+        .replace(new RegExp('00', 'g'), '0')) === 0 ? new Date(nextDay.setDate(new Date(bookingDate.value).getDate() + 1))
+        .setHours(Number(String(restaurantWorkEndTime)
+            .split(':')[0].replace(new RegExp('00', 'g'), '0')), Number(String(restaurantWorkEndTime)
+            .split(':')[1].replace(new RegExp('00', 'g'), '0'))) : new Date(bookingDate.value).getTime();
     return (
         <Page back={true}>
             <MenuPopup
@@ -655,16 +661,15 @@ export const BookingPage: FC = () => {
                                                         >
                                                             <span>
                                                                 {currentSelectedTime?.start_datetime ==
-                                                                v.start_datetime
-                                                                    ? `${getTimeShort(
-                                                                          v.start_datetime
-                                                                      )} - ${new Date(v.end_datetime).getTime() > workEndDate ?  restaurantWorkEndTime : getTimeShort(
-                                                                          v.end_datetime
-                                                                      )}`
-                                                                    : getTimeShort(
-                                                                          v.start_datetime
-                                                                      )}
-
+                                                                    v.start_datetime
+                                                                        ? `${getTimeShort(
+                                                                              v.start_datetime
+                                                                          )} - ${new Date(v.end_datetime).getTime() > workEndDate ?  restaurantWorkEndTime : getTimeShort(
+                                                                              v.end_datetime
+                                                                          )}`
+                                                                        : getTimeShort(
+                                                                              v.start_datetime
+                                                                          )}
                                                             </span>
                                                         </div>
                                                     </SwiperSlide>

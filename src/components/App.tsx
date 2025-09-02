@@ -42,6 +42,7 @@ import { StageFour } from '@/pages/OnboardingPage/stages/StageFour.tsx';
 import { StageFive } from '@/pages/OnboardingPage/stages/StageFive.tsx';
 import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
 import {StageSeven} from "@/pages/OnboardingPage/stages/StageSeven.tsx";
+import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -87,6 +88,7 @@ const AppRouter = () => {
     return (
         <BrowserRouter basename={import.meta.env.MODE !== 'development' ? undefined : '/dm_front/'}>
             <ScrollToTop />
+            <BannerPopup />
             <Redirecter />
             {
             //     earlyAccess && !user?.early_access ? (
