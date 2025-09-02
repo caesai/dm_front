@@ -56,7 +56,7 @@ export const BannerPopup: React.FC = () => {
             </div>
             <div style={{
                 backgroundImage: 'url(' + banner + ')',
-                backgroundSize: '100%',
+                backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
                 height: '100%',
