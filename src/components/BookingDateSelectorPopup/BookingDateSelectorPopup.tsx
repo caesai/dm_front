@@ -47,13 +47,18 @@ export const BookingDateSelectorPopup: FC<Props> = ({
             setBookingDate(values[0]);
         }
     }, [isOpen, values]);
-
+    const onChange = (val: PickerValueObj) => {
+        setBookingDate({
+            title: formatDate(val.value),
+            value: val.value
+        });
+    }
     const picker = (
         <>
             <Picker
-                value={bookingDate}
                 // @ts-expect-error broken-lib
-                onChange={setBookingDate}
+                value={bookingDate}
+                onChange={onChange}
                 wheelMode="natural"
                 height={120}
             >

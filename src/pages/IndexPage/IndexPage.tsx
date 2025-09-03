@@ -103,7 +103,6 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter(v => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
-    console.log('tg_id: ', tg_id);
     return (
         <Page back={false}>
             <div className={css.pageContainer}>

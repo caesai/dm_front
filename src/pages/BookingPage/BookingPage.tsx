@@ -67,6 +67,7 @@ import {
 import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
 import { InfoIcon } from '@/components/Icons/InfoIcon.tsx';
 import { BookingInfoPopup } from '@/components/BookingInfoPopup/BookingInfoPopup.tsx';
+import moment from 'moment/moment';
 // import { Share } from '@/components/Icons/Share.tsx';
 
 const confirmationList: IConfirmationType[] = [
@@ -426,16 +427,16 @@ export const BookingPage: FC = () => {
     const restaurantWorkEndTime = restaurants
         .find((item) => item.id === Number(bookingRestaurant.value))?.worktime
         .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
-    const nextDay = new Date();
-    const workEndDate = Number(String(restaurantWorkEndTime).split(':')[0]
-        .replace(new RegExp('00', 'g'), '0')) === 0 ?
-        new Date(nextDay.setDate(new Date(bookingDate.value).getDate() + 1))
-        : new Date(bookingDate.value);
+    let workEndTime = moment(bookingDate.value);
     if (restaurantWorkEndTime !== undefined) {
-        workEndDate.setHours(
-            Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
-            Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0')),
-        );
+        const endOfDay = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) < 12;
+        if (endOfDay) {
+            workEndTime = moment(workEndTime.clone().add(1, 'days').startOf('days').format('YYYY-MM-DD'));
+        }
+        workEndTime.set({
+            hour: Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
+            minutes: Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0'))
+        })
     }
     return (
         <Page back={true}>
@@ -669,9 +670,9 @@ export const BookingPage: FC = () => {
                                                                     v.start_datetime
                                                                         ? `${getTimeShort(
                                                                               v.start_datetime
-                                                                          )} - ${new Date(v.end_datetime).getTime() > workEndDate.getTime() ?  restaurantWorkEndTime : getTimeShort(
+                                                                          )} - ${moment(v.end_datetime).isBefore(workEndTime) ? getTimeShort(
                                                                               v.end_datetime
-                                                                          )}`
+                                                                          ) : restaurantWorkEndTime}`
                                                                         : getTimeShort(
                                                                               v.start_datetime
                                                                           )}
