@@ -42,7 +42,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
               to={`/restaurant/${restaurant.id}`}
               onClick={(event) => {
                   event.preventDefault();
-                  if (restaurant.id !== 11 && restaurant.id !== 4 && restaurant.id !== 6 && restaurant.id !== 7 && restaurant.id !== 9) {
+                  if (restaurant.id !== 11 && restaurant.id !== 10 && restaurant.id !== 4 && restaurant.id !== 6 && restaurant.id !== 7 && restaurant.id !== 9) {
                       navigate(`/restaurant/${restaurant.id}`);
                   } else {
                       toggle();
