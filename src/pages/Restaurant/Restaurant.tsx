@@ -326,6 +326,12 @@ export const Restaurant = () => {
                         <div className={css.headerNavBlock}>
                             <RoundedButton
                                 icon={
+                                    <Share color={'var(--dark-grey)'}/>
+                                }
+                                action={() => shareRestaurant()}
+                            />
+                            <RoundedButton
+                                icon={
                                     <IconlyProfile color={'var(--dark-grey)'}/>
                                 }
                                 action={() => goToProfile()}
@@ -363,12 +369,7 @@ export const Restaurant = () => {
                             {/*    }*/}
                             {/*    action={() => setCallPopup(true)}*/}
                             {/*/>*/}
-                            <RoundedButton
-                                icon={
-                                    <Share color={'var(--dark-grey)'}/>
-                                }
-                                action={() => shareRestaurant()}
-                            />
+
                         </>
                     )}
                 />
