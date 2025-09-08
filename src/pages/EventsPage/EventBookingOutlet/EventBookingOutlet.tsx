@@ -12,7 +12,7 @@ import {useAtom} from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
 import {guestCountAtom} from '@/atoms/eventBookingAtom.ts';
 import {AppLoadingScreen} from "@/components/AppLoadingScreen/AppLoadingScreen.tsx";
-import { EventClockIcon } from '@/components/Icons/EventClock.tsx';
+import { TimeCircleIcon } from '@/components/Icons/TimeCircleIcon.tsx';
 
 export const EventBookingOutlet = () => {
     const navigate = useNavigate();
@@ -97,26 +97,28 @@ export const EventBookingOutlet = () => {
             <div className={css.contentContainer__top}>
                 <div className={css.contentItem}>
                     <h2 className={css.contentItem__title}>Детали заказа</h2>
-                    <div className={css.dateInfoContainer_title}>
-                            <span
-                                className={css.dateInfoContainer_dates__times}
-                            >{bookingInfo.restaurant?.title}</span>
-                        <span className={css.dateInfoContainer_dates__date}>
-                                {bookingInfo.restaurant?.address}
-                            </span>
+
+                    <div className={css.goodsItems}>
+                        <div className={css.itemContainer}>
+                            <div className={css.goodsItems_item}>
+                                <span className={css.goodsItems_item__title}>
+                                    {bookingInfo.event?.name}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <div className={css.dateInfoContainer}>
                         <div className={css.dateInfoContainer_dates}>
                             <span
                                 className={css.dateInfoContainer_dates__times}
                             >
-                                <EventClockIcon size={18}/>
+                                <TimeCircleIcon size={16} color={'#989898'}/>
                                 {moment(
                                     bookingInfo.event?.date_start
                                 ).format('HH:mm')}{' '}
                             </span>
                             <span className={css.dateInfoContainer_dates__date}>
-                                <CalendarIcon size={18}/>
+                                <CalendarIcon size={18} color={'#989898'}/>
                                 {bookingInfo.event?.date_start && moment(bookingInfo.event?.date_start).format('DD.MM.YYYY')}
                             </span>
 
@@ -128,17 +130,13 @@ export const EventBookingOutlet = () => {
             <div className={css.contentContainer}>
                 <div className={css.contentItem}>
                     {/*<h2 className={css.contentItem__title}>Услуги</h2>*/}
-                    <div className={css.goodsItems}>
-                        <div className={css.itemContainer}>
-                            <div className={css.goodsItems_item}>
-                                <span className={css.goodsItems_item__title}>
-                                    {bookingInfo.event?.name}
-                                </span>
-                                <span className={css.goodsItems_item__price}>
-                                    {bookingInfo.event?.ticket_price} ₽
-                                </span>
-                            </div>
-                        </div>
+                    <div className={css.dateInfoContainer_title}>
+                            <span
+                                className={css.dateInfoContainer_dates__times}
+                            >{bookingInfo.restaurant?.title}</span>
+                        <span className={css.dateInfoContainer_dates__date}>
+                                {bookingInfo.restaurant?.address}
+                            </span>
                     </div>
                     <div className={css.hr}/>
                     <div className={classNames(css.goodsItems_item, css.aic)}>
