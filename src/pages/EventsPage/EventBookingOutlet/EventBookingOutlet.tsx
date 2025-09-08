@@ -12,6 +12,7 @@ import {useAtom} from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
 import {guestCountAtom} from '@/atoms/eventBookingAtom.ts';
 import {AppLoadingScreen} from "@/components/AppLoadingScreen/AppLoadingScreen.tsx";
+import { EventClockIcon } from '@/components/Icons/EventClock.tsx';
 
 export const EventBookingOutlet = () => {
     const navigate = useNavigate();
@@ -96,41 +97,31 @@ export const EventBookingOutlet = () => {
             <div className={css.contentContainer__top}>
                 <div className={css.contentItem}>
                     <h2 className={css.contentItem__title}>Детали заказа</h2>
-                    <div className={css.dateInfoContainer}>
-                        <div className={css.cubicIconContainer}>
-                            <CalendarIcon size={22}/>
-                        </div>
-                        <div className={css.dateInfoContainer_dates}>
-                            <span className={css.dateInfoContainer_dates__date}>
-                                {/*{bookingInfo.date*/}
-                                {/*    ? formatDateDT(*/}
-                                {/*          new Date(*/}
-                                {/*              bookingInfo.date.start_datetime*/}
-                                {/*          )*/}
-                                {/*      )*/}
-                                {/*    : '...'}*/}
-                                {bookingInfo.event?.date_start && moment(bookingInfo.event?.date_start).format('DD.MM.YYYY')}
-                            </span>
-                            <span
-                                className={css.dateInfoContainer_dates__times}
-                            >
-                                {moment(
-                                    bookingInfo.event?.date_start
-                                ).format('HH:mm')}{' '}
-                                {/*-{' '}*/}
-                                {/*{moment(bookingInfo.date?.end_datetime).format(*/}
-                                {/*    'HH:mm'*/}
-                                {/*)}*/}
-                            </span>
-                        </div>
-                        <div className={css.dateInfoContainer_dates}>
+                    <div className={css.dateInfoContainer_title}>
                             <span
                                 className={css.dateInfoContainer_dates__times}
                             >{bookingInfo.restaurant?.title}</span>
-                            <span className={css.dateInfoContainer_dates__date}>
+                        <span className={css.dateInfoContainer_dates__date}>
                                 {bookingInfo.restaurant?.address}
                             </span>
+                    </div>
+                    <div className={css.dateInfoContainer}>
+                        <div className={css.dateInfoContainer_dates}>
+                            <span
+                                className={css.dateInfoContainer_dates__times}
+                            >
+                                <EventClockIcon size={18}/>
+                                {moment(
+                                    bookingInfo.event?.date_start
+                                ).format('HH:mm')}{' '}
+                            </span>
+                            <span className={css.dateInfoContainer_dates__date}>
+                                <CalendarIcon size={18}/>
+                                {bookingInfo.event?.date_start && moment(bookingInfo.event?.date_start).format('DD.MM.YYYY')}
+                            </span>
+
                         </div>
+
                     </div>
                 </div>
             </div>

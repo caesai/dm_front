@@ -53,10 +53,16 @@
     align-items: center;
 }
 
-.dateInfoContainer_dates {
+.dateInfoContainer_title {
     display: flex;
     flex-direction: column;
     gap: 0;
+}
+
+.dateInfoContainer_dates {
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
 }
 
 .dateInfoContainer_dates__date {
@@ -64,6 +70,8 @@
     font-weight: 700;
     font-size: 14px;
     color: var(--grey);
+    display: inline-flex;
+    align-items: center;
 }
 
 .dateInfoContainer_dates__times {
