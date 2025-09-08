@@ -18,6 +18,7 @@ type TStoriesCitiesIds = number[]
 export interface IStory {
     id: number;
     type: TStory;
+    component_type: number | null;
     duration: number;
     url: string | null;
     title: string | null;
