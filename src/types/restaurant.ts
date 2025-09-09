@@ -90,6 +90,8 @@ export interface IBookingInfo {
     booking_status: string;
     user_comments: string;
     tags: string;
+    booking_type?: string;
+    event_title?: string;
 }
 
 export interface ICurrentBookings {

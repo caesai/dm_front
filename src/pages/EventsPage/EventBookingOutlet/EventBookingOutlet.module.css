@@ -72,13 +72,23 @@
     color: var(--grey);
     display: inline-flex;
     align-items: center;
+    gap: 5px;
+    span {
+        color: #989898;
+    }
 }
 
 .dateInfoContainer_dates__times {
     font-family: "Mont", sans-serif;
     font-weight: 700;
     font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     color: var(--black);
+    span {
+        color: #989898;
+    }
 }
 
 .goodsItems {

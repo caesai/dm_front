@@ -6,6 +6,7 @@ import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import { useNavigate } from 'react-router-dom';
 import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
 import { weekdaysMap } from '@/utils.ts';
+import { TicketIcon } from '@/components/Icons/TicketIcon.tsx';
 
 interface BookingReminderProps {
     id: number;
@@ -15,6 +16,8 @@ interface BookingReminderProps {
     address: string;
     persons: number;
     children: number;
+    booking_type?: string;
+    event_title?: string;
 }
 
 const formatDate = (dateStr: string): string => {
@@ -27,14 +30,15 @@ const formatDate = (dateStr: string): string => {
 
 export const BookingReminder: FC<BookingReminderProps> = (p) => {
     const navigate = useNavigate();
-
+    console.log('p.type: ', p)
     return (
         <div
             className={css.bookingReminder}
-            onClick={() => navigate(`/myBookings/${p.id}`)}
+            onClick={() => p.booking_type === 'event' ? navigate(`/tickets/${p.id}`) : navigate(`/myBookings/${p.id}`)}
         >
             <div className={css.inner}>
-                <span className={css.title}>{p.title}</span>
+                <span className={css.title}>{p.booking_type === 'event' ? p.event_title : p.title}</span>
+                {p.booking_type === 'event' ? <span className={css.subText}>{p.title}</span> : null}
                 <span className={css.subText}>{p.address}</span>
                 <div className={css.sub}>
                     <div className={css.subItem}>
@@ -54,10 +58,11 @@ export const BookingReminder: FC<BookingReminderProps> = (p) => {
                         </span>
                     </div>
                     <div className={css.subItem}>
-                        <UsersIcon
-                            size={16}
-                            color={'var(--dark-grey)'}
-                        ></UsersIcon>
+                        {p.booking_type === 'event' ? (
+                            <TicketIcon size={16} />
+                        ) : (
+                            <UsersIcon size={16} color={'var(--dark-grey)'} />
+                        )}
                         <span className={css.subText}>{p.persons}</span>
                         {!!p.children && (
                             <>

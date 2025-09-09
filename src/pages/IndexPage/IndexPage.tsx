@@ -23,6 +23,8 @@ import {Stories} from "@/components/Stories/Stories.tsx";
 // import {DEV_MODE} from "@/api/base.ts";
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { useNavigate } from 'react-router-dom';
+import { APIGetTickets } from '@/api/events.ts';
+import moment from 'moment';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -59,9 +61,34 @@ export const IndexPage: FC = () => {
             return;
         }
         setCurrentBookingsLoading(true);
-        APIGetCurrentBookings(auth.access_token)
-            .then((res) => setCurrentBookings(res.data.currentBookings))
-            .finally(() => setCurrentBookingsLoading(false));
+        // APIGetCurrentBookings(auth.access_token)
+        //     .then((res) => setCurrentBookings(res.data.currentBookings))
+        //     .finally(() => setCurrentBookingsLoading(false));
+        // APIGetTickets(auth.access_token)
+        //     .then((res) => setTickets(res.data))
+        //     .finally(() => setEventsLoading(false));
+        Promise.all([APIGetCurrentBookings(auth.access_token),APIGetTickets(auth.access_token)])
+            .then((responses) => {
+                // console.log('responses: ', responses);
+                // @ts-expect-error
+                const events: IBookingInfo[] = responses[1].data.map((event) => ({
+                    id: event.id,
+                    booking_type: 'event',
+                    booking_date: moment(event.date_start).format('YYYY-MM-DD'),
+                    time: moment(event.date_start).format('HH:MM'),
+                    restaurant: event.restaurant,
+                    tags: null,
+                    duration: 0,
+                    guests_count: event.guest_count,
+                    children_count: 0,
+                    event_title: event.event_title,
+                }));
+                const bookings = [...responses[0].data.currentBookings, ...events];
+                setCurrentBookings(bookings);
+            })
+            .finally(() => {
+                setCurrentBookingsLoading(false);
+            })
     }, []);
 
     useEffect(() => {
@@ -103,6 +130,7 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter(v => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
+    console.log('currentBookings: ', currentBookings)
     return (
         <Page back={false}>
             <div className={css.pageContainer}>
@@ -117,20 +145,24 @@ export const IndexPage: FC = () => {
                         />
                     </div>
                 ) : (
-                    currentBookings.filter((book) => {
-                        return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime()
-                    }).map((book) => (
-                        <BookingReminder
-                            key={book.id}
-                            id={book.id}
-                            title={book.restaurant.title}
-                            address={book.restaurant.address}
-                            date={book.booking_date}
-                            time={book.time}
-                            persons={book.guests_count}
-                            children={book.children_count}
-                        />
-                    ))
+                    currentBookings
+                        .filter((book) => {
+                            return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime()
+                        })
+                        .map((book) => (
+                            <BookingReminder
+                                key={book.id}
+                                id={book.id}
+                                title={book.restaurant.title}
+                                address={book.restaurant.address}
+                                date={book.booking_date}
+                                time={book.time}
+                                persons={book.guests_count}
+                                children={book.children_count}
+                                booking_type={book.booking_type}
+                                event_title={book.event_title}
+                            />
+                        ))
                 )}
                 <OptionsNavigation/>
                 <div className={css.restaurants}>
