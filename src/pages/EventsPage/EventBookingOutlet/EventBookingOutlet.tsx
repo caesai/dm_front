@@ -136,8 +136,8 @@ export const EventBookingOutlet = () => {
                     {/*<h2 className={css.contentItem__title}>Услуги</h2>*/}
                     <div className={css.dateInfoContainer_title}>
                         <div className={css.dateInfoContainer_dates__times}>
-                            <HomeIcon size={18} />
-                            <span style={{ color: 'black'}}>{bookingInfo.restaurant?.title}</span>
+                            <HomeIcon size={18} color={'#989898'} />
+                            <span>{bookingInfo.restaurant?.title}</span>
                         </div>
                         <div className={css.dateInfoContainer_dates__date}>
                             <PinIcon size={18} />

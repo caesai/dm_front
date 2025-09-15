@@ -34,7 +34,7 @@ export const Redirecter = () => {
 
     useEffect(() => {
         const paramsObject = Object.fromEntries([...params]);
-
+        console.log('paramsObject: ', paramsObject);
         if (
             auth?.access_token &&
             !user?.phone_number &&
@@ -49,6 +49,9 @@ export const Redirecter = () => {
             !ONBOARDING_EXCLUDED.includes(location.pathname) &&
             !location.pathname.includes('events')
         ) {
+            if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
+                navigate(`/events/super`, { replace: true });
+            }
             if (location.search.includes('eventId')) {
                 const eventId = getEventIdFromParams(paramsObject, 'eventId');
                 navigate(`/events/${eventId}?shared=true`);
@@ -81,6 +84,9 @@ export const Redirecter = () => {
         if (location.search.includes('bookingId')) {
             const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
             navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });
+        }
+        if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
+            navigate(`/events/super`, { replace: true });
         }
     }, [auth, user, location.pathname, location.search]);
 

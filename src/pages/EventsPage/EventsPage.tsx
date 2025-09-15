@@ -108,7 +108,6 @@ export const EventsPage: React.FC = () => {
     // useEffect(() => {
     //     console.log('bookingInfo: ', bookingInfo);
     // }, [bookingInfo]);
-
     useEffect(() => {
         // TODO: handling error through Modal Popup
         if (params.get('paymentError')) {
@@ -118,12 +117,14 @@ export const EventsPage: React.FC = () => {
             alert('Возникла ошибка при оплате мероприятия');
         }
     }, [params]);
-
+    console.log('params', location.pathname.includes('super'));
     const goBack = () => {
         if (eventURL) {
             setGuestCount(0);
         }
         if (Boolean(params.get('shared'))) {
+            navigate('/', { replace: true });
+        } else if (location.pathname.includes('super')) {
             navigate('/', { replace: true });
         } else {
             navigate(-1);
@@ -142,7 +143,7 @@ export const EventsPage: React.FC = () => {
                         {isRestaurantsPage ? 'Выберите ресторан' : 'Мероприятия'}
                     </span>
                     <div className={css.header_spacer}>
-                        {eventURL ? (
+                        {(eventURL && !location.pathname.includes('super')) ? (
                             <RoundedButton
                                 icon={
                                     <Share color={'var(--dark-grey)'} />

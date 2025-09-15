@@ -83,7 +83,7 @@ export const IndexPage: FC = () => {
                     children_count: 0,
                     event_title: event.event_title,
                 }));
-                const bookings = [...responses[0].data.currentBookings, ...events];
+                const bookings = [...events, ...responses[0].data.currentBookings];
                 setCurrentBookings(bookings);
             })
             .finally(() => {

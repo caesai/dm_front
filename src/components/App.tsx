@@ -43,6 +43,7 @@ import { StageFive } from '@/pages/OnboardingPage/stages/StageFive.tsx';
 import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
 import {StageSeven} from "@/pages/OnboardingPage/stages/StageSeven.tsx";
 import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
+import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -112,21 +113,13 @@ const AppRouter = () => {
                             path={'/events/:eventId'}
                             element={<EventConfirmationOutlet />}
                         />
-                        {/*<Route*/}
-                        {/*    path={'/events/:name/restaurant'}*/}
-                        {/*    element={<RestaurantsListOutlet />}*/}
-                        {/*/>*/}
-                        {/*<Route*/}
-                        {/*    path={'/events/:name/restaurant/:res'}*/}
-                        {/*    element={<DTSelectionOutlet />}*/}
-                        {/*/>*/}
-                        {/*<Route*/}
-                        {/*    path={'/events/:name/restaurant/:res/guests'}*/}
-                        {/*    element={<EventConfirmationOutlet />}*/}
-                        {/*/>*/}
                         <Route
                             path={'/events/:eventId/confirm'}
                             element={<EventBookingOutlet />}
+                        />
+                        <Route
+                            path={'/events/super'}
+                            element={<EventSuperInfoOutlet />}
                         />
                     </Route>
                     <Route path={'/tickets'} element={<UserTicketsPage />} />
@@ -155,7 +148,6 @@ const AppRouter = () => {
                     <Route path={'/onboarding'} element={<OnboardingPage />}>
                         <Route path={'/onboarding/1'} element={<StageOne />} />
                         <Route path={'/onboarding/2'} element={<StageTwo />} />
-                         {/*<Route path={'/onboarding/3'} element={<StageThree />} />*/}
                         <Route path={'/onboarding/4'} element={<StageFour />} />
                         <Route path={'/onboarding/3'} element={<StageFive />} />
                         <Route path={'/onboarding/5'} element={<StageSix />} />
