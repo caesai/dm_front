@@ -113,6 +113,7 @@ export const EventSuperApplyOutlet = () => {
                             onFocus={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'relative';
+
                                 }
                             }}
                             onBlur={() => {
@@ -130,11 +131,13 @@ export const EventSuperApplyOutlet = () => {
                             onFocus={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'relative';
+                                    bookingBtn.current.style.marginBottom = '60px';
                                 }
                             }}
                             onBlur={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'fixed';
+                                    bookingBtn.current.style.marginBottom = '';
                                 }
                             }}
                         />
