@@ -137,7 +137,7 @@ export const EventSuperApplyOutlet = () => {
                             onBlur={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'fixed';
-                                    bookingBtn.current.style.marginBottom = '';
+                                    bookingBtn.current.style.marginBottom = 'auto';
                                 }
                             }}
                         />
