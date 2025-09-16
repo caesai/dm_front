@@ -41,3 +41,7 @@ export interface IEventBooking {
     restaurant?: EventRestaurant;
     guestCount?: number;
 }
+
+export interface ISuperEventHasApplicationResponse {
+    has_application: boolean;
+}

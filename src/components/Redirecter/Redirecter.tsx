@@ -4,6 +4,7 @@ import {
 } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { setDataToLocalStorage } from '@/utils.ts';
 
 export const Redirecter = () => {
     const location = useLocation();
@@ -34,7 +35,6 @@ export const Redirecter = () => {
 
     useEffect(() => {
         const paramsObject = Object.fromEntries([...params]);
-        console.log('paramsObject: ', paramsObject);
         if (
             auth?.access_token &&
             !user?.phone_number &&
@@ -50,6 +50,7 @@ export const Redirecter = () => {
             !location.pathname.includes('events')
         ) {
             if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
+                setDataToLocalStorage('superEvent', {});
                 navigate(`/events/super`, { replace: true });
             }
             if (location.search.includes('eventId')) {

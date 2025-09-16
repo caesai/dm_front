@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import {APICompleteOnboarding, APIUserName} from '@/api/user.ts';
 import {useAtom} from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
-import {getDataFromLocalStorage} from "@/utils.ts";
+import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
 import {TextInput} from "@/components/TextInput/TextInput.tsx";
 import {useState} from "react";
 
@@ -24,8 +24,12 @@ export const StageSeven = () => {
             .then((d) => setUser(d.data))
             .then(() => {
                 const sharedEvent = getDataFromLocalStorage('sharedEvent');
+                const superEvent = getDataFromLocalStorage('superEvent');
                 if(sharedEvent) {
                     navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
+                } else if (superEvent) {
+                    navigate('/events/super');
+                    removeDataFromLocalStorage('superEvent');
                 } else {
                     navigate('/');
                 }

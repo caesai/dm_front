@@ -1,29 +1,37 @@
-import React, { useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import css from './EventSuperInfoOutlet.module.css';
-import { IEventBookingContext } from '@/utils.ts';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import classNames from 'classnames';
 import { useAtom } from 'jotai/index';
-import { guestCountAtom } from '@/atoms/eventBookingAtom.ts';
-import { userAtom } from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import hh from '/img/hh.jpg';
+import { APIGetSuperEventHasApplication, APIPostSuperEventCheckLink } from '@/api/events.ts';
 
 export const EventSuperInfoOutlet: React.FC = () => {
     const navigate = useNavigate();
-    const [bookingInfo] = useOutletContext<IEventBookingContext>();
     const [hideAbout, setHideAbout] = useState(true);
-    const [guestCount] = useAtom(guestCountAtom);
+    const [hasApplication, setHasApplication] = useState(false);
     const [user] = useAtom(userAtom);
+    const [auth] = useAtom(authAtom);
 
     const next = () => {
-        if (guestCount === 0) return;
         if (user?.complete_onboarding) {
-            navigate(`/events/${bookingInfo.event?.id}/confirm`);
+            navigate(`/events/super/apply`);
         } else {
             navigate(`/onboarding/4`);
         }
     };
+
+    useEffect(() => {
+        if (auth?.access_token) {
+            APIPostSuperEventCheckLink(auth?.access_token).then();
+            APIGetSuperEventHasApplication(auth?.access_token)
+                .then((response) => {
+                    setHasApplication(response.data.has_application);
+                });
+        }
+    }, []);
 
     const description = 'Hospitality Heroes — ежеквартальное образовательное мероприятие Dreamteam, которое мы  делаем открытым для всех профессионалов индустрии гостеприимства.';
     return (
@@ -101,16 +109,22 @@ export const EventSuperInfoOutlet: React.FC = () => {
                         </span>
                     </div>
                 </div>
-
+                {hasApplication && (
+                    <div className={css.event_params_row}>
+                        <div className={css.event_params_col}>
+                            <span className={css.event_params_col__title}>Заявка на участие отправлена</span>
+                        </div>
+                    </div>
+                )}
             </div>
-            {bookingInfo.event && Number(bookingInfo.event?.tickets_left) > 0 && (
+            {!hasApplication && (
                 <div className={css.absoluteBottom}>
                     <div className={css.bottomWrapper}>
                         <UniversalButton
                             width={'full'}
-                            title={!isNaN(Number(bookingInfo.event?.ticket_price)) && Number(bookingInfo.event?.ticket_price) > 0 ? 'Купить билет' : 'Забронировать'}
+                            title={'Участвовать'}
                             theme={'red'}
-                            action={() => next()}
+                            action={next}
                         />
                     </div>
                 </div>

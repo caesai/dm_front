@@ -43,6 +43,7 @@ import { StageFive } from '@/pages/OnboardingPage/stages/StageFive.tsx';
 import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
 import {StageSeven} from "@/pages/OnboardingPage/stages/StageSeven.tsx";
 import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
+import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
 import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
 
 const AppRouter = () => {
@@ -120,6 +121,10 @@ const AppRouter = () => {
                         <Route
                             path={'/events/super'}
                             element={<EventSuperInfoOutlet />}
+                        />
+                        <Route
+                            path={'/events/super/apply'}
+                            element={<EventSuperApplyOutlet />}
                         />
                     </Route>
                     <Route path={'/tickets'} element={<UserTicketsPage />} />

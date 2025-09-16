@@ -22,9 +22,10 @@ import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.t
 import {Stories} from "@/components/Stories/Stories.tsx";
 // import {DEV_MODE} from "@/api/base.ts";
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import { useNavigate } from 'react-router-dom';
-import { APIGetTickets } from '@/api/events.ts';
+import { Link, useNavigate } from 'react-router-dom';
+import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
+import superevent from '/img/super.png';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -55,6 +56,7 @@ export const IndexPage: FC = () => {
     const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
     const navigate = useNavigate();
     const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+    const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -88,7 +90,10 @@ export const IndexPage: FC = () => {
             })
             .finally(() => {
                 setCurrentBookingsLoading(false);
-            })
+            });
+        APIGetSuperEventHasAccess(auth.access_token).then((response) => {
+                setHasSuperEventAccess(response.data);
+        })
     }, []);
 
     useEffect(() => {
@@ -136,6 +141,13 @@ export const IndexPage: FC = () => {
             <div className={css.pageContainer}>
                 <Header/>
                 {tg_id && [84327932, 115555014, 118832541, 153495524].includes(tg_id) &&  <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
+                {hasSuperEventAccess && (
+                    <div style={{ marginRight: 15}}>
+                        <Link to={'/events/super'}>
+                            <img src={superevent} style={{ maxWidth: '100%', width: '100%'}} alt={''} />
+                        </Link>
+                    </div>
+                )}
                 {currentBookingsLoading ? (
                     <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock
