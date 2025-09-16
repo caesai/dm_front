@@ -83,9 +83,9 @@ export const EventSuperApplyOutlet = () => {
                             placeholder={'Ваша фамилия'}
                         />
                         <TextInput
-                            value={userInfo.phone}
+                            value={'+' + userInfo.phone}
                             onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, phone: e }))
+                                setUserInfo((p) => ({ ...p, phone: e.replace('+', '') }))
                             }
                             placeholder={'Ваш контактный номер'}
                         />
@@ -94,7 +94,7 @@ export const EventSuperApplyOutlet = () => {
                             onChange={(e) =>
                                 setUserInfo((p) => ({ ...p, work_place: e }))
                             }
-                            placeholder={'Ваше место работы (организаия)'}
+                            placeholder={'Ваше место работы (организация)'}
                         />
                         <TextInput
                             value={userInfo.job_title}

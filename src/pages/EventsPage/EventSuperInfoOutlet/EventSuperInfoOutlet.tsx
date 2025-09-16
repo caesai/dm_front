@@ -19,7 +19,7 @@ export const EventSuperInfoOutlet: React.FC = () => {
         if (user?.complete_onboarding) {
             navigate(`/events/super/apply`);
         } else {
-            navigate(`/onboarding/4`);
+            navigate(`/onboarding/5`);
         }
     };
 
@@ -112,7 +112,7 @@ export const EventSuperInfoOutlet: React.FC = () => {
                 {hasApplication && (
                     <div className={css.event_params_row}>
                         <div className={css.event_params_col}>
-                            <span className={css.event_params_col__title}>Заявка на участие отправлена</span>
+                            <span className={css.event_params_col__title}>&#10003; Заявка на участие отправлена</span>
                         </div>
                     </div>
                 )}
