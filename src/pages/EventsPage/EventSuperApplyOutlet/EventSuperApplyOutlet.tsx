@@ -2,7 +2,7 @@ import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from './EventSuperApplyOutlet.module.css';
 import { useNavigate } from 'react-router-dom';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
@@ -25,6 +25,7 @@ export const EventSuperApplyOutlet = () => {
         visit_purpose: ''
     });
     const [loading, setLoading] = useState(false);
+    const bookingBtn = useRef<HTMLDivElement>(null);
 
     const validate = useMemo(() => {
         return (
@@ -109,6 +110,16 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, experience: e }))
                             }
                             placeholder={'Ваш опыт работы'}
+                            onFocus={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'relative';
+                                }
+                            }}
+                            onBlur={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'fixed';
+                                }
+                            }}
                         />
                         <TextInput
                             value={userInfo.visit_purpose}
@@ -116,11 +127,21 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, visit_purpose: e }))
                             }
                             placeholder={'Цель посещения ивента'}
+                            onFocus={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'relative';
+                                }
+                            }}
+                            onBlur={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'fixed';
+                                }
+                            }}
                         />
                     </div>
                 </div>
             </div>
-            <div className={css.absoluteBottom}>
+            <div className={css.absoluteBottom} ref={bookingBtn}>
                 <div className={css.bottomWrapper}>
                     <UniversalButton
                         width={'full'}

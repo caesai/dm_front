@@ -76,7 +76,7 @@ export const EventSuperInfoOutlet: React.FC = () => {
                             Дата
                         </span>
                         <span className={css.event_params_col__data}>
-                            17.09.2025
+                            11.11.2025
                         </span>
                     </div>
 
@@ -85,7 +85,7 @@ export const EventSuperInfoOutlet: React.FC = () => {
                             Время
                         </span>
                         <span className={css.event_params_col__data}>
-                            18:00
+                            10:00
                         </span>
                     </div>
                 </div>
