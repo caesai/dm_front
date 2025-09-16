@@ -114,18 +114,20 @@ export const EventsPage: React.FC = () => {
             alert('Возникла ошибка при оплате мероприятия');
         }
     }, [params]);
+
     const goBack = () => {
         if (eventURL) {
             setGuestCount(0);
         }
         if (Boolean(params.get('shared'))) {
             navigate('/', { replace: true });
-        } else if (location.pathname.includes('super')) {
+        } else if (location.pathname.includes('super') && !location.pathname.includes('apply')) {
             navigate('/', { replace: true });
         } else {
             navigate(-1);
         }
     };
+
     return (
         <Page back={true}>
             <div className={css.page}>
