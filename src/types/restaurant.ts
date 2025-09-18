@@ -92,6 +92,7 @@ export interface IBookingInfo {
     tags: string;
     booking_type?: string;
     event_title?: string;
+    duration: number;
 }
 
 export interface ICurrentBookings {

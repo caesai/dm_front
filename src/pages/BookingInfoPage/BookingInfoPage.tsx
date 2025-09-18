@@ -27,7 +27,7 @@ import {
     weekdaysMap,
 } from '@/utils.ts';
 import classNames from 'classnames';
-import { BOOKING_DURATION, BOOKINGCOMMENTMOCK } from '../../mockData.ts';
+import { BOOKINGCOMMENTMOCK } from '../../mockData.ts';
 import { BASE_BOT } from '@/api/base.ts';
 import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
 import { DoubleCheckIcon } from '@/components/Icons/DoubleCheckIcon.tsx';
@@ -50,7 +50,7 @@ export const BookingInfoPage = () => {
     const getEndTime = useCallback((start: string): string => {
         const [hours, minutes] = start.split(':').map(Number);
         const endDate = new Date();
-        endDate.setHours(hours, minutes + BOOKING_DURATION, 0);
+        endDate.setHours(hours, minutes + Number(booking?.duration), 0);
         return endDate.toTimeString().slice(0, 5); // Returns in 'HH:mm' format
     }, []);
 
