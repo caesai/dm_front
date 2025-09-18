@@ -670,9 +670,9 @@ export const BookingPage: FC = () => {
                                                                     v.start_datetime
                                                                         ? `${getTimeShort(
                                                                               v.start_datetime
-                                                                          )} - ${moment(v.end_datetime).isBefore(workEndTime) ? getTimeShort(
+                                                                          )} - ${getTimeShort(
                                                                               v.end_datetime
-                                                                          ) : restaurantWorkEndTime}`
+                                                                          )}`
                                                                         : getTimeShort(
                                                                               v.start_datetime
                                                                           )}
