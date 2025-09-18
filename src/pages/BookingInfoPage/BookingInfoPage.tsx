@@ -47,10 +47,10 @@ export const BookingInfoPage = () => {
     // Return the end time of the booking based on the start time and duration
     // start is in format 'HH:mm'
     // duration is in minutes (from BOOKING_DURATION mock data)
-    const getEndTime = useCallback((start: string): string => {
+    const getEndTime = useCallback((start: string, duration: number): string => {
         const [hours, minutes] = start.split(':').map(Number);
         const endDate = new Date();
-        endDate.setHours(hours, minutes + Number(booking?.duration), 0);
+        endDate.setHours(hours, minutes + duration, 0);
         return endDate.toTimeString().slice(0, 5); // Returns in 'HH:mm' format
     }, []);
 
@@ -349,7 +349,7 @@ export const BookingInfoPage = () => {
                                                 css.bookingInfoDetails_item__text
                                             }
                                         >
-                                            {`${booking.time}-${getEndTime(booking.time)}`}
+                                            {`${booking.time}-${getEndTime(booking.time, booking.duration)}`}
                                         </span>
                                     ) : (
                                         <PlaceholderBlock
