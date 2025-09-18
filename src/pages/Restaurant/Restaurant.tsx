@@ -523,9 +523,9 @@ export const Restaurant = () => {
                                                 >
                                                     {currentSelectedTime == ts ? `${getTimeShort(
                                                         ts.start_datetime
-                                                    )} -  ${getTimeShort(
+                                                    )} -  ${moment(ts.end_datetime).isBefore(workEndTime) ? getTimeShort(
                                                         ts.end_datetime
-                                                    )}` : getTimeShort(
+                                                    ) : restaurantWorkEndTime}` : getTimeShort(
                                                         ts.start_datetime
                                                     )}
                                                 </div>
