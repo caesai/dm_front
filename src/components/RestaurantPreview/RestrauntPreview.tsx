@@ -18,11 +18,12 @@ import {
     getRestaurantStatus,
 } from '@/utils.ts';
 import {useAtom} from "jotai/index";
-import {userAtom} from "@/atoms/userAtom.ts";
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-// import {Toast} from "@/components/Toast/Toast.tsx";
+import {Toast} from "@/components/Toast/Toast.tsx";
+import { APIPostNewRestaurant } from '@/api/restaurants.ts';
 
 interface IProps {
     restaurant: IRestaurant;
@@ -36,14 +37,43 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
     const [restaurants] = useAtom(restaurantsListAtom);
     const [selectedCity, setSelectedCity] = useState<number | null>(null);
     // const [auth] = useAtom(authAtom);
+    const [auth] = useAtom(authAtom);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastShow, setToastShow] = useState<boolean>(false);
+
+    const wantToBeFirst = () => {
+        if (!auth?.access_token) {
+            navigate('/onboarding/5');
+            return;
+        }
+
+        APIPostNewRestaurant(auth?.access_token)
+            .then(() => {
+                setToastShow(true);
+                setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
+            })
+            .catch((err) => {
+                if (err.response) {
+                    setToastMessage('Возникла ошибка: ' + err.response.data.message);
+                }
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    // setToastShow(false);
+                    setToastMessage(null);
+                }, 4000);
+            });
+    }
 
     return (
         <Link className={css.restaurant}
               to={`/restaurant/${restaurant.id}`}
               onClick={(event) => {
                   event.preventDefault();
-                  if (restaurant.id !== 11 && restaurant.id !== 10 && restaurant.id !== 4 && restaurant.id !== 6 && restaurant.id !== 7 && restaurant.id !== 9) {
+                  if (restaurant.id !== 12 && restaurant.id !== 11 && restaurant.id !== 10 && restaurant.id !== 4 && restaurant.id !== 6 && restaurant.id !== 7 && restaurant.id !== 9) {
                       navigate(`/restaurant/${restaurant.id}`);
+                  } else if (restaurant.id == 12) {
+                    // nothing
                   } else {
                       toggle();
                   }
@@ -129,12 +159,14 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                                 backgroundImage: `url(${restaurant.brand_chef.photo_url})`,
                             }}
                         ></div>
-                        <div className={css.chefInfo}>
-                            <span className={css.chefTitle}>Бренд-шеф</span>
-                            <span className={css.chefName}>
-                                {restaurant.brand_chef.name}
-                            </span>
-                        </div>
+                        {restaurant.id !== 12 && (
+                            <div className={css.chefInfo}>
+                                <span className={css.chefTitle}>Бренд-шеф</span>
+                                <span className={css.chefName}>
+                                    {restaurant.brand_chef.name}
+                                </span>
+                            </div>
+                        )}
                     </div>
             </div>
             <div className={css.resInfo}>
@@ -143,17 +175,32 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                     <span className={css.resSlogan}>{restaurant.slogan}</span>
                     <span className={css.resSlogan}>{restaurant.address}</span>
                 </div>
-                <div className={css.tags}>
-                    <InfoTag
-                        text={getRestaurantStatus(
-                            restaurant.worktime,
-                            getCurrentWeekdayShort(),
-                            getCurrentTimeShort()
-                        )}
-                    />
-                    <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`}/>
-                </div>
+                {restaurant.id !== 12 ? (
+                    <div className={css.tags}>
+                        <InfoTag
+                            text={getRestaurantStatus(
+                                restaurant.worktime,
+                                getCurrentWeekdayShort(),
+                                getCurrentTimeShort()
+                            )}
+                        />
+                        <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`}/>
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex'}}>
+                        {toastShow ? (
+                            <div className={css.success_animation}>
+                                <svg className={css.checkmark} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                    <circle className={css.checkmark__circle} cx="26" cy="26" r="25" fill="none" />
+                                    <path className={css.checkmark__check} fill="none"
+                                          d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                                </svg>
+                            </div>
+                        ) : <span onClick={wantToBeFirst} className={css.resFirst}> Хочу побывать первым</span>}
+                    </div>
+                )}
             </div>
+            <Toast message={toastMessage} showClose={toastShow} />
         </Link>
     );
 };

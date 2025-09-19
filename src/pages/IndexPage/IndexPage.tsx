@@ -26,6 +26,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
 import superevent from '/img/super.png';
+import newres from '/img/chinois_app.png';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -135,7 +136,38 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter(v => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
-    console.log('currentBookings: ', currentBookings)
+    console.log('currentCityA: ', currentCityA);
+    const restaurantListed = currentCityA === 'spb' ? [{
+        "id": 12,
+        "title": "Self Edge Chinois",
+        "slogan": "Загородный ресторан в центре города",
+        "address": "Санкт-Перербург, ул. Добролюбова, 11",
+        "logo_url": "",
+        "thumbnail_photo": newres,
+        "avg_cheque": 3000,
+        "about_text": "",
+        "about_dishes": "Европейская",
+        "about_kitchen": "Американская",
+        "about_features": "",
+        "phone_number": "",
+        "address_lonlng": "",
+        "address_station": "",
+        "address_station_color": "",
+        "city": {
+            "id": 2,
+            "name": "Санкт-Петербург",
+            "name_english": "spb",
+            "name_dative": "Санкт-Петербурге"
+        },
+        "gallery": [],
+        "brand_chef": {},
+        "worktime": [],
+        "menu": [],
+        "menu_imgs": [],
+        "socials": [],
+        "photo_cards": []
+    },...restaurantsList] : restaurantsList;
+    // @ts-ignore
     return (
         <Page back={false}>
             <div className={css.pageContainer}>
@@ -183,8 +215,9 @@ export const IndexPage: FC = () => {
                         currentValue={currentCityS}
                         onChange={updateCurrentCity}
                     />
-                    {restaurantsList.map((rest) => (
+                    {restaurantListed.map((rest) => (
                         <RestaurantPreview
+                            // @ts-ignore
                             restaurant={rest}
                             key={`rest-${rest.id}`}
                         />

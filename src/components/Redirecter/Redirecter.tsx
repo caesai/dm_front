@@ -54,6 +54,9 @@ export const Redirecter = () => {
                 setDataToLocalStorage('superEvent', {});
                 navigate(`/events/super`, { replace: true });
             }
+            if (paramsObject.tgWebAppStartParam === 'newselfokna') {
+                navigate('/newrestaurant', { replace: true });
+            }
             if (location.search.includes('eventId')) {
                 const eventId = getEventIdFromParams(paramsObject, 'eventId');
                 navigate(`/events/${eventId}?shared=true`);
@@ -90,6 +93,9 @@ export const Redirecter = () => {
         }
         if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
             navigate(`/events/super`, { replace: true });
+        }
+        if (paramsObject.tgWebAppStartParam === 'newselfokna') {
+            navigate('/newrestaurant', { replace: true });
         }
     }, [auth, user, location.pathname, location.search]);
 

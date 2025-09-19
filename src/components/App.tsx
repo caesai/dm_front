@@ -45,6 +45,7 @@ import {StageSeven} from "@/pages/OnboardingPage/stages/StageSeven.tsx";
 import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
 import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
 import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
+import { NewRestaurant } from '@/pages/NewRestaurant/NewRestaurant.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -135,6 +136,7 @@ const AppRouter = () => {
                         element={<BookingInfoPage />}
                     />
                     <Route path={'/restaurant/:id'} element={<Restaurant />} />
+                    <Route path={'/newrestaurant'} element={<NewRestaurant />} />
                     <Route path={'/booking'} element={<BookingPage />} />
                     <Route
                         path={'/bookingConfirmation'}
