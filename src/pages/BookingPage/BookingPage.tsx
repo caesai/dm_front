@@ -195,7 +195,7 @@ export const BookingPage: FC = () => {
         () =>
             availableTimeslots.filter((v) => {
                 const h = new Date(v.start_datetime).getHours();
-                return h >= 18 && h <= 23;
+                return h >= 18 && h <= 23 || h == 0;
             }),
         [availableTimeslots]
     );
@@ -270,7 +270,7 @@ export const BookingPage: FC = () => {
         if (hours >= 12 && hours < 18) {
             return 'day';
         }
-        if (hours >= 18 && hours <= 23) {
+        if (hours >= 18 && hours <= 23 || hours == 0) {
             return 'evening';
         }
         return 'day';
