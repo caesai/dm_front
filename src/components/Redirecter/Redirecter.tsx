@@ -47,7 +47,8 @@ export const Redirecter = () => {
             auth?.access_token &&
             (!user?.license_agreement || !user.complete_onboarding) &&
             !ONBOARDING_EXCLUDED.includes(location.pathname) &&
-            !location.pathname.includes('events')
+            !location.pathname.includes('events') &&
+            !location.pathname.includes('restaurant')
         ) {
             if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
                 setDataToLocalStorage('superEvent', {});
@@ -58,7 +59,8 @@ export const Redirecter = () => {
                 navigate(`/events/${eventId}?shared=true`);
             } else if (location.search.includes('restaurantId')) {
                 const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
-                navigate('/restaurant/' + restaurantId + '?shared=true', { replace: true });
+                setDataToLocalStorage('superEvent', { id: restaurantId});
+                navigate('/restaurant/' + restaurantId + '?shared=true');
             } else if (location.search.includes('bookingId')) {
                 const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
                 navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });

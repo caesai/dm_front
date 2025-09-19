@@ -25,11 +25,15 @@ export const StageSeven = () => {
             .then(() => {
                 const sharedEvent = getDataFromLocalStorage('sharedEvent');
                 const superEvent = getDataFromLocalStorage('superEvent');
+                const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
                 if(sharedEvent) {
                     navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
                 } else if (superEvent) {
                     navigate('/events/super');
                     removeDataFromLocalStorage('superEvent');
+                } else if (sharedRestaurant) {
+                    navigate('/restaurant/' + JSON.parse(sharedRestaurant).id);
+                    removeDataFromLocalStorage('sharedRestaurant');
                 } else {
                     navigate('/');
                 }

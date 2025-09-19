@@ -146,7 +146,6 @@ export const Restaurant = () => {
     }, [id]);
 
     useEffect(() => {
-        // console.log('restaurant: ', restaurant)
         if (restaurant?.gallery) {
             setGallery(transformGallery(restaurant.gallery));
         }
@@ -272,7 +271,13 @@ export const Restaurant = () => {
             minutes: Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0'))
         })
     }
-
+    const handleNextBtn = () => {
+        if (searchParams.get('shared')) {
+            navigate('/onboarding/5');
+        } else {
+            navigate(`/booking?id=${restaurant?.id}`);
+        }
+    }
     return (
         <Page back={true}>
             <BookingDateSelectorPopup
@@ -345,7 +350,7 @@ export const Restaurant = () => {
             </div>
             <div className={css.floatingFooter}>
                 <BottomButtonWrapper
-                    onClick={() => navigate(`/booking?id=${restaurant?.id}`)}
+                    onClick={handleNextBtn}
                     additionalBtns={(
                         <>
                             <RoundedButton
