@@ -3,6 +3,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import react from '@vitejs/plugin-react-swc';
 import mkcert from 'vite-plugin-mkcert';
 import {resolve} from 'path'
+import fs from "fs";
 
 // const BASE_URL = process.env.NODE_ENV == 'production' ? '/dm_front/' : '/';
 // https://vitejs.dev/config/
@@ -23,13 +24,22 @@ export default defineConfig(({mode}) => ({
         publicDir: './public',
         server: {
             // Exposes your dev server and makes it accessible for the devices in the same network.
-            host: true,
+            port: 443,
+            host: "0.0.0.0",
+            hmr: {
+                host: 'dt-mini-app.local',
+                port: 443,
+            },
             proxy: {
                 '/api/': {
                     target: 'https://devsoko.ru',
                     changeOrigin: true,
                 }
-            }
+            },
+            https: {
+                key: fs.readFileSync('./.cert/localhost-key.pem'),
+                cert: fs.readFileSync('./.cert/localhost.pem'),
+            },
         },
         build: {
             target: 'ES2022',
