@@ -48,8 +48,10 @@ export default defineConfig(({mode}) => ({
                     main: resolve(__dirname, "index.html"),
                     404: resolve(__dirname, "public/404.html"),
                 },
+                external: ['https']
             },
             // assetsDir: 'assets',
         },
+
     })
 );
