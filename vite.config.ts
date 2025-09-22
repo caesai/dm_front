@@ -3,7 +3,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import react from '@vitejs/plugin-react-swc';
 import mkcert from 'vite-plugin-mkcert';
 import {resolve} from 'path'
-import fs from "fs";
+// import fs from "fs";
 
 // const BASE_URL = process.env.NODE_ENV == 'production' ? '/dm_front/' : '/';
 // https://vitejs.dev/config/
@@ -36,10 +36,10 @@ export default defineConfig(({mode}) => ({
                     changeOrigin: true,
                 }
             },
-            https: {
-                key: fs.readFileSync('./.cert/localhost-key.pem'),
-                cert: fs.readFileSync('./.cert/localhost.pem'),
-            },
+            // https: {
+            //     key: fs.readFileSync('./.cert/localhost-key.pem'),
+            //     cert: fs.readFileSync('./.cert/localhost.pem'),
+            // },
         },
         build: {
             target: 'ES2022',
@@ -48,10 +48,8 @@ export default defineConfig(({mode}) => ({
                     main: resolve(__dirname, "index.html"),
                     404: resolve(__dirname, "public/404.html"),
                 },
-                external: ['https']
             },
             // assetsDir: 'assets',
         },
-
     })
 );
