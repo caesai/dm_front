@@ -31,7 +31,6 @@ export const CitySelect: FC<IConfirmationSelect> = ({
     const getLocation = async () => {
         if (locationManager.requestLocation.isAvailable()) {
             const location = await locationManager.requestLocation();
-            console.log(location)
             const city = NearestCity(location.latitude, location.longitude);
             const closestCity = options.filter((option) => option.text === city.toString());
             onChange(closestCity[0]);

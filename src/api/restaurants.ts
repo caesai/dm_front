@@ -9,8 +9,12 @@ import {
 } from '@/types/restaurant.ts';
 import { IEventInRestaurant } from '@/types/events.ts';
 
-export const APIGetRestaurants = () => {
-    return axios.get<IRestaurant[]>(`${BASE_URL}/restaurant/list`);
+export const APIGetRestaurants = (token: string) => {
+    return axios.get<IRestaurant[]>(`${BASE_URL}/restaurant/list`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 };
 
 export const APIGetAvailableDays = (
@@ -38,7 +42,7 @@ export const APIGetAvailableTimeSlots = (
     guests: number
 ) => {
     return axios.get(
-        `${BASE_URL}/restaurant/${restaurant_id}/availableTimeslots`,
+            `${BASE_URL}/restaurant/${restaurant_id}/availableTimeslots`,
         {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -63,7 +67,8 @@ export const APICreateBooking = (
     email: string,
     comment: string,
     prepared_comments: string[],
-    confirmation: string
+    confirmation: string,
+    pre_order_dishes: boolean,
 ) => {
     return axios.post<IBookingCreate>(
         `${BASE_URL}/restaurant/${restaurant_id}/booking`,
@@ -78,6 +83,8 @@ export const APICreateBooking = (
             comment: import.meta.env.MODE === 'development' ? 'ТЕСТОВОЕ БРОНИРОВАНИЕ! НЕ ОТВЕЧАТЬ!' : comment ,
             prepared_comments,
             confirmation,
+            pre_order_dishes,
+            tags: prepared_comments.join(','),
         },
         {
             headers: {
@@ -154,9 +161,14 @@ export const APISendReview = (
     );
 };
 
-export const APIGetEventsInRestaurant = async (restaurant_id: number) => {
+export const APIGetEventsInRestaurant = async (restaurant_id: number, token: string) => {
     return await axios.get<IEventInRestaurant[]>(
-        `${BASE_URL}/restaurant/${restaurant_id}/events`
+        `${BASE_URL}/restaurant/${restaurant_id}/events`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
     );
 };
 

@@ -4,7 +4,7 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { InputSlider } from '@/pages/RestaurantMapPage/InputSlider/InputSlider.tsx';
 // import { RestaurantOnMapIcon } from '@/components/Icons/RestaurantOnMapIcon.tsx';
 import { RestaurantOnMapSelectedIcon } from '@/components/Icons/RestaurantOnMapIconSelected.tsx';
@@ -19,7 +19,7 @@ import {
 import * as YMaps from '@yandex/ymaps3-types';
 import { Feature } from '@yandex/ymaps3-types/packages/clusterer';
 import { useAtom } from 'jotai';
-import { getCurrentCity } from '@/atoms/cityListAtom.ts';
+import { cityListAtom, getCurrentCity, ICity } from '@/atoms/cityListAtom.ts';
 import { IRestaurant } from '@/types/restaurant.ts';
 import { IconlyLocation } from '@/components/Icons/Location.tsx';
 import { TimeCircle } from '@/components/Icons/TimeCircle.tsx';
@@ -38,12 +38,15 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { Taxi } from '@/components/YandexTaxi/Taxi.tsx';
 import { Discovery } from 'react-iconly';
 import { openLink } from '@telegram-apps/sdk-react';
+import { setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { DownArrow } from '@/components/Icons/DownArrow.tsx';
+// import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 
 interface IRestaurantDetails {
     selectedRest: IRestaurant;
 }
 
-const RestaurantDetails = ({ selectedRest }: IRestaurantDetails) => {
+const RestaurantDetails: React.FC<IRestaurantDetails> = ({ selectedRest }) => {
     const navigate = useNavigate();
 
     return (
@@ -220,17 +223,18 @@ export const RestaurantMapPage = () => {
     const [, setBackButton] = useAtom(backButtonAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [selectedRest, setSelectedRest] = useState<IRestaurant>();
+    const [cityListA] = useAtom(cityListAtom);
+    const [isCityListOpen, setIsCityListOpen] = useState(false);
+    const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
 
     useEffect(() => {
         const search_id = searchParams.get('restaurant');
-        console.log('search_id :', search_id);
         if (!search_id) {
             return;
         }
 
         const res = restaurants.find((v) => v.id == Number(search_id));
         if (res) {
-            console.log('set rest', res);
             setSelectedRest(res);
         }
     }, []);
@@ -241,8 +245,6 @@ export const RestaurantMapPage = () => {
                 restaurant: String(selectedRest.id),
             }));
         }
-
-        console.log('selected rest', selectedRest?.id);
     }, [selectedRest]);
 
     useEffect(() => {
@@ -367,6 +369,18 @@ export const RestaurantMapPage = () => {
         [selectedPoint]
     );
 
+    const openCityList = () => {
+        setIsCityListOpen(true);
+    }
+
+    const closeCityList = () => {
+        setIsCityListOpen(false);
+    }
+
+    const changeCity = (id: string) => {
+        setCurrentCityA(id);
+        closeCityList();
+    }
     return (
         <Page back={true}>
             <div className={css.page}>
@@ -387,7 +401,12 @@ export const RestaurantMapPage = () => {
                         />
                         <span className={css.header_title}>
                             Рестораны в{' '}
-                            <span className={css.red}>{city?.name_dative}</span>
+                            <span className={css.red} onClick={openCityList}> {city?.name_dative} <DownArrow size={16} /></span>
+                            <div className={classNames(css.dropdown_content, isCityListOpen ? css.dropdown_active : null)}>
+                                {cityListA.map((v: ICity, i) => (
+                                    <span key={i} onClick={() => changeCity(String(v.name_english))}>{v.name_dative}</span>
+                                ))}
+                            </div>
                         </span>
                         <div className={css.header_spacer} />
                     </div>

@@ -77,7 +77,6 @@ export const FeedbackPopup: FC<Props> = (props) => {
 
     useEffect(() => {
         if (props.isOpen) {
-            console.log('isOpen');
             setIsClosing(false);
             setRating(0);
             setCurrentTags([]);

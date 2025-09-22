@@ -15,3 +15,14 @@
 .button__active {
     border: 2px solid var(--black, #000000)
 }
+
+.disabled {
+    font-family: 'Mont', sans-serif;
+    border: 1px solid var(--light-grey, #D0D0D0);
+    padding: 6px 14px;
+    font-weight: 700;
+    font-size: 12px;
+    span {
+        color: var(--dark-grey)!important;
+    }
+}

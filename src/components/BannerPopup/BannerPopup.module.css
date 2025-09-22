@@ -1,0 +1,11 @@
+.popup {
+    display: flex;
+    flex-direction: column;
+    padding: 30px 15px 20px 15px;
+    gap: 15px;
+    margin: 0;
+}
+
+.banner {
+    max-width: 100%;
+}

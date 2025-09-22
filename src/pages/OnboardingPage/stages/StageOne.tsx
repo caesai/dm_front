@@ -31,13 +31,13 @@ export const StageOne: React.FC<StageOneProps> = ({ isStory }) => {
                     </div>
                     {!isStory && (
                         <div className={css.button_container}>
-                        <div
-                            className={css.redButton}
-                            onClick={() => navigate('/onboarding/2')}
-                        >
-                            <span>Продолжить</span>
+                            <div
+                                className={css.redButton}
+                                onClick={() => navigate('/onboarding/2')}
+                            >
+                                <span>Продолжить</span>
+                            </div>
                         </div>
-                    </div>
                     )}
                 </div>
                 <div className={css.stageOne_wrapper}>

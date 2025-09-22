@@ -34,6 +34,7 @@
     font-family: 'Mont', sans-serif;
     font-weight: 800;
     font-size: 14px;
+    position: relative;
 }
 
 .header_spacer {
@@ -43,6 +44,9 @@
 
 .red {
     color: var(--red);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .bottomEl {
@@ -212,4 +216,30 @@
     display: flex;
     gap: 4px;
     align-items: center;
+}
+
+.dropdown_content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 10px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    z-index: 999;
+    flex-direction: column;
+    border-radius: 16px;
+    right: 0;
+    gap: 10px;
+    text-align: center;
+}
+
+.dropdown_content span {
+    padding-bottom: 3px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dropdown_active {
+    display: flex;
 }

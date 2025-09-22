@@ -1,17 +1,20 @@
-import {CalendarIcon} from '@/components/Icons/CalendarIcon.tsx';
+import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import classNames from 'classnames';
-import {TextInput} from '@/components/TextInput/TextInput.tsx';
-import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import { TextInput } from '@/components/TextInput/TextInput.tsx';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from './EventBookingOutlet.module.css';
-import {useNavigate, useOutletContext} from 'react-router-dom';
-import {formatDateDT, getDataFromLocalStorage, IEventBookingContext, removeDataFromLocalStorage} from '@/utils.ts';
-import {useMemo, useRef, useState} from 'react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import { getDataFromLocalStorage, IEventBookingContext, removeDataFromLocalStorage } from '@/utils.ts';
+import { useMemo, useRef, useState } from 'react';
 import moment from 'moment';
-import {APICreateInvoice} from '@/api/events.ts';
-import {useAtom} from 'jotai';
-import {authAtom, userAtom} from '@/atoms/userAtom.ts';
-import {guestCountAtom} from '@/atoms/eventBookingAtom.ts';
-import {AppLoadingScreen} from "@/components/AppLoadingScreen/AppLoadingScreen.tsx";
+import { APICreateInvoice } from '@/api/events.ts';
+import { useAtom } from 'jotai';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { guestCountAtom } from '@/atoms/eventBookingAtom.ts';
+import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+import { ClockIcon } from '@/components/Icons/ClockIcon.tsx';
+import { HomeIcon } from '@/components/Icons/HomeIcon.tsx';
+import { PinIcon } from '@/components/Icons/PinIcon.tsx';
 
 export const EventBookingOutlet = () => {
     const navigate = useNavigate();
@@ -31,7 +34,7 @@ export const EventBookingOutlet = () => {
 
     const calculateTotal = useMemo(() => {
         const ticketPrice = bookingInfo.event?.ticket_price;
-        if (!ticketPrice) {
+        if (ticketPrice === undefined) {
             return null;
         }
         return guestCount * ticketPrice;
@@ -40,8 +43,7 @@ export const EventBookingOutlet = () => {
     const validate = useMemo(() => {
         return (
             bookingInfo.restaurant &&
-            bookingInfo.event_date &&
-            bookingInfo.date &&
+            bookingInfo.event?.date_start &&
             userInfo.name &&
             userInfo.phone &&
             auth?.access_token
@@ -51,8 +53,7 @@ export const EventBookingOutlet = () => {
     const createInvoice = () => {
         if (
             bookingInfo.restaurant &&
-            bookingInfo.event_date &&
-            bookingInfo.date &&
+            bookingInfo.event?.date_start &&
             userInfo.name &&
             userInfo.phone &&
             auth?.access_token &&
@@ -61,15 +62,19 @@ export const EventBookingOutlet = () => {
             setLoading(true);
             APICreateInvoice(
                 bookingInfo.restaurant.id,
-                bookingInfo.event_date?.id,
-                bookingInfo.date,
+                bookingInfo.event?.id,
+                {
+                    start_datetime: bookingInfo.event.date_start,
+                    end_datetime: bookingInfo.event.date_start,
+                    is_free: true,
+                },
                 userInfo.name,
                 userInfo.phone,
                 '',
                 userInfo.commentary,
                 'В Telegram',
                 guestCount,
-                auth?.access_token
+                auth?.access_token,
             ).then((res) => {
                 const sharedEvent = getDataFromLocalStorage('sharedEvent');
                 if (sharedEvent) {
@@ -77,7 +82,11 @@ export const EventBookingOutlet = () => {
                 }
                 res.data.payment_url
                     ? window.location.replace(res.data.payment_url)
-                    : navigate('/events');
+                    : navigate('/tickets/' + res.data.booking_id);
+            }).catch(error => {
+                setLoading(false);
+                // TODO: Handle Error Using Modal Popup
+                console.error(error);
             });
         }
     };
@@ -90,57 +99,52 @@ export const EventBookingOutlet = () => {
             <div className={css.contentContainer__top}>
                 <div className={css.contentItem}>
                     <h2 className={css.contentItem__title}>Детали заказа</h2>
-                    <div className={css.dateInfoContainer}>
-                        <div className={css.cubicIconContainer}>
-                            <CalendarIcon size={22}/>
-                        </div>
-                        <div className={css.dateInfoContainer_dates}>
-                            <span className={css.dateInfoContainer_dates__date}>
-                                {/*{bookingInfo.date*/}
-                                {/*    ? formatDateDT(*/}
-                                {/*          new Date(*/}
-                                {/*              bookingInfo.date.start_datetime*/}
-                                {/*          )*/}
-                                {/*      )*/}
-                                {/*    : '...'}*/}
-                                {bookingInfo.event?.restaurants[0].dates[0] && formatDateDT(
-                                    new Date(bookingInfo.event?.restaurants[0].dates[0].date_start)
-                                )}
-                            </span>
-                            <span
-                                className={css.dateInfoContainer_dates__times}
-                            >
-                                {moment(
-                                    bookingInfo.date?.start_datetime
-                                ).format('HH:mm')}{' '}
-                                {/*-{' '}*/}
-                                {/*{moment(bookingInfo.date?.end_datetime).format(*/}
-                                {/*    'HH:mm'*/}
-                                {/*)}*/}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className={css.contentContainer}>
-                <div className={css.contentItem}>
-                    <h2 className={css.contentItem__title}>Услуги</h2>
+
                     <div className={css.goodsItems}>
                         <div className={css.itemContainer}>
                             <div className={css.goodsItems_item}>
                                 <span className={css.goodsItems_item__title}>
                                     {bookingInfo.event?.name}
                                 </span>
-                                <span className={css.goodsItems_item__price}>
-                                    {bookingInfo.event?.ticket_price} ₽
-                                </span>
-                            </div>
-                            <div className={css.roundedText}>
-                                <span>✓ 100% предоплата</span>
                             </div>
                         </div>
                     </div>
-                    <div className={css.hr}/>
+                    <div className={css.dateInfoContainer}>
+                        <div className={css.dateInfoContainer_dates}>
+                            <div
+                                className={css.dateInfoContainer_dates__times}
+                            >
+                                <ClockIcon size={16} color={'#989898'} />
+                                <span>
+                                {moment(
+                                    bookingInfo.event?.date_start,
+                                ).format('HH:mm')}{' '}
+                                    </span>
+                            </div>
+                            <div className={css.dateInfoContainer_dates__date}>
+                                <CalendarIcon size={18} color={'#989898'} />
+                                <span>
+                                    {bookingInfo.event?.date_start && moment(bookingInfo.event?.date_start).format('DD.MM.YYYY')}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className={css.contentContainer}>
+                <div className={css.contentItem}>
+                    {/*<h2 className={css.contentItem__title}>Услуги</h2>*/}
+                    <div className={css.dateInfoContainer_title}>
+                        <div className={css.dateInfoContainer_dates__times}>
+                            <HomeIcon size={18} color={'#989898'} />
+                            <span>{bookingInfo.restaurant?.title}</span>
+                        </div>
+                        <div className={css.dateInfoContainer_dates__date}>
+                            <PinIcon size={18} />
+                            <span>{bookingInfo.restaurant?.address}</span>
+                        </div>
+                    </div>
+                    <div className={css.hr} />
                     <div className={classNames(css.goodsItems_item, css.aic)}>
                         <span className={css.goodsItems_item__total}>
                             Количество билетов
@@ -166,14 +170,14 @@ export const EventBookingOutlet = () => {
                         <TextInput
                             value={userInfo.name}
                             onChange={(e) =>
-                                setUserInfo((p) => ({...p, name: e}))
+                                setUserInfo((p) => ({ ...p, name: e }))
                             }
                             placeholder={'Имя'}
                         ></TextInput>
                         <TextInput
                             value={userInfo.phone}
                             onChange={(e) =>
-                                setUserInfo((p) => ({...p, phone: e}))
+                                setUserInfo((p) => ({ ...p, phone: e }))
                             }
                             placeholder={'Номер телефона'}
                         ></TextInput>
@@ -184,23 +188,23 @@ export const EventBookingOutlet = () => {
                         {/*    }*/}
                         {/*    placeholder={'Email'}*/}
                         {/*></TextInput>*/}
-                        <TextInput
-                            value={userInfo.commentary}
-                            onChange={(e) =>
-                                setUserInfo((p) => ({...p, commentary: e}))
-                            }
-                            onFocus={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.position = 'relative';
-                                }
-                            }}
-                            onBlur={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.position = 'fixed';
-                                }
-                            }}
-                            placeholder={'Комментарий'}
-                        ></TextInput>
+                        {/*<TextInput*/}
+                        {/*    value={userInfo.commentary}*/}
+                        {/*    onChange={(e) =>*/}
+                        {/*        setUserInfo((p) => ({...p, commentary: e}))*/}
+                        {/*    }*/}
+                        {/*    onFocus={() => {*/}
+                        {/*        if(bookingBtn.current) {*/}
+                        {/*            bookingBtn.current.style.position = 'relative';*/}
+                        {/*        }*/}
+                        {/*    }}*/}
+                        {/*    onBlur={() => {*/}
+                        {/*        if(bookingBtn.current) {*/}
+                        {/*            bookingBtn.current.style.position = 'fixed';*/}
+                        {/*        }*/}
+                        {/*    }}*/}
+                        {/*    placeholder={'Комментарий'}*/}
+                        {/*></TextInput>*/}
                     </div>
                     {/*<ConfirmationSelect*/}
                     {/*    options={confirmationList}*/}
@@ -217,9 +221,9 @@ export const EventBookingOutlet = () => {
                         theme={'red'}
                         action={() => {
                             if (validate) {
-                                createInvoice()
+                                createInvoice();
                             } else {
-                                alert('TODO: Validation alert')
+                                alert('TODO: Validation alert');
                             }
                         }
                         }

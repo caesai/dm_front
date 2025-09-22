@@ -24,9 +24,9 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.tsx';
 import { EventListOutlet } from '@/pages/EventsPage/EventListOutlet/EventListOutlet.tsx';
 import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
-import { EventInfoOutlet } from '@/pages/EventsPage/EventInfoOutlet/EventInfoOutlet.tsx';
-import { RestaurantsListOutlet } from '@/pages/EventsPage/RestaurantsListOutlet/RestaurantsListOutlet.tsx';
-import { DTSelectionOutlet } from '@/pages/EventsPage/DTSelectionOutlet/DTSelectionOutlet.tsx';
+// import { EventInfoOutlet } from '@/pages/EventsPage/EventInfoOutlet/EventInfoOutlet.tsx';
+// import { RestaurantsListOutlet } from '@/pages/EventsPage/RestaurantsListOutlet/RestaurantsListOutlet.tsx';
+// import { DTSelectionOutlet } from '@/pages/EventsPage/DTSelectionOutlet/DTSelectionOutlet.tsx';
 import { EventConfirmationOutlet } from '@/pages/EventsPage/EventConfirmationOutlet/EventConfirmationOutlet.tsx';
 import { EventBookingOutlet } from '@/pages/EventsPage/EventBookingOutlet/EventBookingOutlet.tsx';
 import { PaymentReturnPage } from '@/pages/PaymentReturnPage/PaymentReturnPage.tsx';
@@ -42,6 +42,10 @@ import { StageFour } from '@/pages/OnboardingPage/stages/StageFour.tsx';
 import { StageFive } from '@/pages/OnboardingPage/stages/StageFive.tsx';
 import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
 import {StageSeven} from "@/pages/OnboardingPage/stages/StageSeven.tsx";
+import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
+import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
+import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
+import { NewRestaurant } from '@/pages/NewRestaurant/NewRestaurant.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -56,8 +60,7 @@ const AppRouter = () => {
     useEffect(() => {
         if (!loadingComplete && auth?.access_token) {
             APIGetCityList().then((res) => setCities(res.data));
-            APIGetRestaurants().then((res) => {
-                console.log('restaurants: ', res.data)
+            APIGetRestaurants(auth.access_token).then((res) => {
                 setRestaurants(res.data);
             });
         }
@@ -85,10 +88,10 @@ const AppRouter = () => {
             setLoadingComplete(true);
         }
     }, [cities, restaurants]);
-
     return (
         <BrowserRouter basename={import.meta.env.MODE !== 'development' ? undefined : '/dm_front/'}>
             <ScrollToTop />
+            <BannerPopup />
             <Redirecter />
             {
             //     earlyAccess && !user?.early_access ? (
@@ -109,24 +112,20 @@ const AppRouter = () => {
                     <Route path={'/events'} element={<EventsPage />}>
                         <Route path={'/events'} element={<EventListOutlet />} />
                         <Route
-                            path={'/events/:name'}
-                            element={<EventInfoOutlet />}
-                        />
-                        <Route
-                            path={'/events/:name/restaurant'}
-                            element={<RestaurantsListOutlet />}
-                        />
-                        <Route
-                            path={'/events/:name/restaurant/:res'}
-                            element={<DTSelectionOutlet />}
-                        />
-                        <Route
-                            path={'/events/:name/restaurant/:res/guests'}
+                            path={'/events/:eventId'}
                             element={<EventConfirmationOutlet />}
                         />
                         <Route
-                            path={'/events/:id/restaurant/:res/confirm'}
+                            path={'/events/:eventId/confirm'}
                             element={<EventBookingOutlet />}
+                        />
+                        <Route
+                            path={'/events/super'}
+                            element={<EventSuperInfoOutlet />}
+                        />
+                        <Route
+                            path={'/events/super/apply'}
+                            element={<EventSuperApplyOutlet />}
                         />
                     </Route>
                     <Route path={'/tickets'} element={<UserTicketsPage />} />
@@ -137,7 +136,8 @@ const AppRouter = () => {
                         element={<BookingInfoPage />}
                     />
                     <Route path={'/restaurant/:id'} element={<Restaurant />} />
-                    <Route path={'/booking/:id'} element={<BookingPage />} />
+                    <Route path={'/newrestaurant'} element={<NewRestaurant />} />
+                    <Route path={'/booking'} element={<BookingPage />} />
                     <Route
                         path={'/bookingConfirmation'}
                         element={<BookingConfirmationPage />}
@@ -155,7 +155,6 @@ const AppRouter = () => {
                     <Route path={'/onboarding'} element={<OnboardingPage />}>
                         <Route path={'/onboarding/1'} element={<StageOne />} />
                         <Route path={'/onboarding/2'} element={<StageTwo />} />
-                         {/*<Route path={'/onboarding/3'} element={<StageThree />} />*/}
                         <Route path={'/onboarding/4'} element={<StageFour />} />
                         <Route path={'/onboarding/3'} element={<StageFive />} />
                         <Route path={'/onboarding/5'} element={<StageSix />} />

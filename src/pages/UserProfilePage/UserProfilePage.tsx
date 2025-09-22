@@ -82,7 +82,6 @@ export const UserProfilePage = () => {
     };
 
     const updateUser = () => {
-        console.log(userInfo);
         if (!authInfo?.access_token) {
             return;
         }

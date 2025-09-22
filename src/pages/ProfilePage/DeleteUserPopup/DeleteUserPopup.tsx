@@ -35,6 +35,7 @@ declare global {
         Telegram: {
             WebApp: {
                 close: () => void;
+                initDataUnsafe: any;
             }
         };
     }
@@ -82,8 +83,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
         //         window.Telegram.WebApp.close();
         // }
         // return;
-        APIDeleteUser(authInfo.access_token).then((res) => {
-            console.log('response: ', res);
+        APIDeleteUser(authInfo.access_token).then(() => {
             setAuth({
                 access_token: '',
                 expires_in: 0
@@ -129,12 +129,12 @@ export const DeleteUserPopup: FC<Props> = (props) => {
                     isClosing ? css.popup__closing : null
                 )}
             >
-                <span className={css.title}>Подвтердите удаление учетной записи</span>
+                <span className={css.title}>Подтвердите удаление учетной записи</span>
                 <span className={css.tags_title}>Все данные, связанные с ней, также будут удалены. Удалить учетную запись?</span>
 
                 <button
                     className={classNames(
-                        css.button,
+                        css.button, css.button__disabled
                     )}
                     onClick={deleteUser}
                 >

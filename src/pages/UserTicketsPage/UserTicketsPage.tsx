@@ -59,7 +59,7 @@ export const UserTicketsPage = () => {
                     {tickets.sort(function(a, b) {
                         const aDate = new Date(a.date_start);
                         const bDate = new Date(b.date_start);
-                        return aDate.getTime() - bDate.getTime();
+                        return bDate.getTime() - aDate.getTime();
                     }).map((ticket, i) => (
                         <Ticket key={i} ticket={ticket} />
                     ))}

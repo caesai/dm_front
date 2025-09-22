@@ -7,21 +7,35 @@ import classNames from 'classnames';
 interface ICommentaryOptionButton {
     text: string;
     icon: string;
+    disabled?: boolean;
+    onClick?: () => void;
+    active?: boolean;
 }
 
 export const CommentaryOptionButton: FC<ICommentaryOptionButton> = ({
     text,
     icon,
+    disabled,
+    onClick,
+    active
 }) => {
     const [getAtom, setAtom] = useAtom(commAtom);
-
+    const handleClick = () => {
+        if (!disabled && !onClick) {
+            setAtom(text)
+        } else {
+            onClick && onClick();
+        }
+    }
     return (
         <div
             className={classNames(
                 css.button,
-                getAtom.includes(text) ? css.button__active : null
+                getAtom.includes(text) ? css.button__active : null,
+                active ? css.button__active : null,
+                disabled ? css.disabled : null
             )}
-            onClick={() => setAtom(text)}
+            onClick={handleClick}
         >
             <span>{icon}</span>
             <span>{text}</span>

@@ -12,16 +12,19 @@ import { APIGetTicket } from '@/api/events.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { formatDateDT } from '@/utils.ts';
+// import { formatDateDT } from '@/utils.ts';
 import moment from 'moment';
-import QRCode from 'react-qr-code';
+// import QRCode from 'react-qr-code';
 // import jsPDF from "jspdf";
 // import {BASE_BOT} from "@/api/base.ts";
-import {Buffer} from 'buffer';
+import { Buffer } from 'buffer';
 // import {MontFont} from "@/components/MontFont/Montfont.ts";
 // import '../../../public/'
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
+import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
+import { useModal } from '@/components/ModalPopup/useModal.ts';
+import { BASE_BOT } from '@/api/base.ts';
 
 
 export const TicketInfoPage = () => {
@@ -29,6 +32,8 @@ export const TicketInfoPage = () => {
     const { id } = useParams();
     const [auth] = useAtom(authAtom);
     const [ticket, setTicket] = useState<EventTicket>();
+    const [isRefund, setIsRefund] = useState(false);
+    const { isShowing, toggle } = useModal();
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -40,47 +45,40 @@ export const TicketInfoPage = () => {
     }, [id]);
 
     const sharePdf = () => {
-        // const doc = new jsPDF("p","px","a4");
-        // doc.addFileToVFS('Mont-Regular.ttf', MontFont);
-        // doc.addFont('Mont-Regular.ttf', 'Mont-Regular', 'normal');
-        // doc.setFont('Mont-Regular');
         const ticketEl = document.getElementById('ticket');
-        html2pdf().from(ticketEl).output('blob').then((pdfAsString:string) => {
-            console.log('pdfAsString: ', pdfAsString);
-            const buffer = Buffer.from(pdfAsString, 'utf-8')
-            const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
+        html2pdf().from(ticketEl).output('blob').then((pdfAsString: string) => {
+            const buffer = Buffer.from(pdfAsString, 'utf-8');
+            const pdf = new File([buffer], ticket?.event_title + '.pdf', { type: 'application/pdf' });
             const files = [pdf];
             navigator.share({
-                files
+                files,
             }).then();
         });
-        // const buffer = Buffer.from(pdfOutput, 'utf-8')
-        // const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
-        // const files = [pdf];
-        // navigator.share({
-        //     files
-        // }).then();
-        // doc.html(document.getElementById('ticket') as HTMLElement, {
-        //     callback: function (res) {
-        //         // doc.save('doc.pdf');
-        //
-        //         // const jpegUrl = document.getElementById('qr').toDataURL("image/jpeg");
-        //         // doc.addImage(jpegUrl, 'JPEG', 0, 0);
-        //         const buffer = Buffer.from(res.output(), 'utf-8')
-        //         const pdf = new File([buffer], "hello.pdf", { type: "application/pdf" });
-        //         const files = [pdf];
-        //         navigator.share({
-        //             files
-        //         }).then();
-        //     },
-        //     html2canvas: {
-        //         scale: 1, // Adjust scaling factor if needed
-        //     },
-        //     // fontFaces: ['Mont']
-        // });
-    }
+    };
+
+    const refund = () => {
+        setIsRefund(true);
+        setTimeout(() => {
+            window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
+            // fetch(`https://t.me/${BASE_BOT}?start=refund-${Number(id)}`).then((res) => res.json()).catch((err) => {
+            //     console.log('err: ', err);
+            // })
+        }, 5000);
+    };
+
     return (
         <Page back={true}>
+            <ModalPopup
+                isOpen={isShowing}
+                setOpen={toggle}
+                title={!isRefund ? 'Вы хотите оформить возврат?' : 'Запрос принят'}
+                text={isRefund ? `В течении 30 минут с вами свяжется сотрудник ресторана, чтобы оформить возврат. Если запрос был отправлен вне рабочего времени ресторана, мы обязательно ответим сразу после открытия.` : undefined}
+                button={!isRefund}
+                btnText={'Да'}
+                reverseButton={true}
+                btnAction={refund}
+                btnScndrText={'Нет'}
+            />
             <div className={css.body}>
                 <div className={css.header}>
                     <div className={css.header_group}>
@@ -100,7 +98,7 @@ export const TicketInfoPage = () => {
                     <div className={css.header_group}>
                         <RoundedButton
                             icon={<RefundIcon />}
-                            action={() => alert('refund')}
+                            action={toggle}
                             bgColor={'var(--primary-background)'}
                         />
 
@@ -114,20 +112,27 @@ export const TicketInfoPage = () => {
 
                 <div className={css.ticket} id={'ticket'}>
                     <div className={css.ticket_header}>
-                        <div
-                            className={classNames(
-                                css.ticket_header_img,
-                                css.bgImage
-                            )}
-                            style={{
-                                backgroundImage: `url(${ticket?.event_img || 'https://storage.yandexcloud.net/bottec-dreamteam/event_placeholder.png'})`,
-                            }}
-                        />
+                        {ticket?.event_img && ticket?.event_img !== "" ? (
+                            <div
+                                className={classNames(
+                                    css.ticket_header_img,
+                                    css.bgImage,
+                                )}
+                                style={{
+                                    backgroundImage: `url(${ticket?.event_img})`,
+                                }}
+                            />
+                            ) : (
+                            <PlaceholderBlock
+                                width={'100%'}
+                                aspectRatio={'3/2'}
+                            />
+                        )}
                         <div className={css.ticket_header_details}>
                             <span
                                 className={classNames(
                                     css.mont,
-                                    css.ticket_header_details__title
+                                    css.ticket_header_details__title,
                                 )}
                             >
                                 {ticket?.event_title || (
@@ -140,7 +145,7 @@ export const TicketInfoPage = () => {
                             <span
                                 className={classNames(
                                     css.mont,
-                                    css.ticket_header_details__res
+                                    css.ticket_header_details__res,
                                 )}
                             >
                                 {ticket?.restaurant.title || (
@@ -158,7 +163,7 @@ export const TicketInfoPage = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj__title
+                                        css.ticket_details_row_obj__title,
                                     )}
                                 >
                                     Адрес
@@ -166,7 +171,7 @@ export const TicketInfoPage = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj_cont
+                                        css.ticket_details_row_obj_cont,
                                     )}
                                 >
                                     {ticket?.restaurant.address || (
@@ -183,7 +188,7 @@ export const TicketInfoPage = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj__title
+                                        css.ticket_details_row_obj__title,
                                     )}
                                 >
                                     Дата
@@ -191,13 +196,11 @@ export const TicketInfoPage = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj_cont
+                                        css.ticket_details_row_obj_cont,
                                     )}
                                 >
                                     {ticket ? (
-                                        formatDateDT(
-                                            new Date(ticket?.date_start)
-                                        )
+                                        moment(ticket?.date_start).format('DD.MM.YYYY')
                                     ) : (
                                         <PlaceholderBlock
                                             width={'50px'}
@@ -210,7 +213,7 @@ export const TicketInfoPage = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj__title
+                                        css.ticket_details_row_obj__title,
                                     )}
                                 >
                                     Время
@@ -218,12 +221,12 @@ export const TicketInfoPage = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj_cont
+                                        css.ticket_details_row_obj_cont,
                                     )}
                                 >
                                     {ticket ? (
                                         moment(ticket?.date_start).format(
-                                            'HH:mm'
+                                            'HH:mm',
                                         )
                                     ) : (
                                         <PlaceholderBlock
@@ -239,7 +242,7 @@ export const TicketInfoPage = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj__title
+                                        css.ticket_details_row_obj__title,
                                     )}
                                 >
                                     Количество гостей
@@ -247,7 +250,7 @@ export const TicketInfoPage = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj_cont
+                                        css.ticket_details_row_obj_cont,
                                     )}
                                 >
                                     {ticket?.guest_count || (
@@ -262,7 +265,7 @@ export const TicketInfoPage = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj__title
+                                        css.ticket_details_row_obj__title,
                                     )}
                                 >
                                     Стоимость
@@ -270,7 +273,7 @@ export const TicketInfoPage = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj_cont
+                                        css.ticket_details_row_obj_cont,
                                     )}
                                 >
                                     {ticket ? (
@@ -285,21 +288,48 @@ export const TicketInfoPage = () => {
                             </div>
                         </div>
                     </div>
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        {ticket ? (
-                            <QRCode size={128} value={String(`${ticket.id}`)} id={'qr'} />
-                        ) : (
-                            <PlaceholderBlock
-                                width={'128px'}
-                                height={'128px'}
-                            />
-                        )}
+                    <div className={css.ticket_details_row}>
+                        <div className={css.ticket_details_row_obj}>
+                                <span
+                                    className={classNames(
+                                        css.mont,
+                                        css.ticket_details_row_obj__title,
+                                    )}
+                                >
+                                    Номер телефона
+                                </span>
+                            <span
+                                className={classNames(
+                                    css.mont,
+                                    css.ticket_details_row_obj_cont,
+                                )}
+                            >
+                                    {ticket ? (
+                                        `${ticket?.phone} `
+                                    ) : (
+                                        <PlaceholderBlock
+                                            width={'70px'}
+                                            height={'19px'}
+                                        />
+                                    )}
+                                </span>
+                        </div>
                     </div>
+                    {/*<div*/}
+                    {/*    style={{*/}
+                    {/*        display: 'flex',*/}
+                    {/*        justifyContent: 'center',*/}
+                    {/*    }}*/}
+                    {/*>*/}
+                    {/*    {ticket ? (*/}
+                    {/*        <QRCode size={128} value={String(`${ticket.id}`)} id={'qr'} />*/}
+                    {/*    ) : (*/}
+                    {/*        <PlaceholderBlock*/}
+                    {/*            width={'128px'}*/}
+                    {/*            height={'128px'}*/}
+                    {/*        />*/}
+                    {/*    )}*/}
+                    {/*</div>*/}
                 </div>
             </div>
         </Page>

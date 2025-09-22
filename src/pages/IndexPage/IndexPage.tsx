@@ -19,8 +19,14 @@ import {restaurantsListAtom} from '@/atoms/restaurantsListAtom.ts';
 import {APIGetCurrentBookings} from '@/api/restaurants.ts';
 import {authAtom} from '@/atoms/userAtom.ts';
 import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import {NewsStories} from "@/components/NewsStories/NewsStories.tsx";
-import {DEV_MODE} from "@/api/base.ts";
+import {Stories} from "@/components/Stories/Stories.tsx";
+// import {DEV_MODE} from "@/api/base.ts";
+import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { Link, useNavigate } from 'react-router-dom';
+import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
+import moment from 'moment';
+import superevent from '/img/super.png';
+import newres from '/img/chinois_app.png';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -30,8 +36,6 @@ const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
 };
 
 export const IndexPage: FC = () => {
-    // Пиздец говно. Такого кала я еще не писал никогда.
-    // Скорее всего это можно переписать в 2 строки, но я слишком пьян и уже ничего не понимаю.
     const [currentCityA] = useAtom(currentCityAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
     const [cityListA] = useAtom(cityListAtom);
@@ -51,15 +55,46 @@ export const IndexPage: FC = () => {
 
     const [currentBookings, setCurrentBookings] = useState<IBookingInfo[]>([]);
     const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
+    const navigate = useNavigate();
+    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+    const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
 
     useEffect(() => {
         if (!auth?.access_token) {
             return;
         }
         setCurrentBookingsLoading(true);
-        APIGetCurrentBookings(auth.access_token)
-            .then((res) => setCurrentBookings(res.data.currentBookings))
-            .finally(() => setCurrentBookingsLoading(false));
+        // APIGetCurrentBookings(auth.access_token)
+        //     .then((res) => setCurrentBookings(res.data.currentBookings))
+        //     .finally(() => setCurrentBookingsLoading(false));
+        // APIGetTickets(auth.access_token)
+        //     .then((res) => setTickets(res.data))
+        //     .finally(() => setEventsLoading(false));
+        Promise.all([APIGetCurrentBookings(auth.access_token),APIGetTickets(auth.access_token)])
+            .then((responses) => {
+                // console.log('responses: ', responses);
+                // @ts-expect-error
+                const events: IBookingInfo[] = responses[1].data.map((event) => ({
+                    id: event.id,
+                    booking_type: 'event',
+                    booking_date: moment(event.date_start).format('YYYY-MM-DD'),
+                    time: moment(event.date_start).format('HH:MM'),
+                    restaurant: event.restaurant,
+                    tags: null,
+                    duration: 0,
+                    guests_count: event.guest_count,
+                    children_count: 0,
+                    event_title: event.event_title,
+                }));
+                const bookings = [...events, ...responses[0].data.currentBookings];
+                setCurrentBookings(bookings);
+            })
+            .finally(() => {
+                setCurrentBookingsLoading(false);
+            });
+        APIGetSuperEventHasAccess(auth.access_token).then((response) => {
+                setHasSuperEventAccess(response.data);
+        })
     }, []);
 
     useEffect(() => {
@@ -101,12 +136,50 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter(v => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
-
+    console.log('currentCityA: ', currentCityA);
+    const restaurantListed = currentCityA === 'spb' ? [{
+        "id": 12,
+        "title": "Self Edge Chinois",
+        "slogan": "Загородный ресторан в центре города",
+        "address": "Санкт-Перербург, ул. Добролюбова, 11",
+        "logo_url": "",
+        "thumbnail_photo": newres,
+        "avg_cheque": 3000,
+        "about_text": "",
+        "about_dishes": "Европейская",
+        "about_kitchen": "Американская",
+        "about_features": "",
+        "phone_number": "",
+        "address_lonlng": "",
+        "address_station": "",
+        "address_station_color": "",
+        "city": {
+            "id": 2,
+            "name": "Санкт-Петербург",
+            "name_english": "spb",
+            "name_dative": "Санкт-Петербурге"
+        },
+        "gallery": [],
+        "brand_chef": {},
+        "worktime": [],
+        "menu": [],
+        "menu_imgs": [],
+        "socials": [],
+        "photo_cards": []
+    },...restaurantsList] : restaurantsList;
+    // @ts-ignore
     return (
         <Page back={false}>
             <div className={css.pageContainer}>
                 <Header/>
-                {DEV_MODE && <NewsStories />}
+                {tg_id && [84327932, 115555014, 118832541, 153495524, 163811519].includes(tg_id) &&  <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
+                {hasSuperEventAccess && (
+                    <div style={{ marginRight: 15}}>
+                        <Link to={'/events/super'}>
+                            <img src={superevent} style={{ maxWidth: '100%', width: '100%'}} alt={''} />
+                        </Link>
+                    </div>
+                )}
                 {currentBookingsLoading ? (
                     <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock
@@ -116,21 +189,25 @@ export const IndexPage: FC = () => {
                         />
                     </div>
                 ) : (
-                    currentBookings.filter((book) => {
-                        return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime()
-                    }).map((book) => (
-                        <BookingReminder
-                            key={book.id}
-                            id={book.id}
-                            title={book.restaurant.title}
-                            address={book.restaurant.address}
-                            date={book.booking_date}
-                            time={book.time}
-                            persons={book.guests_count}
-                        />
-                    ))
+                    currentBookings
+                        .filter((book) => {
+                            return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime()
+                        })
+                        .map((book) => (
+                            <BookingReminder
+                                key={book.id}
+                                id={book.id}
+                                title={book.restaurant.title}
+                                address={book.restaurant.address}
+                                date={book.booking_date}
+                                time={book.time}
+                                persons={book.guests_count}
+                                children={book.children_count}
+                                booking_type={book.booking_type}
+                                event_title={book.event_title}
+                            />
+                        ))
                 )}
-                {/*<NewsStories />*/}
                 <OptionsNavigation/>
                 <div className={css.restaurants}>
                     <CitySelect
@@ -138,14 +215,16 @@ export const IndexPage: FC = () => {
                         currentValue={currentCityS}
                         onChange={updateCurrentCity}
                     />
-                    {restaurantsList.map((rest) => (
+                    {restaurantListed.map((rest) => (
                         <RestaurantPreview
+                            // @ts-ignore
                             restaurant={rest}
                             key={`rest-${rest.id}`}
                         />
                     ))}
                 </div>
             </div>
+            {currentCityA !== 'ekb' && <BottomButtonWrapper onClick={() => navigate('/booking/')}/>}
         </Page>
     );
 };

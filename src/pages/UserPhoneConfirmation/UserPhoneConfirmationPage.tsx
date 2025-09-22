@@ -7,7 +7,7 @@ import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { APIUserInfo } from '@/api/auth.ts';
 import { useNavigate } from 'react-router-dom';
-import {getDataFromLocalStorage} from "@/utils.ts";
+import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
 
 export const UserPhoneConfirmationPage = () => {
     const [user, setUser] = useAtom(userAtom);
@@ -25,17 +25,26 @@ export const UserPhoneConfirmationPage = () => {
         setTimeout(
             () =>
                 APIUserInfo(auth.access_token).then((data) =>
-                    setUser(data.data)
+                    setUser(data.data),
                 ),
-            5000
+            5000,
         );
     };
 
     useEffect(() => {
         if (user?.phone_number) {
             const sharedEvent = getDataFromLocalStorage('sharedEvent');
-            if(sharedEvent) {
+            const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
+            const superEvent = getDataFromLocalStorage('superEvent');
+            if (sharedEvent) {
                 navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
+                removeDataFromLocalStorage('sharedEvent');
+            } else if (superEvent) {
+                navigate('/events/super');
+                removeDataFromLocalStorage('superEvent');
+            } else if (sharedRestaurant) {
+                navigate('/restaurant/' + JSON.parse(sharedRestaurant).id);
+                removeDataFromLocalStorage('sharedRestaurant');
             } else {
                 navigate('/');
             }
@@ -57,7 +66,7 @@ export const UserPhoneConfirmationPage = () => {
         }
 
         const removeListener = mainButton.onClick(() =>
-            requestPhone().then((res) => (res === 'sent' ? updateUser() : null))
+            requestPhone().then((res) => (res === 'sent' ? updateUser() : null)),
         );
 
         return () => {

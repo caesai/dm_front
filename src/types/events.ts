@@ -1,4 +1,5 @@
 import { IUser } from '@/atoms/userAtom.ts';
+import { IRestaurantShortBooking } from '@/types/restaurant.ts';
 
 interface EventRestaurant {
     id: number;
@@ -15,19 +16,32 @@ export interface EventTicket {
     date_start: string;
     guest_count: number;
     total: number;
+    phone?: string;
     restaurant: EventRestaurant;
 }
 
 export interface IEventInRestaurant {
+    id: number;
     name: string;
     description: string;
     ticket_price: number;
     image_url: string;
     date_start: string;
     tickets_left: number;
+    restaurant: IRestaurantShortBooking
 }
 
 export interface IEventTicketScanner extends EventTicket {
     is_confirmed: boolean;
     user: IUser;
+}
+
+export interface IEventBooking {
+    event?: IEventInRestaurant;
+    restaurant?: EventRestaurant;
+    guestCount?: number;
+}
+
+export interface ISuperEventHasApplicationResponse {
+    has_application: boolean;
 }

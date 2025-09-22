@@ -15,9 +15,9 @@ import {FreeMode} from 'swiper/modules';
 import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import {useEffect, useState} from 'react';
 import {DownArrow} from '@/components/Icons/DownArrow.tsx';
-import {InstagramIcon} from '@/components/Icons/Instagram.tsx';
+// import {InstagramIcon} from '@/components/Icons/Instagram.tsx';
 import {GoToPathIcon} from '@/components/Icons/GoToPathIcon.tsx';
-import {PhoneCallIcon} from '@/components/Icons/PhoneCallIcon.tsx';
+// import {PhoneCallIcon} from '@/components/Icons/PhoneCallIcon.tsx';
 import {RestaurantNavigation} from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
 import {ContentBlock} from '@/components/ContentBlock/ContentBlock.tsx';
 import {ContentContainer} from '@/components/ContentContainer/ContentContainer.tsx';
@@ -30,7 +30,7 @@ import {
     GalleryPhoto,
 } from '@/pages/Restaurant/Restaurant.types.ts';
 import {CallRestaurantPopup} from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
-// import { EventCard } from '@/components/EventCard/EventCard.tsx';
+import { EventCard } from '@/components/EventCard/EventCard.tsx';
 import {useAtom} from 'jotai';
 import {backButtonAtom} from '@/atoms/backButtonAtom.ts';
 import {IPhotoCard, IRestaurant} from '@/types/restaurant.ts';
@@ -71,6 +71,10 @@ import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.t
 import {BookingDateSelectorPopup} from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
 // import {EventCard} from '@/components/EventCard/EventCard.tsx';
 import {IEventInRestaurant} from '@/types/events.ts';
+import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { Share } from '@/components/Icons/Share.tsx';
+import { BASE_BOT } from '@/api/base.ts';
+import moment from 'moment';
 
 export const transformGallery = (
     gallery: IPhotoCard[]
@@ -130,20 +134,18 @@ export const Restaurant = () => {
     const [currentGalleryPhotos, setCurrentGalleryPhotos] = useState<
         (string | string[])[]
     >([]);
-    const [
-        // events
-        ,
-        setEvents] = useState<IEventInRestaurant[]>([]);
+    const [events, setEvents] = useState<IEventInRestaurant[]>([]);
+
+    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
     useEffect(() => {
         setRestaurant(restaurants.find((v) => v.id === Number(id)));
         setCurrentSelectedTime(null);
         setBookingDate({value: 'unset', title: 'unset'});
-        APIGetEventsInRestaurant(Number(id)).then((res) => setEvents(res.data));
+        APIGetEventsInRestaurant(Number(id), String(auth?.access_token)).then((res) => setEvents(res.data));
     }, [id]);
 
     useEffect(() => {
-        console.log('restaurant: ', restaurant)
         if (restaurant?.gallery) {
             setGallery(transformGallery(restaurant.gallery));
         }
@@ -208,7 +210,6 @@ export const Restaurant = () => {
         let photoList: string[] = [];
 
         if (currentGalleryCategory === 'Все фото') {
-            console.log(gallery);
             gallery.forEach((g) => {
                 g.photos.forEach((photo) => photoList.push(photo.link));
             });
@@ -238,6 +239,45 @@ export const Restaurant = () => {
         return groupedPhotos;
     };
 
+    const shareRestaurant = () => {
+        const url = encodeURI(
+            `https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`
+        );
+        const title = encodeURI(String(restaurant?.title));
+        const shareData = {
+            title,
+            url,
+        }
+        try {
+            if (navigator && navigator.canShare(shareData)) {
+                navigator.share(shareData).then().catch((err) => {
+                    alert(JSON.stringify(err));
+                });
+            }
+        } catch (e) {
+            window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
+        }
+    }
+    const restaurantWorkEndTime = restaurant?.worktime
+        .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+    let workEndTime = moment(bookingDate.value);
+    if (restaurantWorkEndTime !== undefined) {
+        const endOfDay = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) < 12;
+        if (endOfDay) {
+            workEndTime = moment(workEndTime.clone().add(1, 'days').startOf('days').format('YYYY-MM-DD'));
+        }
+        workEndTime.set({
+            hour: Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
+            minutes: Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0'))
+        })
+    }
+    const handleNextBtn = () => {
+        if (searchParams.get('shared')) {
+            navigate('/onboarding/5');
+        } else {
+            navigate(`/booking?id=${restaurant?.id}`);
+        }
+    }
     return (
         <Page back={true}>
             <BookingDateSelectorPopup
@@ -293,47 +333,84 @@ export const Restaurant = () => {
                         <div className={css.headerNavBlock}>
                             <RoundedButton
                                 icon={
+                                    <Share color={'var(--dark-grey)'}/>
+                                }
+                                action={() => shareRestaurant()}
+                            />
+                            <RoundedButton
+                                icon={
                                     <IconlyProfile color={'var(--dark-grey)'}/>
                                 }
                                 action={() => goToProfile()}
                             />
                         </div>
                     </div>
-                    {headerScrolled ? <RestaurantNavigation/> : null}
+                    {headerScrolled ? <RestaurantNavigation isEvents={Boolean(events.length)}/> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
-                <div className={css.floatingFooterWrapper}>
-                    <div
-                        className={css.bookingButton}
-                        onClick={() => navigate(`/booking/${restaurant?.id}`)}
-                    >
-                        <span className={css.text}>Забронировать</span>
-                    </div>
-                    <RoundedButton
-                        icon={
-                            <GoToPathIcon
-                                size={24}
-                                color={'var(--dark-grey)'}
+                <BottomButtonWrapper
+                    onClick={handleNextBtn}
+                    additionalBtns={(
+                        <>
+                            <RoundedButton
+                                icon={
+                                    <GoToPathIcon
+                                        size={24}
+                                        color={'var(--dark-grey)'}
+                                    />
+                                }
+                                action={() =>
+                                    // ,
+                                    window.open(
+                                        `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`
+                                    )
+                                }
                             />
-                        }
-                        action={() =>
-                            // ,
-                            window.open(
-                                `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`
-                            )
-                        }
-                    />
-                    <RoundedButton
-                        icon={
-                            <PhoneCallIcon
-                                size={24}
-                                color={'var(--dark-grey)'}
-                            />
-                        }
-                        action={() => setCallPopup(true)}
-                    />
-                </div>
+                            {/*<RoundedButton*/}
+                            {/*    icon={*/}
+                            {/*        <PhoneCallIcon*/}
+                            {/*            size={24}*/}
+                            {/*            color={'var(--dark-grey)'}*/}
+                            {/*        />*/}
+                            {/*    }*/}
+                            {/*    action={() => setCallPopup(true)}*/}
+                            {/*/>*/}
+
+                        </>
+                    )}
+                />
+                {/*<div className={css.floatingFooterWrapper}>*/}
+                {/*    <div*/}
+                {/*        className={css.bookingButton}*/}
+                {/*        onClick={() => navigate(`/booking?id=${restaurant?.id}`)}*/}
+                {/*    >*/}
+                {/*        <span className={css.text}>Забронировать</span>*/}
+                {/*    </div>*/}
+                {/*    <RoundedButton*/}
+                {/*        icon={*/}
+                {/*            <GoToPathIcon*/}
+                {/*                size={24}*/}
+                {/*                color={'var(--dark-grey)'}*/}
+                {/*            />*/}
+                {/*        }*/}
+                {/*        action={() =>*/}
+                {/*            // ,*/}
+                {/*            window.open(*/}
+                {/*                `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`*/}
+                {/*            )*/}
+                {/*        }*/}
+                {/*    />*/}
+                {/*    <RoundedButton*/}
+                {/*        icon={*/}
+                {/*            <PhoneCallIcon*/}
+                {/*                size={24}*/}
+                {/*                color={'var(--dark-grey)'}*/}
+                {/*            />*/}
+                {/*        }*/}
+                {/*        action={() => setCallPopup(true)}*/}
+                {/*    />*/}
+                {/*</div>*/}
             </div>
             <div className={css.pageContainer}>
                 <RestaurantTopPreview rest={restaurant}/>
@@ -362,7 +439,7 @@ export const Restaurant = () => {
                             // id={'booking'}
                             className={css.navSliderAndBookingContainer}
                         >
-                            <RestaurantNavigation/>
+                            <RestaurantNavigation isEvents={Boolean(events.length)} />
                             <div className={css.bookingContaner}>
                                 <Swiper
                                     slidesPerView={'auto'}
@@ -451,9 +528,9 @@ export const Restaurant = () => {
                                                 >
                                                     {currentSelectedTime == ts ? `${getTimeShort(
                                                         ts.start_datetime
-                                                    )} -  ${getTimeShort(
+                                                    )} -  ${moment(ts.end_datetime).isBefore(workEndTime) ? getTimeShort(
                                                         ts.end_datetime
-                                                    )}` : getTimeShort(
+                                                    ) : restaurantWorkEndTime}` : getTimeShort(
                                                         ts.start_datetime
                                                     )}
                                                 </div>
@@ -719,35 +796,35 @@ export const Restaurant = () => {
                             </UnmountClosed>
                         </div>
                     </ContentBlock>
-                    <ContentBlock>
-                        <div className={css.infoBlock}>
-                            <div className={css.top}>
-                                <span className={css.title}>
-                                    Социальные сети
-                                </span>
-                            </div>
-                            <div className={css.infoBlock}>
-                                {restaurant?.socials.map((social) => (
-                                    <a
-                                        key={social.name}
-                                        href={social.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <div className={css.socialRow}>
-                                            <InstagramIcon
-                                                color={'black'}
-                                                size={20}
-                                            />
-                                            <span className={css.socialLink}>
-                                                {social.name}
-                                            </span>
-                                        </div>
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
-                    </ContentBlock>
+                    {/*<ContentBlock>*/}
+                    {/*    <div className={css.infoBlock}>*/}
+                    {/*        <div className={css.top}>*/}
+                    {/*            <span className={css.title}>*/}
+                    {/*                Социальные сети*/}
+                    {/*            </span>*/}
+                    {/*        </div>*/}
+                            {/*<div className={css.infoBlock}>*/}
+                            {/*    {restaurant?.socials.map((social) => (*/}
+                            {/*        <a*/}
+                            {/*            key={social.name}*/}
+                            {/*            href={social.url}*/}
+                            {/*            target="_blank"*/}
+                            {/*            rel="noopener noreferrer"*/}
+                            {/*        >*/}
+                            {/*            <div className={css.socialRow}>*/}
+                            {/*                <InstagramIcon*/}
+                            {/*                    color={'black'}*/}
+                            {/*                    size={20}*/}
+                            {/*                />*/}
+                            {/*                <span className={css.socialLink}>*/}
+                            {/*                    {social.name}*/}
+                            {/*                </span>*/}
+                            {/*            </div>*/}
+                            {/*        </a>*/}
+                            {/*    ))}*/}
+                            {/*</div>*/}
+                    {/*    </div>*/}
+                    {/*</ContentBlock>*/}
                     <ContentBlock>
                         <div className={css.infoBlock}>
                             <div className={css.top}>
@@ -824,40 +901,40 @@ export const Restaurant = () => {
                         </div>
                     </ContentBlock>
                 </ContentContainer>
-                {/*<ContentContainer>*/}
-                {/*    <ContentBlock>*/}
-                {/*        <HeaderContainer>*/}
-                {/*            <HeaderContent*/}
-                {/*                title={'Мероприятия'}*/}
-                {/*                id={'events'}*/}
-                {/*            />*/}
-                {/*        </HeaderContainer>*/}
-                {/*        {events.length ?*/}
-                {/*            events.map((e) => (*/}
-                {/*                    <EventCard*/}
-                {/*                        key={e.name}*/}
-                {/*                        onClick={() =>*/}
-                {/*                            navigate(*/}
-                {/*                                `/events/${e.name}/restaurant/${restaurant?.id}`*/}
-                {/*                            )*/}
-                {/*                        }*/}
-                {/*                        event_price={e.ticket_price}*/}
-                {/*                        event_name={e.name}*/}
-                {/*                        event_desc={e.description}*/}
-                {/*                        event_img={e.image_url}*/}
-                {/*                    />*/}
-                {/*                )*/}
-                {/*            ) : (*/}
-                {/*                <span*/}
-                {/*                    className={classNames(*/}
-                {/*                        css.aboutText*/}
-                {/*                    )}*/}
-                {/*                >*/}
-                {/*                Пока нет мероприятий*/}
-                {/*            </span>*/}
-                {/*            )}*/}
-                {/*    </ContentBlock>*/}
-                {/*</ContentContainer>*/}
+                {Boolean(events.length) && tg_id && [5753349682, 217690245, 291146366, 940813721, 1225265717, 1145014952, 5362638149, 551243345, 701368624, 1090746420, 596483540, 1050003812, 542527667, 483425133, 451194888, 1020365281, 7077186349, 229667270, 257329939, 1094749437, 201790418, 79219030954, 706889029, 1357403642, 475197315, 586628247, 244816672, 353624620, 115555014, 153495524, 1283802964, 84327932, 163811519, 7160315434, 118832541, 189652327, 5165491111].includes(tg_id) && (<ContentContainer>
+                    <ContentBlock>
+                        <HeaderContainer>
+                            <HeaderContent
+                                title={'Мероприятия'}
+                                id={'events'}
+                            />
+                        </HeaderContainer>
+                        {events.map((e) => (
+                                <EventCard
+                                    key={e.name}
+                                    onClick={() => navigate(
+                                        `/events/${e.id}`,
+                                    )}
+                                    event_price={e.ticket_price}
+                                    event_name={e.name}
+                                    event_img={e.image_url}
+                                    event_restaurant={e.restaurant.title}
+                                    event_date={e.date_start}
+                                    event_address={e.restaurant.address}
+                                    sold={e.tickets_left == 0}
+                                />
+                            )
+                            // ) : (
+                            //     <span
+                            //         className={classNames(
+                            //             css.aboutText
+                            //         )}
+                            //     >
+                            //     Пока нет мероприятий
+                            // </span>
+                        )}
+                    </ContentBlock>
+                </ContentContainer>)}
 
                 <ContentContainer>
                     <ContentBlock>

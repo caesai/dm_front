@@ -1,4 +1,4 @@
-.element {
+.storyBlock {
     width: 100px;
     height: 100px;
     background-color: var(--secondary-background);
@@ -9,24 +9,7 @@
     margin-right: 10px;
 }
 
-.newsText {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    backdrop-filter: blur(20px);
-    /*padding: 12px 11px 12px 12px;*/
-    padding: 8px;
-    width: 100%;
-}
-
-.newsText span {
-    font-size: 12px;
-    line-height: 14px;
-    font-family: 'Mont';
-    color: var(--tgui--white);
-}
-
-.newsImage {
+.storyBlockImage {
     width: 100%;
     height: 100px;
     overflow: hidden;
@@ -36,11 +19,12 @@
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
 }
-.newsImage img {
+.storyBlockImage img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 .isClicked {
     border: 2px solid var(--red);
+    align-self: flex-end;
 }

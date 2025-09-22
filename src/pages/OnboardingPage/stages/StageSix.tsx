@@ -5,6 +5,7 @@ import {useNavigate} from 'react-router-dom';
 // import {APICompleteOnboarding} from '@/api/user.ts';
 import {useAtom} from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
+import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
 // import {getDataFromLocalStorage} from "@/utils.ts";
 
 export const StageSix = () => {
@@ -38,18 +39,8 @@ export const StageSix = () => {
         <div className={css.stage_page}>
             <div className={css.stage_page_wrapper}>
                 <div className={css.stage_footer}>
-                    <div className={css.agreeCheckbox_container}>
-                        <input
-                            type="checkbox"
-                            id={'agree'}
-                            className={css.agreeCheckbox}
-                            checked={agree}
-                            onChange={() => setAgree(!agree)}
-                        />
-                        <label
-                            htmlFor="agree"
-                            className={css.agreeCheckbox_label}
-                        >
+                    <CheckBoxInput checked={agree} toggle={() => setAgree(!agree)} label={(
+                        <div>
                             Принимаю{' '}
                             <span className={css.redUnderline}>
                                 Условия пользовательского соглашения
@@ -58,8 +49,8 @@ export const StageSix = () => {
                             <span className={css.redUnderline}>
                                 Политику конфиденциальности
                             </span>
-                        </label>
-                    </div>
+                        </div>
+                    )} />
                     <div className={css.button_container}>
                         <div
                             className={classNames(css.redButton, {

@@ -185,8 +185,20 @@
     align-items: center;
 }
 
+.bookingInfoDetails h3 {
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+}
+
 .bookingInfoDetails_container {
     gap: 12px;
+    align-items: center;
+    text-align: center;
+}
+
+.bookingInfoDetails_tags {
+    width: 100%;
 }
 
 .bookingInfoDetails_item {
@@ -216,4 +228,18 @@
         font-size: 16px;
         color: var(--primary-background);
     }
+}
+
+.tag {
+    padding: 9px 16px;
+    display: flex;
+    gap: 8px;
+    border: 2px solid var(--secondary-background, #F4F4F4);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    align-items: center;
+
+    font-family: Mont, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
 }

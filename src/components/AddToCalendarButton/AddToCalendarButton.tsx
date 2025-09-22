@@ -29,7 +29,6 @@ const AddToCalendarButton: React.FC = () => {
             const blob = new Blob([value], {
                 type: 'text/calendar;charset=utf-8',
             });
-            console.log(`blob:${blob}`);
             const url = URL.createObjectURL(blob);
 
             // Создаем временную ссылку и автоматически нажимаем на нее

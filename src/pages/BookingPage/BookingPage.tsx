@@ -6,10 +6,9 @@ import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 import classNames from 'classnames';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
-import { DownArrow } from '@/components/Icons/DownArrow.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import {
     formatDate,
@@ -51,6 +50,25 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import {BASE_BOT} from "@/api/base.ts";
 import {UniversalButton} from "@/components/Buttons/UniversalButton/UniversalButton.tsx";
 import { childrenCountAtom, guestCountAtom} from "@/atoms/eventBookingAtom.ts";
+import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
+// import { BookingSpecialPopup } from '@/components/BookingSpecialPopup/BookingSpecialPopup.tsx';
+
+import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
+
+import specialMenu from '/img/specialMenu.jpg';
+import specialMenu2 from '/img/specialMenu2.jpg';
+import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
+import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
+import { bookingRestaurantAtom, restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import {
+    BookingRestaurantsSelectorPopup
+} from '@/components/BookingRestaurantsSelectorPopup/BookingRestaurantsSelectorPopup.tsx';
+import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
+import { InfoIcon } from '@/components/Icons/InfoIcon.tsx';
+import { BookingInfoPopup } from '@/components/BookingInfoPopup/BookingInfoPopup.tsx';
+import moment from 'moment/moment';
+// import { Share } from '@/components/Icons/Share.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -69,7 +87,9 @@ const confirmationList: IConfirmationType[] = [
 
 export const BookingPage: FC = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const [params] = useSearchParams();
+    const idFromParams = params.get('id');
+    const isFreeEventBooking = params.get('free_event');
 
     // Global state atoms
     const [auth] = useAtom(authAtom);
@@ -78,45 +98,47 @@ export const BookingPage: FC = () => {
     const [guestCount, setGuestCount] = useAtom(guestCountAtom);
     const [childrenCount, setChildrenCount] = useAtom(childrenCountAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
-    const [currentSelectedTime, setCurrentSelectedTime] =
-        useAtom<ITimeSlot | null>(timeslotAtom);
+    const [currentSelectedTime, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
+    const [bookingRestaurant, setBookingRestaurant] = useAtom(bookingRestaurantAtom);
+    const [restaurants] = useAtom(restaurantsListAtom);
 
     // Local state
     const [guestCountPopup, setGuestCountPopup] = useState(false);
     const [bookingDatePopup, setBookingDatePopup] = useState(false);
+    const [bookingRestaurantPopup, setBookingRestaurantPopup] = useState(false);
     const [timeslotsLoading, setTimeslotsLoading] = useState(true);
-    const [userName, setUserName] = useState<string>(
-        user?.first_name ? user.first_name : ''
-    );
-    const [userPhone, setUserPhone] = useState<string>(
-        user?.phone_number ? user.phone_number : ''
-    );
+    const [userName, setUserName] = useState<string>(user?.first_name ? user.first_name : '');
+    const [userPhone, setUserPhone] = useState<string>(user?.phone_number ? user.phone_number : '');
     const [userEmail] = useState<string>(user?.email ? user.email : '');
     const [commentary, setCommentary] = useState('');
     const [confirmation, setConfirmation] = useState<IConfirmationType>({
         id: 'telegram',
         text: 'В Telegram',
     });
-    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>(
-        []
-    );
-    const [currentPartOfDay, setCurrentPartOfDay] = useState<
-        'morning' | 'day' | 'evening' | null
-    >(null);
+    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
+    const [currentPartOfDay, setCurrentPartOfDay] = useState<'morning' | 'day' | 'evening' | null>(null);
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
+    const [bookingRestaurants, setBookingRestaurants] = useState<PickerValueObj[]>([]);
 
     const [phoneValidated, setPhoneValidated] = useState(true);
     const [nameValidated, setNameValidated] = useState(true);
     const [dateValidated, setDateValidated] = useState(true);
     const [guestsValidated, setGuestsValidated] = useState(true);
     const [requestLoading, setRequestLoading] = useState(false);
+    const [errorPopup, setErrorPopup] = useState(false);
+    const [botError, setBotError] = useState(false);
+    const [errorPopupCount, setErrorPopupCount] = useState(0);
+    // const [specPopup, setSpecPopup] = useState(false);
+    const [menuPopupOpen, setMenuPopupOpen] = useState(false);
+    const [preOrder, setPreOrder] = useState(false);
+    const [infoPopup, setInfoPopup] = useState(false);
 
     const bookingBtn = useRef<HTMLDivElement>(null);
 
     // Update bookingDates when guestCount changes
     useEffect(() => {
-        auth?.access_token && id
-            ? APIGetAvailableDays(auth?.access_token, parseInt(id), 1).then(
+        auth?.access_token && bookingRestaurant.value !== 'unset'
+            ? APIGetAvailableDays(auth?.access_token, parseInt(String(bookingRestaurant.value)), 1).then(
                   (res) =>
                       setBookingDates(
                           res.data.map((v) => ({
@@ -126,16 +148,16 @@ export const BookingPage: FC = () => {
                       )
               )
             : null;
-    }, [guestCount]);
+    }, [guestCount, bookingRestaurant]);
 
-    useEffect(() => {
-        console.log(currentSelectedTime);
-    }, [currentSelectedTime]);
+    // useEffect(() => {
+    //     console.log(currentSelectedTime);
+    // }, [currentSelectedTime]);
 
     // Update availableTimeslots when bookingDate or guestCount changes
     useEffect(() => {
         if (
-            !id ||
+            bookingRestaurant.value === 'unset' ||
             !auth?.access_token ||
             bookingDate.value === 'unset' ||
             !guestCount
@@ -145,13 +167,13 @@ export const BookingPage: FC = () => {
         setTimeslotsLoading(true);
         APIGetAvailableTimeSlots(
             auth.access_token,
-            parseInt(id),
+            parseInt(String(bookingRestaurant.value)),
             bookingDate.value,
             guestCount
         )
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotsLoading(false));
-    }, [bookingDate, guestCount]);
+    }, [bookingDate, guestCount, bookingRestaurant]);
 
     const morningTimeslots = useMemo(
         () =>
@@ -173,18 +195,19 @@ export const BookingPage: FC = () => {
         () =>
             availableTimeslots.filter((v) => {
                 const h = new Date(v.start_datetime).getHours();
-                return h >= 18 && h <= 23;
+                return h >= 18 && h <= 23 || h == 0;
             }),
         [availableTimeslots]
     );
 
     // Find the first part of the day with available timeslots and update currentPartOfDay
-    useEffect(() => {
-        if (morningTimeslots.length > 0) setCurrentPartOfDay('morning');
-        else if (dayTimeslots.length > 0) setCurrentPartOfDay('day');
-        else if (eveningTimeslots.length > 0) setCurrentPartOfDay('evening');
-        else setCurrentPartOfDay(null); // Нет слотов вовсе
-    }, [morningTimeslots, dayTimeslots, eveningTimeslots]);
+    // useEffect(() => {
+    //     if (morningTimeslots.length > 0) setCurrentPartOfDay('morning');
+    //     else if (dayTimeslots.length > 0) setCurrentPartOfDay('day');
+    //     else if (eveningTimeslots.length > 0) setCurrentPartOfDay('evening');
+    //     else setCurrentPartOfDay(null); // Нет слотов вовсе
+    //     // console.log('??')
+    // }, [morningTimeslots, dayTimeslots, eveningTimeslots]);
 
     // Update currentPartOfDay when currentSelectedTime changes
     useEffect(() => {
@@ -194,7 +217,7 @@ export const BookingPage: FC = () => {
             );
             setCurrentPartOfDay(part);
         }
-    }, [currentSelectedTime]);
+    }, [currentSelectedTime, guestCount]);
 
     // Set currentPartOfDay based on available timeslots if currentSelectedTime is not set
     useEffect(() => {
@@ -213,6 +236,23 @@ export const BookingPage: FC = () => {
         currentSelectedTime,
     ]);
 
+    useEffect(() => {
+        const restaurantList = restaurants.map((v) => {
+            return {
+                title: v.title,
+                address: v.address,
+                value: String(v.id),
+            };
+        });
+        if (idFromParams) {
+        //     setBookingRestaurant(restaurantList[0]);
+            const restaurant = restaurantList.find(item => item.value === idFromParams);
+            restaurant !== undefined && setBookingRestaurant(restaurant);
+        } else {
+            setBookingRestaurants(restaurantList);
+        }
+    }, [restaurants]);
+
     // Create filtered timeslots
     const filteredTimeslots = useMemo(() => {
         if (currentPartOfDay === 'morning') return morningTimeslots;
@@ -230,7 +270,7 @@ export const BookingPage: FC = () => {
         if (hours >= 12 && hours < 18) {
             return 'day';
         }
-        if (hours >= 18 && hours <= 23) {
+        if (hours >= 18 && hours <= 23 || hours == 0) {
             return 'evening';
         }
         return 'day';
@@ -274,7 +314,6 @@ export const BookingPage: FC = () => {
     ]);
 
     const validateForm = () => {
-        console.log('Click');
         if (!nameValidate) {
             setNameValidated(false);
             setTimeout(() => {
@@ -309,13 +348,12 @@ export const BookingPage: FC = () => {
     };
 
     const hideApp = () => {
-        //
         // window.location.href = "tg:resolve";
         if (window.Telegram.WebApp) {
-            window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`
+            window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(bookingRestaurant.value)}`
             window.Telegram.WebApp.close();
         } else {
-            window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(id)}`
+            window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(bookingRestaurant.value)}`
         }
     }
 
@@ -324,34 +362,92 @@ export const BookingPage: FC = () => {
             setRequestLoading(true);
             APICreateBooking(
                 auth.access_token,
-                Number(id),
+                Number(bookingRestaurant.value),
                 bookingDate.value,
                 getTimeShort(currentSelectedTime.start_datetime),
-                (guestCount - childrenCount),
+                guestCount,
                 childrenCount,
                 userName,
                 userPhone,
                 userEmail,
                 commentary,
                 comms,
-                confirmation.text
+                confirmation.text,
+                (guestCount + childrenCount) < 8 ? false : preOrder,
                 // tg_id: user.
             )
                 .then((res) => {
+                    if (res.data?.error) {
+                        setErrorPopup(true);
+                        setBotError(true);
+                        return;
+                    }
                     navigate(`/myBookings/${res.data.id}`);
                 })
                 .catch((err) => {
                     console.log('err: ', err);
-                    alert(
-                        'Произошла ошибка при выполнении запроса, попробуйте еще раз.'
-                    );
+                    setErrorPopup(true);
+                    setErrorPopupCount((prev) => prev + 1);
                 })
                 .finally(() => setRequestLoading(false));
         }
     };
-
+    // const isSpecialPopup = new Date(bookingDate.value).getTime() && new Date('2025-07-30').getTime() && currentPartOfDay === 'evening' && bookingRestaurant.value == '1';
+    const openMenu = (isOpen: boolean) => {
+        if (isOpen) {
+            setErrorPopup(false);
+            setMenuPopupOpen(true);
+        } else {
+            setErrorPopup(true);
+            setMenuPopupOpen(false);
+        }
+    }
+    // const shareBooking = () => {
+    //     if (bookingRestaurant.value !== 'unset') {
+    //         const url = encodeURI(
+    //             `https://t.me/${BASE_BOT}?startapp=bookingId_${bookingRestaurant.value}`
+    //         );
+    //         const title = encodeURI(String(bookingRestaurant.title));
+    //         const shareData = {
+    //             title,
+    //             url,
+    //         }
+    //         try {
+    //             if (navigator && navigator.canShare(shareData)) {
+    //                 navigator.share(shareData).then().catch((err) => {
+    //                     alert(JSON.stringify(err));
+    //                 });
+    //             }
+    //         } catch (e) {
+    //             window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
+    //         }
+    //     }
+    // }
+    // TODO: make proper utils function to calculate work end time
+    const restaurantWorkEndTime = restaurants
+        .find((item) => item.id === Number(bookingRestaurant.value))?.worktime
+        .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+    let workEndTime = moment(bookingDate.value);
+    if (restaurantWorkEndTime !== undefined) {
+        const endOfDay = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) < 12;
+        if (endOfDay) {
+            workEndTime = moment(workEndTime.clone().add(1, 'days').startOf('days').format('YYYY-MM-DD'));
+        }
+        workEndTime.set({
+            hour: Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
+            minutes: Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0'))
+        })
+    }
     return (
         <Page back={true}>
+            <MenuPopup
+                isOpen={menuPopupOpen}
+                setOpen={openMenu}
+                menuItems={[specialMenu, specialMenu2]}
+            />
+            <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(bookingRestaurant.value)} count={errorPopupCount} botError={botError}/>
+            {/*<BookingSpecialPopup isOpen={specPopup} setOpen={setSpecPopup} createBooking={createBooking} resId={Number(bookingRestaurant.value)} setMenuPopupOpen={openMenu}/>*/}
+            <BookingInfoPopup isOpen={infoPopup} setOpen={setInfoPopup} />
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
                 childrenCount={childrenCount}
@@ -359,8 +455,8 @@ export const BookingPage: FC = () => {
                 setChildrenCount={setChildrenCount}
                 isOpen={guestCountPopup}
                 setOpen={setGuestCountPopup}
-                maxGuestsNumber={getGuestMaxNumber(id)}
-                serviceFeeMessage={getServiceFeeData(id)}
+                maxGuestsNumber={getGuestMaxNumber(String(bookingRestaurant.value))}
+                serviceFeeMessage={getServiceFeeData(String(bookingRestaurant.value))}
             />
             <BookingDateSelectorPopup
                 isOpen={bookingDatePopup}
@@ -368,6 +464,14 @@ export const BookingPage: FC = () => {
                 bookingDate={bookingDate}
                 setBookingDate={setBookingDate}
                 values={bookingDates}
+            />
+            {/*restaurants*/}
+            <BookingRestaurantsSelectorPopup
+                isOpen={bookingRestaurantPopup}
+                setOpen={setBookingRestaurantPopup}
+                bookingRestaurant={bookingRestaurant}
+                setBookingRestaurant={setBookingRestaurant}
+                values={bookingRestaurants}
             />
             <div className={css.page}>
                 <PageContainer>
@@ -377,90 +481,59 @@ export const BookingPage: FC = () => {
                                 <div style={{ width: '44px' }}></div>
                                 <div className={css.headerInfo}>
                                     <h3 className={css.headerInfo__title}>
-                                        Бронирование
+                                        {isFreeEventBooking ? isFreeEventBooking : 'Бронирование'}
                                     </h3>
+                                    {idFromParams && (
+                                        <>
+                                            <h3 className={css.headerInfo__title}>
+                                                <b>{String(bookingRestaurant.title)}</b>
+                                            </h3>
+                                            <h4 className={css.headerInfo__subtitle}>{String(bookingRestaurant.address)}</h4>
+                                        </>
+                                    )}
                                 </div>
                                 <div>
                                     <RoundedButton
                                         icon={<CrossIcon size={44} />}
-                                        isBack={true}
+                                        // isBack={true}
+                                        action={() => {
+                                            if (params.get('shared')) {
+                                                navigate('/')
+                                            } else {
+                                                navigate(-1)
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>
                             <div className={css.header_bottom}>
-                                <div
-                                    className={classNames(css.header__selector)}
-                                >
-                                    <div
-                                        className={classNames(
-                                            css.header__select,
-                                            !dateValidated ? css.invalid : null
-                                        )}
+                                {!idFromParams && <DropDownSelect
+                                    title={bookingRestaurant.value !== 'unset'? String(bookingRestaurants.find((item) => item.value === bookingRestaurant.value)?.title) : 'Ресторан'}
+                                    isValid={dateValidated}
+                                    icon={<KitchenIcon size={24}/>}
+                                    onClick={() => {
+                                        setBookingRestaurantPopup(true);
+                                    }}
+                                />}
+                                <div className={classNames(css.header__selector)}>
+                                    <DropDownSelect
+                                        title={bookingDate.value !== 'unset' ? formatDateShort(
+                                            bookingDate.value
+                                        ) : 'Дата'}
+                                        isValid={dateValidated}
+                                        icon={<CalendarIcon size={24}/>}
                                         onClick={() =>
                                             setBookingDatePopup(true)
                                         }
-                                    >
-                                        <div
-                                            className={css.header__select__left}
-                                        >
-                                            <CalendarIcon
-                                                size={24}
-                                            ></CalendarIcon>
-                                            <span
-                                                className={
-                                                    css.header__select__left_text
-                                                }
-                                            >
-                                                {bookingDate.value !== 'unset'
-                                                    ? formatDateShort(
-                                                          bookingDate.value
-                                                      )
-                                                    : 'Дата'}
-                                            </span>
-                                        </div>
-                                        <div
-                                            className={
-                                                css.header__select__arrow
-                                            }
-                                        >
-                                            <DownArrow></DownArrow>
-                                        </div>
-                                    </div>
-                                    <div
-                                        className={classNames(
-                                            css.header__select,
-                                            !guestsValidated
-                                                ? css.invalid
-                                                : null
-                                        )}
+                                    />
+                                    <DropDownSelect
+                                        title={guestCount ? getGuestsString(guestCount + childrenCount) : 'Гости'}
+                                        isValid={guestsValidated}
+                                        icon={<UsersIcon size={24}/>}
                                         onClick={() =>
                                             setGuestCountPopup(!guestCountPopup)
                                         }
-                                    >
-                                        <div
-                                            className={css.header__select__left}
-                                        >
-                                            <UsersIcon size={24}></UsersIcon>
-                                            <span
-                                                className={
-                                                    css.header__select__left_text
-                                                }
-                                            >
-                                                {guestCount
-                                                    ? getGuestsString(
-                                                          guestCount
-                                                      )
-                                                    : 'Гости'}
-                                            </span>
-                                        </div>
-                                        <div
-                                            className={
-                                                css.header__select__arrow
-                                            }
-                                        >
-                                            <DownArrow></DownArrow>
-                                        </div>
-                                    </div>
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -569,6 +642,7 @@ export const BookingPage: FC = () => {
                                                 style={{
                                                     width: '100%',
                                                 }}
+                                                initialSlide={filteredTimeslots.findIndex(item => item.start_datetime === currentSelectedTime?.start_datetime)}
                                             >
                                                 {filteredTimeslots.map((v) => (
                                                     <SwiperSlide
@@ -585,23 +659,23 @@ export const BookingPage: FC = () => {
                                                                     ? css.timeList_button__active
                                                                     : null
                                                             )}
-                                                            onClick={() =>
+                                                            onClick={() => {
                                                                 setCurrentSelectedTime(
-                                                                    v
-                                                                )
-                                                            }
+                                                                    v,
+                                                                );
+                                                            }}
                                                         >
                                                             <span>
                                                                 {currentSelectedTime?.start_datetime ==
-                                                                v.start_datetime
-                                                                    ? `${getTimeShort(
-                                                                          v.start_datetime
-                                                                      )} - ${getTimeShort(
-                                                                          v.end_datetime
-                                                                      )}`
-                                                                    : getTimeShort(
-                                                                          v.start_datetime
-                                                                      )}
+                                                                    v.start_datetime
+                                                                        ? `${getTimeShort(
+                                                                              v.start_datetime
+                                                                          )} - ${moment(v.end_datetime).isBefore(workEndTime) ? getTimeShort(
+                                                                              v.end_datetime
+                                                                          ) : restaurantWorkEndTime}`
+                                                                        : getTimeShort(
+                                                                              v.start_datetime
+                                                                          )}
                                                             </span>
                                                         </div>
                                                     </SwiperSlide>
@@ -617,11 +691,11 @@ export const BookingPage: FC = () => {
                                         )}
                                     </div>
                                 ) : null}
-                                <UniversalButton
+                                {!isFreeEventBooking && <UniversalButton
                                     action={hideApp}
                                     width={'full'}
                                     title={'Не нашли стол на желаемую дату и время?'}
-                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />
+                                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />}
                             </div>
                         </ContentContainer>
                     )}
@@ -638,10 +712,21 @@ export const BookingPage: FC = () => {
                     {/*    </div>*/}
                     {/*</ContentContainer>*/}
 
-                    <ContentContainer>
+                    {!isFreeEventBooking && <ContentContainer>
                         <HeaderContainer>
                             <HeaderContent title={'Пожелания к брони'} />
                         </HeaderContainer>
+                        {(guestCount + childrenCount) >= 8 && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 5}}>
+                                <CheckBoxInput
+                                    checked={preOrder}
+                                    toggle={() => setPreOrder(!preOrder)}
+                                    label={'Оформить предзаказ блюд и напитков'} />
+                                <span onClick={() => setInfoPopup(true)}>
+                                    <InfoIcon size={14}/>
+                                </span>
+                            </div>
+                        )}
                         <TextInput
                             value={commentary}
                             onFocus={() => {
@@ -666,8 +751,8 @@ export const BookingPage: FC = () => {
                                 freeMode={true}
                                 spaceBetween={8}
                             >
-                                {id !== undefined &&
-                                    getBookingCommentMock(id).map((obj) => (
+                                {bookingRestaurant.value !== 'unset' &&
+                                    getBookingCommentMock(String(bookingRestaurant.value)).map((obj) => (
                                         <SwiperSlide
                                             key={obj.text}
                                             style={{ width: 'max-content' }}
@@ -680,7 +765,7 @@ export const BookingPage: FC = () => {
                                     ))}
                             </Swiper>
                         </div>
-                    </ContentContainer>
+                    </ContentContainer>}
                     <ContentContainer>
                         <HeaderContainer>
                             <HeaderContent title={'Контакты'} />
@@ -718,20 +803,12 @@ export const BookingPage: FC = () => {
                     </ContentContainer>
                 </PageContainer>
             </div>
-            <div className={css.absoluteBottom} ref={bookingBtn}>
-                <div className={css.absoluteBottom_wrapper}>
-                    <div
-                        className={classNames(
-                            css.redButton,
-                            validateFormMemo ? null : css.disabledButton,
-                            requestLoading && css.loadingButton
-                        )}
-                        onClick={() => createBooking()}
-                    >
-                        <span className={css.text}>Забронировать</span>
-                    </div>
-                </div>
-            </div>
+            <BottomButtonWrapper
+                forwardedRef={bookingBtn}
+                isDisabled={validateFormMemo}
+                isLoading={requestLoading}
+                onClick={createBooking}
+            />
         </Page>
     );
 };

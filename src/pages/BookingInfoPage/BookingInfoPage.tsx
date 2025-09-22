@@ -7,7 +7,7 @@ import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { TimeCircle } from '@/components/Icons/TimeCircle.tsx';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
+// import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { useCallback, useEffect, useState } from 'react';
@@ -24,10 +24,17 @@ import {
     formatDateDayMonthLong,
     formatDateDayShort,
     formatDateMonthShort,
+    weekdaysMap,
 } from '@/utils.ts';
 import classNames from 'classnames';
-import { BOOKING_DURATION } from '../../mockData.ts';
-import {BASE_BOT} from "@/api/base.ts";
+import { BOOKINGCOMMENTMOCK } from '../../mockData.ts';
+import { BASE_BOT } from '@/api/base.ts';
+import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
+import { DoubleCheckIcon } from '@/components/Icons/DoubleCheckIcon.tsx';
+import { PhoneCallIcon } from '@/components/Icons/PhoneCallIcon.tsx';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper/modules';
+import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 
 export const BookingInfoPage = () => {
     const { id } = useParams();
@@ -40,10 +47,10 @@ export const BookingInfoPage = () => {
     // Return the end time of the booking based on the start time and duration
     // start is in format 'HH:mm'
     // duration is in minutes (from BOOKING_DURATION mock data)
-    const getEndTime = useCallback((start: string): string => {
+    const getEndTime = useCallback((start: string, duration: number): string => {
         const [hours, minutes] = start.split(':').map(Number);
         const endDate = new Date();
-        endDate.setHours(hours, minutes + BOOKING_DURATION, 0);
+        endDate.setHours(hours, minutes + duration, 0);
         return endDate.toTimeString().slice(0, 5); // Returns in 'HH:mm' format
     }, []);
 
@@ -77,21 +84,18 @@ export const BookingInfoPage = () => {
             return;
         }
         APIGetBooking(auth.access_token, Number(id)).then((res) =>
-            setBooking(res.data)
+            setBooking(res.data),
         );
     }, []);
 
     const hideApp = () => {
-        //
-        // window.location.href = "tg:resolve";
-        console.log('booking?.id: ', `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`);
         if (window.Telegram.WebApp) {
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`;
             window.Telegram.WebApp.close();
         } else {
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`;
         }
-    }
+    };
 
     return (
         <Page back={true}>
@@ -112,12 +116,12 @@ export const BookingInfoPage = () => {
                     <div
                         className={classNames(
                             css.fr,
-                            css.bookingInfoDetails_item
+                            css.bookingInfoDetails_item,
                         )}
                     >
                         {booking ? (
                             ['new', 'waiting', 'confirmed'].some(
-                                (v) => v == booking.booking_status
+                                (v) => v == booking.booking_status,
                             ) ? (
                                 <UniversalButton
                                     width={'full'}
@@ -136,7 +140,7 @@ export const BookingInfoPage = () => {
                         )}
                         {booking ? (
                             ['new', 'waiting', 'confirmed'].some(
-                                (v) => v == booking.booking_status
+                                (v) => v == booking.booking_status,
                             ) ? (
                                 <UniversalButton
                                     width={'full'}
@@ -155,7 +159,7 @@ export const BookingInfoPage = () => {
                     <div
                         className={classNames(
                             css.fr,
-                            css.bookingInfoDetails_item
+                            css.bookingInfoDetails_item,
                         )}
                     >
                         {booking ? (
@@ -163,7 +167,7 @@ export const BookingInfoPage = () => {
                                 className={css.redButton}
                                 onClick={() =>
                                     navigate(
-                                        `/restaurant/${booking?.restaurant.id}?menuOpen=true`
+                                        `/restaurant/${booking?.restaurant.id}?menuOpen=true`,
                                     )
                                 }
                             >
@@ -182,7 +186,7 @@ export const BookingInfoPage = () => {
                                 action={() =>
                                     openLink(
                                         `https://yandex.ru/maps/?text=${booking?.restaurant.address}`,
-                                        { tryInstantView: false }
+                                        { tryInstantView: false },
                                     )
                                 }
                                 icon={
@@ -225,7 +229,7 @@ export const BookingInfoPage = () => {
                         <div
                             className={classNames(
                                 css.fc,
-                                css.calendarContainer
+                                css.calendarContainer,
                             )}
                         >
                             {booking ? (
@@ -233,24 +237,24 @@ export const BookingInfoPage = () => {
                                     <div
                                         className={classNames(
                                             css.calendar,
-                                            css.calendar__month
+                                            css.calendar__month,
                                         )}
                                     >
                                         <span>
                                             {formatDateMonthShort(
-                                                booking.booking_date
+                                                booking.booking_date,
                                             )}
                                         </span>
                                     </div>
                                     <div
                                         className={classNames(
                                             css.calendar,
-                                            css.calendar__day
+                                            css.calendar__day,
                                         )}
                                     >
                                         <span>
                                             {formatDateDayShort(
-                                                booking.booking_date
+                                                booking.booking_date,
                                             )}
                                         </span>
                                     </div>
@@ -266,7 +270,7 @@ export const BookingInfoPage = () => {
                         <div
                             className={classNames(
                                 css.fc,
-                                css.bookingInfo_restaurant
+                                css.bookingInfo_restaurant,
                             )}
                         >
                             <h2 className={css.bookingInfo_restaurant__title}>
@@ -295,19 +299,44 @@ export const BookingInfoPage = () => {
                         <div
                             className={classNames(
                                 css.fc,
-                                css.bookingInfoDetails
+                                css.bookingInfoDetails,
                             )}
                         >
                             <div
                                 className={classNames(
                                     css.fr,
-                                    css.bookingInfoDetails_container
+                                    css.bookingInfoDetails_container,
+                                )}
+                            >
+                                {booking?.booking_status == 'waiting' ? (
+                                    <>
+                                        <PhoneCallIcon size={24} />
+                                        <h3>Мы свяжемся с вами для <br />подтверждения бронирования</h3>
+                                    </>
+                                ) : (
+                                    <>
+                                        <DoubleCheckIcon />
+                                        <h3>Ваше бронирование подтверждено</h3>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        <div
+                            className={classNames(
+                                css.fc,
+                                css.bookingInfoDetails,
+                            )}
+                        >
+                            <div
+                                className={classNames(
+                                    css.fr,
+                                    css.bookingInfoDetails_container,
                                 )}
                             >
                                 <div
                                     className={classNames(
                                         css.fr,
-                                        css.bookingInfoDetails_item
+                                        css.bookingInfoDetails_item,
                                     )}
                                 >
                                     <TimeCircle
@@ -320,7 +349,7 @@ export const BookingInfoPage = () => {
                                                 css.bookingInfoDetails_item__text
                                             }
                                         >
-                                            {`${booking.time}-${getEndTime(booking.time)}`}
+                                            {`${booking.time}-${getEndTime(booking.time, booking.duration)}`}
                                         </span>
                                     ) : (
                                         <PlaceholderBlock
@@ -332,7 +361,7 @@ export const BookingInfoPage = () => {
                                 <div
                                     className={classNames(
                                         css.fr,
-                                        css.bookingInfoDetails_item
+                                        css.bookingInfoDetails_item,
                                     )}
                                 >
                                     <CalendarIcon
@@ -346,8 +375,8 @@ export const BookingInfoPage = () => {
                                             }
                                         >
                                             {formatDateDayMonthLong(
-                                                booking.booking_date
-                                            )}
+                                                booking.booking_date,
+                                            )}, {weekdaysMap[new Date(booking.booking_date).getDay()]}
                                         </span>
                                     ) : (
                                         <PlaceholderBlock
@@ -359,22 +388,35 @@ export const BookingInfoPage = () => {
                                 <div
                                     className={classNames(
                                         css.fr,
-                                        css.bookingInfoDetails_item
+                                        css.bookingInfoDetails_item,
                                     )}
                                 >
                                     <UsersIcon
                                         size={16}
                                         color={'var(--dark-grey)'}
                                     ></UsersIcon>
-
                                     {booking ? (
-                                        <span
-                                            className={
-                                                css.bookingInfoDetails_item__text
-                                            }
-                                        >
-                                            {booking.guests_count}
-                                        </span>
+                                        <>
+                                            <span
+                                                className={
+                                                    css.bookingInfoDetails_item__text
+                                                }
+                                            >
+                                                {Number(booking.guests_count)}
+                                            </span>
+                                            {!!booking.children_count && (
+                                                <>
+                                                    <ChildrenIcon size={16} />
+                                                    <span
+                                                        className={
+                                                            css.bookingInfoDetails_item__text
+                                                        }
+                                                    >
+                                                        {Number(booking.children_count)}
+                                                    </span>
+                                                </>
+                                            )}
+                                        </>
                                     ) : (
                                         <PlaceholderBlock
                                             width={'20px'}
@@ -387,40 +429,37 @@ export const BookingInfoPage = () => {
                         <div
                             className={classNames(
                                 css.fc,
-                                css.bookingInfoDetails
+                                css.bookingInfoDetails,
                             )}
                         >
                             <div
+                                style={{ width: '100%'}}
                                 className={classNames(
                                     css.fr,
-                                    css.bookingInfoDetails_container
+                                    css.bookingInfoDetails_container,
                                 )}
                             >
-                                <div
-                                    className={classNames(
-                                        css.fr,
-                                        css.bookingInfoDetails_item
-                                    )}
+                                <Swiper
+                                    slidesPerView="auto"
+                                    modules={[FreeMode]}
+                                    freeMode={true}
+                                    spaceBetween={8}
                                 >
-                                    <ChatIcon
-                                        size={16}
-                                        color={'var(--dark-grey)'}
-                                    ></ChatIcon>
-                                    {booking ? (
-                                        <span
-                                            className={
-                                                css.bookingInfoDetails_item__text
-                                            }
-                                        >
-                                            {booking.user_comments}
-                                        </span>
-                                    ) : (
-                                        <PlaceholderBlock
-                                            width={'120px'}
-                                            height={'17px'}
-                                        />
-                                    )}
-                                </div>
+                                    {booking && booking.tags && (
+                                        booking.tags.split(',').map((tag, i) => (
+                                            <SwiperSlide
+                                                key={i}
+                                                style={{ width: 'max-content' }}
+                                            >
+                                                <CommentaryOptionButton
+                                                    disabled={true}
+                                                    text={String(BOOKINGCOMMENTMOCK.find(mock => mock.text === tag)?.text)}
+                                                    icon={String(BOOKINGCOMMENTMOCK.find(mock => mock.text === tag)?.emoji)}
+                                                />
+                                            </SwiperSlide>
+                                        )))}
+                                </Swiper>
+
                             </div>
                         </div>
                         {booking ? (

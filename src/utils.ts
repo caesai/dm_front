@@ -1,8 +1,10 @@
 import { IWorkTime } from '@/types/restaurant.ts';
-import { IEventBooking, IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
+// import { IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
 import { Dispatch, SetStateAction } from 'react';
-import moment from 'moment';
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+// import moment from 'moment';
+// import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+import { IEventBooking } from '@/types/events.ts';
+// import axios from 'axios';
 // import { IEventBooking } from '@/pages/EventsPage/EventsPage.tsx';
 // import { Dispatch, SetStateAction } from 'react';
 
@@ -93,7 +95,7 @@ const MONTHS_LONG2 = [
     'ноября',
     'декабря',
 ];
-const weekdaysMap: Record<number, string> = {
+export const weekdaysMap: Record<number, string> = {
     0: 'вс',
     1: 'пн',
     2: 'вт',
@@ -113,14 +115,15 @@ export const formatDate = (inputDate: string): string => {
 
     const day = input.getDate();
     const month = MONTHS_LONG2[input.getMonth()];
+    const dayNumber = weekdaysMap[input.getDay()];
 
     if (input.getTime() === today.getTime()) {
-        return `Сегодня, ${day} ${month}`;
+        return `Сегодня, ${day} ${month}, ${dayNumber}`;
     } else if (input.getTime() === today.getTime() + 86400000) {
         // 86400000 миллисекунд в одном дне
-        return `Завтра, ${day} ${month}`;
+        return `Завтра, ${day} ${month}, ${dayNumber}`;
     } else {
-        return `${day} ${month}`;
+        return `${day} ${month}, ${dayNumber}`;
     }
 };
 export const formatDateAlt = (inputDate: string): string => {
@@ -158,6 +161,14 @@ export const formatDateDT = (inputDate: Date): string => {
     return `${day} ${month}`;
 };
 
+export const formatDateDTY = (inputDate: Date): string => {
+    const day = inputDate.getDate();
+    const month = inputDate.getMonth();
+    const year = inputDate.getFullYear();
+
+    return `${day}.${month}.${year}`;
+};
+
 export const formatDateDayMonthLong = (inputDate: string): string => {
     const input = new Date(inputDate);
     const day = input.getDate();
@@ -175,8 +186,9 @@ export const formatDateShort = (inputDate: string): string => {
 
     const day = input.getDate();
     const month = MONTHS[input.getMonth()];
+    const dayNumber = input.getDay();
 
-    return `${day} ${month}`;
+    return `${day} ${month}, ${weekdaysMap[dayNumber]}`;
 };
 
 export const formatDateMonthShort = (inputDate: string): string => {
@@ -468,18 +480,18 @@ export type IEventBookingContext = [
     IEventBooking,
     Dispatch<SetStateAction<IEventBooking>>,
 ];
-
-export const findCurrentDate = (
-    bookingInfo: IEventBooking,
-    date: ITimeSlot
-): IEventDate | undefined => {
-    return bookingInfo.restaurant?.dates.find((v) => {
-        return (
-            moment(date.start_datetime).isSameOrAfter(moment(v.date_start)) ||
-            moment(date.start_datetime).isSameOrBefore(moment(v.date_end))
-        );
-    });
-};
+//
+// export const findCurrentDate = (
+//     bookingInfo: IEventBooking,
+//     date: ITimeSlot
+// ): IEventDate | undefined => {
+//     return bookingInfo.event?.date_start.find((v) => {
+//         return (
+//             moment(date.start_datetime).isSameOrAfter(moment(bookingInfo.event?.date_start)) ||
+//             moment(date.start_datetime).isSameOrBefore(moment(v.date_end))
+//         );
+//     });
+// };
 
 
 // Callback function for asynchronous call to HTML5 geolocation
@@ -539,3 +551,33 @@ export const getDataFromLocalStorage = (itemKey: string) => {
 export const removeDataFromLocalStorage = (itemKey: string) => {
     localStorage.removeItem(itemKey);
 }
+
+export const getBlobFromUrl = async (blobUrl: string) => {
+    // const response = await axios.get(blobUrl, {
+    //     responseType: 'blob',
+    // });
+    // return response.data;
+    const response = await fetch(blobUrl);
+    return await response.blob();
+}
+
+export const getCookie = (name: string) => {
+    const nameExpression = `${name}=`;
+    const cookies = document.cookie.split(';');
+    const cookie = cookies.find(currentCookie => currentCookie.includes(nameExpression));
+    return cookie ? cookie.trim().substring(nameExpression.length, cookie.length) : null;
+}
+
+export const setCookie = (name: string, value: string, expire = 365, path = '/') => {
+    const date = new Date();
+    date.setTime(date.getTime() + (expire * 24 * 3600 * 1000));
+    const expires = date.toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=${path}`;
+};
+
+export const setShortCookie = (name: string, value: string, seconds: number, path = '/') => {
+    const date = new Date();
+    date.setTime(date.getTime() + (seconds * 1000));
+    const expires = date.toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=${path}`;
+};

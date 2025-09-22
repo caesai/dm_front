@@ -46,7 +46,6 @@ export interface IRestaurantShort {
     thumbnail_photo: string;
     openTime: string;
     avg_cheque: number;
-
     photo_cards: IPhotoCard[];
     brand_chef: IRestaurantChef;
     city: ICity;
@@ -68,9 +67,7 @@ export interface IRestaurant extends IRestaurantShort {
     address_lonlng: string;
     address_station: string;
     address_station_color: string;
-
     phone_number: string;
-
     gallery: IPhotoCard[];
     menu: IMenuItem[];
     menu_imgs: IMenuImg[];
@@ -79,6 +76,7 @@ export interface IRestaurant extends IRestaurantShort {
 }
 
 export interface IBookingCreate {
+    error: any;
     id: number;
 }
 
@@ -91,6 +89,10 @@ export interface IBookingInfo {
     children_count: number;
     booking_status: string;
     user_comments: string;
+    tags: string;
+    booking_type?: string;
+    event_title?: string;
+    duration: number;
 }
 
 export interface ICurrentBookings {
