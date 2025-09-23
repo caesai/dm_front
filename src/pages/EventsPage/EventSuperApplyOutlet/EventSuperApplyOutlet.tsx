@@ -130,14 +130,12 @@ export const EventSuperApplyOutlet = () => {
                             placeholder={'Цель посещения ивента'}
                             onFocus={() => {
                                 if(bookingBtn.current) {
-                                    bookingBtn.current.style.position = 'relative';
-                                    bookingBtn.current.style.bottom = '-90px';
+                                    bookingBtn.current.style.opacity = '0';
                                 }
                             }}
                             onBlur={() => {
                                 if(bookingBtn.current) {
-                                    bookingBtn.current.style.position = 'fixed';
-                                    bookingBtn.current.style.bottom = '30px';
+                                    bookingBtn.current.style.opacity = '1';
                                 }
                             }}
                         />
