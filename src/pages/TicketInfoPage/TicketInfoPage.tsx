@@ -85,10 +85,10 @@ export const TicketInfoPage = () => {
 
     const refund = () => {
         setIsRefund(true);
+        setDataToLocalStorage('ticket_refund: ', { id });
         setTimeout(() => {
             window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
         }, 5000);
-        setDataToLocalStorage('ticket_refund: ', { id });
     };
 
     const goBack = () => {

@@ -14,8 +14,8 @@ import { FC, useState } from 'react';
 import {IRestaurant} from '@/types/restaurant.ts';
 import {
     getCurrentTimeShort,
-    getCurrentWeekdayShort,
-    getRestaurantStatus,
+    getCurrentWeekdayShort, getDataFromLocalStorage,
+    getRestaurantStatus, setDataToLocalStorage,
 } from '@/utils.ts';
 import {useAtom} from "jotai/index";
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
@@ -40,6 +40,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
     const [auth] = useAtom(authAtom);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
+    const want_first = getDataFromLocalStorage('want_first');
 
     const wantToBeFirst = () => {
         if (!auth?.access_token) {
@@ -51,6 +52,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
             .then(() => {
                 setToastShow(true);
                 setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
+                setDataToLocalStorage('want_first', { done: true });
             })
             .catch((err) => {
                 if (err.response) {
@@ -189,7 +191,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                     </div>
                 ) : (
                     <div style={{ display: 'flex'}}>
-                        {toastShow ? (
+                        {toastShow || (want_first && JSON.parse(want_first).done) ? (
                             <div className={css.success_animation}>
                                 <svg className={css.checkmark} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                                     <circle className={css.checkmark__circle} cx="26" cy="26" r="25" fill="none" />
