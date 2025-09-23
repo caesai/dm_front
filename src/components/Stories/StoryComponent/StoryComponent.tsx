@@ -16,6 +16,8 @@ export const StoryComponent: React.FC<StoryComponentProps> = ({ title, descripti
         <div className={classNames(css.storyComponent)} style={{
             backgroundImage: component_type && component_type == 2 ? `url(${url})` : undefined,
             backgroundSize: 'cover',
+            backgroundPosition: 'center center',
+            backgroundRepeat: 'no-repeat',
         }}>
             <div className={css.storyWrapper}>
                 <div className={css.storyFooter}>

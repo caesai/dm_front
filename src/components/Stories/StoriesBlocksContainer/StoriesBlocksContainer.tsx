@@ -38,7 +38,7 @@ export const StoriesBlocksContainer: React.FC<IStoriesBlocksContainerProps> = ({
                     return 0;
                 })
                 .map(({thumbnail, id }, index) => (
-                    <SwiperSlide style={{width: '100px'}} key={index}>
+                    <SwiperSlide style={{width: '93px'}} key={index}>
                         <StoriesBlock onClick={openStory} index={index} thumbnail={thumbnail} isSeen={localStories.find((item) => item.id === id)?.isSeen} />
                     </SwiperSlide>
                 ))

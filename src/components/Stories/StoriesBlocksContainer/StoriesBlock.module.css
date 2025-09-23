@@ -1,6 +1,6 @@
 .storyBlock {
-    width: 100px;
-    height: 100px;
+    width: 93px;
+    height: 93px;
     background-color: var(--secondary-background);
     border-radius: 20px;
     overflow: hidden;
@@ -11,7 +11,7 @@
 
 .storyBlockImage {
     width: 100%;
-    height: 100px;
+    height: 93px;
     overflow: hidden;
     display: flex;
     justify-content: center;

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import {Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import {useEffect} from 'react';
 // import imgFull from "/img/logoFull.png";
-import logoNew from "/img/DT_concierge_logo_1.png";
+import logoNew from "/img/DT_concierge_logo_color1.svg";
 
 export const OnboardingPage = () => {
     const navigate = useNavigate();
