@@ -59,9 +59,9 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
             })
             .finally(() => {
                 setTimeout(() => {
-                    // setToastShow(false);
+                    setToastShow(false);
                     setToastMessage(null);
-                }, 4000);
+                }, 3000);
             });
     }
 
@@ -116,7 +116,8 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                 }}
             />
             <div
-                className={classNames(css.bgImage, css.imaged)}
+                className={classNames(css.bgImage,
+                    restaurant.id === 12 ? css.bgNoImaged : css.imaged)}
                 style={{
                     backgroundImage: `url(${restaurant.thumbnail_photo})`,
                 }}
