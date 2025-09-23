@@ -38,8 +38,8 @@ export const TicketInfoPage = () => {
     const [isRefund, setIsRefund] = useState(false);
     const { isShowing, toggle } = useModal();
     const shared = Boolean(searchParams.get('shared'));
-    const refundTicket = getDataFromLocalStorage('ticket_refund');
-    console.log('refundTicket: ', refundTicket);
+    const ticket_refund = getDataFromLocalStorage('ticket_refund');
+    console.log('refundTicket: ', ticket_refund);
     useEffect(() => {
         if (!auth?.access_token || shared) {
             APIGetSharedTicket(Number(id)).then((res) => {
@@ -87,9 +87,10 @@ export const TicketInfoPage = () => {
     const refund = () => {
         setIsRefund(true);
         setDataToLocalStorage('ticket_refund: ', { id });
-        setTimeout(() => {
-            window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
-        }, 5000);
+        console.log('wt', { id });
+        // setTimeout(() => {
+        //     window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
+        // }, 5000);
     };
 
     const goBack = () => {
@@ -190,7 +191,7 @@ export const TicketInfoPage = () => {
                         </div>
                         {!shared && (
                             <div>
-                                <span onClick={refund} className={css.refundBtn}>{isRefund || (refundTicket && JSON.parse(refundTicket).id === id) ? 'Запрос на возврат оформлен' : 'Оформить возврат'}</span>
+                                <span onClick={refund} className={css.refundBtn}>{isRefund || (ticket_refund && JSON.parse(ticket_refund).id === id) ? 'Запрос на возврат оформлен' : 'Оформить возврат'}</span>
                             </div>
                         )}
                     </div>
