@@ -100,7 +100,7 @@ export const APIGetTicket = async (id: number, token: string) => {
 };
 
 export const APIGetSharedTicket = async (id: number) => {
-    return await axios.get<EventTicket>(`${BASE_URL}/events/tickets/by-remarked/${id}`);
+    return await axios.get<EventTicket>(`${BASE_URL}/events/tickets/by-id/${id}`);
 };
 
 export const APIGetTickets = async (token: string) => {
