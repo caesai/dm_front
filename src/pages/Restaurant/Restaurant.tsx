@@ -273,7 +273,7 @@ export const Restaurant = () => {
         })
     }
     const handleNextBtn = () => {
-        if (searchParams.get('shared')) {
+        if (!auth?.access_token) {
             navigate('/onboarding/5');
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
