@@ -39,7 +39,7 @@ export const TicketInfoPage = () => {
     const { isShowing, toggle } = useModal();
     const shared = Boolean(searchParams.get('shared'));
     const ticket_refund = getDataFromLocalStorage('ticket_refund');
-    console.log('refundTicket: ', ticket_refund);
+    console.log('ticket_refund: ', ticket_refund);
     useEffect(() => {
         if (!auth?.access_token || shared) {
             APIGetSharedTicket(Number(id)).then((res) => {
