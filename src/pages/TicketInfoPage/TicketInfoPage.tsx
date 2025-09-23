@@ -86,11 +86,11 @@ export const TicketInfoPage = () => {
 
     const refund = () => {
         setIsRefund(true);
-        setDataToLocalStorage('ticket_refund: ', { id });
+        setDataToLocalStorage('ticket_refund', { id });
         console.log('wt', { id });
-        // setTimeout(() => {
-        //     window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
-        // }, 5000);
+        setTimeout(() => {
+            window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
+        }, 5000);
     };
 
     const goBack = () => {
