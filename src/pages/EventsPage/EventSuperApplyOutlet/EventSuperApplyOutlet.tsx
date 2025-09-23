@@ -78,12 +78,13 @@ export const EventSuperApplyOutlet = () => {
                             onFocus={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'relative';
-
+                                    bookingBtn.current.style.bottom = '0px';
                                 }
                             }}
                             onBlur={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'absolute';
+                                    bookingBtn.current.style.bottom = '30px';
                                 }
                             }}
                         />
@@ -96,12 +97,13 @@ export const EventSuperApplyOutlet = () => {
                             onFocus={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'relative';
-
+                                    bookingBtn.current.style.bottom = '0px';
                                 }
                             }}
                             onBlur={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'absolute';
+                                    bookingBtn.current.style.bottom = '30px';
                                 }
                             }}
                         />
@@ -114,12 +116,13 @@ export const EventSuperApplyOutlet = () => {
                             onFocus={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'relative';
-
+                                    bookingBtn.current.style.bottom = '0px';
                                 }
                             }}
                             onBlur={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'absolute';
+                                    bookingBtn.current.style.bottom = '30px';
                                 }
                             }}
                         />
@@ -132,12 +135,13 @@ export const EventSuperApplyOutlet = () => {
                             onFocus={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'relative';
-
+                                    bookingBtn.current.style.bottom = '0px';
                                 }
                             }}
                             onBlur={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'absolute';
+                                    bookingBtn.current.style.bottom = '30px';
                                 }
                             }}
                         />
@@ -150,12 +154,13 @@ export const EventSuperApplyOutlet = () => {
                             onFocus={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'relative';
-
+                                    bookingBtn.current.style.bottom = '0px';
                                 }
                             }}
                             onBlur={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'absolute';
+                                    bookingBtn.current.style.bottom = '30px';
                                 }
                             }}
                         />
@@ -168,12 +173,13 @@ export const EventSuperApplyOutlet = () => {
                             onFocus={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'relative';
-
+                                    bookingBtn.current.style.bottom = '0px';
                                 }
                             }}
                             onBlur={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'absolute';
+                                    bookingBtn.current.style.bottom = '30px';
                                 }
                             }}
                         />
@@ -186,12 +192,13 @@ export const EventSuperApplyOutlet = () => {
                             onFocus={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'relative';
-
+                                    bookingBtn.current.style.bottom = '0px';
                                 }
                             }}
                             onBlur={() => {
                                 if(bookingBtn.current) {
                                     bookingBtn.current.style.position = 'absolute';
+                                    bookingBtn.current.style.bottom = '30px';
                                 }
                             }}
                         />
