@@ -69,7 +69,7 @@ export const Redirecter = () => {
                 navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });
             } else if (location.search.includes('ticketId')) {
                 const ticketId = getEventIdFromParams(paramsObject, 'ticketId');
-                navigate('/tickets/' + ticketId, { replace: true });
+                navigate('/tickets/' + ticketId + '?shared=true', { replace: true });
             } else {
                 navigate('/onboarding');
             }

@@ -39,14 +39,15 @@ export const TicketInfoPage = () => {
     const shared = Boolean(searchParams.get('shared'));
     useEffect(() => {
         if (!auth?.access_token || shared) {
+            console.log('shared: ', shared)
             APIGetSharedTicket(Number(id)).then((res) => {
                 setTicket(res.data);
             });
-            return;
+        } else {
+            APIGetTicket(Number(id), auth.access_token).then((res) => {
+                setTicket(res.data);
+            });
         }
-        APIGetTicket(Number(id), auth.access_token).then((res) => {
-            setTicket(res.data);
-        });
     }, [id]);
 
     // const sharePdf = () => {
