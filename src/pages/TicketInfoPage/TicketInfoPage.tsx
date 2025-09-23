@@ -26,6 +26,7 @@ import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 import { BASE_BOT } from '@/api/base.ts';
 import { Share } from '@/components/Icons/Share.tsx';
+import { getDataFromLocalStorage, setDataToLocalStorage } from '@/utils.ts';
 
 
 export const TicketInfoPage = () => {
@@ -37,9 +38,9 @@ export const TicketInfoPage = () => {
     const [isRefund, setIsRefund] = useState(false);
     const { isShowing, toggle } = useModal();
     const shared = Boolean(searchParams.get('shared'));
+    const refundTicket = getDataFromLocalStorage('ticket_refund');
     useEffect(() => {
         if (!auth?.access_token || shared) {
-            console.log('shared: ', shared)
             APIGetSharedTicket(Number(id)).then((res) => {
                 setTicket(res.data);
             });
@@ -87,6 +88,7 @@ export const TicketInfoPage = () => {
         setTimeout(() => {
             window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
         }, 5000);
+        setDataToLocalStorage('ticket_refund: ', { id });
     };
 
     const goBack = () => {
@@ -187,7 +189,7 @@ export const TicketInfoPage = () => {
                         </div>
                         {!shared && (
                             <div>
-                                <span onClick={refund} className={css.refundBtn}>{isRefund ? 'Запрос на возврат оформлен' : 'Оформить возврат'}</span>
+                                <span onClick={refund} className={css.refundBtn}>{isRefund || (refundTicket && JSON.parse(refundTicket).id === id) ? 'Запрос на возврат оформлен' : 'Оформить возврат'}</span>
                             </div>
                         )}
                     </div>
