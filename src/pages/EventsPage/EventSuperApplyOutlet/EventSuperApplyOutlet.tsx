@@ -112,13 +112,12 @@ export const EventSuperApplyOutlet = () => {
                             placeholder={'Ваш опыт работы'}
                             onFocus={() => {
                                 if(bookingBtn.current) {
-                                    bookingBtn.current.style.position = 'relative';
-
+                                    bookingBtn.current.style.opacity = '0';
                                 }
                             }}
                             onBlur={() => {
                                 if(bookingBtn.current) {
-                                    bookingBtn.current.style.position = 'fixed';
+                                    bookingBtn.current.style.opacity = '1';
                                 }
                             }}
                         />
