@@ -38,7 +38,7 @@ export const TicketInfoPage = () => {
     const { isShowing, toggle } = useModal();
     const shared = Boolean(searchParams.get('shared'));
     useEffect(() => {
-        if (!auth?.access_token) {
+        if (!auth?.access_token || shared) {
             APIGetSharedTicket(Number(id)).then((res) => {
                 setTicket(res.data);
             });
