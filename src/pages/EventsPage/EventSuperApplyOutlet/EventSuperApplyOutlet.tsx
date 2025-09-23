@@ -75,16 +75,6 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, name: e }))
                             }
                             placeholder={'Ваше имя'}
-                            onFocus={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '0';
-                                }
-                            }}
-                            onBlur={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '1';
-                                }
-                            }}
                         />
                         <TextInput
                             value={userInfo.surname}
@@ -92,16 +82,6 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, surname: e }))
                             }
                             placeholder={'Ваша фамилия'}
-                            onFocus={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '0';
-                                }
-                            }}
-                            onBlur={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '1';
-                                }
-                            }}
                         />
                         <TextInput
                             value={'+' + userInfo.phone}
@@ -109,16 +89,6 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, phone: e.replace('+', '') }))
                             }
                             placeholder={'Ваш контактный номер'}
-                            onFocus={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '0';
-                                }
-                            }}
-                            onBlur={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '1';
-                                }
-                            }}
                         />
                         <TextInput
                             value={userInfo.work_place}
@@ -126,16 +96,6 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, work_place: e }))
                             }
                             placeholder={'Ваше место работы (организация)'}
-                            onFocus={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '0';
-                                }
-                            }}
-                            onBlur={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '1';
-                                }
-                            }}
                         />
                         <TextInput
                             value={userInfo.job_title}
@@ -143,16 +103,6 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, job_title: e }))
                             }
                             placeholder={'Ваша должность'}
-                            onFocus={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '0';
-                                }
-                            }}
-                            onBlur={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '1';
-                                }
-                            }}
                         />
                         <TextInput
                             value={userInfo.experience}
@@ -160,16 +110,6 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, experience: e }))
                             }
                             placeholder={'Ваш опыт работы'}
-                            onFocus={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '0';
-                                }
-                            }}
-                            onBlur={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '1';
-                                }
-                            }}
                         />
                         <TextInput
                             value={userInfo.visit_purpose}
@@ -177,16 +117,6 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, visit_purpose: e }))
                             }
                             placeholder={'Цель посещения ивента'}
-                            onFocus={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '0';
-                                }
-                            }}
-                            onBlur={() => {
-                                if(bookingBtn.current) {
-                                    bookingBtn.current.style.opacity = '1';
-                                }
-                            }}
                         />
                     </div>
                 </div>

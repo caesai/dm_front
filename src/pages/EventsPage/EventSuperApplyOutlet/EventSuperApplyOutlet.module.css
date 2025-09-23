@@ -160,13 +160,13 @@
 }
 
 .absoluteBottom {
-    position: fixed;
-    bottom: 30px;
-    left: 0;
+    /*position: fixed;*/
+    /*bottom: 30px;*/
+    /*left: 0;*/
     width: 100%;
 }
 
 .bottomWrapper {
-    padding: 0 15px;
+    /*padding: 0 15px;*/
     display: flex;
 }
