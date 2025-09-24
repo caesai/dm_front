@@ -56,7 +56,7 @@ import {Calendar} from 'react-iconly';
 import {FaAngleRight} from 'react-icons/fa';
 import {PickerValueObj} from '@/lib/react-mobile-picker/components/Picker.tsx';
 import {ITimeSlot} from '@/pages/BookingPage/BookingPage.types.ts';
-import {authAtom} from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import {
     APIGetAvailableDays,
     APIGetAvailableTimeSlots,
@@ -103,6 +103,7 @@ export const Restaurant = () => {
     const {id} = useParams();
     const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
+    const [user] = useAtom(userAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [, setGuestCount] = useAtom(guestCountAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
@@ -160,7 +161,6 @@ export const Restaurant = () => {
         const handleScroll = () => {
             setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 50px – меняем состояние
         };
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -273,10 +273,18 @@ export const Restaurant = () => {
         })
     }
     const handleNextBtn = () => {
-        if (!auth?.access_token) {
+        if (!user?.complete_onboarding) {
             navigate('/onboarding/5');
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
+        }
+    }
+
+    const goBack = () => {
+        if (!user?.complete_onboarding) {
+            navigate('/onboarding');
+        } else {
+            navigate('/')
         }
     }
     return (
@@ -323,7 +331,7 @@ export const Restaurant = () => {
                         <div className={css.headerNavBlock}>
                             <RoundedButton
                                 icon={<BackIcon color={'var(--dark-grey)'}/>}
-                                action={() => navigate('/')}
+                                action={goBack}
                             ></RoundedButton>
                         </div>
                         {headerScrolled ? (
@@ -338,12 +346,14 @@ export const Restaurant = () => {
                                 }
                                 action={() => shareRestaurant()}
                             />
-                            <RoundedButton
-                                icon={
-                                    <IconlyProfile color={'var(--dark-grey)'}/>
-                                }
-                                action={() => goToProfile()}
-                            />
+                            {user && user.complete_onboarding && (
+                                <RoundedButton
+                                    icon={
+                                        <IconlyProfile color={'var(--dark-grey)'}/>
+                                    }
+                                    action={() => goToProfile()}
+                                />
+                            )}
                         </div>
                     </div>
                     {headerScrolled ? <RestaurantNavigation isEvents={Boolean(events.length) && tg_id && mockEventsUsersList.includes(tg_id)}/> : null}
