@@ -174,7 +174,7 @@ export const IndexPage: FC = () => {
                 <Header/>
                 {tg_id && [84327932, 115555014, 118832541, 153495524, 163811519].includes(tg_id) &&  <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
                 {hasSuperEventAccess && (
-                    <div style={{ marginRight: 15}}>
+                    <div style={{ marginRight: 15, height: 85}}>
                         <Link to={'/events/super'}>
                             <img src={superevent} style={{ maxWidth: '100%', width: '100%'}} alt={''} />
                         </Link>
