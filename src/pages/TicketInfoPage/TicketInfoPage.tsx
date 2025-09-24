@@ -39,7 +39,7 @@ export const TicketInfoPage = () => {
     const { isShowing, toggle } = useModal();
     const shared = Boolean(searchParams.get('shared'));
     const ticket_refund = getDataFromLocalStorage('ticket_refund');
-    console.log('ticket_refund: ', ticket_refund);
+    // console.log('ticket_refund: ', ticket_refund);
     useEffect(() => {
         if (!auth?.access_token || shared) {
             APIGetSharedTicket(Number(id)).then((res) => {
@@ -85,9 +85,11 @@ export const TicketInfoPage = () => {
     };
 
     const refund = () => {
+        if (ticket_refund && JSON.parse(ticket_refund).id === id) {
+            return;
+        }
         setIsRefund(true);
         setDataToLocalStorage('ticket_refund', { id });
-        console.log('wt', { id });
         setTimeout(() => {
             window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
         }, 5000);
