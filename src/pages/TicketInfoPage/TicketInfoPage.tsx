@@ -191,7 +191,10 @@ export const TicketInfoPage = () => {
                         </div>
                         {!shared && (
                             <div>
-                                <span onClick={refund} className={css.refundBtn}>{isRefund || (ticket_refund && JSON.parse(ticket_refund).id === id) ? 'Запрос на возврат оформлен' : 'Оформить возврат'}</span>
+                                <span onClick={refund} className={classNames(
+                                    css.refundBtn,
+                                    isRefund || (ticket_refund && JSON.parse(ticket_refund).id === id) ? css.refundTrue : null
+                                )}>{isRefund || (ticket_refund && JSON.parse(ticket_refund).id === id) ? 'Запрос на возврат оформлен' : 'Оформить возврат'}</span>
                             </div>
                         )}
                     </div>

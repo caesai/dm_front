@@ -114,10 +114,15 @@
 
 .refundBtn {
     font-family: 'Mont', sans-serif;
-    font-weight: 400;
+    font-weight: 700;
     font-size: 12px;
-    color: white;
+    background-color: var(--secondary-light-grey);
+    border-radius: 14px;
+    padding: 6px 12px;
+    color: var(--dark-grey);
+}
+
+.refundTrue {
     background-color: var(--red);
-    border-radius: 16px;
-    padding: 3px 10px;
+    color: white;
 }

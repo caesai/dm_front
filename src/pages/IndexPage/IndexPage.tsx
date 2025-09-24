@@ -27,6 +27,7 @@ import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
 import superevent from '/img/super.png';
 import newres from '/img/chinois_app.png';
+import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -136,11 +137,10 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter(v => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
-    console.log('currentCityA: ', currentCityA);
-    const restaurantListed = currentCityA === 'spb' ? [{
+    const restaurantListed = (currentCityA === 'spb' && tg_id && mockEventsUsersList.includes(tg_id)) ? [{
         "id": 12,
         "title": "Self Edge Chinois",
-        "slogan": "Загородный ресторан в центре города",
+        "slogan": "Современная Азия с акцентом на Китай и культовый raw bar",
         "address": "Санкт-Перербург, ул. Добролюбова, 11",
         "logo_url": "",
         "thumbnail_photo": newres,
