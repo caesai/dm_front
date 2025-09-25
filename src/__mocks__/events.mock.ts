@@ -44,6 +44,20 @@ export const mockEventsList: IEventInRestaurant[] = [{
         "address": "Санкт-Петербург, ул. Радищева, 34",
         "address_lonlng": "",
         "thumbnail_photo": "https://storage.yandexcloud.net/bottec-dreamteam/SEJ/main.jpg"
+    },
+}, {
+    "id": 241,
+    "name": "🍨 Встреча любителей высокой кухни",
+    "description": "Бесплатное тестовое мероприятие. Бесплатное тестовое мероприятие. Бесплатное тестовое мероприятие.\r\nБесплатное тестовое мероприятие. Бесплатное тестовое мероприятие. Бесплатное тестовое мероприятие. Спасибо.",
+    "ticket_price": 0,
+    "image_url": "http://cabinet.clientomer.ru/storage/123004/advents/241.jpg",
+    "date_start": "2025-09-30 21:00:00",
+    "tickets_left": 10,
+    "restaurant": {
+        "id": 4,
+        "title": "Self Edge Japanese",
+        "address": "Санкт-Петербург, ул. Радищева, 34",
+        "thumbnail_photo": "https://storage.yandexcloud.net/bottec-dreamteam/SEJ/main.jpg"
     }
 }];
 
