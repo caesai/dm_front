@@ -11,6 +11,9 @@ export const EventListOutlet: React.FC = () => {
     const navigate = useNavigate();
     const [events] = useAtom<IEventInRestaurant[]>(eventsListAtom);
     const next = (event: IEventInRestaurant) => {
+        // if (event.ticket_price == 0 && event.tickets_left == 0) {
+        //     return;
+        // }
         navigate(`/events/${event.id}`)
     };
     return (
@@ -21,9 +24,9 @@ export const EventListOutlet: React.FC = () => {
                     const bDate = new Date(b.date_start);
                     return aDate.getTime() - bDate.getTime();
                 })
-                // .filter((event) =>{
-                //     return new Date().getTime() <= new Date(event.date_start).getTime();
-                // })
+                .filter((event) => {
+                    return event.ticket_price == 0 ? event.tickets_left > 0 : event;
+                })
                 .map((event) => (
                     <EventCard
                         key={event.name}

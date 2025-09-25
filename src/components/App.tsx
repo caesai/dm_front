@@ -94,13 +94,6 @@ const AppRouter = () => {
             <BannerPopup />
             <Redirecter />
             {
-            //     earlyAccess && !user?.early_access ? (
-            //     <div>
-            //         <span>
-            //             Вход в приложение пока доступен только по приглашению
-            //         </span>
-            //     </div>
-            // ) :
                 !loadingComplete ? (
                 <AppLoadingScreen />
             ) : (

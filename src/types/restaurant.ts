@@ -55,7 +55,7 @@ export interface IRestaurantShortBooking {
     id: number;
     title: string;
     address: string;
-    address_lonlng: string;
+    address_lonlng?: string;
     thumbnail_photo: string;
 }
 

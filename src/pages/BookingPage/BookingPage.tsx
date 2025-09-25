@@ -427,6 +427,7 @@ export const BookingPage: FC = () => {
     const restaurantWorkEndTime = restaurants
         .find((item) => item.id === Number(bookingRestaurant.value))?.worktime
         .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+
     let workEndTime = moment(bookingDate.value);
     if (restaurantWorkEndTime !== undefined) {
         const endOfDay = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) < 12;
@@ -670,9 +671,12 @@ export const BookingPage: FC = () => {
                                                                     v.start_datetime
                                                                         ? `${getTimeShort(
                                                                               v.start_datetime
-                                                                          )} - ${moment(v.end_datetime).isBefore(workEndTime) ? getTimeShort(
+                                                                          )} - ${moment(v.end_datetime).isBefore(workEndTime) ? 
+                                                                        getTimeShort(
                                                                               v.end_datetime
-                                                                          ) : restaurantWorkEndTime}`
+                                                                          ) : restaurantWorkEndTime == undefined ? getTimeShort(
+                                                                            v.end_datetime
+                                                                        ) : restaurantWorkEndTime}`
                                                                         : getTimeShort(
                                                                               v.start_datetime
                                                                           )}
