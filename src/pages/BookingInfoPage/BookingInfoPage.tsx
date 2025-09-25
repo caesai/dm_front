@@ -465,7 +465,7 @@ export const BookingInfoPage = () => {
                         {booking ? (
                             <Taxi
                                 address={booking.restaurant.address}
-                                lonlng={booking.restaurant.address_lonlng}
+                                lonlng={String(booking.restaurant.address_lonlng)}
                             />
                         ) : (
                             <PlaceholderBlock width={'354px'} height={'64px'} />
