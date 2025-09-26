@@ -316,7 +316,7 @@ export const BookingInfoPage = () => {
                                 ) : (
                                     <>
                                         <DoubleCheckIcon />
-                                        <h3>Ваше бронирование подтверждено</h3>
+                                        <h3>Ваше бронирование {booking?.booking_status == 'canceled' ? 'отменено' : 'подтверждено'}</h3>
                                     </>
                                 )}
                             </div>

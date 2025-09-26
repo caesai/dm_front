@@ -252,7 +252,7 @@ export const Restaurant = () => {
         try {
             if (navigator && navigator.canShare(shareData)) {
                 navigator.share(shareData).then().catch((err) => {
-                    alert(JSON.stringify(err));
+                    console.error(JSON.stringify(err));
                 });
             }
         } catch (e) {
