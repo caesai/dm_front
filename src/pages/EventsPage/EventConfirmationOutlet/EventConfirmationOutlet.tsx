@@ -41,8 +41,9 @@ export const EventConfirmationOutlet: React.FC = () => {
                     end_datetime: moment(bookingInfo.event?.date_start).add(2, 'hours').toISOString(),
                     is_free: true,
                 });
-                console.log('end_datetime: String(bookingInfo.event?.date_start): ', String(bookingInfo.event?.date_start))
-                navigate('/booking?id=' + bookingInfo.restaurant?.id + '&free_event=' + bookingInfo.event.name);
+                console.log('end_datetime: String(bookingInfo.event?.date_start): ', bookingInfo.event.id)
+
+                navigate('/booking?id=' + bookingInfo.restaurant?.id + '&free_event=' + bookingInfo.event.name + '&event_id=' + bookingInfo.event.id);
                 return;
             }
             navigate(`/events/${bookingInfo.event?.id}/confirm`);

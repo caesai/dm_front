@@ -78,6 +78,7 @@ export interface IRestaurant extends IRestaurantShort {
 export interface IBookingCreate {
     error: any;
     id: number;
+    ticket_id?: number;
 }
 
 export interface IBookingInfo {
