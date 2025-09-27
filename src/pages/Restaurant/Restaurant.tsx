@@ -33,7 +33,7 @@ import {CallRestaurantPopup} from '@/components/CallRestaurantPopup/CallRestaura
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
 import {useAtom} from 'jotai';
 import {backButtonAtom} from '@/atoms/backButtonAtom.ts';
-import {IPhotoCard, IRestaurant} from '@/types/restaurant.ts';
+import { IPhotoCard, IRestaurant } from '@/types/restaurant.ts';
 import {
     YMap,
     YMapComponentsProvider,
@@ -76,6 +76,8 @@ import { Share } from '@/components/Icons/Share.tsx';
 import { BASE_BOT } from '@/api/base.ts';
 import moment from 'moment';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+import { IBanquet } from '@/types/banquets.ts';
+import { banquetData } from '@/__mocks__/banquets.mock.ts';
 
 export const transformGallery = (
     gallery: IPhotoCard[]
@@ -137,6 +139,7 @@ export const Restaurant = () => {
         (string | string[])[]
     >([]);
     const [events, setEvents] = useState<IEventInRestaurant[]>([]);
+    const [banquet, ] = useState<IBanquet>(banquetData);
 
     const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
@@ -868,11 +871,36 @@ export const Restaurant = () => {
                         )}
                     </ContentBlock>
                 </ContentContainer>)}
-
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
-                            <HeaderContent title={'Адрес'}/>
+                            <HeaderContent title={'Банкеты'}/>
+                        </HeaderContainer>
+                        <div className={css.banquetContainer}>
+                            <div className={css.banquetImg}>
+                                <div
+                                    className={classNames(
+                                        css.banquetImage,
+                                        css.bgImage,
+                                    )}
+                                    style={{
+                                        backgroundImage: `url(${banquet.image_url})`,
+                                    }}
+                                ></div>
+                            </div>
+                            <span className={css.banquetDescription}>{banquet.description}</span>
+                            <UniversalButton
+                                width={'full'}
+                                title={'Подробнее'}
+                                theme={'red'}
+                            />
+                        </div>
+                    </ContentBlock>
+                </ContentContainer>
+                <ContentContainer>
+                    <ContentBlock>
+                        <HeaderContainer>
+                            <HeaderContent title={'Адрес'} />
                         </HeaderContainer>
                         <div className={css.mapContainer}>
                             <div className={css.map}>
