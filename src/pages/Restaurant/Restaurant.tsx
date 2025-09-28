@@ -893,6 +893,7 @@ export const Restaurant = () => {
                                 width={'full'}
                                 title={'Подробнее'}
                                 theme={'red'}
+                                action={() => navigate(`/banquets/${restaurant?.id}/choose`)}
                             />
                         </div>
                     </ContentBlock>

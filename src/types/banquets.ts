@@ -7,6 +7,7 @@ export type IBanquetOptions = {
     id: number
     name: string
     guests_limit: number
-    deposit: string
+    deposit?: string
+    conditions?: string
     image_url: string
 }

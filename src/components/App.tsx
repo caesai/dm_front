@@ -46,6 +46,7 @@ import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
 import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
 import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
 import { NewRestaurant } from '@/pages/NewRestaurant/NewRestaurant.tsx';
+import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -153,6 +154,7 @@ const AppRouter = () => {
                         <Route path={'/onboarding/5'} element={<StageSix />} />
                         <Route path={'/onboarding/6'} element={<StageSeven />} />
                     </Route>
+                    <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
 
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
