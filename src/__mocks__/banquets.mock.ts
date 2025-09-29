@@ -32,7 +32,7 @@ export const banquetOptions: IBanquetOptions[] = [
 export const banquetParams: IBanquetParams  = {
     min_guests_number: 6,
     max_guests_number: 20,
-    banketType: ["День рождения", "Свадьба", "Важный повод", "Корпоратив", "Другое"],
-    depodit_per_person: 4000,
+    banquetType: ["День рождения", "Свадьба", "Важный повод", "Корпоратив", "Другое"],
+    deposit_per_person: 4000,
     service_fee: 10,
 }

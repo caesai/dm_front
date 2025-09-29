@@ -13,8 +13,8 @@ import { TimeFromIcon } from '@/components/Icons/TimeFromIcon.tsx';
 import { TimeToIcon } from '@/components/Icons/TimeToIcon.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
-import { CakeIcon } from '@/components/Icons/CakeIcon.tsx'
-import { UsersIcon } from '@/components/Icons/UsersIcon'
+import { CakeIcon } from '@/components/Icons/CakeIcon.tsx';
+import { UsersIcon } from '@/components/Icons/UsersIcon';
 import { BanquetOptionsPopup } from '@/components/BanquetOptionsPopup/BanquetOpitonsPopup.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import classNames from 'classnames';
@@ -35,13 +35,14 @@ export const BanquetOptionPage = () => {
     const [timeTo, setTimeTo] = useState<string | undefined>();
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
     const [isOpenDropdown, setOpenDropdown] = useState<boolean>(false);
-    const [currentBanquetParams, setCurrentBanquetParams] = useState<IBanquetParams>();
+    const [currentBanquetParams, setCurrentBanquetParams] =
+        useState<IBanquetParams>();
     const [selectedReason, setSelectedReason] = useState<string>('');
     const [customReason, setCustomReason] = useState<string>('');
 
     const [guestCount, setGuestCount] = useState<PickerValueObj>({
         value: 'unset',
-        title: ''
+        title: '',
     });
 
     const closePopup = () => setOpenPopup(false);
@@ -49,7 +50,7 @@ export const BanquetOptionPage = () => {
     const goBack = () => {
         console.log(restaurant_id, 'banquetOptions');
         navigate(`/banquets/${restaurant_id}/choose`);
-    }
+    };
 
     const handleReasonSelect = (reason: string) => {
         setSelectedReason(reason);
@@ -64,8 +65,8 @@ export const BanquetOptionPage = () => {
         timeFrom &&
         timeTo &&
         guestCount.value !== 'unset' &&
-        (selectedReason !== '' && (selectedReason !== 'Другое' || customReason !== ''));
-
+        selectedReason !== '' &&
+        (selectedReason !== 'Другое' || customReason !== '');
 
     useEffect(() => {
         if (!banquet) {
@@ -74,7 +75,7 @@ export const BanquetOptionPage = () => {
     }, [banquet, navigate]);
 
     useEffect(() => {
-        setCurrentBanquetParams(banquetParams)
+        setCurrentBanquetParams(banquetParams);
     }, []);
 
     return (
@@ -100,7 +101,9 @@ export const BanquetOptionPage = () => {
                             icon={<BackIcon color={'var(--dark-grey)'} />}
                             action={goBack}
                         ></RoundedButton>
-                        <span className={css.header_title}>{banquet?.name}</span>
+                        <span className={css.header_title}>
+                            {banquet?.name}
+                        </span>
                         <div />
                     </div>
                     <ContentContainer>
@@ -110,16 +113,22 @@ export const BanquetOptionPage = () => {
                                     className={css.datePicker}
                                     onClick={() => setCalendarOpen(true)}
                                 >
-                                    {
-                                        date ?
-                                            <span>{date.toLocaleDateString()}</span>
-                                            :
-                                            <span className={css.datePicker__placeholder}>
+                                    {date ? (
+                                        <span>{date.toLocaleDateString()}</span>
+                                    ) : (
+                                        <span
+                                            className={
+                                                css.datePicker__placeholder
+                                            }
+                                        >
                                             Дата
                                         </span>
-                                    }
+                                    )}
 
-                                    <CalendarIcon size={20} color={'var(--grey)'} />
+                                    <CalendarIcon
+                                        size={20}
+                                        color={'var(--grey)'}
+                                    />
                                 </div>
                                 <div className={css.timeInputs}>
                                     <TimeInput
@@ -140,40 +149,57 @@ export const BanquetOptionPage = () => {
                                     onClick={() => setOpenPopup(true)}
                                 >
                                     <UsersIcon size={24} />
-                                    {guestCount.value === 'unset'
-                                        ?
-                                        <span className={css.guestCount__placeholder}>
+                                    {guestCount.value === 'unset' ? (
+                                        <span
+                                            className={
+                                                css.guestCount__placeholder
+                                            }
+                                        >
                                             Количество гостей
                                         </span>
-                                        :
+                                    ) : (
                                         <span>{guestCount.title}</span>
-                                    }
+                                    )}
                                 </div>
                                 <div className={css.reasonContainer}>
                                     <DropDownSelect
-                                        title={selectedReason ? selectedReason : 'Повод'}
+                                        title={
+                                            selectedReason
+                                                ? selectedReason
+                                                : 'Повод'
+                                        }
                                         isValid={true}
                                         icon={<CakeIcon size={24} />}
-                                        onClick={() => setOpenDropdown(!isOpenDropdown)}
+                                        onClick={() =>
+                                            setOpenDropdown(!isOpenDropdown)
+                                        }
                                     />
                                     <div
                                         className={classNames(
                                             css.dropdown_content,
-                                            isOpenDropdown ? css.dropdown_active : null
+                                            isOpenDropdown
+                                                ? css.dropdown_active
+                                                : null
                                         )}
                                     >
-                                        {currentBanquetParams?.banketType.map((type, i) => (
-                                            <span
-                                                key={i}
-                                                className={css.dropdown_item}
-                                                onClick={() => handleReasonSelect(type)}
-                                            >
-                                                {type}
-                                            </span>
-                                        ))}
+                                        {currentBanquetParams?.banquetType.map(
+                                            (type, i) => (
+                                                <span
+                                                    key={i}
+                                                    className={
+                                                        css.dropdown_item
+                                                    }
+                                                    onClick={() =>
+                                                        handleReasonSelect(type)
+                                                    }
+                                                >
+                                                    {type}
+                                                </span>
+                                            )
+                                        )}
                                     </div>
                                 </div>
-                                {/* Форма для ввода повода ьанкета, если выбрано "Другое" */}
+                                {/* Форма для ввода повода банкета, если выбрано "Другое" */}
                                 {selectedReason === 'Другое' && (
                                     <TextInput
                                         placeholder={'Повод'}
@@ -183,51 +209,73 @@ export const BanquetOptionPage = () => {
                                 )}
                             </div>
                         </ContentBlock>
-                        {
-                            isFormValid && (
-                                <ContentBlock>
-                                    <div className={css.payment}>
-                                        <span className={css.payment_title}>Предварительный рассчет стоимости:</span>
-                                        <div className={css.payment_text}>
-                                            <span>Депозит за человека:</span>
-                                            <span>{currentBanquetParams?.depodit_per_person} ₽</span>
-                                        </div>
-                                        <div className={css.payment_text}>
-                                            <span>Депозит итого:</span>
-                                            <span>
-                                        {currentBanquetParams && guestCount.value !== 'unset' &&
-                                            currentBanquetParams.depodit_per_person * parseInt(guestCount.value) + ' ₽'
-                                        }
+                        {isFormValid && (
+                            <ContentBlock>
+                                <div className={css.payment}>
+                                    <span className={css.payment_title}>
+                                        Предварительный рассчет стоимости:
                                     </span>
-                                        </div>
-                                        <div className={css.payment_text}>
-                                            <span>Сервисный сбор:</span>
-                                            <span>{currentBanquetParams?.service_fee}%</span>
-                                        </div>
-                                        <div className={css.payment_text}>
-                                            <span>Итого:</span>
-                                            <span>
-                                        {currentBanquetParams && (1 + currentBanquetParams?.service_fee / 100) * currentBanquetParams?.depodit_per_person * parseInt(guestCount.value) + ' ₽'}
-                                    </span>
-                                        </div>
-                                        <p>Конечная стоимость банкета формируется
-                                            из подобранного меню, винного сопровождения,
-                                            сервисного сбора, а также дополнительных услуг.</p>
+                                    <div className={css.payment_text}>
+                                        <span>Депозит за человека:</span>
+                                        <span>
+                                            {
+                                                currentBanquetParams?.deposit_per_person
+                                            }{' '}
+                                            ₽
+                                        </span>
                                     </div>
-                                </ContentBlock>
-                            )
-                        }
+                                    <div className={css.payment_text}>
+                                        <span>Депозит итого:</span>
+                                        <span>
+                                            {currentBanquetParams &&
+                                                guestCount.value !== 'unset' &&
+                                                currentBanquetParams.deposit_per_person *
+                                                    parseInt(guestCount.value) +
+                                                    ' ₽'}
+                                        </span>
+                                    </div>
+                                    <div className={css.payment_text}>
+                                        <span>Сервисный сбор:</span>
+                                        <span>
+                                            {currentBanquetParams?.service_fee}%
+                                        </span>
+                                    </div>
+                                    <div className={css.payment_text}>
+                                        <span>Итого:</span>
+                                        <span>
+                                            {currentBanquetParams &&
+                                                (1 +
+                                                    currentBanquetParams?.service_fee /
+                                                        100) *
+                                                    currentBanquetParams?.deposit_per_person *
+                                                    parseInt(guestCount.value) +
+                                                    ' ₽'}
+                                        </span>
+                                    </div>
+                                    <p>
+                                        Конечная стоимость банкета формируется
+                                        из подобранного меню, винного
+                                        сопровождения, сервисного сбора, а также
+                                        дополнительных услуг.
+                                    </p>
+                                </div>
+                            </ContentBlock>
+                        )}
                         <div className={css.button}>
                             <UniversalButton
                                 width={'full'}
                                 title={'Продолжить'}
                                 theme={'red'}
-                                action={() => navigate(`/banquets/${restaurant_id}/additional-services`)}
+                                action={() =>
+                                    navigate(
+                                        `/banquets/${restaurant_id}/additional-services`
+                                    )
+                                }
                             />
                         </div>
                     </ContentContainer>
                 </div>
             </div>
         </Page>
-    )
-}
+    );
+};

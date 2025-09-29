@@ -15,7 +15,7 @@ export interface IBanquetOptions {
 export interface IBanquetParams {
     min_guests_number: number
     max_guests_number: number
-    banketType: string[]
-    depodit_per_person: number
+    banquetType: string[]
+    deposit_per_person: number
     service_fee: number
 }
