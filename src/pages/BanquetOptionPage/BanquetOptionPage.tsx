@@ -112,9 +112,9 @@ export const BanquetOptionPage = () => {
                                 >
                                     {
                                         date ?
-                                        <span>{date.toLocaleDateString()}</span>
-                                        :
-                                        <span className={css.datePicker__placeholder}>
+                                            <span>{date.toLocaleDateString()}</span>
+                                            :
+                                            <span className={css.datePicker__placeholder}>
                                             Дата
                                         </span>
                                     }
@@ -150,7 +150,7 @@ export const BanquetOptionPage = () => {
                                     }
                                 </div>
                                 <div className={css.reasonContainer}>
-                                <DropDownSelect
+                                    <DropDownSelect
                                         title={selectedReason ? selectedReason : 'Повод'}
                                         isValid={true}
                                         icon={<CakeIcon size={24} />}
@@ -217,14 +217,14 @@ export const BanquetOptionPage = () => {
                                 </ContentBlock>
                             )
                         }
+                        <div className={css.button}>
+                            <UniversalButton
+                                width={'full'}
+                                title={'Продолжить'}
+                                theme={'red'}
+                            />
+                        </div>
                     </ContentContainer>
-                    <div className={css.button}>
-                        <UniversalButton
-                            width={'full'}
-                            title={'Продолжить'}
-                            theme={'red'}
-                        />
-                    </div>
                 </div>
             </div>
         </Page>
