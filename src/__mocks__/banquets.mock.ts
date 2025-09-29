@@ -1,11 +1,11 @@
-import { IBanquet, IBanquetOptions } from '@/types/banquets.ts';
+import { IBanquet, IBanquetOptions, IBanquetParams } from '@/types/banquets.ts';
 
 export const banquetData: IBanquet = {
     image_url: "https://kolmelhior.ru/upload/iblock/2c4/1tzhih52e9d6exo286ecgqqsi8l0mmr9.jpg",
     description: "Мы создадим идеальные условия для вашего праздника: вкусное меню, комфортный зал и душевная атмосфера."
 }
 
-export const banketOptions: IBanquetOptions[] = [
+export const banquetOptions: IBanquetOptions[] = [
     {
         id: 2136,
         name: "Кабинет",
@@ -28,3 +28,11 @@ export const banketOptions: IBanquetOptions[] = [
         image_url: "https://i.pinimg.com/736x/42/64/e1/4264e1a3c56bbe061174039772d43fb0.jpg"
     },
 ]
+
+export const banquetParams: IBanquetParams  = {
+    min_guests_number: 6,
+    max_guests_number: 20,
+    banketType: ["День рождения", "Свадьба", "Важный повод", "Корпоратив", "Другое"],
+    depodit_per_person: 4000,
+    service_fee: 10,
+}

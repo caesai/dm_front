@@ -7,23 +7,23 @@ import { ContentContainer } from '@/components/ContentContainer/ContentContainer
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { useEffect, useState } from 'react';
 import { IBanquetOptions } from '@/types/banquets.ts';
-import { banketOptions } from '@/__mocks__/banquets.mock.ts';
+import { banquetOptions } from '@/__mocks__/banquets.mock.ts';
 import { DepositIcon } from '@/components/Icons/DepositIcon.tsx';
 import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 
 export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
-    const {id} = useParams();
+    const {restaurant_id} = useParams();
 
-    const [options, setOptions] = useState<IBanquetOptions[]>([])
+    const [banquets, setBanquets] = useState<IBanquetOptions[]>([])
 
     const goBack = () => {
-        navigate(`/restaurant/${id}`);
+        navigate(`/restaurant/${restaurant_id}`);
     }
 
     useEffect(() => {
-        setOptions(banketOptions);
+        setBanquets(banquetOptions);
     }, []);
     return (
         <Page back={true}>
@@ -39,7 +39,7 @@ export const ChooseBanquetOptionsPage = () => {
                     </div>
                     <ContentContainer>
                         <ContentBlock>
-                            {options.map((banquet) => (
+                            {banquets.map((banquet) => (
                                 <div className={css.banquetContainer} key={banquet.id}>
                                     <img
                                         src={banquet.image_url} alt="banquet_img"
@@ -58,6 +58,7 @@ export const ChooseBanquetOptionsPage = () => {
                                             title={'Выбрать'}
                                             theme={'red'}
                                             width={'full'}
+                                            action={() => navigate(`/banquets/${restaurant_id}/option`, { state: { banquet } })}
                                         />
                                     </div>
                                 </div>
