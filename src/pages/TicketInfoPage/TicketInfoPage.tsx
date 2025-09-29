@@ -8,7 +8,7 @@ import classNames from 'classnames';
 // import { DownloadIcon } from '@/components/Icons/DownloadIcon.tsx';
 import { useEffect, useState } from 'react';
 import { EventTicket } from '@/types/events.ts';
-import { APIGetSharedTicket, APIGetTicket } from '@/api/events.ts';
+import { APIDeleteTicket, APIGetSharedTicket, APIGetTicket } from '@/api/events.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
@@ -22,11 +22,12 @@ import moment from 'moment';
 // import '../../../public/'
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
-import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
-import { useModal } from '@/components/ModalPopup/useModal.ts';
+// import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { BASE_BOT } from '@/api/base.ts';
 import { Share } from '@/components/Icons/Share.tsx';
 import { getDataFromLocalStorage, setDataToLocalStorage } from '@/utils.ts';
+import { CancelBookingPopup } from '@/pages/BookingInfoPage/CancelBookingPopup/CancelBookingPopup.tsx';
+import { InformationPopup } from '@/components/InformationPopup/InformationPopup.tsx';
 
 
 export const TicketInfoPage = () => {
@@ -35,8 +36,10 @@ export const TicketInfoPage = () => {
     const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [ticket, setTicket] = useState<EventTicket>();
-    const [isRefund, setIsRefund] = useState(false);
-    const { isShowing, toggle } = useModal();
+    const [cancelPopup, setCancelPopup] = useState(false);
+    const [canceledPopup, setCanceledPopup] = useState(false);
+
+
     const shared = Boolean(searchParams.get('shared'));
     const ticket_refund = getDataFromLocalStorage('ticket_refund');
     // console.log('ticket_refund: ', ticket_refund);
@@ -88,11 +91,21 @@ export const TicketInfoPage = () => {
         if (ticket_refund && JSON.parse(ticket_refund).id === id) {
             return;
         }
-        setIsRefund(true);
-        setDataToLocalStorage('ticket_refund', { id });
-        setTimeout(() => {
-            window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
-        }, 5000);
+        setCancelPopup(true);
+    };
+
+    const onCancel = () => {
+        if (!auth?.access_token) {
+            // navigate('/');
+            return;
+        }
+        setCancelPopup(false);
+        APIDeleteTicket(Number(id), String(auth?.access_token))
+            .then(() => {
+                setDataToLocalStorage('ticket_refund', { id });
+                setCanceledPopup(true);
+            })
+            .catch(() => alert('Произошла ошибка при отмене брони.'));
     };
 
     const goBack = () => {
@@ -105,16 +118,28 @@ export const TicketInfoPage = () => {
 
     return (
         <Page back={true}>
-            <ModalPopup
-                isOpen={isShowing}
-                setOpen={toggle}
-                title={!isRefund ? 'Вы хотите оформить возврат?' : 'Запрос принят'}
-                text={isRefund ? `В течении 30 минут с вами свяжется сотрудник ресторана, чтобы оформить возврат. Если запрос был отправлен вне рабочего времени ресторана, мы обязательно ответим сразу после открытия.` : undefined}
-                button={!isRefund}
-                btnText={'Да'}
-                reverseButton={true}
-                btnAction={refund}
-                btnScndrText={'Нет'}
+            {/*<ModalPopup*/}
+            {/*    isOpen={isShowing}*/}
+            {/*    setOpen={toggle}*/}
+            {/*    title={!isRefund ? 'Вы хотите оформить возврат?' : 'Запрос принят'}*/}
+            {/*    text={isRefund ? `В течении 30 минут с вами свяжется сотрудник ресторана, чтобы оформить возврат. Если запрос был отправлен вне рабочего времени ресторана, мы обязательно ответим сразу после открытия.` : undefined}*/}
+            {/*    button={!isRefund}*/}
+            {/*    btnText={'Да'}*/}
+            {/*    reverseButton={true}*/}
+            {/*    btnAction={refund}*/}
+            {/*    btnScndrText={'Нет'}*/}
+            {/*/>*/}
+            <CancelBookingPopup
+                isOpen={cancelPopup}
+                text={'Оформить возврат?'}
+                setOpen={setCancelPopup}
+                onSubmit={() => onCancel()}
+            />
+            <InformationPopup
+                isOpen={canceledPopup}
+                setOpen={setCanceledPopup}
+                close={() => navigate('/tickets')}
+                text={'Запрос на возврат оформлен'}
             />
             <div className={css.body}>
                 <div className={css.header}>
@@ -195,8 +220,8 @@ export const TicketInfoPage = () => {
                             <div>
                                 <span onClick={refund} className={classNames(
                                     css.refundBtn,
-                                    isRefund || (ticket_refund && JSON.parse(ticket_refund).id === id) ? css.refundTrue : null
-                                )}>{isRefund || (ticket_refund && JSON.parse(ticket_refund).id === id) ? 'Запрос на возврат оформлен' : 'Оформить возврат'}</span>
+                                    ticket_refund && JSON.parse(ticket_refund).id === id ? css.refundTrue : null
+                                )}>{ticket_refund && JSON.parse(ticket_refund).id === id ? 'Запрос на возврат оформлен' : 'Оформить возврат'}</span>
                             </div>
                         )}
                     </div>

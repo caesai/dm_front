@@ -173,3 +173,11 @@ export const APIGetSuperEventHasAccess = async ( token: string ) => {
         }
     })
 }
+
+export const APIDeleteTicket = async (event_id: number, token: string) => {
+    return await axios.delete<EventTicket>(`${BASE_URL}/events/cancel/${event_id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
