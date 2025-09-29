@@ -16,25 +16,6 @@ dependencies using the command:
 npm install
 ```
 
-## Self Sign Certificates and Hosts Config
-
-Install [mkcert](https://github.com/FiloSottile/mkcert) for making locally-trusted development certificates.
-After install one should to create certificates for dt-mini-app.local domain
-```
-mkdir -p .cert && mkcert -key-file ./.cert/localhost-key.pem -cert-file ./.cert/localhost.pem 'dt-mini-app.local'
-```
-
-Now in /etc/hosts
-
-```
-sudo nano /etc/hosts
-```
-
-Add line in the end of the file
-```
-127.0.0.1 dt-mini-app.local
-```
-
 ## Scripts
 
 This project contains the following scripts:

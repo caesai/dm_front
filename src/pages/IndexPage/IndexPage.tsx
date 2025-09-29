@@ -27,7 +27,6 @@ import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
 import superevent from '/img/super.png';
 import newres from '/img/chinois_app.png';
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -137,10 +136,11 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter(v => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
-    const restaurantListed = (currentCityA === 'spb' && tg_id && mockEventsUsersList.includes(tg_id)) ? [{
+    console.log('currentCityA: ', currentCityA);
+    const restaurantListed = currentCityA === 'spb' ? [{
         "id": 12,
         "title": "Self Edge Chinois",
-        "slogan": "Современная Азия с акцентом на Китай и культовый raw bar",
+        "slogan": "Загородный ресторан в центре города",
         "address": "Санкт-Перербург, ул. Добролюбова, 11",
         "logo_url": "",
         "thumbnail_photo": newres,
@@ -174,7 +174,7 @@ export const IndexPage: FC = () => {
                 <Header/>
                 {tg_id && [84327932, 115555014, 118832541, 153495524, 163811519].includes(tg_id) &&  <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
                 {hasSuperEventAccess && (
-                    <div style={{ marginRight: 15, height: 85}}>
+                    <div style={{ marginRight: 15}}>
                         <Link to={'/events/super'}>
                             <img src={superevent} style={{ maxWidth: '100%', width: '100%'}} alt={''} />
                         </Link>

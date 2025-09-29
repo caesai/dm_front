@@ -56,7 +56,7 @@ import {Calendar} from 'react-iconly';
 import {FaAngleRight} from 'react-icons/fa';
 import {PickerValueObj} from '@/lib/react-mobile-picker/components/Picker.tsx';
 import {ITimeSlot} from '@/pages/BookingPage/BookingPage.types.ts';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import {authAtom} from '@/atoms/userAtom.ts';
 import {
     APIGetAvailableDays,
     APIGetAvailableTimeSlots,
@@ -75,7 +75,6 @@ import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButt
 import { Share } from '@/components/Icons/Share.tsx';
 import { BASE_BOT } from '@/api/base.ts';
 import moment from 'moment';
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 export const transformGallery = (
     gallery: IPhotoCard[]
@@ -103,7 +102,6 @@ export const Restaurant = () => {
     const {id} = useParams();
     const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
-    const [user] = useAtom(userAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [, setGuestCount] = useAtom(guestCountAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
@@ -161,6 +159,7 @@ export const Restaurant = () => {
         const handleScroll = () => {
             setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 50px – меняем состояние
         };
+
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -252,7 +251,7 @@ export const Restaurant = () => {
         try {
             if (navigator && navigator.canShare(shareData)) {
                 navigator.share(shareData).then().catch((err) => {
-                    console.error(JSON.stringify(err));
+                    alert(JSON.stringify(err));
                 });
             }
         } catch (e) {
@@ -273,18 +272,10 @@ export const Restaurant = () => {
         })
     }
     const handleNextBtn = () => {
-        if (!user?.complete_onboarding) {
+        if (searchParams.get('shared')) {
             navigate('/onboarding/5');
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
-        }
-    }
-
-    const goBack = () => {
-        if (!user?.complete_onboarding) {
-            navigate('/onboarding');
-        } else {
-            navigate('/')
         }
     }
     return (
@@ -331,7 +322,7 @@ export const Restaurant = () => {
                         <div className={css.headerNavBlock}>
                             <RoundedButton
                                 icon={<BackIcon color={'var(--dark-grey)'}/>}
-                                action={goBack}
+                                action={() => navigate('/')}
                             ></RoundedButton>
                         </div>
                         {headerScrolled ? (
@@ -346,17 +337,15 @@ export const Restaurant = () => {
                                 }
                                 action={() => shareRestaurant()}
                             />
-                            {user && user.complete_onboarding && (
-                                <RoundedButton
-                                    icon={
-                                        <IconlyProfile color={'var(--dark-grey)'}/>
-                                    }
-                                    action={() => goToProfile()}
-                                />
-                            )}
+                            <RoundedButton
+                                icon={
+                                    <IconlyProfile color={'var(--dark-grey)'}/>
+                                }
+                                action={() => goToProfile()}
+                            />
                         </div>
                     </div>
-                    {headerScrolled ? <RestaurantNavigation isEvents={Boolean(events.length) && tg_id && mockEventsUsersList.includes(tg_id)}/> : null}
+                    {headerScrolled ? <RestaurantNavigation isEvents={Boolean(events.length)}/> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
@@ -378,9 +367,50 @@ export const Restaurant = () => {
                                     )
                                 }
                             />
+                            {/*<RoundedButton*/}
+                            {/*    icon={*/}
+                            {/*        <PhoneCallIcon*/}
+                            {/*            size={24}*/}
+                            {/*            color={'var(--dark-grey)'}*/}
+                            {/*        />*/}
+                            {/*    }*/}
+                            {/*    action={() => setCallPopup(true)}*/}
+                            {/*/>*/}
+
                         </>
                     )}
                 />
+                {/*<div className={css.floatingFooterWrapper}>*/}
+                {/*    <div*/}
+                {/*        className={css.bookingButton}*/}
+                {/*        onClick={() => navigate(`/booking?id=${restaurant?.id}`)}*/}
+                {/*    >*/}
+                {/*        <span className={css.text}>Забронировать</span>*/}
+                {/*    </div>*/}
+                {/*    <RoundedButton*/}
+                {/*        icon={*/}
+                {/*            <GoToPathIcon*/}
+                {/*                size={24}*/}
+                {/*                color={'var(--dark-grey)'}*/}
+                {/*            />*/}
+                {/*        }*/}
+                {/*        action={() =>*/}
+                {/*            // ,*/}
+                {/*            window.open(*/}
+                {/*                `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`*/}
+                {/*            )*/}
+                {/*        }*/}
+                {/*    />*/}
+                {/*    <RoundedButton*/}
+                {/*        icon={*/}
+                {/*            <PhoneCallIcon*/}
+                {/*                size={24}*/}
+                {/*                color={'var(--dark-grey)'}*/}
+                {/*            />*/}
+                {/*        }*/}
+                {/*        action={() => setCallPopup(true)}*/}
+                {/*    />*/}
+                {/*</div>*/}
             </div>
             <div className={css.pageContainer}>
                 <RestaurantTopPreview rest={restaurant}/>
@@ -766,6 +796,35 @@ export const Restaurant = () => {
                             </UnmountClosed>
                         </div>
                     </ContentBlock>
+                    {/*<ContentBlock>*/}
+                    {/*    <div className={css.infoBlock}>*/}
+                    {/*        <div className={css.top}>*/}
+                    {/*            <span className={css.title}>*/}
+                    {/*                Социальные сети*/}
+                    {/*            </span>*/}
+                    {/*        </div>*/}
+                            {/*<div className={css.infoBlock}>*/}
+                            {/*    {restaurant?.socials.map((social) => (*/}
+                            {/*        <a*/}
+                            {/*            key={social.name}*/}
+                            {/*            href={social.url}*/}
+                            {/*            target="_blank"*/}
+                            {/*            rel="noopener noreferrer"*/}
+                            {/*        >*/}
+                            {/*            <div className={css.socialRow}>*/}
+                            {/*                <InstagramIcon*/}
+                            {/*                    color={'black'}*/}
+                            {/*                    size={20}*/}
+                            {/*                />*/}
+                            {/*                <span className={css.socialLink}>*/}
+                            {/*                    {social.name}*/}
+                            {/*                </span>*/}
+                            {/*            </div>*/}
+                            {/*        </a>*/}
+                            {/*    ))}*/}
+                            {/*</div>*/}
+                    {/*    </div>*/}
+                    {/*</ContentBlock>*/}
                     <ContentBlock>
                         <div className={css.infoBlock}>
                             <div className={css.top}>
@@ -842,7 +901,7 @@ export const Restaurant = () => {
                         </div>
                     </ContentBlock>
                 </ContentContainer>
-                {Boolean(events.length) && tg_id && mockEventsUsersList.includes(tg_id) && (<ContentContainer>
+                {Boolean(events.length) && tg_id && [5753349682, 217690245, 291146366, 940813721, 1225265717, 1145014952, 5362638149, 551243345, 701368624, 1090746420, 596483540, 1050003812, 542527667, 483425133, 451194888, 1020365281, 7077186349, 229667270, 257329939, 1094749437, 201790418, 79219030954, 706889029, 1357403642, 475197315, 586628247, 244816672, 353624620, 115555014, 153495524, 1283802964, 84327932, 163811519, 7160315434, 118832541, 189652327, 5165491111].includes(tg_id) && (<ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
                             <HeaderContent
@@ -865,6 +924,14 @@ export const Restaurant = () => {
                                     sold={e.tickets_left == 0}
                                 />
                             )
+                            // ) : (
+                            //     <span
+                            //         className={classNames(
+                            //             css.aboutText
+                            //         )}
+                            //     >
+                            //     Пока нет мероприятий
+                            // </span>
                         )}
                     </ContentBlock>
                 </ContentContainer>)}
@@ -896,6 +963,7 @@ export const Restaurant = () => {
                                                     )[1]
                                                 ) - 0.0003,
                                             ],
+                                            // 47.226539, 39.752190
                                             zoom: 17,
                                         }}
                                     >
@@ -959,6 +1027,8 @@ export const Restaurant = () => {
                                     </section>
                                 </YMapComponentsProvider>
                             </div>
+
+                            {/*</div>*/}
                         </div>
                     </ContentBlock>
                 </ContentContainer>

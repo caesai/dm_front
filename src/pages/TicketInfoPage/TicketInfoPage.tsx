@@ -2,13 +2,13 @@ import { Page } from '@/components/Page.tsx';
 import css from './TicketInfoPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames';
-// import { RefundIcon } from '@/components/Icons/RefundIcon.tsx';
-// import { DownloadIcon } from '@/components/Icons/DownloadIcon.tsx';
+import { RefundIcon } from '@/components/Icons/RefundIcon.tsx';
+import { DownloadIcon } from '@/components/Icons/DownloadIcon.tsx';
 import { useEffect, useState } from 'react';
 import { EventTicket } from '@/types/events.ts';
-import { APIDeleteTicket, APIGetSharedTicket, APIGetTicket } from '@/api/events.ts';
+import { APIGetTicket } from '@/api/events.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
@@ -17,129 +17,67 @@ import moment from 'moment';
 // import QRCode from 'react-qr-code';
 // import jsPDF from "jspdf";
 // import {BASE_BOT} from "@/api/base.ts";
-// import { Buffer } from 'buffer';
+import { Buffer } from 'buffer';
 // import {MontFont} from "@/components/MontFont/Montfont.ts";
 // import '../../../public/'
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
-// import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
+import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
+import { useModal } from '@/components/ModalPopup/useModal.ts';
 import { BASE_BOT } from '@/api/base.ts';
-import { Share } from '@/components/Icons/Share.tsx';
-import { getDataFromLocalStorage, setDataToLocalStorage } from '@/utils.ts';
-import { CancelBookingPopup } from '@/pages/BookingInfoPage/CancelBookingPopup/CancelBookingPopup.tsx';
-import { InformationPopup } from '@/components/InformationPopup/InformationPopup.tsx';
 
 
 export const TicketInfoPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [ticket, setTicket] = useState<EventTicket>();
-    const [cancelPopup, setCancelPopup] = useState(false);
-    const [canceledPopup, setCanceledPopup] = useState(false);
+    const [isRefund, setIsRefund] = useState(false);
+    const { isShowing, toggle } = useModal();
 
-
-    const shared = Boolean(searchParams.get('shared'));
-    const ticket_refund = getDataFromLocalStorage('ticket_refund');
-    // console.log('ticket_refund: ', ticket_refund);
     useEffect(() => {
-        if (!auth?.access_token || shared) {
-            APIGetSharedTicket(Number(id)).then((res) => {
-                setTicket(res.data);
-            });
-        } else {
-            APIGetTicket(Number(id), auth.access_token).then((res) => {
-                setTicket(res.data);
-            });
+        if (!auth?.access_token) {
+            return;
         }
+        APIGetTicket(Number(id), auth.access_token).then((res) => {
+            setTicket(res.data);
+        });
     }, [id]);
 
-    // const sharePdf = () => {
-    //     const ticketEl = document.getElementById('ticket');
-    //     html2pdf().from(ticketEl).output('blob').then((pdfAsString: string) => {
-    //         const buffer = Buffer.from(pdfAsString, 'utf-8');
-    //         const pdf = new File([buffer], ticket?.event_title + '.pdf', { type: 'application/pdf' });
-    //         const files = [pdf];
-    //         navigator.share({
-    //             files,
-    //         }).then();
-    //     });
-    // };
-
-    const shareTicket = () => {
-        const url = encodeURI(
-            `https://t.me/${BASE_BOT}?startapp=ticketId_${id}`
-        );
-        const title = encodeURI(String(ticket?.event_title));
-        const shareData = {
-            title,
-            url,
-        }
-        try {
-            if (navigator && navigator.canShare(shareData)) {
-                navigator.share(shareData).then().catch((err) => {
-                    console.error(JSON.stringify(err));
-                });
-            }
-        } catch (e) {
-            window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
-        }
+    const sharePdf = () => {
+        const ticketEl = document.getElementById('ticket');
+        html2pdf().from(ticketEl).output('blob').then((pdfAsString: string) => {
+            const buffer = Buffer.from(pdfAsString, 'utf-8');
+            const pdf = new File([buffer], ticket?.event_title + '.pdf', { type: 'application/pdf' });
+            const files = [pdf];
+            navigator.share({
+                files,
+            }).then();
+        });
     };
 
     const refund = () => {
-        if (ticket_refund && JSON.parse(ticket_refund).id === id) {
-            return;
-        }
-        setCancelPopup(true);
+        setIsRefund(true);
+        setTimeout(() => {
+            window.location.href = `https://t.me/${BASE_BOT}?start=refund-${Number(id)}`;
+            // fetch(`https://t.me/${BASE_BOT}?start=refund-${Number(id)}`).then((res) => res.json()).catch((err) => {
+            //     console.log('err: ', err);
+            // })
+        }, 5000);
     };
-
-    const onCancel = () => {
-        if (!auth?.access_token) {
-            // navigate('/');
-            return;
-        }
-        setCancelPopup(false);
-        APIDeleteTicket(Number(id), String(auth?.access_token))
-            .then(() => {
-                setDataToLocalStorage('ticket_refund', { id });
-                setCanceledPopup(true);
-            })
-            .catch(() => alert('Произошла ошибка при отмене брони.'));
-    };
-
-    const goBack = () => {
-        if (!auth?.access_token) {
-            navigate('/onboarding/5');
-        } else {
-            navigate('/tickets');
-        }
-    }
 
     return (
         <Page back={true}>
-            {/*<ModalPopup*/}
-            {/*    isOpen={isShowing}*/}
-            {/*    setOpen={toggle}*/}
-            {/*    title={!isRefund ? 'Вы хотите оформить возврат?' : 'Запрос принят'}*/}
-            {/*    text={isRefund ? `В течении 30 минут с вами свяжется сотрудник ресторана, чтобы оформить возврат. Если запрос был отправлен вне рабочего времени ресторана, мы обязательно ответим сразу после открытия.` : undefined}*/}
-            {/*    button={!isRefund}*/}
-            {/*    btnText={'Да'}*/}
-            {/*    reverseButton={true}*/}
-            {/*    btnAction={refund}*/}
-            {/*    btnScndrText={'Нет'}*/}
-            {/*/>*/}
-            <CancelBookingPopup
-                isOpen={cancelPopup}
-                text={'Оформить возврат?'}
-                setOpen={setCancelPopup}
-                onSubmit={() => onCancel()}
-            />
-            <InformationPopup
-                isOpen={canceledPopup}
-                setOpen={setCanceledPopup}
-                close={() => navigate('/tickets')}
-                text={'Успешный возврат'}
+            <ModalPopup
+                isOpen={isShowing}
+                setOpen={toggle}
+                title={!isRefund ? 'Вы хотите оформить возврат?' : 'Запрос принят'}
+                text={isRefund ? `В течении 30 минут с вами свяжется сотрудник ресторана, чтобы оформить возврат. Если запрос был отправлен вне рабочего времени ресторана, мы обязательно ответим сразу после открытия.` : undefined}
+                button={!isRefund}
+                btnText={'Да'}
+                reverseButton={true}
+                btnAction={refund}
+                btnScndrText={'Нет'}
             />
             <div className={css.body}>
                 <div className={css.header}>
@@ -151,22 +89,24 @@ export const TicketInfoPage = () => {
                                     color={'var(--dark-grey)'}
                                 />
                             }
-                            action={goBack}
+                            action={() => navigate('/tickets')}
                             bgColor={'var(--primary-background)'}
                         />
+                        <div className={css.header_spacer} />
                     </div>
                     <span className={css.header_title}>Мои билеты</span>
                     <div className={css.header_group}>
                         <RoundedButton
-                            icon={<Share />}
-                            action={shareTicket}
+                            icon={<RefundIcon />}
+                            action={toggle}
                             bgColor={'var(--primary-background)'}
                         />
-                        {/*<RoundedButton*/}
-                        {/*    icon={<DownloadIcon />}*/}
-                        {/*    action={sharePdf}*/}
-                        {/*    bgColor={'var(--primary-background)'}*/}
-                        {/*/>*/}
+
+                        <RoundedButton
+                            icon={<DownloadIcon />}
+                            action={sharePdf}
+                            bgColor={'var(--primary-background)'}
+                        />
                     </div>
                 </div>
 
@@ -216,14 +156,6 @@ export const TicketInfoPage = () => {
                                 )}
                             </span>
                         </div>
-                        {!shared && (
-                            <div>
-                                <span onClick={refund} className={classNames(
-                                    css.refundBtn,
-                                    ticket_refund && JSON.parse(ticket_refund).id === id ? css.refundTrue : null
-                                )}>{ticket_refund && JSON.parse(ticket_refund).id === id ? 'Запрос на возврат оформлен' : 'Оформить возврат'}</span>
-                            </div>
-                        )}
                     </div>
                     <div className={css.ticket_details}>
                         <div className={css.ticket_details_row}>
@@ -329,8 +261,7 @@ export const TicketInfoPage = () => {
                                     )}
                                 </span>
                             </div>
-                            {ticket?.total !== 0 && (
-                                <div className={css.ticket_details_row_obj}>
+                            <div className={css.ticket_details_row_obj}>
                                 <span
                                     className={classNames(
                                         css.mont,
@@ -339,12 +270,12 @@ export const TicketInfoPage = () => {
                                 >
                                     Стоимость
                                 </span>
-                                    <span
-                                        className={classNames(
-                                            css.mont,
-                                            css.ticket_details_row_obj_cont,
-                                        )}
-                                    >
+                                <span
+                                    className={classNames(
+                                        css.mont,
+                                        css.ticket_details_row_obj_cont,
+                                    )}
+                                >
                                     {ticket ? (
                                         `${ticket?.total} ₽`
                                     ) : (
@@ -354,8 +285,7 @@ export const TicketInfoPage = () => {
                                         />
                                     )}
                                 </span>
-                                </div>
-                            )}
+                            </div>
                         </div>
                     </div>
                     <div className={css.ticket_details_row}>
