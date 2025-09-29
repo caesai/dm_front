@@ -139,7 +139,7 @@ export const TicketInfoPage = () => {
                 isOpen={canceledPopup}
                 setOpen={setCanceledPopup}
                 close={() => navigate('/tickets')}
-                text={'Запрос на возврат оформлен'}
+                text={'Успешный возврат'}
             />
             <div className={css.body}>
                 <div className={css.header}>
@@ -329,7 +329,8 @@ export const TicketInfoPage = () => {
                                     )}
                                 </span>
                             </div>
-                            <div className={css.ticket_details_row_obj}>
+                            {ticket?.total !== 0 && (
+                                <div className={css.ticket_details_row_obj}>
                                 <span
                                     className={classNames(
                                         css.mont,
@@ -338,12 +339,12 @@ export const TicketInfoPage = () => {
                                 >
                                     Стоимость
                                 </span>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj_cont,
-                                    )}
-                                >
+                                    <span
+                                        className={classNames(
+                                            css.mont,
+                                            css.ticket_details_row_obj_cont,
+                                        )}
+                                    >
                                     {ticket ? (
                                         `${ticket?.total} ₽`
                                     ) : (
@@ -353,7 +354,8 @@ export const TicketInfoPage = () => {
                                         />
                                     )}
                                 </span>
-                            </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className={css.ticket_details_row}>

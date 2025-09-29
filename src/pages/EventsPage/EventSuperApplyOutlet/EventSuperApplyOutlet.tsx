@@ -106,7 +106,7 @@ export const EventSuperApplyOutlet = () => {
                         <TextInput
                             value={'+' + userInfo.phone}
                             onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, phone: e.replace('+', '') }))
+                                setUserInfo((p) => ({ ...p, phone: e.replace(/\+/g, '') }))
                             }
                             placeholder={'Ваш контактный номер'}
                             onFocus={onFocus}
