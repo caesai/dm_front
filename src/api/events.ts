@@ -99,6 +99,14 @@ export const APIGetTicket = async (id: number, token: string) => {
     });
 };
 
+export const APIGetSharedTicket = async (id: number) => {
+    return await axios.get<EventTicket>(`${BASE_URL}/events/tickets/by-id/${id}`, {
+        params: {
+            id,
+        },
+    });
+};
+
 export const APIGetTickets = async (token: string) => {
     return await axios.get<EventTicket[]>(`${BASE_URL}/events/tickets`, {
         headers: {
@@ -165,3 +173,11 @@ export const APIGetSuperEventHasAccess = async ( token: string ) => {
         }
     })
 }
+
+export const APIDeleteTicket = async (event_id: number, token: string) => {
+    return await axios.delete<EventTicket>(`${BASE_URL}/events/cancel/${event_id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};

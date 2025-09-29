@@ -316,7 +316,7 @@ export const BookingInfoPage = () => {
                                 ) : (
                                     <>
                                         <DoubleCheckIcon />
-                                        <h3>Ваше бронирование подтверждено</h3>
+                                        <h3>Ваше бронирование {booking?.booking_status == 'canceled' ? 'отменено' : 'подтверждено'}</h3>
                                     </>
                                 )}
                             </div>
@@ -465,7 +465,7 @@ export const BookingInfoPage = () => {
                         {booking ? (
                             <Taxi
                                 address={booking.restaurant.address}
-                                lonlng={booking.restaurant.address_lonlng}
+                                lonlng={String(booking.restaurant.address_lonlng)}
                             />
                         ) : (
                             <PlaceholderBlock width={'354px'} height={'64px'} />

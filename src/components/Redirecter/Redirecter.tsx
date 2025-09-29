@@ -62,11 +62,14 @@ export const Redirecter = () => {
                 navigate(`/events/${eventId}?shared=true`);
             } else if (location.search.includes('restaurantId')) {
                 const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
-                setDataToLocalStorage('superEvent', { id: restaurantId});
-                navigate('/restaurant/' + restaurantId + '?shared=true');
+                setDataToLocalStorage('superEvent', { id: restaurantId });
+                navigate('/restaurant/' + restaurantId + '?shared=true', { replace: true });
             } else if (location.search.includes('bookingId')) {
                 const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
                 navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });
+            } else if (location.search.includes('ticketId')) {
+                const ticketId = getEventIdFromParams(paramsObject, 'ticketId');
+                navigate('/tickets/' + ticketId + '?shared=true', { replace: true });
             } else {
                 navigate('/onboarding');
             }
@@ -90,6 +93,10 @@ export const Redirecter = () => {
         if (location.search.includes('bookingId')) {
             const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
             navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });
+        }
+        if (location.search.includes('ticketId')) {
+            const ticketId = getEventIdFromParams(paramsObject, 'ticketId');
+            navigate('/tickets/' + ticketId + '?shared=true', { replace: true });
         }
         if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
             navigate(`/events/super`, { replace: true });

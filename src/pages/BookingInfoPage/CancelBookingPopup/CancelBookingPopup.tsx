@@ -25,15 +25,16 @@ interface Props {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
     onSubmit: () => void;
+    text?: string;
 }
 
-export const CancelBookingPopup = ({ isOpen, setOpen, onSubmit }: Props) => {
+export const CancelBookingPopup = ({ isOpen, setOpen, onSubmit, text }: Props) => {
     const close = () => setOpen(false);
     return (
         <StyledPopup open={isOpen} onClose={close}>
             <div className={css.popup}>
                 <span className={css.text}>
-                    Вы уверены, что хотите отменить бронирование?
+                    {text ? text : 'Вы уверены, что хотите отменить бронирование?'}
                 </span>
                 <div className={css.buttons}>
                     <UniversalButton

@@ -223,7 +223,7 @@ export const EventBookingOutlet = () => {
                             if (validate) {
                                 createInvoice();
                             } else {
-                                alert('TODO: Validation alert');
+                                console.error('TODO: Validation alert');
                             }
                         }
                         }

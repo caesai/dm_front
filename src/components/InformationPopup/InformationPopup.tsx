@@ -25,13 +25,14 @@ interface Props {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
     text?: string;
+    close?: () => void;
 }
 
-export const InformationPopup = ({ isOpen, text }: Props) => {
-    const close = () => navigate('/myBookings');
+export const InformationPopup = ({ isOpen, text, close }: Props) => {
+    const onClose = close ? close : () => navigate('/myBookings');
     const navigate = useNavigate();
     return (
-        <StyledPopup open={isOpen} onClose={close}>
+        <StyledPopup open={isOpen} onClose={onClose}>
             <div className={css.popup}>
                 <div className={css.end}>
                     <RoundedButton
