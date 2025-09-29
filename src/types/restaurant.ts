@@ -55,7 +55,7 @@ export interface IRestaurantShortBooking {
     id: number;
     title: string;
     address: string;
-    address_lonlng?: string;
+    address_lonlng: string;
     thumbnail_photo: string;
 }
 
@@ -78,7 +78,6 @@ export interface IRestaurant extends IRestaurantShort {
 export interface IBookingCreate {
     error: any;
     id: number;
-    ticket_id?: number;
 }
 
 export interface IBookingInfo {

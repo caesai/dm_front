@@ -69,7 +69,6 @@ export const APICreateBooking = (
     prepared_comments: string[],
     confirmation: string,
     pre_order_dishes: boolean,
-    event_id: number | null,
 ) => {
     return axios.post<IBookingCreate>(
         `${BASE_URL}/restaurant/${restaurant_id}/booking`,
@@ -86,7 +85,6 @@ export const APICreateBooking = (
             confirmation,
             pre_order_dishes,
             tags: prepared_comments.join(','),
-            event_id
         },
         {
             headers: {

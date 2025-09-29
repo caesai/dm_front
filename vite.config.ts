@@ -5,6 +5,7 @@ import mkcert from 'vite-plugin-mkcert';
 import {resolve} from 'path'
 import fs from "fs";
 
+// const BASE_URL = process.env.NODE_ENV == 'production' ? '/dm_front/' : '/';
 // https://vitejs.dev/config/
 export default defineConfig(({mode, command}) => ({
         base: mode !== 'development' ? '/' : '/dm_front/',
@@ -48,6 +49,7 @@ export default defineConfig(({mode, command}) => ({
                     404: resolve(__dirname, "public/404.html"),
                 },
             },
+            // assetsDir: 'assets',
         },
     })
 );

@@ -111,18 +111,3 @@
     background-size: cover;
     background-position: center;
 }
-
-.refundBtn {
-    font-family: 'Mont', sans-serif;
-    font-weight: 700;
-    font-size: 12px;
-    background-color: var(--secondary-light-grey);
-    border-radius: 14px;
-    padding: 6px 12px;
-    color: var(--dark-grey);
-}
-
-.refundTrue {
-    background-color: var(--red);
-    color: white;
-}

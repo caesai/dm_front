@@ -5,7 +5,7 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
-import logoNew from "/img/DT_concierge_logo_color1.svg";
+import logoNew from "/img/DT_concierge_logo_1.png";
 
 export const Header = () => {
     const navigate = useNavigate();

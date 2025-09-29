@@ -38,12 +38,10 @@ export const EventConfirmationOutlet: React.FC = () => {
                 });
                 setCurrentSelectedTime({
                     start_datetime: String(bookingInfo.event?.date_start),
-                    end_datetime: moment(bookingInfo.event?.date_start).add(2, 'hours').toISOString(),
+                    end_datetime: String(bookingInfo.event?.date_start),
                     is_free: true,
                 });
-                console.log('end_datetime: String(bookingInfo.event?.date_start): ', bookingInfo.event.id)
-
-                navigate('/booking?id=' + bookingInfo.restaurant?.id + '&free_event=' + bookingInfo.event.name + '&event_id=' + bookingInfo.event.id);
+                navigate('/booking?id=' + bookingInfo.restaurant?.id + '&free_event=' + bookingInfo.event.name);
                 return;
             }
             navigate(`/events/${bookingInfo.event?.id}/confirm`);
@@ -138,7 +136,7 @@ export const EventConfirmationOutlet: React.FC = () => {
                             rounded={'20px'}
                         />
                     )}
-                    {!isNaN(Number(bookingInfo.event?.ticket_price)) && Number(bookingInfo.event?.ticket_price) > 0 ? (
+                    {!isNaN(Number(bookingInfo.event?.ticket_price)) && Number(bookingInfo.event?.ticket_price) >= 0 ? (
                         <div className={css.event_params_col}>
                             <span className={css.event_params_col__title}>
                                 Цена
@@ -147,13 +145,13 @@ export const EventConfirmationOutlet: React.FC = () => {
                                 {Number(bookingInfo.event?.ticket_price) == 0 ? 'Бесплатно' : bookingInfo.event?.ticket_price + ' ₽'}
                             </span>
                         </div>
-                    ): Number(bookingInfo.event?.ticket_price) !== 0 ? (
+                    ):(
                         <PlaceholderBlock
                             width={'100%'}
                             height={'40px'}
                             rounded={'20px'}
                         />
-                    ) : null}
+                    )}
                 </div>
                 <div className={css.event_params_row} style={{ justifyContent: 'space-between' }}>
                     {Number(bookingInfo.event?.tickets_left) >= 0 ? (
