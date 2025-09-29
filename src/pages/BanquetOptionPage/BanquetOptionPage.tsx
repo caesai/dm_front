@@ -222,6 +222,7 @@ export const BanquetOptionPage = () => {
                                 width={'full'}
                                 title={'Продолжить'}
                                 theme={'red'}
+                                action={() => navigate(`/banquets/${restaurant_id}/additional-services`)}
                             />
                         </div>
                     </ContentContainer>
