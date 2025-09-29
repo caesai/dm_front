@@ -49,6 +49,7 @@ import { NewRestaurant } from '@/pages/NewRestaurant/NewRestaurant.tsx';
 import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.tsx';
 import { BanquetOptionPage } from '@/pages/BanquetOptionPage/BanquetOptionPage.tsx';
 import { BanquetAdditionalServicesPage } from '@/pages/BanquetAdditionalServices/BanquetAdditionalServicesPage.tsx';
+import { BanquetReservationPage } from '@/pages/BanquetReservationPage/BanquetReservationPage.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -159,6 +160,7 @@ const AppRouter = () => {
                     <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
                     <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />
                     <Route path={'banquets/:id/additional-services'} element={<BanquetAdditionalServicesPage />} />
+                    <Route path={'banquets/:id/reservation'} element={<BanquetReservationPage />} />
 
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>

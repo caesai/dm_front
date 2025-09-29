@@ -67,6 +67,7 @@ export const BanquetAdditionalServicesPage = () => {
                                 width={'full'}
                                 title={'Продолжить'}
                                 theme={'red'}
+                                action={() => navigate(`/banquets/${restaurant_id}/reservation`)}
                             />
                         </div>
                     </ContentContainer>
