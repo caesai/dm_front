@@ -128,11 +128,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     </select>
                 </div>
                 <div>
-                    <button className="nav-button" onClick={handlePrevMonth}>
-                        &#10094;
+                    <button className="nav-button" onClick={handlePrevMonth} dangerouslySetInnerHTML={{ __html: '&#10094;'}}>
+
                     </button>
-                    <button className="nav-button" onClick={handleNextMonth}>
-                        &#10095;
+                    <button className="nav-button" onClick={handleNextMonth} dangerouslySetInnerHTML={{ __html: '&#10095;'}} >
+
                     </button>
                 </div>
             </div>
