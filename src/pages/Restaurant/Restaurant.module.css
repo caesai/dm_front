@@ -442,3 +442,21 @@
 .timeItemActive {
     border: 1px solid var(--black);
 }
+
+.banquetContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.banquetImage {
+    width: 100%;
+    aspect-ratio: 100/60;
+    border-radius: 12px;
+}
+
+.banquetDescription {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+}

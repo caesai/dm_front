@@ -1,0 +1,59 @@
+.page {
+    background-color: var(--primary-background);
+    height: 100vh;
+}
+
+.pageWrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.banquetContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 6px;
+
+    > img {
+        aspect-ratio: 120/85;
+        width: 100%;
+        border-radius: 12px;
+    }
+}
+
+.banquetInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    > div {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+}
+
+.banquet_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.banquet_text {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+}

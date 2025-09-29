@@ -1,0 +1,33 @@
+.page {
+    background-color: var(--primary-background);
+    height: 100vh;
+}
+
+.pageWrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.text {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--grey);
+}
+
+.button {
+    margin-top: 10%;
+}
