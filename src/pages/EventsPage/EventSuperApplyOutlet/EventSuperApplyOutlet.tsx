@@ -104,7 +104,7 @@ export const EventSuperApplyOutlet = () => {
                             onBlur={onBlur}
                         />
                         <TextInput
-                            value={'+' + userInfo.phone}
+                            value={Number(userInfo.phone.charAt(0)) === 7 ? '+' + userInfo.phone : userInfo.phone}
                             onChange={(e) =>
                                 setUserInfo((p) => ({ ...p, phone: e.replace(/\+/g, '') }))
                             }

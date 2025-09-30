@@ -68,6 +68,7 @@ import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
 import { InfoIcon } from '@/components/Icons/InfoIcon.tsx';
 import { BookingInfoPopup } from '@/components/BookingInfoPopup/BookingInfoPopup.tsx';
 import moment from 'moment/moment';
+import { APIGetAvailableEventTimeSlots } from '@/api/events.ts';
 // import { Share } from '@/components/Icons/Share.tsx';
 
 const confirmationList: IConfirmationType[] = [
@@ -166,16 +167,27 @@ export const BookingPage: FC = () => {
             return;
         }
         setTimeslotsLoading(true);
-        APIGetAvailableTimeSlots(
-            auth.access_token,
-            parseInt(String(bookingRestaurant.value)),
-            bookingDate.value,
-            guestCount
-        )
-            .then((res) => setAvailableTimeslots(res.data))
-            .finally(() => setTimeslotsLoading(false));
-    }, [bookingDate, guestCount, bookingRestaurant]);
+        if (isFreeEventBooking) {
+            APIGetAvailableEventTimeSlots(
+                auth.access_token,
+                parseInt(String(bookingRestaurant.value)),
+                guestCount,
+                Number(freeEventid)
+            )
+                .then((res) => setAvailableTimeslots(res.data.timeslots))
+                .finally(() => setTimeslotsLoading(false));
 
+        } else {
+            APIGetAvailableTimeSlots(
+                auth.access_token,
+                parseInt(String(bookingRestaurant.value)),
+                bookingDate.value,
+                guestCount,
+            )
+                .then((res) => setAvailableTimeslots(res.data))
+                .finally(() => setTimeslotsLoading(false));
+        }
+    }, [bookingDate, guestCount, bookingRestaurant]);
     const morningTimeslots = useMemo(
         () =>
             availableTimeslots.filter((v) => {

@@ -41,7 +41,6 @@ export const EventConfirmationOutlet: React.FC = () => {
                     end_datetime: moment(bookingInfo.event?.date_start).add(2, 'hours').toISOString(),
                     is_free: true,
                 });
-                console.log('end_datetime: String(bookingInfo.event?.date_start): ', bookingInfo.event.id)
 
                 navigate('/booking?id=' + bookingInfo.restaurant?.id + '&free_event=' + bookingInfo.event.name + '&event_id=' + bookingInfo.event.id);
                 return;
@@ -156,7 +155,7 @@ export const EventConfirmationOutlet: React.FC = () => {
                     ) : null}
                 </div>
                 <div className={css.event_params_row} style={{ justifyContent: 'space-between' }}>
-                    {Number(bookingInfo.event?.tickets_left) >= 0 ? (
+                    {Number(bookingInfo.event?.ticket_price) !== 0 ? Number(bookingInfo.event?.tickets_left) >= 0 ? (
                         <div className={css.event_params_col}>
                             <span className={css.event_params_col__title}>
                                 Осталось мест
@@ -171,7 +170,7 @@ export const EventConfirmationOutlet: React.FC = () => {
                             height={'40px'}
                             rounded={'20px'}
                         />
-                    )}
+                    ) : null}
 
                     {!isNaN(Number(bookingInfo.event?.ticket_price)) && Number(bookingInfo.event?.ticket_price) !== 0 && (
                         <div className={css.event_params_col}>

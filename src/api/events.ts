@@ -181,3 +181,26 @@ export const APIDeleteTicket = async (event_id: number, token: string) => {
         },
     });
 };
+
+
+export const APIGetAvailableEventTimeSlots = (
+    token: string,
+    restaurant_id: number,
+    guestCount: number,
+    event_id: number,
+) => {
+    return axios.post(
+        `${BASE_URL}/events/availableTimeslots`,
+        {
+            guestCount,
+            restaurant_id,
+            event_id,
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+
+        }
+    );
+};
