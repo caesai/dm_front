@@ -19,3 +19,8 @@ export interface IBanquetParams {
     deposit_per_person: number
     service_fee: number
 }
+
+export interface IBanquetAdditionalOptions {
+    cost: number
+    name: string
+}

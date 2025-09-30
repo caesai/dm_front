@@ -1,4 +1,4 @@
-import { IBanquet, IBanquetOptions, IBanquetParams } from '@/types/banquets.ts';
+import { IBanquet, IBanquetAdditionalOptions, IBanquetOptions, IBanquetParams } from '@/types/banquets.ts';
 
 export const banquetData: IBanquet = {
     image_url: "https://kolmelhior.ru/upload/iblock/2c4/1tzhih52e9d6exo286ecgqqsi8l0mmr9.jpg",
@@ -36,3 +36,34 @@ export const banquetParams: IBanquetParams  = {
     deposit_per_person: 4000,
     service_fee: 10,
 }
+
+export const banquetAdditionalOptions: IBanquetAdditionalOptions[] = [
+    {
+        name: "Индивидуальное оформление площадки",
+        cost: 5000,
+    },
+    {
+        name: "Разработка меню",
+        cost: 10000,
+    },
+    {
+        name: "Винное сопровождение",
+        cost: 5000,
+    },
+    {
+        name: "Торт по индивидуальному заказу",
+        cost: 20000,
+    },
+    {
+        name: "Ведущие",
+        cost: 15000,
+    },
+    {
+        name: "Музыкант/группа",
+        cost: 40000,
+    },
+    {
+        name: "Медиаоборудование",
+        cost: 7000
+    }
+]

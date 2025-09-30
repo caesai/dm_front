@@ -48,7 +48,6 @@ export const BanquetOptionPage = () => {
     const closePopup = () => setOpenPopup(false);
 
     const goBack = () => {
-        console.log(restaurant_id, 'banquetOptions');
         navigate(`/banquets/${restaurant_id}/choose`);
     };
 
@@ -67,6 +66,30 @@ export const BanquetOptionPage = () => {
         guestCount.value !== 'unset' &&
         selectedReason !== '' &&
         (selectedReason !== 'Другое' || customReason !== '');
+
+    const handleContinue = () => {
+        const finalReason = selectedReason === 'Другое' ? customReason : selectedReason;
+        const banquetData = {
+            date,
+            timeFrom,
+            timeTo,
+            guestCount,
+            reason: finalReason,
+            price: currentBanquetParams && guestCount.value !== 'unset' ? {
+                deposit: currentBanquetParams.deposit_per_person,
+                totalDeposit: currentBanquetParams.deposit_per_person * parseInt(guestCount.value),
+                serviceFee: currentBanquetParams.service_fee,
+                total: (1 + currentBanquetParams.service_fee / 100) *
+                    currentBanquetParams.deposit_per_person *
+                    parseInt(guestCount.value)
+            } : null
+        };
+
+        navigate(`/banquets/${restaurant_id}/additional-services`, {
+            state: banquetData
+        });
+    };
+
 
     useEffect(() => {
         if (!banquet) {
@@ -266,11 +289,8 @@ export const BanquetOptionPage = () => {
                                 width={'full'}
                                 title={'Продолжить'}
                                 theme={'red'}
-                                action={() =>
-                                    navigate(
-                                        `/banquets/${restaurant_id}/additional-services`
-                                    )
-                                }
+                                action={handleContinue
+                            }
                             />
                         </div>
                     </ContentContainer>
