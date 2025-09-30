@@ -2,7 +2,7 @@ import { Page } from '@/components/Page.tsx';
 import css from './BanquetAdditionalServicesPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { useEffect, useState } from 'react';
@@ -12,8 +12,11 @@ import { banquetAdditionalOptions } from '@/__mocks__/banquets.mock.ts';
 import { IBanquetAdditionalOptions } from '@/types/banquets.ts';
 
 export const BanquetAdditionalServicesPage = () => {
+    const location = useLocation();
     const navigate = useNavigate();
     const {restaurant_id} = useParams();
+
+    const banquetData = location.state;
 
     const [options, setOptions] = useState<IBanquetAdditionalOptions[]>([]);
     const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -30,6 +33,15 @@ export const BanquetAdditionalServicesPage = () => {
 
     const goBack = () => {
         navigate(`/banquets/${restaurant_id}/option`);
+    }
+
+    const goNext = () => {
+        const reservationData = {
+            ...banquetData,
+            selectedServices
+        };
+
+        navigate(`/banquets/${restaurant_id}/reservation`, {state: {reservationData}});
     }
 
     useEffect(() => {
@@ -67,7 +79,7 @@ export const BanquetAdditionalServicesPage = () => {
                                 width={'full'}
                                 title={'Продолжить'}
                                 theme={'red'}
-                                action={() => navigate(`/banquets/${restaurant_id}/reservation`)}
+                                action={goNext}
                             />
                         </div>
                     </ContentContainer>
