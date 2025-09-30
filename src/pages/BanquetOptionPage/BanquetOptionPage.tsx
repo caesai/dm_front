@@ -48,7 +48,8 @@ export const BanquetOptionPage = () => {
     const closePopup = () => setOpenPopup(false);
 
     const goBack = () => {
-        navigate(`/banquets/${restaurant_id}/choose`);
+        // navigate(`/banquets/${restaurant_id}/choose`);
+        navigate(-1);
     };
 
     const handleReasonSelect = (reason: string) => {

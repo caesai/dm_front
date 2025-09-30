@@ -6,13 +6,14 @@
 .pageWrapper {
     display: flex;
     flex-direction: column;
-    padding: 20px 15px;
+    padding: 20px 0;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 15px;
 }
 
 .header_title {
@@ -39,10 +40,27 @@
     flex-direction: column;
     gap: 8px;
 
+    /*> div {*/
+    /*    display: flex;*/
+    /*    align-items: center;*/
+    /*    gap: 6px;*/
+    /*    justify-content: space-between;*/
+    /*}*/
+}
+
+.banquetInfoRow {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+}
+
+.banquetInfoCol {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+
     > div {
         display: flex;
-        align-items: center;
-        gap: 6px;
+        gap: 3px;
     }
 }
 
