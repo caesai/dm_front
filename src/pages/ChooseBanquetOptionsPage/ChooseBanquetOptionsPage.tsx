@@ -19,7 +19,8 @@ export const ChooseBanquetOptionsPage = () => {
     const [banquets, setBanquets] = useState<IBanquetOptions[]>([])
 
     const goBack = () => {
-        navigate(`/restaurant/${restaurant_id}`);
+        // navigate(`/restaurant/${restaurant_id}`);
+        navigate(-1);
     }
 
     useEffect(() => {
@@ -46,20 +47,24 @@ export const ChooseBanquetOptionsPage = () => {
                                         onDragStart={event => event.preventDefault()} />
                                     <div className={css.banquetInfo}>
                                         <span className={css.banquet_title}>{banquet.name}</span>
-                                        <div>
-                                            <DepositIcon />
-                                            <span className={css.banquet_text}>{banquet.deposit ? banquet.deposit : banquet.conditions}</span>
-                                        </div>
-                                        <div>
-                                            <GuestsIcon />
-                                            <span className={css.banquet_text}>до {banquet.guests_limit} человек</span>
-                                        </div>
+                                        <div className={css.banquetInfoRow}>
+                                            <div className={css.banquetInfoCol}>
+                                                <div>
+                                                    <DepositIcon />
+                                                    <span className={css.banquet_text}>{banquet.deposit ? banquet.deposit : banquet.conditions}</span>
+                                                </div>
+                                                <div>
+                                                    <GuestsIcon />
+                                                    <span className={css.banquet_text}>до {banquet.guests_limit} человек</span>
+                                                </div>
+                                            </div>
                                         <UniversalButton
                                             title={'Выбрать'}
                                             theme={'red'}
                                             width={'full'}
                                             action={() => navigate(`/banquets/${restaurant_id}/option`, { state: { banquet } })}
                                         />
+                                        </div>
                                     </div>
                                 </div>
                             ))}

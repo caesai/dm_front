@@ -9,11 +9,15 @@ import {DownArrow} from '@/components/Icons/DownArrow';
 import { RadioInput } from '@/components/RadioInput/RadioInput.tsx';
 import { useState } from 'react';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import { userAtom } from '@/atoms/userAtom.ts';
+import { useAtom } from 'jotai';
 
 export const BanquetReservationPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const {restaurant_id} = useParams();
+
+    const [user] = useAtom(userAtom)
 
     const reservationData = location.state.reservationData || {};
 
@@ -59,7 +63,7 @@ export const BanquetReservationPage = () => {
                                     <div className={css.info__left}>
                                         <div>
                                             <span>Имя</span>
-                                            <span>Тимофей</span>
+                                            <span>{user?.first_name}</span>
                                         </div>
                                         <div>
                                             <span>Дата</span>
@@ -73,7 +77,7 @@ export const BanquetReservationPage = () => {
                                     <div className={css.info__right}>
                                         <div>
                                             <span>Номер телефона</span>
-                                            <span>+7 (900) 123-45-67</span>
+                                            <span>{user?.phone_number}</span>
                                         </div>
                                         <div>
                                             <span>Время</span>
