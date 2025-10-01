@@ -137,6 +137,9 @@ export const BanquetOptionPage = () => {
                                     className={css.datePicker}
                                     onClick={() => setCalendarOpen(true)}
                                 >
+                                    <CalendarIcon
+                                        size={20}
+                                    />
                                     {date ? (
                                         <span>{date.toLocaleDateString()}</span>
                                     ) : (
@@ -148,11 +151,6 @@ export const BanquetOptionPage = () => {
                                             Дата
                                         </span>
                                     )}
-
-                                    <CalendarIcon
-                                        size={20}
-                                        color={'var(--grey)'}
-                                    />
                                 </div>
                                 <div className={css.timeInputs}>
                                     <TimeInput
@@ -192,6 +190,7 @@ export const BanquetOptionPage = () => {
                                                 ? selectedReason
                                                 : 'Повод'
                                         }
+                                        textStyle={{fontWeight: '700'}}
                                         isValid={true}
                                         icon={<CakeIcon size={24} />}
                                         onClick={() =>

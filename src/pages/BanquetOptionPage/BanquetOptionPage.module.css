@@ -30,7 +30,7 @@
 
 .datePicker {
     display: flex;
-    justify-content: space-between;
+    gap: 12px;
     padding: 13px 20px;
     margin: 0;
     border: none;
@@ -42,7 +42,7 @@
     font-weight: 700;
 
     .datePicker__placeholder {
-        color: var(--grey);
+        align-self: end;
     }
 }
 
@@ -67,7 +67,6 @@
     font-weight: 700;
 
     .guestCount__placeholder {
-        color: var(--grey);
         cursor: default;
     }
 }
@@ -172,6 +171,12 @@
         font-weight: 800;
         font-size: 16px;
     }
+}
+
+.dropdown_text {
+    font-family: 'Mont', 'sans-serif';
+    font-weight: 800;
+    font-size: 12px;
 }
 
 .button {
