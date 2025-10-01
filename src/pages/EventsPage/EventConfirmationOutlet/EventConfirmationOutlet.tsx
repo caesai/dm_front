@@ -125,9 +125,7 @@ export const EventConfirmationOutlet: React.FC = () => {
                                 Время
                             </span>
                                 <span className={css.event_params_col__data}>
-                                {moment(
-                                    bookingInfo.event?.date_start,
-                                ).format('HH:mm')}
+                                {bookingInfo.event.ticket_price == 0 ? `${moment(bookingInfo.event?.date_start).format('HH:mm')} - ${moment(bookingInfo.event?.date_end).format('HH:mm')}` : moment(bookingInfo.event?.date_start).format('HH:mm')}
                             </span>
                         </div>
                     ) : (

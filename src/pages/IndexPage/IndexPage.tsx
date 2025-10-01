@@ -180,6 +180,8 @@ export const IndexPage: FC = () => {
                         </Link>
                     </div>
                 )}
+                <OptionsNavigation/>
+
                 {currentBookingsLoading ? (
                     <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock
@@ -208,7 +210,6 @@ export const IndexPage: FC = () => {
                             />
                         ))
                 )}
-                <OptionsNavigation/>
                 <div className={css.restaurants}>
                     <CitySelect
                         options={cityOptions}
