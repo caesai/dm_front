@@ -15,6 +15,7 @@ export interface EventTicket {
     event_img: string;
     event_description: string;
     date_start: string;
+    date_end: string;
     guest_count: number;
     total: number;
     phone?: string;

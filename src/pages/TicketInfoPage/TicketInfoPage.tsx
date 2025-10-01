@@ -172,14 +172,14 @@ export const TicketInfoPage = () => {
 
                 <div className={css.ticket} id={'ticket'}>
                     <div className={css.ticket_header}>
-                        {ticket?.event_img && ticket?.event_img !== "" ? (
+                        {ticket?.event_img || ticket?.restaurant.thumbnail_photo ? (
                             <div
                                 className={classNames(
                                     css.ticket_header_img,
                                     css.bgImage,
                                 )}
                                 style={{
-                                    backgroundImage: `url(${ticket?.event_img})`,
+                                    backgroundImage: `url(${ticket?.event_img !== '' ? ticket?.event_img : ticket.restaurant.thumbnail_photo})`,
                                 }}
                             />
                             ) : (
@@ -293,9 +293,7 @@ export const TicketInfoPage = () => {
                                     )}
                                 >
                                     {ticket ? (
-                                        moment(ticket?.date_start).format(
-                                            'HH:mm',
-                                        )
+                                        `${moment(ticket?.date_start).format('HH:mm',)} - ${moment(ticket?.date_end).format('HH:mm',)}`
                                     ) : (
                                         <PlaceholderBlock
                                             width={'50px'}
