@@ -1,5 +1,8 @@
 export interface IBanquet {
-    image_url: string
+    imageById: {
+        image_url: string
+        restaurant_id: number
+    }[]
     description: string
 }
 
