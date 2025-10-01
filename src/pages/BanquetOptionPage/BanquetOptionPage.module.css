@@ -175,5 +175,8 @@
 }
 
 .button {
-    margin-top: 60%;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem;
 }

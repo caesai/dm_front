@@ -254,8 +254,8 @@ export const BanquetOptionPage = () => {
                                             {currentBanquetParams &&
                                                 guestCount.value !== 'unset' &&
                                                 currentBanquetParams.deposit_per_person *
-                                                    parseInt(guestCount.value) +
-                                                    ' ₽'}
+                                                parseInt(guestCount.value) +
+                                                ' ₽'}
                                         </span>
                                     </div>
                                     <div className={css.payment_text}>
@@ -270,10 +270,10 @@ export const BanquetOptionPage = () => {
                                             {currentBanquetParams &&
                                                 (1 +
                                                     currentBanquetParams?.service_fee /
-                                                        100) *
-                                                    currentBanquetParams?.deposit_per_person *
-                                                    parseInt(guestCount.value) +
-                                                    ' ₽'}
+                                                    100) *
+                                                currentBanquetParams?.deposit_per_person *
+                                                parseInt(guestCount.value) +
+                                                ' ₽'}
                                         </span>
                                     </div>
                                     <p>
@@ -285,16 +285,15 @@ export const BanquetOptionPage = () => {
                                 </div>
                             </ContentBlock>
                         )}
-                        <div className={css.button}>
-                            <UniversalButton
-                                width={'full'}
-                                title={'Продолжить'}
-                                theme={'red'}
-                                action={handleContinue
-                            }
-                            />
-                        </div>
                     </ContentContainer>
+                </div>
+                <div className={css.button}>
+                    <UniversalButton
+                        width={'full'}
+                        title={'Продолжить'}
+                        theme={isFormValid ? 'red' : undefined}
+                        action={isFormValid ? handleContinue : undefined}
+                    />
                 </div>
             </div>
         </Page>
