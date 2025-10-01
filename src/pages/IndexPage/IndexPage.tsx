@@ -173,15 +173,11 @@ export const IndexPage: FC = () => {
             <div className={css.pageContainer}>
                 <Header/>
                 {tg_id && [84327932, 115555014, 118832541, 153495524, 163811519, 456052969, 244983015].includes(tg_id) &&  <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
-                {hasSuperEventAccess && (
-                    <div style={{ marginRight: 15, height: 85}}>
-                        <Link to={'/events/super'}>
-                            <img src={superevent} style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }} alt={''} />
-                        </Link>
-                    </div>
-                )}
-                <OptionsNavigation/>
-
+                <CitySelect
+                    options={cityOptions}
+                    currentValue={currentCityS}
+                    onChange={updateCurrentCity}
+                />
                 {currentBookingsLoading ? (
                     <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock
@@ -210,12 +206,18 @@ export const IndexPage: FC = () => {
                             />
                         ))
                 )}
+                {hasSuperEventAccess && (
+                    <div style={{ marginRight: 15, height: 85}}>
+                        <Link to={'/events/super'}>
+                            <img src={superevent} style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }} alt={''} />
+                        </Link>
+                    </div>
+                )}
+                <OptionsNavigation/>
+
+
                 <div className={css.restaurants}>
-                    <CitySelect
-                        options={cityOptions}
-                        currentValue={currentCityS}
-                        onChange={updateCurrentCity}
-                    />
+
                     {restaurantListed.map((rest) => (
                         <RestaurantPreview
                             // @ts-ignore
