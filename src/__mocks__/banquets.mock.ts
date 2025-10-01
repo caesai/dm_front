@@ -1,8 +1,53 @@
 import { IBanquet, IBanquetAdditionalOptions, IBanquetOptions, IBanquetParams } from '@/types/banquets.ts';
 
 export const banquetData: IBanquet = {
-    image_url: "https://kolmelhior.ru/upload/iblock/2c4/1tzhih52e9d6exo286ecgqqsi8l0mmr9.jpg",
-    description: "Мы создадим идеальные условия для вашего праздника: вкусное меню, комфортный зал и душевная атмосфера."
+    imageById: [
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/7e0092898a7a457c8ad9be0e00c3df89.jpg',
+            restaurant_id: 1
+        },
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/256a086b546f40b589c8da0edaadf1dc.jpg',
+            restaurant_id: 2
+        },
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/7a3efaa254ef4800846142ec2298cb70.jpg',
+            restaurant_id: 3
+        },
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/a965b4b4559c47c3a778f7715cc590ae.jpg',
+            restaurant_id: 4
+        },
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/31c2e547e39a487681747e0954a00ffc.jpg',
+            restaurant_id: 5
+        },
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/466ebf19d72d4b2f94450a0c4cd8691a.jpg',
+            restaurant_id: 6
+        },
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/a965b4b4559c47c3a778f7715cc590ae.jpg',
+            restaurant_id: 7
+        },
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/0dff4c2ee8da43d1a1dfc0ca5c966e9b.jpg',
+            restaurant_id: 8
+        },
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/a965b4b4559c47c3a778f7715cc590ae.jpg',
+            restaurant_id: 9
+        },
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/d4fa1466780d435d96b90f637e5d43f2.jpg',
+            restaurant_id: 10
+        },
+        {
+            image_url: 'https://storage.yandexcloud.net/dreamteam-storage/d4fa1466780d435d96b90f637e5d43f2.jpg',
+            restaurant_id: 11
+        }
+    ],
+    description: 'Ваши значимые события в {RESTAURANT.NAME}: банкеты, частные мероприятия, семейные торжества, корпоративные и деловые встречи.'
 }
 
 export const banquetOptions: IBanquetOptions[] = [

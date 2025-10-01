@@ -100,6 +100,23 @@ export const transformGallery = (
     }));
 };
 
+const getBanquetData = (restaurantId: number, restaurantName: string): IBanquet => {
+    const filteredImages = banquetData.imageById.filter(
+        item => item.restaurant_id === restaurantId
+    );
+
+    const imageById = filteredImages.length > 0
+        ? filteredImages
+        : [banquetData.imageById[0]];
+
+    const description = banquetData.description.replace('{RESTAURANT.NAME}', restaurantName);
+
+    return {
+        imageById,
+        description
+    };
+};
+
 export const Restaurant = () => {
     const navigate = useNavigate();
     const {id} = useParams();
@@ -139,71 +156,11 @@ export const Restaurant = () => {
         (string | string[])[]
     >([]);
     const [events, setEvents] = useState<IEventInRestaurant[]>([]);
-    const [banquet, ] = useState<IBanquet>(banquetData);
+    const [banquet, setBanquet] = useState<IBanquet>(() =>
+        getBanquetData(Number(id), restaurant?.title || '')
+    );
 
     const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
-
-    useEffect(() => {
-        setRestaurant(restaurants.find((v) => v.id === Number(id)));
-        setCurrentSelectedTime(null);
-        setBookingDate({value: 'unset', title: 'unset'});
-        APIGetEventsInRestaurant(Number(id), String(auth?.access_token)).then((res) => setEvents(res.data));
-    }, [id]);
-
-    useEffect(() => {
-        if (restaurant?.gallery) {
-            setGallery(transformGallery(restaurant.gallery));
-        }
-    }, [restaurant]);
-
-    useEffect(() => {
-        setCurrentGalleryPhotos(getGalleryPhotos());
-    }, [currentGalleryCategory, gallery]);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 50px – меняем состояние
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    useEffect(() => {
-        if (!auth?.access_token) {
-            return;
-        }
-        APIGetAvailableDays(auth?.access_token, Number(id), 1)
-            .then((res) => {
-                setBookingDates(
-                    res.data.map((v) => ({
-                        title: formatDate(v),
-                        value: v,
-                    }))
-                );
-                return res;
-            })
-            .then((res) => {
-                    setBookingDate({
-                        title: formatDate(res.data[0]),
-                        value: res.data[0],
-                    });
-                }
-            )
-    }, []);
-    useEffect(() => {
-        if (!auth?.access_token || bookingDate.value == 'unset') {
-            return;
-        }
-        setTimeslotLoading(true);
-        APIGetAvailableTimeSlots(
-            auth.access_token,
-            Number(id),
-            bookingDate.value,
-            1
-        )
-            .then((res) => setAvailableTimeslots(res.data))
-            .finally(() => setTimeslotLoading(false));
-    }, [bookingDate]);
 
     const goToProfile = () => {
         setBackUrlAtom(`/restaurant/${id}`);
@@ -290,6 +247,75 @@ export const Restaurant = () => {
             navigate('/')
         }
     }
+
+    useEffect(() => {
+        setRestaurant(restaurants.find((v) => v.id === Number(id)));
+        setCurrentSelectedTime(null);
+        setBookingDate({value: 'unset', title: 'unset'});
+        APIGetEventsInRestaurant(Number(id), String(auth?.access_token)).then((res) => setEvents(res.data));
+    }, [id]);
+
+    useEffect(() => {
+        if (restaurant?.gallery) {
+            setGallery(transformGallery(restaurant.gallery));
+        }
+    }, [restaurant]);
+
+    useEffect(() => {
+        setCurrentGalleryPhotos(getGalleryPhotos());
+    }, [currentGalleryCategory, gallery]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 50px – меняем состояние
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    useEffect(() => {
+        if (!auth?.access_token) {
+            return;
+        }
+        APIGetAvailableDays(auth?.access_token, Number(id), 1)
+            .then((res) => {
+                setBookingDates(
+                    res.data.map((v) => ({
+                        title: formatDate(v),
+                        value: v,
+                    }))
+                );
+                return res;
+            })
+            .then((res) => {
+                    setBookingDate({
+                        title: formatDate(res.data[0]),
+                        value: res.data[0],
+                    });
+                }
+            )
+    }, []);
+    useEffect(() => {
+        if (!auth?.access_token || bookingDate.value == 'unset') {
+            return;
+        }
+        setTimeslotLoading(true);
+        APIGetAvailableTimeSlots(
+            auth.access_token,
+            Number(id),
+            bookingDate.value,
+            1
+        )
+            .then((res) => setAvailableTimeslots(res.data))
+            .finally(() => setTimeslotLoading(false));
+    }, [bookingDate]);
+
+    useEffect(() => {
+        if (restaurant) {
+            setBanquet(getBanquetData(Number(id), restaurant.title));
+        }
+    }, [restaurant, id]);
+
     return (
         <Page back={true}>
             <BookingDateSelectorPopup
@@ -884,7 +910,7 @@ export const Restaurant = () => {
                                         css.bgImage,
                                     )}
                                     style={{
-                                        backgroundImage: `url(${banquet.image_url})`,
+                                        backgroundImage: `url(${banquet.imageById[0].image_url})`,
                                     }}
                                 ></div>
                             </div>
