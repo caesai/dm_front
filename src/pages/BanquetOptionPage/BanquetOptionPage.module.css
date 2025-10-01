@@ -30,7 +30,7 @@
 
 .datePicker {
     display: flex;
-    justify-content: space-between;
+    gap: 12px;
     padding: 13px 20px;
     margin: 0;
     border: none;
@@ -42,7 +42,7 @@
     font-weight: 700;
 
     .datePicker__placeholder {
-        color: var(--grey);
+        align-self: end;
     }
 }
 
@@ -67,7 +67,6 @@
     font-weight: 700;
 
     .guestCount__placeholder {
-        color: var(--grey);
         cursor: default;
     }
 }
@@ -140,7 +139,6 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
-    padding: 0 15px;
 
     > p {
         font-family: 'Mont', 'sans-serif';
@@ -174,6 +172,15 @@
     }
 }
 
+.dropdown_text {
+    font-family: 'Mont', 'sans-serif';
+    font-weight: 800;
+    font-size: 12px;
+}
+
 .button {
-    margin-top: 60%;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem;
 }

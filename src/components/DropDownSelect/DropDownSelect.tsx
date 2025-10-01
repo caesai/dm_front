@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { CSSProperties, ReactNode } from 'react';
 import classNames from 'classnames';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
 import css from './DropDownSelect.module.css';
@@ -8,9 +8,10 @@ interface DropDownSelectProps {
     onClick?: () => void;
     isValid: boolean;
     icon?: ReactNode;
+    textStyle?: CSSProperties;
 }
 
-export const DropDownSelect: React.FC<DropDownSelectProps> = ({title, onClick, isValid, icon}) => {
+export const DropDownSelect: React.FC<DropDownSelectProps> = ({title, onClick, isValid, icon, textStyle}) => {
     return (
         <div
             className={classNames(
@@ -24,6 +25,7 @@ export const DropDownSelect: React.FC<DropDownSelectProps> = ({title, onClick, i
             >
                 {icon && icon}
                 <span
+                    style={textStyle}
                     className={
                         css.select_text
                     }

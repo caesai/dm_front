@@ -137,6 +137,9 @@ export const BanquetOptionPage = () => {
                                     className={css.datePicker}
                                     onClick={() => setCalendarOpen(true)}
                                 >
+                                    <CalendarIcon
+                                        size={20}
+                                    />
                                     {date ? (
                                         <span>{date.toLocaleDateString()}</span>
                                     ) : (
@@ -148,11 +151,6 @@ export const BanquetOptionPage = () => {
                                             Дата
                                         </span>
                                     )}
-
-                                    <CalendarIcon
-                                        size={20}
-                                        color={'var(--grey)'}
-                                    />
                                 </div>
                                 <div className={css.timeInputs}>
                                     <TimeInput
@@ -192,6 +190,7 @@ export const BanquetOptionPage = () => {
                                                 ? selectedReason
                                                 : 'Повод'
                                         }
+                                        textStyle={{fontWeight: '700'}}
                                         isValid={true}
                                         icon={<CakeIcon size={24} />}
                                         onClick={() =>
@@ -233,11 +232,11 @@ export const BanquetOptionPage = () => {
                                 )}
                             </div>
                         </ContentBlock>
-                        {isFormValid && (
+                        {isFormValid && banquet.deposit !== null && (
                             <ContentBlock>
                                 <div className={css.payment}>
                                     <span className={css.payment_title}>
-                                        Предварительный рассчет стоимости:
+                                        Предварительная стоимость*:
                                     </span>
                                     <div className={css.payment_text}>
                                         <span>Депозит за человека:</span>
@@ -254,8 +253,8 @@ export const BanquetOptionPage = () => {
                                             {currentBanquetParams &&
                                                 guestCount.value !== 'unset' &&
                                                 currentBanquetParams.deposit_per_person *
-                                                    parseInt(guestCount.value) +
-                                                    ' ₽'}
+                                                parseInt(guestCount.value) +
+                                                ' ₽'}
                                         </span>
                                     </div>
                                     <div className={css.payment_text}>
@@ -270,31 +269,29 @@ export const BanquetOptionPage = () => {
                                             {currentBanquetParams &&
                                                 (1 +
                                                     currentBanquetParams?.service_fee /
-                                                        100) *
-                                                    currentBanquetParams?.deposit_per_person *
-                                                    parseInt(guestCount.value) +
-                                                    ' ₽'}
+                                                    100) *
+                                                currentBanquetParams?.deposit_per_person *
+                                                parseInt(guestCount.value) +
+                                                ' ₽'}
                                         </span>
                                     </div>
                                     <p>
-                                        Конечная стоимость банкета формируется
-                                        из подобранного меню, винного
-                                        сопровождения, сервисного сбора, а также
-                                        дополнительных услуг.
+                                        *Окончательная стоимость банкета будет определена после того,
+                                        как вы сформируете запрос,
+                                        и мы свяжемся с вами для уточнения всех деталей мероприятия.
                                     </p>
                                 </div>
                             </ContentBlock>
                         )}
-                        <div className={css.button}>
-                            <UniversalButton
-                                width={'full'}
-                                title={'Продолжить'}
-                                theme={'red'}
-                                action={handleContinue
-                            }
-                            />
-                        </div>
                     </ContentContainer>
+                </div>
+                <div className={css.button}>
+                    <UniversalButton
+                        width={'full'}
+                        title={'Продолжить'}
+                        theme={isFormValid ? 'red' : undefined}
+                        action={isFormValid ? handleContinue : undefined}
+                    />
                 </div>
             </div>
         </Page>

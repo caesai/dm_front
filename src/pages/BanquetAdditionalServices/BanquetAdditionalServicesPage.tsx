@@ -62,27 +62,29 @@ export const BanquetAdditionalServicesPage = () => {
                     </div>
                     <ContentContainer>
                         <ContentBlock>
-                            {options.map((option) => (
-                                <BanquetCheckBox
-                                    key={option.name}
-                                    checked={selectedServices.includes(option.name)}
-                                    toggle={() => toggleService(option.name)}
-                                    label={option.name}
-                                />
-                            ))}
+                            <div className={css.checkbox}>
+                                {options.map((option) => (
+                                    <BanquetCheckBox
+                                        key={option.name}
+                                        checked={selectedServices.includes(option.name)}
+                                        toggle={() => toggleService(option.name)}
+                                        label={option.name}
+                                    />
+                                ))}
+                            </div>
                         </ContentBlock>
                         <ContentBlock>
                             <span className={css.text}>Не входит в стоимость, оплачивается отдельно</span>
                         </ContentBlock>
-                        <div className={css.button}>
-                            <UniversalButton
-                                width={'full'}
-                                title={'Продолжить'}
-                                theme={'red'}
-                                action={goNext}
-                            />
-                        </div>
                     </ContentContainer>
+                    <div className={css.button}>
+                        <UniversalButton
+                            width={'full'}
+                            title={'Продолжить'}
+                            theme={'red'}
+                            action={goNext}
+                        />
+                    </div>
                 </div>
             </div>
         </Page>
