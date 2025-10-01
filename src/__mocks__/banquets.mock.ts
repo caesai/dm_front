@@ -1,4 +1,9 @@
-import { IBanquet, IBanquetAdditionalOptions, IBanquetOptions, IBanquetParams } from '@/types/banquets.ts';
+import {
+    IBanquet,
+    IBanquetAdditionalOptions,
+    IBanquetOptionsContainer,
+    IBanquetParams,
+} from '@/types/banquets.ts';
 
 export const banquetData: IBanquet = {
     imageById: [
@@ -50,27 +55,121 @@ export const banquetData: IBanquet = {
     description: 'Ваши значимые события в {RESTAURANT.NAME}: банкеты, частные мероприятия, семейные торжества, корпоративные и деловые встречи.'
 }
 
-export const banquetOptions: IBanquetOptions[] = [
+export const banquetOptions: IBanquetOptionsContainer[] = [
     {
-        id: 2136,
-        name: "Кабинет",
-        guests_limit: 14,
-        deposit: "Без депозита",
-        image_url: "https://moltomolto.ru/wp-content/uploads/2021/08/yubilej1.webp"
+        restaurant_id: 1,
+        options: [
+            {
+                id: 2136,
+                name: "Зал у Камина (только будни)",
+                guests_min: 10,
+                guests_max: 20,
+                deposit: 15000,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/07f673b133a0433e88c6b0c4e8b603a3.jpeg",
+            },
+            {
+                id: 2137,
+                name: "Банкетная рассадка",
+                guests_min: 8,
+                guests_max: 12,
+                deposit: 5000,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/9eb420734c0c4f6d9240568f407e72ad.jpg",
+            }
+        ]
     },
     {
-        id: 9823,
-        name: "Винный зал",
-        guests_limit: 16,
-        conditions: "Индивидуальные условия",
-        image_url: "https://ss.sport-express.ru/userfiles/materials/191/1913530/volga.jpg"
+        restaurant_id: 2,
+        options: [
+            {
+                id: 2138,
+                name: "Общий стол",
+                guests_min: 6,
+                guests_max: 10,
+                deposit: 2500,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/70751e5df46446178e1ded4d30607517.jpg",
+            },
+            {
+                id: 2139,
+                name: "Банкетная рассадка в зале",
+                guests_min: 25,
+                guests_max: 40,
+                deposit: 3000,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/ae5f1c4bd8044c37998c39a885adcd6b.jpg",
+            }
+        ]
     },
     {
-        id: 9827,
-        name: `Граунд "ШИК"`,
-        guests_limit: 14,
-        conditions: "от 900 тыс. ₽",
-        image_url: "https://i.pinimg.com/736x/42/64/e1/4264e1a3c56bbe061174039772d43fb0.jpg"
+        restaurant_id: 3,
+        options: []
+    },
+    {
+        restaurant_id: 4,
+        options: []
+    },
+    {
+        restaurant_id: 5,
+        options: [
+            {
+                id: 2140,
+                name: "Кабинет",
+                guests_min: null,
+                guests_max: 12,
+                deposit: null,
+                deposit_message: "Индивидуальные условия",
+                service_fee: 0,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/2db2b6d8dec54f4a9ce6e0ad025dfed6.jpg",
+            },
+            {
+                id: 2141,
+                name: "Винный зал",
+                guests_min: null,
+                guests_max: 16,
+                deposit_message: "Индивидуальные условия",
+                service_fee: 0,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/a6f8225fca3a43ae816613e0a51b9b53.jpg",
+            },
+            {
+                id: 2142,
+                name: `Граунд "ШИК”`,
+                guests_min: null,
+                guests_max: 30,
+                deposit_message: "Индивидуальные условия",
+                service_fee: 0,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/bd7c9b3e8e5b4ac78a4f6d335c4468e6.jpg",
+            }
+        ]
+    },
+    {
+        restaurant_id: 6,
+        options: []
+    },
+    {
+        restaurant_id: 7,
+        options: []
+    },
+    {
+        restaurant_id: 8,
+        options: []
+    },
+    {
+        restaurant_id: 9,
+        options: []
+    },
+    {
+        restaurant_id: 10,
+        options: []
+    },
+    {
+        restaurant_id: 11,
+        options: []
     },
 ]
 

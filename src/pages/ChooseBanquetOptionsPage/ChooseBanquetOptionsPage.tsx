@@ -6,26 +6,38 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { useEffect, useState } from 'react';
-import { IBanquetOptions } from '@/types/banquets.ts';
+import { IBanquetOptionsContainer } from '@/types/banquets.ts';
 import { banquetOptions } from '@/__mocks__/banquets.mock.ts';
 import { DepositIcon } from '@/components/Icons/DepositIcon.tsx';
 import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 
 export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
-    const {restaurant_id} = useParams();
+    const {id} = useParams();
 
-    const [banquets, setBanquets] = useState<IBanquetOptions[]>([])
+    const [banquets, setBanquets] = useState<IBanquetOptionsContainer>()
+
+    const getBanquetOptions = (restaurantId?: string): IBanquetOptionsContainer | undefined => {
+        if (!restaurantId) return;
+        const filteredBanquets = banquetOptions.filter(
+            item => item.restaurant_id === parseInt(restaurantId)
+        );
+
+        return filteredBanquets[0];
+    };
 
     const goBack = () => {
-        // navigate(`/restaurant/${restaurant_id}`);
         navigate(-1);
     }
 
     useEffect(() => {
-        setBanquets(banquetOptions);
-    }, []);
+        const banquet = getBanquetOptions(id);
+        if (banquet) {
+            setBanquets(banquet);
+        }
+    }, [id]);
+
+
     return (
         <Page back={true}>
             <div className={css.page}>
@@ -35,39 +47,48 @@ export const ChooseBanquetOptionsPage = () => {
                             icon={<BackIcon color={'var(--dark-grey)'} />}
                             action={goBack}
                         ></RoundedButton>
-                        <span className={css.header_title}>Форматы посадки</span>
+                        <span className={css.header_title}>Подбор опций для банкета</span>
                         <div />
                     </div>
                     <ContentContainer>
                         <ContentBlock>
-                            {banquets.map((banquet) => (
-                                <div className={css.banquetContainer} key={banquet.id}>
-                                    <img
-                                        src={banquet.image_url} alt="banquet_img"
-                                        onDragStart={event => event.preventDefault()} />
-                                    <div className={css.banquetInfo}>
-                                        <span className={css.banquet_title}>{banquet.name}</span>
-                                        <div className={css.banquetInfoRow}>
-                                            <div className={css.banquetInfoCol}>
-                                                <div>
-                                                    <DepositIcon />
-                                                    <span className={css.banquet_text}>{banquet.deposit ? banquet.deposit : banquet.conditions}</span>
+                            {banquets?.options && banquets.options.length > 0 ? (
+                                banquets?.options.map((banquet) => (
+                                    <div className={css.banquetContainer} key={banquet.id}>
+                                        <img
+                                            src={banquet.image} alt="banquet_img"
+                                            onDragStart={event => event.preventDefault()} />
+                                        <div className={css.banquetInfo}>
+                                            <span className={css.banquet_title}>{banquet.name}</span>
+                                            <div className={css.banquetInfoRow}>
+                                                <div className={css.banquetInfoCol}>
+                                                    <div>
+                                                        <DepositIcon />
+                                                        <span
+                                                            className={css.banquet_text}>{banquet.deposit ? banquet.deposit : banquet.deposit_message}</span>
+                                                    </div>
+                                                    <div>
+                                                        <GuestsIcon />
+                                                        <span
+                                                            className={css.banquet_text}>до {banquet.guests_max} человек</span>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <GuestsIcon />
-                                                    <span className={css.banquet_text}>до {banquet.guests_limit} человек</span>
+                                                <div className={css.buttonContainer}>
+                                                    <button
+                                                        className={css.infoButton}
+                                                        onClick={() => navigate(`/banquets/${id}/option`, { state: { banquet } })}
+                                                    >
+                                                        Выбрать
+                                                    </button>
                                                 </div>
                                             </div>
-                                        <UniversalButton
-                                            title={'Выбрать'}
-                                            theme={'red'}
-                                            width={'full'}
-                                            action={() => navigate(`/banquets/${restaurant_id}/option`, { state: { banquet } })}
-                                        />
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+
+                                ) : (
+                                <h1 className={css.no_banquets}>Нет доступных опций для банкета</h1>)
+                        }
                         </ContentBlock>
                     </ContentContainer>
                 </div>

@@ -6,13 +6,20 @@ export interface IBanquet {
     description: string
 }
 
+export interface IBanquetOptionsContainer {
+    restaurant_id: number
+    options: IBanquetOptions[]
+}
+
 export interface IBanquetOptions {
     id: number
     name: string
-    guests_limit: number
-    deposit?: string
-    conditions?: string
-    image_url: string
+    guests_min: number | null,
+    guests_max: number,
+    deposit?: number | null,
+    deposit_message: string | null,
+    service_fee: number,
+    image: string
 }
 
 export interface IBanquetParams {
