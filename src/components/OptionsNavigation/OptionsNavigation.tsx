@@ -41,7 +41,7 @@ export const OptionsNavigation = () => {
             {/*)}*/}
             {tg_id && mockEventsUsersList.includes(tg_id) && (
                 <div style={{ height: 85}}>
-                    <Link to={'/events/super'}>
+                    <Link to={'/events'}>
                         <img src={eventBg} style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }} alt={''} />
                     </Link>
                 </div>
