@@ -45,7 +45,7 @@ export const BanquetOptionsPopup: FC<Props> = ({
         (_, i) => {
             const count = i + minGuests;
             return {
-                title: `${count} гостей`,
+                title: count.toString(),
                 value: count.toString()
             };
         }
