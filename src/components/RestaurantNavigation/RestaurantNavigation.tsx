@@ -26,6 +26,8 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
         }
     });
 
+    const onClick = () => document.documentElement.scrollIntoView({ behavior: "smooth" });
+
     return (
         <div className={css.navigationSlider}>
             <Swiper
@@ -35,7 +37,7 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
                 spaceBetween={8}
             >
                 <SwiperSlide style={{ width: 'fit-content' }}>
-                    <AnchorLink href="#booking" offset={64} onClick={() => document.documentElement.scrollIntoView({ behavior: "smooth" })}>
+                    <AnchorLink href="#booking" offset={64} onClick={onClick}>
                         <div
                             className={classNames(
                                 css.navigationLink,
@@ -47,7 +49,7 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
                     </AnchorLink>
                 </SwiperSlide>
                 <SwiperSlide style={{ width: 'fit-content' }}>
-                    <AnchorLink href="#gallery" offset={128}>
+                    <AnchorLink href="#gallery" offset={128} onClick={onClick}>
                         <div className={classNames(
                             css.navigationLink,
                             hash === 'gallery' ? css.navigationLinkActive : ''
@@ -55,7 +57,7 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
                     </AnchorLink>
                 </SwiperSlide>
                 <SwiperSlide style={{ width: 'fit-content' }}>
-                    <AnchorLink href="#menu" offset={128}>
+                    <AnchorLink href="#menu" offset={128} onClick={onClick}>
                         <div className={classNames(
                             css.navigationLink,
                             hash === 'menu' ? css.navigationLinkActive : ''
@@ -63,7 +65,7 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
                     </AnchorLink>
                 </SwiperSlide>
                 <SwiperSlide style={{ width: 'fit-content' }}>
-                    <AnchorLink href="#about" offset={128}>
+                    <AnchorLink href="#about" offset={128} onClick={onClick}>
                         <div className={classNames(
                             css.navigationLink,
                             hash === 'about' ? css.navigationLinkActive : ''
@@ -71,7 +73,7 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
                     </AnchorLink>
                 </SwiperSlide>
                 <SwiperSlide style={{ width: 'fit-content' }}>
-                    <AnchorLink href="#chef" offset={128}>
+                    <AnchorLink href="#chef" offset={128} onClick={onClick}>
                         <div className={classNames(
                             css.navigationLink,
                             hash === 'chef' ? css.navigationLinkActive : ''
@@ -80,7 +82,7 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
                 </SwiperSlide>
                 {isEvents && (
                     <SwiperSlide style={{ width: 'fit-content' }}>
-                        <AnchorLink href="#events" offset={128}>
+                        <AnchorLink href="#events" offset={128} onClick={onClick}>
                             <div className={classNames(
                                 css.navigationLink,
                                 hash === 'events' ? css.navigationLinkActive : ''

@@ -25,7 +25,7 @@ import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButt
 import { Link, useNavigate } from 'react-router-dom';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
-import superevent from '/img/super.png';
+import superevent from '/img/hh2.jpg';
 import newres from '/img/chinois_app.png';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
@@ -176,7 +176,7 @@ export const IndexPage: FC = () => {
                 {hasSuperEventAccess && (
                     <div style={{ marginRight: 15, height: 85}}>
                         <Link to={'/events/super'}>
-                            <img src={superevent} style={{ maxWidth: '100%', width: '100%'}} alt={''} />
+                            <img src={superevent} style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }} alt={''} />
                         </Link>
                     </div>
                 )}
