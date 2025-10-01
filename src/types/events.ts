@@ -29,6 +29,7 @@ export interface IEventInRestaurant {
     ticket_price: number;
     image_url: string;
     date_start: string;
+    date_end: string;
     tickets_left: number;
     restaurant: IRestaurantShortBooking
 }
