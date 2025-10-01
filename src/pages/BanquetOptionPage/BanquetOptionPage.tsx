@@ -18,14 +18,14 @@ import { UsersIcon } from '@/components/Icons/UsersIcon';
 import { BanquetOptionsPopup } from '@/components/BanquetOptionsPopup/BanquetOpitonsPopup.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import classNames from 'classnames';
-import { IBanquetParams } from '@/types/banquets.ts';
-import { banquetParams } from '@/__mocks__/banquets.mock.ts';
+import { IBanquetAdditionalOptions, IBanquetParams } from '@/types/banquets.ts';
+import { banquetAdditionalOptions, banquetParams } from '@/__mocks__/banquets.mock.ts';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 
 export const BanquetOptionPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { restaurant_id } = useParams();
+    const { id } = useParams();
 
     const banquet = location.state?.banquet;
 
@@ -60,6 +60,15 @@ export const BanquetOptionPage = () => {
         }
     };
 
+    const getBanquetAdditionalOptions = (restaurantId?: string): IBanquetAdditionalOptions | undefined => {
+        if (!restaurantId) return;
+        const filteredBanquets = banquetAdditionalOptions.filter(
+            item => item.restaurant_id === parseInt(restaurantId)
+        );
+
+        return filteredBanquets[0];
+    };
+
     const isFormValid =
         date !== null &&
         timeFrom &&
@@ -70,11 +79,13 @@ export const BanquetOptionPage = () => {
 
     const handleContinue = () => {
         const finalReason = selectedReason === 'Другое' ? customReason : selectedReason;
+        const additionalOptions = getBanquetAdditionalOptions(id)?.options
         const banquetData = {
             date,
             timeFrom,
             timeTo,
             guestCount,
+            additionalOptions,
             reason: finalReason,
             price: currentBanquetParams && guestCount.value !== 'unset' ? {
                 deposit: currentBanquetParams.deposit_per_person,
@@ -85,10 +96,16 @@ export const BanquetOptionPage = () => {
                     parseInt(guestCount.value)
             } : null
         };
-
-        navigate(`/banquets/${restaurant_id}/additional-services`, {
-            state: banquetData
-        });
+        if (additionalOptions && additionalOptions.length > 0) {
+            navigate(`/banquets/${id}/additional-services`, {
+                state: banquetData
+            });
+        }
+        else {
+            navigate(`/banquets/${id}/reservation`, {
+                state: banquetData
+            });
+        }
     };
 
 

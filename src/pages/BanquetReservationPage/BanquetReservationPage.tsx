@@ -15,11 +15,11 @@ import { useAtom } from 'jotai';
 export const BanquetReservationPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const {restaurant_id} = useParams();
+    const {id} = useParams();
 
     const [user] = useAtom(userAtom)
 
-    const reservationData = location.state.reservationData || {};
+    const reservationData = location.state?.reservationData || location.state;
 
     const {
         date,
@@ -31,11 +31,10 @@ export const BanquetReservationPage = () => {
         price,
     } = reservationData;
 
-
     const [selectedOption, setSelectedOption] = useState<string | undefined>();
 
     const goBack = () => {
-        navigate(`/banquets/${restaurant_id}/option`);
+        navigate(`/banquets/${id}/option`);
     }
 
     const formattedDate = new Date(date).toLocaleDateString('ru-RU')
