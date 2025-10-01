@@ -26,6 +26,7 @@ export const BanquetReservationPage = () => {
         timeFrom,
         timeTo,
         guestCount,
+        restaurant_title,
         reason,
         selectedServices = [],
         price,
@@ -38,6 +39,9 @@ export const BanquetReservationPage = () => {
     }
 
     const formattedDate = new Date(date).toLocaleDateString('ru-RU')
+    const formatNumber = (number: string) => {
+        return number[0] === '7' ?  `+ ${number}` : number
+    }
 
     const services = selectedServices.length > 0
         ? selectedServices.join(', ')
@@ -46,118 +50,121 @@ export const BanquetReservationPage = () => {
     return (
         <Page back={true}>
             <div className={css.page}>
-                <div className={css.pageWrapper}>
-                    <div className={css.header}>
-                        <RoundedButton
-                            icon={<BackIcon color={'var(--dark-grey)'} />}
-                            action={goBack}
-                        ></RoundedButton>
-                        <span className={css.header_title}>Бронирование банкета</span>
-                        <div />
-                    </div>
-                    <ContentContainer>
-                        <ContentBlock>
-                            <div className={css.info}>
-                                <div className={css.info_container}>
-                                    <div className={css.info__left}>
-                                        <div>
-                                            <span>Имя</span>
-                                            <span>{user?.first_name}</span>
-                                        </div>
-                                        <div>
-                                            <span>Дата</span>
-                                            <span>{formattedDate}</span>
-                                        </div>
-                                        <div>
-                                            <span>Гости</span>
-                                            <span>{guestCount.title}</span>
-                                        </div>
+                <div className={css.header}>
+                    <RoundedButton
+                        icon={<BackIcon color={'var(--dark-grey)'} />}
+                        action={goBack}
+                    ></RoundedButton>
+                    <span className={css.header_title}>{restaurant_title}</span>
+                    <div />
+                </div>
+                <ContentContainer>
+                    <ContentBlock>
+                        <div className={css.info}>
+                            <div className={css.info_container}>
+                                <div className={css.info__left}>
+                                    <div>
+                                        <span>Имя</span>
+                                        <span>{user?.first_name}</span>
                                     </div>
-                                    <div className={css.info__right}>
-                                        <div>
-                                            <span>Номер телефона</span>
-                                            <span>{user?.phone_number}</span>
-                                        </div>
-                                        <div>
-                                            <span>Время</span>
-                                            <span>с {timeFrom} по {timeTo}</span>
-                                        </div>
-                                        <div>
-                                            <span>Повод</span>
-                                            <span>{reason}</span>
-                                        </div>
+                                    <div>
+                                        <span>Дата</span>
+                                        <span>{formattedDate}</span>
+                                    </div>
+                                    <div>
+                                        <span>Гости</span>
+                                        <span>{guestCount.title}</span>
                                     </div>
                                 </div>
+                                <div className={css.info__right}>
+                                    <div>
+                                        <span>Номер телефона</span>
+                                        {user && user.phone_number && (
+                                            <span>{formatNumber(user.phone_number)}</span>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <span>Время</span>
+                                        <span>с {timeFrom} по {timeTo}</span>
+                                    </div>
+                                    <div>
+                                        <span>Повод</span>
+                                        <span>{reason}</span>
+                                    </div>
+                                </div>
+                            </div>
 
-                                <div className={css.additionalServices}>
-                                    <span>Дополнительные услуги</span>
-                                    <span>
+                            <div className={css.additionalServices}>
+                                <span>Дополнительные услуги</span>
+                                <span>
                                         {services}
                                     </span>
+                            </div>
+                        </div>
+                    </ContentBlock>
+                    <ContentBlock>
+                        <div className={css.commentary}>
+                            <span>Комментарий</span>
+                            <input />
+                        </div>
+                    </ContentBlock>
+                    <ContentBlock>
+                        <div className={css.connect}>
+                            <div className={css.connectTitle}>
+                                <span>Способ связи</span>
+                                <div className={css.topArrow}>
+                                    <DownArrow size={14} />
                                 </div>
                             </div>
-                        </ContentBlock>
-                        <ContentBlock>
-                            <div className={css.commentary}>
-                                <span>Комментарий</span>
-                                <input />
+                            <div className={css.radio_container}>
+                                <RadioInput
+                                    title={'Telegram'}
+                                    checked={selectedOption === 'telegram'}
+                                    onChange={() => setSelectedOption('telegram')}
+                                />
+                                <RadioInput
+                                    title={'Телефон'}
+                                    checked={selectedOption === 'phone'}
+                                    onChange={() => setSelectedOption('phone')}
+                                />
                             </div>
-                        </ContentBlock>
-                        <ContentBlock>
-                            <div className={css.connect}>
-                                <div className={css.connectTitle}>
-                                    <span>Способ связи</span>
-                                    <div className={css.topArrow}>
-                                        <DownArrow size={14} />
-                                    </div>
-                                </div>
-                                <div className={css.radio_container}>
-                                    <RadioInput
-                                        title={'Telegram'}
-                                        checked={selectedOption === 'telegram'}
-                                        onChange={() => setSelectedOption('telegram')}
-                                    />
-                                    <RadioInput
-                                        title={'Телефон'}
-                                        checked={selectedOption === 'phone'}
-                                        onChange={() => setSelectedOption('phone')}
-                                    />
-                                </div>
+                        </div>
+                    </ContentBlock>
+                    <ContentBlock>
+                        <span className={css.price_title}>Предварительная стоимость*:</span>
+                        <div className={css.price}>
+                            <div>
+                                <span>Депозит за человека:</span>
+                                <span>{price.deposit} ₽</span>
                             </div>
-                        </ContentBlock>
-                        <ContentBlock>
-                            <span className={css.price_title}>* Предварительная стоимость:</span>
-                            <div className={css.price}>
-                                <div>
-                                    <span>Депозит за человека:</span>
-                                    <span>{price.deposit} ₽</span>
-                                </div>
-                                <div>
-                                    <span>Депозит итого:</span>
-                                    <span>{price.totalDeposit} ₽</span>
-                                </div>
-                                <div>
-                                    <span>Сервисный сбор:</span>
-                                    <span>{price.serviceFee}%</span>
-                                </div>
-                                <div>
-                                    <span>Итого:</span>
-                                    <span>{price.total} ₽</span>
-                                </div>
-                                <p>
-                                    *Окончательная стоимость банкета будет
-                                    определена после того, как вы сформируете запрос,
-                                    и мы свяжемся с вами для уточнения всех деталей мероприятия.
-                                </p>
+                            <div>
+                                <span>Депозит итого:</span>
+                                <span>{price.totalDeposit} ₽</span>
                             </div>
-                        </ContentBlock>
+                            <div>
+                                <span>Сервисный сбор:</span>
+                                <span>{price.serviceFee}%</span>
+                            </div>
+                            <div>
+                                <span>Итого:</span>
+                                <span>{price.total} ₽</span>
+                            </div>
+                            <p>
+                                *Окончательная стоимость банкета будет
+                                определена после того, как вы сформируете запрос,
+                                и мы свяжемся с вами для уточнения всех деталей мероприятия.
+                            </p>
+                        </div>
+                    </ContentBlock>
+                    <div className={css.button}>
                         <UniversalButton
                             width={'full'}
                             title={'Забронировать'}
                             theme={'red'}
                         />
-                    </ContentContainer>
-                </div>
+                    </div>
+                </ContentContainer>
+
             </div>
         </Page>
     )

@@ -2,7 +2,7 @@ import { Page } from '@/components/Page.tsx';
 import css from './ChooseBanquetOptionsPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { useEffect, useState } from 'react';
@@ -13,7 +13,10 @@ import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
 
 export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
     const {id} = useParams();
+    const restaurant_title = location.state?.restaurant_title;
 
     const [banquets, setBanquets] = useState<IBanquetOptionsContainer>()
 
@@ -76,7 +79,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                 <div className={css.buttonContainer}>
                                                     <button
                                                         className={css.infoButton}
-                                                        onClick={() => navigate(`/banquets/${id}/option`, { state: { banquet } })}
+                                                        onClick={() => navigate(`/banquets/${id}/option`, { state: { banquet: banquet, restaurant_title: restaurant_title } })}
                                                     >
                                                         Выбрать
                                                     </button>

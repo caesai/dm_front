@@ -3,17 +3,11 @@
     height: 100vh;
 }
 
-.pageWrapper {
-    display: flex;
-    flex-direction: column;
-    padding: 20px 15px;
-}
-
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-right: 40px;
+    padding: 20px 55px 0 15px;
 }
 
 .header_title {

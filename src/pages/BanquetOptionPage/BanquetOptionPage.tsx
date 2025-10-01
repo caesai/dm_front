@@ -28,6 +28,7 @@ export const BanquetOptionPage = () => {
     const { id } = useParams();
 
     const banquet = location.state?.banquet;
+    const restaurant_title = location.state?.restaurant_title;
 
     const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);
@@ -86,6 +87,7 @@ export const BanquetOptionPage = () => {
             timeTo,
             guestCount,
             additionalOptions,
+            restaurant_title,
             reason: finalReason,
             price: currentBanquetParams && guestCount.value !== 'unset' ? {
                 deposit: currentBanquetParams.deposit_per_person,
