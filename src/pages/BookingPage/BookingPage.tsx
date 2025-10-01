@@ -540,9 +540,10 @@ export const BookingPage: FC = () => {
                                             bookingDate.value
                                         ) : 'Дата'}
                                         isValid={dateValidated}
+
                                         icon={<CalendarIcon size={24}/>}
                                         onClick={() =>
-                                            setBookingDatePopup(true)
+                                            !isFreeEventBooking && setBookingDatePopup(true)
                                         }
                                     />
                                     <DropDownSelect
