@@ -232,11 +232,11 @@ export const BanquetOptionPage = () => {
                                 )}
                             </div>
                         </ContentBlock>
-                        {isFormValid && (
+                        {isFormValid && banquet.deposit !== null && (
                             <ContentBlock>
                                 <div className={css.payment}>
                                     <span className={css.payment_title}>
-                                        Предварительный рассчет стоимости:
+                                        Предварительная стоимость*:
                                     </span>
                                     <div className={css.payment_text}>
                                         <span>Депозит за человека:</span>
@@ -276,10 +276,9 @@ export const BanquetOptionPage = () => {
                                         </span>
                                     </div>
                                     <p>
-                                        Конечная стоимость банкета формируется
-                                        из подобранного меню, винного
-                                        сопровождения, сервисного сбора, а также
-                                        дополнительных услуг.
+                                        *Окончательная стоимость банкета будет определена после того,
+                                        как вы сформируете запрос,
+                                        и мы свяжемся с вами для уточнения всех деталей мероприятия.
                                     </p>
                                 </div>
                             </ContentBlock>
