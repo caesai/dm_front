@@ -315,7 +315,9 @@ export const Restaurant = () => {
             setBanquet(getBanquetData(Number(id), restaurant.title));
         }
     }, [restaurant, id]);
-
+    const filteredEvents = events.filter((event) => {
+        return event.ticket_price == 0 ? event.tickets_left > 0 : null;
+    });
     return (
         <Page back={true}>
             <BookingDateSelectorPopup
@@ -879,7 +881,7 @@ export const Restaurant = () => {
                                 id={'events'}
                             />
                         </HeaderContainer>
-                        {events.map((e) => (
+                        {filteredEvents.length > 0 ? filteredEvents.map((e) => (
                                 <EventCard
                                     key={e.name}
                                     onClick={() => navigate(
@@ -894,7 +896,7 @@ export const Restaurant = () => {
                                     sold={e.tickets_left == 0}
                                 />
                             )
-                        )}
+                        ) : <span className={css.title}>Мероприятий пока нет</span>}
                     </ContentBlock>
                 </ContentContainer>
                 {tg_id && mockEventsUsersList.includes(tg_id) && (

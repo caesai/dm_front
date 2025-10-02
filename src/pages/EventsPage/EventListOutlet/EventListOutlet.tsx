@@ -16,17 +16,12 @@ export const EventListOutlet: React.FC = () => {
         // }
         navigate(`/events/${event.id}`)
     };
+    const filteredEvents = events.filter((event) => {
+        return event.ticket_price == 0 ? event.tickets_left > 0 : null;
+    });
     return (
         <div className={css.cards}>
-            {events
-                .sort(function(a, b) {
-                    const aDate = new Date(a.date_start);
-                    const bDate = new Date(b.date_start);
-                    return aDate.getTime() - bDate.getTime();
-                })
-                .filter((event) => {
-                    return event.ticket_price == 0 ? event.tickets_left > 0 : null;
-                })
+            {filteredEvents.length > 0 ? filteredEvents
                 .map((event) => (
                     <EventCard
                         key={event.name}
@@ -41,6 +36,7 @@ export const EventListOutlet: React.FC = () => {
                         sold={event.tickets_left === 0}
                     />
                 ))
+                : <span className={css.header_title}>Мероприятий пока нет</span>
             }
         </div>
     );

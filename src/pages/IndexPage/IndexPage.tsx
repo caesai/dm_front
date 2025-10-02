@@ -193,7 +193,7 @@ export const IndexPage: FC = () => {
         <Page back={false}>
             <div className={css.pageContainer}>
                 <Header/>
-                {tg_id && [84327932, 115555014, 118832541, 153495524, 163811519, 456052969, 244983015].includes(tg_id) &&  <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
+                {tg_id && [84327932, 115555014, 118832541, 153495524, 163811519, 456052969, 244983015, 7160315434].includes(tg_id) &&  <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
                 <CitySelect
                     options={cityOptions}
                     currentValue={currentCityS}
