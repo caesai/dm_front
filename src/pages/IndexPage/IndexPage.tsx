@@ -64,7 +64,7 @@ export const IndexPage: FC = () => {
     const [toastShow, setToastShow] = useState<boolean>(false);
 
     const location = useLocation();
-    const isBanquet = location.state.banquet;
+    const isBanquet = location.state?.banquet;
 
     useEffect(() => {
         if (!auth?.access_token) {
