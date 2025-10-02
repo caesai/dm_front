@@ -90,6 +90,14 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
                         </AnchorLink>
                     </SwiperSlide>
                 )}
+                <SwiperSlide style={{ width: 'fit-content' }}>
+                    <AnchorLink href="#banquet" offset={128}>
+                        <div className={classNames(
+                            css.navigationLink,
+                            hash === 'banquet' ? css.navigationLinkActive : ''
+                        )}>Банкеты</div>
+                    </AnchorLink>
+                </SwiperSlide>
                 <SwiperSlide style={{ width: '48px' }}></SwiperSlide>
             </Swiper>
         </div>

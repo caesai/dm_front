@@ -91,6 +91,7 @@ export const BanquetOptionPage = () => {
         const finalReason = selectedReason === 'Другое' ? customReason : selectedReason;
         const additionalOptions = getBanquetAdditionalOptions(id)?.options;
         const banquetData = {
+            name: banquet.name,
             date,
             timeFrom: timeFrom.value,
             timeTo: timeTo.value,

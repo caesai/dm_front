@@ -22,12 +22,13 @@ import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.t
 import {Stories} from "@/components/Stories/Stories.tsx";
 // import {DEV_MODE} from "@/api/base.ts";
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
 import superevent from '/img/hh2.jpg';
 import newres from '/img/chinois_app.png';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+import { Toast } from '@/components/Toast/Toast.tsx';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -59,6 +60,11 @@ export const IndexPage: FC = () => {
     const navigate = useNavigate();
     const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastShow, setToastShow] = useState<boolean>(false);
+
+    const location = useLocation();
+    const isBanquet = location.state.banquet;
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -131,6 +137,17 @@ export const IndexPage: FC = () => {
             result.filter((v) => v.city.name_english == currentCityA)
         );
     }, [currentCityA, cityListA]);
+
+    useEffect(() => {
+        if (isBanquet) {
+            setToastShow(true);
+            setToastMessage('Запрос на бронирование банкета успешен. С вами свяжутся наши менеджеры.');
+            setTimeout(() => {
+                setToastShow(false);
+                setToastMessage(null);
+            }, 3000);
+        }
+    }, [isBanquet]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
@@ -232,6 +249,7 @@ export const IndexPage: FC = () => {
                 </div>
             </div>
             {currentCityA !== 'ekb' && <BottomButtonWrapper onClick={() => navigate('/booking/')}/>}
+            <Toast message={toastMessage} showClose={toastShow} />
         </Page>
     );
 };

@@ -900,7 +900,7 @@ export const Restaurant = () => {
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
-                            <HeaderContent title={'Банкеты'}/>
+                            <HeaderContent title={'Банкеты'} id={'banquet'}/>
                         </HeaderContainer>
                         <div className={css.banquetContainer}>
                             <div className={css.banquetImg}>
