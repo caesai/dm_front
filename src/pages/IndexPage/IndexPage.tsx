@@ -75,18 +75,22 @@ export const IndexPage: FC = () => {
             .then((responses) => {
                 // console.log('responses: ', responses);
                 // @ts-expect-error
-                const events: IBookingInfo[] = responses[1].data.map((event) => ({
-                    id: event.id,
-                    booking_type: 'event',
-                    booking_date: moment(event.date_start).format('YYYY-MM-DD'),
-                    time: moment(event.date_start).format('HH:MM'),
-                    restaurant: event.restaurant,
-                    tags: null,
-                    duration: 0,
-                    guests_count: event.guest_count,
-                    children_count: 0,
-                    event_title: event.event_title,
-                }));
+                const events: IBookingInfo[] = responses[1].data.map((event) =>
+                {
+                    return {
+                        id: event.id,
+                        booking_type: 'event',
+                        booking_date: moment(event.date_start).format('YYYY-MM-DD'),
+                        time: moment(event.date_start).format('HH:mm'),
+                        restaurant: event.restaurant,
+                        tags: null,
+                        duration: 0,
+                        guests_count: event.guest_count,
+                        children_count: 0,
+                        event_title: event.event_title,
+                    }
+                }
+                );
                 const bookings = [...events, ...responses[0].data.currentBookings];
                 setCurrentBookings(bookings);
             })
