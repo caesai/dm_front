@@ -136,7 +136,10 @@ export const BanquetOptionPage = () => {
                     isOpen={calendarOpen}
                     setIsOpen={setCalendarOpen}
                     initialDate={new Date()}
-                    setDate={setDate}
+                    setDate={(date) => {
+                        setDate(date);
+                        setCalendarOpen(false);
+                    }}
                 />
                 <div className={css.pageWrapper}>
                     <div className={css.header}>
@@ -147,7 +150,7 @@ export const BanquetOptionPage = () => {
                         <span className={css.header_title}>
                             {banquet?.name}
                         </span>
-                        <div />
+                        <div style={{ width: 40}}/>
                     </div>
                     <ContentContainer>
                         <ContentBlock>
