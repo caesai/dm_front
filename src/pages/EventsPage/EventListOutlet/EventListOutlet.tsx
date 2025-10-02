@@ -25,7 +25,7 @@ export const EventListOutlet: React.FC = () => {
                     return aDate.getTime() - bDate.getTime();
                 })
                 .filter((event) => {
-                    return event.ticket_price == 0 ? event.tickets_left > 0 : event;
+                    return event.ticket_price == 0 ? event.tickets_left > 0 : null;
                 })
                 .map((event) => (
                     <EventCard

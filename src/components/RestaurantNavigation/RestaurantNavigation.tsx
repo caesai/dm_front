@@ -6,10 +6,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 
 interface IRestaurantNavigationProps {
-    isEvents: boolean;
+    isShow: boolean;
 }
 
-export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents}) => {
+export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isShow}) => {
     const [hash, setHash] = useState<string | null>(null);
     useEffect(() => {
         const handleScroll = () => {
@@ -80,7 +80,6 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
                         )}>О шефе</div>
                     </AnchorLink>
                 </SwiperSlide>
-                {isEvents && (
                     <SwiperSlide style={{ width: 'fit-content' }}>
                         <AnchorLink href="#events" offset={128} onClick={onClick}>
                             <div className={classNames(
@@ -89,7 +88,8 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
                             )}>Мероприятия</div>
                         </AnchorLink>
                     </SwiperSlide>
-                )}
+                {isShow && (
+
                 <SwiperSlide style={{ width: 'fit-content' }}>
                     <AnchorLink href="#banquet" offset={128}>
                         <div className={classNames(
@@ -98,6 +98,8 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({isEvents})
                         )}>Банкеты</div>
                     </AnchorLink>
                 </SwiperSlide>
+                )}
+
                 <SwiperSlide style={{ width: '48px' }}></SwiperSlide>
             </Swiper>
         </div>

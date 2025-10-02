@@ -385,7 +385,7 @@ export const Restaurant = () => {
                             )}
                         </div>
                     </div>
-                    {headerScrolled ? <RestaurantNavigation isEvents={Boolean(events.length) && tg_id && mockEventsUsersList.includes(tg_id)}/> : null}
+                    {headerScrolled ? <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)}/> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
@@ -438,7 +438,7 @@ export const Restaurant = () => {
                             // id={'booking'}
                             className={css.navSliderAndBookingContainer}
                         >
-                            <RestaurantNavigation isEvents={Boolean(events.length)} />
+                            <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)} />
                             <div className={css.bookingContaner}>
                                 <Swiper
                                     slidesPerView={'auto'}
@@ -871,7 +871,7 @@ export const Restaurant = () => {
                         </div>
                     </ContentBlock>
                 </ContentContainer>
-                {Boolean(events.length) && tg_id && mockEventsUsersList.includes(tg_id) && (<ContentContainer>
+                <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
                             <HeaderContent
@@ -896,7 +896,8 @@ export const Restaurant = () => {
                             )
                         )}
                     </ContentBlock>
-                </ContentContainer>)}
+                </ContentContainer>
+                {tg_id && mockEventsUsersList.includes(tg_id) && (
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
@@ -927,6 +928,7 @@ export const Restaurant = () => {
                         </div>
                     </ContentBlock>
                 </ContentContainer>
+                )}
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>

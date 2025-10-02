@@ -7,7 +7,7 @@ import {useState} from "react";
 import { useAtom } from 'jotai/index';
 import {userAtom} from "@/atoms/userAtom.ts";
 import {StarPrivelegyIcon} from "@/components/Icons/StarPrivelegy.tsx";
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+// import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { Link } from 'react-router-dom';
 import eventBg from '/img/events.jpg';
 // import {DEV_MODE} from "@/api/base.ts";
@@ -18,7 +18,7 @@ export const OptionsNavigation = () => {
     // const [review] = useAtom(reviewAtom);
     const [isOpen, setIsOpen] = useState(false);
     const [user] = useAtom(userAtom);
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+    // const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
     // console.log('tg_id: ', tg_id);
     // useEffect(() => {
     //     if (!auth?.access_token) {
@@ -39,13 +39,13 @@ export const OptionsNavigation = () => {
             {/*        link={'/events'}*/}
             {/*    />*/}
             {/*)}*/}
-            {tg_id && mockEventsUsersList.includes(tg_id) && (
+            {/*{tg_id && mockEventsUsersList.includes(tg_id) && (*/}
                 <div style={{ height: 85}}>
                     <Link to={'/events'}>
                         <img src={eventBg} style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }} alt={''} />
                     </Link>
                 </div>
-            )}
+            {/*)}*/}
 
             {user?.username && ['w0esofwit','egormk','burovburov', 'iliathoughts', 'Sushkazzlo'].includes(user?.username) && (
                 <div style={{ display: 'flex', width: '50%'}}>
