@@ -1,5 +1,5 @@
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-import css from './BanquetOptionsPopup.module.css';
+import css from './TimeSelectorPopup.module.css';
 import styled from 'styled-components';
 import Popup from 'reactjs-popup';
 import { Dispatch, FC, SetStateAction, useEffect } from 'react';
@@ -11,10 +11,8 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 interface Props {
     isOpen: boolean;
     closePopup: () => void;
-    guestCount: PickerValue;
-    setGuestCount: Dispatch<SetStateAction<PickerValueObj>>;
-    minGuests: number;
-    maxGuests: number;
+    time: PickerValue;
+    setTimeOption: Dispatch<SetStateAction<PickerValueObj>>;
 }
 
 const StyledPopup = styled(Popup)`
@@ -35,31 +33,29 @@ const StyledPopup = styled(Popup)`
 export const TimeSelectorPopup: FC<Props> = ({
                                                    isOpen,
                                                    closePopup,
-                                                   guestCount,
-                                                   setGuestCount,
-                                                   minGuests,
-                                                   maxGuests
+                                                 time,
+                                                   setTimeOption,
                                                }) => {
-    const guestOptions: PickerValueObj[] = Array.from(
-        { length: maxGuests - minGuests + 1 },
-        (_, i) => {
-            const count = i + minGuests;
-            return {
-                title: count.toString(),
-                value: count.toString()
-            };
+    const timeOptions: PickerValueObj[] = [
+        '9:00', '10:00',  '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
+        '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '00:00'
+    ].map((val) => (
+        {
+            title: val,
+            value: val
         }
-    );
+    ));
+
 
     useEffect(() => {
-        if (isOpen && guestCount.value === 'unset') {
-            setGuestCount(guestOptions[0]);
+        if (isOpen && time.value === 'unset') {
+            setTimeOption(timeOptions[0]);
         }
     }, [isOpen]);
 
     const onChange = (val: PickerValueObj) => {
-        setGuestCount({
-            title: `${val.value} гостей`,
+        setTimeOption({
+            title: `${val.value}`,
             value: val.value
         });
     };
@@ -68,13 +64,13 @@ export const TimeSelectorPopup: FC<Props> = ({
         <>
             <Picker
                 // @ts-expect-error broken-lib
-                value={guestCount}
+                value={time}
                 onChange={onChange}
                 wheelMode="natural"
                 height={120}
             >
                 <Picker.Column name={'value'}>
-                    {guestOptions.map((option) => (
+                    {timeOptions.map((option) => (
                         <Picker.Item key={option.value} value={option}>
                             {({ selected }) => (
                                 <div className={css.selectorItem}>
@@ -100,7 +96,7 @@ export const TimeSelectorPopup: FC<Props> = ({
         <StyledPopup open={isOpen} onClose={closePopup} modal>
             <ContentContainer>
                 <div className={css.content}>
-                    <h3>Укажите количество гостей</h3>
+                    <h3>Выберите время</h3>
                     {picker}
                 </div>
             </ContentContainer>
