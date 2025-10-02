@@ -53,10 +53,9 @@ export const BanquetReservationPage = () => {
         : 'Не выбраны';
     const createBooking = () => {
         if (!auth?.access_token) return;
-        console.log('reservationData: ', reservationData)
         APIPostBanquetRequest(auth?.access_token, {
             restaurant_id: Number(id),
-            banquet_option: '',
+            banquet_option: reservationData.name,
             date: moment(date).toISOString(),
             start_time: timeFrom,
             end_time: timeTo,
@@ -69,10 +68,11 @@ export const BanquetReservationPage = () => {
         }).then(res => {
             //
             if (res.data.status === 'success') {
-                navigate('/');
+                navigate('/', { state: { banquet: true } });
             }
         })
     }
+    console.log('reservationData: ', reservationData)
     return (
         <Page back={true}>
             <div className={css.page}>
