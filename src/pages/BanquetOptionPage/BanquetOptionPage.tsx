@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import { IBanquetAdditionalOptions, IBanquetParams } from '@/types/banquets.ts';
 import { banquetAdditionalOptions, banquetParams } from '@/__mocks__/banquets.mock.ts';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
+import { TimeSelectorPopup } from '@/components/TimeSelectorPopup/TimeSelectorPopup.tsx';
 
 export const BanquetOptionPage = () => {
     const navigate = useNavigate();
@@ -32,22 +33,31 @@ export const BanquetOptionPage = () => {
 
     const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);
-    const [timeFrom, setTimeFrom] = useState<string | undefined>();
-    const [timeTo, setTimeTo] = useState<string | undefined>();
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
     const [isOpenDropdown, setOpenDropdown] = useState<boolean>(false);
     const [currentBanquetParams, setCurrentBanquetParams] =
         useState<IBanquetParams>();
     const [selectedReason, setSelectedReason] = useState<string>('');
     const [customReason, setCustomReason] = useState<string>('');
+    const [isTimeToPopup, setTimeToPopup] = useState<boolean>(false);
+    const [isTimeFromPopup, setTimeFromPopup] = useState<boolean>(false);
 
     const [guestCount, setGuestCount] = useState<PickerValueObj>({
         value: 'unset',
         title: '',
     });
+    const [timeFrom, setTimeFrom] = useState<PickerValueObj>({
+        value: 'от',
+        title: '',
+    });
+    const [timeTo, setTimeTo] = useState<PickerValueObj>({
+        value: 'до',
+        title: '',
+    });
 
     const closePopup = () => setOpenPopup(false);
-
+    const closeTimeFromPopup = () => setTimeFromPopup(false);
+    const closeTimeToPopup = () => setTimeToPopup(false);
     const goBack = () => {
         // navigate(`/banquets/${restaurant_id}/choose`);
         navigate(-1);
@@ -64,7 +74,7 @@ export const BanquetOptionPage = () => {
     const getBanquetAdditionalOptions = (restaurantId?: string): IBanquetAdditionalOptions | undefined => {
         if (!restaurantId) return;
         const filteredBanquets = banquetAdditionalOptions.filter(
-            item => item.restaurant_id === parseInt(restaurantId)
+            item => item.restaurant_id === parseInt(restaurantId),
         );
 
         return filteredBanquets[0];
@@ -77,14 +87,13 @@ export const BanquetOptionPage = () => {
         guestCount.value !== 'unset' &&
         selectedReason !== '' &&
         (selectedReason !== 'Другое' || customReason !== '');
-    console.log('banquet: ', banquet)
     const handleContinue = () => {
         const finalReason = selectedReason === 'Другое' ? customReason : selectedReason;
-        const additionalOptions = getBanquetAdditionalOptions(id)?.options
+        const additionalOptions = getBanquetAdditionalOptions(id)?.options;
         const banquetData = {
             date,
-            timeFrom,
-            timeTo,
+            timeFrom: timeFrom.value,
+            timeTo: timeTo.value,
             guestCount,
             additionalOptions,
             restaurant_title,
@@ -95,17 +104,16 @@ export const BanquetOptionPage = () => {
                 serviceFee: banquet.service_fee,
                 total: (1 + banquet.service_fee / 100) *
                     banquet.deposit *
-                    parseInt(guestCount.value)
-            } : null
+                    parseInt(guestCount.value),
+            } : null,
         };
         if (additionalOptions && additionalOptions.length > 0) {
             navigate(`/banquets/${id}/additional-services`, {
-                state: banquetData
+                state: banquetData,
             });
-        }
-        else {
+        } else {
             navigate(`/banquets/${id}/reservation`, {
-                state: banquetData
+                state: banquetData,
             });
         }
     };
@@ -131,6 +139,8 @@ export const BanquetOptionPage = () => {
                 minGuests={10}
                 maxGuests={20}
             />
+            <TimeSelectorPopup isOpen={isTimeFromPopup} closePopup={closeTimeFromPopup} time={timeTo} setTimeOption={setTimeFrom} />
+            <TimeSelectorPopup isOpen={isTimeToPopup} closePopup={closeTimeToPopup} time={timeTo} setTimeOption={setTimeTo} />
             <div className={css.page}>
                 <CalendarPopup
                     isOpen={calendarOpen}
@@ -177,14 +187,17 @@ export const BanquetOptionPage = () => {
                                 <div className={css.timeInputs}>
                                     <TimeInput
                                         placeholder={'Время с'}
-                                        value={timeFrom}
-                                        onChange={(e) => setTimeFrom(e)}
+                                        value={timeFrom.value}
+                                        onChange={() => {}}
                                         icon={<TimeFromIcon size={24} />}
+                                        onFocus={() => setTimeFromPopup(true)}
                                     />
                                     <TimeInput
                                         placeholder={'Время до'}
-                                        value={timeTo}
-                                        onChange={(e) => setTimeTo(e)}
+                                        value={timeTo.value}
+                                        onChange={() => {}}
+                                        // onChange={(e) => setTimeTo(e)}
+                                        onFocus={() => setTimeToPopup(true)}
                                         icon={<TimeToIcon size={24} />}
                                     />
                                 </div>
