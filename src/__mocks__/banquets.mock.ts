@@ -84,16 +84,25 @@ export const banquetOptions: IBanquetOptionsContainer[] = [
     {
         restaurant_id: 2,
         options: [
-            {
-                id: 2138,
-                name: "Общий стол",
-                guests_min: 6,
-                guests_max: 10,
-                deposit: 2500,
-                deposit_message: null,
-                service_fee: 10,
-                image: "https://storage.yandexcloud.net/dreamteam-storage/70751e5df46446178e1ded4d30607517.jpg",
-            },
+
+        ]
+    },
+    {
+        restaurant_id: 3,
+        options: []
+    },
+    {
+        restaurant_id: 4,
+        options: [{
+            id: 2138,
+            name: "Общий стол",
+            guests_min: 6,
+            guests_max: 10,
+            deposit: 2500,
+            deposit_message: null,
+            service_fee: 10,
+            image: "https://storage.yandexcloud.net/dreamteam-storage/70751e5df46446178e1ded4d30607517.jpg",
+        },
             {
                 id: 2139,
                 name: "Банкетная рассадка в зале",
@@ -103,16 +112,7 @@ export const banquetOptions: IBanquetOptionsContainer[] = [
                 deposit_message: null,
                 service_fee: 10,
                 image: "https://storage.yandexcloud.net/dreamteam-storage/ae5f1c4bd8044c37998c39a885adcd6b.jpg",
-            }
-        ]
-    },
-    {
-        restaurant_id: 3,
-        options: []
-    },
-    {
-        restaurant_id: 4,
-        options: []
+            }]
     },
     {
         restaurant_id: 5,

@@ -9,8 +9,11 @@ import {DownArrow} from '@/components/Icons/DownArrow';
 import { RadioInput } from '@/components/RadioInput/RadioInput.tsx';
 import { useState } from 'react';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { userAtom } from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { useAtom } from 'jotai';
+import { APIPostBanquetRequest } from '@/api/banquet.ts';
+import moment from 'moment';
+import { TextInput } from '@/components/TextInput/TextInput.tsx';
 
 export const BanquetReservationPage = () => {
     const navigate = useNavigate();
@@ -18,6 +21,7 @@ export const BanquetReservationPage = () => {
     const {id} = useParams();
 
     const [user] = useAtom(userAtom)
+    const [auth] = useAtom(authAtom);
 
     const reservationData = location.state?.reservationData || location.state;
 
@@ -33,9 +37,10 @@ export const BanquetReservationPage = () => {
     } = reservationData;
 
     const [selectedOption, setSelectedOption] = useState<string | undefined>();
+    const [commentary, setCommentary] = useState<string>('');
 
     const goBack = () => {
-        navigate(`/banquets/${id}/option`);
+        navigate(-1);
     }
 
     const formattedDate = new Date(date).toLocaleDateString('ru-RU')
@@ -46,7 +51,28 @@ export const BanquetReservationPage = () => {
     const services = selectedServices.length > 0
         ? selectedServices.join(', ')
         : 'Не выбраны';
-
+    const createBooking = () => {
+        if (!auth?.access_token) return;
+        console.log('reservationData: ', reservationData)
+        APIPostBanquetRequest(auth?.access_token, {
+            restaurant_id: Number(id),
+            banquet_option: '',
+            date: moment(date).toISOString(),
+            start_time: timeFrom,
+            end_time: timeTo,
+            guests_count: guestCount.value,
+            occasion: reason,
+            additional_services: selectedServices,
+            comment: commentary,
+            contact_method: String(selectedOption),
+            estimated_cost: price.total,
+        }).then(res => {
+            //
+            if (res.data.status === 'success') {
+                navigate('/');
+            }
+        })
+    }
     return (
         <Page back={true}>
             <div className={css.page}>
@@ -105,7 +131,13 @@ export const BanquetReservationPage = () => {
                     <ContentBlock>
                         <div className={css.commentary}>
                             <span>Комментарий</span>
-                            <input />
+                            <TextInput
+                                value={commentary}
+                                onChange={(e) => {
+                                    setCommentary(e);
+                                }}
+                                placeholder={'Введите комментарий'}
+                            />
                         </div>
                     </ContentBlock>
                     <ContentBlock>
@@ -161,6 +193,7 @@ export const BanquetReservationPage = () => {
                             width={'full'}
                             title={'Забронировать'}
                             theme={'red'}
+                            action={createBooking}
                         />
                     </div>
                 </ContentContainer>

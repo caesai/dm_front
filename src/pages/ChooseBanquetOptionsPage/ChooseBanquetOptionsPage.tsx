@@ -51,7 +51,7 @@ export const ChooseBanquetOptionsPage = () => {
                             action={goBack}
                         ></RoundedButton>
                         <span className={css.header_title}>Подбор опций для банкета</span>
-                        <div />
+                        <div style={{ width: 20 }}/>
                     </div>
                     <ContentContainer>
                         <ContentBlock>
@@ -66,14 +66,14 @@ export const ChooseBanquetOptionsPage = () => {
                                             <div className={css.banquetInfoRow}>
                                                 <div className={css.banquetInfoCol}>
                                                     <div>
-                                                        <DepositIcon />
-                                                        <span
-                                                            className={css.banquet_text}>{banquet.deposit ? banquet.deposit : banquet.deposit_message}</span>
-                                                    </div>
-                                                    <div>
                                                         <GuestsIcon />
                                                         <span
                                                             className={css.banquet_text}>до {banquet.guests_max} человек</span>
+                                                    </div>
+                                                    <div>
+                                                        <DepositIcon />
+                                                        <span
+                                                            className={css.banquet_text}>{banquet.deposit ? banquet.deposit + ' ₽' : banquet.deposit_message}</span>
                                                     </div>
                                                 </div>
                                                 <div className={css.buttonContainer}>

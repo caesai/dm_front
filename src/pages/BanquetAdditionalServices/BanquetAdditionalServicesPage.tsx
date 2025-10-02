@@ -30,7 +30,7 @@ export const BanquetAdditionalServicesPage = () => {
     };
 
     const goBack = () => {
-        navigate(`/banquets/${restaurant_id}/option`);
+        navigate(-1);
     }
 
     const goNext = () => {
@@ -62,7 +62,7 @@ export const BanquetAdditionalServicesPage = () => {
                         <span className={css.header_title}>Дополнительные услуги</span>
                         <div />
                     </div>
-                    <ContentContainer>
+                    <ContentContainer >
                         <ContentBlock>
                             <div className={css.checkbox}>
                                 {options && (
