@@ -77,7 +77,7 @@ export const BanquetOptionPage = () => {
         guestCount.value !== 'unset' &&
         selectedReason !== '' &&
         (selectedReason !== 'Другое' || customReason !== '');
-
+    console.log('banquet: ', banquet)
     const handleContinue = () => {
         const finalReason = selectedReason === 'Другое' ? customReason : selectedReason;
         const additionalOptions = getBanquetAdditionalOptions(id)?.options
@@ -90,11 +90,11 @@ export const BanquetOptionPage = () => {
             restaurant_title,
             reason: finalReason,
             price: currentBanquetParams && guestCount.value !== 'unset' ? {
-                deposit: currentBanquetParams.deposit_per_person,
-                totalDeposit: currentBanquetParams.deposit_per_person * parseInt(guestCount.value),
-                serviceFee: currentBanquetParams.service_fee,
-                total: (1 + currentBanquetParams.service_fee / 100) *
-                    currentBanquetParams.deposit_per_person *
+                deposit: banquet.deposit,
+                totalDeposit: banquet.deposit * parseInt(guestCount.value),
+                serviceFee: banquet.service_fee,
+                total: (1 + banquet.service_fee / 100) *
+                    banquet.deposit *
                     parseInt(guestCount.value)
             } : null
         };
@@ -264,7 +264,7 @@ export const BanquetOptionPage = () => {
                                         <span>Депозит за человека:</span>
                                         <span>
                                             {
-                                                currentBanquetParams?.deposit_per_person
+                                                banquet?.deposit
                                             }{' '}
                                             ₽
                                         </span>
@@ -274,7 +274,7 @@ export const BanquetOptionPage = () => {
                                         <span>
                                             {currentBanquetParams &&
                                                 guestCount.value !== 'unset' &&
-                                                currentBanquetParams.deposit_per_person *
+                                                banquet.deposit *
                                                 parseInt(guestCount.value) +
                                                 ' ₽'}
                                         </span>
@@ -282,18 +282,18 @@ export const BanquetOptionPage = () => {
                                     <div className={css.payment_text}>
                                         <span>Сервисный сбор:</span>
                                         <span>
-                                            {currentBanquetParams?.service_fee}%
+                                            {banquet?.service_fee}%
                                         </span>
                                     </div>
                                     <div className={css.payment_text}>
                                         <span>Итого:</span>
                                         <span>
                                             {currentBanquetParams &&
-                                                (1 +
-                                                    currentBanquetParams?.service_fee /
+                                                ((1 +
+                                                    banquet?.service_fee /
                                                     100) *
-                                                currentBanquetParams?.deposit_per_person *
-                                                parseInt(guestCount.value) +
+                                                banquet?.deposit *
+                                                parseInt(guestCount.value)).toFixed(2) +
                                                 ' ₽'}
                                         </span>
                                     </div>
