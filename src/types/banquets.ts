@@ -31,6 +31,6 @@ export interface IBanquetParams {
 }
 
 export interface IBanquetAdditionalOptions {
-    cost: number
-    name: string
+    restaurant_id: number
+    options: string[]
 }

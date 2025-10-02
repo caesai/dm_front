@@ -919,7 +919,10 @@ export const Restaurant = () => {
                                 width={'full'}
                                 title={'Подробнее'}
                                 theme={'red'}
-                                action={() => navigate(`/banquets/${restaurant?.id}/choose`)}
+                                action={
+                                () => navigate(`/banquets/${restaurant?.id}/choose`,
+                                    {state: {restaurant_title: restaurant?.title}})
+                                }
                             />
                         </div>
                     </ContentBlock>

@@ -8,8 +8,6 @@ import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { useEffect, useState } from 'react';
 import { BanquetCheckBox } from '@/components/BanquetCheckBox/BanquetCheckBox.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { banquetAdditionalOptions } from '@/__mocks__/banquets.mock.ts';
-import { IBanquetAdditionalOptions } from '@/types/banquets.ts';
 
 export const BanquetAdditionalServicesPage = () => {
     const location = useLocation();
@@ -17,8 +15,8 @@ export const BanquetAdditionalServicesPage = () => {
     const {restaurant_id} = useParams();
 
     const banquetData = location.state;
+    const options = banquetData.additionalOptions;
 
-    const [options, setOptions] = useState<IBanquetAdditionalOptions[]>([]);
     const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
     const toggleService = (serviceName: string) => {
@@ -45,8 +43,12 @@ export const BanquetAdditionalServicesPage = () => {
     }
 
     useEffect(() => {
-        setOptions(banquetAdditionalOptions);
-    }, []);
+        if (!options) {
+            navigate(`/banquets/${restaurant_id}/reservation`, {
+                state: banquetData
+            });
+        }
+    }, [options, banquetData]);
 
     return (
         <Page back={true}>
@@ -63,14 +65,16 @@ export const BanquetAdditionalServicesPage = () => {
                     <ContentContainer>
                         <ContentBlock>
                             <div className={css.checkbox}>
-                                {options.map((option) => (
-                                    <BanquetCheckBox
-                                        key={option.name}
-                                        checked={selectedServices.includes(option.name)}
-                                        toggle={() => toggleService(option.name)}
-                                        label={option.name}
-                                    />
-                                ))}
+                                {options && (
+                                    options.map((option: string) => (
+                                        <BanquetCheckBox
+                                            key={option}
+                                            checked={selectedServices.includes(option)}
+                                            toggle={() => toggleService(option)}
+                                            label={option}
+                                        />
+                                    ))
+                                )}
                             </div>
                         </ContentBlock>
                         <ContentBlock>

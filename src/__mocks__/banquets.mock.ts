@@ -149,7 +149,39 @@ export const banquetOptions: IBanquetOptionsContainer[] = [
     },
     {
         restaurant_id: 6,
-        options: []
+        options: [
+            {
+                id: 2143,
+                name: "Банкетная рассадка",
+                guests_min: 9,
+                guests_max: 11,
+                deposit: 5000,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/b83dfbba5d474da5bdb14c521e47a6b7.jpg",
+            },
+            {
+                id: 2144,
+                name: "Банкетная рассадка",
+                guests_min: 12,
+                guests_max: 18,
+                deposit: 8000,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/b83dfbba5d474da5bdb14c521e47a6b7.jpg",
+            },
+            {
+                id: 2145,
+                name: "Банкетная рассадка",
+                guests_min: 19,
+                guests_max: 35,
+                deposit: 10000,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/b83dfbba5d474da5bdb14c521e47a6b7.jpg",
+            }
+
+        ]
     },
     {
         restaurant_id: 7,
@@ -161,7 +193,39 @@ export const banquetOptions: IBanquetOptionsContainer[] = [
     },
     {
         restaurant_id: 9,
-        options: []
+        options: [
+            {
+                id: 2146,
+                name: "Общий стол (2 этаж)",
+                guests_min: 12,
+                guests_max: 16,
+                deposit: 8500,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/4d6e1a1b81d34d3e9e851321780c6829.jpg",
+            },
+            {
+                id: 2147,
+                name: "Столы с диванами (1 этаж)",
+                guests_min: 12,
+                guests_max: 14,
+                deposit: 8500,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/0d3bd633131447768cc975334ae44f00.jpg",
+            },
+            {
+                id: 2148,
+                name: "Банкетная рассадка (2 этаж)",
+                guests_min: 24,
+                guests_max: 50,
+                deposit: 8500,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/a6406a916c704ae0992a96baf0ba5351.jpg",
+            }
+
+        ]
     },
     {
         restaurant_id: 10,
@@ -169,7 +233,37 @@ export const banquetOptions: IBanquetOptionsContainer[] = [
     },
     {
         restaurant_id: 11,
-        options: []
+        options: [{
+            id: 2149,
+            name: "Банкетная рассадка",
+            guests_min: 8,
+            guests_max: 11,
+            deposit: 5000,
+            deposit_message: null,
+            service_fee: 10,
+            image: "https://storage.yandexcloud.net/dreamteam-storage/3790ff7670bf4f1bb045cf2d37646bfa.jpg",
+        },
+            {
+                id: 2150,
+                name: "Банкетная рассадка",
+                guests_min: 12,
+                guests_max: 19,
+                deposit: 10000,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/14a57e50743c4cde8fe830afcf3ab938.jpg",
+            },
+            {
+                id: 2151,
+                name: "Банкетная рассадка",
+                guests_min: 20,
+                guests_max: 40,
+                deposit: 15000,
+                deposit_message: null,
+                service_fee: 10,
+                image: "https://storage.yandexcloud.net/dreamteam-storage/f187c97f96ab43f8be1c34ff3eefac78.JPG",
+            }
+        ]
     },
 ]
 
@@ -183,31 +277,84 @@ export const banquetParams: IBanquetParams  = {
 
 export const banquetAdditionalOptions: IBanquetAdditionalOptions[] = [
     {
-        name: "Индивидуальное оформление площадки",
-        cost: 5000,
+        restaurant_id: 1,
+        options: ["Цветочное оформление",
+            "Разработка персонального меню",
+            "Винное сопровождение",
+            "Торт по индивидуальному заказу"
+        ]
     },
     {
-        name: "Разработка меню",
-        cost: 10000,
+        restaurant_id: 2,
+        options: ["Цветочное оформление",
+            "Разработка персонального меню",
+            "Печать меню",
+            "Фотограф"
+        ]
     },
     {
-        name: "Винное сопровождение",
-        cost: 5000,
+        restaurant_id: 3,
+        options: ["Цветочное оформление",
+            "Дегустация пива с шеф-сомелье",
+            "Пивное казино",
+            "Торт по индивидуальному заказу",
+            "Печать меню",
+            "Приглашенный музыкант / группа",
+            "Фотограф"
+
+        ]
     },
     {
-        name: "Торт по индивидуальному заказу",
-        cost: 20000,
+        restaurant_id: 4,
+        options: []
     },
     {
-        name: "Ведущие",
-        cost: 15000,
+        restaurant_id: 5,
+        options: ["Разработка персонального меню",
+            "Медиаоборудование (проектор / плазма)",]
     },
     {
-        name: "Музыкант/группа",
-        cost: 40000,
+        restaurant_id: 6,
+        options: ["Цветочное оформление",
+            "Разработка персонального меню",
+            "Винное сопровождение",
+        ]
     },
     {
-        name: "Медиаоборудование",
-        cost: 7000
-    }
+        restaurant_id: 7,
+        options: ["Разработка персонального меню",
+            "Винное сопровождение",
+            "Торт по индивидуальному заказу",
+            "Печать меню",
+            "Приглашенный музыкант / группа",
+            "Ведущий",
+            "Медиаоборудование (проектор / плазма)",
+            "Фотограф"
+        ]
+    },
+    {
+        restaurant_id: 8,
+        options: []
+    },
+    {
+        restaurant_id: 9,
+        options: ["Разработка персонального меню",
+            "Винное сопровождение",
+            "Приглашенный музыкант / группа",
+            "Ведущий"
+        ]
+    },
+    {
+        restaurant_id: 10,
+        options: []
+    },
+    {
+        restaurant_id: 11,
+        options: ["Цветочное оформление",
+            "Разработка персонального меню",
+            "Торт по индивидуальному заказу",
+            "Медиаоборудование (проектор / плазма)",
+            "Фотограф"
+        ]
+    },
 ]
