@@ -11,6 +11,7 @@ import { APIGetEvents } from '@/api/events.ts';
 import { Share } from '@/components/Icons/Share.tsx';
 import { BASE_BOT } from '@/api/base.ts';
 import { IEventBooking, IEventInRestaurant } from '@/types/events.ts';
+import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
 // import {Toast} from "@/components/Toast/Toast.tsx";
 //
@@ -152,7 +153,26 @@ export const EventsPage: React.FC = () => {
                     </div>
                 </div>
                 {events.length === 0 ? (
-                    <span className={css.header_title}>Мероприятий пока нет</span>
+                    <div>
+                        <PlaceholderBlock
+                            width={'100%'}
+                            aspectRatio={'3/2'}
+                        />
+                        <div style={{marginTop: 10}}>
+                            <PlaceholderBlock
+                                width={'100%'}
+                                height={'32px'}
+
+                            />
+                        </div>
+                        <div style={{marginTop: 10}}>
+                            <PlaceholderBlock
+                                width={'100%'}
+                                height={'32px'}
+
+                            />
+                        </div>
+                    </div>
                 ) : (
                     <Outlet context={[bookingInfo, setBookingInfo]} />
                 )}

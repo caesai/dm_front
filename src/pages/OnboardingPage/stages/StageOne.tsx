@@ -1,14 +1,14 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
-import blackChops from "/img/onboarding/blackchops.png";
+// import blackChops from "/img/onboarding/blackchops.png";
 // import anchovus from "/img/onboarding/anchovys.png";
-import smoke from "/img/onboarding/smoke.png";
-import trappist from "/img/onboarding/trappist.png";
-import poly from "/img/onboarding/poly.png"
-import pame from "/img/onboarding/pame.png";
-import BBQNEW from "/img/onboarding/bbqnew.png";
-import self from "/img/onboarding/self.png";
+// import smoke from "/img/onboarding/smoke.png";
+// import trappist from "/img/onboarding/trappist.png";
+// import poly from "/img/onboarding/poly.png"
+// import pame from "/img/onboarding/pame.png";
+// import BBQNEW from "/img/onboarding/bbqnew.png";
+import stage_logos from "/img/stage_logos.png";
 // import restaurants_logo from "/img/onboarding/restaurants_logo.png";
 
 interface StageOneProps {
@@ -45,70 +45,15 @@ export const StageOne: React.FC<StageOneProps> = ({ isStory }) => {
                         <div className={css.stageOne_icons} >
                         {/*<img src={restaurants_logo} className={css.stageOne_icon} style={{ maxWidth: '100%'}} alt="restaurants_logo" />*/}
                         <img
-                            src={blackChops}
-                            style={{ visibility: "hidden" }}
+                            src={stage_logos}
+                            // style={{ visibility: "hidden" }}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
-                                css.stageOne_icons_1
+                                // css.stageOne_icons_1
                             )}
                         />
-                        <img
-                            src={self}
-                            alt=""
-                            className={classNames(
-                                css.stageOne_icon,
-                                css.stageOne_icons_2
-                            )}
-                        />
-                        <img
-                            src={smoke}
-                            alt=""
-                            className={classNames(
-                                css.stageOne_icon,
-                                css.stageOne_icons_3
-                            )}
-                        />
-                        <img
-                            src={trappist}
-                            alt=""
-                            className={classNames(
-                                css.stageOne_icon,
-                                css.stageOne_icons_4
-                            )}
-                        />
-                        <img
-                            src={poly}
-                            alt=""
-                            className={classNames(
-                                css.stageOne_icon,
-                                css.stageOne_icons_5
-                            )}
-                        />
-                        <img
-                            src={pame}
-                            alt=""
-                            className={classNames(
-                                css.stageOne_icon,
-                                css.stageOne_icons_6
-                            )}
-                        />
-                        <img
-                            src={blackChops}
-                            alt=""
-                            className={classNames(
-                                css.stageOne_icon,
-                                css.stageOne_icons_7
-                            )}
-                        />
-                            <img
-                                src={BBQNEW}
-                                alt=""
-                                className={classNames(
-                                    css.stageOne_icon,
-                                    css.stageOne_icons_8
-                                )}
-                            />
+
                     </div>
                 </div>
             </div>
