@@ -1,38 +1,38 @@
-import {Page} from '@/components/Page.tsx';
+import { Page } from '@/components/Page.tsx';
 import css from './Restaurant.module.css';
-import {RoundedButton} from '@/components/RoundedButton/RoundedButton.tsx';
-import {BackIcon} from '@/components/Icons/BackIcon.tsx';
-import {IconlyProfile} from '@/components/Icons/Profile.tsx';
-import {RestaurantTopPreview} from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
-import {useNavigate, useParams, useSearchParams} from 'react-router-dom';
+import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
+import { BackIcon } from '@/components/Icons/BackIcon.tsx';
+import { IconlyProfile } from '@/components/Icons/Profile.tsx';
+import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
-import {Swiper, SwiperSlide} from 'swiper/react';
-import {UnmountClosed} from 'react-collapse';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { UnmountClosed } from 'react-collapse';
 import 'swiper/css/bundle';
 import 'swiper/css/zoom';
 
-import {FreeMode} from 'swiper/modules';
-import {UniversalButton} from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import {useEffect, useState} from 'react';
-import {DownArrow} from '@/components/Icons/DownArrow.tsx';
+import { FreeMode } from 'swiper/modules';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import { useEffect, useState } from 'react';
+import { DownArrow } from '@/components/Icons/DownArrow.tsx';
 // import {InstagramIcon} from '@/components/Icons/Instagram.tsx';
-import {GoToPathIcon} from '@/components/Icons/GoToPathIcon.tsx';
+import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 // import {PhoneCallIcon} from '@/components/Icons/PhoneCallIcon.tsx';
-import {RestaurantNavigation} from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
-import {ContentBlock} from '@/components/ContentBlock/ContentBlock.tsx';
-import {ContentContainer} from '@/components/ContentContainer/ContentContainer.tsx';
-import {HeaderContainer} from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
-import {HeaderContent} from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
+import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
+import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
+import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
+import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 // import {HeaderSubText} from '@/components/ContentBlock/HeaderContainer/HeaderSubText/HeaderContainer.tsx';
-import {MenuPopup} from '@/components/MenuPopup/MenuPopup.tsx';
+import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
 import {
     GalleryCollection,
     GalleryPhoto,
 } from '@/pages/Restaurant/Restaurant.types.ts';
-import {CallRestaurantPopup} from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
+import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
-import {useAtom} from 'jotai';
-import {backButtonAtom} from '@/atoms/backButtonAtom.ts';
+import { useAtom } from 'jotai';
+import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
 import { IPhotoCard, IRestaurant } from '@/types/restaurant.ts';
 import {
     YMap,
@@ -42,8 +42,8 @@ import {
     YMapMarker,
 } from 'ymap3-components';
 // import { LogoMapIcon } from '@/components/Icons/LogoMapIcon.tsx';
-import {ImageViewerPopup} from '@/components/ImageViewerPopup/ImageViewerPopup.tsx';
-import {restaurantsListAtom} from '@/atoms/restaurantsListAtom.ts';
+import { ImageViewerPopup } from '@/components/ImageViewerPopup/ImageViewerPopup.tsx';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import {
     formatDate,
     formatDateAlt,
@@ -52,10 +52,10 @@ import {
     getRestaurantStatus,
     getTimeShort,
 } from '@/utils.ts';
-import {Calendar} from 'react-iconly';
-import {FaAngleRight} from 'react-icons/fa';
-import {PickerValueObj} from '@/lib/react-mobile-picker/components/Picker.tsx';
-import {ITimeSlot} from '@/pages/BookingPage/BookingPage.types.ts';
+import { Calendar } from 'react-iconly';
+import { FaAngleRight } from 'react-icons/fa';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import {
     APIGetAvailableDays,
@@ -67,10 +67,10 @@ import {
     guestCountAtom,
     timeslotAtom,
 } from '@/atoms/bookingInfoAtom.ts';
-import {PlaceholderBlock} from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import {BookingDateSelectorPopup} from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
+import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
 // import {EventCard} from '@/components/EventCard/EventCard.tsx';
-import {IEventInRestaurant} from '@/types/events.ts';
+import { IEventInRestaurant } from '@/types/events.ts';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { Share } from '@/components/Icons/Share.tsx';
 import { BASE_BOT } from '@/api/base.ts';
@@ -80,7 +80,7 @@ import { IBanquet } from '@/types/banquets.ts';
 import { banquetData } from '@/__mocks__/banquets.mock.ts';
 
 export const transformGallery = (
-    gallery: IPhotoCard[]
+    gallery: IPhotoCard[],
 ): GalleryCollection[] => {
     // Создаем объект для группировки по категориям
     const groupedByCategory: Record<string, GalleryPhoto[]> = {};
@@ -90,7 +90,7 @@ export const transformGallery = (
         if (!groupedByCategory[photo.category]) {
             groupedByCategory[photo.category] = [];
         }
-        groupedByCategory[photo.category].push({link: photo.url});
+        groupedByCategory[photo.category].push({ link: photo.url });
     });
 
     // Преобразуем объект в массив GalleryCollection
@@ -102,7 +102,7 @@ export const transformGallery = (
 
 const getBanquetData = (restaurantId: number, restaurantName: string): IBanquet => {
     const filteredImages = banquetData.imageById.filter(
-        item => item.restaurant_id === restaurantId
+        item => item.restaurant_id === restaurantId,
     );
 
     const imageById = filteredImages.length > 0
@@ -113,13 +113,13 @@ const getBanquetData = (restaurantId: number, restaurantName: string): IBanquet 
 
     return {
         imageById,
-        description
+        description,
     };
 };
 
 export const Restaurant = () => {
     const navigate = useNavigate();
-    const {id} = useParams();
+    const { id } = useParams();
     const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
@@ -133,7 +133,7 @@ export const Restaurant = () => {
     const [restaurant, setRestaurant] = useState<IRestaurant>();
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>(
-        []
+        [],
     );
 
     const [timeslotLoading, setTimeslotLoading] = useState(true);
@@ -143,7 +143,7 @@ export const Restaurant = () => {
     const [hideWorkHours, setHideWorkHours] = useState(true);
     const [headerScrolled, setHeaderScrolled] = useState(false);
     const [menuPopupOpen, setMenuPopupOpen] = useState(
-        Boolean(searchParams.get('menuOpen')) || false
+        Boolean(searchParams.get('menuOpen')) || false,
     );
     const [bookingDatePopup, setBookingDatePopup] = useState<boolean>(false);
     const [callPopup, setCallPopup] = useState(false);
@@ -157,7 +157,7 @@ export const Restaurant = () => {
     >([]);
     const [events, setEvents] = useState<IEventInRestaurant[]>([]);
     const [banquet, setBanquet] = useState<IBanquet>(() =>
-        getBanquetData(Number(id), restaurant?.title || '')
+        getBanquetData(Number(id), restaurant?.title || ''),
     );
 
     const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
@@ -177,10 +177,10 @@ export const Restaurant = () => {
             photoList = [...new Set(photoList)];
         } else {
             const searchedGallery = gallery.find(
-                (item) => item.title === currentGalleryCategory
+                (item) => item.title === currentGalleryCategory,
             );
             searchedGallery?.photos.forEach((photo) =>
-                photoList.push(photo.link)
+                photoList.push(photo.link),
             );
         }
 
@@ -202,13 +202,13 @@ export const Restaurant = () => {
 
     const shareRestaurant = () => {
         const url = encodeURI(
-            `https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`
+            `https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`,
         );
         const title = encodeURI(String(restaurant?.title));
         const shareData = {
             title,
             url,
-        }
+        };
         try {
             if (navigator && navigator.canShare(shareData)) {
                 navigator.share(shareData).then().catch((err) => {
@@ -216,9 +216,9 @@ export const Restaurant = () => {
                 });
             }
         } catch (e) {
-            window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
+            window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
         }
-    }
+    };
     const restaurantWorkEndTime = restaurant?.worktime
         .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
     let workEndTime = moment(bookingDate.value);
@@ -229,8 +229,8 @@ export const Restaurant = () => {
         }
         workEndTime.set({
             hour: Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
-            minutes: Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0'))
-        })
+            minutes: Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0')),
+        });
     }
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
@@ -238,20 +238,20 @@ export const Restaurant = () => {
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
         }
-    }
+    };
 
     const goBack = () => {
         if (!user?.complete_onboarding) {
             navigate('/onboarding');
         } else {
-            navigate('/')
+            navigate('/');
         }
-    }
+    };
 
     useEffect(() => {
         setRestaurant(restaurants.find((v) => v.id === Number(id)));
         setCurrentSelectedTime(null);
-        setBookingDate({value: 'unset', title: 'unset'});
+        setBookingDate({ value: 'unset', title: 'unset' });
         APIGetEventsInRestaurant(Number(id), String(auth?.access_token)).then((res) => setEvents(res.data));
     }, [id]);
 
@@ -283,7 +283,7 @@ export const Restaurant = () => {
                     res.data.map((v) => ({
                         title: formatDate(v),
                         value: v,
-                    }))
+                    })),
                 );
                 return res;
             })
@@ -292,8 +292,8 @@ export const Restaurant = () => {
                         title: formatDate(res.data[0]),
                         value: res.data[0],
                     });
-                }
-            )
+                },
+            );
     }, []);
     useEffect(() => {
         if (!auth?.access_token || bookingDate.value == 'unset') {
@@ -304,7 +304,7 @@ export const Restaurant = () => {
             auth.access_token,
             Number(id),
             bookingDate.value,
-            1
+            1,
         )
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotLoading(false));
@@ -354,14 +354,14 @@ export const Restaurant = () => {
             <div
                 className={classNames(
                     css.header,
-                    headerScrolled ? css.scrolled : null
+                    headerScrolled ? css.scrolled : null,
                 )}
             >
                 <div className={css.headerNav}>
                     <div className={css.headerTop}>
                         <div className={css.headerNavBlock}>
                             <RoundedButton
-                                icon={<BackIcon color={'var(--dark-grey)'}/>}
+                                icon={<BackIcon color={'var(--dark-grey)'} />}
                                 action={goBack}
                             ></RoundedButton>
                         </div>
@@ -373,21 +373,22 @@ export const Restaurant = () => {
                         <div className={css.headerNavBlock}>
                             <RoundedButton
                                 icon={
-                                    <Share color={'var(--dark-grey)'}/>
+                                    <Share color={'var(--dark-grey)'} />
                                 }
                                 action={() => shareRestaurant()}
                             />
                             {user && user.complete_onboarding && (
                                 <RoundedButton
                                     icon={
-                                        <IconlyProfile color={'var(--dark-grey)'}/>
+                                        <IconlyProfile color={'var(--dark-grey)'} />
                                     }
                                     action={() => goToProfile()}
                                 />
                             )}
                         </div>
                     </div>
-                    {headerScrolled ? <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)}/> : null}
+                    {headerScrolled ?
+                        <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)} /> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
@@ -405,7 +406,7 @@ export const Restaurant = () => {
                                 action={() =>
                                     // ,
                                     window.open(
-                                        `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`
+                                        `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`,
                                     )
                                 }
                             />
@@ -414,7 +415,7 @@ export const Restaurant = () => {
                 />
             </div>
             <div className={css.pageContainer}>
-                <RestaurantTopPreview rest={restaurant}/>
+                <RestaurantTopPreview rest={restaurant} />
                 <div className={css.yaTaxi}>
                     <div
                         key={'taxi1'}
@@ -454,7 +455,7 @@ export const Restaurant = () => {
                                     {bookingDate.value == 'unset' ||
                                     !bookingDates.length ? (
                                         <SwiperSlide
-                                            style={{width: 'min-content'}}
+                                            style={{ width: 'min-content' }}
                                         >
                                             <PlaceholderBlock
                                                 width={'150px'}
@@ -464,22 +465,22 @@ export const Restaurant = () => {
                                         </SwiperSlide>
                                     ) : (
                                         <SwiperSlide
-                                            style={{width: 'min-content'}}
+                                            style={{ width: 'min-content' }}
                                             onClick={() =>
                                                 setBookingDatePopup(true)
                                             }
                                         >
                                             <div className={css.timeItem}>
-                                                <Calendar size={18}/>
+                                                <Calendar size={18} />
                                                 {formatDateAlt(bookingDate.value)}
-                                                <FaAngleRight size={16}/>
+                                                <FaAngleRight size={16} />
                                             </div>
                                         </SwiperSlide>
                                     )}
                                     {timeslotLoading ? (
                                         <>
                                             <SwiperSlide
-                                                style={{width: 'min-content'}}
+                                                style={{ width: 'min-content' }}
                                             >
                                                 <PlaceholderBlock
                                                     width={'68px'}
@@ -488,7 +489,7 @@ export const Restaurant = () => {
                                                 />
                                             </SwiperSlide>
                                             <SwiperSlide
-                                                style={{width: 'min-content'}}
+                                                style={{ width: 'min-content' }}
                                             >
                                                 <PlaceholderBlock
                                                     width={'68px'}
@@ -497,7 +498,7 @@ export const Restaurant = () => {
                                                 />
                                             </SwiperSlide>
                                             <SwiperSlide
-                                                style={{width: 'min-content'}}
+                                                style={{ width: 'min-content' }}
                                             >
                                                 <PlaceholderBlock
                                                     width={'68px'}
@@ -510,7 +511,7 @@ export const Restaurant = () => {
                                         availableTimeslots.map((ts, i) => (
                                             <SwiperSlide
                                                 key={i}
-                                                style={{width: 'min-content'}}
+                                                style={{ width: 'min-content' }}
                                                 onClick={() => {
                                                     setCurrentSelectedTime(ts);
                                                     setGuestCount({
@@ -524,15 +525,15 @@ export const Restaurant = () => {
                                                         css.timeItem,
                                                         currentSelectedTime == ts
                                                             ? css.timeItemActive
-                                                            : null
+                                                            : null,
                                                     )}
                                                 >
                                                     {currentSelectedTime == ts ? `${getTimeShort(
-                                                        ts.start_datetime
+                                                        ts.start_datetime,
                                                     )} -  ${moment(ts.end_datetime).isBefore(workEndTime) ? getTimeShort(
-                                                        ts.end_datetime
+                                                        ts.end_datetime,
                                                     ) : restaurantWorkEndTime}` : getTimeShort(
-                                                        ts.start_datetime
+                                                        ts.start_datetime,
                                                     )}
                                                 </div>
                                             </SwiperSlide>
@@ -544,7 +545,7 @@ export const Restaurant = () => {
                     </ContentBlock>
                     <ContentBlock id={'gallery'}>
                         <HeaderContainer>
-                            <HeaderContent title={'Галерея'}/>
+                            <HeaderContent title={'Галерея'} />
                             <div className={css.photoSliderNavigationContainer}>
                                 <Swiper
                                     modules={[FreeMode]}
@@ -553,10 +554,10 @@ export const Restaurant = () => {
                                     spaceBetween={4}
                                 >
                                     <SwiperSlide
-                                        style={{width: 'max-content'}}
+                                        style={{ width: 'max-content' }}
                                         onClick={() =>
                                             setCurrentGalleryCategory(
-                                                'Все фото'
+                                                'Все фото',
                                             )
                                         }
                                     >
@@ -566,7 +567,7 @@ export const Restaurant = () => {
                                                 currentGalleryCategory ==
                                                 'Все фото'
                                                     ? css.photoSliderNavigationActive
-                                                    : null
+                                                    : null,
                                             )}
                                         >
                                             Все фото
@@ -574,11 +575,11 @@ export const Restaurant = () => {
                                     </SwiperSlide>
                                     {gallery.map((d, i) => (
                                         <SwiperSlide
-                                            style={{width: 'max-content'}}
+                                            style={{ width: 'max-content' }}
                                             key={i}
                                             onClick={() =>
                                                 setCurrentGalleryCategory(
-                                                    d.title
+                                                    d.title,
                                                 )
                                             }
                                         >
@@ -588,7 +589,7 @@ export const Restaurant = () => {
                                                     currentGalleryCategory ==
                                                     d.title
                                                         ? css.photoSliderNavigationActive
-                                                        : null
+                                                        : null,
                                                 )}
                                             >
                                                 {d.title}
@@ -625,17 +626,17 @@ export const Restaurant = () => {
                                                         key={`${i}${smallPhoto}`}
                                                         className={classNames(
                                                             css.photo,
-                                                            css.photoSmall
+                                                            css.photoSmall,
                                                         )}
                                                         style={{
                                                             backgroundImage: `url(${smallPhoto})`,
                                                         }}
                                                         onClick={() => {
                                                             setCurrentImageViewerPhoto(
-                                                                smallPhoto
+                                                                smallPhoto,
                                                             );
                                                             setImageViewerOpen(
-                                                                true
+                                                                true,
                                                             );
                                                         }}
                                                     ></div>
@@ -645,14 +646,14 @@ export const Restaurant = () => {
                                             <div
                                                 className={classNames(
                                                     css.photo,
-                                                    css.photoBig
+                                                    css.photoBig,
                                                 )}
                                                 style={{
                                                     backgroundImage: `url(${photo})`,
                                                 }}
                                                 onClick={() => {
                                                     setCurrentImageViewerPhoto(
-                                                        photo
+                                                        photo,
                                                     );
                                                     setImageViewerOpen(true);
                                                 }}
@@ -667,7 +668,7 @@ export const Restaurant = () => {
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer id={'menu'}>
-                            <HeaderContent title={'Меню'}/>
+                            <HeaderContent title={'Меню'} />
                             {/*<HeaderSubText text={'Рекомендуем'}/>*/}
                         </HeaderContainer>
                         <div className={css.photoSliderContainer}>
@@ -681,14 +682,14 @@ export const Restaurant = () => {
                                     .sort((a, b) => (a.id > b.id ? 1 : -1))
                                     .map((menu, index) => (
                                         <SwiperSlide
-                                            style={{width: '162px'}}
+                                            style={{ width: '162px' }}
                                             key={`${index}${menu.photo_url}`}
                                         >
                                             <div className={css.menuItem}>
                                                 <div
                                                     className={classNames(
                                                         css.menuItemPhoto,
-                                                        css.bgImage
+                                                        css.bgImage,
                                                     )}
                                                     style={{
                                                         backgroundImage: `url(${menu.photo_url})`,
@@ -721,13 +722,13 @@ export const Restaurant = () => {
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
-                            <HeaderContent id={'about'} title={'О месте'}/>
+                            <HeaderContent id={'about'} title={'О месте'} />
                         </HeaderContainer>
                         <div className={css.aboutContainer}>
                             <span
                                 className={classNames(
                                     css.aboutText,
-                                    hideAbout ? css.trimLines : null
+                                    hideAbout ? css.trimLines : null,
                                 )}
                             >
                                 {restaurant?.about_text}
@@ -750,7 +751,7 @@ export const Restaurant = () => {
                                         ? getRestaurantStatus(
                                             restaurant.worktime,
                                             getCurrentWeekdayShort(),
-                                            getCurrentTimeShort()
+                                            getCurrentTimeShort(),
                                         )
                                         : ''}
                                 </span>
@@ -769,7 +770,7 @@ export const Restaurant = () => {
                                             css.opened,
                                             {
                                                 [css.closed]: hideWorkHours,
-                                            }
+                                            },
                                         )}
                                     >
                                         <DownArrow
@@ -832,13 +833,13 @@ export const Restaurant = () => {
                 <ContentContainer>
                     <ContentBlock>
                         <HeaderContainer>
-                            <HeaderContent id={'chef'} title={'О шефе'}/>
+                            <HeaderContent id={'chef'} title={'О шефе'} />
                         </HeaderContainer>
                         <div className={css.aboutContainer}>
                             <span
                                 className={classNames(
                                     css.aboutText,
-                                    hideChefAbout ? css.trimLines : null
+                                    hideChefAbout ? css.trimLines : null,
                                 )}
                             >
                                 {restaurant?.brand_chef.about}
@@ -858,7 +859,7 @@ export const Restaurant = () => {
                             <div
                                 className={classNames(
                                     css.chefImage,
-                                    css.bgImage
+                                    css.bgImage,
                                 )}
                                 style={{
                                     backgroundImage: `url(${restaurant?.brand_chef.photo_url})`,
@@ -873,15 +874,16 @@ export const Restaurant = () => {
                         </div>
                     </ContentBlock>
                 </ContentContainer>
-                <ContentContainer>
-                    <ContentBlock>
-                        <HeaderContainer>
-                            <HeaderContent
-                                title={'Мероприятия'}
-                                id={'events'}
-                            />
-                        </HeaderContainer>
-                        {filteredEvents.length > 0 ? filteredEvents.map((e) => (
+                {filteredEvents.length > 0 ?
+                    <ContentContainer>
+                        <ContentBlock>
+                            <HeaderContainer>
+                                <HeaderContent
+                                    title={'Мероприятия'}
+                                    id={'events'}
+                                />
+                            </HeaderContainer>
+                            {filteredEvents.map((e) => (
                                 <EventCard
                                     key={e.name}
                                     onClick={() => navigate(
@@ -895,41 +897,42 @@ export const Restaurant = () => {
                                     event_address={e.restaurant.address}
                                     sold={e.tickets_left == 0}
                                 />
-                            )
-                        ) : <span className={css.title}>Мероприятий пока нет</span>}
-                    </ContentBlock>
-                </ContentContainer>
+                            )}
+                        </ContentBlock>
+                    </ContentContainer>
+                    ) : null}
+
                 {tg_id && mockEventsUsersList.includes(tg_id) && (
-                <ContentContainer>
-                    <ContentBlock>
-                        <HeaderContainer>
-                            <HeaderContent title={'Банкеты'} id={'banquet'}/>
-                        </HeaderContainer>
-                        <div className={css.banquetContainer}>
-                            <div className={css.banquetImg}>
-                                <div
-                                    className={classNames(
-                                        css.banquetImage,
-                                        css.bgImage,
-                                    )}
-                                    style={{
-                                        backgroundImage: `url(${banquet.imageById[0].image_url})`,
-                                    }}
-                                ></div>
+                    <ContentContainer>
+                        <ContentBlock>
+                            <HeaderContainer>
+                                <HeaderContent title={'Банкеты'} id={'banquet'} />
+                            </HeaderContainer>
+                            <div className={css.banquetContainer}>
+                                <div className={css.banquetImg}>
+                                    <div
+                                        className={classNames(
+                                            css.banquetImage,
+                                            css.bgImage,
+                                        )}
+                                        style={{
+                                            backgroundImage: `url(${banquet.imageById[0].image_url})`,
+                                        }}
+                                    ></div>
+                                </div>
+                                <span className={css.banquetDescription}>{banquet.description}</span>
+                                <UniversalButton
+                                    width={'full'}
+                                    title={'Подробнее'}
+                                    theme={'red'}
+                                    action={
+                                        () => navigate(`/banquets/${restaurant?.id}/choose`,
+                                            { state: { restaurant_title: restaurant?.title } })
+                                    }
+                                />
                             </div>
-                            <span className={css.banquetDescription}>{banquet.description}</span>
-                            <UniversalButton
-                                width={'full'}
-                                title={'Подробнее'}
-                                theme={'red'}
-                                action={
-                                () => navigate(`/banquets/${restaurant?.id}/choose`,
-                                    {state: {restaurant_title: restaurant?.title}})
-                                }
-                            />
-                        </div>
-                    </ContentBlock>
-                </ContentContainer>
+                        </ContentBlock>
+                    </ContentContainer>
                 )}
                 <ContentContainer>
                     <ContentBlock>
@@ -949,37 +952,37 @@ export const Restaurant = () => {
                                             center: [
                                                 Number(
                                                     restaurant?.address_lonlng.split(
-                                                        ','
-                                                    )[0]
+                                                        ',',
+                                                    )[0],
                                                 ),
                                                 Number(
                                                     restaurant?.address_lonlng.split(
-                                                        ','
-                                                    )[1]
+                                                        ',',
+                                                    )[1],
                                                 ) - 0.0003,
                                             ],
                                             zoom: 17,
                                         }}
                                     >
-                                        <YMapDefaultSchemeLayer/>
-                                        <YMapDefaultFeaturesLayer/>
+                                        <YMapDefaultSchemeLayer />
+                                        <YMapDefaultFeaturesLayer />
                                         <YMapMarker
                                             coordinates={[
                                                 Number(
                                                     restaurant?.address_lonlng.split(
-                                                        ','
-                                                    )[0]
+                                                        ',',
+                                                    )[0],
                                                 ),
                                                 Number(
                                                     restaurant?.address_lonlng.split(
-                                                        ','
-                                                    )[1]
+                                                        ',',
+                                                    )[1],
                                                 ),
                                             ]}
                                             draggable={false}
                                         >
                                             <div className={css.mapPoint}>
-                                                <img width={50} src={restaurant?.logo_url} alt={''}/>
+                                                <img width={50} src={restaurant?.logo_url} alt={''} />
                                             </div>
                                         </YMapMarker>
                                     </YMap>
