@@ -874,7 +874,7 @@ export const Restaurant = () => {
                         </div>
                     </ContentBlock>
                 </ContentContainer>
-                {filteredEvents.length > 0 ?
+                {filteredEvents.length > 0 ? (
                     <ContentContainer>
                         <ContentBlock>
                             <HeaderContainer>
@@ -897,7 +897,7 @@ export const Restaurant = () => {
                                     event_address={e.restaurant.address}
                                     sold={e.tickets_left == 0}
                                 />
-                            )}
+                            ))}
                         </ContentBlock>
                     </ContentContainer>
                     ) : null}
