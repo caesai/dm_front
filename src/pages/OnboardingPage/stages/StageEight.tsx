@@ -2,17 +2,16 @@ import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { sixStageOptions } from '@/__mocks__/onboarding.mock.ts';
+import { sevenStageOptions } from '@/__mocks__/onboarding.mock.ts';
 import { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { APIUserPreferences } from '@/api/user.ts';
 
-export const StageSeven = () => {
+export const StageEight = () => {
     const navigate = useNavigate();
 
     const [auth] = useAtom(authAtom);
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
     const [preferences, setPreferences] = useState<string[]>([]);
 
@@ -26,18 +25,19 @@ export const StageSeven = () => {
     }
 
     const handleContinue = () => {
-        if (!tg_id || !auth?.access_token || preferences.length === 0 ) {
+        if (!auth?.access_token || preferences.length === 0 ) {
             return;
         }
 
+
         APIUserPreferences(auth.access_token, {
             preferences: [{
-                    category: 'mood',
+                    category: 'menu',
                     choices: preferences,
                 }]
 
         })
-            .then(() => navigate('/onboarding/8'))
+            .then(() => navigate('/onboarding/9'))
             .catch(() => alert
                 (
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
@@ -62,9 +62,11 @@ export const StageSeven = () => {
                 </div>
                 <div className={css.stageSeven_wrapper}>
                     <h2 className={css.stage_description_title}>
-                        Что вам ближе <br/> по настроению?</h2>
+                        Что вас особенно <br/>
+                        привлекает в меню?
+                    </h2>
                     <div className={css.stage_options_container}>
-                        {sixStageOptions.map((item) => (
+                        {sevenStageOptions.map((item) => (
                             <CommentaryOptionButton
                                 text={item.content}
                                 icon={item.icon}

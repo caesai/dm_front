@@ -2,17 +2,18 @@ import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { sixStageOptions } from '@/__mocks__/onboarding.mock.ts';
+import { eightStageOptions } from '@/__mocks__/onboarding.mock.ts';
 import { useState } from 'react';
 import { useAtom } from 'jotai/index';
-import { authAtom } from '@/atoms/userAtom.ts';
-import { APIUserPreferences } from '@/api/user.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { APICompleteOnboarding, APIUserPreferences } from '@/api/user.ts';
+import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
 
-export const StageSeven = () => {
+export const StageNine = () => {
     const navigate = useNavigate();
 
+    const [, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
     const [preferences, setPreferences] = useState<string[]>([]);
 
@@ -26,20 +27,42 @@ export const StageSeven = () => {
     }
 
     const handleContinue = () => {
-        if (!tg_id || !auth?.access_token || preferences.length === 0 ) {
+        if (!auth?.access_token || preferences.length === 0 ) {
             return;
         }
 
         APIUserPreferences(auth.access_token, {
             preferences: [{
-                    category: 'mood',
+                    category: 'events',
                     choices: preferences,
                 }]
 
-        })
-            .then(() => navigate('/onboarding/8'))
-            .catch(() => alert
+        }).catch(() => alert
                 (
+                    'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
+                )
+            );
+
+        APICompleteOnboarding(auth.access_token, true)
+            .then((d) => setUser(d.data))
+            .then(() => {
+                const sharedEvent = getDataFromLocalStorage('sharedEvent');
+                const superEvent = getDataFromLocalStorage('superEvent');
+                const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
+                if(sharedEvent) {
+                    navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
+                } else if (superEvent) {
+                    navigate('/events/super');
+                    removeDataFromLocalStorage('superEvent');
+                } else if (sharedRestaurant) {
+                    navigate('/restaurant/' + JSON.parse(sharedRestaurant).id);
+                    removeDataFromLocalStorage('sharedRestaurant');
+                } else {
+                    navigate('/');
+                }
+            })
+            .catch(() =>
+                alert(
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
                 )
             );
@@ -62,9 +85,10 @@ export const StageSeven = () => {
                 </div>
                 <div className={css.stageSeven_wrapper}>
                     <h2 className={css.stage_description_title}>
-                        Что вам ближе <br/> по настроению?</h2>
+                        Какие форматы <br/> вам интересны?
+                    </h2>
                     <div className={css.stage_options_container}>
-                        {sixStageOptions.map((item) => (
+                        {eightStageOptions.map((item) => (
                             <CommentaryOptionButton
                                 text={item.content}
                                 icon={item.icon}

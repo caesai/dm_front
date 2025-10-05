@@ -11,6 +11,13 @@ export interface IUserUpdate {
     date_of_birth?: string;
 }
 
+interface IUserPreferences {
+    preferences: [{
+        category: 'mood' | 'menu' | 'events',
+        choices: string[]
+    }]
+}
+
 export const APIUpdateUserInfo = async (
     {
         first_name,
@@ -68,6 +75,17 @@ export const APIUserName = async (token: string, first_name: string, last_name: 
             first_name,
             last_name,
         },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+};
+
+export const APIUserPreferences = async (token: string, data: IUserPreferences) => {
+    return await axios.post(
+        `${BASE_URL}/user-preferences/user/bulk-update`, data,
         {
             headers: {
                 Authorization: `Bearer ${token}`,
