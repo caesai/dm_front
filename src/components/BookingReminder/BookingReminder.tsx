@@ -30,7 +30,6 @@ const formatDate = (dateStr: string): string => {
 
 export const BookingReminder: FC<BookingReminderProps> = (p) => {
     const navigate = useNavigate();
-    console.log('p.type: ', p)
     return (
         <div
             className={css.bookingReminder}
