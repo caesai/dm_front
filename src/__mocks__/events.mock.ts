@@ -60,6 +60,7 @@ export const mockEventsList: IEventInRestaurant[] = [{
         'id': 4,
         'title': 'Self Edge Japanese',
         'address': 'Санкт-Петербург, ул. Радищева, 34',
+        'address_lonlng': '',
         'thumbnail_photo': 'https://storage.yandexcloud.net/bottec-dreamteam/SEJ/main.jpg',
     },
     date_end: '',
