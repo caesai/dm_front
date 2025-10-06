@@ -91,7 +91,6 @@ export const BookingPage: FC = () => {
     const [params] = useSearchParams();
     const idFromParams = params.get('id');
     const isFreeEventBooking = params.get('free_event');
-    const freeEventid = params.get('event_id');
 
     // Global state atoms
     const [auth] = useAtom(authAtom);
@@ -388,7 +387,6 @@ export const BookingPage: FC = () => {
                 confirmation.text,
                 (guestCount + childrenCount) < 8 ? false : preOrder,
                 // tg_id: user.
-                isFreeEventBooking ? Number(freeEventid) : null
             )
                 .then((res) => {
                     if (res.data?.error) {
@@ -396,14 +394,10 @@ export const BookingPage: FC = () => {
                         setBotError(true);
                         return;
                     }
-                    if (isFreeEventBooking) {
-                        navigate('/tickets/' + res.data.ticket_id);
-                    } else {
-                        navigate(`/myBookings/${res.data.id}`);
-                    }
+                    navigate(`/myBookings/${res.data.id}`);
                 })
                 .catch((err) => {
-                    console.error('err: ', err);
+                    console.log('err: ', err);
                     setErrorPopup(true);
                     setErrorPopupCount((prev) => prev + 1);
                 })
@@ -445,7 +439,6 @@ export const BookingPage: FC = () => {
     const restaurantWorkEndTime = restaurants
         .find((item) => item.id === Number(bookingRestaurant.value))?.worktime
         .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
-
     let workEndTime = moment(bookingDate.value);
     if (restaurantWorkEndTime !== undefined) {
         const endOfDay = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) < 12;
@@ -690,12 +683,9 @@ export const BookingPage: FC = () => {
                                                                     v.start_datetime
                                                                         ? `${getTimeShort(
                                                                               v.start_datetime
-                                                                          )} - ${moment(v.end_datetime).isBefore(workEndTime) ? 
-                                                                        getTimeShort(
+                                                                          )} - ${moment(v.end_datetime).isBefore(workEndTime) ? getTimeShort(
                                                                               v.end_datetime
-                                                                          ) : restaurantWorkEndTime == undefined ? getTimeShort(
-                                                                            v.end_datetime
-                                                                        ) : restaurantWorkEndTime}`
+                                                                          ) : restaurantWorkEndTime}`
                                                                         : getTimeShort(
                                                                               v.start_datetime
                                                                           )}

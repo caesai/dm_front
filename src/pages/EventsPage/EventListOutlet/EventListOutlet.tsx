@@ -11,9 +11,6 @@ export const EventListOutlet: React.FC = () => {
     const navigate = useNavigate();
     const [events] = useAtom<IEventInRestaurant[]>(eventsListAtom);
     const next = (event: IEventInRestaurant) => {
-        // if (event.ticket_price == 0 && event.tickets_left == 0) {
-        //     return;
-        // }
         navigate(`/events/${event.id}`)
     };
     const filteredEvents = events.filter((event) => {

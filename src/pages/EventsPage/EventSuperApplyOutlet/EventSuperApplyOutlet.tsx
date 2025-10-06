@@ -26,7 +26,6 @@ export const EventSuperApplyOutlet = () => {
     });
     const [loading, setLoading] = useState(false);
     const bookingBtn = useRef<HTMLDivElement>(null);
-    const bookingBtnWrapper = useRef<HTMLDivElement>(null);
 
     const validate = useMemo(() => {
         return (
@@ -62,21 +61,6 @@ export const EventSuperApplyOutlet = () => {
         }
     };
 
-    const onFocus= () => {
-        if(bookingBtn.current && bookingBtnWrapper.current) {
-            bookingBtn.current.style.position = 'relative';
-            bookingBtn.current.style.bottom = '0px';
-            bookingBtnWrapper.current.style.padding = '0px';
-        }
-    }
-    const onBlur= () => {
-        if(bookingBtn.current && bookingBtnWrapper.current) {
-            bookingBtn.current.style.position = 'absolute';
-            bookingBtn.current.style.bottom = '30px';
-            bookingBtnWrapper.current.style.padding = '0 15px';
-        }
-    }
-
     if (loading) {
         return <AppLoadingScreen />;
     }
@@ -91,8 +75,6 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, name: e }))
                             }
                             placeholder={'Ваше имя'}
-                            onFocus={onFocus}
-                            onBlur={onBlur}
                         />
                         <TextInput
                             value={userInfo.surname}
@@ -100,17 +82,13 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, surname: e }))
                             }
                             placeholder={'Ваша фамилия'}
-                            onFocus={onFocus}
-                            onBlur={onBlur}
                         />
                         <TextInput
                             value={Number(userInfo.phone.charAt(0)) === 7 ? '+' + userInfo.phone : userInfo.phone}
                             onChange={(e) =>
-                                setUserInfo((p) => ({ ...p, phone: e.replace(/\+/g, '') }))
+                                setUserInfo((p) => ({ ...p, phone: e.replace('+', '') }))
                             }
                             placeholder={'Ваш контактный номер'}
-                            onFocus={onFocus}
-                            onBlur={onBlur}
                         />
                         <TextInput
                             value={userInfo.work_place}
@@ -118,8 +96,6 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, work_place: e }))
                             }
                             placeholder={'Ваше место работы (организация)'}
-                            onFocus={onFocus}
-                            onBlur={onBlur}
                         />
                         <TextInput
                             value={userInfo.job_title}
@@ -127,8 +103,6 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, job_title: e }))
                             }
                             placeholder={'Ваша должность'}
-                            onFocus={onFocus}
-                            onBlur={onBlur}
                         />
                         <TextInput
                             value={userInfo.experience}
@@ -136,8 +110,17 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, experience: e }))
                             }
                             placeholder={'Ваш опыт работы'}
-                            onFocus={onFocus}
-                            onBlur={onBlur}
+                            onFocus={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'relative';
+
+                                }
+                            }}
+                            onBlur={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'fixed';
+                                }
+                            }}
                         />
                         <TextInput
                             value={userInfo.visit_purpose}
@@ -145,14 +128,24 @@ export const EventSuperApplyOutlet = () => {
                                 setUserInfo((p) => ({ ...p, visit_purpose: e }))
                             }
                             placeholder={'Цель посещения ивента'}
-                            onFocus={onFocus}
-                            onBlur={onBlur}
+                            onFocus={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'relative';
+                                    bookingBtn.current.style.marginBottom = '60px';
+                                }
+                            }}
+                            onBlur={() => {
+                                if(bookingBtn.current) {
+                                    bookingBtn.current.style.position = 'fixed';
+                                    bookingBtn.current.style.marginBottom = 'auto';
+                                }
+                            }}
                         />
                     </div>
                 </div>
             </div>
             <div className={css.absoluteBottom} ref={bookingBtn}>
-                <div className={css.bottomWrapper} ref={bookingBtnWrapper}>
+                <div className={css.bottomWrapper}>
                     <UniversalButton
                         width={'full'}
                         title={'Подать заявку'}

@@ -10,7 +10,6 @@ interface EventRestaurant {
 
 export interface EventTicket {
     id: number;
-    remarked_id: number;
     event_title: string;
     event_img: string;
     event_description: string;

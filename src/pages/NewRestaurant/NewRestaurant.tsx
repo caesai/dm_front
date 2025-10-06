@@ -46,7 +46,7 @@ export const NewRestaurant = () => {
                     restaurant={{
                         "id": 12,
                         "title": "Self Edge Chinois",
-                        "slogan": "Современная Азия с акцентом на Китай и культовый raw bar",
+                        "slogan": "Загородный ресторан в центре города",
                         "address": "Санкт-Перербург, ул. Добролюбова, 11",
                         "logo_url": "",
                         "thumbnail_photo": newres,

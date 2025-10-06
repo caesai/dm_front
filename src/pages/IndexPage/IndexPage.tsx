@@ -158,10 +158,11 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter(v => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
-    const restaurantListed = (currentCityA === 'spb' && tg_id && mockEventsUsersList.includes(tg_id)) ? [{
+    console.log('currentCityA: ', currentCityA);
+    const restaurantListed = currentCityA === 'spb' ? [{
         "id": 12,
         "title": "Self Edge Chinois",
-        "slogan": "Современная Азия с акцентом на Китай и культовый raw bar",
+        "slogan": "Загородный ресторан в центре города",
         "address": "Санкт-Перербург, ул. Добролюбова, 11",
         "logo_url": "",
         "thumbnail_photo": newres,

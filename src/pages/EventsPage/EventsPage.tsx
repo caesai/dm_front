@@ -98,7 +98,7 @@ export const EventsPage: React.FC = () => {
         try {
             if (navigator && navigator.canShare(shareData)) {
                 navigator.share(shareData).then().catch((err) => {
-                    console.error(JSON.stringify(err));
+                    alert(JSON.stringify(err));
                 });
             }
         } catch (e) {

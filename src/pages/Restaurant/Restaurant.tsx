@@ -122,7 +122,6 @@ export const Restaurant = () => {
     const { id } = useParams();
     const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
-    const [user] = useAtom(userAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [, setGuestCount] = useAtom(guestCountAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
@@ -212,7 +211,7 @@ export const Restaurant = () => {
         try {
             if (navigator && navigator.canShare(shareData)) {
                 navigator.share(shareData).then().catch((err) => {
-                    console.error(JSON.stringify(err));
+                    alert(JSON.stringify(err));
                 });
             }
         } catch (e) {
@@ -233,7 +232,7 @@ export const Restaurant = () => {
         });
     }
     const handleNextBtn = () => {
-        if (!user?.complete_onboarding) {
+        if (searchParams.get('shared')) {
             navigate('/onboarding/5');
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
@@ -410,9 +409,50 @@ export const Restaurant = () => {
                                     )
                                 }
                             />
+                            {/*<RoundedButton*/}
+                            {/*    icon={*/}
+                            {/*        <PhoneCallIcon*/}
+                            {/*            size={24}*/}
+                            {/*            color={'var(--dark-grey)'}*/}
+                            {/*        />*/}
+                            {/*    }*/}
+                            {/*    action={() => setCallPopup(true)}*/}
+                            {/*/>*/}
+
                         </>
                     )}
                 />
+                {/*<div className={css.floatingFooterWrapper}>*/}
+                {/*    <div*/}
+                {/*        className={css.bookingButton}*/}
+                {/*        onClick={() => navigate(`/booking?id=${restaurant?.id}`)}*/}
+                {/*    >*/}
+                {/*        <span className={css.text}>Забронировать</span>*/}
+                {/*    </div>*/}
+                {/*    <RoundedButton*/}
+                {/*        icon={*/}
+                {/*            <GoToPathIcon*/}
+                {/*                size={24}*/}
+                {/*                color={'var(--dark-grey)'}*/}
+                {/*            />*/}
+                {/*        }*/}
+                {/*        action={() =>*/}
+                {/*            // ,*/}
+                {/*            window.open(*/}
+                {/*                `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`*/}
+                {/*            )*/}
+                {/*        }*/}
+                {/*    />*/}
+                {/*    <RoundedButton*/}
+                {/*        icon={*/}
+                {/*            <PhoneCallIcon*/}
+                {/*                size={24}*/}
+                {/*                color={'var(--dark-grey)'}*/}
+                {/*            />*/}
+                {/*        }*/}
+                {/*        action={() => setCallPopup(true)}*/}
+                {/*    />*/}
+                {/*</div>*/}
             </div>
             <div className={css.pageContainer}>
                 <RestaurantTopPreview rest={restaurant} />
@@ -798,6 +838,35 @@ export const Restaurant = () => {
                             </UnmountClosed>
                         </div>
                     </ContentBlock>
+                    {/*<ContentBlock>*/}
+                    {/*    <div className={css.infoBlock}>*/}
+                    {/*        <div className={css.top}>*/}
+                    {/*            <span className={css.title}>*/}
+                    {/*                Социальные сети*/}
+                    {/*            </span>*/}
+                    {/*        </div>*/}
+                            {/*<div className={css.infoBlock}>*/}
+                            {/*    {restaurant?.socials.map((social) => (*/}
+                            {/*        <a*/}
+                            {/*            key={social.name}*/}
+                            {/*            href={social.url}*/}
+                            {/*            target="_blank"*/}
+                            {/*            rel="noopener noreferrer"*/}
+                            {/*        >*/}
+                            {/*            <div className={css.socialRow}>*/}
+                            {/*                <InstagramIcon*/}
+                            {/*                    color={'black'}*/}
+                            {/*                    size={20}*/}
+                            {/*                />*/}
+                            {/*                <span className={css.socialLink}>*/}
+                            {/*                    {social.name}*/}
+                            {/*                </span>*/}
+                            {/*            </div>*/}
+                            {/*        </a>*/}
+                            {/*    ))}*/}
+                            {/*</div>*/}
+                    {/*    </div>*/}
+                    {/*</ContentBlock>*/}
                     <ContentBlock>
                         <div className={css.infoBlock}>
                             <div className={css.top}>
@@ -961,6 +1030,7 @@ export const Restaurant = () => {
                                                     )[1],
                                                 ) - 0.0003,
                                             ],
+                                            // 47.226539, 39.752190
                                             zoom: 17,
                                         }}
                                     >
@@ -1024,6 +1094,8 @@ export const Restaurant = () => {
                                     </section>
                                 </YMapComponentsProvider>
                             </div>
+
+                            {/*</div>*/}
                         </div>
                     </ContentBlock>
                 </ContentContainer>
