@@ -39,9 +39,8 @@ import { StageOne } from '@/pages/OnboardingPage/stages/StageOne.tsx';
 import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
 // import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
 import { StageFour } from '@/pages/OnboardingPage/stages/StageFour.tsx';
+import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
 import { StageFive } from '@/pages/OnboardingPage/stages/StageFive.tsx';
-import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
-import {StageSeven} from "@/pages/OnboardingPage/stages/StageSeven.tsx";
 import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
 import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
 import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
@@ -50,6 +49,10 @@ import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/Choos
 import { BanquetOptionPage } from '@/pages/BanquetOptionPage/BanquetOptionPage.tsx';
 import { BanquetAdditionalServicesPage } from '@/pages/BanquetAdditionalServices/BanquetAdditionalServicesPage.tsx';
 import { BanquetReservationPage } from '@/pages/BanquetReservationPage/BanquetReservationPage.tsx';
+import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
+import { StageSeven } from '@/pages/OnboardingPage/stages/StageSeven.tsx';
+import { StageEight } from '@/pages/OnboardingPage/stages/StageEight.tsx';
+import { StageNine } from '@/pages/OnboardingPage/stages/StageNine.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -152,10 +155,13 @@ const AppRouter = () => {
                     <Route path={'/onboarding'} element={<OnboardingPage />}>
                         <Route path={'/onboarding/1'} element={<StageOne />} />
                         <Route path={'/onboarding/2'} element={<StageTwo />} />
+                        <Route path={'/onboarding/3'} element={<StageThree />} />
                         <Route path={'/onboarding/4'} element={<StageFour />} />
-                        <Route path={'/onboarding/3'} element={<StageFive />} />
-                        <Route path={'/onboarding/5'} element={<StageSix />} />
-                        <Route path={'/onboarding/6'} element={<StageSeven />} />
+                        <Route path={'/onboarding/5'} element={<StageFive />} />
+                        <Route path={'/onboarding/6'} element={<StageSix />} />
+                        <Route path={'/onboarding/7'} element={<StageSeven />} />
+                        <Route path={'/onboarding/8'} element={<StageEight />} />
+                        <Route path={'/onboarding/9'} element={<StageNine />} />
                     </Route>
                     <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
                     <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />

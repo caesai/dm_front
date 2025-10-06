@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { CSSProperties, FC } from 'react';
 import css from './CommentaryOptionButton.module.css';
 import { useAtom } from 'jotai';
 import { commAtom } from '@/atoms/bookingCommAtom.ts';
@@ -10,6 +10,7 @@ interface ICommentaryOptionButton {
     disabled?: boolean;
     onClick?: () => void;
     active?: boolean;
+    style?: CSSProperties;
 }
 
 export const CommentaryOptionButton: FC<ICommentaryOptionButton> = ({
@@ -17,7 +18,8 @@ export const CommentaryOptionButton: FC<ICommentaryOptionButton> = ({
     icon,
     disabled,
     onClick,
-    active
+    active,
+    style
 }) => {
     const [getAtom, setAtom] = useAtom(commAtom);
     const handleClick = () => {
@@ -35,6 +37,7 @@ export const CommentaryOptionButton: FC<ICommentaryOptionButton> = ({
                 active ? css.button__active : null,
                 disabled ? css.disabled : null
             )}
+            style={style}
             onClick={handleClick}
         >
             <span>{icon}</span>
