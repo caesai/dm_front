@@ -23,6 +23,8 @@ export const Redirecter = () => {
         '/onboarding/5',
         '/onboarding/6',
         '/onboarding/7',
+        '/onboarding/8',
+        '/onboarding/9',
     ];
 
     const getEventIdFromParams = useCallback((paramsObject: {[k:string]: string}, searchString: string) => {
