@@ -397,7 +397,7 @@ export const BookingPage: FC = () => {
                         return;
                     }
                     if (isFreeEventBooking) {
-                        navigate('/tickets/' + res.data.ticket_id);
+                        navigate('/tickets/' + res.data?.ticket_id);
                     } else {
                         navigate(`/myBookings/${res.data.id}`);
                     }
