@@ -27,7 +27,7 @@ import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
 import superevent from '/img/hh2.jpg';
 import newres from '/img/chinois_app.png';
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+// import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { Toast } from '@/components/Toast/Toast.tsx';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
@@ -58,7 +58,7 @@ export const IndexPage: FC = () => {
     const [currentBookings, setCurrentBookings] = useState<IBookingInfo[]>([]);
     const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
     const navigate = useNavigate();
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+    // const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
@@ -158,7 +158,7 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter(v => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
-    const restaurantListed = (currentCityA === 'spb' && tg_id && mockEventsUsersList.includes(tg_id)) ? [{
+    const restaurantListed = (currentCityA === 'spb') ? [{
         "id": 12,
         "title": "Self Edge Chinois",
         "slogan": "Современная Азия с акцентом на Китай и культовый raw bar",
@@ -193,7 +193,7 @@ export const IndexPage: FC = () => {
         <Page back={false}>
             <div className={css.pageContainer}>
                 <Header/>
-                {tg_id && [84327932, 115555014, 118832541, 153495524, 163811519, 456052969, 244983015, 7160315434].includes(tg_id) &&  <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />}
+                <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />
                 <CitySelect
                     options={cityOptions}
                     currentValue={currentCityS}
