@@ -5,8 +5,6 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
-import {DownArrow} from '@/components/Icons/DownArrow';
-import { RadioInput } from '@/components/RadioInput/RadioInput.tsx';
 import { useState } from 'react';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
@@ -14,6 +12,8 @@ import { useAtom } from 'jotai';
 import { APIPostBanquetRequest } from '@/api/banquet.ts';
 import moment from 'moment';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
+import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
+import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 
 export const BanquetReservationPage = () => {
     const navigate = useNavigate();
@@ -24,6 +24,17 @@ export const BanquetReservationPage = () => {
     const [auth] = useAtom(authAtom);
 
     const reservationData = location.state?.reservationData || location.state;
+
+    const confirmationList = [
+        {
+            id: 'telegram',
+            text: 'В Telegram',
+        },
+        {
+            id: 'phone',
+            text: 'По телефону',
+        },
+    ]
 
     const {
         date,
@@ -36,8 +47,11 @@ export const BanquetReservationPage = () => {
         price,
     } = reservationData;
 
-    const [selectedOption, setSelectedOption] = useState<string | undefined>();
     const [commentary, setCommentary] = useState<string>('');
+    const [confirmation, setConfirmation] = useState<IConfirmationType>({
+        id: 'telegram',
+        text: 'В Telegram',
+    });
 
     const goBack = () => {
         navigate(-1);
@@ -63,7 +77,7 @@ export const BanquetReservationPage = () => {
             occasion: reason,
             additional_services: selectedServices,
             comment: commentary,
-            contact_method: String(selectedOption),
+            contact_method: confirmation.id,
             estimated_cost: price.total,
         }).then(res => {
             //
@@ -142,24 +156,12 @@ export const BanquetReservationPage = () => {
                     </ContentBlock>
                     <ContentBlock>
                         <div className={css.connect}>
-                            <div className={css.connectTitle}>
-                                <span>Способ связи</span>
-                                <div className={css.topArrow}>
-                                    <DownArrow size={14} />
-                                </div>
-                            </div>
-                            <div className={css.radio_container}>
-                                <RadioInput
-                                    title={'Telegram'}
-                                    checked={selectedOption === 'telegram'}
-                                    onChange={() => setSelectedOption('telegram')}
-                                />
-                                <RadioInput
-                                    title={'Телефон'}
-                                    checked={selectedOption === 'phone'}
-                                    onChange={() => setSelectedOption('phone')}
-                                />
-                            </div>
+                            <ConfirmationSelect
+                                options={confirmationList}
+                                currentValue={confirmation}
+                                onChange={setConfirmation}
+                                title={<span className={css.connect_title}>Способ связи</span>}
+                            />
                         </div>
                     </ContentBlock>
                     <ContentBlock>
