@@ -40,7 +40,7 @@ export const EventCard: FC<IEventCard> = ({
                 }}
             >
                 <div className={css.footer}>
-                    {!sold ? <span className={classNames(css.card_price)}>{Number(event_price) == 0 ? 'Бесплатно' : event_price + ' ₽'}</span> :
+                    {!sold ? <span className={classNames(css.card_price)}>{Number(event_price) == 0 ? 'Заказ по меню' : event_price + ' ₽'}</span> :
                         (
                             <span className={classNames(css.card_price)}>Sold out</span>
                         )}
