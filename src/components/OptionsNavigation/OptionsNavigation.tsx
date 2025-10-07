@@ -47,7 +47,7 @@ export const OptionsNavigation = () => {
                 </div>
             {/*)}*/}
 
-            {user?.username && ['w0esofwit','egormk','burovburov', 'iliathoughts', 'Sushkazzlo'].includes(user?.username) && (
+            {user?.username && ['w0esofwit','egormk', 'iliathoughts', 'Sushkazzlo'].includes(user?.username) && (
                 <div style={{ display: 'flex', width: '50%'}}>
                     <OptionsNavigationElement
                         icon={<StarPrivelegyIcon size={23} color={'var(--light-grey)'}  />}
