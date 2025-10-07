@@ -73,7 +73,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                     <div>
                                                         <DepositIcon />
                                                         <span className={css.banquet_text}>
-                                                            {banquet.deposit ?  `От ${banquet.deposit} ₽ на гостя` : banquet.deposit_message}
+                                                            {banquet.deposit ?  `от ${banquet.deposit} ₽ на гостя` : banquet.deposit_message}
                                                         </span>
                                                     </div>
                                                 </div>
