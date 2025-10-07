@@ -12,7 +12,6 @@ export const StageSeven = () => {
     const navigate = useNavigate();
 
     const [auth] = useAtom(authAtom);
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
     const [preferences, setPreferences] = useState<string[]>([]);
 
@@ -21,12 +20,14 @@ export const StageSeven = () => {
             setPreferences(prev => (prev.filter((p) => p !== content)));
         }
         else {
-            setPreferences([...preferences, content]);
+            if (preferences.length < 3) {
+                setPreferences([...preferences, content]);
+            }
         }
     }
 
     const handleContinue = () => {
-        if (!tg_id || !auth?.access_token || preferences.length === 0 ) {
+        if (!auth?.access_token || preferences.length === 0 ) {
             return;
         }
 
