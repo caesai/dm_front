@@ -140,7 +140,7 @@ export const BanquetOptionPage = () => {
                 minGuests={10}
                 maxGuests={20}
             />
-            <TimeSelectorPopup isOpen={isTimeFromPopup} closePopup={closeTimeFromPopup} time={timeTo} setTimeOption={setTimeFrom} />
+            <TimeSelectorPopup isOpen={isTimeFromPopup} closePopup={closeTimeFromPopup} time={timeFrom} setTimeOption={setTimeFrom} />
             <TimeSelectorPopup isOpen={isTimeToPopup} closePopup={closeTimeToPopup} time={timeTo} setTimeOption={setTimeTo} />
             <div className={css.page}>
                 <CalendarPopup
@@ -187,18 +187,13 @@ export const BanquetOptionPage = () => {
                                 </div>
                                 <div className={css.timeInputs}>
                                     <TimeInput
-                                        placeholder={'Время с'}
                                         value={timeFrom.value}
-                                        onChange={() => {}}
+                                        onClick={() => setTimeFromPopup(true)}
                                         icon={<TimeFromIcon size={24} />}
-                                        onFocus={() => setTimeFromPopup(true)}
                                     />
                                     <TimeInput
-                                        placeholder={'Время до'}
                                         value={timeTo.value}
-                                        onChange={() => {}}
-                                        // onChange={(e) => setTimeTo(e)}
-                                        onFocus={() => setTimeToPopup(true)}
+                                        onClick={() => setTimeToPopup(true)}
                                         icon={<TimeToIcon size={24} />}
                                     />
                                 </div>
