@@ -388,7 +388,7 @@ export const Restaurant = () => {
                         </div>
                     </div>
                     {headerScrolled ?
-                        <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)} /> : null}
+                        <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)} isEvents={filteredEvents.length > 0}/> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
@@ -441,7 +441,7 @@ export const Restaurant = () => {
                             // id={'booking'}
                             className={css.navSliderAndBookingContainer}
                         >
-                            <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)} />
+                            <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)} isEvents={filteredEvents.length > 0}/>
                             <div className={css.bookingContaner}>
                                 <Swiper
                                     slidesPerView={'auto'}
