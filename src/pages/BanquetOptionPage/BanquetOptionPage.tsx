@@ -137,8 +137,8 @@ export const BanquetOptionPage = () => {
                 closePopup={closePopup}
                 guestCount={guestCount}
                 setGuestCount={setGuestCount}
-                minGuests={10}
-                maxGuests={20}
+                minGuests={banquet.guests_min}
+                maxGuests={banquet.guests_max}
             />
             <TimeSelectorPopup isOpen={isTimeFromPopup} closePopup={closeTimeFromPopup} time={timeFrom} setTimeOption={setTimeFrom} />
             <TimeSelectorPopup isOpen={isTimeToPopup} closePopup={closeTimeToPopup} time={timeTo} setTimeOption={setTimeTo} />
@@ -302,8 +302,8 @@ export const BanquetOptionPage = () => {
                                                     banquet?.service_fee /
                                                     100) *
                                                 banquet?.deposit *
-                                                parseInt(guestCount.value)).toFixed(2) +
-                                                ' ₽'}
+                                                parseInt(guestCount.value)) + ' ₽'
+                                            }
                                         </span>
                                     </div>
                                     <p>

@@ -25,6 +25,7 @@ export const ConfirmationSelect: FC<IConfirmationSelect> = ({
             text: text,
         };
         onChange(newValue);
+        setCollapse((prev) => !prev)
     };
 
     return (
