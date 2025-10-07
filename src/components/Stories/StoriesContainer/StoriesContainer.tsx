@@ -85,7 +85,9 @@ interface StorySlideProps {
     shouldRender: boolean;
 }
 
-const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stories, onClose, shouldRender }) => {
+const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stories, onClose,
+                                                   // shouldRender
+}) => {
     const [localStories, setLocalStories] = useAtom(localStoriesListAtom);
     const localStory = localStories.find((item) => item.id === storyId);
 
@@ -141,7 +143,7 @@ const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stori
             <span className={classnames(css.closeIcon)} onClick={onClose}>
                 <CloseIcon size={44} />
             </span>
-            {shouldRender && (
+            {/*{shouldRender && (*/}
                 <Stories
                     width="100%"
                     height="100%"
@@ -151,7 +153,7 @@ const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stori
                     onAllStoriesEnd={handleStoryEnd}
                     classNames={{ progressBar: css.progressBar, main: css.slide }}
                 />
-            )}
+            {/*)}*/}
         </div>
     );
 };
