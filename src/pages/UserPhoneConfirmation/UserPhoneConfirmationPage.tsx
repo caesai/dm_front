@@ -37,7 +37,7 @@ export const UserPhoneConfirmationPage = () => {
             const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
             const superEvent = getDataFromLocalStorage('superEvent');
             if (sharedEvent) {
-                navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
+                navigate(`/events/${JSON.parse(sharedEvent).id}/confirm`);
                 removeDataFromLocalStorage('sharedEvent');
             } else if (superEvent) {
                 navigate('/events/super');

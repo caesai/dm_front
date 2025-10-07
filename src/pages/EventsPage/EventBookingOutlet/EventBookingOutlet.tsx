@@ -217,7 +217,7 @@ export const EventBookingOutlet = () => {
                 <div className={css.bottomWrapper}>
                     <UniversalButton
                         width={'full'}
-                        title={'Оплатить'}
+                        title={Number(bookingInfo.event?.ticket_price) > 0 ? 'Оплатить' : 'Забронировать'}
                         theme={'red'}
                         action={() => {
                             if (validate) {
@@ -225,8 +225,7 @@ export const EventBookingOutlet = () => {
                             } else {
                                 console.error('TODO: Validation alert');
                             }
-                        }
-                        }
+                        }}
                     />
                 </div>
             </div>
