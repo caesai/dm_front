@@ -194,11 +194,13 @@ export const IndexPage: FC = () => {
             <div className={css.pageContainer}>
                 <Header/>
                 <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />
-                <CitySelect
-                    options={cityOptions}
-                    currentValue={currentCityS}
-                    onChange={updateCurrentCity}
-                />
+                <div style={{ marginRight: 15 }}>
+                    <CitySelect
+                        options={cityOptions}
+                        currentValue={currentCityS}
+                        onChange={updateCurrentCity}
+                    />
+                </div>
                 {currentBookingsLoading ? (
                     <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock

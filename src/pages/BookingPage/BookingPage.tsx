@@ -307,7 +307,7 @@ export const BookingPage: FC = () => {
     }, [currentSelectedTime]);
 
     const guestsValidate = useMemo(() => {
-        return !guestCount;
+        return !!guestCount;
     }, [guestCount]);
 
     const validateFormMemo = useMemo(() => {
