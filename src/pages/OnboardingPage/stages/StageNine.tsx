@@ -57,7 +57,7 @@ export const StageNine = () => {
                     navigate('/events/super');
                     removeDataFromLocalStorage('superEvent');
                 } else if (sharedRestaurant) {
-                    navigate('/booking/?id=' + JSON.parse(sharedRestaurant).id);
+                    navigate('/booking?id=' + JSON.parse(sharedRestaurant).id);
                     removeDataFromLocalStorage('sharedRestaurant');
                 } else {
                     navigate('/');

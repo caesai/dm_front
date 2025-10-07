@@ -43,7 +43,7 @@ export const UserPhoneConfirmationPage = () => {
                 navigate('/events/super');
                 removeDataFromLocalStorage('superEvent');
             } else if (sharedRestaurant) {
-                navigate('/restaurant/' + JSON.parse(sharedRestaurant).id);
+                navigate('/booking?id=' + JSON.parse(sharedRestaurant).id);
                 removeDataFromLocalStorage('sharedRestaurant');
             } else {
                 navigate('/');
