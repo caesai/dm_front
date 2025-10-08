@@ -9,7 +9,7 @@ export const sixStageOptions: IOnboardingOptions[] = [
         icon: '🍽'
     },
     {
-        content: 'Вечеринка / тусовка',
+        content: 'Шумная тусовка',
         icon: '🎉'
     },
     {
@@ -91,7 +91,7 @@ export const eightStageOptions: IOnboardingOptions[] = [
         icon: '🔪'
     },
     {
-        content: 'Детские события',
+        content: 'События для детей',
         icon: '🎈'
     },
 ]

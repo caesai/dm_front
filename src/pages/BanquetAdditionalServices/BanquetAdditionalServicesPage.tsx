@@ -6,7 +6,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { useEffect, useState } from 'react';
-import { BanquetCheckBox } from '@/components/BanquetCheckBox/BanquetCheckBox.tsx';
+import { BanquetCheckbox } from '@/components/BanquetCheckbox/BanquetCheckbox.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 
 export const BanquetAdditionalServicesPage = () => {
@@ -67,7 +67,7 @@ export const BanquetAdditionalServicesPage = () => {
                             <div className={css.checkbox}>
                                 {options && (
                                     options.map((option: string) => (
-                                        <BanquetCheckBox
+                                        <BanquetCheckbox
                                             key={option}
                                             checked={selectedServices.includes(option)}
                                             toggle={() => toggleService(option)}

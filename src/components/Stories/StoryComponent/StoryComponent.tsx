@@ -2,6 +2,8 @@ import React from 'react';
 import css from './StoryComponent.module.css';
 import classNames from 'classnames';
 import { IStory } from '@/types/stories.ts';
+import { BASE_BOT } from '@/api/base.ts';
+import { useNavigate } from 'react-router-dom';
 // import classnames from 'classnames';
 
 interface StoryComponentProps extends IStory {
@@ -9,9 +11,26 @@ interface StoryComponentProps extends IStory {
 }
 
 export const StoryComponent: React.FC<StoryComponentProps> = ({ title, description, url, button_url, button_text, button_color, component_type }) => {
+    const navigate = useNavigate();
     const openButtonUrl = () => {
-        button_url && window.open(button_url);
+        if (button_url) {
+            if (button_url.includes(BASE_BOT)) {
+                const url = button_url.split("?")[1];
+                const slicedUrl = url.slice(url.lastIndexOf('=')+1);
+                if (slicedUrl.includes('restaurantId')) {
+                    navigate('/restaurant/' + slicedUrl.slice(slicedUrl.lastIndexOf('_')+1));
+                }
+                if (slicedUrl.includes('eventId')) {
+                    navigate('/events/' + slicedUrl.slice(slicedUrl.lastIndexOf('_')+1));
+                }
+                if (slicedUrl.includes('bookingId')) {
+                    navigate('/booking/?id=' + slicedUrl.slice(slicedUrl.lastIndexOf('_')+1));
+                }
+            }
+            window.open(button_url);
+        }
     }
+    console.log('button_url: ', button_url);
     return (
         <div className={classNames(css.storyComponent)} style={{
             backgroundImage: component_type && component_type == 2 ? `url(${url})` : undefined,

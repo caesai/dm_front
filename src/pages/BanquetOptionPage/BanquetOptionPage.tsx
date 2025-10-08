@@ -23,6 +23,19 @@ import { banquetAdditionalOptions, banquetParams } from '@/__mocks__/banquets.mo
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { TimeSelectorPopup } from '@/components/TimeSelectorPopup/TimeSelectorPopup.tsx';
 
+const timeToHours = (timeStr: string): number => {
+    if (!timeStr || timeStr === 'от' || timeStr === 'до') return 0;
+    return parseInt(timeStr.split(':')[0]);
+};
+
+const isTimeValid = (from: string, to: string): boolean => {
+    const fromHours = timeToHours(from);
+    const toHours = timeToHours(to);
+
+    if (fromHours === 0 || toHours === 0) return true;
+    return toHours - fromHours >= 1;
+};
+
 export const BanquetOptionPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -59,7 +72,6 @@ export const BanquetOptionPage = () => {
     const closeTimeFromPopup = () => setTimeFromPopup(false);
     const closeTimeToPopup = () => setTimeToPopup(false);
     const goBack = () => {
-        // navigate(`/banquets/${restaurant_id}/choose`);
         navigate(-1);
     };
 
@@ -80,13 +92,17 @@ export const BanquetOptionPage = () => {
         return filteredBanquets[0];
     };
 
+    const isTimeRangeValid = isTimeValid(timeFrom.value, timeTo.value);
+
     const isFormValid =
         date !== null &&
-        timeFrom &&
-        timeTo &&
+        timeFrom.value !== 'от' &&
+        timeTo.value !== 'до' &&
+        isTimeRangeValid &&
         guestCount.value !== 'unset' &&
         selectedReason !== '' &&
         (selectedReason !== 'Другое' || customReason !== '');
+
     const handleContinue = () => {
         const finalReason = selectedReason === 'Другое' ? customReason : selectedReason;
         const additionalOptions = getBanquetAdditionalOptions(id)?.options;
@@ -119,7 +135,6 @@ export const BanquetOptionPage = () => {
         }
     };
 
-
     useEffect(() => {
         if (!banquet) {
             navigate('/');
@@ -137,11 +152,23 @@ export const BanquetOptionPage = () => {
                 closePopup={closePopup}
                 guestCount={guestCount}
                 setGuestCount={setGuestCount}
-                minGuests={10}
-                maxGuests={20}
+                minGuests={banquet.guests_min}
+                maxGuests={banquet.guests_max}
             />
-            <TimeSelectorPopup isOpen={isTimeFromPopup} closePopup={closeTimeFromPopup} time={timeTo} setTimeOption={setTimeFrom} />
-            <TimeSelectorPopup isOpen={isTimeToPopup} closePopup={closeTimeToPopup} time={timeTo} setTimeOption={setTimeTo} />
+            <TimeSelectorPopup
+                isOpen={isTimeFromPopup}
+                closePopup={closeTimeFromPopup}
+                time={timeFrom}
+                setTimeOption={setTimeFrom}
+                maxTime={timeTo.value !== 'до' ? timeTo.value : undefined}
+            />
+            <TimeSelectorPopup
+                isOpen={isTimeToPopup}
+                closePopup={closeTimeToPopup}
+                time={timeTo}
+                setTimeOption={setTimeTo}
+                minTime={timeFrom.value !== 'от' ? timeFrom.value : undefined}
+            />
             <div className={css.page}>
                 <CalendarPopup
                     isOpen={calendarOpen}
@@ -187,18 +214,13 @@ export const BanquetOptionPage = () => {
                                 </div>
                                 <div className={css.timeInputs}>
                                     <TimeInput
-                                        placeholder={'Время с'}
                                         value={timeFrom.value}
-                                        onChange={() => {}}
+                                        onClick={() => setTimeFromPopup(true)}
                                         icon={<TimeFromIcon size={24} />}
-                                        onFocus={() => setTimeFromPopup(true)}
                                     />
                                     <TimeInput
-                                        placeholder={'Время до'}
                                         value={timeTo.value}
-                                        onChange={() => {}}
-                                        // onChange={(e) => setTimeTo(e)}
-                                        onFocus={() => setTimeToPopup(true)}
+                                        onClick={() => setTimeToPopup(true)}
                                         icon={<TimeToIcon size={24} />}
                                     />
                                 </div>
@@ -304,11 +326,11 @@ export const BanquetOptionPage = () => {
                                         <span>
                                             {currentBanquetParams &&
                                                 ((1 +
-                                                    banquet?.service_fee /
-                                                    100) *
-                                                banquet?.deposit *
-                                                parseInt(guestCount.value)).toFixed(2) +
-                                                ' ₽'}
+                                                        banquet?.service_fee /
+                                                        100) *
+                                                    banquet?.deposit *
+                                                    parseInt(guestCount.value)) + ' ₽'
+                                            }
                                         </span>
                                     </div>
                                     <p>

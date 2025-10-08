@@ -8,11 +8,18 @@ import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx'
 import classNames from 'classnames';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 
+const timeToHours = (timeStr: string): number => {
+    if (!timeStr || timeStr === 'от' || timeStr === 'до') return 0;
+    return parseInt(timeStr.split(':')[0]);
+};
+
 interface Props {
     isOpen: boolean;
     closePopup: () => void;
     time: PickerValue;
     setTimeOption: Dispatch<SetStateAction<PickerValueObj>>;
+    minTime?: string;
+    maxTime?: string;
 }
 
 const StyledPopup = styled(Popup)`
@@ -31,21 +38,29 @@ const StyledPopup = styled(Popup)`
 `;
 
 export const TimeSelectorPopup: FC<Props> = ({
-                                                   isOpen,
-                                                   closePopup,
+                                                 isOpen,
+                                                 closePopup,
                                                  time,
-                                                   setTimeOption,
-                                               }) => {
-    const timeOptions: PickerValueObj[] = [
-        '9:00', '10:00',  '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
-        '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '00:00'
-    ].map((val) => (
-        {
-            title: val,
-            value: val
-        }
-    ));
+                                                 setTimeOption,
+                                                 minTime,
+                                                 maxTime,
+                                             }) => {
+    const allTimeOptions: PickerValueObj[] = [
+        '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
+        '18:00', '19:00', '20:00', '21:00', '22:00', '23:00',
+    ].map((val) => ({
+        title: val,
+        value: val
+    }));
 
+    const timeOptions = allTimeOptions.filter(option => {
+        const optionHours = timeToHours(option.value);
+
+        if (minTime && optionHours <= timeToHours(minTime)) return false;
+        return !(maxTime && optionHours >= timeToHours(maxTime));
+
+
+    });
 
     useEffect(() => {
         if (isOpen && time.value === 'unset') {

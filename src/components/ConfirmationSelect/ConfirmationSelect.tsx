@@ -1,5 +1,5 @@
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-import { Dispatch, FC, SetStateAction, useState } from 'react';
+import { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react';
 import css from './ConfirmationSelect.module.css';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
 import { Collapse } from 'react-collapse';
@@ -9,12 +9,14 @@ interface IConfirmationSelect {
     options: IConfirmationType[];
     currentValue: IConfirmationType;
     onChange: Dispatch<SetStateAction<IConfirmationType>>;
+    title?: ReactNode
 }
 
 export const ConfirmationSelect: FC<IConfirmationSelect> = ({
     options,
     currentValue,
     onChange,
+    title
 }) => {
     const [collapse, setCollapse] = useState(false);
     const selectOnChange = (id: string, text: string) => {
@@ -23,6 +25,7 @@ export const ConfirmationSelect: FC<IConfirmationSelect> = ({
             text: text,
         };
         onChange(newValue);
+        setCollapse((prev) => !prev)
     };
 
     return (
@@ -32,7 +35,7 @@ export const ConfirmationSelect: FC<IConfirmationSelect> = ({
                 onClick={() => setCollapse((prev) => !prev)}
             >
                 <div className={css.textWrap}>
-                    <span className={css.title}>Способ подтверждения</span>
+                    <span className={css.title}>{title ? title : 'Способ подтверждения'}</span>
                     <span className={css.currentValue}>
                         {currentValue.text}
                     </span>

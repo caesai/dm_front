@@ -22,7 +22,9 @@ export const StageNine = () => {
             setPreferences(prev => (prev.filter((p) => p !== content)));
         }
         else {
-            setPreferences([...preferences, content]);
+            if (preferences.length < 3) {
+                setPreferences([...preferences, content]);
+            }
         }
     }
 
@@ -55,7 +57,7 @@ export const StageNine = () => {
                     navigate('/events/super');
                     removeDataFromLocalStorage('superEvent');
                 } else if (sharedRestaurant) {
-                    navigate('/booking/?id=' + JSON.parse(sharedRestaurant).id);
+                    navigate('/booking?id=' + JSON.parse(sharedRestaurant).id);
                     removeDataFromLocalStorage('sharedRestaurant');
                 } else {
                     navigate('/');

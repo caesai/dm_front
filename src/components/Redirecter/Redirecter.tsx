@@ -22,7 +22,9 @@ export const Redirecter = () => {
         '/onboarding/4',
         '/onboarding/5',
         '/onboarding/6',
-        '/onboarding/7',
+        // '/onboarding/7',
+        // '/onboarding/8',
+        // '/onboarding/9',
     ];
 
     const getEventIdFromParams = useCallback((paramsObject: {[k:string]: string}, searchString: string) => {
@@ -59,10 +61,11 @@ export const Redirecter = () => {
             }
             if (location.search.includes('eventId')) {
                 const eventId = getEventIdFromParams(paramsObject, 'eventId');
+                setDataToLocalStorage('sharedEvent', { id: eventId });
                 navigate(`/events/${eventId}?shared=true`);
             } else if (location.search.includes('restaurantId')) {
                 const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
-                setDataToLocalStorage('superEvent', { id: restaurantId });
+                setDataToLocalStorage('sharedRestaurant', { id: restaurantId });
                 navigate('/restaurant/' + restaurantId + '?shared=true', { replace: true });
             } else if (location.search.includes('bookingId')) {
                 const bookingId = getEventIdFromParams(paramsObject, 'bookingId');

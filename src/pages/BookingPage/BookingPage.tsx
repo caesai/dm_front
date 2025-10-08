@@ -307,7 +307,7 @@ export const BookingPage: FC = () => {
     }, [currentSelectedTime]);
 
     const guestsValidate = useMemo(() => {
-        return !guestCount;
+        return !!guestCount;
     }, [guestCount]);
 
     const validateFormMemo = useMemo(() => {
@@ -397,7 +397,7 @@ export const BookingPage: FC = () => {
                         return;
                     }
                     if (isFreeEventBooking) {
-                        navigate('/tickets/' + res.data.ticket_id);
+                        navigate('/tickets/' + res.data?.ticket_id);
                     } else {
                         navigate(`/myBookings/${res.data.id}`);
                     }
