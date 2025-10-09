@@ -110,7 +110,7 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({ isShow, i
                     </SwiperSlide>
                 )}
 
-                <SwiperSlide style={{ width: '48px' }}></SwiperSlide>
+                {/*<SwiperSlide style={{ width: '48px' }}></SwiperSlide>*/}
             </Swiper>
         </div>
     );

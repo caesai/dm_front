@@ -6,7 +6,7 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import {TextInput} from "@/components/TextInput/TextInput.tsx";
 import {useState} from "react";
 import { APICompleteOnboarding, APIUserName } from '@/api/user.ts';
-import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
+import { getDataFromLocalStorage } from '@/utils.ts';
 
 export const StageSix = () => {
     const [user, setUser] = useAtom(userAtom);
@@ -45,10 +45,10 @@ export const StageSix = () => {
                     navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
                 } else if (superEvent) {
                     navigate('/events/super');
-                    removeDataFromLocalStorage('superEvent');
+                    // removeDataFromLocalStorage('superEvent');
                 } else if (sharedRestaurant) {
                     navigate('/restaurant/' + JSON.parse(sharedRestaurant).id);
-                    removeDataFromLocalStorage('sharedRestaurant');
+                    // removeDataFromLocalStorage('sharedRestaurant');
                 } else {
                     navigate('/');
                 }
