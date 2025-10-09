@@ -139,7 +139,7 @@ const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stori
     return (
         <div className={classnames(css.stories_container)}>
             <span className={classnames(css.closeIcon)} onClick={onClose}>
-                <CloseIcon size={44} />
+                <CloseIcon size={44} color={'red'}/>
             </span>
             {shouldRender && (
                 <Stories

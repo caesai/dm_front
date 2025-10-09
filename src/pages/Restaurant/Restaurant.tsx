@@ -48,7 +48,7 @@ import {
     formatDate,
     formatDateAlt,
     getCurrentTimeShort,
-    getCurrentWeekdayShort,
+    getCurrentWeekdayShort, getDataFromLocalStorage,
     getRestaurantStatus,
     getTimeShort,
 } from '@/utils.ts';
@@ -166,7 +166,8 @@ export const Restaurant = () => {
         setBackUrlAtom(`/restaurant/${id}`);
         navigate('/profile');
     };
-
+    const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
+    console.log('sharedRestaurant: ', sharedRestaurant);
     const getGalleryPhotos = () => {
         let photoList: string[] = [];
 

@@ -30,7 +30,6 @@ export const StoryComponent: React.FC<StoryComponentProps> = ({ title, descripti
             window.open(button_url);
         }
     }
-    console.log('button_url: ', button_url);
     return (
         <div className={classNames(css.storyComponent)} style={{
             backgroundImage: component_type && component_type == 2 ? `url(${url})` : undefined,

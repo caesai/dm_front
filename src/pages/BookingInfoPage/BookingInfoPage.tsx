@@ -107,6 +107,7 @@ export const BookingInfoPage = () => {
             <InformationPopup
                 isOpen={canceledPopup}
                 setOpen={setCanceledPopup}
+                close={() => navigate('/myBookings')}
                 text={'Ваше бронирование отменено'}
             />
             <div className={css.absolute_footer}>

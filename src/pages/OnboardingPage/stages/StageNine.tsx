@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { APICompleteOnboarding, APIUserPreferences } from '@/api/user.ts';
-import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
+import { getDataFromLocalStorage } from '@/utils.ts';
 
 export const StageNine = () => {
     const navigate = useNavigate();
@@ -55,10 +55,10 @@ export const StageNine = () => {
                     navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
                 } else if (superEvent) {
                     navigate('/events/super');
-                    removeDataFromLocalStorage('superEvent');
+                    // removeDataFromLocalStorage('superEvent');
                 } else if (sharedRestaurant) {
                     navigate('/booking?id=' + JSON.parse(sharedRestaurant).id);
-                    removeDataFromLocalStorage('sharedRestaurant');
+                    // removeDataFromLocalStorage('sharedRestaurant');
                 } else {
                     navigate('/');
                 }
