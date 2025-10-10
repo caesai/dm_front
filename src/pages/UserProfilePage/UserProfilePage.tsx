@@ -177,13 +177,13 @@ export const UserProfilePage = () => {
 
                         <CalendarIcon size={20} color={'var(--grey)'} />
                     </div>
-                    <TextInput
-                        value={userInfo.allergies}
-                        onChange={(v) =>
-                            setUserInfo((prev) => ({ ...prev, allergies: v }))
-                        }
-                        placeholder={'Аллергия'}
-                    />
+                    {/*<TextInput*/}
+                    {/*    value={userInfo.allergies}*/}
+                    {/*    onChange={(v) =>*/}
+                    {/*        setUserInfo((prev) => ({ ...prev, allergies: v }))*/}
+                    {/*    }*/}
+                    {/*    placeholder={'Аллергия'}*/}
+                    {/*/>*/}
                     <div
                         className={css.delete}
                         onClick={openDeletePopup}

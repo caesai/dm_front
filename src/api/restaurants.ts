@@ -175,10 +175,7 @@ export const APIGetEventsInRestaurant = async (restaurant_id: number, token: str
 };
 
 export const APIPostNewRestaurant = (token: string) => {
-    return axios.post(
-        `${BASE_URL}/restaurant/new`,
-        {
-        },
+    return axios.post(`${BASE_URL}/restaurant/new`, {},
         {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -186,3 +183,14 @@ export const APIPostNewRestaurant = (token: string) => {
         }
     );
 };
+
+
+export const APIPOSTCancelReason = (token: string, booking_id: number, cancel_reason: string) => {
+    return axios.post(`${BASE_URL}/booking/cancel/${booking_id}/reason`, {
+        cancel_reason
+    },{
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+}
