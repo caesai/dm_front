@@ -106,6 +106,7 @@ export const TicketInfoPage = () => {
                     navigate('/tickets')
                 }}
                 successMessage={'Успешный возврат'}
+                skipStep={true}
             />
             <div className={css.body}>
                 <div className={css.header}>
