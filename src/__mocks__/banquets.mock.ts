@@ -1,4 +1,4 @@
-import { IBanquet, } from '@/types/banquets.ts';
+import { IBanquet } from '@/types/banquets.ts';
 
 export const banquetData: IBanquet = {
     "banquet_options": [
