@@ -14,10 +14,8 @@ export const BanquetAdditionalServicesPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const {id} = useParams();
-    console.log('restaurant_id: ', id)
     const banquetData = location.state;
     const options: IBanquetAdditionalOptions[] = banquetData.additionalOptions;
-    console.log('options: ', options);
     const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
     const toggleService = (serviceName: string) => {
