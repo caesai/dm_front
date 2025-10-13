@@ -21,14 +21,6 @@ export interface IBanquetOptions {
     images: string[]
 }
 
-export interface IBanquetParams {
-    min_guests_number: number
-    max_guests_number: number
-    banquetType: string[]
-    deposit_per_person: number
-    service_fee: number
-}
-
 export interface IBanquetAdditionalOptions {
     id: number;
     name: string;
