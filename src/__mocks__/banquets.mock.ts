@@ -1,7 +1,4 @@
-import {
-    IBanquet,
-    IBanquetParams,
-} from '@/types/banquets.ts';
+import { IBanquet, } from '@/types/banquets.ts';
 
 export const banquetData: IBanquet = {
     "banquet_options": [
@@ -66,12 +63,4 @@ export const banquetData: IBanquet = {
     ],
     "image": "https://storage.yandexcloud.net/dreamteam-storage/d4fa1466780d435d96b90f637e5d43f2.jpg",
     "description": "Ваши значимые события в Smoke BBQ: банкеты, частные мероприятия, семейные торжества, корпоративные и деловые встречи"
-};
-
-export const banquetParams: IBanquetParams = {
-    min_guests_number: 6,
-    max_guests_number: 20,
-    banquetType: ['День рождения', 'Свадьба', 'Важный повод', 'Корпоратив', 'Другое'],
-    deposit_per_person: 4000,
-    service_fee: 10,
 };
