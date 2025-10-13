@@ -35,7 +35,7 @@ const isTimeValid = (from: string, to: string): boolean => {
     return toHours - fromHours >= 1;
 };
 
-const banquetType = ['День рождения', 'Свадьба', 'Важный повод', 'Корпоратив', 'Другое'];
+const banquetType = ['День рождения', 'Свадьба', 'Корпоратив', 'Другое'];
 
 export const BanquetOptionPage = () => {
     const navigate = useNavigate();
