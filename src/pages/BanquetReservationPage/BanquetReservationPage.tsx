@@ -22,7 +22,6 @@ export const BanquetReservationPage = () => {
 
     const [user] = useAtom(userAtom)
     const [auth] = useAtom(authAtom);
-
     const reservationData = location.state?.reservationData || location.state;
 
     const confirmationList = [
@@ -86,7 +85,6 @@ export const BanquetReservationPage = () => {
             }
         })
     }
-    console.log('reservationData: ', reservationData)
     return (
         <Page back={true}>
             <div className={css.page}>
