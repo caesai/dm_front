@@ -13,24 +13,13 @@ export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const banquets: IBanquet = location.state?.banquets;
+    const restaurant_title = location.state?.restaurant_title;
 
     const {id} = useParams();
-    const restaurant_title: IBanquet = location.state?.restaurant_title;
-
-    // const [banquets, setBanquets] = useState<IBanquet>()
 
     const goBack = () => {
         navigate(-1);
     }
-    //
-    // useEffect(() => {
-    //     // const banquet = getBanquetOptions(id);
-    //     console.log('banquet: ', banquet)
-    //     if (banquet) {
-    //         setBanquets(banquet);
-    //     }
-    // }, [id]);
-
 
     return (
         <Page back={true}>

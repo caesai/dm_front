@@ -44,7 +44,7 @@ export const BanquetOptionPage = () => {
     const banquet: IBanquetOptions = location.state?.banquet;
     const restaurant_title = location.state?.restaurant_title;
     const additional_options: IBanquetAdditionalOptions[] = location.state?.additional_options;
-
+    console.log('restaurant_title: ', restaurant_title);
     const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
