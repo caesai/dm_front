@@ -8,15 +8,16 @@ import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { useEffect, useState } from 'react';
 import { BanquetCheckbox } from '@/components/BanquetCheckbox/BanquetCheckbox.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import { IBanquetAdditionalOptions } from '@/types/banquets.ts';
 
 export const BanquetAdditionalServicesPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {restaurant_id} = useParams();
-
+    const {id} = useParams();
+    console.log('restaurant_id: ', id)
     const banquetData = location.state;
-    const options = banquetData.additionalOptions;
-
+    const options: IBanquetAdditionalOptions[] = banquetData.additionalOptions;
+    console.log('options: ', options);
     const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
     const toggleService = (serviceName: string) => {
@@ -39,12 +40,12 @@ export const BanquetAdditionalServicesPage = () => {
             selectedServices
         };
 
-        navigate(`/banquets/${restaurant_id}/reservation`, {state: {reservationData}});
+        navigate(`/banquets/${id}/reservation`, {state: {reservationData}});
     }
 
     useEffect(() => {
         if (!options) {
-            navigate(`/banquets/${restaurant_id}/reservation`, {
+            navigate(`/banquets/${id}/reservation`, {
                 state: banquetData
             });
         }
@@ -66,12 +67,12 @@ export const BanquetAdditionalServicesPage = () => {
                         <ContentBlock>
                             <div className={css.checkbox}>
                                 {options && (
-                                    options.map((option: string) => (
+                                    options.map((option: IBanquetAdditionalOptions) => (
                                         <BanquetCheckbox
-                                            key={option}
-                                            checked={selectedServices.includes(option)}
-                                            toggle={() => toggleService(option)}
-                                            label={option}
+                                            key={option.id}
+                                            checked={selectedServices.includes(option.name)}
+                                            toggle={() => toggleService(option.name)}
+                                            label={option.name}
                                         />
                                     ))
                                 )}

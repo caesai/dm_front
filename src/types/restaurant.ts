@@ -24,14 +24,14 @@ export interface IWorkTime {
     time_end: string;
 }
 
-interface IMenuItem {
+export interface IMenuItem {
     id: number;
     title: string;
     photo_url: string;
     price: number;
 }
 
-interface IMenuImg {
+export interface IMenuImg {
     id: number;
     image_url: string;
     order: number;

@@ -184,7 +184,6 @@ export const APIPostNewRestaurant = (token: string) => {
     );
 };
 
-
 export const APIPOSTCancelReason = (token: string, booking_id: number, cancel_reason: string) => {
     return axios.post(`${BASE_URL}/booking/cancel/${booking_id}/reason`, {
         cancel_reason

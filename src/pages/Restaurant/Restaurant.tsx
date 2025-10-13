@@ -4,7 +4,7 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { UnmountClosed } from 'react-collapse';
@@ -13,7 +13,7 @@ import 'swiper/css/zoom';
 
 import { FreeMode } from 'swiper/modules';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
 // import {InstagramIcon} from '@/components/Icons/Instagram.tsx';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
@@ -33,7 +33,7 @@ import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestau
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
 import { useAtom } from 'jotai';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
-import { IPhotoCard, IRestaurant } from '@/types/restaurant.ts';
+import { IMenuImg, IMenuItem, IPhotoCard, IRestaurant, IWorkTime } from '@/types/restaurant.ts';
 import {
     YMap,
     YMapComponentsProvider,
@@ -48,7 +48,7 @@ import {
     formatDate,
     formatDateAlt,
     getCurrentTimeShort,
-    getCurrentWeekdayShort, getDataFromLocalStorage,
+    getCurrentWeekdayShort,
     getRestaurantStatus,
     getTimeShort,
 } from '@/utils.ts';
@@ -77,7 +77,8 @@ import { BASE_BOT } from '@/api/base.ts';
 import moment from 'moment';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { IBanquet } from '@/types/banquets.ts';
-import { banquetData } from '@/__mocks__/banquets.mock.ts';
+// import { banquetData } from '@/__mocks__/banquets.mock.ts';
+import { APIGetBanquetOptions } from '@/api/banquet.ts';
 
 export const transformGallery = (
     gallery: IPhotoCard[],
@@ -100,31 +101,13 @@ export const transformGallery = (
     }));
 };
 
-const getBanquetData = (restaurantId: number, restaurantName: string): IBanquet => {
-    const filteredImages = banquetData.imageById.filter(
-        item => item.restaurant_id === restaurantId,
-    );
-
-    const imageById = filteredImages.length > 0
-        ? filteredImages
-        : [banquetData.imageById[0]];
-
-    const description = banquetData.description.replace('{RESTAURANT.NAME}', restaurantName);
-
-    return {
-        imageById,
-        description,
-    };
-};
 
 export const Restaurant = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
-    const [, setGuestCount] = useAtom(guestCountAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
     const [, setBackUrlAtom] = useAtom(backButtonAtom);
     const [currentSelectedTime, setCurrentSelectedTime] =
@@ -138,67 +121,18 @@ export const Restaurant = () => {
 
     const [timeslotLoading, setTimeslotLoading] = useState(true);
 
-    const [hideAbout, setHideAbout] = useState(true);
-    const [hideChefAbout, setHideChefAbout] = useState(true);
-    const [hideWorkHours, setHideWorkHours] = useState(true);
     const [headerScrolled, setHeaderScrolled] = useState(false);
-    const [menuPopupOpen, setMenuPopupOpen] = useState(
-        Boolean(searchParams.get('menuOpen')) || false,
-    );
-    const [bookingDatePopup, setBookingDatePopup] = useState<boolean>(false);
+
     const [callPopup, setCallPopup] = useState(false);
-    const [imageViewerOpen, setImageViewerOpen] = useState(false);
-    const [currentImageViewerPhoto, setCurrentImageViewerPhoto] = useState('');
-    const [gallery, setGallery] = useState<GalleryCollection[]>([]);
-    const [currentGalleryCategory, setCurrentGalleryCategory] =
-        useState('Все фото');
-    const [currentGalleryPhotos, setCurrentGalleryPhotos] = useState<
-        (string | string[])[]
-    >([]);
+
     const [events, setEvents] = useState<IEventInRestaurant[]>([]);
-    const [banquet, setBanquet] = useState<IBanquet>(() =>
-        getBanquetData(Number(id), restaurant?.title || ''),
-    );
+    const [banquets, setBanquets] = useState<IBanquet | null>(null);
 
     const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
     const goToProfile = () => {
         setBackUrlAtom(`/restaurant/${id}`);
         navigate('/profile');
-    };
-    const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
-    console.log('sharedRestaurant: ', sharedRestaurant);
-    const getGalleryPhotos = () => {
-        let photoList: string[] = [];
-
-        if (currentGalleryCategory === 'Все фото') {
-            gallery.forEach((g) => {
-                g.photos.forEach((photo) => photoList.push(photo.link));
-            });
-            photoList = [...new Set(photoList)];
-        } else {
-            const searchedGallery = gallery.find(
-                (item) => item.title === currentGalleryCategory,
-            );
-            searchedGallery?.photos.forEach((photo) =>
-                photoList.push(photo.link),
-            );
-        }
-
-        const groupedPhotos: (string | string[])[] = [];
-        let i = 0;
-
-        while (i < photoList.length) {
-            groupedPhotos.push(photoList[i]);
-            i++;
-
-            if (i < photoList.length - 1) {
-                groupedPhotos.push([photoList[i], photoList[i + 1]]);
-                i += 2;
-            }
-        }
-
-        return groupedPhotos;
     };
 
     const shareRestaurant = () => {
@@ -220,19 +154,7 @@ export const Restaurant = () => {
             window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
         }
     };
-    const restaurantWorkEndTime = restaurant?.worktime
-        .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
-    let workEndTime = moment(bookingDate.value);
-    if (restaurantWorkEndTime !== undefined) {
-        const endOfDay = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) < 12;
-        if (endOfDay) {
-            workEndTime = moment(workEndTime.clone().add(1, 'days').startOf('days').format('YYYY-MM-DD'));
-        }
-        workEndTime.set({
-            hour: Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
-            minutes: Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0')),
-        });
-    }
+
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
             navigate('/onboarding/5');
@@ -250,21 +172,18 @@ export const Restaurant = () => {
     };
 
     useEffect(() => {
+        APIGetBanquetOptions(String(auth?.access_token), Number(id))
+            .then((res) => {
+                setBanquets(res.data);
+            });
+    }, [id]);
+
+    useEffect(() => {
         setRestaurant(restaurants.find((v) => v.id === Number(id)));
         setCurrentSelectedTime(null);
         setBookingDate({ value: 'unset', title: 'unset' });
         APIGetEventsInRestaurant(Number(id), String(auth?.access_token)).then((res) => setEvents(res.data));
     }, [id]);
-
-    useEffect(() => {
-        if (restaurant?.gallery) {
-            setGallery(transformGallery(restaurant.gallery));
-        }
-    }, [restaurant]);
-
-    useEffect(() => {
-        setCurrentGalleryPhotos(getGalleryPhotos());
-    }, [currentGalleryCategory, gallery]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -296,6 +215,7 @@ export const Restaurant = () => {
                 },
             );
     }, []);
+
     useEffect(() => {
         if (!auth?.access_token || bookingDate.value == 'unset') {
             return;
@@ -311,42 +231,12 @@ export const Restaurant = () => {
             .finally(() => setTimeslotLoading(false));
     }, [bookingDate]);
 
-    useEffect(() => {
-        if (restaurant) {
-            setBanquet(getBanquetData(Number(id), restaurant.title));
-        }
-    }, [restaurant, id]);
     const filteredEvents = events.filter((event) => {
         return event.ticket_price == 0 ? event.tickets_left > 0 : null;
     });
+
     return (
         <Page back={true}>
-            <BookingDateSelectorPopup
-                isOpen={bookingDatePopup}
-                setOpen={setBookingDatePopup}
-                bookingDate={bookingDate}
-                setBookingDate={setBookingDate}
-                values={bookingDates}
-            />
-            {restaurant?.menu_imgs ? (
-                <MenuPopup
-                    isOpen={menuPopupOpen}
-                    setOpen={setMenuPopupOpen}
-                    menuItems={restaurant.menu_imgs
-                        .sort((a, b) => (a.order > b.order ? 1 : -1))
-                        .map((v) => v.image_url)}
-                />
-            ) : null}
-
-            {restaurant?.gallery && (
-                <ImageViewerPopup
-                    isOpen={imageViewerOpen}
-                    setOpen={setImageViewerOpen}
-                    items={restaurant?.gallery}
-                    currentItem={currentImageViewerPhoto}
-                    setCurrentItem={setCurrentImageViewerPhoto}
-                />
-            )}
             <CallRestaurantPopup
                 isOpen={callPopup}
                 setOpen={setCallPopup}
@@ -389,7 +279,8 @@ export const Restaurant = () => {
                         </div>
                     </div>
                     {headerScrolled ?
-                        <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)} isEvents={filteredEvents.length > 0}/> : null}
+                        <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)}
+                                              isEvents={filteredEvents.length > 0} /> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
@@ -436,599 +327,801 @@ export const Restaurant = () => {
                         data-point-b={restaurant?.address_lonlng}
                     ></div>
                 </div>
-                <ContentContainer>
-                    <ContentBlock id={'booking'}>
-                        <div
-                            // id={'booking'}
-                            className={css.navSliderAndBookingContainer}
+                <BookingBlock
+                    currentSelectedTime={currentSelectedTime}
+                    workTime={restaurant?.worktime}
+                    bookingDate={bookingDate}
+                    bookingDates={bookingDates}
+                    setBookingDate={setBookingDate}
+                    timeslotLoading={timeslotLoading}
+                    availableTimeslots={availableTimeslots}
+                    setCurrentSelectedTime={setCurrentSelectedTime}
+                    isShow={tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0}
+                    isEvents={filteredEvents.length > 0}
+                />
+                <GalleryBlock restaurant_gallery={restaurant?.gallery} />
+                <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
+                <AboutBlock
+                    about_text={String(restaurant?.about_text)}
+                    about_dishes={String(restaurant?.about_dishes)}
+                    about_kitchen={String(restaurant?.about_kitchen)}
+                    about_features={String(restaurant?.about_features)}
+                    avg_cheque={String(restaurant?.avg_cheque)}
+                    workTime={restaurant?.worktime}
+                />
+
+                <ChefBlock
+                    about={String(restaurant?.brand_chef.about)}
+                    photo_url={String(restaurant?.brand_chef.photo_url)}
+                    chef_name={String(restaurant?.brand_chef.name)}
+                />
+                {filteredEvents.length > 0 && <EventsBlock events={events} />}
+                {tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0 && (
+                    <BanquetsBlock
+                        image={banquets.image}
+                        description={banquets.description}
+                        restaurant_id={Number(id)}
+                        restaurant_title={String(restaurant?.title)}
+                        banquets={banquets}
+                    />
+                )}
+                <AddressBlock
+                    longitude={Number(
+                        restaurant?.address_lonlng.split(
+                            ',',
+                        )[0],
+                    )}
+                    latitude={Number(
+                        restaurant?.address_lonlng.split(
+                            ',',
+                        )[1],
+                    ) - 0.0003}
+                    address={String(restaurant?.address)}
+                    logo_url={String(restaurant?.logo_url)}
+                    address_station_color={String(restaurant?.address_station_color)}
+                />
+            </div>
+        </Page>
+    );
+};
+
+interface BookingBlockProps {
+    currentSelectedTime: ITimeSlot | null;
+    workTime: IWorkTime[] | undefined;
+    bookingDate: PickerValueObj;
+    bookingDates: PickerValueObj[];
+    setBookingDate: Dispatch<SetStateAction<PickerValueObj>>;
+    timeslotLoading: boolean;
+    availableTimeslots: ITimeSlot[];
+    setCurrentSelectedTime: (currentSelectedTime: ITimeSlot) => void;
+    // TODO: Refactor this booleans
+    isShow: boolean;
+    isEvents: boolean;
+}
+
+const BookingBlock: React.FC<BookingBlockProps> = (
+    {
+        currentSelectedTime,
+        workTime,
+        bookingDate,
+        setBookingDate,
+        bookingDates,
+        timeslotLoading,
+        availableTimeslots,
+        setCurrentSelectedTime,
+        isShow,
+        isEvents,
+    }) => {
+    const [, setGuestCount] = useAtom(guestCountAtom);
+    const [bookingDatePopup, setBookingDatePopup] = useState<boolean>(false);
+    const restaurantWorkEndTime = workTime && workTime
+        .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+    let workEndTime = moment(bookingDate.value);
+    if (restaurantWorkEndTime !== undefined) {
+        const endOfDay = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) < 12;
+        if (endOfDay) {
+            workEndTime = moment(workEndTime.clone().add(1, 'days').startOf('days').format('YYYY-MM-DD'));
+        }
+        workEndTime.set({
+            hour: Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
+            minutes: Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0')),
+        });
+    }
+
+    return (
+        <ContentContainer>
+            <BookingDateSelectorPopup
+                isOpen={bookingDatePopup}
+                setOpen={setBookingDatePopup}
+                bookingDate={bookingDate}
+                setBookingDate={setBookingDate}
+                values={bookingDates}
+            />
+            <ContentBlock id={'booking'}>
+                <div className={css.navSliderAndBookingContainer}>
+                    <RestaurantNavigation isShow={isShow} isEvents={isEvents} />
+                    <div className={css.bookingContaner}>
+                        <Swiper
+                            slidesPerView={'auto'}
+                            spaceBetween={8}
+                            freeMode={true}
+                            modules={[FreeMode]}
+                            style={{
+                                marginLeft: '0',
+                            }}
                         >
-                            <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)} isEvents={filteredEvents.length > 0}/>
-                            <div className={css.bookingContaner}>
-                                <Swiper
-                                    slidesPerView={'auto'}
-                                    spaceBetween={8}
-                                    freeMode={true}
-                                    modules={[FreeMode]}
-                                    style={{
-                                        marginLeft: '0',
-                                    }}
+                            {bookingDate.value == 'unset' ||
+                            !bookingDates.length ? (
+                                <SwiperSlide
+                                    style={{ width: 'min-content' }}
                                 >
-                                    {bookingDate.value == 'unset' ||
-                                    !bookingDates.length ? (
-                                        <SwiperSlide
-                                            style={{ width: 'min-content' }}
-                                        >
-                                            <PlaceholderBlock
-                                                width={'150px'}
-                                                height={'41px'}
-                                                rounded={'20px'}
-                                            />
-                                        </SwiperSlide>
-                                    ) : (
-                                        <SwiperSlide
-                                            style={{ width: 'min-content' }}
-                                            onClick={() =>
-                                                setBookingDatePopup(true)
-                                            }
-                                        >
-                                            <div className={css.timeItem}>
-                                                <Calendar size={18} />
-                                                {formatDateAlt(bookingDate.value)}
-                                                <FaAngleRight size={16} />
-                                            </div>
-                                        </SwiperSlide>
-                                    )}
-                                    {timeslotLoading ? (
-                                        <>
-                                            <SwiperSlide
-                                                style={{ width: 'min-content' }}
-                                            >
-                                                <PlaceholderBlock
-                                                    width={'68px'}
-                                                    height={'41px'}
-                                                    rounded={'20px'}
-                                                />
-                                            </SwiperSlide>
-                                            <SwiperSlide
-                                                style={{ width: 'min-content' }}
-                                            >
-                                                <PlaceholderBlock
-                                                    width={'68px'}
-                                                    height={'41px'}
-                                                    rounded={'20px'}
-                                                />
-                                            </SwiperSlide>
-                                            <SwiperSlide
-                                                style={{ width: 'min-content' }}
-                                            >
-                                                <PlaceholderBlock
-                                                    width={'68px'}
-                                                    height={'41px'}
-                                                    rounded={'20px'}
-                                                />
-                                            </SwiperSlide>
-                                        </>
-                                    ) : (
-                                        availableTimeslots.map((ts, i) => (
-                                            <SwiperSlide
-                                                key={i}
-                                                style={{ width: 'min-content' }}
-                                                onClick={() => {
-                                                    setCurrentSelectedTime(ts);
-                                                    setGuestCount({
-                                                        title: '1 гость',
-                                                        value: '1',
-                                                    });
-                                                }}
-                                            >
-                                                <div
-                                                    className={classNames(
-                                                        css.timeItem,
-                                                        currentSelectedTime == ts
-                                                            ? css.timeItemActive
-                                                            : null,
-                                                    )}
-                                                >
-                                                    {currentSelectedTime == ts ? `${getTimeShort(
-                                                        ts.start_datetime,
-                                                    )} -  ${moment(ts.end_datetime).isBefore(workEndTime) ? getTimeShort(
-                                                        ts.end_datetime,
-                                                    ) : restaurantWorkEndTime}` : getTimeShort(
-                                                        ts.start_datetime,
-                                                    )}
-                                                </div>
-                                            </SwiperSlide>
-                                        ))
-                                    )}
-                                </Swiper>
-                            </div>
-                        </div>
-                    </ContentBlock>
-                    <ContentBlock id={'gallery'}>
-                        <HeaderContainer>
-                            <HeaderContent title={'Галерея'} />
-                            <div className={css.photoSliderNavigationContainer}>
-                                <Swiper
-                                    modules={[FreeMode]}
-                                    freeMode={true}
-                                    slidesPerView={'auto'}
-                                    spaceBetween={4}
+                                    <PlaceholderBlock
+                                        width={'150px'}
+                                        height={'41px'}
+                                        rounded={'20px'}
+                                    />
+                                </SwiperSlide>
+                            ) : (
+                                <SwiperSlide
+                                    style={{ width: 'min-content' }}
+                                    onClick={() =>
+                                        setBookingDatePopup(true)
+                                    }
                                 >
+                                    <div className={css.timeItem}>
+                                        <Calendar size={18} />
+                                        {formatDateAlt(bookingDate.value)}
+                                        <FaAngleRight size={16} />
+                                    </div>
+                                </SwiperSlide>
+                            )}
+                            {timeslotLoading ? (
+                                <>
                                     <SwiperSlide
-                                        style={{ width: 'max-content' }}
-                                        onClick={() =>
-                                            setCurrentGalleryCategory(
-                                                'Все фото',
-                                            )
-                                        }
+                                        style={{ width: 'min-content' }}
+                                    >
+                                        <PlaceholderBlock
+                                            width={'68px'}
+                                            height={'41px'}
+                                            rounded={'20px'}
+                                        />
+                                    </SwiperSlide>
+                                    <SwiperSlide
+                                        style={{ width: 'min-content' }}
+                                    >
+                                        <PlaceholderBlock
+                                            width={'68px'}
+                                            height={'41px'}
+                                            rounded={'20px'}
+                                        />
+                                    </SwiperSlide>
+                                    <SwiperSlide
+                                        style={{ width: 'min-content' }}
+                                    >
+                                        <PlaceholderBlock
+                                            width={'68px'}
+                                            height={'41px'}
+                                            rounded={'20px'}
+                                        />
+                                    </SwiperSlide>
+                                </>
+                            ) : (
+                                availableTimeslots.map((ts, i) => (
+                                    <SwiperSlide
+                                        key={i}
+                                        style={{ width: 'min-content' }}
+                                        onClick={() => {
+                                            setCurrentSelectedTime(ts);
+                                            setGuestCount({
+                                                title: '1 гость',
+                                                value: '1',
+                                            });
+                                        }}
                                     >
                                         <div
                                             className={classNames(
-                                                css.photoSliderNavigationItem,
-                                                currentGalleryCategory ==
-                                                'Все фото'
-                                                    ? css.photoSliderNavigationActive
+                                                css.timeItem,
+                                                currentSelectedTime == ts
+                                                    ? css.timeItemActive
                                                     : null,
                                             )}
                                         >
-                                            Все фото
+                                            {currentSelectedTime == ts ? `${getTimeShort(
+                                                ts.start_datetime,
+                                            )} -  ${moment(ts.end_datetime).isBefore(workEndTime) ? getTimeShort(
+                                                ts.end_datetime,
+                                            ) : restaurantWorkEndTime}` : getTimeShort(
+                                                ts.start_datetime,
+                                            )}
                                         </div>
                                     </SwiperSlide>
-                                    {gallery.map((d, i) => (
-                                        <SwiperSlide
-                                            style={{ width: 'max-content' }}
-                                            key={i}
-                                            onClick={() =>
-                                                setCurrentGalleryCategory(
-                                                    d.title,
-                                                )
-                                            }
-                                        >
-                                            <div
-                                                className={classNames(
-                                                    css.photoSliderNavigationItem,
-                                                    currentGalleryCategory ==
-                                                    d.title
-                                                        ? css.photoSliderNavigationActive
-                                                        : null,
-                                                )}
-                                            >
-                                                {d.title}
-                                            </div>
-                                        </SwiperSlide>
-                                    ))}
-                                </Swiper>
-                            </div>
-                        </HeaderContainer>
-                        <div className={css.photoSliderContainer}>
-                            <Swiper
-                                slidesPerView="auto"
-                                modules={[FreeMode]}
-                                freeMode={true}
-                                spaceBetween={8}
+                                ))
+                            )}
+                        </Swiper>
+                    </div>
+                </div>
+            </ContentBlock>
+        </ContentContainer>
+    );
+};
+
+interface GalleryBlockProps {
+    restaurant_gallery: IPhotoCard[] | undefined;
+}
+
+const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
+    const [imageViewerOpen, setImageViewerOpen] = useState(false);
+    const [currentImageViewerPhoto, setCurrentImageViewerPhoto] = useState('');
+    const [gallery, setGallery] = useState<GalleryCollection[]>([]);
+    const [currentGalleryCategory, setCurrentGalleryCategory] = useState('Все фото');
+    const [currentGalleryPhotos, setCurrentGalleryPhotos] = useState<
+        (string | string[])[]
+    >([]);
+    const getGalleryPhotos = () => {
+        let photoList: string[] = [];
+
+        if (currentGalleryCategory === 'Все фото') {
+            gallery.forEach((g) => {
+                g.photos.forEach((photo) => photoList.push(photo.link));
+            });
+            photoList = [...new Set(photoList)];
+        } else {
+            const searchedGallery = gallery.find(
+                (item) => item.title === currentGalleryCategory,
+            );
+            searchedGallery?.photos.forEach((photo) =>
+                photoList.push(photo.link),
+            );
+        }
+
+        const groupedPhotos: (string | string[])[] = [];
+        let i = 0;
+
+        while (i < photoList.length) {
+            groupedPhotos.push(photoList[i]);
+            i++;
+
+            if (i < photoList.length - 1) {
+                groupedPhotos.push([photoList[i], photoList[i + 1]]);
+                i += 2;
+            }
+        }
+
+        return groupedPhotos;
+    };
+    useEffect(() => {
+        if (restaurant_gallery) {
+            setGallery(transformGallery(restaurant_gallery));
+        }
+    }, [restaurant_gallery]);
+
+    useEffect(() => {
+        setCurrentGalleryPhotos(getGalleryPhotos());
+    }, [currentGalleryCategory, gallery]);
+    return (
+        <ContentContainer>
+            {restaurant_gallery && (
+                <ImageViewerPopup
+                    isOpen={imageViewerOpen}
+                    setOpen={setImageViewerOpen}
+                    items={restaurant_gallery}
+                    currentItem={currentImageViewerPhoto}
+                    setCurrentItem={setCurrentImageViewerPhoto}
+                />
+            )}
+            <ContentBlock id={'gallery'}>
+                <HeaderContainer>
+                    <HeaderContent title={'Галерея'} />
+                    <div className={css.photoSliderNavigationContainer}>
+                        <Swiper
+                            modules={[FreeMode]}
+                            freeMode={true}
+                            slidesPerView={'auto'}
+                            spaceBetween={4}
+                        >
+                            <SwiperSlide
+                                style={{ width: 'max-content' }}
+                                onClick={() =>
+                                    setCurrentGalleryCategory(
+                                        'Все фото',
+                                    )
+                                }
                             >
-                                {currentGalleryPhotos.map((photo, index) => (
-                                    <SwiperSlide
-                                        key={`${index}${photo}`}
+                                <div
+                                    className={classNames(
+                                        css.photoSliderNavigationItem,
+                                        currentGalleryCategory ==
+                                        'Все фото'
+                                            ? css.photoSliderNavigationActive
+                                            : null,
+                                    )}
+                                >
+                                    Все фото
+                                </div>
+                            </SwiperSlide>
+                            {gallery.map((d, i) => (
+                                <SwiperSlide
+                                    style={{ width: 'max-content' }}
+                                    key={i}
+                                    onClick={() =>
+                                        setCurrentGalleryCategory(
+                                            d.title,
+                                        )
+                                    }
+                                >
+                                    <div
+                                        className={classNames(
+                                            css.photoSliderNavigationItem,
+                                            currentGalleryCategory ==
+                                            d.title
+                                                ? css.photoSliderNavigationActive
+                                                : null,
+                                        )}
+                                    >
+                                        {d.title}
+                                    </div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    </div>
+                </HeaderContainer>
+                <div className={css.photoSliderContainer}>
+                    <Swiper
+                        slidesPerView="auto"
+                        modules={[FreeMode]}
+                        freeMode={true}
+                        spaceBetween={8}
+                    >
+                        {currentGalleryPhotos.map((photo, index) => (
+                            <SwiperSlide
+                                key={`${index}${photo}`}
+                                className={
+                                    Array.isArray(photo)
+                                        ? css.smallPhotoSlideContainer
+                                        : css.photoBig
+                                }
+                            >
+                                {Array.isArray(photo) ? (
+                                    <div
                                         className={
-                                            Array.isArray(photo)
-                                                ? css.smallPhotoSlideContainer
-                                                : css.photoBig
+                                            css.smallPhotoContainer
                                         }
                                     >
-                                        {Array.isArray(photo) ? (
+                                        {photo.map((smallPhoto, i) => (
                                             <div
-                                                className={
-                                                    css.smallPhotoContainer
-                                                }
-                                            >
-                                                {photo.map((smallPhoto, i) => (
-                                                    <div
-                                                        key={`${i}${smallPhoto}`}
-                                                        className={classNames(
-                                                            css.photo,
-                                                            css.photoSmall,
-                                                        )}
-                                                        style={{
-                                                            backgroundImage: `url(${smallPhoto})`,
-                                                        }}
-                                                        onClick={() => {
-                                                            setCurrentImageViewerPhoto(
-                                                                smallPhoto,
-                                                            );
-                                                            setImageViewerOpen(
-                                                                true,
-                                                            );
-                                                        }}
-                                                    ></div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <div
+                                                key={`${i}${smallPhoto}`}
                                                 className={classNames(
                                                     css.photo,
-                                                    css.photoBig,
+                                                    css.photoSmall,
                                                 )}
                                                 style={{
-                                                    backgroundImage: `url(${photo})`,
+                                                    backgroundImage: `url(${smallPhoto})`,
                                                 }}
                                                 onClick={() => {
                                                     setCurrentImageViewerPhoto(
-                                                        photo,
+                                                        smallPhoto,
                                                     );
-                                                    setImageViewerOpen(true);
+                                                    setImageViewerOpen(
+                                                        true,
+                                                    );
                                                 }}
-                                            ></div>
-                                        )}
-                                    </SwiperSlide>
-                                ))}
-                            </Swiper>
-                        </div>
-                    </ContentBlock>
-                </ContentContainer>
-                <ContentContainer>
-                    <ContentBlock>
-                        <HeaderContainer id={'menu'}>
-                            <HeaderContent title={'Меню'} />
-                            {/*<HeaderSubText text={'Рекомендуем'}/>*/}
-                        </HeaderContainer>
-                        <div className={css.photoSliderContainer}>
-                            <Swiper
-                                slidesPerView="auto"
-                                modules={[FreeMode]}
-                                freeMode={true}
-                                spaceBetween={8}
-                            >
-                                {restaurant?.menu
-                                    .sort((a, b) => (a.id > b.id ? 1 : -1))
-                                    .map((menu, index) => (
-                                        <SwiperSlide
-                                            style={{ width: '162px' }}
-                                            key={`${index}${menu.photo_url}`}
-                                        >
-                                            <div className={css.menuItem}>
-                                                <div
-                                                    className={classNames(
-                                                        css.menuItemPhoto,
-                                                        css.bgImage,
-                                                    )}
-                                                    style={{
-                                                        backgroundImage: `url(${menu.photo_url})`,
-                                                    }}
-                                                ></div>
-                                                <div
-                                                    className={css.menuItemInfo}
-                                                >
-                                                    <span className={css.title}>
-                                                        {menu.title}
-                                                    </span>
-                                                    <span
-                                                        className={css.subtitle}
-                                                    >
-                                                        {menu.price} ₽
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </SwiperSlide>
-                                    ))}
-                            </Swiper>
-                        </div>
-                        <UniversalButton
-                            title={'Посмотреть меню'}
-                            width={'full'}
-                            action={() => setMenuPopupOpen(true)}
-                        />
-                    </ContentBlock>
-                </ContentContainer>
-                <ContentContainer>
-                    <ContentBlock>
-                        <HeaderContainer>
-                            <HeaderContent id={'about'} title={'О месте'} />
-                        </HeaderContainer>
-                        <div className={css.aboutContainer}>
-                            <span
-                                className={classNames(
-                                    css.aboutText,
-                                    hideAbout ? css.trimLines : null,
-                                )}
-                            >
-                                {restaurant?.about_text}
-                            </span>
-                            <div
-                                className={css.trimLinesButton}
-                                onClick={() => setHideAbout((prev) => !prev)}
-                            >
-                                <span className={css.text}>
-                                    {hideAbout ? 'Читать больше' : 'Скрыть'}
-                                </span>
-                            </div>
-                        </div>
-                    </ContentBlock>
-                    <ContentBlock>
-                        <div className={css.infoBlock}>
-                            <div className={css.top}>
-                                <span className={css.title}>
-                                    {restaurant?.worktime
-                                        ? getRestaurantStatus(
-                                            restaurant.worktime,
-                                            getCurrentWeekdayShort(),
-                                            getCurrentTimeShort(),
-                                        )
-                                        : ''}
-                                </span>
-                                <div
-                                    className={css.right}
-                                    onClick={() =>
-                                        setHideWorkHours((prev) => !prev)
-                                    }
-                                >
-                                    <span className={css.expandButton}>
-                                        График
-                                    </span>
-                                    <div
-                                        className={classNames(
-                                            css.right,
-                                            css.opened,
-                                            {
-                                                [css.closed]: hideWorkHours,
-                                            },
-                                        )}
-                                    >
-                                        <DownArrow
-                                            size={20}
-                                            color={'var(--grey)'}
-                                        ></DownArrow>
+                                            />
+                                        ))}
                                     </div>
-                                </div>
-                            </div>
-                            <UnmountClosed
-                                isOpened={!hideWorkHours}
-                                className={css.collapse}
-                            >
-                                <div className={css.workHours}>
-                                    {restaurant?.worktime.map((r) => (
-                                        <span
-                                            key={`weekday-${r.weekday}`}
-                                            className={css.text}
-                                        >
-                                            {r.weekday}: {r.time_start}-
-                                            {r.time_end}
-                                        </span>
-                                    ))}
-                                </div>
-                            </UnmountClosed>
-                        </div>
-                    </ContentBlock>
-                    <ContentBlock>
-                        <div className={css.infoBlock}>
-                            <div className={css.top}>
-                                <span className={css.title}>Детали</span>
-                            </div>
-                            <div className={css.infoBlock}>
-                                <div className={css.textRow}>
-                                    <span className={css.title}>Кухня:</span>
-                                    <span className={css.value}>
-                                        {restaurant?.about_kitchen}, {restaurant?.about_dishes}
-                                    </span>
-                                </div>
-                                <div className={css.textRow}>
-                                    <span className={css.title}>
-                                        Особенности:
-                                    </span>
-                                    <span className={css.value}>
-                                        {restaurant?.about_features}
-                                    </span>
-                                </div>
-                                <div className={css.textRow}>
-                                    <span className={css.title}>
-                                        Средний чек:
-                                    </span>
-                                    <span className={css.value}>
-                                        {restaurant?.avg_cheque} ₽
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </ContentBlock>
-                </ContentContainer>
-                <ContentContainer>
-                    <ContentBlock>
-                        <HeaderContainer>
-                            <HeaderContent id={'chef'} title={'О шефе'} />
-                        </HeaderContainer>
-                        <div className={css.aboutContainer}>
-                            <span
-                                className={classNames(
-                                    css.aboutText,
-                                    hideChefAbout ? css.trimLines : null,
-                                )}
-                            >
-                                {restaurant?.brand_chef.about}
-                            </span>
-                            <div
-                                className={css.trimLinesButton}
-                                onClick={() =>
-                                    setHideChefAbout((prev) => !prev)
-                                }
-                            >
-                                <span className={css.text}>
-                                    {hideChefAbout ? 'Читать больше' : 'Скрыть'}
-                                </span>
-                            </div>
-                        </div>
-                        <div className={css.chefInfoContainer}>
-                            <div
-                                className={classNames(
-                                    css.chefImage,
-                                    css.bgImage,
-                                )}
-                                style={{
-                                    backgroundImage: `url(${restaurant?.brand_chef.photo_url})`,
-                                }}
-                            ></div>
-                            <div className={css.chefInfo}>
-                                <span className={css.title}>
-                                    {restaurant?.brand_chef.name}
-                                </span>
-                                <span className={css.subTitle}>Бренд-шеф</span>
-                            </div>
-                        </div>
-                    </ContentBlock>
-                </ContentContainer>
-                {filteredEvents.length > 0 ? (
-                    <ContentContainer>
-                        <ContentBlock>
-                            <HeaderContainer>
-                                <HeaderContent
-                                    title={'Мероприятия'}
-                                    id={'events'}
-                                />
-                            </HeaderContainer>
-                            {filteredEvents.map((e) => (
-                                <EventCard
-                                    key={e.name}
-                                    onClick={() => navigate(
-                                        `/events/${e.id}`,
-                                    )}
-                                    event_price={e.ticket_price}
-                                    event_name={e.name}
-                                    event_img={e.image_url}
-                                    event_restaurant={e.restaurant.title}
-                                    event_date={e.date_start}
-                                    event_address={e.restaurant.address}
-                                    sold={e.tickets_left == 0}
-                                />
-                            ))}
-                        </ContentBlock>
-                    </ContentContainer>
-                    ) : null}
-
-                {tg_id && mockEventsUsersList.includes(tg_id) && (
-                    <ContentContainer>
-                        <ContentBlock>
-                            <HeaderContainer>
-                                <HeaderContent title={'Банкеты'} id={'banquet'} />
-                            </HeaderContainer>
-                            <div className={css.banquetContainer}>
-                                <div className={css.banquetImg}>
+                                ) : (
                                     <div
                                         className={classNames(
-                                            css.banquetImage,
-                                            css.bgImage,
+                                            css.photo,
+                                            css.photoBig,
                                         )}
                                         style={{
-                                            backgroundImage: `url(${banquet.imageById[0].image_url})`,
+                                            backgroundImage: `url(${photo})`,
                                         }}
-                                    ></div>
-                                </div>
-                                <span className={css.banquetDescription}>{banquet.description}</span>
-                                <UniversalButton
-                                    width={'full'}
-                                    title={'Подробнее'}
-                                    theme={'red'}
-                                    action={
-                                        () => navigate(`/banquets/${restaurant?.id}/choose`,
-                                            { state: { restaurant_title: restaurant?.title } })
-                                    }
-                                />
-                            </div>
-                        </ContentBlock>
-                    </ContentContainer>
-                )}
-                <ContentContainer>
-                    <ContentBlock>
-                        <HeaderContainer>
-                            <HeaderContent title={'Адрес'} />
-                        </HeaderContainer>
-                        <div className={css.mapContainer}>
-                            <div className={css.map}>
-                                <YMapComponentsProvider
-                                    apiKey={
-                                        '73a95f3b-fa74-4525-99e3-86ee1309f266'
-                                    }
-                                    lang={'ru_RU'}
+                                        onClick={() => {
+                                            setCurrentImageViewerPhoto(
+                                                photo,
+                                            );
+                                            setImageViewerOpen(true);
+                                        }}
+                                    />
+                                )}
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                </div>
+            </ContentBlock>
+        </ContentContainer>
+    );
+};
+
+interface MenuBlockProps {
+    menu: IMenuItem[] | undefined;
+    menu_imgs: IMenuImg[] | undefined;
+}
+
+const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
+    const [menuPopupOpen, setMenuPopupOpen] = useState(false);
+    return (
+        <ContentContainer>
+            {menu_imgs ? (
+                <MenuPopup
+                    isOpen={menuPopupOpen}
+                    setOpen={setMenuPopupOpen}
+                    menuItems={menu_imgs
+                        .sort((a, b) => (a.order > b.order ? 1 : -1))
+                        .map((v) => v.image_url)}
+                />
+            ) : null}
+            <ContentBlock>
+                <HeaderContainer id={'menu'}>
+                    <HeaderContent title={'Меню'} />
+                    {/*<HeaderSubText text={'Рекомендуем'}/>*/}
+                </HeaderContainer>
+                <div className={css.photoSliderContainer}>
+                    <Swiper
+                        slidesPerView="auto"
+                        modules={[FreeMode]}
+                        freeMode={true}
+                        spaceBetween={8}
+                    >
+                        {menu && menu
+                            .sort((a, b) => (a.id > b.id ? 1 : -1))
+                            .map((item, index) => (
+                                <SwiperSlide style={{ width: '162px' }}
+                                             key={`${index}${item.photo_url}`}
                                 >
-                                    <YMap
-                                        location={{
-                                            center: [
-                                                Number(
-                                                    restaurant?.address_lonlng.split(
-                                                        ',',
-                                                    )[0],
-                                                ),
-                                                Number(
-                                                    restaurant?.address_lonlng.split(
-                                                        ',',
-                                                    )[1],
-                                                ) - 0.0003,
-                                            ],
-                                            zoom: 17,
-                                        }}
-                                    >
-                                        <YMapDefaultSchemeLayer />
-                                        <YMapDefaultFeaturesLayer />
-                                        <YMapMarker
-                                            coordinates={[
-                                                Number(
-                                                    restaurant?.address_lonlng.split(
-                                                        ',',
-                                                    )[0],
-                                                ),
-                                                Number(
-                                                    restaurant?.address_lonlng.split(
-                                                        ',',
-                                                    )[1],
-                                                ),
-                                            ]}
-                                            draggable={false}
-                                        >
-                                            <div className={css.mapPoint}>
-                                                <img width={50} src={restaurant?.logo_url} alt={''} />
-                                            </div>
-                                        </YMapMarker>
-                                    </YMap>
-                                    <section>
-                                        <div className={css.relativeRestInfo}>
-                                            <div className={css.mapInfo}>
-                                                <div
-                                                    className={css.mapInfoMetro}
-                                                >
-                                                    {restaurant?.address_station_color ? (
-                                                        <div
-                                                            className={
-                                                                css.mapInfoMetroCircle
-                                                            }
-                                                            style={{
-                                                                backgroundColor: `${restaurant.address_station_color}`,
-                                                            }}
-                                                        ></div>
-                                                    ) : null}
-                                                    <span
-                                                        className={
-                                                            css.mapInfoMetroText
-                                                        }
-                                                    >
-                                                        {
-                                                            restaurant?.address
-                                                        }
-                                                    </span>
-                                                </div>
-                                                <div
-                                                    className={
-                                                        css.mapInfoAddress
-                                                    }
-                                                >
-                                                    {restaurant?.address}
-                                                </div>
-                                            </div>
+                                    <div className={css.menuItem}>
+                                        <div
+                                            className={classNames(
+                                                css.menuItemPhoto,
+                                                css.bgImage,
+                                            )}
+                                            style={{
+                                                backgroundImage: `url(${item.photo_url})`,
+                                            }}
+                                        ></div>
+                                        <div className={css.menuItemInfo}>
+                                            <span className={css.title}>
+                                                {item.title}
+                                            </span>
+                                            <span className={css.subtitle}>
+                                                {item.price} ₽
+                                            </span>
                                         </div>
-                                    </section>
-                                </YMapComponentsProvider>
+                                    </div>
+                                </SwiperSlide>
+                            ))}
+                    </Swiper>
+                </div>
+                <UniversalButton
+                    title={'Посмотреть меню'}
+                    width={'full'}
+                    action={() => setMenuPopupOpen(true)}
+                />
+            </ContentBlock>
+        </ContentContainer>
+    );
+};
+
+interface AboutBlockProps {
+    about_text: string;
+    workTime: IWorkTime[] | undefined;
+    about_kitchen: string;
+    about_dishes: string;
+    about_features: string;
+    avg_cheque: string;
+}
+
+const AboutBlock: React.FC<AboutBlockProps> = (
+    {
+        about_text,
+        workTime,
+        about_dishes,
+        about_kitchen,
+        about_features,
+        avg_cheque,
+    },
+) => {
+    const [hideAbout, setHideAbout] = useState(true);
+    const [hideWorkHours, setHideWorkHours] = useState(true);
+    const toggleAbout = () => {
+        setHideAbout((prev) => !prev);
+    };
+    const toggleWorkHours = () => {
+        setHideWorkHours((prev) => !prev);
+    };
+    return (
+        <ContentContainer>
+            <ContentBlock>
+                <HeaderContainer>
+                    <HeaderContent id={'about'} title={'О месте'} />
+                </HeaderContainer>
+                <div className={css.aboutContainer}>
+                    <span
+                        className={classNames(
+                            css.aboutText,
+                            hideAbout ? css.trimLines : null,
+                        )}
+                    >
+                        {about_text}
+                    </span>
+                    <div className={css.trimLinesButton} onClick={toggleAbout}>
+                        <span className={css.text}>{hideAbout ? 'Читать больше' : 'Скрыть'}</span>
+                    </div>
+                </div>
+            </ContentBlock>
+            <ContentBlock>
+                <div className={css.infoBlock}>
+                    <div className={css.top}>
+                        <span className={css.title}>
+                            {workTime
+                                ? getRestaurantStatus(
+                                    workTime,
+                                    getCurrentWeekdayShort(),
+                                    getCurrentTimeShort(),
+                                )
+                                : ''}
+                        </span>
+                        <div className={css.right} onClick={toggleWorkHours}>
+                            <span className={css.expandButton}>График</span>
+                            <div
+                                className={classNames(
+                                    css.right,
+                                    css.opened,
+                                    {
+                                        [css.closed]: hideWorkHours,
+                                    },
+                                )}
+                            >
+                                <DownArrow size={20} color={'var(--grey)'} />
                             </div>
                         </div>
-                    </ContentBlock>
-                </ContentContainer>
-            </div>
-        </Page>
+                    </div>
+                    <UnmountClosed isOpened={!hideWorkHours} className={css.collapse}>
+                        <div className={css.workHours}>
+                            {workTime && workTime.map((r) => (
+                                <span key={`weekday-${r.weekday}`} className={css.text}>
+                                    {r.weekday}: {r.time_start}-{r.time_end}
+                                </span>
+                            ))}
+                        </div>
+                    </UnmountClosed>
+                </div>
+            </ContentBlock>
+            <ContentBlock>
+                <div className={css.infoBlock}>
+                    <div className={css.top}>
+                        <span className={css.title}>Детали</span>
+                    </div>
+                    <div className={css.infoBlock}>
+                        <div className={css.textRow}>
+                            <span className={css.title}>Кухня:</span>
+                            <span className={css.value}>{about_kitchen}, {about_dishes}</span>
+                        </div>
+                        <div className={css.textRow}>
+                            <span className={css.title}>Особенности:</span>
+                            <span className={css.value}>{about_features}</span>
+                        </div>
+                        <div className={css.textRow}>
+                            <span className={css.title}>Средний чек:</span>
+                            <span className={css.value}>{avg_cheque} ₽</span>
+                        </div>
+                    </div>
+                </div>
+            </ContentBlock>
+        </ContentContainer>
+    );
+};
+
+interface ChefBlockProps {
+    about: string;
+    photo_url: string;
+    chef_name: string;
+}
+
+const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_name }) => {
+    const [hideChefAbout, setHideChefAbout] = useState(true);
+    const toggleChefInfo = () => {
+        setHideChefAbout((prev) => !prev);
+    };
+    return (
+        <ContentContainer>
+            <ContentBlock>
+                <HeaderContainer>
+                    <HeaderContent id={'chef'} title={'О шефе'} />
+                </HeaderContainer>
+                <div className={css.aboutContainer}>
+                    <span
+                        className={classNames(
+                            css.aboutText,
+                            hideChefAbout ? css.trimLines : null,
+                        )}
+                    >
+                        {about}
+                    </span>
+                    <div className={css.trimLinesButton} onClick={toggleChefInfo}>
+                        <span className={css.text}>
+                            {hideChefAbout ? 'Читать больше' : 'Скрыть'}
+                        </span>
+                    </div>
+                </div>
+                <div className={css.chefInfoContainer}>
+                    <div
+                        className={classNames(
+                            css.chefImage,
+                            css.bgImage,
+                        )}
+                        style={{ backgroundImage: `url(${photo_url})` }}
+                    />
+                    <div className={css.chefInfo}>
+                        <span className={css.title}>{chef_name}</span>
+                        <span className={css.subTitle}>Бренд-шеф</span>
+                    </div>
+                </div>
+            </ContentBlock>
+        </ContentContainer>
+    );
+};
+
+interface EventsBlockProps {
+    events: IEventInRestaurant[];
+}
+
+const EventsBlock: React.FC<EventsBlockProps> = ({ events }) => {
+    const navigate = useNavigate();
+
+    return (
+        <ContentContainer>
+            <ContentBlock>
+                <HeaderContainer>
+                    <HeaderContent
+                        title={'Мероприятия'}
+                        id={'events'}
+                    />
+                </HeaderContainer>
+                {events.map((e) => (
+                    <EventCard
+                        key={e.name}
+                        onClick={() => navigate(
+                            `/events/${e.id}`,
+                        )}
+                        event_price={e.ticket_price}
+                        event_name={e.name}
+                        event_img={e.image_url}
+                        event_restaurant={e.restaurant.title}
+                        event_date={e.date_start}
+                        event_address={e.restaurant.address}
+                        sold={e.tickets_left == 0}
+                    />
+                ))}
+            </ContentBlock>
+        </ContentContainer>
+    );
+};
+
+interface BanquetsBlockProps {
+    image: string;
+    description: string;
+    restaurant_id: number;
+    restaurant_title: string;
+    banquets: IBanquet;
+}
+
+const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, restaurant_id, restaurant_title, banquets }) => {
+    const navigate = useNavigate();
+    const navigateToBanquet = () => {
+        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title: restaurant_title, banquets } });
+    };
+    return (
+        <ContentContainer>
+            <ContentBlock>
+                <HeaderContainer>
+                    <HeaderContent title={'Банкеты'} id={'banquet'} />
+                </HeaderContainer>
+                <div className={css.banquetContainer}>
+                    <div className={css.banquetImg}>
+                        <div
+                            className={classNames(
+                                css.banquetImage,
+                                css.bgImage,
+                            )}
+                            style={{
+                                backgroundImage: `url(${image})`,
+                            }}
+                        ></div>
+                    </div>
+                    <span className={css.banquetDescription}>{description}</span>
+                    <UniversalButton
+                        width={'full'}
+                        title={'Подробнее'}
+                        theme={'red'}
+                        action={navigateToBanquet}
+                    />
+                </div>
+            </ContentBlock>
+        </ContentContainer>
+    );
+};
+
+interface AddressBlockProps {
+    longitude: number;
+    latitude: number;
+    logo_url: string;
+    address: string;
+    address_station_color?: string;
+}
+
+const AddressBlock: React.FC<AddressBlockProps> = (
+    {
+        longitude,
+        latitude,
+        logo_url,
+        address_station_color,
+        address,
+    },
+) => {
+    const location = {
+        center: [
+            longitude,
+            latitude,
+        ],
+        zoom: 17,
+    };
+    return (
+        <ContentContainer>
+            <ContentBlock>
+                <HeaderContainer>
+                    <HeaderContent title={'Адрес'} />
+                </HeaderContainer>
+                <div className={css.mapContainer}>
+                    <div className={css.map}>
+                        <YMapComponentsProvider
+                            apiKey={'73a95f3b-fa74-4525-99e3-86ee1309f266'}
+                            lang={'ru_RU'}
+                        >
+                            <YMap location={location}>
+                                <YMapDefaultSchemeLayer />
+                                <YMapDefaultFeaturesLayer />
+                                <YMapMarker
+                                    coordinates={[
+                                        longitude,
+                                        latitude,
+                                    ]}
+                                    draggable={false}
+                                >
+                                    <div className={css.mapPoint}>
+                                        <img width={50} src={logo_url} alt={''} />
+                                    </div>
+                                </YMapMarker>
+                            </YMap>
+                            <section>
+                                <div className={css.relativeRestInfo}>
+                                    <div className={css.mapInfo}>
+                                        <div
+                                            className={css.mapInfoMetro}
+                                        >
+                                            {address_station_color ? (
+                                                <div
+                                                    className={css.mapInfoMetroCircle}
+                                                    style={{
+                                                        backgroundColor: `${address_station_color}`,
+                                                    }}
+                                                ></div>
+                                            ) : null}
+                                            <span className={css.mapInfoMetroText}>
+                                                {address}
+                                            </span>
+                                        </div>
+                                        <div className={css.mapInfoAddress}>
+                                            {address}
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </YMapComponentsProvider>
+                    </div>
+                </div>
+            </ContentBlock>
+        </ContentContainer>
     );
 };

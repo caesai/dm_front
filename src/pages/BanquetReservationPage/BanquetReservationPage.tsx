@@ -22,7 +22,7 @@ export const BanquetReservationPage = () => {
 
     const [user] = useAtom(userAtom)
     const [auth] = useAtom(authAtom);
-
+    console.log('id: ', id)
     const reservationData = location.state?.reservationData || location.state;
 
     const confirmationList = [

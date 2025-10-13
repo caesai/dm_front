@@ -18,8 +18,8 @@ import { UsersIcon } from '@/components/Icons/UsersIcon';
 import { BanquetOptionsPopup } from '@/components/BanquetOptionsPopup/BanquetOpitonsPopup.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import classNames from 'classnames';
-import { IBanquetAdditionalOptions, IBanquetParams } from '@/types/banquets.ts';
-import { banquetAdditionalOptions, banquetParams } from '@/__mocks__/banquets.mock.ts';
+import { IBanquetAdditionalOptions, IBanquetOptions, IBanquetParams } from '@/types/banquets.ts';
+import { banquetParams } from '@/__mocks__/banquets.mock.ts';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { TimeSelectorPopup } from '@/components/TimeSelectorPopup/TimeSelectorPopup.tsx';
 
@@ -40,9 +40,10 @@ export const BanquetOptionPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
-
-    const banquet = location.state?.banquet;
+    console.log('id: ', id)
+    const banquet: IBanquetOptions = location.state?.banquet;
     const restaurant_title = location.state?.restaurant_title;
+    const additional_options: IBanquetAdditionalOptions[] = location.state?.additional_options;
 
     const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);
@@ -60,7 +61,7 @@ export const BanquetOptionPage = () => {
         title: '',
     });
     const [timeFrom, setTimeFrom] = useState<PickerValueObj>({
-        value: 'от',
+        value: 'с',
         title: '',
     });
     const [timeTo, setTimeTo] = useState<PickerValueObj>({
@@ -83,14 +84,14 @@ export const BanquetOptionPage = () => {
         }
     };
 
-    const getBanquetAdditionalOptions = (restaurantId?: string): IBanquetAdditionalOptions | undefined => {
-        if (!restaurantId) return;
-        const filteredBanquets = banquetAdditionalOptions.filter(
-            item => item.restaurant_id === parseInt(restaurantId),
-        );
-
-        return filteredBanquets[0];
-    };
+    // const getBanquetAdditionalOptions = (restaurantId?: string): IBanquetAdditionalOptions | undefined => {
+    //     if (!restaurantId) return;
+    //     const filteredBanquets = banquet.additional_options.filter(
+    //         item => item.restaurant_id === parseInt(restaurantId),
+    //     );
+    //
+    //     return filteredBanquets[0];
+    // };
 
     const isTimeRangeValid = isTimeValid(timeFrom.value, timeTo.value);
 
@@ -105,26 +106,26 @@ export const BanquetOptionPage = () => {
 
     const handleContinue = () => {
         const finalReason = selectedReason === 'Другое' ? customReason : selectedReason;
-        const additionalOptions = getBanquetAdditionalOptions(id)?.options;
+        console.log('banquet: ', banquet)
         const banquetData = {
             name: banquet.name,
             date,
             timeFrom: timeFrom.value,
             timeTo: timeTo.value,
             guestCount,
-            additionalOptions,
+            additionalOptions: additional_options,
             restaurant_title,
             reason: finalReason,
             price: currentBanquetParams && guestCount.value !== 'unset' ? {
                 deposit: banquet.deposit,
-                totalDeposit: banquet.deposit * parseInt(guestCount.value),
+                totalDeposit: Number(banquet.deposit) * parseInt(guestCount.value),
                 serviceFee: banquet.service_fee,
                 total: (1 + banquet.service_fee / 100) *
-                    banquet.deposit *
+                    Number(banquet.deposit) *
                     parseInt(guestCount.value),
             } : null,
         };
-        if (additionalOptions && additionalOptions.length > 0) {
+        if (banquetData.additionalOptions && banquetData.additionalOptions.length > 0) {
             navigate(`/banquets/${id}/additional-services`, {
                 state: banquetData,
             });
@@ -152,7 +153,7 @@ export const BanquetOptionPage = () => {
                 closePopup={closePopup}
                 guestCount={guestCount}
                 setGuestCount={setGuestCount}
-                minGuests={banquet.guests_min}
+                minGuests={Number(banquet.guests_min)}
                 maxGuests={banquet.guests_max}
             />
             <TimeSelectorPopup
@@ -310,7 +311,7 @@ export const BanquetOptionPage = () => {
                                         <span>
                                             {currentBanquetParams &&
                                                 guestCount.value !== 'unset' &&
-                                                banquet.deposit *
+                                                Number(banquet.deposit) *
                                                 parseInt(guestCount.value) +
                                                 ' ₽'}
                                         </span>
@@ -328,7 +329,7 @@ export const BanquetOptionPage = () => {
                                                 ((1 +
                                                         banquet?.service_fee /
                                                         100) *
-                                                    banquet?.deposit *
+                                                    Number(banquet?.deposit) *
                                                     parseInt(guestCount.value)) + ' ₽'
                                             }
                                         </span>
