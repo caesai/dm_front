@@ -50,7 +50,7 @@ import {
     getCurrentTimeShort,
     getCurrentWeekdayShort,
     getRestaurantStatus,
-    getTimeShort,
+    getTimeShort, setDataToLocalStorage,
 } from '@/utils.ts';
 import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
@@ -157,6 +157,8 @@ export const Restaurant = () => {
 
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
+            setDataToLocalStorage('sharedRestaurant', { id, date: bookingDate, time: currentSelectedTime });
+
             navigate('/onboarding/5');
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
@@ -279,8 +281,8 @@ export const Restaurant = () => {
                         </div>
                     </div>
                     {headerScrolled ?
-                        <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)}
-                                              isEvents={filteredEvents.length > 0} /> : null}
+                        <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0}
+                                              isEvents={filteredEvents.length > 0}/> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>

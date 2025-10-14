@@ -65,8 +65,7 @@ export const Redirecter = () => {
                 navigate(`/events/${eventId}?shared=true`);
             } else if (location.search.includes('restaurantId')) {
                 const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
-                console.log('sharedRestaurant: ', { id: restaurantId })
-                setDataToLocalStorage('sharedRestaurant', { id: restaurantId });
+                // setDataToLocalStorage('sharedRestaurant', { id: restaurantId });
                 navigate('/restaurant/' + restaurantId + '?shared=true', { replace: true });
             } else if (location.search.includes('bookingId')) {
                 const bookingId = getEventIdFromParams(paramsObject, 'bookingId');

@@ -12,9 +12,9 @@ import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import {
     formatDate,
-    formatDateShort,
+    formatDateShort, getDataFromLocalStorage,
     getGuestsString,
-    getTimeShort,
+    getTimeShort, removeDataFromLocalStorage,
 } from '@/utils.ts';
 import { BookingGuestCountSelectorPopup } from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -188,6 +188,7 @@ export const BookingPage: FC = () => {
                 .finally(() => setTimeslotsLoading(false));
         }
     }, [bookingDate, guestCount, bookingRestaurant]);
+
     const morningTimeslots = useMemo(
         () =>
             availableTimeslots.filter((v) => {
@@ -212,6 +213,16 @@ export const BookingPage: FC = () => {
             }),
         [availableTimeslots]
     );
+
+    useEffect(() => {
+        const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
+        if (sharedRestaurant) {
+            const { date, time } = JSON.parse(sharedRestaurant);
+            setBookingDate(date);
+            setCurrentSelectedTime(time);
+            removeDataFromLocalStorage('sharedRestaurant');
+        }
+    },[])
 
     // Find the first part of the day with available timeslots and update currentPartOfDay
     // useEffect(() => {
