@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import css from './RestaurantNavigation.module.css';
 import AnchorLink from 'react-anchor-link-smooth-scroll';
 import classNames from 'classnames';
+import { Swiper as SwiperCore } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 
@@ -12,9 +13,18 @@ interface IRestaurantNavigationProps {
 
 export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({ isShow, isEvents }) => {
     const [hash, setHash] = useState<string | null>(null);
+    const [swiperInstance, setSwiperInstance] = useState<SwiperCore | null>(null);
+    const hashes = ['booking', 'gallery', 'menu', 'about', 'chef', 'events', 'banquet'];
+
+    useEffect(() => {
+        if (hash && swiperInstance) {
+            const index = hashes.indexOf(hash);
+            swiperInstance.slideTo(index);
+        }
+    }, [hash]);
     useEffect(() => {
         const handleScroll = () => {
-            const elements = ['booking', 'gallery', 'menu', 'about', 'chef', 'events', 'banquet'].map((id) => document.getElementById(id));
+            const elements = hashes.map((id) => document.getElementById(id));
             elements.forEach((element) => {
                 if (element && (element.offsetTop - window.scrollY < window.innerHeight / 2)) {
                     setHash(element.id);
@@ -34,6 +44,7 @@ export const RestaurantNavigation: FC<IRestaurantNavigationProps> = ({ isShow, i
                 freeMode={true}
                 slidesPerView={'auto'}
                 spaceBetween={8}
+                onSwiper={setSwiperInstance}
             >
                 <SwiperSlide style={{ width: 'fit-content' }}>
                     <AnchorLink href="#booking" offset={250}>
