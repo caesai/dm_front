@@ -362,6 +362,7 @@ export const Restaurant = () => {
                         description={banquets.description}
                         restaurant_id={Number(id)}
                         restaurant_title={String(restaurant?.title)}
+                        workTime={restaurant?.worktime}
                         banquets={banquets}
                     />
                 )}
@@ -1005,12 +1006,13 @@ interface BanquetsBlockProps {
     restaurant_id: number;
     restaurant_title: string;
     banquets: IBanquet;
+    workTime: IWorkTime[] | undefined;
 }
 
-const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, restaurant_id, restaurant_title, banquets }) => {
+const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, restaurant_id, restaurant_title, banquets, workTime }) => {
     const navigate = useNavigate();
     const navigateToBanquet = () => {
-        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title: restaurant_title, banquets } });
+        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title, banquets, workTime } });
     };
     return (
         <ContentContainer>
