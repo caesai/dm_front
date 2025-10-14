@@ -188,6 +188,7 @@ export const Restaurant = () => {
     }, [id]);
 
     useEffect(() => {
+        // TODO: Refactor two Navigation Blocks on Restaurant Page
         const handleScroll = () => {
             setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 50px – меняем состояние
         };
@@ -343,21 +344,6 @@ export const Restaurant = () => {
                 />
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
                 <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
-                <AboutBlock
-                    about_text={String(restaurant?.about_text)}
-                    about_dishes={String(restaurant?.about_dishes)}
-                    about_kitchen={String(restaurant?.about_kitchen)}
-                    about_features={String(restaurant?.about_features)}
-                    avg_cheque={String(restaurant?.avg_cheque)}
-                    workTime={restaurant?.worktime}
-                />
-
-                <ChefBlock
-                    about={String(restaurant?.brand_chef.about)}
-                    photo_url={String(restaurant?.brand_chef.photo_url)}
-                    chef_name={String(restaurant?.brand_chef.name)}
-                />
-                {filteredEvents.length > 0 && <EventsBlock events={events} />}
                 {tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0 && (
                     <BanquetsBlock
                         image={banquets.image}
@@ -368,6 +354,20 @@ export const Restaurant = () => {
                         banquets={banquets}
                     />
                 )}
+                {filteredEvents.length > 0 && <EventsBlock events={events} />}
+                <AboutBlock
+                    about_text={String(restaurant?.about_text)}
+                    about_dishes={String(restaurant?.about_dishes)}
+                    about_kitchen={String(restaurant?.about_kitchen)}
+                    about_features={String(restaurant?.about_features)}
+                    avg_cheque={String(restaurant?.avg_cheque)}
+                    workTime={restaurant?.worktime}
+                />
+                <ChefBlock
+                    about={String(restaurant?.brand_chef.about)}
+                    photo_url={String(restaurant?.brand_chef.photo_url)}
+                    chef_name={String(restaurant?.brand_chef.name)}
+                />
                 <AddressBlock
                     longitude={Number(
                         restaurant?.address_lonlng.split(
