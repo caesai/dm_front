@@ -45,6 +45,7 @@ export const StageNine = () => {
 
         APICompleteOnboarding(auth.access_token, true)
             .then((d) => setUser(d.data))
+            .then(() => localStorage.setItem("PREFERENCES_STATUS", JSON.stringify({ visit_number: 3, preferences_sent: true })))
             .then(() => {
                 const sharedEvent = getDataFromLocalStorage('sharedEvent');
                 const superEvent = getDataFromLocalStorage('superEvent');
