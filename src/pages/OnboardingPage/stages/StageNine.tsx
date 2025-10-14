@@ -22,9 +22,7 @@ export const StageNine = () => {
             setPreferences(prev => (prev.filter((p) => p !== content)));
         }
         else {
-            if (preferences.length < 3) {
-                setPreferences([...preferences, content]);
-            }
+            setPreferences([...preferences, content]);
         }
     }
 
