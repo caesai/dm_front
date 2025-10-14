@@ -412,3 +412,16 @@
         margin: 10px 0;
     }
 }
+
+.closeIcon {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    z-index: 10001;
+    cursor: pointer;
+
+    >svg {
+        transform: scale(0.6);
+    }
+}
+
