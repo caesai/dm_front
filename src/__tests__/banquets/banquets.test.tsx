@@ -22,7 +22,7 @@ describe('Banquets', () => {
         (useLocation as jest.Mock).mockClear();
     });
 
-    test('Should return a empty banquets message', async () => {
+    test('Should return an empty banquets message', async () => {
         (useLocation as jest.Mock).mockReturnValue({
             state: {
                 banquets: null

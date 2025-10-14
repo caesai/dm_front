@@ -156,9 +156,6 @@ const AppRouter = () => {
                         <Route path={'/onboarding/4'} element={<StageFour />} />
                         <Route path={'/onboarding/5'} element={<StageFive />} />
                         <Route path={'/onboarding/6'} element={<StageSix />} />
-                        {/*<Route path={'/onboarding/7'} element={<StageSeven />} />*/}
-                        {/*<Route path={'/onboarding/8'} element={<StageEight />} />*/}
-                        {/*<Route path={'/onboarding/9'} element={<StageNine />} />*/}
                     </Route>
                     <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
                     <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />

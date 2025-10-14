@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import { IBanquetAdditionalOptions, IBanquetOptions } from '@/types/banquets.ts';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { TimeSelectorPopup } from '@/components/TimeSelectorPopup/TimeSelectorPopup.tsx';
+import { IWorkTime } from '@/types/restaurant.ts';
 
 const timeToHours = (timeStr: string): number => {
     if (!timeStr || timeStr === 'с' || timeStr === 'до') return 0;
@@ -42,7 +43,8 @@ export const BanquetOptionPage = () => {
     const location = useLocation();
     const { id } = useParams();
     const banquet: IBanquetOptions = location.state?.banquet;
-    const restaurant_title = location.state?.restaurant_title;
+    const restaurant_title: string = location.state?.restaurant_title;
+    const workTime: IWorkTime[] = location.state?.workTime;
     const additional_options: IBanquetAdditionalOptions[] = location.state?.additional_options;
     const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);
@@ -141,14 +143,15 @@ export const BanquetOptionPage = () => {
                 maxGuests={banquet.guests_max}
             />
             <TimeSelectorPopup
-                isOpen={isTimeFromPopup}
+                isOpen={!!date && isTimeFromPopup}
                 closePopup={closeTimeFromPopup}
                 time={timeFrom}
                 setTimeOption={setTimeFrom}
+                minTime={date ? workTime[Number(date?.getDay())].time_start :  undefined}
                 maxTime={timeTo.value !== 'до' ? timeTo.value : undefined}
             />
             <TimeSelectorPopup
-                isOpen={isTimeToPopup}
+                isOpen={!!date && isTimeToPopup}
                 closePopup={closeTimeToPopup}
                 time={timeTo}
                 setTimeOption={setTimeTo}

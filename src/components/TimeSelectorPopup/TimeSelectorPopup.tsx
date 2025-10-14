@@ -37,20 +37,22 @@ const StyledPopup = styled(Popup)`
     }
 `;
 
-export const TimeSelectorPopup: FC<Props> = ({
-                                                 isOpen,
-                                                 closePopup,
-                                                 time,
-                                                 setTimeOption,
-                                                 minTime,
-                                                 maxTime,
-                                             }) => {
+export const TimeSelectorPopup: FC<Props> = (
+    {
+        isOpen,
+        closePopup,
+        time,
+        setTimeOption,
+        minTime,
+        maxTime,
+    },
+) => {
     const allTimeOptions: PickerValueObj[] = [
         '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
         '18:00', '19:00', '20:00', '21:00', '22:00', '23:00',
     ].map((val) => ({
         title: val,
-        value: val
+        value: val,
     }));
 
     const timeOptions = allTimeOptions.filter(option => {
@@ -71,7 +73,7 @@ export const TimeSelectorPopup: FC<Props> = ({
     const onChange = (val: PickerValueObj) => {
         setTimeOption({
             title: `${val.value}`,
-            value: val.value
+            value: val.value,
         });
     };
 
@@ -92,7 +94,7 @@ export const TimeSelectorPopup: FC<Props> = ({
                                     <span
                                         className={classNames(
                                             css.item,
-                                            selected ? css.item__selected : null
+                                            selected ? css.item__selected : null,
                                         )}
                                     >
                                         {option.title}
