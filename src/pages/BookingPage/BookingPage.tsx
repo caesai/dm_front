@@ -528,7 +528,6 @@ export const BookingPage: FC = () => {
                                         icon={<CrossIcon size={44} />}
                                         // isBack={true}
                                         action={() => {
-                                            console.log('params.get(\'shared\'): ', params.get('shared'))
                                             if (params.get('shared')) {
                                                 navigate('/')
                                             } else {
