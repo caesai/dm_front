@@ -11,6 +11,7 @@ import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { AxiosResponse } from 'axios';
 import { useAtom } from 'jotai/index';
 import { authAtom } from '@/atoms/userAtom.ts';
+import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 const StyledPopup = styled(Popup)`
     &-overlay {
@@ -44,12 +45,14 @@ interface Props {
 export const CancelBookingPopup = ({ isOpen, setOpen, onCancelBooking, popupText, successMessage, skipStep, bookingId, onSuccess }: Props) => {
     const [currentStep, setCurrentStep] = useState(0);
     const steps = [StepOne, StepTwo, StepThree, ErrorStep];
+    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
     const cancelBooking = () => {
         onCancelBooking()
             .then(() => {
-                if (skipStep) {
+                if (skipStep || tg_id && mockEventsUsersList.includes(tg_id)) {
                     setCurrentStep(2);
+                    return;
                 }
                 setCurrentStep((prev) => prev + 1);
             })
@@ -68,7 +71,7 @@ export const CancelBookingPopup = ({ isOpen, setOpen, onCancelBooking, popupText
     }
 
     const handlePreviousStep = () => {
-        setCurrentStep((prev) => prev - 1);
+        setCurrentStep(0);
     };
 
     const CurrentStepComponent = steps[currentStep];

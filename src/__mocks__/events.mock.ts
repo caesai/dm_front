@@ -108,4 +108,5 @@ export const mockEventsUsersList = [
     1277004097,
     230478536,
     379430093,
+    742541388,
 ]
