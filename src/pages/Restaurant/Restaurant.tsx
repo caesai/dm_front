@@ -50,7 +50,8 @@ import {
     getCurrentTimeShort,
     getCurrentWeekdayShort,
     getRestaurantStatus,
-    getTimeShort, setDataToLocalStorage,
+    getTimeShort,
+    // setDataToLocalStorage,
 } from '@/utils.ts';
 import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
@@ -157,9 +158,7 @@ export const Restaurant = () => {
 
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
-            setDataToLocalStorage('sharedRestaurant', { id, date: bookingDate, time: currentSelectedTime });
-
-            navigate('/onboarding/5');
+            navigate('/onboarding/5', { state: { id, date: bookingDate, time: currentSelectedTime, sharedRestaurant: true } });
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
         }

@@ -1,6 +1,6 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import { sevenStageOptions } from '@/__mocks__/onboarding.mock.ts';
 import { useState } from 'react';
@@ -10,6 +10,8 @@ import { APIUserPreferences } from '@/api/user.ts';
 
 export const StageEight = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location?.state;
 
     const [auth] = useAtom(authAtom);
 
@@ -37,7 +39,7 @@ export const StageEight = () => {
                 }]
 
         })
-            .then(() => navigate('/onboarding/9'))
+            .then(() => navigate('/onboarding/9', { state }))
             .catch(() => alert
                 (
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'

@@ -6,13 +6,15 @@ import { requestPhone } from '@/components/RequestPermissions/utils.ts';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { APIUserInfo } from '@/api/auth.ts';
-import { useNavigate } from 'react-router-dom';
-import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
+import { useLocation, useNavigate } from 'react-router-dom';
+// import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
 
 export const UserPhoneConfirmationPage = () => {
     const [user, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location?.state;
 
     const updateUser = () => {
         if (!auth?.access_token) {
@@ -33,18 +35,17 @@ export const UserPhoneConfirmationPage = () => {
 
     useEffect(() => {
         if (user?.phone_number) {
-            const sharedEvent = getDataFromLocalStorage('sharedEvent');
-            const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
-            const superEvent = getDataFromLocalStorage('superEvent');
-            if (sharedEvent) {
-                navigate(`/events/${JSON.parse(sharedEvent).id}/confirm`);
-                removeDataFromLocalStorage('sharedEvent');
-            } else if (superEvent) {
-                navigate('/events/super');
-                removeDataFromLocalStorage('superEvent');
-            } else if (sharedRestaurant) {
-                navigate('/booking?id=' + JSON.parse(sharedRestaurant).id);
-                // removeDataFromLocalStorage('sharedRestaurant');
+            if (state) {
+                if (state.sharedEvent) {
+                    navigate(`/events/${state.id}/confirm&shared=true`);
+                }
+                if (state.superEvent) {
+                    navigate('/events/super&shared=true');
+                }
+                if (state.sharedRestaurant) {
+                    console.log('state: ', state);
+                    navigate('/booking?id=' + state.id + '&shared=true', { state });
+                }
             } else {
                 navigate('/');
             }

@@ -12,6 +12,7 @@ export const Redirecter = () => {
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const [params] = useSearchParams();
+    const state = location?.state;
 
     const EXCLUDED_URLS = ['/phoneConfirmation', '/onboarding', '/gdpr'];
     const ONBOARDING_EXCLUDED = [
@@ -43,7 +44,7 @@ export const Redirecter = () => {
             user?.complete_onboarding &&
             !EXCLUDED_URLS.includes(location.pathname)
         ) {
-            navigate('/phoneConfirmation');
+            navigate('/phoneConfirmation', { state });
         }
         if (
             auth?.access_token &&
@@ -54,19 +55,17 @@ export const Redirecter = () => {
         ) {
             if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
                 setDataToLocalStorage('superEvent', {});
-                navigate(`/events/super`, { replace: true });
+                navigate(`/events/super?shared=true`, { replace: true });
             }
             if (paramsObject.tgWebAppStartParam === 'newselfokna') {
                 navigate('/newrestaurant', { replace: true });
             }
             if (location.search.includes('eventId')) {
                 const eventId = getEventIdFromParams(paramsObject, 'eventId');
-                setDataToLocalStorage('sharedEvent', { id: eventId });
                 navigate(`/events/${eventId}?shared=true`);
             } else if (location.search.includes('restaurantId')) {
                 const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
-                // setDataToLocalStorage('sharedRestaurant', { id: restaurantId });
-                navigate('/restaurant/' + restaurantId + '?shared=true', { replace: true });
+                navigate('/restaurant/' + restaurantId + '&shared=true', { replace: true });
             } else if (location.search.includes('bookingId')) {
                 const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
                 navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });

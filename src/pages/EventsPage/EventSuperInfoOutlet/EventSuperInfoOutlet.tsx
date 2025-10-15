@@ -19,7 +19,7 @@ export const EventSuperInfoOutlet: React.FC = () => {
         if (user?.complete_onboarding) {
             navigate(`/events/super/apply`);
         } else {
-            navigate(`/onboarding/5`);
+            navigate(`/onboarding/5`, { state: { superEvent: true } });
         }
     };
 
