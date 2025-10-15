@@ -1,12 +1,11 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
-import {useNavigate} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {useAtom} from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import {TextInput} from "@/components/TextInput/TextInput.tsx";
 import {useState} from "react";
 import { APICompleteOnboarding, APIUserName } from '@/api/user.ts';
-import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
 
 export const StageSix = () => {
     const [user, setUser] = useAtom(userAtom);
@@ -14,7 +13,8 @@ export const StageSix = () => {
     const navigate = useNavigate();
     const [name, setName] = useState<string>();
     const [surname, setSurname] = useState<string>();
-
+    const location = useLocation();
+    const state = location?.state;
     // на доработках
     // const handleConfirm = () => {
     //     if (!auth?.access_token || !name ) {
@@ -22,7 +22,9 @@ export const StageSix = () => {
     //     }
     //
     //     APIUserName(auth.access_token, name, surname)
-    //         .then(() => navigate('/onboarding/7'))
+    //         .then(() => {
+    //             navigate('/onboarding/7')
+    //         })
     //         .catch(() => alert
     //             (
     //                 'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
@@ -38,20 +40,20 @@ export const StageSix = () => {
         APICompleteOnboarding(auth.access_token, true)
             .then((d) => setUser(d.data))
             .then(() => {
-                const sharedEvent = getDataFromLocalStorage('sharedEvent');
-                const superEvent = getDataFromLocalStorage('superEvent');
-                const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
-                if(sharedEvent) {
-                    navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
-                } else if (superEvent) {
-                    navigate('/events/super');
-                    removeDataFromLocalStorage('superEvent');
-                } else if (sharedRestaurant) {
-                    navigate('/restaurant/' + JSON.parse(sharedRestaurant).id);
-                    removeDataFromLocalStorage('sharedRestaurant');
-                } else {
-                    navigate('/');
-                }
+                // const sharedEvent = getDataFromLocalStorage('sharedEvent');
+                // const superEvent = getDataFromLocalStorage('superEvent');
+                // const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
+                // if(sharedEvent) {
+                //     navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
+                // } else if (superEvent) {
+                //     navigate('/events/super');
+                //     // removeDataFromLocalStorage('superEvent');
+                // } else if (sharedRestaurant) {
+                //     navigate('/restaurant/' + JSON.parse(sharedRestaurant).id);
+                //     // removeDataFromLocalStorage('sharedRestaurant');
+                // } else {
+                    navigate('/', { state } );
+                // }
             })
             .catch(() =>
                 alert(

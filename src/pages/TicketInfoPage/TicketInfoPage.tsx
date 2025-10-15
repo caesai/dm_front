@@ -4,22 +4,13 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
-// import { RefundIcon } from '@/components/Icons/RefundIcon.tsx';
-// import { DownloadIcon } from '@/components/Icons/DownloadIcon.tsx';
 import { useEffect, useState } from 'react';
 import { EventTicket } from '@/types/events.ts';
 import { APIDeleteTicket, APIGetSharedTicket, APIGetTicket } from '@/api/events.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-// import { formatDateDT } from '@/utils.ts';
 import moment from 'moment';
-// import QRCode from 'react-qr-code';
-// import jsPDF from "jspdf";
-// import {BASE_BOT} from "@/api/base.ts";
-// import { Buffer } from 'buffer';
-// import {MontFont} from "@/components/MontFont/Montfont.ts";
-// import '../../../public/'
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
 // import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
@@ -27,7 +18,6 @@ import { BASE_BOT } from '@/api/base.ts';
 import { Share } from '@/components/Icons/Share.tsx';
 import { getDataFromLocalStorage, setDataToLocalStorage } from '@/utils.ts';
 import { CancelBookingPopup } from '@/pages/BookingInfoPage/CancelBookingPopup/CancelBookingPopup.tsx';
-import { InformationPopup } from '@/components/InformationPopup/InformationPopup.tsx';
 
 
 export const TicketInfoPage = () => {
@@ -37,8 +27,6 @@ export const TicketInfoPage = () => {
     const [auth] = useAtom(authAtom);
     const [ticket, setTicket] = useState<EventTicket>();
     const [cancelPopup, setCancelPopup] = useState(false);
-    const [canceledPopup, setCanceledPopup] = useState(false);
-
 
     const shared = Boolean(searchParams.get('shared'));
     const ticket_refund = getDataFromLocalStorage('ticket_refund');
@@ -95,17 +83,7 @@ export const TicketInfoPage = () => {
     };
 
     const onCancel = () => {
-        if (!auth?.access_token) {
-            // navigate('/');
-            return;
-        }
-        setCancelPopup(false);
-        APIDeleteTicket(Number(id), String(auth?.access_token))
-            .then(() => {
-                setDataToLocalStorage('ticket_refund', { id });
-                setCanceledPopup(true);
-            })
-            .catch(() => alert('Произошла ошибка при отмене брони.'));
+        return APIDeleteTicket(Number(id), String(auth?.access_token));
     };
 
     const goBack = () => {
@@ -118,28 +96,17 @@ export const TicketInfoPage = () => {
 
     return (
         <Page back={true}>
-            {/*<ModalPopup*/}
-            {/*    isOpen={isShowing}*/}
-            {/*    setOpen={toggle}*/}
-            {/*    title={!isRefund ? 'Вы хотите оформить возврат?' : 'Запрос принят'}*/}
-            {/*    text={isRefund ? `В течении 30 минут с вами свяжется сотрудник ресторана, чтобы оформить возврат. Если запрос был отправлен вне рабочего времени ресторана, мы обязательно ответим сразу после открытия.` : undefined}*/}
-            {/*    button={!isRefund}*/}
-            {/*    btnText={'Да'}*/}
-            {/*    reverseButton={true}*/}
-            {/*    btnAction={refund}*/}
-            {/*    btnScndrText={'Нет'}*/}
-            {/*/>*/}
             <CancelBookingPopup
                 isOpen={cancelPopup}
-                text={'Оформить возврат?'}
+                popupText={'Оформить возврат?'}
                 setOpen={setCancelPopup}
-                onSubmit={() => onCancel()}
-            />
-            <InformationPopup
-                isOpen={canceledPopup}
-                setOpen={setCanceledPopup}
-                close={() => navigate('/tickets')}
-                text={'Успешный возврат'}
+                onCancelBooking={onCancel}
+                onSuccess={() => {
+                    setDataToLocalStorage('ticket_refund', { id });
+                    navigate('/tickets')
+                }}
+                successMessage={'Успешный возврат'}
+                skipStep={true}
             />
             <div className={css.body}>
                 <div className={css.header}>

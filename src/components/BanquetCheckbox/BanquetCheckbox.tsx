@@ -1,11 +1,11 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import css from './BanquetCheckbox.module.css';
 import { CheckboxIcon } from '@/components/Icons/CheckboxIcon.tsx';
 
 interface CheckBoxInputProps {
     checked: boolean;
     toggle: () => void;
-    label: ReactNode;
+    label: string;
 }
 
 export const BanquetCheckbox: React.FC<CheckBoxInputProps> = ({ checked, toggle, label }) => {

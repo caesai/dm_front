@@ -541,7 +541,11 @@ export function NearestCity(latitude: number, longitude: number) {
 }
 
 export const setDataToLocalStorage = (itemKey: string, data: object) => {
-    localStorage.setItem(itemKey, JSON.stringify(data));
+    try {
+        localStorage.setItem(itemKey, JSON.stringify(data));
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 export const getDataFromLocalStorage = (itemKey: string) => {

@@ -38,6 +38,7 @@ describe('Events API Test', () => {
                 <EventListOutlet />
             </MemoryRouter>,
         );
+
         await waitFor(() => {
             expect(screen.getByText(/Дегустация чая/i)).toBeInTheDocument();
         });

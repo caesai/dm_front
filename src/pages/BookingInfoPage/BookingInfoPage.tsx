@@ -12,7 +12,6 @@ import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { useCallback, useEffect, useState } from 'react';
 import { CancelBookingPopup } from '@/pages/BookingInfoPage/CancelBookingPopup/CancelBookingPopup.tsx';
-import { InformationPopup } from '@/components/InformationPopup/InformationPopup.tsx';
 import { IBookingInfo } from '@/types/restaurant.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { useScript } from 'usehooks-ts';
@@ -40,7 +39,6 @@ export const BookingInfoPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [cancelPopup, setCancelPopup] = useState(false);
-    const [canceledPopup, setCanceledPopup] = useState(false);
     const [booking, setBooking] = useState<IBookingInfo>();
     const [auth] = useAtom(authAtom);
 
@@ -62,18 +60,10 @@ export const BookingInfoPage = () => {
         };
     }, []);
 
-    const onCancel = () => {
-        if (!auth?.access_token || !booking) {
-            // navigate('/');
-            return;
-        }
-        setCancelPopup(false);
-        APICancelBooking(auth.access_token, booking.id)
-            .then(() => {
-                setCanceledPopup(true);
-            })
-            .catch(() => alert('Произошла ошибка при отмене брони.'));
+    const onCancelBooking = () => {
+        return APICancelBooking(String(auth?.access_token), Number(booking?.id))
     };
+
     useScript('https://yastatic.net/taxi-widget/ya-taxi-widget.js', {
         removeOnUnmount: true,
     });
@@ -102,12 +92,11 @@ export const BookingInfoPage = () => {
             <CancelBookingPopup
                 isOpen={cancelPopup}
                 setOpen={setCancelPopup}
-                onSubmit={() => onCancel()}
-            />
-            <InformationPopup
-                isOpen={canceledPopup}
-                setOpen={setCanceledPopup}
-                text={'Ваше бронирование отменено'}
+                onCancelBooking={onCancelBooking}
+                onSuccess={() => navigate('/myBookings')}
+                popupText={'Вы уверены, что хотите отменить бронирование?'}
+                successMessage={'Ваше бронирование отменено'}
+                bookingId={booking?.id}
             />
             <div className={css.absolute_footer}>
                 <div

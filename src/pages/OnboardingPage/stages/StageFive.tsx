@@ -1,56 +1,48 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-// import {APICompleteOnboarding} from '@/api/user.ts';
-import {useAtom} from 'jotai';
-import {authAtom, userAtom} from '@/atoms/userAtom.ts';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
-// import {getDataFromLocalStorage} from "@/utils.ts";
 
 export const StageFive = () => {
     const [agree, setAgree] = useState(false);
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location?.state;
 
     const handleConfirm = () => {
         if (!agree || !user || !auth?.access_token) {
             return;
         }
-        navigate('/onboarding/6')
-        // APICompleteOnboarding(auth.access_token, agree)
-        //     .then((d) => setUser(d.data))
-        //     .then(() => {
-        //         const sharedEvent = getDataFromLocalStorage('sharedEvent');
-        //         if(sharedEvent) {
-        //             navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
-        //         } else {
-        //             navigate('/');
-        //         }
-        //     })
-        //     .catch(() =>
-        //         alert(
-        //             'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
-        //         )
-        //     );
+        navigate('/onboarding/6', { state });
     };
+
+    const toggle = () => {
+        setAgree(!agree);
+    };
+
+    const CheckBoxLabel = () => (
+        <div>
+            Принимаю{' '}
+            <span className={css.redUnderline}>
+                Условия пользовательского соглашения
+            </span>{' '}
+            и{' '}
+            <span className={css.redUnderline}>
+                Политику конфиденциальности
+            </span>
+        </div>
+    );
+
     return (
         <div className={css.stage_page}>
             <div className={css.stage_page_wrapper}>
                 <div className={css.stage_footer}>
-                    <CheckBoxInput checked={agree} toggle={() => setAgree(!agree)} label={(
-                        <div>
-                            Принимаю{' '}
-                            <span className={css.redUnderline}>
-                                Условия пользовательского соглашения
-                            </span>{' '}
-                            и{' '}
-                            <span className={css.redUnderline}>
-                                Политику конфиденциальности
-                            </span>
-                        </div>
-                    )} />
+                    <CheckBoxInput checked={agree} toggle={toggle} label={<CheckBoxLabel />} />
                     <div className={css.button_container}>
                         <div
                             className={classNames(css.redButton, {

@@ -6,15 +6,17 @@ import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import {useNavigate, useSearchParams} from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import {
     formatDate,
     formatDateShort,
+    // getDataFromLocalStorage,
     getGuestsString,
     getTimeShort,
+    // removeDataFromLocalStorage,
 } from '@/utils.ts';
 import { BookingGuestCountSelectorPopup } from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -92,7 +94,8 @@ export const BookingPage: FC = () => {
     const idFromParams = params.get('id');
     const isFreeEventBooking = params.get('free_event');
     const freeEventid = params.get('event_id');
-
+    const location = useLocation();
+    const state = location?.state;
     // Global state atoms
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
@@ -188,6 +191,7 @@ export const BookingPage: FC = () => {
                 .finally(() => setTimeslotsLoading(false));
         }
     }, [bookingDate, guestCount, bookingRestaurant]);
+
     const morningTimeslots = useMemo(
         () =>
             availableTimeslots.filter((v) => {
@@ -212,6 +216,14 @@ export const BookingPage: FC = () => {
             }),
         [availableTimeslots]
     );
+
+    useEffect(() => {
+        if (state) {
+            const { date, time } = state;
+            setBookingDate(date);
+            setCurrentSelectedTime(time);
+        }
+    },[state])
 
     // Find the first part of the day with available timeslots and update currentPartOfDay
     // useEffect(() => {

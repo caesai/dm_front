@@ -5,41 +5,23 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
-import { useEffect, useState } from 'react';
-import { IBanquetOptionsContainer } from '@/types/banquets.ts';
-import { banquetOptions } from '@/__mocks__/banquets.mock.ts';
+import { IBanquet } from '@/types/banquets.ts';
 import { DepositIcon } from '@/components/Icons/DepositIcon.tsx';
 import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
+import { IWorkTime } from '@/types/restaurant.ts';
 
 export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-
-    const {id} = useParams();
+    const banquets: IBanquet = location.state?.banquets;
+    const workTime: IWorkTime[] = location.state?.workTime;
     const restaurant_title = location.state?.restaurant_title;
 
-    const [banquets, setBanquets] = useState<IBanquetOptionsContainer>()
-
-    const getBanquetOptions = (restaurantId?: string): IBanquetOptionsContainer | undefined => {
-        if (!restaurantId) return;
-        const filteredBanquets = banquetOptions.filter(
-            item => item.restaurant_id === parseInt(restaurantId)
-        );
-
-        return filteredBanquets[0];
-    };
+    const {id} = useParams();
 
     const goBack = () => {
         navigate(-1);
     }
-
-    useEffect(() => {
-        const banquet = getBanquetOptions(id);
-        if (banquet) {
-            setBanquets(banquet);
-        }
-    }, [id]);
-
 
     return (
         <Page back={true}>
@@ -55,11 +37,11 @@ export const ChooseBanquetOptionsPage = () => {
                     </div>
                     <ContentContainer>
                         <ContentBlock>
-                            {banquets?.options && banquets.options.length > 0 ? (
-                                banquets?.options.map((banquet) => (
+                            {banquets?.banquet_options && banquets.banquet_options.length > 0 ? (
+                                banquets?.banquet_options.map((banquet) => (
                                     <div className={css.banquetContainer} key={banquet.id}>
                                         <img
-                                            src={banquet.image} alt="banquet_img"
+                                            src={banquet.images[0]} alt="banquet_img"
                                             onDragStart={event => event.preventDefault()} />
                                         <div className={css.banquetInfo}>
                                             <span className={css.banquet_title}>{banquet.name}</span>
@@ -80,7 +62,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                 <div className={css.buttonContainer}>
                                                     <button
                                                         className={css.infoButton}
-                                                        onClick={() => navigate(`/banquets/${id}/option`, { state: { banquet: banquet, restaurant_title: restaurant_title } })}
+                                                        onClick={() => navigate(`/banquets/${id}/option`, { state: { banquet, additional_options: banquets.additional_options, restaurant_title, workTime } })}
                                                     >
                                                         Выбрать
                                                     </button>

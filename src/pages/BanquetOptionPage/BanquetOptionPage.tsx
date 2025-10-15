@@ -18,13 +18,13 @@ import { UsersIcon } from '@/components/Icons/UsersIcon';
 import { BanquetOptionsPopup } from '@/components/BanquetOptionsPopup/BanquetOpitonsPopup.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import classNames from 'classnames';
-import { IBanquetAdditionalOptions, IBanquetParams } from '@/types/banquets.ts';
-import { banquetAdditionalOptions, banquetParams } from '@/__mocks__/banquets.mock.ts';
+import { IBanquetAdditionalOptions, IBanquetOptions } from '@/types/banquets.ts';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { TimeSelectorPopup } from '@/components/TimeSelectorPopup/TimeSelectorPopup.tsx';
+import { IWorkTime } from '@/types/restaurant.ts';
 
 const timeToHours = (timeStr: string): number => {
-    if (!timeStr || timeStr === 'от' || timeStr === 'до') return 0;
+    if (!timeStr || timeStr === 'с' || timeStr === 'до') return 0;
     return parseInt(timeStr.split(':')[0]);
 };
 
@@ -36,20 +36,21 @@ const isTimeValid = (from: string, to: string): boolean => {
     return toHours - fromHours >= 1;
 };
 
+const banquetType = ['День рождения', 'Свадьба', 'Корпоратив', 'Другое'];
+
 export const BanquetOptionPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
-
-    const banquet = location.state?.banquet;
-    const restaurant_title = location.state?.restaurant_title;
-
+    const banquet: IBanquetOptions = location.state?.banquet;
+    const restaurant_title: string = location.state?.restaurant_title;
+    const workTime: IWorkTime[] = location.state?.workTime;
+    const additional_options: IBanquetAdditionalOptions[] = location.state?.additional_options;
     const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
     const [isOpenDropdown, setOpenDropdown] = useState<boolean>(false);
-    const [currentBanquetParams, setCurrentBanquetParams] =
-        useState<IBanquetParams>();
+
     const [selectedReason, setSelectedReason] = useState<string>('');
     const [customReason, setCustomReason] = useState<string>('');
     const [isTimeToPopup, setTimeToPopup] = useState<boolean>(false);
@@ -60,7 +61,7 @@ export const BanquetOptionPage = () => {
         title: '',
     });
     const [timeFrom, setTimeFrom] = useState<PickerValueObj>({
-        value: 'от',
+        value: 'с',
         title: '',
     });
     const [timeTo, setTimeTo] = useState<PickerValueObj>({
@@ -83,20 +84,11 @@ export const BanquetOptionPage = () => {
         }
     };
 
-    const getBanquetAdditionalOptions = (restaurantId?: string): IBanquetAdditionalOptions | undefined => {
-        if (!restaurantId) return;
-        const filteredBanquets = banquetAdditionalOptions.filter(
-            item => item.restaurant_id === parseInt(restaurantId),
-        );
-
-        return filteredBanquets[0];
-    };
-
     const isTimeRangeValid = isTimeValid(timeFrom.value, timeTo.value);
 
     const isFormValid =
         date !== null &&
-        timeFrom.value !== 'от' &&
+        timeFrom.value !== 'с' &&
         timeTo.value !== 'до' &&
         isTimeRangeValid &&
         guestCount.value !== 'unset' &&
@@ -105,26 +97,25 @@ export const BanquetOptionPage = () => {
 
     const handleContinue = () => {
         const finalReason = selectedReason === 'Другое' ? customReason : selectedReason;
-        const additionalOptions = getBanquetAdditionalOptions(id)?.options;
         const banquetData = {
             name: banquet.name,
             date,
             timeFrom: timeFrom.value,
             timeTo: timeTo.value,
             guestCount,
-            additionalOptions,
+            additionalOptions: additional_options,
             restaurant_title,
             reason: finalReason,
-            price: currentBanquetParams && guestCount.value !== 'unset' ? {
+            price: guestCount.value !== 'unset' ? {
                 deposit: banquet.deposit,
-                totalDeposit: banquet.deposit * parseInt(guestCount.value),
+                totalDeposit: Number(banquet.deposit) * parseInt(guestCount.value),
                 serviceFee: banquet.service_fee,
                 total: (1 + banquet.service_fee / 100) *
-                    banquet.deposit *
+                    Number(banquet.deposit) *
                     parseInt(guestCount.value),
             } : null,
         };
-        if (additionalOptions && additionalOptions.length > 0) {
+        if (banquetData.additionalOptions && banquetData.additionalOptions.length > 0) {
             navigate(`/banquets/${id}/additional-services`, {
                 state: banquetData,
             });
@@ -141,10 +132,6 @@ export const BanquetOptionPage = () => {
         }
     }, [banquet, navigate]);
 
-    useEffect(() => {
-        setCurrentBanquetParams(banquetParams);
-    }, []);
-
     return (
         <Page back={true}>
             <BanquetOptionsPopup
@@ -152,18 +139,19 @@ export const BanquetOptionPage = () => {
                 closePopup={closePopup}
                 guestCount={guestCount}
                 setGuestCount={setGuestCount}
-                minGuests={banquet.guests_min}
+                minGuests={Number(banquet.guests_min)}
                 maxGuests={banquet.guests_max}
             />
             <TimeSelectorPopup
-                isOpen={isTimeFromPopup}
+                isOpen={!!date && isTimeFromPopup}
                 closePopup={closeTimeFromPopup}
                 time={timeFrom}
                 setTimeOption={setTimeFrom}
+                minTime={date ? workTime[Number(date?.getDay())].time_start :  undefined}
                 maxTime={timeTo.value !== 'до' ? timeTo.value : undefined}
             />
             <TimeSelectorPopup
-                isOpen={isTimeToPopup}
+                isOpen={!!date && isTimeToPopup}
                 closePopup={closeTimeToPopup}
                 time={timeTo}
                 setTimeOption={setTimeTo}
@@ -263,7 +251,7 @@ export const BanquetOptionPage = () => {
                                                 : null
                                         )}
                                     >
-                                        {currentBanquetParams?.banquetType.map(
+                                        {banquetType.map(
                                             (type, i) => (
                                                 <span
                                                     key={i}
@@ -308,9 +296,9 @@ export const BanquetOptionPage = () => {
                                     <div className={css.payment_text}>
                                         <span>Депозит итого:</span>
                                         <span>
-                                            {currentBanquetParams &&
+                                            {banquet &&
                                                 guestCount.value !== 'unset' &&
-                                                banquet.deposit *
+                                                Number(banquet.deposit) *
                                                 parseInt(guestCount.value) +
                                                 ' ₽'}
                                         </span>
@@ -324,11 +312,11 @@ export const BanquetOptionPage = () => {
                                     <div className={css.payment_text}>
                                         <span>Итого:</span>
                                         <span>
-                                            {currentBanquetParams &&
+                                            {banquet &&
                                                 ((1 +
                                                         banquet?.service_fee /
                                                         100) *
-                                                    banquet?.deposit *
+                                                    Number(banquet?.deposit) *
                                                     parseInt(guestCount.value)) + ' ₽'
                                             }
                                         </span>

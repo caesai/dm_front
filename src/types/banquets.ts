@@ -1,9 +1,8 @@
 export interface IBanquet {
-    imageById: {
-        image_url: string
-        restaurant_id: number
-    }[]
-    description: string
+    banquet_options: IBanquetOptions[];
+    additional_options: IBanquetAdditionalOptions[];
+    description: string;
+    image: string;
 }
 
 export interface IBanquetOptionsContainer {
@@ -19,18 +18,24 @@ export interface IBanquetOptions {
     deposit?: number | null,
     deposit_message: string | null,
     service_fee: number,
-    image: string
-}
-
-export interface IBanquetParams {
-    min_guests_number: number
-    max_guests_number: number
-    banquetType: string[]
-    deposit_per_person: number
-    service_fee: number
+    images: string[]
 }
 
 export interface IBanquetAdditionalOptions {
-    restaurant_id: number
-    options: string[]
+    id: number;
+    name: string;
+}
+
+export interface IBanquetReserve {
+    "restaurant_id": number;
+    "banquet_option": string;
+    "date": string;
+    "start_time": string;
+    "end_time": string;
+    "guests_count": number;
+    "occasion": string;
+    "additional_services": string[];
+    "comment": string;
+    "contact_method": string;
+    "estimated_cost": number;
 }
