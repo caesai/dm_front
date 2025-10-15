@@ -4,7 +4,6 @@ import {
 } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { setDataToLocalStorage } from '@/utils.ts';
 
 export const Redirecter = () => {
     const location = useLocation();
@@ -54,7 +53,6 @@ export const Redirecter = () => {
             !location.pathname.includes('restaurant')
         ) {
             if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
-                setDataToLocalStorage('superEvent', {});
                 navigate(`/events/super?shared=true`, { replace: true });
             }
             if (paramsObject.tgWebAppStartParam === 'newselfokna') {
