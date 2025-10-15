@@ -50,6 +50,9 @@ import { BanquetOptionPage } from '@/pages/BanquetOptionPage/BanquetOptionPage.t
 import { BanquetAdditionalServicesPage } from '@/pages/BanquetAdditionalServices/BanquetAdditionalServicesPage.tsx';
 import { BanquetReservationPage } from '@/pages/BanquetReservationPage/BanquetReservationPage.tsx';
 import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
+import { StageNine } from '@/pages/OnboardingPage/stages/StageNine.tsx';
+import { StageSeven } from '@/pages/OnboardingPage/stages/StageSeven.tsx';
+import { StageEight } from '@/pages/OnboardingPage/stages/StageEight.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -156,6 +159,9 @@ const AppRouter = () => {
                         <Route path={'/onboarding/4'} element={<StageFour />} />
                         <Route path={'/onboarding/5'} element={<StageFive />} />
                         <Route path={'/onboarding/6'} element={<StageSix />} />
+                        <Route path={'/onboarding/7'} element={<StageSeven />} />
+                        <Route path={'/onboarding/8'} element={<StageEight />} />
+                        <Route path={'/onboarding/9'} element={<StageNine />} />
                     </Route>
                     <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
                     <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />

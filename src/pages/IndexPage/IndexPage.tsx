@@ -149,6 +149,29 @@ export const IndexPage: FC = () => {
         }
     }, [isBanquet]);
 
+    useEffect(() => {
+        const preferencesStatus = JSON.parse(localStorage.getItem("PREFERENCES_STATUS") as string)
+        console.log(preferencesStatus)
+
+        if (!preferencesStatus) {
+            localStorage.setItem("PREFERENCES_STATUS", JSON.stringify({ visit_number: 1 }))
+            return;
+        }
+
+        const { visit_number } = preferencesStatus;
+
+        if (visit_number === 1) {
+            localStorage.setItem("PREFERENCES_STATUS", JSON.stringify({ visit_number: 2 }))
+            return;
+        }
+
+        if (visit_number === 2) {
+            localStorage.setItem("PREFERENCES_STATUS", JSON.stringify({ visit_number: 3, preferences_sent: false }))
+            navigate('/onboarding/7')
+            return
+        }
+        }, [navigate]);
+
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
         setCurrentCityA(city.id);
@@ -158,6 +181,7 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter(v => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
+
     const restaurantListed = (currentCityA === 'spb') ? [{
         "id": 12,
         "title": "Self Edge Chinois",
@@ -188,6 +212,7 @@ export const IndexPage: FC = () => {
         "socials": [],
         "photo_cards": []
     },...restaurantsList] : restaurantsList;
+
     // @ts-ignore
     return (
         <Page back={false}>
