@@ -18,11 +18,11 @@ export const OnboardingPage = () => {
     const [auth] = useAtom(authAtom);
     const [, setUser] = useAtom(userAtom);
 
-    // useEffect(() => {
-    //     if (location.pathname == '/onboarding') {
-    //         navigate('/onboarding/1');
-    //     }
-    // }, [location]);
+    useEffect(() => {
+        if (location.pathname == '/onboarding') {
+            navigate('/onboarding/1');
+        }
+    }, [location]);
 
     const closeOnboarding = () => {
         if (!auth?.access_token ) return
