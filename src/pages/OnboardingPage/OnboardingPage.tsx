@@ -8,6 +8,7 @@ import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
 import { APICompleteOnboarding } from '@/api/user.ts';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { useEffect } from 'react';
 
 export const OnboardingPage = () => {
     const navigate = useNavigate();
