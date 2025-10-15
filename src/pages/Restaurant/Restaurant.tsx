@@ -50,7 +50,7 @@ import {
     getCurrentTimeShort,
     getCurrentWeekdayShort,
     getRestaurantStatus,
-    getTimeShort,
+    getTimeShort, setDataToLocalStorage,
 } from '@/utils.ts';
 import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
@@ -157,6 +157,8 @@ export const Restaurant = () => {
 
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
+            setDataToLocalStorage('sharedRestaurant', { id, date: bookingDate, time: currentSelectedTime });
+
             navigate('/onboarding/5');
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
@@ -186,6 +188,7 @@ export const Restaurant = () => {
     }, [id]);
 
     useEffect(() => {
+        // TODO: Refactor two Navigation Blocks on Restaurant Page
         const handleScroll = () => {
             setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 50px – меняем состояние
         };
@@ -279,8 +282,8 @@ export const Restaurant = () => {
                         </div>
                     </div>
                     {headerScrolled ?
-                        <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id)}
-                                              isEvents={filteredEvents.length > 0} /> : null}
+                        <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0}
+                                              isEvents={filteredEvents.length > 0}/> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
@@ -341,6 +344,17 @@ export const Restaurant = () => {
                 />
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
                 <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
+                {tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0 && (
+                    <BanquetsBlock
+                        image={banquets.image}
+                        description={banquets.description}
+                        restaurant_id={Number(id)}
+                        restaurant_title={String(restaurant?.title)}
+                        workTime={restaurant?.worktime}
+                        banquets={banquets}
+                    />
+                )}
+                {filteredEvents.length > 0 && <EventsBlock events={events} />}
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}
                     about_dishes={String(restaurant?.about_dishes)}
@@ -349,22 +363,11 @@ export const Restaurant = () => {
                     avg_cheque={String(restaurant?.avg_cheque)}
                     workTime={restaurant?.worktime}
                 />
-
                 <ChefBlock
                     about={String(restaurant?.brand_chef.about)}
                     photo_url={String(restaurant?.brand_chef.photo_url)}
                     chef_name={String(restaurant?.brand_chef.name)}
                 />
-                {filteredEvents.length > 0 && <EventsBlock events={events} />}
-                {tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0 && (
-                    <BanquetsBlock
-                        image={banquets.image}
-                        description={banquets.description}
-                        restaurant_id={Number(id)}
-                        restaurant_title={String(restaurant?.title)}
-                        banquets={banquets}
-                    />
-                )}
                 <AddressBlock
                     longitude={Number(
                         restaurant?.address_lonlng.split(
@@ -1005,12 +1008,13 @@ interface BanquetsBlockProps {
     restaurant_id: number;
     restaurant_title: string;
     banquets: IBanquet;
+    workTime: IWorkTime[] | undefined;
 }
 
-const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, restaurant_id, restaurant_title, banquets }) => {
+const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, restaurant_id, restaurant_title, banquets, workTime }) => {
     const navigate = useNavigate();
     const navigateToBanquet = () => {
-        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title: restaurant_title, banquets } });
+        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title, banquets, workTime } });
     };
     return (
         <ContentContainer>

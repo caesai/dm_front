@@ -17,8 +17,5 @@ export const APIGetBanquetOptions = async (token: string, restaurant_id: number 
         headers: {
             Authorization: `Bearer ${token}`,
         },
-        params: {
-            restaurant_id
-        }
     });
 }

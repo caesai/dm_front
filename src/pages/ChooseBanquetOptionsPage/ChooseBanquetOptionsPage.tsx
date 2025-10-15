@@ -8,11 +8,13 @@ import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { IBanquet } from '@/types/banquets.ts';
 import { DepositIcon } from '@/components/Icons/DepositIcon.tsx';
 import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
+import { IWorkTime } from '@/types/restaurant.ts';
 
 export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const banquets: IBanquet = location.state?.banquets;
+    const workTime: IWorkTime[] = location.state?.workTime;
     const restaurant_title = location.state?.restaurant_title;
 
     const {id} = useParams();
@@ -60,7 +62,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                 <div className={css.buttonContainer}>
                                                     <button
                                                         className={css.infoButton}
-                                                        onClick={() => navigate(`/banquets/${id}/option`, { state: { banquet: banquet, additional_options: banquets.additional_options, restaurant_title: restaurant_title } })}
+                                                        onClick={() => navigate(`/banquets/${id}/option`, { state: { banquet, additional_options: banquets.additional_options, restaurant_title, workTime } })}
                                                     >
                                                         Выбрать
                                                     </button>
