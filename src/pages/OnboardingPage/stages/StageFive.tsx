@@ -1,7 +1,7 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
@@ -11,12 +11,14 @@ export const StageFive = () => {
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location?.state;
 
     const handleConfirm = () => {
         if (!agree || !user || !auth?.access_token) {
             return;
         }
-        navigate('/onboarding/6');
+        navigate('/onboarding/6', { state });
     };
 
     const toggle = () => {

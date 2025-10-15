@@ -1,63 +1,66 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
-import {useNavigate} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {useAtom} from 'jotai';
-import { authAtom } from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import {TextInput} from "@/components/TextInput/TextInput.tsx";
 import {useState} from "react";
-import { APIUserName } from '@/api/user.ts';
+import { APICompleteOnboarding, APIUserName } from '@/api/user.ts';
 
 export const StageSix = () => {
-    // const [user, setUser] = useAtom(userAtom);
+    const [user, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
     const [name, setName] = useState<string>();
     const [surname, setSurname] = useState<string>();
-
+    const location = useLocation();
+    const state = location?.state;
     // на доработках
-    const handleConfirm = () => {
-        if (!auth?.access_token || !name ) {
-            return;
-        }
-
-        APIUserName(auth.access_token, name, surname)
-            .then(() => navigate('/onboarding/7'))
-            .catch(() => alert
-                (
-                    'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
-                )
-            );
-    };
-
     // const handleConfirm = () => {
-    //     if (!user || !auth?.access_token || !name ) {
+    //     if (!auth?.access_token || !name ) {
     //         return;
     //     }
-    //     APIUserName(auth.access_token, name, surname).then();
-    //     APICompleteOnboarding(auth.access_token, true)
-    //         .then((d) => setUser(d.data))
+    //
+    //     APIUserName(auth.access_token, name, surname)
     //         .then(() => {
-    //             const sharedEvent = getDataFromLocalStorage('sharedEvent');
-    //             const superEvent = getDataFromLocalStorage('superEvent');
-    //             const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
-    //             if(sharedEvent) {
-    //                 navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
-    //             } else if (superEvent) {
-    //                 navigate('/events/super');
-    //                 // removeDataFromLocalStorage('superEvent');
-    //             } else if (sharedRestaurant) {
-    //                 navigate('/restaurant/' + JSON.parse(sharedRestaurant).id);
-    //                 // removeDataFromLocalStorage('sharedRestaurant');
-    //             } else {
-    //                 navigate('/');
-    //             }
+    //             navigate('/onboarding/7')
     //         })
-    //         .catch(() =>
-    //             alert(
+    //         .catch(() => alert
+    //             (
     //                 'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
     //             )
     //         );
     // };
+
+    const handleConfirm = () => {
+        if (!user || !auth?.access_token || !name ) {
+            return;
+        }
+        APIUserName(auth.access_token, name, surname).then();
+        APICompleteOnboarding(auth.access_token, true)
+            .then((d) => setUser(d.data))
+            .then(() => {
+                // const sharedEvent = getDataFromLocalStorage('sharedEvent');
+                // const superEvent = getDataFromLocalStorage('superEvent');
+                // const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
+                // if(sharedEvent) {
+                //     navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
+                // } else if (superEvent) {
+                //     navigate('/events/super');
+                //     // removeDataFromLocalStorage('superEvent');
+                // } else if (sharedRestaurant) {
+                //     navigate('/restaurant/' + JSON.parse(sharedRestaurant).id);
+                //     // removeDataFromLocalStorage('sharedRestaurant');
+                // } else {
+                    navigate('/', { state } );
+                // }
+            })
+            .catch(() =>
+                alert(
+                    'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
+                )
+            );
+    };
 
     return (
         <div className={css.stage_page}>

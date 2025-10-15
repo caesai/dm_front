@@ -2,48 +2,34 @@ import {Page} from '@/components/Page.tsx';
 import css from './OnboardingPage.module.css';
 import classNames from 'classnames';
 import {Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
-import {useEffect} from 'react';
 import logoNew from "/img/DT_concierge_logo_color1.svg";
 import classnames from 'classnames';
 import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
 import { APICompleteOnboarding } from '@/api/user.ts';
-import { getDataFromLocalStorage } from '@/utils.ts';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 
 export const OnboardingPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const state = location?.state;
     const [params] = useSearchParams();
 
     const [auth] = useAtom(authAtom);
     const [, setUser] = useAtom(userAtom);
 
-    useEffect(() => {
-        if (location.pathname == '/onboarding') {
-            navigate('/onboarding/1');
-        }
-    }, [location]);
+    // useEffect(() => {
+    //     if (location.pathname == '/onboarding') {
+    //         navigate('/onboarding/1');
+    //     }
+    // }, [location]);
 
     const closeOnboarding = () => {
         if (!auth?.access_token ) return
         APICompleteOnboarding(auth.access_token, true)
             .then((d) => setUser(d.data))
             .then(() => {
-                const sharedEvent = getDataFromLocalStorage('sharedEvent');
-                const superEvent = getDataFromLocalStorage('superEvent');
-                const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
-                if(sharedEvent) {
-                    navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
-                } else if (superEvent) {
-                    navigate('/events/super');
-                    // removeDataFromLocalStorage('superEvent');
-                } else if (sharedRestaurant) {
-                    navigate('/booking?id=' + JSON.parse(sharedRestaurant).id);
-                    // removeDataFromLocalStorage('sharedRestaurant');
-                } else {
-                    navigate('/');
-                }
+                navigate('/', { state });
             })
             .catch(() =>
                 alert(

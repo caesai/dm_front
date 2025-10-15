@@ -50,7 +50,8 @@ import {
     getCurrentTimeShort,
     getCurrentWeekdayShort,
     getRestaurantStatus,
-    getTimeShort, setDataToLocalStorage,
+    getTimeShort,
+    // setDataToLocalStorage,
 } from '@/utils.ts';
 import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
@@ -125,7 +126,7 @@ export const Restaurant = () => {
 
     const [callPopup, setCallPopup] = useState(false);
 
-    const [events, setEvents] = useState<IEventInRestaurant[]>([]);
+    const [events, setEvents] = useState<IEventInRestaurant[] | null>(null);
     const [banquets, setBanquets] = useState<IBanquet | null>(null);
 
     const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
@@ -157,9 +158,7 @@ export const Restaurant = () => {
 
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
-            setDataToLocalStorage('sharedRestaurant', { id, date: bookingDate, time: currentSelectedTime });
-
-            navigate('/onboarding/5');
+            navigate('/onboarding/5', { state: { id, date: bookingDate, time: currentSelectedTime, sharedRestaurant: true } });
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
         }
@@ -234,7 +233,7 @@ export const Restaurant = () => {
             .finally(() => setTimeslotLoading(false));
     }, [bookingDate]);
 
-    const filteredEvents = events.filter((event) => {
+    const filteredEvents = events?.filter((event) => {
         return event.ticket_price == 0 ? event.tickets_left > 0 : null;
     });
 
@@ -282,8 +281,8 @@ export const Restaurant = () => {
                         </div>
                     </div>
                     {headerScrolled ?
-                        <RestaurantNavigation isShow={tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0}
-                                              isEvents={filteredEvents.length > 0}/> : null}
+                        <RestaurantNavigation isLoading={events == null && banquets == null} isShow={tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0}
+                                              isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}/> : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
@@ -339,8 +338,9 @@ export const Restaurant = () => {
                     timeslotLoading={timeslotLoading}
                     availableTimeslots={availableTimeslots}
                     setCurrentSelectedTime={setCurrentSelectedTime}
+                    isNavigationLoading={events == null && banquets == null}
                     isShow={tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0}
-                    isEvents={filteredEvents.length > 0}
+                    isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
                 />
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
                 <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
@@ -354,7 +354,7 @@ export const Restaurant = () => {
                         banquets={banquets}
                     />
                 )}
-                {filteredEvents.length > 0 && <EventsBlock events={events} />}
+                {Boolean(filteredEvents && filteredEvents?.length > 0) && <EventsBlock events={events} />}
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}
                     about_dishes={String(restaurant?.about_dishes)}
@@ -400,6 +400,7 @@ interface BookingBlockProps {
     // TODO: Refactor this booleans
     isShow: boolean;
     isEvents: boolean;
+    isNavigationLoading: boolean;
 }
 
 const BookingBlock: React.FC<BookingBlockProps> = (
@@ -414,6 +415,7 @@ const BookingBlock: React.FC<BookingBlockProps> = (
         setCurrentSelectedTime,
         isShow,
         isEvents,
+        isNavigationLoading
     }) => {
     const [, setGuestCount] = useAtom(guestCountAtom);
     const [bookingDatePopup, setBookingDatePopup] = useState<boolean>(false);
@@ -442,7 +444,7 @@ const BookingBlock: React.FC<BookingBlockProps> = (
             />
             <ContentBlock id={'booking'}>
                 <div className={css.navSliderAndBookingContainer}>
-                    <RestaurantNavigation isShow={isShow} isEvents={isEvents} />
+                    <RestaurantNavigation isLoading={isNavigationLoading} isShow={isShow} isEvents={isEvents} />
                     <div className={css.bookingContaner}>
                         <Swiper
                             slidesPerView={'auto'}
@@ -967,7 +969,7 @@ const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_name }) =>
 };
 
 interface EventsBlockProps {
-    events: IEventInRestaurant[];
+    events: IEventInRestaurant[] | null;
 }
 
 const EventsBlock: React.FC<EventsBlockProps> = ({ events }) => {
@@ -982,7 +984,7 @@ const EventsBlock: React.FC<EventsBlockProps> = ({ events }) => {
                         id={'events'}
                     />
                 </HeaderContainer>
-                {events.map((e) => (
+                {events?.map((e) => (
                     <EventCard
                         key={e.name}
                         onClick={() => navigate(
