@@ -29,7 +29,7 @@ import superevent from '/img/hh2.jpg';
 import newres from '/img/chinois_app.png';
 // import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { Toast } from '@/components/Toast/Toast.tsx';
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+// import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -59,7 +59,7 @@ export const IndexPage: FC = () => {
     const [currentBookings, setCurrentBookings] = useState<IBookingInfo[]>([]);
     const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
     const navigate = useNavigate();
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+    // const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
@@ -150,29 +150,29 @@ export const IndexPage: FC = () => {
         }
     }, [isBanquet]);
 
-    useEffect(() => {
-        if (tg_id && mockEventsUsersList.includes(tg_id)) {
-            const preferencesStatus = JSON.parse(localStorage.getItem('PREFERENCES_STATUS') as string);
-
-            if (!preferencesStatus) {
-                localStorage.setItem('PREFERENCES_STATUS', JSON.stringify({ visit_number: 1 }));
-                return;
-            }
-
-            const { visit_number } = preferencesStatus;
-
-            if (visit_number === 1) {
-                localStorage.setItem('PREFERENCES_STATUS', JSON.stringify({ visit_number: 2 }));
-                return;
-            }
-
-            if (visit_number === 2) {
-                localStorage.setItem('PREFERENCES_STATUS', JSON.stringify({ visit_number: 3, preferences_sent: false }));
-                navigate('/onboarding/7');
-                return;
-            }
-        }
-    }, [navigate]);
+    // useEffect(() => {
+    //     if (tg_id && mockEventsUsersList.includes(tg_id)) {
+    //         const preferencesStatus = JSON.parse(localStorage.getItem('PREFERENCES_STATUS') as string);
+    //
+    //         if (!preferencesStatus) {
+    //             localStorage.setItem('PREFERENCES_STATUS', JSON.stringify({ visit_number: 1 }));
+    //             return;
+    //         }
+    //
+    //         const { visit_number } = preferencesStatus;
+    //
+    //         if (visit_number === 1) {
+    //             localStorage.setItem('PREFERENCES_STATUS', JSON.stringify({ visit_number: 2 }));
+    //             return;
+    //         }
+    //
+    //         if (visit_number === 2) {
+    //             localStorage.setItem('PREFERENCES_STATUS', JSON.stringify({ visit_number: 3, preferences_sent: false }));
+    //             navigate('/onboarding/7');
+    //             return;
+    //         }
+    //     }
+    // }, [navigate]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);

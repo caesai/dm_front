@@ -50,11 +50,12 @@ export const CancelBookingPopup = ({ isOpen, setOpen, onCancelBooking, popupText
     const cancelBooking = () => {
         onCancelBooking()
             .then(() => {
-                if (skipStep || tg_id && mockEventsUsersList.includes(tg_id)) {
+                if (skipStep || tg_id && !mockEventsUsersList.includes(tg_id)) {
                     setCurrentStep(2);
                     return;
+                } else {
+                    setCurrentStep((prev) => prev + 1);
                 }
-                setCurrentStep((prev) => prev + 1);
             })
             .catch(() => {
                 // Set Error Step Component
