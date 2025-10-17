@@ -180,7 +180,7 @@ export const BanquetOptionPage = () => {
                 closePopup={closeTimeToPopup}
                 time={timeTo}
                 setTimeOption={setTimeTo}
-                minTime={timeFrom.value !== 'от' ? timeFrom.value : undefined}
+                minTime={timeFrom.value !== 'с' ? timeFrom.value : undefined}
             />
             <div className={css.page}>
                 <CalendarPopup
