@@ -1,17 +1,15 @@
-import css from '../OnboardingPage.module.css';
+import css from '../PreferencesPage.module.css';
 import classNames from 'classnames';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { sixStageOptions } from '@/__mocks__/onboarding.mock.ts';
+import { sevenStageOptions } from '@/__mocks__/onboarding.mock.ts';
 import { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { APIUserPreferences } from '@/api/user.ts';
 
-export const StageSeven = () => {
+export const PreferencesTwo = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const state = location?.state;
 
     const [auth] = useAtom(authAtom);
 
@@ -31,14 +29,15 @@ export const StageSeven = () => {
             return;
         }
 
+
         APIUserPreferences(auth.access_token, {
             preferences: [{
-                    category: 'mood',
+                    category: 'menu',
                     choices: preferences,
                 }]
 
         })
-            .then(() => navigate('/onboarding/8', { state }))
+            .then(() => navigate('/preferences/3'))
             .catch(() => alert
                 (
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
@@ -63,15 +62,18 @@ export const StageSeven = () => {
                 </div>
                 <div className={css.stageSeven_wrapper}>
                     <h2 className={css.stage_description_title}>
-                        Что вам ближе <br/> по настроению?</h2>
+                        Что вас особенно <br/>
+                        привлекает в меню?
+                    </h2>
                     <div className={css.stage_options_container}>
-                        {sixStageOptions.map((item) => (
+                        {sevenStageOptions.map((item, index) => (
                             <CommentaryOptionButton
                                 text={item.content}
                                 icon={item.icon}
                                 style={{backgroundColor: '#FFFFFF'}}
                                 active={preferences.includes(item.content)}
                                 onClick={() => changePreference(item.content)}
+                                key={index}
                             />
                         ))}
                     </div>

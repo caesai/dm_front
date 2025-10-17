@@ -1,24 +1,27 @@
 import {Page} from '@/components/Page.tsx';
-import css from './OnboardingPage.module.css';
+import css from './PreferencesPage.module.css';
 import classNames from 'classnames';
 import {Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import {useEffect} from 'react';
 import logoNew from "/img/DT_concierge_logo_color1.svg";
+import classnames from 'classnames';
+import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
 
-export const OnboardingPage = () => {
+export const PreferencesPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [params] = useSearchParams();
 
     useEffect(() => {
-        if (location.pathname == '/onboarding') {
-            navigate('/onboarding/1');
+        if (location.pathname == '/preferences') {
+            navigate('/preferences/1');
         }
     }, [location]);
 
+
     const getCurrentPage = () => {
         const pg = location.pathname
-            .replace('/onboarding', '')
+            .replace('/preferences', '')
             .replace('/', '');
         return Number(pg) || 1;
     };
@@ -34,40 +37,22 @@ export const OnboardingPage = () => {
                     {params.get('eventId') ? null : (
                         <div className={css.stage_container}>
                             <div
-                                className={classNames(css.stage, {
+                                className={classNames(css.stage, css.stage_additional, {
                                     [css.stage__active]: checkIsPageActive(1),
                                 })}
-                                onClick={() => navigate('/onboarding/1')}
+                                onClick={() => navigate('/preferences/1')}
                             ></div>
                             <div
-                                className={classNames(css.stage, {
+                                className={classNames(css.stage, css.stage_additional, {
                                     [css.stage__active]: checkIsPageActive(2),
                                 })}
-                                onClick={() => navigate('/onboarding/2')}
+                                onClick={() => navigate('/preferences/2')}
                             ></div>
                             <div
-                                className={classNames(css.stage, {
+                                className={classNames(css.stage, css.stage_additional, {
                                     [css.stage__active]: checkIsPageActive(3),
                                 })}
-                                onClick={() => navigate('/onboarding/3')}
-                            ></div>
-                            <div
-                                className={classNames(css.stage, {
-                                    [css.stage__active]: checkIsPageActive(4),
-                                })}
-                                onClick={() => navigate('/onboarding/4')}
-                            ></div>
-                            <div
-                                className={classNames(css.stage, {
-                                    [css.stage__active]: checkIsPageActive(5),
-                                })}
-                                onClick={() => navigate('/onboarding/5')}
-                            ></div>
-                            <div
-                                className={classNames(css.stage, {
-                                    [css.stage__active]: checkIsPageActive(6),
-                                })}
-                                // onClick={() => navigate('/onboarding/6')}
+                                onClick={() => navigate('/preferences/3')}
                             ></div>
                         </div>
                     )}
@@ -78,6 +63,9 @@ export const OnboardingPage = () => {
                             alt="DreamTeam logo"
                         />
                     </div>
+                    <span className={classnames(css.closeIcon)} onClick={() => navigate('/')}>
+                            <CloseIcon size={46} />
+                    </span>
                 </div>
             </div>
             <Outlet />
