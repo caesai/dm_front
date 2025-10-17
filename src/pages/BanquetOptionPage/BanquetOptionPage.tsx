@@ -134,28 +134,8 @@ export const BanquetOptionPage = () => {
     }, [banquet, navigate]);
 
     const subtractOneHour = (timeString: string) => {
-        // Split the string into hour and minute parts
-        const [hours, minutes] = timeString.split(':').map(Number);
-
-        // Subtract 1 from the hour
-        let newHours = hours - 1;
-
-        // Handle the midnight edge case (e.g., 00:30 becomes 23:30)
-        if (newHours < 0) {
-            newHours = 23;
-        }
-
-        // Format the new hour with a leading zero if needed
-        const formattedHours = String(newHours).padStart(2, '0');
-
-        // The minutes remain unchanged
-        const formattedMinutes = String(minutes).padStart(2, '0');
-
-        // Combine and return the new time string
-        return `${formattedHours}:${formattedMinutes}`;
+        return moment(timeString, 'HH:mm').subtract(1, 'hour').format('HH:mm');
     }
-
-    console.log('workTime: ', workTime)
 
     return (
         <Page back={true}>

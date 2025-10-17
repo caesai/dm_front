@@ -44,6 +44,7 @@ export const Redirecter = () => {
         if (location.search.includes(paramKey)) {
             const id = getEventIdFromParams(paramsObject, paramKey);
             navigate(`${path}${id}?shared=true`, { replace: true });
+            return;
         }
     };
 
@@ -64,8 +65,10 @@ export const Redirecter = () => {
         if (shouldNavigateToOnboarding) {
             if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
                 navigate(`/events/super?shared=true`, { replace: true });
+                return;
             } else if (paramsObject.tgWebAppStartParam === 'newselfokna') {
                 navigate('/newrestaurant', { replace: true });
+                return;
             } else {
                 handleNavigation('eventId', '/events/');
                 handleNavigation('restaurantId', '/restaurant/');
@@ -86,8 +89,10 @@ export const Redirecter = () => {
 
         if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
             navigate(`/events/super`, { replace: true });
+            return;
         } else if (paramsObject.tgWebAppStartParam === 'newselfokna') {
             navigate('/newrestaurant', { replace: true });
+            return;
         }
     }, [auth, user, location.pathname, location.search]);
 
