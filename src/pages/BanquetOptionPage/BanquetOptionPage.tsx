@@ -22,6 +22,7 @@ import { IBanquetAdditionalOptions, IBanquetOptions } from '@/types/banquets.ts'
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { TimeSelectorPopup } from '@/components/TimeSelectorPopup/TimeSelectorPopup.tsx';
 import { IWorkTime } from '@/types/restaurant.ts';
+import moment from 'moment';
 
 const timeToHours = (timeStr: string): number => {
     if (!timeStr || timeStr === 'с' || timeStr === 'до') return 0;
@@ -132,6 +133,30 @@ export const BanquetOptionPage = () => {
         }
     }, [banquet, navigate]);
 
+    const subtractOneHour = (timeString: string) => {
+        // Split the string into hour and minute parts
+        const [hours, minutes] = timeString.split(':').map(Number);
+
+        // Subtract 1 from the hour
+        let newHours = hours - 1;
+
+        // Handle the midnight edge case (e.g., 00:30 becomes 23:30)
+        if (newHours < 0) {
+            newHours = 23;
+        }
+
+        // Format the new hour with a leading zero if needed
+        const formattedHours = String(newHours).padStart(2, '0');
+
+        // The minutes remain unchanged
+        const formattedMinutes = String(minutes).padStart(2, '0');
+
+        // Combine and return the new time string
+        return `${formattedHours}:${formattedMinutes}`;
+    }
+
+    console.log('workTime: ', workTime)
+
     return (
         <Page back={true}>
             <BanquetOptionsPopup
@@ -147,11 +172,11 @@ export const BanquetOptionPage = () => {
                 closePopup={closeTimeFromPopup}
                 time={timeFrom}
                 setTimeOption={setTimeFrom}
-                minTime={date ? workTime[Number(date?.getDay())].time_start :  undefined}
+                minTime={date ? subtractOneHour(workTime[Number(date?.getDay())].time_start) :  undefined}
                 maxTime={timeTo.value !== 'до' ? timeTo.value : undefined}
             />
             <TimeSelectorPopup
-                isOpen={!!date && isTimeToPopup}
+                isOpen={!!date && isTimeToPopup && timeFrom.value !== 'с'}
                 closePopup={closeTimeToPopup}
                 time={timeTo}
                 setTimeOption={setTimeTo}
@@ -163,6 +188,9 @@ export const BanquetOptionPage = () => {
                     setIsOpen={setCalendarOpen}
                     initialDate={new Date()}
                     setDate={(date) => {
+                        if (moment(date).isBefore(new Date())) {
+                            return;
+                        }
                         setDate(date);
                         setCalendarOpen(false);
                     }}
@@ -331,7 +359,9 @@ export const BanquetOptionPage = () => {
                         )}
                     </ContentContainer>
                 </div>
-                <div className={css.button}>
+                <div className={css.button} style={{
+                    position: isFormValid && banquet.deposit !== null ? 'relative' : 'absolute',
+                }}>
                     <UniversalButton
                         width={'full'}
                         title={'Продолжить'}

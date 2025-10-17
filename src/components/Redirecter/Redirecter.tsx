@@ -27,6 +27,26 @@ export const Redirecter = () => {
         // '/onboarding/9',
     ];
 
+    const paramsObject = Object.fromEntries([...params]);
+
+    const shouldNavigateToPhoneConfirmation = auth?.access_token &&
+        !user?.phone_number &&
+        user?.complete_onboarding &&
+        !EXCLUDED_URLS.includes(location.pathname);
+
+    const shouldNavigateToOnboarding = auth?.access_token &&
+        (!user?.license_agreement || !user.complete_onboarding) &&
+        !ONBOARDING_EXCLUDED.includes(location.pathname) &&
+        !location.pathname.includes('events') &&
+        !location.pathname.includes('restaurant');
+
+    const handleNavigation = (paramKey: string, path: string) => {
+        if (location.search.includes(paramKey)) {
+            const id = getEventIdFromParams(paramsObject, paramKey);
+            navigate(`${path}${id}?shared=true`, { replace: true });
+        }
+    };
+
     const getEventIdFromParams = useCallback((paramsObject: {[k:string]: string}, searchString: string) => {
         for (let key in paramsObject) {
             if (paramsObject[key].includes(searchString)) {
@@ -35,76 +55,113 @@ export const Redirecter = () => {
         }
     }, []);
 
+    // Refactored Redirect Logic
     useEffect(() => {
-        const paramsObject = Object.fromEntries([...params]);
-        if (
-            auth?.access_token &&
-            !user?.phone_number &&
-            user?.complete_onboarding &&
-            !EXCLUDED_URLS.includes(location.pathname)
-        ) {
+        if (shouldNavigateToPhoneConfirmation) {
             navigate('/phoneConfirmation', { state });
         }
-        if (
-            auth?.access_token &&
-            (!user?.license_agreement || !user.complete_onboarding) &&
-            !ONBOARDING_EXCLUDED.includes(location.pathname) &&
-            !location.pathname.includes('events') &&
-            !location.pathname.includes('restaurant')
-        ) {
+
+        if (shouldNavigateToOnboarding) {
             if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
                 navigate(`/events/super?shared=true`, { replace: true });
-            }
-            if (paramsObject.tgWebAppStartParam === 'newselfokna') {
+            } else if (paramsObject.tgWebAppStartParam === 'newselfokna') {
                 navigate('/newrestaurant', { replace: true });
-            }
-            if (location.search.includes('eventId')) {
-                const eventId = getEventIdFromParams(paramsObject, 'eventId');
-                navigate(`/events/${eventId}?shared=true`);
-            } else if (location.search.includes('restaurantId')) {
-                const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
-                navigate('/restaurant/' + restaurantId + '&shared=true', { replace: true });
-            } else if (location.search.includes('bookingId')) {
-                const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
-                navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });
-            } else if (location.search.includes('ticketId')) {
-                const ticketId = getEventIdFromParams(paramsObject, 'ticketId');
-                navigate('/tickets/' + ticketId + '?shared=true', { replace: true });
             } else {
-                navigate('/onboarding');
+                handleNavigation('eventId', '/events/');
+                handleNavigation('restaurantId', '/restaurant/');
+                handleNavigation('bookingId', '/booking/?id=');
+                handleNavigation('ticketId', '/tickets/');
             }
+            navigate('/onboarding');
         }
-        if (
-            auth?.access_token &&
-            location.pathname.includes('/paymentReturn')
-        ) {
+
+        if (auth?.access_token && location.pathname.includes('/paymentReturn')) {
             navigate(location.pathname + location.search);
         }
-        if (
-            location.search.includes('eventId')
-        ) {
-            const eventId = getEventIdFromParams(paramsObject, 'eventId');
-            navigate(`/events/${eventId}?shared=true`, { replace: true });
-        }
-        if (location.search.includes('restaurantId')) {
-            const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
-            navigate('/restaurant/' + restaurantId + '?shared=true', { replace: true });
-        }
-        if (location.search.includes('bookingId')) {
-            const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
-            navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });
-        }
-        if (location.search.includes('ticketId')) {
-            const ticketId = getEventIdFromParams(paramsObject, 'ticketId');
-            navigate('/tickets/' + ticketId + '?shared=true', { replace: true });
-        }
+
+        handleNavigation('eventId', '/events/');
+        handleNavigation('restaurantId', '/restaurant/');
+        handleNavigation('bookingId', '/booking/?id=');
+        handleNavigation('ticketId', '/tickets/');
+
         if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
             navigate(`/events/super`, { replace: true });
-        }
-        if (paramsObject.tgWebAppStartParam === 'newselfokna') {
+        } else if (paramsObject.tgWebAppStartParam === 'newselfokna') {
             navigate('/newrestaurant', { replace: true });
         }
     }, [auth, user, location.pathname, location.search]);
+
+    // TODO: Be sure redirect logic still works then delete this part
+    // useEffect(() => {
+    //     const paramsObject = Object.fromEntries([...params]);
+    //     if (
+    //         auth?.access_token &&
+    //         !user?.phone_number &&
+    //         user?.complete_onboarding &&
+    //         !EXCLUDED_URLS.includes(location.pathname)
+    //     ) {
+    //         navigate('/phoneConfirmation', { state });
+    //     }
+    //     if (
+    //         auth?.access_token &&
+    //         (!user?.license_agreement || !user.complete_onboarding) &&
+    //         !ONBOARDING_EXCLUDED.includes(location.pathname) &&
+    //         !location.pathname.includes('events') &&
+    //         !location.pathname.includes('restaurant')
+    //     ) {
+    //         if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
+    //             navigate(`/events/super?shared=true`, { replace: true });
+    //         }
+    //         if (paramsObject.tgWebAppStartParam === 'newselfokna') {
+    //             navigate('/newrestaurant', { replace: true });
+    //         }
+    //         if (location.search.includes('eventId')) {
+    //             const eventId = getEventIdFromParams(paramsObject, 'eventId');
+    //             navigate(`/events/${eventId}?shared=true`);
+    //         } else if (location.search.includes('restaurantId')) {
+    //             const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
+    //             navigate('/restaurant/' + restaurantId + '&shared=true', { replace: true });
+    //         } else if (location.search.includes('bookingId')) {
+    //             const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
+    //             navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });
+    //         } else if (location.search.includes('ticketId')) {
+    //             const ticketId = getEventIdFromParams(paramsObject, 'ticketId');
+    //             navigate('/tickets/' + ticketId + '?shared=true', { replace: true });
+    //         } else {
+    //             navigate('/onboarding');
+    //         }
+    //     }
+    //     if (
+    //         auth?.access_token &&
+    //         location.pathname.includes('/paymentReturn')
+    //     ) {
+    //         navigate(location.pathname + location.search);
+    //     }
+    //     if (
+    //         location.search.includes('eventId')
+    //     ) {
+    //         const eventId = getEventIdFromParams(paramsObject, 'eventId');
+    //         navigate(`/events/${eventId}?shared=true`, { replace: true });
+    //     }
+    //     if (location.search.includes('restaurantId')) {
+    //         const restaurantId = getEventIdFromParams(paramsObject, 'restaurantId');
+    //         navigate('/restaurant/' + restaurantId + '?shared=true', { replace: true });
+    //     }
+    //     if (location.search.includes('bookingId')) {
+    //         const bookingId = getEventIdFromParams(paramsObject, 'bookingId');
+    //         navigate('/booking/?id=' + bookingId + '&shared=true', { replace: true });
+    //     }
+    //     if (location.search.includes('ticketId')) {
+    //         const ticketId = getEventIdFromParams(paramsObject, 'ticketId');
+    //         navigate('/tickets/' + ticketId + '?shared=true', { replace: true });
+    //     }
+    //     if (paramsObject.tgWebAppStartParam === 'hospitality_heroes') {
+    //         navigate(`/events/super`, { replace: true });
+    //     }
+    //     if (paramsObject.tgWebAppStartParam === 'newselfokna') {
+    //         navigate('/newrestaurant', { replace: true });
+    //     }
+    // }, [auth, user, location.pathname, location.search]);
 
     return <></>;
 };
