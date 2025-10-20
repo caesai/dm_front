@@ -172,7 +172,7 @@ export const IndexPage: FC = () => {
             navigate('/preferences/1')
             return
         }
-        }, [navigate, user?.phone_number]);
+        }, [navigate, user?.license_agreement, user?.complete_onboarding, user?.phone_number]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);

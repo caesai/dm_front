@@ -3,12 +3,12 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import { sixStageOptions } from '@/__mocks__/onboarding.mock.ts';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { APIUserPreferences } from '@/api/user.ts';
 
-export const PreferencesOne = () => {
+export const PreferencesOne: FC = () => {
     const navigate = useNavigate();
 
     const [auth] = useAtom(authAtom);
@@ -63,14 +63,14 @@ export const PreferencesOne = () => {
                     <h2 className={css.stage_description_title}>
                         Что вам ближе <br/> по настроению?</h2>
                     <div className={css.stage_options_container}>
-                        {sixStageOptions.map((item, index) => (
+                        {sixStageOptions.map((item) => (
                             <CommentaryOptionButton
                                 text={item.content}
                                 icon={item.icon}
                                 style={{backgroundColor: '#FFFFFF'}}
                                 active={preferences.includes(item.content)}
                                 onClick={() => changePreference(item.content)}
-                                key={index}
+                                key={item.content}
                             />
                         ))}
                     </div>

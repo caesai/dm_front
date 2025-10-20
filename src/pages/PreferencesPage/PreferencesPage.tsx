@@ -1,11 +1,10 @@
 import {Page} from '@/components/Page.tsx';
 import css from './PreferencesPage.module.css';
-import classNames from 'classnames';
 import {Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import {useEffect} from 'react';
 import logoNew from "/img/DT_concierge_logo_color1.svg";
-import classnames from 'classnames';
 import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
+import classNames from 'classnames';
 
 export const PreferencesPage = () => {
     const navigate = useNavigate();
@@ -63,7 +62,7 @@ export const PreferencesPage = () => {
                             alt="DreamTeam logo"
                         />
                     </div>
-                    <span className={classnames(css.closeIcon)} onClick={() => navigate('/')}>
+                    <span className={classNames(css.closeIcon)} onClick={() => navigate('/')}>
                             <CloseIcon size={46} />
                     </span>
                 </div>

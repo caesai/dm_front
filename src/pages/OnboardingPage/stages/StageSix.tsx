@@ -6,7 +6,6 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import {TextInput} from "@/components/TextInput/TextInput.tsx";
 import {useState} from "react";
 import { APICompleteOnboarding, APIUserName } from '@/api/user.ts';
-import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
 
 export const StageSix = () => {
     const [user, setUser] = useAtom(userAtom);
@@ -24,22 +23,7 @@ export const StageSix = () => {
         APIUserName(auth.access_token, name, surname).then();
         APICompleteOnboarding(auth.access_token, true)
             .then((d) => setUser(d.data))
-            .then(() => {
-                const sharedEvent = getDataFromLocalStorage('sharedEvent');
-                const superEvent = getDataFromLocalStorage('superEvent');
-                const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
-                if(sharedEvent) {
-                    navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
-                } else if (superEvent) {
-                    navigate('/events/super');
-                    removeDataFromLocalStorage('superEvent');
-                } else if (sharedRestaurant) {
-                    navigate('/restaurant/' + JSON.parse(sharedRestaurant).id);
-                    removeDataFromLocalStorage('sharedRestaurant');
-                } else {
-                    navigate('/', { state } );
-                }
-            })
+            .then(() => navigate('/', { state } ))
             .catch(() =>
                 alert(
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'

@@ -64,14 +64,14 @@ export const PreferencesThree = () => {
                         Какие форматы <br/> вам интересны?
                     </h2>
                     <div className={css.stage_options_container}>
-                        {eightStageOptions.map((item, index) => (
+                        {eightStageOptions.map((item) => (
                             <CommentaryOptionButton
                                 text={item.content}
                                 icon={item.icon}
                                 style={{backgroundColor: '#FFFFFF'}}
                                 active={preferences.includes(item.content)}
                                 onClick={() => changePreference(item.content)}
-                                key={index}
+                                key={item.content}
                             />
                         ))}
                     </div>
