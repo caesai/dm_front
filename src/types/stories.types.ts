@@ -68,24 +68,6 @@ export interface IStoryObject {
     }
 }
 
-export interface Story {
-    url?: string;
-    seeMore?: Function;
-    // seeMoreCollapsed?: React.ComponentType<{
-    //     toggleMore: (show: boolean) => void;
-    //     action: Action;
-    // }>;
-    // header?: Header;
-    type?: string;
-    duration?: number;
-    styles?: object;
-    content?: Renderer;
-    // originalContent?: Renderer
-    // Whether to preload the resource or not, defaults to `true` for images and `false` for videos (video preloading is experimental)
-    preloadResource?: boolean;
-    muted?: boolean;
-}
-
 export type Action = (action: string, bufferAction?: boolean) => void;
 
 export type Renderer = React.FC<{
@@ -136,10 +118,6 @@ export interface GlobalStoriesCtx{
     slideIndex?: number;
 }
 
-export interface StoriesCtx {
-    stories: Story[];
-}
-
 export interface ProgressCtx {
     currentId: number;
     videoDuration: number;
@@ -148,7 +126,7 @@ export interface ProgressCtx {
     next: Function;
 }
 
-export type Tester = (story: Story) => {
+export type Tester = (story: IStoryObject) => {
     condition: boolean;
     priority: number;
 };
