@@ -44,7 +44,7 @@ const ProgressArray: React.FC<ProgressArrayProps> = ({ shouldWait }) => {
             cancelAnimationFrame(Number(animationFrameId.current));
         };
     }, [currentId, pause, shouldWait]);
-    console.log('countCopy.current: ', shouldWait)
+
     const incrementCount = () => {
         if (countCopy.current === 0) storyStartCallback();
         if (lastTime.current == undefined) lastTime.current = timestamp();

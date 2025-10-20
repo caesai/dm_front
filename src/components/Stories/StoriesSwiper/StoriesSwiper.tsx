@@ -86,7 +86,8 @@ const StorySlide: React.FC<StorySlideProps> = (
         stories,
         onClose,
         shouldWait,
-    }) => {
+    },
+) => {
     const [localStories, setLocalStories] = useAtom(localStoriesListAtom);
     const localStory = localStories.find((item) => item.id === storyId);
 
@@ -115,7 +116,6 @@ const StorySlide: React.FC<StorySlideProps> = (
 
 
     const onStoryChange = (index: number) => {
-        console.log("changed")
         if (localStory) {
             updateExistingStory(index);
         } else {
@@ -167,7 +167,7 @@ const StorySlide: React.FC<StorySlideProps> = (
     return (
         <div className={classnames(css.stories_container)}>
             <span className={classnames(css.closeIcon)} onClick={onClose}>
-                <CloseIcon size={44} color={'red'}/>
+                <CloseIcon size={44} color={'red'} />
             </span>
             <GlobalStoriesContext.Provider value={context}>
                 <StoriesContext.Provider value={generateStories(stories, defaultRenderers)}>
@@ -190,17 +190,17 @@ const generateStories = (stories: IStoryObject[], renderers: { renderer: Rendere
         let renderer = getRenderer(Object.assign(story, s), renderers);
         story.originalContent = story.content;
         story.content = renderer;
-        return story
-    })
+        return story;
+    });
 };
 
 const getRenderer = (story: IStoryObject, renderers: { renderer: Renderer, tester: Tester }[]): Renderer => {
     let probable = renderers.map(r => {
         return {
             ...r,
-            testerResult: r.tester(story)
-        }
+            testerResult: r.tester(story),
+        };
     }).filter(r => r.testerResult.condition);
     probable.sort((a, b) => b.testerResult.priority - a.testerResult.priority);
     return probable[0].renderer;
-}
+};

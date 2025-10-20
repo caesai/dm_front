@@ -40,7 +40,7 @@ export const renderer: Renderer = (
     };
 
     const videoLoaded = () => {
-        if (vid.current) {
+        if (vid.current && !shouldWait) {
             messageHandler('UPDATE_VIDEO_DURATION', { duration: vid.current.duration });
             setLoaded(true);
             vid.current

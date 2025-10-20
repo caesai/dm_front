@@ -39,7 +39,7 @@ const StoriesContainer: React.FC<StoriesContainerProps> = ({ shouldWait }) => {
     const stories = useContext<IStoryObject[]>(StoriesContext);
 
     usePreLoader(stories, currentId, Number(preloadCount));
-    console.log('stories: ', stories)
+
     useEffect(() => {
         if (typeof currentIndex === "number") {
             if (currentIndex >= 0 && currentIndex < stories.length) {
@@ -131,7 +131,6 @@ const StoriesContainer: React.FC<StoriesContainerProps> = ({ shouldWait }) => {
 
     const debouncePause = (e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault();
-        console.log('pausss')
         mousedownId.current = setTimeout(() => {
             toggleState("pause");
         }, 200);

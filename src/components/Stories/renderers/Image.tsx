@@ -54,7 +54,6 @@ export const renderer: Renderer = (
     );
 };
 
-
 export const tester: Tester = (story) => {
     return {
         condition: story.type === 'image',

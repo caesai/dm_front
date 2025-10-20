@@ -5,7 +5,7 @@ export const initialContext = {
     defaultInterval: 4000,
     width: 360,
     height: 640,
-    shouldWait: true,
+    shouldWait: false,
 };
 
 const GlobalStoriesContext = React.createContext<GlobalStoriesCtx>(initialContext);

@@ -3,8 +3,6 @@ import { useState } from 'react';
 import { IStoryBlock } from '@/types/stories.types.ts';
 import { StoriesSwiper } from '@/components/Stories/StoriesSwiper/StoriesSwiper.tsx';
 import { StoriesBlocksSwiper } from '@/components/Stories/StoriesBlocksSwiper/StoriesBlocksSwiper.tsx';
-// import { getBlobFromUrl } from '@/utils.ts';
-// import { getBlobFromUrl } from '@/utils.ts';
 
 interface IStoriesProps {
     storiesBlocks: IStoryBlock[];
