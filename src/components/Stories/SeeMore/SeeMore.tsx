@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext } from 'react';
 import { Action, GlobalStoriesCtx } from '@/types/stories.types.ts';
 import GlobalStoriesContext from '@/components/Stories/context/GlobalStoriesContext.ts';
 
@@ -29,7 +29,7 @@ const SeeMore: React.FC<SeeMoreProps> = (props) => {
                 document.removeEventListener("keydown", handleKeyDown);
             }
         }
-    }, [keyboardNavigation])
+    }, [keyboardNavigation]);
 
     const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'ArrowUp') {

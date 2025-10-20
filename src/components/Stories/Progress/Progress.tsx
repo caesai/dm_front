@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext } from 'react';
 import ProgressWrapper from './ProgressWrapper'
 import { GlobalStoriesCtx, ProgressCtx } from '@/types/stories.types.ts';
 import GlobalStoriesContext from '@/components/Stories/context/GlobalStoriesContext.ts';

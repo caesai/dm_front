@@ -14,7 +14,7 @@ export interface IStoriesBlockResponse {
 }
 
 type TStoryUsersIds = number[];
-type TStoriesCitiesIds = number[]
+type TStoriesCitiesIds = number[];
 
 export interface IStory {
     id: number;
@@ -57,7 +57,7 @@ export interface IStoryObject {
     originalContent: Renderer;
     content: Renderer;
     preloadResource?: boolean;
-    componentOptions : {
+    componentOptions: {
         url: string | null;
         title: string | null;
         description: string | null;

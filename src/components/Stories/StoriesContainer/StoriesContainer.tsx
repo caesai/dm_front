@@ -51,7 +51,7 @@ const StoriesContainer: React.FC<StoriesContainerProps> = ({ shouldWait }) => {
                 );
             }
         }
-    }, [currentIndex]);
+    }, [currentIndex, stories.length]);
 
     useEffect(() => {
         if (typeof isPaused === "boolean") {

@@ -6,7 +6,7 @@ export const renderer: Renderer = (props) => {
         if (!props.shouldWait) {
             props.action('play');
         }
-    }, [props.story, props.shouldWait])
+    }, [props.story, props.shouldWait]);
     const Content = props.story.originalContent;
     return <Content {...props} />
 }

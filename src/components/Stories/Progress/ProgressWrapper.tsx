@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext } from 'react';
 import { GlobalStoriesCtx } from '@/types/stories.types.ts';
 import GlobalStoriesContext from '@/components/Stories/context/GlobalStoriesContext.ts';
 import css from '@/components/Stories/Progress/Progress.module.css';

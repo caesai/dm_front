@@ -27,7 +27,6 @@ import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
 import superevent from '/img/hh2.jpg';
 import newres from '/img/chinois_app.png';
-// import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { Toast } from '@/components/Toast/Toast.tsx';
 import { IStoryBlock, IStoryObject } from '@/types/stories.types.ts';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
@@ -127,12 +126,12 @@ export const IndexPage: FC = () => {
                             seeMoreCollapsed: () => <></>,
                             originalContent: () => <></>,
                             componentOptions: {
-                                url: story.url ? story.url : '',
-                                title: story.title ? story.title : '',
-                                description: story.description ? story.description : '',
-                                button_url: story.button_url ? story.button_url : '',
-                                button_text: story.button_text ? story.button_text : '',
-                                button_color: story.button_color ? story.button_color : '',
+                                url: story.url ?? '',
+                                title: story.title ?? '',
+                                description: story.description ?? '',
+                                button_url: story.button_url ?? '',
+                                button_text: story.button_text ?? '',
+                                button_color: story.button_color ?? '',
                                 component_type: Number(story.component_type),
                             }
                         };

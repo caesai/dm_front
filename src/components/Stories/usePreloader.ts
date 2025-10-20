@@ -5,9 +5,9 @@ import { IStoryObject } from '@/types/stories.types.ts';
 const cacheContent = async (contents: IStoryObject[]) => {
     const promises = contents.map((content) => {
         return new Promise(function (resolve, reject) {
-            if(!content.url) return
+            if (!content.url) return
 
-            if(content.type === 'video') {
+            if (content.type === 'video') {
                 const video = document.createElement('video');
                 video.src = content.url;
                 video.onloadeddata = resolve;
@@ -38,10 +38,10 @@ const markUrlsLoaded = (contents: IStoryObject[]) => {
 
 // Returns true if given Story should be preloaded
 const shouldPreload = (content: IStoryObject) => {
-    if (!content.url) return false
-    if (urlsLoaded.has(content.url)) return false
-    if (content.preloadResource !== undefined) return content.preloadResource
-    if (content.type === 'video') return false
+    if (!content.url) return false;
+    if (urlsLoaded.has(content.url)) return false;
+    if (content.preloadResource !== undefined) return content.preloadResource;
+    if (content.type === 'video') return false;
 
     return true
 }

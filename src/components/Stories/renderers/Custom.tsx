@@ -33,7 +33,7 @@ const renderer: Renderer = (
         if (!shouldWait) {
             action('play');
         }
-    }, [story, shouldWait])
+    }, [story, shouldWait]);
 
     const openButtonUrl = () => {
         if (button_url) {
