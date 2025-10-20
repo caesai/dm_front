@@ -1,17 +1,17 @@
 import React from 'react';
 import { FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { StoriesBlock } from '@/components/Stories/StoriesBlocksContainer/StoriesBlock.tsx';
-import { IStoryBlock } from '@/types/stories.ts';
+import { StoriesBlock } from '@/components/Stories/StoriesBlocksSwiper/StoriesBlock.tsx';
+import { IStoryBlock } from '@/types/stories.types.ts';
 import { useAtom } from 'jotai/index';
 import { localStoriesListAtom } from '@/atoms/localStoriesListAtom.ts';
 
-interface IStoriesBlocksContainerProps {
+interface IStoriesBlocksSwiperProps {
     storiesBlocks: IStoryBlock[];
     openStory: (index: number) => void;
 }
 
-export const StoriesBlocksContainer: React.FC<IStoriesBlocksContainerProps> = ({ storiesBlocks, openStory }) => {
+export const StoriesBlocksSwiper: React.FC<IStoriesBlocksSwiperProps> = ({ storiesBlocks, openStory }) => {
     const [localStories] = useAtom(localStoriesListAtom);
     return (
         <Swiper

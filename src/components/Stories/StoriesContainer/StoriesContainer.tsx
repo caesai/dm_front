@@ -1,157 +1,203 @@
-import React, { useRef, useState } from 'react';
-import classnames from 'classnames';
-import css from './StoriesContainer.module.css';
-import Stories from 'stories-react';
-import 'stories-react/dist/index.css';
-import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
-//TODO: Remove hardcoded logo
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { IStoryBlock } from '@/types/stories.ts';
-import { useAtom } from 'jotai';
-import { localStoriesListAtom } from '@/atoms/localStoriesListAtom.ts';
-import { IStoryObject } from 'stories-react/src/types';
-import type { Swiper as SwiperClass } from 'swiper';
-import moment from 'moment';
+import React, { useContext, useState, useRef, useEffect } from "react";
+import { GlobalStoriesCtx, IStoryObject } from '@/types/stories.types.ts';
+import GlobalStoriesContext from '@/components/Stories/context/GlobalStoriesContext.ts';
+import StoriesContext from '@/components/Stories/context/StoriesContext.ts';
+import ProgressContext from "@/components/Stories/context/ProgressContext.ts";
+import Story from '@/components/Stories/Story/Story.tsx';
+import { usePreLoader } from '@/components/Stories/usePreloader.ts';
+import ProgressArray from '@/components/Stories/Progress/ProgressArray.tsx';
+import useIsMounted from '@/components/Stories/useIsMounted.ts';
+import css from '@/components/Stories/StoriesContainer/StoriesContainer.module.css';
 
 interface StoriesContainerProps {
-    storiesBlocks: IStoryBlock[];
-    onClose: () => void;
-    activeStoryIndex: number;
+    shouldWait: boolean;
 }
 
-export const StoriesContainer: React.FC<StoriesContainerProps> = ({ storiesBlocks, onClose, activeStoryIndex }) => {
-    const [realSwiperIndex, setRealSwiperIndex] = useState(activeStoryIndex);
-    const swiperRef = useRef<SwiperClass | null>(null);
-    const onTouchStart = (_swiper: SwiperClass, event: MouseEvent | TouchEvent | PointerEvent) => {
-        try {
-            event.preventDefault();
-            event.stopPropagation();
-            const el = event.target as HTMLElement;
-            el.click();
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const onRealIndexChange = (swiper: SwiperClass) => {
-        setRealSwiperIndex(swiper.activeIndex);
-    };
-    const onSwiper = (swiper: SwiperClass) => {
-        if (!swiperRef.current) {
-            swiperRef.current = swiper;
-        }
-    };
-    const onAllStoriesEnd = () => {
-        if (realSwiperIndex < storiesBlocks.length - 1) {
-            if (swiperRef.current) {
-                swiperRef.current.slideNext();
+const StoriesContainer: React.FC<StoriesContainerProps> = ({ shouldWait }) => {
+    const [currentId, setCurrentId] = useState<number>(0);
+    const [pause, setPause] = useState<boolean>(true);
+    const [bufferAction, setBufferAction] = useState<boolean>(true);
+    const [videoDuration, setVideoDuration] = useState<number>(0);
+    const isMounted = useIsMounted();
+
+    let mousedownId = useRef<any>();
+
+    const {
+        width,
+        height,
+        loop,
+        currentIndex,
+        isPaused,
+        keyboardNavigation,
+        preventDefault,
+        onAllStoriesEnd,
+        onPrevious,
+        onNext,
+        preloadCount,
+    } = useContext<GlobalStoriesCtx>(GlobalStoriesContext);
+
+    const stories = useContext<IStoryObject[]>(StoriesContext);
+
+    usePreLoader(stories, currentId, Number(preloadCount));
+    console.log('stories: ', stories)
+    useEffect(() => {
+        if (typeof currentIndex === "number") {
+            if (currentIndex >= 0 && currentIndex < stories.length) {
+                setCurrentIdWrapper(() => currentIndex);
+            } else {
+                console.error(
+                    "Index out of bounds. Current index was set to value more than the length of stories array.",
+                    currentIndex
+                );
             }
-        } else {
-            console.log('OnClose');
+        }
+    }, [currentIndex]);
 
-            onClose();
+    useEffect(() => {
+        if (typeof isPaused === "boolean") {
+            setPause(isPaused);
+        }
+    }, [isPaused]);
+
+    useEffect(() => {
+        const isClient = typeof window !== "undefined" && window.document;
+        if (
+            isClient &&
+            typeof keyboardNavigation === "boolean" &&
+            keyboardNavigation
+        ) {
+            document.addEventListener("keydown", handleKeyDown);
+            return () => {
+                document.removeEventListener("keydown", handleKeyDown);
+            };
+        }
+    }, [keyboardNavigation]);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "ArrowLeft") {
+            previous();
+        } else if (e.key === "ArrowRight") {
+            next({ isSkippedByUser: true });
         }
     };
-    return (
-        <Swiper
-            freeMode
-            onSwiper={onSwiper}
-            onTouchStart={onTouchStart}
-            className={classnames(css.storiesSlider)}
-            slidesPerView={'auto'}
-            centeredSlides={true}
-            initialSlide={activeStoryIndex}
-            onRealIndexChange={onRealIndexChange}
-        >
-            {storiesBlocks.map((block, index) => (
-                <SwiperSlide className={css.slide} key={index}>
-                    <StorySlide
-                        storyId={block.id}
-                        shouldRender={Number(realSwiperIndex) === Number(index)}
-                        stories={block.stories}
-                        onAllStoriesEnd={onAllStoriesEnd}
-                        onClose={onClose}
-                    />
-                </SwiperSlide>
-            ))}
-        </Swiper>
-    );
-};
 
-interface StorySlideProps {
-    onAllStoriesEnd: () => void;
-    onClose: () => void;
-    storyId: number;
-    stories: IStoryObject[];
-    shouldRender: boolean;
-}
+    const toggleState = (action: string, bufferAction?: boolean) => {
+        setPause(action === "pause");
+        setBufferAction(!!bufferAction);
+    };
 
-const StorySlide: React.FC<StorySlideProps> = ({ onAllStoriesEnd, storyId, stories, onClose, shouldRender }) => {
-    const [localStories, setLocalStories] = useAtom(localStoriesListAtom);
-    const localStory = localStories.find((item) => item.id === storyId);
+    const setCurrentIdWrapper = (callback: (arg0: number) => number) => {
+        setCurrentId(callback);
+        toggleState("pause", true);
+    };
 
-    const handleStoryEnd = () => {
-        if (localStory == undefined) return;
-        setLocalStories((prevItems) => {
-            const localIndex = prevItems.findIndex(item => item.id === storyId);
-            if (localIndex === -1) return prevItems; // Item not found
-            const updatedItem = {
-                ...prevItems[localIndex],
-                index: 0,
-                isSeen: !localStory?.isSeen && true,
-                lastSeenDate: !localStory?.isSeen ? localStory.lastSeenDate : moment(new Date()).format('YYYY-MM-DD'),
-            };
-            return [
-                ...prevItems.slice(0, localIndex),
-                updatedItem,
-                ...prevItems.slice(localIndex + 1),
-            ];
+    const previous = () => {
+        if (onPrevious != undefined) {
+            onPrevious();
+        }
+        setCurrentIdWrapper((prev:number) => (prev > 0 ? Number(prev - 1) : Number(prev)));
+    };
+
+    const next = (options?: { isSkippedByUser?: boolean }) => {
+        if (onNext != undefined && options?.isSkippedByUser && !shouldWait) {
+            onNext();
+        }
+        // Check if component is mounted - for issue #130 (https://github.com/mohitk05/react-insta-stories/issues/130)
+        if (isMounted()) {
+            if (loop) {
+                updateNextStoryIdForLoop();
+            } else {
+                updateNextStoryId();
+            }
+        }
+    };
+
+    const updateNextStoryIdForLoop = () => {
+        setCurrentIdWrapper((prev: number) => {
+            if (prev >= stories.length - 1) {
+                onAllStoriesEnd && onAllStoriesEnd(currentId, stories);
+            }
+            return (prev + 1) % stories.length;
         });
-        onAllStoriesEnd();
-    }
-
-    const onStoryChange = (index: number) => {
-        if (localStory !== undefined) {
-            if (localStory.index <= stories.length - 1) {
-                setLocalStories((prevItems) => {
-                    const localIndex = prevItems.findIndex(item => item.id === storyId);
-                    if (localIndex === -1) return prevItems; // Item not found
-                    const updatedItem = {
-                        ...prevItems[localIndex],
-                        index,
-                    };
-                    return [
-                        ...prevItems.slice(0, localIndex),
-                        updatedItem,
-                        ...prevItems.slice(localIndex + 1),
-                    ];
-                });
-            }
-        } else {
-            const newStoryLocalCount = {
-                id: storyId,
-                index,
-                isSeen: false,
-                lastSeenDate: moment(new Date()).format('YYYY-MM-DD'),
-            };
-            setLocalStories((prevItems) => [...prevItems, newStoryLocalCount]);
-        }
     };
+
+    const updateNextStoryId = () => {
+        setCurrentIdWrapper((prev) => {
+            if (prev < stories.length - 1) return prev + 1;
+            onAllStoriesEnd && onAllStoriesEnd(currentId, stories);
+            return prev;
+        });
+    };
+
+    const debouncePause = (e: React.MouseEvent | React.TouchEvent) => {
+        e.preventDefault();
+        console.log('pausss')
+        mousedownId.current = setTimeout(() => {
+            toggleState("pause");
+        }, 200);
+    };
+
+    const mouseUp =
+        (type: string) => (e: React.MouseEvent | React.TouchEvent) => {
+            e.preventDefault();
+            mousedownId.current && clearTimeout(mousedownId.current);
+            if (pause) {
+                toggleState("play");
+            } else {
+                type === "next" ? next({ isSkippedByUser: true }) : previous();
+            }
+        };
+
+    const getVideoDuration = (duration: number) => {
+        setVideoDuration(duration * 1000);
+    };
+
     return (
-        <div className={classnames(css.stories_container)}>
-            <span className={classnames(css.closeIcon)} onClick={onClose}>
-                <CloseIcon size={44} color={'red'}/>
-            </span>
-            {shouldRender && (
-                <Stories
-                    width="100%"
-                    height="100%"
-                    onStoryChange={onStoryChange}
-                    stories={stories}
-                    currentIndex={localStory !== undefined ? localStory.index : undefined }
-                    onAllStoriesEnd={handleStoryEnd}
-                    classNames={{ progressBar: css.progressBar, main: css.slide }}
-                />
+        <div
+            className={css.container}
+            style={{
+                ...{ width, height },
+            }}
+        >
+            <ProgressContext.Provider
+                value={{
+                    bufferAction: bufferAction,
+                    videoDuration: videoDuration,
+                    currentId,
+                    pause,
+                    next,
+                }}
+            >
+                <ProgressArray shouldWait={shouldWait}/>
+            </ProgressContext.Provider>
+            <Story
+                action={toggleState}
+                bufferAction={bufferAction}
+                playState={pause}
+                shouldWait={shouldWait}
+                story={stories[currentId]}
+                getVideoDuration={getVideoDuration}
+            />
+            {!preventDefault && (
+                <div className={css.overlay}>
+                    <div
+                        style={{ width: "50%", zIndex: 9999 }}
+                        onTouchStart={debouncePause}
+                        onTouchEnd={mouseUp("previous")}
+                        onMouseDown={debouncePause}
+                        onMouseUp={mouseUp("previous")}
+                    />
+                    <div
+                        style={{ width: "50%", zIndex: 9999 }}
+                        onTouchStart={debouncePause}
+                        onTouchEnd={mouseUp("next")}
+                        onMouseDown={debouncePause}
+                        onMouseUp={mouseUp("next")}
+                    />
+                </div>
             )}
         </div>
     );
-};
+}
+
+export default StoriesContainer;

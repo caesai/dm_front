@@ -29,6 +29,8 @@ import superevent from '/img/hh2.jpg';
 import newres from '/img/chinois_app.png';
 // import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { Toast } from '@/components/Toast/Toast.tsx';
+import { IStoryBlock, IStoryObject } from '@/types/stories.types.ts';
+import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
 // import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
@@ -63,6 +65,7 @@ export const IndexPage: FC = () => {
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
+    const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
 
     const location = useLocation();
     const isBanquet = location.state?.banquet;
@@ -72,12 +75,7 @@ export const IndexPage: FC = () => {
             return;
         }
         setCurrentBookingsLoading(true);
-        // APIGetCurrentBookings(auth.access_token)
-        //     .then((res) => setCurrentBookings(res.data.currentBookings))
-        //     .finally(() => setCurrentBookingsLoading(false));
-        // APIGetTickets(auth.access_token)
-        //     .then((res) => setTickets(res.data))
-        //     .finally(() => setEventsLoading(false));
+
         Promise.all([APIGetCurrentBookings(auth.access_token),APIGetTickets(auth.access_token)])
             .then((responses) => {
                 // console.log('responses: ', responses);
@@ -104,10 +102,49 @@ export const IndexPage: FC = () => {
             .finally(() => {
                 setCurrentBookingsLoading(false);
             });
-        APIGetSuperEventHasAccess(auth.access_token).then((response) => {
+
+        APIGetSuperEventHasAccess(auth.access_token)
+            .then((response) => {
                 setHasSuperEventAccess(response.data);
-        })
+            })
     }, []);
+
+    const cityId = cityListA.find(item => item.name_english === currentCityS.id)?.id;
+    useEffect(() => {
+        // TODO: Endpoint to get array of stories objects sets state of stories
+        if (auth?.access_token !== undefined && cityId !== undefined) {
+            ApiGetStoriesBlocks(auth?.access_token, cityId).then((storiesBlockResponse) => {
+                const blocks = storiesBlockResponse.data.filter((item) => (
+                    item.stories.length > 0
+                )).map((block) => {
+                    const convertedStories: IStoryObject[] = block.stories.map((story) => {
+                        return {
+                            type: story.type.toLowerCase(),
+                            url: String(story.url),
+                            duration: story.duration,
+                            content: () => <></>,
+                            seeMoreCollapsed: () => <></>,
+                            originalContent: () => <></>,
+                            componentOptions: {
+                                url: story.url ? story.url : '',
+                                title: story.title ? story.title : '',
+                                description: story.description ? story.description : '',
+                                button_url: story.button_url ? story.button_url : '',
+                                button_text: story.button_text ? story.button_text : '',
+                                button_color: story.button_color ? story.button_color : '',
+                                component_type: Number(story.component_type),
+                            }
+                        };
+                    });
+                    return {
+                        ...block,
+                        stories: convertedStories,
+                    };
+                });
+                setStoriesBlocks(blocks);
+            });
+        }
+    }, [cityId]);
 
     useEffect(() => {
         setCurrentCityS(
@@ -220,7 +257,7 @@ export const IndexPage: FC = () => {
         <Page back={false}>
             <div className={css.pageContainer}>
                 <Header/>
-                <Stories token={auth?.access_token} cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />
+                <Stories storiesBlocks={storiesBlocks} />
                 <div style={{ marginRight: 15 }}>
                     <CitySelect
                         options={cityOptions}
@@ -228,6 +265,7 @@ export const IndexPage: FC = () => {
                         onChange={updateCurrentCity}
                     />
                 </div>
+
                 {currentBookingsLoading ? (
                     <div style={{marginRight: '15px'}}>
                         <PlaceholderBlock
@@ -256,6 +294,7 @@ export const IndexPage: FC = () => {
                             />
                         ))
                 )}
+
                 {hasSuperEventAccess && (
                     <div style={{ marginRight: 15, height: 85}}>
                         <Link to={'/events/super'}>
@@ -263,8 +302,8 @@ export const IndexPage: FC = () => {
                         </Link>
                     </div>
                 )}
-                <OptionsNavigation/>
 
+                <OptionsNavigation/>
 
                 <div className={css.restaurants}>
 

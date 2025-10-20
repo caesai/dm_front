@@ -5,7 +5,7 @@ import {useAtom} from 'jotai';
 import {APIUserAuth, APIUserInfo} from '@/api/auth.ts';
 import {useLaunchParams, useRawInitData} from '@telegram-apps/sdk-react';
 
-const Loader = () => {
+export const Loader = () => {
     return <div className={css.loader}></div>;
 };
 

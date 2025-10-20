@@ -1,50 +1,13 @@
-.stories_container {
-    /*position: fixed;*/
-    /*position: relative;*/
-    top: 0;
-    left: 0;
-    /*z-index: 10000 !important;*/
-    height: 100vh;
-    width: 100%;
-}
-
-.storiesSlider {
-    position: fixed;
-    width: 100%;
-    z-index: 20;
-    top: 0;
-    left: 0;
-    height: 100vh;
-}
-
-.slide {
-    /*position: relative;*/
-    /*z-index: 9999;*/
-    /*position: fixed;*/
-    /*top: 0;*/
-    /*left: 0;*/
-    text-align: center;
-    font-size: 18px;
-    background: #fff!important;
-    /*width: 400px !important;*/
-    /*height: 400px !important;*/
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
+.container {
+    display: flex;
     flex-direction: column;
+    position: relative;
+    -webkit-user-select: none;
 }
 
-.progressBar {
-    background-color: rgba(245, 42, 45, 0.8)!important;
-}
-
-.closeIcon {
+.overlay {
     position: absolute;
-    top: 10px;
-    right: 5px;
-    z-index: 10001;
-
-    >svg {
-        transform: scale(0.6);
-    }
+    height: inherit;
+    width: inherit;
+    display: flex;
 }
