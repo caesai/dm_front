@@ -1,18 +1,15 @@
-import css from '../OnboardingPage.module.css';
+import css from '../PreferencesPage.module.css';
 import classNames from 'classnames';
-import { useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import { eightStageOptions } from '@/__mocks__/onboarding.mock.ts';
 import { useState } from 'react';
 import { useAtom } from 'jotai/index';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APICompleteOnboarding, APIUserPreferences } from '@/api/user.ts';
-import { getDataFromLocalStorage } from '@/utils.ts';
+import { authAtom } from '@/atoms/userAtom.ts';
+import { APIUserPreferences } from '@/api/user.ts';
+import { useNavigate } from 'react-router-dom';
 
-export const StageNine = () => {
+export const PreferencesThree = () => {
     const navigate = useNavigate();
-
-    const [, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
 
     const [preferences, setPreferences] = useState<string[]>([]);
@@ -37,33 +34,11 @@ export const StageNine = () => {
                     choices: preferences,
                 }]
 
-        }).catch(() => alert
-                (
-                    'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
-                )
-            );
-
-        APICompleteOnboarding(auth.access_token, true)
-            .then((d) => setUser(d.data))
+        })
             .then(() => localStorage.setItem("PREFERENCES_STATUS", JSON.stringify({ visit_number: 3, preferences_sent: true })))
-            .then(() => {
-                const sharedEvent = getDataFromLocalStorage('sharedEvent');
-                const superEvent = getDataFromLocalStorage('superEvent');
-                const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
-                if(sharedEvent) {
-                    navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
-                } else if (superEvent) {
-                    navigate('/events/super');
-                    // removeDataFromLocalStorage('superEvent');
-                } else if (sharedRestaurant) {
-                    navigate('/booking?id=' + JSON.parse(sharedRestaurant).id);
-                    // removeDataFromLocalStorage('sharedRestaurant');
-                } else {
-                    navigate('/');
-                }
-            })
-            .catch(() =>
-                alert(
+            .then(() => navigate('/'))
+            .catch(() => alert
+                (
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
                 )
             );
@@ -96,6 +71,7 @@ export const StageNine = () => {
                                 style={{backgroundColor: '#FFFFFF'}}
                                 active={preferences.includes(item.content)}
                                 onClick={() => changePreference(item.content)}
+                                key={item.content}
                             />
                         ))}
                     </div>
