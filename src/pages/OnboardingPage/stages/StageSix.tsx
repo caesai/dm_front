@@ -4,10 +4,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {useAtom} from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import {TextInput} from "@/components/TextInput/TextInput.tsx";
-import {useState} from "react";
+import { useState } from 'react';
 import { APICompleteOnboarding, APIUserName } from '@/api/user.ts';
 
-export const StageSix = () => {
+export const StageSix: React.FC = () => {
     const [user, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
