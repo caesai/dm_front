@@ -2,11 +2,12 @@ import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import phone from "/img/onboarding/phone.png";
+import { FC } from 'react';
 
 interface StageFiveProps {
     isStory?: boolean;
 }
-export const StageThree: React.FC<StageFiveProps> = ({isStory}) => {
+export const StageThree: FC<StageFiveProps> = ({isStory}) => {
     const navigate = useNavigate();
 
     return (

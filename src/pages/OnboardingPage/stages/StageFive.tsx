@@ -6,7 +6,7 @@ import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
 
-export const StageFive = () => {
+export const StageFive: React.FC = () => {
     const [agree, setAgree] = useState(false);
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
