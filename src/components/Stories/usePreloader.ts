@@ -59,6 +59,6 @@ export const usePreLoader = (contents: IStoryObject[], cursor: number, preloadCo
             .filter(shouldPreload);
 
         markUrlsLoaded(toPreload)
-        cacheContent(toPreload)
+        cacheContent(toPreload).then()
     }, [cursor, preloadCount, contents])
 }
