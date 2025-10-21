@@ -74,10 +74,10 @@ export const UserProfilePage: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (allergies.length > 0) {
+        if (allergies && allergies.length > 0) {
             setUserInfo((prev) => ({ ...prev, allergies }))
         }
-    }, [allergies.length]);
+    }, [allergies]);
 
     const setMainButtonLoader = (value: boolean) => {
         mainButton.setParams({

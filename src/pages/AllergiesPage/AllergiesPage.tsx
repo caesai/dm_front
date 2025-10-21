@@ -21,7 +21,7 @@ const AllergiesPage: React.FC = () => {
     const allergies: string[] = location.state?.allergies;
 
     useEffect(() => {
-        if (allergies.length > 0) {
+        if (allergies && allergies.length > 0) {
             const other = findOtherAllergies(allergies);
             if (other.length > 0) {
                 setIsOtherOption(true);
@@ -29,7 +29,7 @@ const AllergiesPage: React.FC = () => {
             }
             setSelectedAllergies(allergies);
         }
-    }, [allergies.length]);
+    }, [allergies]);
 
     const onOptionSelect = (option: string) => {
         // Create a new array based on the previous state.
@@ -126,8 +126,8 @@ const AllergiesPage: React.FC = () => {
                     <UniversalButton
                         width={'full'}
                         title={'Сохранить'}
-                        theme={selectedAllergies.length > 0 || otherAllergyOptions.length > 0 || allergies.length > 0 ? 'red' : undefined}
-                        action={selectedAllergies.length > 0 || otherAllergyOptions.length > 0  || allergies.length > 0  ? handleContinue : undefined}
+                        theme={selectedAllergies.length > 0 || otherAllergyOptions.length > 0 || allergies ? 'red' : undefined}
+                        action={selectedAllergies.length > 0 || otherAllergyOptions.length > 0  || allergies  ? handleContinue : undefined}
                     />
                 </div>
             </div>
