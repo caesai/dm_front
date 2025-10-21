@@ -1093,8 +1093,8 @@ const AddressBlock: React.FC<AddressBlockProps> = (
                                     </div>
                                 </YMapMarker>
                             </YMap>
-                            <section>
-                                <div className={css.relativeRestInfo}>
+                            <section className={css.infoContainer}>
+                                <div className={css.RestInfo}>
                                     <div className={css.mapInfo}>
                                         <div
                                             className={css.mapInfoMetro}
