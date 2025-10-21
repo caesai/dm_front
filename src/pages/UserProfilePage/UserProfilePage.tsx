@@ -78,7 +78,7 @@ export const UserProfilePage: React.FC = () => {
             setUserInfo((prev) => ({ ...prev, allergies }))
         }
     }, [allergies.length]);
-    console.log('allergies: ', allergies);
+
     const setMainButtonLoader = (value: boolean) => {
         mainButton.setParams({
             isLoaderVisible: value,
@@ -138,7 +138,7 @@ export const UserProfilePage: React.FC = () => {
                 <div className={css.header}>
                     <RoundedButton
                         icon={<BackIcon size={24} color={'var(--dark-grey)'} />}
-                        action={() => navigate(-1)}
+                        action={() => navigate('/profile')}
                     />
                     <span className={css.header_title}>Личные данные</span>
                     <div className={css.header_spacer} />
