@@ -3,10 +3,10 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import { sevenStageOptions } from '@/__mocks__/preferences.mock.ts';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { authAtom } from '@/atoms/userAtom.ts';
-import { APIUserPreferences } from '@/api/user.ts';
+import { APIUserPreferences } from '@/api/user.api.ts';
 
 export const PreferencesTwo: React.FC = () => {
     const navigate = useNavigate();

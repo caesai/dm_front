@@ -49,6 +49,7 @@ import { PreferencesPage } from '@/pages/PreferencesPage/PreferencesPage.tsx';
 import { StageOne } from '@/pages/OnboardingPage/stages/StageOne.tsx';
 import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
 import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
+import AllergiesPage from '@/pages/AllergiesPage/AllergiesPage.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -105,6 +106,7 @@ const AppRouter = () => {
                     <Route path={'/map'} element={<RestaurantMapPage />} />
                     <Route path={'/profile'} element={<ProfilePage />} />
                     <Route path={'/me'} element={<UserProfilePage />} />
+                        <Route path={'/me/allergies'} element={<AllergiesPage />} />
                     <Route path={'/events'} element={<EventsPage />}>
                         <Route path={'/events'} element={<EventListOutlet />} />
                         <Route

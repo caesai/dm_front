@@ -585,3 +585,8 @@ export const setShortCookie = (name: string, value: string, seconds: number, pat
     const expires = date.toUTCString();
     document.cookie = `${name}=${value}; expires=${expires}; path=${path}`;
 };
+
+export const getCommonStrings = (arr1: string[], arr2: string[]) => {
+    const arr2Set = new Set(arr2);
+    return arr1.filter(str => arr2Set.has(str));
+}

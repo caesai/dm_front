@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { useAtom } from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
 import {Toast} from "@/components/Toast/Toast.tsx";
-import {APIDeleteUser} from "@/api/user.ts";
+import {APIDeleteUser} from "@/api/user.api.ts";
 import {useNavigate} from "react-router-dom";
 
 
@@ -89,7 +89,12 @@ export const DeleteUserPopup: FC<Props> = (props) => {
                 expires_in: 0
             });
             setUser({
-                administrator: undefined,
+                administrator: null,
+                id: 0,
+                mailing_enabled: false,
+                photo_url: null,
+                telegram_id: 0,
+                username: '',
                 advertisement_agreement: false,
                 allergies: "",
                 complete_onboarding: false,

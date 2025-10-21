@@ -1,5 +1,5 @@
-import { IUser } from '@/atoms/userAtom.ts';
 import { IRestaurantShortBooking } from '@/types/restaurant.ts';
+import { IUser } from '@/types/user.types.ts';
 
 interface EventRestaurant {
     id: number;
