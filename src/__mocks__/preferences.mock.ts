@@ -5,32 +5,32 @@ interface IOnboardingOptions {
 
 export const sixStageOptions: IOnboardingOptions[] = [
     {
-        content: 'Тихий ужин',
-        icon: '🍽'
-    },
-    {
-        content: 'Шумная тусовка',
-        icon: '🎉'
-    },
-    {
-        content: 'Ужин вдвоём',
-        icon: '❤️'
-    },
-    {
         content: 'Обед с друзьями',
         icon: '🍻'
     },
     {
-        content: 'Семейные встречи',
-        icon: '👨‍👩‍👧‍'
+        content: 'Тихий ужин',
+        icon: '🍽'
     },
     {
         content: 'Рабочие встречи',
         icon: '💼'
     },
     {
+        content: 'Вечеринка',
+        icon: '🎉'
+    },
+    {
+        content: 'Свидание',
+        icon: '❤️'
+    },
+    {
         content: 'Быстрый перекус',
         icon: '🥐'
+    },
+    {
+        content: 'Семейный бранч',
+        icon: '👨‍👩‍👧‍'
     },
 ]
 
@@ -48,16 +48,16 @@ export const sevenStageOptions: IOnboardingOptions[] = [
         icon: '🍾'
     },
     {
-        content: 'Коктейли',
-        icon: '🍹'
-    },
-    {
         content: 'ЗОЖ',
         icon: '🥗'
     },
     {
         content: 'Уникальные продукты',
         icon: '🥦'
+    },
+    {
+        content: 'Коктейли',
+        icon: '🍹'
     },
     {
         content: 'Завтраки',
@@ -75,7 +75,11 @@ export const eightStageOptions: IOnboardingOptions[] = [
         icon: '🎪'
     },
     {
-        content: 'Винные ужины и дегустации',
+        content: 'Детские события',
+        icon: '🎈'
+    },
+    {
+        content: 'Винные ужины',
         icon: '🍷'
     },
     {
@@ -83,15 +87,11 @@ export const eightStageOptions: IOnboardingOptions[] = [
         icon: '🪩'
     },
     {
-        content: 'Музыкальные события',
-        icon: '🎷‍'
-    },
-    {
         content: 'Мастер-классы',
         icon: '🔪'
     },
     {
-        content: 'События для детей',
-        icon: '🎈'
+        content: 'Музыкальные события',
+        icon: '🎷‍'
     },
 ]
