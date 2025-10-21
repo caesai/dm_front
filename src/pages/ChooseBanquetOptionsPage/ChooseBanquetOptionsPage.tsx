@@ -12,8 +12,8 @@ import { IWorkTime } from '@/types/restaurant.ts';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import 'swiper/css/navigation';
-import { Pagination, Navigation } from 'swiper/modules';
+// import 'swiper/css/navigation';
+import { Pagination } from 'swiper/modules';
 import classnames from 'classnames';
 
 export const ChooseBanquetOptionsPage = () => {
@@ -51,8 +51,8 @@ export const ChooseBanquetOptionsPage = () => {
                                                 clickable: true
                                             }}
                                             observer={true}
-                                            navigation={true}
-                                            modules={[Pagination, Navigation]}
+                                            // navigation={true}
+                                            modules={[Pagination]}
                                             className={classnames(css.swiper)}
                                         >
                                             {banquet.images.map((image, index) => (
