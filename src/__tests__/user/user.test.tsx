@@ -1,5 +1,5 @@
 import { act, screen, render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { UserProfilePage } from '@/pages/UserProfilePage/UserProfilePage.tsx';
 import { APIUpdateUserInfo } from '@/api/user.api.ts';
 import { useAtom } from 'jotai';
@@ -58,6 +58,7 @@ jest.mock('@/api/user.api.ts', () => ({
 describe('User', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        (useLocation as jest.Mock).mockClear();
     });
 
     test('should show an success toast on API error', async () => {
@@ -67,6 +68,11 @@ describe('User', () => {
             // ... other properties
         };
         const mockSetAuthInfo = jest.fn();
+        (useLocation as jest.Mock).mockReturnValue({
+            state: {
+                allergies: null
+            },
+        });
 
         // Configure the `useAtom` mock to return a tuple with your mock data
         (useAtom as jest.Mock).mockReturnValue([mockAuthInfo, mockSetAuthInfo]);

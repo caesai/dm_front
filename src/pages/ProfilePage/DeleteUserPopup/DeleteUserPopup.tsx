@@ -96,7 +96,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
                 telegram_id: 0,
                 username: '',
                 advertisement_agreement: false,
-                allergies: "",
+                allergies: [""],
                 complete_onboarding: false,
                 date_of_birth: "",
                 early_access: false,

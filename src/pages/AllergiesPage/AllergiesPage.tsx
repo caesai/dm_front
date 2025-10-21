@@ -24,7 +24,7 @@ const AllergiesPage: React.FC = () => {
         if (allergies) {
             const allergiesOptionsArray = allergiesOptions.map((item) => item.content);
             const commonAllergies = getCommonStrings(allergies, allergiesOptionsArray);
-            console.log('commonAllergies: ', commonAllergies);
+            // console.log('commonAllergies: ', commonAllergies);
         }
     }, [allergies]);
 
