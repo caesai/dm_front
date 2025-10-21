@@ -26,7 +26,7 @@ export const StageOne: React.FC<StageOneProps> = ({ isStory }) => {
                             Выберите подходящий ресторан
                         </h2>
                         <span className={css.stage_description_subtitle}>
-                            Собрали все рестораны Dreamteam в одном месте.
+                            Забронируйте стол, делитесь впечатлениями, участвуйте в мероприятиях
                         </span>
                     </div>
                     {!isStory && (

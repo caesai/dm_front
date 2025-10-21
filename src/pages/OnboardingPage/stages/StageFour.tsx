@@ -1,186 +1,57 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
-import { useNavigate } from 'react-router-dom';
-import { Star } from 'react-iconly';
+import { useLocation, useNavigate } from 'react-router-dom';
+import {useAtom} from 'jotai';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import {TextInput} from "@/components/TextInput/TextInput.tsx";
+import { useState } from 'react';
+import { APICompleteOnboarding, APIUserName } from '@/api/user.ts';
 
-interface StageFourProps {
-    isStory?: boolean;
-}
-
-export const StageFour: React.FC<StageFourProps> = ({isStory}) => {
+export const StageFour: React.FC = () => {
+    const [user, setUser] = useAtom(userAtom);
+    const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
+    const [name, setName] = useState<string>();
+    const [surname, setSurname] = useState<string>();
+    const location = useLocation();
+    const state = location?.state;
+
+    const handleConfirm = () => {
+        if (!user || !auth?.access_token || !name ) {
+            return;
+        }
+        APIUserName(auth.access_token, name, surname).then();
+        APICompleteOnboarding(auth.access_token, true)
+            .then((d) => setUser(d.data))
+            .then(() => navigate('/', { state } ))
+            .catch(() =>
+                alert(
+                    'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
+                )
+            );
+    };
+
     return (
-        <div className={classNames(css.stage_page)}>
-            <div className={classNames(css.stage_page_wrapper)}>
+        <div className={css.stage_page}>
+            <div className={css.stage_page_wrapper}>
                 <div className={css.stage_footer}>
-                    <div className={css.stage_description}>
-                        <h2 className={classNames(css.stage_description_title)}>
-                            Делитесь впечатлениями
-                        </h2>
-                        <span
-                            className={classNames(
-                                css.stage_description_subtitle
-                            )}
-                        >
-                            Чтобы стать лучше, нам важно ваше мнение.
-                        </span>
-                    </div>
-                    {!isStory && (<div className={css.button_container}>
+                    <div className={css.button_container}>
                         <div
-                            className={css.redButton}
-                            onClick={() => navigate('/onboarding/5')}
+                            className={classNames(css.redButton, {
+                                [css.redButton__disabled]: !name,
+                            })}
+                            onClick={() => handleConfirm()}
                         >
                             <span>Продолжить</span>
                         </div>
-                    </div>)}
+                    </div>
                 </div>
-                <div className={css.stageFour_wrapper}>
-                    <div className={css.stageFour_content}>
-                        <div className={classNames(css.opinion, css.opinion_1)}>
-                            <span>Музыка</span>
-                        </div>
-
-                        <Star
-                            filled
-                            primaryColor={'var(--red)'}
-                            secondaryColor={'var(--red)'}
-                            size={'large'}
-                            style={{
-                                position: 'relative',
-                                top: '5px',
-                                left: '145px',
-                                transform: 'rotate(-6deg)',
-                            }}
-                        ></Star>
-                        <div className={classNames(css.opinion, css.opinion_2)}>
-                            <span>Гостеприимство</span>
-                        </div>
-                        <div className={classNames(css.opinion, css.opinion_3)}>
-                            <span>Чистота и комфорт</span>
-                        </div>
-                        <div className={classNames(css.opinion, css.opinion_4)}>
-                            <span>Размер порции и подача</span>
-                        </div>
-                        <div className={classNames(css.opinion, css.opinion_5)}>
-                            <span>Скорость обслуживания</span>
-                        </div>
-                        <div className={classNames(css.opinion, css.opinion_6)}>
-                            <span>Атмосфера</span>
-                        </div>
-                        <div className={classNames(css.opinion, css.opinion_7)}>
-                            <span>Дополнительные удобства</span>
-                        </div>
-                        <div className={classNames(css.opinion, css.opinion_8)}>
-                            <span>Вкус блюд и напитков</span>
-                        </div>
-                        <Star
-                            filled
-                            primaryColor={'var(--red)'}
-                            secondaryColor={'var(--red)'}
-                            size={'large'}
-                            style={{
-                                position: 'relative',
-                                top: '-140px',
-                                left: '145px',
-                                transform: 'rotate(-33deg)',
-                            }}
-                        ></Star>
-                        <Star
-                            filled
-                            primaryColor={'var(--red)'}
-                            secondaryColor={'var(--red)'}
-                            size={'large'}
-                            style={{
-                                position: 'relative',
-                                top: '-64px',
-                                left: '166px',
-                                transform: 'rotate(110deg)',
-                            }}
-                        ></Star>
-                        <Star
-                            filled
-                            primaryColor={'var(--red)'}
-                            secondaryColor={'var(--red)'}
-                            size={'large'}
-                            style={{
-                                position: 'relative',
-                                top: '-93px',
-                                left: '159px',
-                                transform: 'rotate(-33deg)',
-                            }}
-                        ></Star>
-                        <Star
-                            filled
-                            primaryColor={'var(--red)'}
-                            secondaryColor={'var(--red)'}
-                            size={'large'}
-                            style={{
-                                position: 'relative',
-                                top: '-16px',
-                                left: '8px',
-                                transform: 'rotate(-33deg)',
-                            }}
-                        ></Star>
-                        <Star
-                            filled
-                            primaryColor={'var(--red)'}
-                            secondaryColor={'var(--red)'}
-                            size={'large'}
-                            style={{
-                                position: 'relative',
-                                top: '33px',
-                                left: '117px',
-                                transform: 'rotate(-13deg)',
-                            }}
-                        ></Star>
-                        <Star
-                            filled
-                            primaryColor={'var(--red)'}
-                            secondaryColor={'var(--red)'}
-                            size={'large'}
-                            style={{
-                                position: 'relative',
-                                top: '35px',
-                                left: '-174px',
-                                transform: 'rotate(-33deg)',
-                            }}
-                        ></Star>
-                        <Star
-                            filled
-                            primaryColor={'var(--red)'}
-                            secondaryColor={'var(--red)'}
-                            size={'large'}
-                            style={{
-                                position: 'relative',
-                                top: '-5px',
-                                left: '-194px',
-                                transform: 'rotate(-33deg)',
-                            }}
-                        ></Star>
-                        <Star
-                            filled
-                            primaryColor={'var(--red)'}
-                            secondaryColor={'var(--red)'}
-                            size={'large'}
-                            style={{
-                                position: 'relative',
-                                top: '-35px',
-                                left: '-215px',
-                                transform: 'rotate(-1deg)',
-                            }}
-                        ></Star>
-                        <Star
-                            filled
-                            primaryColor={'var(--red)'}
-                            secondaryColor={'var(--red)'}
-                            size={'large'}
-                            style={{
-                                position: 'relative',
-                                top: '-43px',
-                                left: '-272px',
-                                transform: 'rotate(-56deg)',
-                            }}
-                        ></Star>
+                <div className={css.stageSix_wrapper}>
+                    <h2 className={css.stage_description_title}>
+                        Как мы могли бы<br /> к вам обращаться?</h2>
+                    <div className={css.form}>
+                        <TextInput placeholder={'Имя'} value={name} onChange={(e) => setName(e)} />
+                        <TextInput placeholder={'Фамилия'} value={surname} onChange={(e) => setSurname(e)} />
                     </div>
                 </div>
             </div>
