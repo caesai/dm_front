@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { BASE_URL } from '@/api/base.ts';
-import { IAuthInfo, IUser } from '@/atoms/userAtom.ts';
+import { IAuthInfo } from '@/atoms/userAtom.ts';
+import { IUser } from '@/types/user.types.ts';
 
 interface AuthParams {
     data?: string;

@@ -1,14 +1,9 @@
+import React from 'react';
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
-import { useNavigate } from 'react-router-dom';
 import { Star } from 'react-iconly';
 
-interface StageFourProps {
-    isStory?: boolean;
-}
-
-export const StageTwo: React.FC<StageFourProps> = ({isStory}) => {
-    const navigate = useNavigate();
+export const StageTwo: React.FC = () => {
     return (
         <div className={classNames(css.stage_page)}>
             <div className={classNames(css.stage_page_wrapper)}>
@@ -25,14 +20,6 @@ export const StageTwo: React.FC<StageFourProps> = ({isStory}) => {
                             Чтобы стать лучше, нам важно ваше мнение.
                         </span>
                     </div>
-                    {!isStory && (<div className={css.button_container}>
-                        <div
-                            className={css.redButton}
-                            onClick={() => navigate('/onboarding/3')}
-                        >
-                            <span>Продолжить</span>
-                        </div>
-                    </div>)}
                 </div>
                 <div className={css.stageFour_wrapper}>
                     <div className={css.stageFour_content}>

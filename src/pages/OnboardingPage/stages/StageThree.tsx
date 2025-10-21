@@ -1,6 +1,6 @@
+import React, { useState } from 'react';
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
-import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';

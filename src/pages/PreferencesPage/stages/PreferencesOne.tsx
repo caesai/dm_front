@@ -6,7 +6,7 @@ import { sixStageOptions } from '@/__mocks__/preferences.mock.ts';
 import React, { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { authAtom } from '@/atoms/userAtom.ts';
-import { APIUserPreferences } from '@/api/user.ts';
+import { APIUserPreferences } from '@/api/user.api.ts';
 
 export const PreferencesOne: React.FC = () => {
     const navigate = useNavigate();

@@ -1,0 +1,47 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px 60px 15px;
+    height: max-content;
+    min-height: 100vh;
+    background-color: #fff;
+    gap: 18px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.header_spacer {
+    width: 44px;
+    height: 44px;
+}
+
+.options {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.button {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+}

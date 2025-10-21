@@ -1,12 +1,12 @@
 import {Page} from '@/components/Page.tsx';
 import css from './PreferencesPage.module.css';
 import {Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
-import {useEffect} from 'react';
+import React, {useEffect} from 'react';
 import logoNew from "/img/DT_concierge_logo_color1.svg";
 import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
 import classNames from 'classnames';
 
-export const PreferencesPage = () => {
+export const PreferencesPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [params] = useSearchParams();
