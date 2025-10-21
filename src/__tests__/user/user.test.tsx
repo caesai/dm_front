@@ -61,7 +61,7 @@ describe('User', () => {
         (useLocation as jest.Mock).mockClear();
     });
 
-    test('should show an success toast on API error', async () => {
+    test('should show an successful toast on API error', async () => {
         // Arrange
         const mockAuthInfo = {
             access_token: 'fake-access-token',

@@ -54,10 +54,13 @@ const AllergiesPage: React.FC = () => {
     }
 
     const handleContinue = () => {
-        const other = otherAllergyOptions !== '' ? otherAllergyOptions.split(',') : null;
+        const other = findOtherAllergies(selectedAllergies);
         let updatedAllergies = selectedAllergies;
-        if (other) {
-            updatedAllergies = [...selectedAllergies, ...other];
+        if (otherAllergyOptions == '') {
+            updatedAllergies = updatedAllergies.filter(item => !other.includes(item));
+        } else {
+            // const updatedOther = findOtherAllergies(otherAllergyOptions.split(','));
+            updatedAllergies = [...selectedAllergies, otherAllergyOptions];
         }
         navigate('/me', { state: {
                 allergies: updatedAllergies,
@@ -109,8 +112,8 @@ const AllergiesPage: React.FC = () => {
                     <UniversalButton
                         width={'full'}
                         title={'Сохранить'}
-                        theme={selectedAllergies.length > 0 || otherAllergyOptions.length > 0 ? 'red' : undefined}
-                        action={selectedAllergies.length > 0 || otherAllergyOptions.length > 0 ? handleContinue : undefined}
+                        theme={selectedAllergies.length > 0 || otherAllergyOptions.length > 0 || allergies ? 'red' : undefined}
+                        action={selectedAllergies.length > 0 || otherAllergyOptions.length > 0  || allergies ? handleContinue : undefined}
                     />
                 </div>
             </div>

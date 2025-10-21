@@ -57,7 +57,7 @@ export const UserProfilePage: React.FC = () => {
         setDobFromAPI(user?.date_of_birth)
     );
 
-    const allergies: string[] = location.state?.allergies;
+    const allergies: string[] = location.state?.allergies ?? [];
 
     useEffect(() => {
         if (mainButton.mount.isAvailable()) {
@@ -85,13 +85,11 @@ export const UserProfilePage: React.FC = () => {
         };
     }, []);
 
-    // useEffect(() => {
-    //     if (userInfo.allergies) {
-    //         const allergiesOptionsArray = allergiesOptions.map((item) => item.content);
-    //         const commonAllergies = getCommonStrings(userInfo.allergies, allergiesOptionsArray);
-    //         // console.log('commonAllergies: ', commonAllergies);
-    //     }
-    // }, [userInfo.allergies]);
+    useEffect(() => {
+        if (allergies) {
+            setUserInfo((prev) => ({ ...prev, allergies }))
+        }
+    }, [allergies]);
 
     const setMainButtonLoader = (value: boolean) => {
         mainButton.setParams({
@@ -108,7 +106,7 @@ export const UserProfilePage: React.FC = () => {
             {
                 ...userInfo,
                 date_of_birth: dob?.toISOString().split('T')[0],
-                allergies,
+                allergies: allergies ?? userInfo.allergies,
             },
             authInfo.access_token
         )
@@ -134,7 +132,7 @@ export const UserProfilePage: React.FC = () => {
 
     const navigateToAllergies = () => {
         navigate('/me/allergies', { state: {
-                allergies: userInfo.allergies,
+                allergies: userInfo.allergies && userInfo.allergies.length > 0 ? userInfo.allergies : null,
             }
         });
     }
@@ -204,9 +202,9 @@ export const UserProfilePage: React.FC = () => {
                     </div>
                     <div onClick={navigateToAllergies} className={css.allergy}>
                         <span>Аллергии</span>
-                        {userInfo.allergies &&
+                        {userInfo.allergies && userInfo.allergies.length > 0 &&
                             (
-                                <div className={css.allergyOptions} style={{ height: 0}}>
+                                <div className={css.allergyOptions} >
                                     {allergiesOptions.filter(option =>
                                         userInfo.allergies && userInfo.allergies.includes(option.content),
                                     ).map((item, index) => (
