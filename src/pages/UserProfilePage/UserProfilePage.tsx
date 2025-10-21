@@ -13,10 +13,10 @@ import { APIUpdateUserInfo} from '@/api/user.api.ts';
 import { mainButton } from '@telegram-apps/sdk-react';
 import { Toast } from "@/components/Toast/Toast.tsx";
 import { DeleteUserPopup } from "@/pages/ProfilePage/DeleteUserPopup/DeleteUserPopup.tsx";
-import { IUser } from '@/types/user.types.ts';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
 import { findOtherAllergies } from '@/utils.ts';
+import { IUserUpdate } from '@/types/user.types.ts';
 
 export const UserProfilePage: React.FC = () => {
     const navigate = useNavigate();
@@ -28,19 +28,7 @@ export const UserProfilePage: React.FC = () => {
     const [toastShow, setToastShow] = useState<boolean>(false);
     const [deletePopup, setDeletePopup] = useState(false);
 
-    const [userInfo, setUserInfo] = useState<IUser>({
-        id: user?.id ?? 0,
-        telegram_id: user?.telegram_id ?? 0,
-        administrator: user?.administrator ?? null,
-        advertisement_agreement: user?.advertisement_agreement ?? false,
-        complete_onboarding: user?.complete_onboarding ?? false,
-        date_of_birth: user?.date_of_birth ?? null,
-        early_access: user?.early_access ?? false,
-        gdpr_agreement: user?.gdpr_agreement ?? false,
-        license_agreement: user?.license_agreement ?? false,
-        mailing_enabled: user?.mailing_enabled ?? false,
-        photo_url: user?.photo_url ?? null,
-        username: user?.username ?? '',
+    const [userInfo, setUserInfo] = useState<IUserUpdate>({
         first_name: user?.first_name ?? '',
         last_name: user?.last_name ?? '',
         phone_number: user?.phone_number,
@@ -86,11 +74,11 @@ export const UserProfilePage: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (allergies) {
+        if (allergies.length > 0) {
             setUserInfo((prev) => ({ ...prev, allergies }))
         }
-    }, [allergies]);
-
+    }, [allergies.length]);
+    console.log('allergies: ', allergies);
     const setMainButtonLoader = (value: boolean) => {
         mainButton.setParams({
             isLoaderVisible: value,

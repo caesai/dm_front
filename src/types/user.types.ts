@@ -27,7 +27,7 @@ export interface IUserUpdate {
     last_name?: string;
     email?: string;
     phone_number?: string;
-    allergies?: string;
+    allergies?: string[] | null;
     date_of_birth?: string;
 }
 

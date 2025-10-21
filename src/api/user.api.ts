@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {BASE_URL} from '@/api/base.ts';
-import { IUser, IUserPreferences } from '@/types/user.types.ts';
+import { IUser, IUserPreferences, IUserUpdate } from '@/types/user.types.ts';
 
 export const APIUpdateUserInfo = async (
     {
@@ -10,7 +10,7 @@ export const APIUpdateUserInfo = async (
         phone_number,
         allergies,
         email,
-    }: IUser,
+    }: IUserUpdate,
     access_token: string
 ) => {
     let payload = {};
