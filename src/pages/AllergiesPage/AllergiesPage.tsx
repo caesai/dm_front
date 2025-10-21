@@ -8,7 +8,7 @@ import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/Comm
 import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import { getCommonStrings } from '@/utils.ts';
+import { findOtherAllergies } from '@/utils.ts';
 
 const AllergiesPage: React.FC = () => {
     const navigate = useNavigate();
@@ -22,9 +22,12 @@ const AllergiesPage: React.FC = () => {
 
     useEffect(() => {
         if (allergies) {
-            const allergiesOptionsArray = allergiesOptions.map((item) => item.content);
-            const commonAllergies = getCommonStrings(allergies, allergiesOptionsArray);
-            // console.log('commonAllergies: ', commonAllergies);
+            const other = findOtherAllergies(allergies);
+            if (other.length > 0) {
+                setIsOtherOption(true);
+                setOtherAllergyOptions(other.join(','));
+            }
+            setSelectedAllergies(allergies);
         }
     }, [allergies]);
 
@@ -51,8 +54,13 @@ const AllergiesPage: React.FC = () => {
     }
 
     const handleContinue = () => {
+        const other = otherAllergyOptions !== '' ? otherAllergyOptions.split(',') : null;
+        let updatedAllergies = selectedAllergies;
+        if (other) {
+            updatedAllergies = [...selectedAllergies, ...other];
+        }
         navigate('/me', { state: {
-                allergies: [...selectedAllergies, ...otherAllergyOptions.split(',')],
+                allergies: updatedAllergies,
             }
         });
     }

@@ -14,6 +14,9 @@ import { mainButton } from '@telegram-apps/sdk-react';
 import { Toast } from "@/components/Toast/Toast.tsx";
 import { DeleteUserPopup } from "@/pages/ProfilePage/DeleteUserPopup/DeleteUserPopup.tsx";
 import { IUser } from '@/types/user.types.ts';
+import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
+import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
+import { findOtherAllergies } from '@/utils.ts';
 
 export const UserProfilePage: React.FC = () => {
     const navigate = useNavigate();
@@ -81,6 +84,14 @@ export const UserProfilePage: React.FC = () => {
             mainButton.unmount();
         };
     }, []);
+
+    // useEffect(() => {
+    //     if (userInfo.allergies) {
+    //         const allergiesOptionsArray = allergiesOptions.map((item) => item.content);
+    //         const commonAllergies = getCommonStrings(userInfo.allergies, allergiesOptionsArray);
+    //         // console.log('commonAllergies: ', commonAllergies);
+    //     }
+    // }, [userInfo.allergies]);
 
     const setMainButtonLoader = (value: boolean) => {
         mainButton.setParams({
@@ -191,15 +202,47 @@ export const UserProfilePage: React.FC = () => {
 
                         <CalendarIcon size={20} color={'var(--grey)'} />
                     </div>
-                    {/*<TextInput*/}
-                    {/*    value={userInfo.allergies}*/}
-                    {/*    onChange={(v) =>*/}
-                    {/*        setUserInfo((prev) => ({ ...prev, allergies: v }))*/}
-                    {/*    }*/}
-                    {/*    placeholder={'Аллергия'}*/}
-                    {/*/>*/}
                     <div onClick={navigateToAllergies} className={css.allergy}>
                         <span>Аллергии</span>
+                        {userInfo.allergies &&
+                            (
+                                <div className={css.allergyOptions} style={{ height: 0}}>
+                                    {allergiesOptions.filter(option =>
+                                        userInfo.allergies && userInfo.allergies.includes(option.content),
+                                    ).map((item, index) => (
+                                        <CommentaryOptionButton
+                                            newDesign
+                                            text={item.content}
+                                            icon={item.icon}
+                                            active={true}
+                                            style={{
+                                                fontSize: 10,
+                                                padding: '5px 8px',
+                                                backgroundColor: '#fff',
+                                                borderColor: '#fff',
+                                            }}
+                                            key={index}
+                                        />
+                                    ))}
+                                    {findOtherAllergies(userInfo.allergies).length > 0 &&
+                                        findOtherAllergies(userInfo.allergies)
+                                            .map((allergy, index) => (
+                                                <CommentaryOptionButton
+                                                    newDesign
+                                                    text={allergy}
+                                                    icon={'❌'}
+                                                    active={true}
+                                                    style={{
+                                                        fontSize: 10,
+                                                        padding: '5px 8px',
+                                                        backgroundColor: '#fff',
+                                                        borderColor: '#fff',
+                                                    }}
+                                                    key={index}
+                                                />
+                                            ))}
+                                </div>
+                            )}
                     </div>
                     <div
                         className={css.delete}

@@ -59,10 +59,12 @@
 }
 
 .allergy {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     padding: 13px 20px;
     margin: 0;
     width: 100%;
-    display: inline-flex;
     border: none;
     border-radius: 12px;
     outline: none;
@@ -72,6 +74,15 @@
     font-weight: 700;
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.2s ease-in-out;
+
+    >span {
+        display: inline-flex;
+    }
+}
+
+.allergyOptions {
+    display: flex;
+
 }
 
 .delete {

@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction } from 'react';
 // import moment from 'moment';
 // import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { IEventBooking } from '@/types/events.ts';
+import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
 // import axios from 'axios';
 // import { IEventBooking } from '@/pages/EventsPage/EventsPage.tsx';
 // import { Dispatch, SetStateAction } from 'react';
@@ -586,7 +587,10 @@ export const setShortCookie = (name: string, value: string, seconds: number, pat
     document.cookie = `${name}=${value}; expires=${expires}; path=${path}`;
 };
 
-export const getCommonStrings = (arr1: string[], arr2: string[]) => {
-    const arr2Set = new Set(arr2);
-    return arr1.filter(str => arr2Set.has(str));
+export const findOtherAllergies = (allergies: string[]) => {
+    // Создаем Set для быстрого поиска по названиям аллергенов
+    const validAllergies = new Set(allergiesOptions.map(option => option.content));
+
+    // Фильтруем userAllergies, оставляя только те, которых нет в Set
+    return allergies.filter(allergy => !validAllergies.has(allergy));
 }
