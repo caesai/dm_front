@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from '@/api/base.ts';
-import { IBanquetReserve } from '@/types/banquets.ts';
+import { IBanquetReserve } from '@/types/banquets.types.ts';
 
 export const APIPostBanquetRequest = async (token: string | undefined, banquetReserve: IBanquetReserve) => {
     return axios.post(`${BASE_URL}/banquet/request`, {

@@ -2,7 +2,6 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.tsx';
 import { screen, waitFor, render } from '@testing-library/react';
 import { banquetData } from '@/__mocks__/banquets.mock.ts';
-
 // Mocking Telegram SDK to be able to run code outside
 jest.mock('@telegram-apps/sdk-react', () => ({
     backButton: {
@@ -14,6 +13,16 @@ jest.mock('@telegram-apps/sdk-react', () => ({
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'), // Import and retain default behavior
     useLocation: jest.fn(), // Mock useLocation specifically
+}));
+
+jest.mock('swiper/react', () => ({
+    Swiper: jest.fn(),
+    SwiperSlide: jest.fn(),
+}));
+
+jest.mock('swiper/modules', () => ({
+    Navigation: jest.fn(),
+    Pagination: jest.fn(),
 }));
 
 describe('Banquets', () => {
