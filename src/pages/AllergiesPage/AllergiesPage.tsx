@@ -21,7 +21,7 @@ const AllergiesPage: React.FC = () => {
     const allergies: string[] = location.state?.allergies;
 
     useEffect(() => {
-        if (allergies) {
+        if (allergies.length > 0) {
             const other = findOtherAllergies(allergies);
             if (other.length > 0) {
                 setIsOtherOption(true);
@@ -29,7 +29,7 @@ const AllergiesPage: React.FC = () => {
             }
             setSelectedAllergies(allergies);
         }
-    }, [allergies]);
+    }, [allergies.length]);
 
     const onOptionSelect = (option: string) => {
         // Create a new array based on the previous state.
@@ -50,17 +50,31 @@ const AllergiesPage: React.FC = () => {
     }
 
     const handleOtherAllergyOptions = (value: string) => {
-        setOtherAllergyOptions(value);
+        const other = findOtherAllergies(selectedAllergies)
+        if (allergies.length > 0 && other.length > 0) {
+            const allergyIndexToUpdate = selectedAllergies.findIndex(item => item === otherAllergyOptions);
+            if (allergyIndexToUpdate > - 1) {
+                const updatedAllergies = selectedAllergies;
+                updatedAllergies[allergyIndexToUpdate] = value;
+                setSelectedAllergies(updatedAllergies);
+                setOtherAllergyOptions(value);
+
+            }
+        } else {
+            setOtherAllergyOptions(value);
+        }
     }
 
     const handleContinue = () => {
         const other = findOtherAllergies(selectedAllergies);
         let updatedAllergies = selectedAllergies;
+
         if (otherAllergyOptions == '') {
             updatedAllergies = updatedAllergies.filter(item => !other.includes(item));
         } else {
-            // const updatedOther = findOtherAllergies(otherAllergyOptions.split(','));
-            updatedAllergies = [...selectedAllergies, otherAllergyOptions];
+            if (allergies.length > 0 && other.length == 0) {
+                updatedAllergies = [...selectedAllergies, otherAllergyOptions];
+            }
         }
         navigate('/me', { state: {
                 allergies: updatedAllergies,
@@ -112,8 +126,8 @@ const AllergiesPage: React.FC = () => {
                     <UniversalButton
                         width={'full'}
                         title={'Сохранить'}
-                        theme={selectedAllergies.length > 0 || otherAllergyOptions.length > 0 || allergies ? 'red' : undefined}
-                        action={selectedAllergies.length > 0 || otherAllergyOptions.length > 0  || allergies ? handleContinue : undefined}
+                        theme={selectedAllergies.length > 0 || otherAllergyOptions.length > 0 || allergies.length > 0 ? 'red' : undefined}
+                        action={selectedAllergies.length > 0 || otherAllergyOptions.length > 0  || allergies.length > 0  ? handleContinue : undefined}
                     />
                 </div>
             </div>
