@@ -18,7 +18,7 @@ import { UsersIcon } from '@/components/Icons/UsersIcon';
 import { BanquetOptionsPopup } from '@/components/BanquetOptionsPopup/BanquetOpitonsPopup.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import classNames from 'classnames';
-import { IBanquetAdditionalOptions, IBanquetOptions } from '@/types/banquets.ts';
+import { IBanquetAdditionalOptions, IBanquetOptions } from '@/types/banquets.types.ts';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { TimeSelectorPopup } from '@/components/TimeSelectorPopup/TimeSelectorPopup.tsx';
 import { IWorkTime } from '@/types/restaurant.ts';
@@ -168,7 +168,7 @@ export const BanquetOptionPage = () => {
                     setIsOpen={setCalendarOpen}
                     initialDate={new Date()}
                     setDate={(date) => {
-                        if (moment(date).isBefore(new Date())) {
+                        if (moment(date).isBefore(moment().subtract(1, 'days').startOf('day'))) {
                             return;
                         }
                         setDate(date);
