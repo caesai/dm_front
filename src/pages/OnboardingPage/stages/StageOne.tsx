@@ -2,8 +2,10 @@ import React from 'react';
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import stage_logos from "/img/stage_logos.png";
+import { useNavigate } from 'react-router-dom';
 
 export const StageOne: React.FC = () => {
+    const navigate = useNavigate();
     return (
         <div className={css.stage_page}>
             <div className={css.stage_page_wrapper}>
@@ -16,9 +18,17 @@ export const StageOne: React.FC = () => {
                             Забронируйте стол, делитесь впечатлениями, участвуйте в мероприятиях
                         </span>
                     </div>
+                    <div className={css.button_container}>
+                        <div
+                            className={css.redButton}
+                            onClick={() => navigate('/onboarding/2')}
+                        >
+                            <span>Продолжить</span>
+                        </div>
+                    </div>
                 </div>
                 <div className={css.stageOne_wrapper}>
-                        <div className={css.stageOne_icons} >
+                    <div className={css.stageOne_icons}>
                         <img
                             src={stage_logos}
                             alt=""
