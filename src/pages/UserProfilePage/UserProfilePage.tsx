@@ -189,7 +189,7 @@ export const UserProfilePage: React.FC = () => {
                         <CalendarIcon size={20} color={'var(--grey)'} />
                     </div>
                     <div onClick={navigateToAllergies} className={css.allergy}>
-                        <span>Аллергии</span>
+                        <span>Аллергия</span>
                         {userInfo.allergies && userInfo.allergies.length > 0 &&
                             (
                                 <div className={css.allergyOptions} >

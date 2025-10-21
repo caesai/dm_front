@@ -90,7 +90,7 @@ const AllergiesPage: React.FC = () => {
                         icon={<BackIcon size={24} color={'var(--dark-grey)'} />}
                         action={() => navigate(-1)}
                     />
-                    <span className={css.header_title}>Личные данные</span>
+                    <span className={css.header_title}>Аллергены</span>
                     <div className={css.header_spacer} />
                 </div>
                 <div className={css.options}>
