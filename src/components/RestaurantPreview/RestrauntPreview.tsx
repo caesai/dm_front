@@ -52,7 +52,9 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
             .then(() => {
                 setToastShow(true);
                 setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
-                setDataToLocalStorage('want_first', { done: true });
+                setTimeout(() => {
+                    setDataToLocalStorage('want_first', { done: true });
+                }, 5000);
             })
             .catch((err) => {
                 if (err.response) {
@@ -191,7 +193,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                     </div>
                 ) : (
                     <div style={{ display: 'flex'}}>
-                        {toastShow || (want_first && JSON.parse(want_first).done) ? (
+                        {toastShow || want_first ? (
                             <div className={css.success_animation}>
                                 <svg className={css.checkmark} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                                     <circle className={css.checkmark__circle} cx="26" cy="26" r="25" fill="none" />
