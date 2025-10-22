@@ -67,9 +67,9 @@ const AllergiesPage: React.FC = () => {
 
     const handleContinue = () => {
         const other = findOtherAllergies(selectedAllergies);
-        let updatedAllergies = selectedAllergies;
+        let updatedAllergies = [...selectedAllergies];
 
-        if (otherAllergyOptions == '') {
+        if (otherAllergyOptions === '') {
             updatedAllergies = updatedAllergies.filter(item => !other.includes(item));
         } else {
             if (other.length === 0) {

@@ -194,7 +194,15 @@ export const IndexPage: FC = () => {
         [cityListConfirm, currentCityS.id],
     );
 
-    const restaurantListed = (currentCityA === 'spb' && !JSON.parse(String(want_first))?.done) ? [{
+    let wantFirstParsed: any = {};
+
+    try {
+        wantFirstParsed = JSON.parse(String(want_first));
+    } catch (e) {
+        wantFirstParsed = {};
+    }
+
+    const restaurantListed = (currentCityA === 'spb' && !wantFirstParsed?.done) ? [{
         'id': 12,
         'title': 'Self Edge Chinois',
         'slogan': 'Современная Азия с акцентом на Китай и культовый raw bar',
