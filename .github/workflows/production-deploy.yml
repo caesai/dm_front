@@ -32,20 +32,11 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload dist repository
-          path: './dist'
-
       - name: Copy folder content recursively to remote
         uses: garygrossgarten/github-action-scp@release
         with:
           local: dist
-          remote: scp/var/www
+          remote: /var/www/dist/
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.PASSWORD }}
