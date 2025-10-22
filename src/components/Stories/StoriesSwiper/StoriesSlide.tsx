@@ -1,4 +1,4 @@
-import { IStoryObject, Renderer, Tester } from '@/types/stories.types.ts';
+import { IStory } from '@/types/stories.types.ts';
 import React from 'react';
 import { useAtom } from 'jotai/index';
 import { localStoriesListAtom } from '@/atoms/localStoriesListAtom.ts';
@@ -6,16 +6,13 @@ import moment from 'moment/moment';
 import classnames from 'classnames';
 import css from '@/components/Stories/StoriesSwiper/StoriesSwiper.module.css';
 import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
-import GlobalStoriesContext from '@/components/Stories/context/GlobalStoriesContext.ts';
-import StoriesContext from '@/components/Stories/context/StoriesContext.ts';
-import { renderers as defaultRenderers } from '@/components/Stories/renderers';
 import StoriesContainer from '@/components/Stories/StoriesContainer/StoriesContainer.tsx';
 
 interface StorySlideProps {
     onAllStoriesEnd: () => void;
     onClose: () => void;
     storyId: number;
-    stories: IStoryObject[];
+    stories: IStory[];
     shouldWait: boolean;
 }
 
@@ -93,54 +90,22 @@ export const StorySlide: React.FC<StorySlideProps> = (
         setLocalStories((prevItems) => [...prevItems, newStoryLocalCount]);
     };
 
-    const context = {
-        width: '100%',
-        height: '100%',
-        preloadCount: 0,
-        // shouldWait,
-        onStoryEnd: onStoryChange,
-        onAllStoriesEnd: handleStoryEnd,
-        currentIndex: localStory !== undefined ? localStory.index : undefined,
-        // css.progressBar, main: css.slide
-    };
-
     return (
         <div className={classnames(css.stories_container)}>
             <span className={classnames(css.closeIcon)} onClick={onClose}>
                 <CloseIcon size={44} color={'red'} />
             </span>
-            <GlobalStoriesContext.Provider value={context}>
-                <StoriesContext.Provider value={generateStories(stories, defaultRenderers)}>
-                    <StoriesContainer shouldWait={shouldWait} />
-                </StoriesContext.Provider>
-            </GlobalStoriesContext.Provider>
+            <StoriesContainer
+                shouldWait={shouldWait}
+                stories={stories}
+                width={'100%'}
+                height={'100%'}
+                preloadCount={0}
+                onAllStoriesEnd={handleStoryEnd}
+                onStoryEnd={onStoryChange}
+                currentIndex={localStory !== undefined ? localStory.index : undefined}
+                onStoryStart={() => {}}
+            />
         </div>
     );
-};
-
-const generateStories = (stories: IStoryObject[], renderers: { renderer: Renderer, tester: Tester }[]) => {
-    return stories.map(s => {
-        let story: IStoryObject = {
-            ...s,
-            content: () => <></>,
-            originalContent: () => <></>,
-            seeMoreCollapsed: () => <></>,
-        };
-
-        let renderer = getRenderer(Object.assign(story, s), renderers);
-        story.originalContent = story.content;
-        story.content = renderer;
-        return story;
-    });
-};
-
-const getRenderer = (story: IStoryObject, renderers: { renderer: Renderer, tester: Tester }[]): Renderer => {
-    let probable = renderers.map(r => {
-        return {
-            ...r,
-            testerResult: r.tester(story),
-        };
-    }).filter(r => r.testerResult.condition);
-    probable.sort((a, b) => b.testerResult.priority - a.testerResult.priority);
-    return probable[0].renderer;
 };

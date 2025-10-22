@@ -1,65 +1,82 @@
-import React, { useContext } from "react";
-import { Action, GlobalStoriesCtx, IStoryObject } from '@/types/stories.types.ts';
-import GlobalStoriesContext from '@/components/Stories/context/GlobalStoriesContext.ts';
+import React from 'react';
+import { Action, IStory } from '@/types/stories.types.ts';
 import css from './Story.module.css';
+import { DefaultStoryComponent } from '@/components/Stories/renderers/Default.tsx';
+import { VideoStoryComponent } from '@/components/Stories/renderers/Video.tsx';
+import { ImageStoryComponent } from '@/components/Stories/renderers/Image.tsx';
+import { CustomStoryComponent } from '@/components/Stories/renderers/Custom.tsx';
 
 interface StoryProps {
-    story: IStoryObject;
+    story: IStory;
     action: Action;
     playState: boolean;
     shouldWait: boolean;
+    isPaused: boolean;
     getVideoDuration: Function;
     bufferAction: boolean;
+    width: number | string;
+    height: number | string;
 }
 
-const Story: React.FC<StoryProps> = (props) => {
-    const globalContext = useContext<GlobalStoriesCtx>(GlobalStoriesContext);
-
-    const {
+const Story: React.FC<StoryProps> = (
+    {
+        story,
+        action,
         width,
         height,
-        loader,
-        header,
-        storyStyles,
-        storyInnerContainerStyles = {},
-    } = globalContext;
+        shouldWait,
+        isPaused,
+    },
+) => {
 
-    const rendererMessageHandler = (type: string, data: any) => {
-        switch (type) {
-            case "UPDATE_VIDEO_DURATION":
-                props.getVideoDuration(data.duration);
-                return { ack: "OK" as "OK" };
+    const renderStoryTypeComponent = () => {
+        switch (story.type) {
+            case 'component':
+                return (
+                    <CustomStoryComponent
+                        story={story}
+                        action={action}
+                        isPaused={isPaused}
+                        shouldWait={shouldWait}
+                        width={'100%'}
+                        height={'100%'}
+                    />
+                )
+            case 'image':
+                return (
+                    <ImageStoryComponent
+                        story={story}
+                        action={action}
+                        isPaused={isPaused}
+                        shouldWait={shouldWait}
+                        width={'100%'}
+                        height={'100%'}
+                    />
+                )
+            case 'video':
+                return (
+                    <VideoStoryComponent
+                        story={story}
+                        action={action}
+                        isPaused={isPaused}
+                        shouldWait={shouldWait}
+                        width={'100%'}
+                        height={'100%'}
+                    />)
             default:
-                return { ack: "ERROR" as "ERROR" };
+                return <DefaultStoryComponent story={story} action={action} />
         }
-    };
-
-    const getStoryContent = () => {
-        let InnerContent = props.story?.content;
-        let config = { width, height, loader, header, storyStyles };
-        if (InnerContent === undefined) return null;
-        return (
-            <InnerContent
-                action={props.action}
-                isPaused={props.playState}
-                shouldWait={props.shouldWait}
-                story={props.story}
-                config={config}
-                messageHandler={rendererMessageHandler}
-            />
-        );
     };
 
     return (
         <div
             className={css.story}
             style={{
-                ...storyInnerContainerStyles,
                 width: width,
                 height: height,
             }}
         >
-            {getStoryContent()}
+            {renderStoryTypeComponent()}
         </div>
     );
 };

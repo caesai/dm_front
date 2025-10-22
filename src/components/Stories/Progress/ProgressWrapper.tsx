@@ -1,6 +1,4 @@
-import React, { useContext } from 'react';
-import { GlobalStoriesCtx } from '@/types/stories.types.ts';
-import GlobalStoriesContext from '@/components/Stories/context/GlobalStoriesContext.ts';
+import React from 'react';
 import css from '@/components/Stories/Progress/Progress.module.css';
 
 interface ProgressWrapperProps {
@@ -11,13 +9,11 @@ interface ProgressWrapperProps {
 }
 
 const ProgressWrapper: React.FC<ProgressWrapperProps> = (props) => {
-    const { progressWrapperStyles } = useContext<GlobalStoriesCtx>(GlobalStoriesContext);
 
     return (
         <div
             className={css.progress}
             style={{
-                ...progressWrapperStyles,
                 ...getProgressWrapperStyle(props)
             }}
         >

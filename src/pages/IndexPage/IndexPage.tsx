@@ -27,7 +27,7 @@ import moment from 'moment';
 import superevent from '/img/hh2.jpg';
 import newres from '/img/chinois_app.png';
 import { Toast } from '@/components/Toast/Toast.tsx';
-import { IStoryBlock, IStoryObject } from '@/types/stories.types.ts';
+import { IStoryBlock } from '@/types/stories.types.ts';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
 import { getDataFromLocalStorage } from '@/utils.ts';
 
@@ -111,36 +111,10 @@ export const IndexPage: FC = () => {
     const cityId = cityListA.find(item => item.name_english === currentCityS.id)?.id;
     useEffect(() => {
         if (auth?.access_token !== undefined && cityId !== undefined) {
-            ApiGetStoriesBlocks(auth?.access_token, cityId).then((storiesBlockResponse) => {
-                const blocks = storiesBlockResponse.data.filter((item) => (
-                    item.stories.length > 0
-                )).map((block) => {
-                    const convertedStories: IStoryObject[] = block.stories.map((story) => {
-                        return {
-                            type: story.type.toLowerCase(),
-                            url: String(story.url),
-                            duration: story.duration,
-                            content: () => <></>,
-                            seeMoreCollapsed: () => <></>,
-                            originalContent: () => <></>,
-                            componentOptions: {
-                                url: story.url ?? '',
-                                title: story.title ?? '',
-                                description: story.description ?? '',
-                                button_url: story.button_url ?? '',
-                                button_text: story.button_text ?? '',
-                                button_color: story.button_color ?? '',
-                                component_type: Number(story.component_type),
-                            }
-                        };
-                    });
-                    return {
-                        ...block,
-                        stories: convertedStories,
-                    };
+            ApiGetStoriesBlocks(auth?.access_token, cityId)
+                .then((storiesBlockResponse) => {
+                    setStoriesBlocks(storiesBlockResponse.data);
                 });
-                setStoriesBlocks(blocks);
-            });
         }
     }, [cityId]);
 

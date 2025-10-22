@@ -1,8 +1,13 @@
-import { useEffect } from 'react';
-import { Renderer, Tester } from '@/types/stories.types.ts';
+import React, { useEffect } from 'react';
+import { IStory, Action } from '@/types/stories.types.ts';
 import css from '@/components/Stories/renderers/Default.module.css';
 
-export const renderer: Renderer = ({ story, action }) => {
+interface DefaultStoryComponentProps {
+    story: IStory;
+    action: Action;
+}
+
+export const DefaultStoryComponent: React.FC<DefaultStoryComponentProps> = ({ story, action }) => {
     useEffect(() => {
         action("play");
     }, [story]);
@@ -11,16 +16,4 @@ export const renderer: Renderer = ({ story, action }) => {
             <p className={css.text}>This story could not be loaded.</p>
         </div>
     );
-};
-
-export const tester: Tester = () => {
-    return {
-        condition: true,
-        priority: 1,
-    };
-};
-
-export default {
-    renderer,
-    tester,
 };

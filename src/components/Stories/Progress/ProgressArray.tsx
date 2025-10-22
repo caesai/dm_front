@@ -1,8 +1,5 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
-import { GlobalStoriesCtx, IStoryObject, ProgressCtx } from '@/types/stories.types.ts';
-import ProgressContext from '@/components/Stories/context/ProgressContext.ts';
-import GlobalStoriesContext from '@/components/Stories/context/GlobalStoriesContext.ts';
-import StoriesContext from '@/components/Stories/context/StoriesContext.ts';
+import React, { useState, useEffect, useRef } from 'react';
+import { IStory } from '@/types/stories.types.ts';
 import Progress from '@/components/Stories/Progress/Progress.tsx';
 import css from '@/components/Stories/Progress/Progress.module.css';
 
@@ -10,26 +7,37 @@ const timestamp = () => {
     return window.performance && window.performance.now
         ? window.performance.now()
         : new Date().getTime();
-}
+};
 
 interface ProgressArrayProps {
     shouldWait: boolean;
+    currentId: number;
+    videoDuration: number;
+    bufferAction: boolean;
+    pause: boolean;
+    next: Function;
+    stories: IStory[];
+    onStoryEnd: Function;
+    onStoryStart: Function;
 }
 
-const ProgressArray: React.FC<ProgressArrayProps> = ({ shouldWait }) => {
+const ProgressArray: React.FC<ProgressArrayProps> = (
+    {
+        shouldWait,
+        currentId,
+        next,
+        videoDuration,
+        pause,
+        bufferAction,
+        stories,
+        onStoryEnd,
+        onStoryStart,
+    },
+) => {
     const [count, setCount] = useState<number>(0);
     const lastTime = useRef<number>(0);
     const animationFrameId = useRef<number>(0);
     const countCopy = useRef<number>(0);
-
-    const { currentId, next, videoDuration, pause, bufferAction } =
-        useContext<ProgressCtx>(ProgressContext);
-    const {
-        onStoryEnd,
-        onStoryStart,
-        progressContainerStyles,
-    } = useContext<GlobalStoriesCtx>(GlobalStoriesContext);
-    const stories = useContext<IStoryObject[]>(StoriesContext);
 
     useEffect(() => {
         setCount(0);
@@ -77,7 +85,7 @@ const ProgressArray: React.FC<ProgressArrayProps> = ({ shouldWait }) => {
     };
 
     const getCurrentInterval = () => {
-        if (stories[currentId]?.type === "video") return videoDuration;
+        if (stories[currentId]?.type === 'video') return videoDuration;
         return stories[currentId]?.duration;
     };
 
@@ -89,8 +97,7 @@ const ProgressArray: React.FC<ProgressArrayProps> = ({ shouldWait }) => {
         <div
             className={css.progressArr}
             style={{
-                ...progressContainerStyles,
-                ...opacityStyles
+                ...opacityStyles,
             }}
         >
             {stories.map((_, i) => (
@@ -99,6 +106,8 @@ const ProgressArray: React.FC<ProgressArrayProps> = ({ shouldWait }) => {
                     count={count}
                     width={1 / stories.length}
                     active={i === currentId ? 1 : i < currentId ? 2 : 0}
+                    pause={pause}
+                    bufferAction={bufferAction}
                 />
             ))}
         </div>

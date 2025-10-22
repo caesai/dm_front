@@ -1,19 +1,25 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import css from './Custom.module.css';
 import classNames from 'classnames';
 import { BASE_BOT } from '@/api/base.ts';
 import { useNavigate } from 'react-router-dom';
-import { Renderer, Tester } from '@/types/stories.types.ts';
-// import classnames from 'classnames';
+import { Action, IStory } from '@/types/stories.types.ts';
 
+interface CustomStoryComponentProps {
+    story: IStory;
+    action: Action;
+    isPaused: boolean;
+    shouldWait: boolean;
+    width: number | string;
+    height: number | string;
+}
 
-const renderer: Renderer = (
+export const CustomStoryComponent: React.FC<CustomStoryComponentProps> = (
     {
         story,
         action,
         shouldWait,
         // config,
-        // messageHandler,
     }
     ,
 ) => {
@@ -27,8 +33,8 @@ const renderer: Renderer = (
         button_text,
         button_color,
         component_type,
-    } = story.componentOptions;
-
+    } = story;
+    console.log('story: ', story)
     useEffect(() => {
         if (!shouldWait) {
             action('play');
@@ -95,15 +101,3 @@ const renderer: Renderer = (
     );
 };
 
-
-export const tester: Tester = (story) => {
-    return {
-        condition: story.type === 'component',
-        priority: 3,
-    };
-};
-
-export default {
-    renderer,
-    tester,
-};

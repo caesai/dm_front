@@ -1,28 +1,34 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
-import { GlobalStoriesCtx, IStoryObject } from '@/types/stories.types.ts';
-import GlobalStoriesContext from '@/components/Stories/context/GlobalStoriesContext.ts';
-import StoriesContext from '@/components/Stories/context/StoriesContext.ts';
-import ProgressContext from "@/components/Stories/context/ProgressContext.ts";
+import React, { useState, useRef, useEffect } from "react";
+import { IStory } from '@/types/stories.types.ts';
 import Story from '@/components/Stories/Story/Story.tsx';
 import { usePreLoader } from '@/components/Stories/usePreloader.ts';
 import ProgressArray from '@/components/Stories/Progress/ProgressArray.tsx';
 import useIsMounted from '@/components/Stories/useIsMounted.ts';
 import css from '@/components/Stories/StoriesContainer/StoriesContainer.module.css';
 
+type NumberOrString = number | string;
+
 interface StoriesContainerProps {
     shouldWait: boolean;
+    width?: NumberOrString;
+    height?: NumberOrString;
+    loop?: boolean;
+    keyboardNavigation?: boolean;
+    onAllStoriesEnd?: Function;
+    onStoryStart: Function;
+    onStoryEnd: Function;
+    onPrevious?: Function;
+    onNext?: Function;
+    preventDefault?: boolean;
+    preloadCount?: number;
+    isPaused?: boolean;
+    currentIndex?: number;
+    stories: IStory[];
 }
 
-const StoriesContainer: React.FC<StoriesContainerProps> = ({ shouldWait }) => {
-    const [currentId, setCurrentId] = useState<number>(0);
-    const [pause, setPause] = useState<boolean>(true);
-    const [bufferAction, setBufferAction] = useState<boolean>(true);
-    const [videoDuration, setVideoDuration] = useState<number>(0);
-    const isMounted = useIsMounted();
-
-    let mousedownId = useRef<any>();
-
-    const {
+const StoriesContainer: React.FC<StoriesContainerProps> = (
+    {
+        shouldWait,
         width,
         height,
         loop,
@@ -34,9 +40,18 @@ const StoriesContainer: React.FC<StoriesContainerProps> = ({ shouldWait }) => {
         onPrevious,
         onNext,
         preloadCount,
-    } = useContext<GlobalStoriesCtx>(GlobalStoriesContext);
+        stories,
+        onStoryEnd,
+        onStoryStart,
+    }
+    ) => {
+    const [currentId, setCurrentId] = useState<number>(0);
+    const [pause, setPause] = useState<boolean>(true);
+    const [bufferAction, setBufferAction] = useState<boolean>(true);
+    const [videoDuration, setVideoDuration] = useState<number>(0);
+    const isMounted = useIsMounted();
 
-    const stories = useContext<IStoryObject[]>(StoriesContext);
+    let mousedownId = useRef<any>();
 
     usePreLoader(stories, currentId, Number(preloadCount));
 
@@ -158,17 +173,17 @@ const StoriesContainer: React.FC<StoriesContainerProps> = ({ shouldWait }) => {
                 ...{ width, height },
             }}
         >
-            <ProgressContext.Provider
-                value={{
-                    bufferAction: bufferAction,
-                    videoDuration: videoDuration,
-                    currentId,
-                    pause,
-                    next,
-                }}
-            >
-                <ProgressArray shouldWait={shouldWait}/>
-            </ProgressContext.Provider>
+            <ProgressArray
+                bufferAction={bufferAction}
+                videoDuration={videoDuration}
+                currentId={currentId}
+                next={next}
+                pause={pause}
+                shouldWait={shouldWait}
+                stories={stories}
+                onStoryEnd={onStoryEnd}
+                onStoryStart={onStoryStart}
+            />
             <Story
                 action={toggleState}
                 bufferAction={bufferAction}
@@ -176,6 +191,9 @@ const StoriesContainer: React.FC<StoriesContainerProps> = ({ shouldWait }) => {
                 shouldWait={shouldWait}
                 story={stories[currentId]}
                 getVideoDuration={getVideoDuration}
+                isPaused={pause}
+                width={'100%'}
+                height={'100%'}
             />
             {!preventDefault && (
                 <div className={css.overlay}>
