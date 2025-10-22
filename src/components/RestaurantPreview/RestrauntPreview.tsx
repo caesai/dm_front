@@ -54,7 +54,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                 setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
                 setTimeout(() => {
                     setDataToLocalStorage('want_first', { done: true });
-                }, 5000);
+                }, 3000);
             })
             .catch((err) => {
                 if (err.response) {
@@ -145,11 +145,11 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                             >
                                 <RestaurantBadge logo={restaurant.logo_url}/>
                             </SwiperSlide>
-                            {restaurant.photo_cards.map((card) => (
+                            {restaurant.photo_cards.map((card, index) => (
                                 <SwiperSlide
                                     className={css.swiperSlide}
                                     style={{width: '130px'}}
-                                    key={`card-${card.id}`}
+                                    key={`card-${card.id}-${index}`}
                                 >
                                     <RestaurantBadgePhoto url={card.url}/>
                                 </SwiperSlide>

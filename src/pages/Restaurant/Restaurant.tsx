@@ -95,7 +95,6 @@ export const transformGallery = (
     }));
 };
 
-
 export const Restaurant = () => {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -176,7 +175,8 @@ export const Restaurant = () => {
         setRestaurant(restaurants.find((v) => v.id === Number(id)));
         setCurrentSelectedTime(null);
         setBookingDate({ value: 'unset', title: 'unset' });
-        APIGetEventsInRestaurant(Number(id), String(auth?.access_token)).then((res) => setEvents(res.data));
+        APIGetEventsInRestaurant(Number(id), String(auth?.access_token))
+            .then((res) => setEvents(res.data));
     }, [id]);
 
     useEffect(() => {
