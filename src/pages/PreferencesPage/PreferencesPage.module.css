@@ -25,7 +25,7 @@
 .stage {
     height: 8px;
     width: 100%;
-    background-color: white;
+    background-color: var(--grey);
     border-radius: 5px;
 }
 
