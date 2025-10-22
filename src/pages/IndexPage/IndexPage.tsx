@@ -111,7 +111,6 @@ export const IndexPage: FC = () => {
 
     const cityId = cityListA.find(item => item.name_english === currentCityS.id)?.id;
     useEffect(() => {
-        // TODO: Endpoint to get array of stories objects sets state of stories
         if (auth?.access_token !== undefined && cityId !== undefined) {
             ApiGetStoriesBlocks(auth?.access_token, cityId).then((storiesBlockResponse) => {
                 const blocks = storiesBlockResponse.data.filter((item) => (
