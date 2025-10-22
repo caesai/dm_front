@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { IStory } from '@/types/stories.types.ts';
 import Story from '@/components/Stories/Story/Story.tsx';
 import { usePreLoader } from '@/components/Stories/usePreloader.ts';
-import ProgressArray from '@/components/Stories/Progress/ProgressArray.tsx';
+import ProgressArray from '@/components/Stories/StoriesProgress/ProgressArray.tsx';
 import useIsMounted from '@/components/Stories/useIsMounted.ts';
 import css from '@/components/Stories/StoriesContainer/StoriesContainer.module.css';
 

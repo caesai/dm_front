@@ -1,10 +1,10 @@
 import React from 'react';
 import { Action, IStory } from '@/types/stories.types.ts';
 import css from './Story.module.css';
-import { DefaultStoryComponent } from '@/components/Stories/renderers/Default.tsx';
-import { VideoStoryComponent } from '@/components/Stories/renderers/Video.tsx';
-import { ImageStoryComponent } from '@/components/Stories/renderers/Image.tsx';
-import { CustomStoryComponent } from '@/components/Stories/renderers/Custom.tsx';
+import { DefaultStoryComponent } from '@/components/Stories/StoriesComponents/Default.tsx';
+import { VideoStoryComponent } from '@/components/Stories/StoriesComponents/Video.tsx';
+import { ImageStoryComponent } from '@/components/Stories/StoriesComponents/Image.tsx';
+import { CustomStoryComponent } from '@/components/Stories/StoriesComponents/Custom.tsx';
 
 interface StoryProps {
     story: IStory;

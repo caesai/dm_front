@@ -1,5 +1,5 @@
 import React from 'react';
-import css from '@/components/Stories/Progress/Progress.module.css';
+import css from '@/components/Stories/StoriesProgress/Progress.module.css';
 
 interface ProgressWrapperProps {
     children: any;

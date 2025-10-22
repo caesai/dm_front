@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
-import css from '@/components/Stories/renderers/Image.module.css';
+import css from '@/components/Stories/StoriesComponents/Image.module.css';
 import { Action, IStory } from '@/types/stories.types.ts';
 
 interface ImageStoryComponentProps {

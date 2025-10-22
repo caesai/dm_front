@@ -1,6 +1,6 @@
 import React from 'react';
 import ProgressWrapper from './ProgressWrapper';
-import css from '@/components/Stories/Progress/Progress.module.css';
+import css from '@/components/Stories/StoriesProgress/Progress.module.css';
 
 interface ProgressProps {
     width: number;

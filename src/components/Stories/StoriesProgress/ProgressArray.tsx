@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IStory } from '@/types/stories.types.ts';
-import Progress from '@/components/Stories/Progress/Progress.tsx';
-import css from '@/components/Stories/Progress/Progress.module.css';
+import Progress from '@/components/Stories/StoriesProgress/Progress.tsx';
+import css from '@/components/Stories/StoriesProgress/Progress.module.css';
 
 const timestamp = () => {
     return window.performance && window.performance.now

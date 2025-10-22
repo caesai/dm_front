@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
-import css from '@/components/Stories/renderers/Video.module.css';
+import css from '@/components/Stories/StoriesComponents/Video.module.css';
 import { IStory, Action } from '@/types/stories.types.ts';
 
 interface VideoStoryComponentProps {
@@ -49,13 +49,14 @@ export const VideoStoryComponent: React.FC<VideoStoryComponentProps> = (
             setLoaded(true);
             vid.current
                 .play()
-                .then(() => {
-                    action('play');
-                })
+                // .then(() => {
+                //     action('play');
+                // })
                 .catch(() => {
-                    vid.current?.play().finally(() => {
-                        action('play');
-                    });
+                    vid.current?.play()
+                        // .finally(() => {
+                        //     action('play');
+                        // });
                 });
         }
     };

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { IStory, Action } from '@/types/stories.types.ts';
-import css from '@/components/Stories/renderers/Default.module.css';
+import css from '@/components/Stories/StoriesComponents/Default.module.css';
 
 interface DefaultStoryComponentProps {
     story: IStory;
