@@ -27,10 +27,19 @@
     flex-direction: column;
     gap: 8px;
     margin-bottom: 6px;
+}
 
+.swiper {
+    --swiper-navigation-color: #fff !important;
+    --swiper-pagination-color: #fff !important;
+    max-width: 370px;
+}
+
+.slide {
     > img {
         aspect-ratio: 120/85;
         width: 100%;
+        max-width: 370px;
         border-radius: 12px;
         object-fit: cover;
     }

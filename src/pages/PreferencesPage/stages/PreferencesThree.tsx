@@ -1,18 +1,15 @@
-import css from '../OnboardingPage.module.css';
+import css from '../PreferencesPage.module.css';
 import classNames from 'classnames';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { sevenStageOptions } from '@/__mocks__/onboarding.mock.ts';
-import { useState } from 'react';
+import { eightStageOptions } from '@/__mocks__/preferences.mock.ts';
+import React, { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { authAtom } from '@/atoms/userAtom.ts';
-import { APIUserPreferences } from '@/api/user.ts';
+import { APIUserPreferences } from '@/api/user.api.ts';
+import { useNavigate } from 'react-router-dom';
 
-export const StageEight = () => {
+export const PreferencesThree: React.FC = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const state = location?.state;
-
     const [auth] = useAtom(authAtom);
 
     const [preferences, setPreferences] = useState<string[]>([]);
@@ -31,15 +28,15 @@ export const StageEight = () => {
             return;
         }
 
-
         APIUserPreferences(auth.access_token, {
             preferences: [{
-                    category: 'menu',
+                    category: 'events',
                     choices: preferences,
                 }]
 
         })
-            .then(() => navigate('/onboarding/9', { state }))
+            .then(() => localStorage.setItem("PREFERENCES_STATUS", JSON.stringify({ visit_number: 3, preferences_sent: true })))
+            .then(() => navigate('/'))
             .catch(() => alert
                 (
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
@@ -64,17 +61,17 @@ export const StageEight = () => {
                 </div>
                 <div className={css.stageSeven_wrapper}>
                     <h2 className={css.stage_description_title}>
-                        Что вас особенно <br/>
-                        привлекает в меню?
+                        Какие форматы <br/> вам интересны?
                     </h2>
                     <div className={css.stage_options_container}>
-                        {sevenStageOptions.map((item) => (
+                        {eightStageOptions.map((item) => (
                             <CommentaryOptionButton
+                                newDesign
                                 text={item.content}
                                 icon={item.icon}
-                                style={{backgroundColor: '#FFFFFF'}}
                                 active={preferences.includes(item.content)}
                                 onClick={() => changePreference(item.content)}
+                                key={item.content}
                             />
                         ))}
                     </div>

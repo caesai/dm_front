@@ -1,17 +1,15 @@
-import css from '../OnboardingPage.module.css';
+import css from '../PreferencesPage.module.css';
 import classNames from 'classnames';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { sixStageOptions } from '@/__mocks__/onboarding.mock.ts';
-import { useState } from 'react';
+import { sixStageOptions } from '@/__mocks__/preferences.mock.ts';
+import React, { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { authAtom } from '@/atoms/userAtom.ts';
-import { APIUserPreferences } from '@/api/user.ts';
+import { APIUserPreferences } from '@/api/user.api.ts';
 
-export const StageSeven = () => {
+export const PreferencesOne: React.FC = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const state = location?.state;
 
     const [auth] = useAtom(authAtom);
 
@@ -38,7 +36,7 @@ export const StageSeven = () => {
                 }]
 
         })
-            .then(() => navigate('/onboarding/8', { state }))
+            .then(() => navigate('/preferences/2'))
             .catch(() => alert
                 (
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
@@ -67,11 +65,12 @@ export const StageSeven = () => {
                     <div className={css.stage_options_container}>
                         {sixStageOptions.map((item) => (
                             <CommentaryOptionButton
+                                newDesign
                                 text={item.content}
                                 icon={item.icon}
-                                style={{backgroundColor: '#FFFFFF'}}
                                 active={preferences.includes(item.content)}
                                 onClick={() => changePreference(item.content)}
+                                key={item.content}
                             />
                         ))}
                     </div>

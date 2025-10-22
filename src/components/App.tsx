@@ -20,13 +20,9 @@ import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { APIGetCityList } from '@/api/city.ts';
 import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-// import { APIGetEA } from '@/api/config.ts';
 import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.tsx';
 import { EventListOutlet } from '@/pages/EventsPage/EventListOutlet/EventListOutlet.tsx';
 import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
-// import { EventInfoOutlet } from '@/pages/EventsPage/EventInfoOutlet/EventInfoOutlet.tsx';
-// import { RestaurantsListOutlet } from '@/pages/EventsPage/RestaurantsListOutlet/RestaurantsListOutlet.tsx';
-// import { DTSelectionOutlet } from '@/pages/EventsPage/DTSelectionOutlet/DTSelectionOutlet.tsx';
 import { EventConfirmationOutlet } from '@/pages/EventsPage/EventConfirmationOutlet/EventConfirmationOutlet.tsx';
 import { EventBookingOutlet } from '@/pages/EventsPage/EventBookingOutlet/EventBookingOutlet.tsx';
 import { PaymentReturnPage } from '@/pages/PaymentReturnPage/PaymentReturnPage.tsx';
@@ -35,12 +31,8 @@ import { Redirecter } from '@/components/Redirecter/Redirecter.tsx';
 import { UserPhoneConfirmationPage } from '@/pages/UserPhoneConfirmation/UserPhoneConfirmationPage.tsx';
 import { AdminScannerPage } from '@/pages/AdminScannerPage/AdminScannerPage.tsx';
 import { OnboardingPage } from '@/pages/OnboardingPage/OnboardingPage.tsx';
-import { StageOne } from '@/pages/OnboardingPage/stages/StageOne.tsx';
 import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
-// import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
-import { StageFour } from '@/pages/OnboardingPage/stages/StageFour.tsx';
 import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
-import { StageFive } from '@/pages/OnboardingPage/stages/StageFive.tsx';
 import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
 import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
 import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
@@ -49,10 +41,13 @@ import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/Choos
 import { BanquetOptionPage } from '@/pages/BanquetOptionPage/BanquetOptionPage.tsx';
 import { BanquetAdditionalServicesPage } from '@/pages/BanquetAdditionalServices/BanquetAdditionalServicesPage.tsx';
 import { BanquetReservationPage } from '@/pages/BanquetReservationPage/BanquetReservationPage.tsx';
-import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
-import { StageNine } from '@/pages/OnboardingPage/stages/StageNine.tsx';
-import { StageSeven } from '@/pages/OnboardingPage/stages/StageSeven.tsx';
-import { StageEight } from '@/pages/OnboardingPage/stages/StageEight.tsx';
+import { StageFour } from '@/pages/OnboardingPage/stages/StageFour.tsx';
+import { PreferencesThree } from '@/pages/PreferencesPage/stages/PreferencesThree.tsx';
+import { PreferencesOne } from '@/pages/PreferencesPage/stages/PreferencesOne.tsx';
+import { PreferencesTwo } from '@/pages/PreferencesPage/stages/PreferencesTwo.tsx';
+import { PreferencesPage } from '@/pages/PreferencesPage/PreferencesPage.tsx';
+import { StageOne } from '@/pages/OnboardingPage/stages/StageOne.tsx';
+import AllergiesPage from '@/pages/AllergiesPage/AllergiesPage.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -109,6 +104,7 @@ const AppRouter = () => {
                     <Route path={'/map'} element={<RestaurantMapPage />} />
                     <Route path={'/profile'} element={<ProfilePage />} />
                     <Route path={'/me'} element={<UserProfilePage />} />
+                        <Route path={'/me/allergies'} element={<AllergiesPage />} />
                     <Route path={'/events'} element={<EventsPage />}>
                         <Route path={'/events'} element={<EventListOutlet />} />
                         <Route
@@ -157,11 +153,11 @@ const AppRouter = () => {
                         <Route path={'/onboarding/2'} element={<StageTwo />} />
                         <Route path={'/onboarding/3'} element={<StageThree />} />
                         <Route path={'/onboarding/4'} element={<StageFour />} />
-                        <Route path={'/onboarding/5'} element={<StageFive />} />
-                        <Route path={'/onboarding/6'} element={<StageSix />} />
-                        <Route path={'/onboarding/7'} element={<StageSeven />} />
-                        <Route path={'/onboarding/8'} element={<StageEight />} />
-                        <Route path={'/onboarding/9'} element={<StageNine />} />
+                    </Route>
+                    <Route path={'/preferences'} element={<PreferencesPage/>}>
+                        <Route path={'/preferences/1'} element={<PreferencesOne />} />
+                        <Route path={'/preferences/2'} element={<PreferencesTwo />} />
+                        <Route path={'/preferences/3'} element={<PreferencesThree />} />
                     </Route>
                     <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
                     <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />

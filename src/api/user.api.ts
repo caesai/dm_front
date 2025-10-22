@@ -1,22 +1,6 @@
 import axios from 'axios';
 import {BASE_URL} from '@/api/base.ts';
-import {IUser} from '@/atoms/userAtom.ts';
-
-export interface IUserUpdate {
-    first_name?: string;
-    last_name?: string;
-    email?: string;
-    phone_number?: string;
-    allergies?: string;
-    date_of_birth?: string;
-}
-
-interface IUserPreferences {
-    preferences: [{
-        category: 'mood' | 'menu' | 'events',
-        choices: string[]
-    }]
-}
+import { IUser, IUserPreferences, IUserUpdate } from '@/types/user.types.ts';
 
 export const APIUpdateUserInfo = async (
     {

@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { useAtom } from 'jotai';
-import { APIPostBanquetRequest } from '@/api/banquet.ts';
+import { APIPostBanquetRequest } from '@/api/banquet.api.ts';
 import moment from 'moment';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';

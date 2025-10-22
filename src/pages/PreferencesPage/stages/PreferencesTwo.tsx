@@ -1,18 +1,16 @@
-import css from '../OnboardingPage.module.css';
+import css from '../PreferencesPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { eightStageOptions } from '@/__mocks__/onboarding.mock.ts';
-import { useState } from 'react';
+import { sevenStageOptions } from '@/__mocks__/preferences.mock.ts';
+import React, { useState } from 'react';
 import { useAtom } from 'jotai/index';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APICompleteOnboarding, APIUserPreferences } from '@/api/user.ts';
-import { getDataFromLocalStorage } from '@/utils.ts';
+import { authAtom } from '@/atoms/userAtom.ts';
+import { APIUserPreferences } from '@/api/user.api.ts';
 
-export const StageNine = () => {
+export const PreferencesTwo: React.FC = () => {
     const navigate = useNavigate();
 
-    const [, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
 
     const [preferences, setPreferences] = useState<string[]>([]);
@@ -31,39 +29,17 @@ export const StageNine = () => {
             return;
         }
 
+
         APIUserPreferences(auth.access_token, {
             preferences: [{
-                    category: 'events',
+                    category: 'menu',
                     choices: preferences,
                 }]
 
-        }).catch(() => alert
+        })
+            .then(() => navigate('/preferences/3'))
+            .catch(() => alert
                 (
-                    'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
-                )
-            );
-
-        APICompleteOnboarding(auth.access_token, true)
-            .then((d) => setUser(d.data))
-            .then(() => localStorage.setItem("PREFERENCES_STATUS", JSON.stringify({ visit_number: 3, preferences_sent: true })))
-            .then(() => {
-                const sharedEvent = getDataFromLocalStorage('sharedEvent');
-                const superEvent = getDataFromLocalStorage('superEvent');
-                const sharedRestaurant = getDataFromLocalStorage('sharedRestaurant');
-                if(sharedEvent) {
-                    navigate(`/events/${JSON.parse(sharedEvent).eventName}/restaurant/${JSON.parse(sharedEvent).resId}/confirm`);
-                } else if (superEvent) {
-                    navigate('/events/super');
-                    // removeDataFromLocalStorage('superEvent');
-                } else if (sharedRestaurant) {
-                    navigate('/booking?id=' + JSON.parse(sharedRestaurant).id);
-                    // removeDataFromLocalStorage('sharedRestaurant');
-                } else {
-                    navigate('/');
-                }
-            })
-            .catch(() =>
-                alert(
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
                 )
             );
@@ -86,16 +62,18 @@ export const StageNine = () => {
                 </div>
                 <div className={css.stageSeven_wrapper}>
                     <h2 className={css.stage_description_title}>
-                        Какие форматы <br/> вам интересны?
+                        Что вас особенно <br/>
+                        привлекает в меню?
                     </h2>
                     <div className={css.stage_options_container}>
-                        {eightStageOptions.map((item) => (
+                        {sevenStageOptions.map((item) => (
                             <CommentaryOptionButton
+                                newDesign
                                 text={item.content}
                                 icon={item.icon}
-                                style={{backgroundColor: '#FFFFFF'}}
                                 active={preferences.includes(item.content)}
                                 onClick={() => changePreference(item.content)}
+                                key={item.content}
                             />
                         ))}
                     </div>

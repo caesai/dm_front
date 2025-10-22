@@ -1,21 +1,10 @@
+import React from 'react';
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
-import { useNavigate } from 'react-router-dom';
-// import blackChops from "/img/onboarding/blackchops.png";
-// import anchovus from "/img/onboarding/anchovys.png";
-// import smoke from "/img/onboarding/smoke.png";
-// import trappist from "/img/onboarding/trappist.png";
-// import poly from "/img/onboarding/poly.png"
-// import pame from "/img/onboarding/pame.png";
-// import BBQNEW from "/img/onboarding/bbqnew.png";
 import stage_logos from "/img/stage_logos.png";
-// import restaurants_logo from "/img/onboarding/restaurants_logo.png";
+import { useNavigate } from 'react-router-dom';
 
-interface StageOneProps {
-    isStory?: boolean;
-}
-
-export const StageOne: React.FC<StageOneProps> = ({ isStory }) => {
+export const StageOne: React.FC = () => {
     const navigate = useNavigate();
     return (
         <div className={css.stage_page}>
@@ -26,34 +15,27 @@ export const StageOne: React.FC<StageOneProps> = ({ isStory }) => {
                             Выберите подходящий ресторан
                         </h2>
                         <span className={css.stage_description_subtitle}>
-                            Собрали все рестораны Dreamteam в одном месте.
+                            Забронируйте стол, делитесь впечатлениями, участвуйте в мероприятиях
                         </span>
                     </div>
-                    {!isStory && (
-                        <div className={css.button_container}>
-                            <div
-                                className={css.redButton}
-                                onClick={() => navigate('/onboarding/2')}
-                            >
-                                <span>Продолжить</span>
-                            </div>
+                    <div className={css.button_container}>
+                        <div
+                            className={css.redButton}
+                            onClick={() => navigate('/onboarding/2')}
+                        >
+                            <span>Продолжить</span>
                         </div>
-                    )}
+                    </div>
                 </div>
                 <div className={css.stageOne_wrapper}>
-                    {/*<div className={css.stageOne_icons} style={{ backgroundImage: `url(${restaurants_logo})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}  >*/}
-                        <div className={css.stageOne_icons} >
-                        {/*<img src={restaurants_logo} className={css.stageOne_icon} style={{ maxWidth: '100%'}} alt="restaurants_logo" />*/}
+                    <div className={css.stageOne_icons}>
                         <img
                             src={stage_logos}
-                            // style={{ visibility: "hidden" }}
                             alt=""
                             className={classNames(
                                 css.stageOne_icon,
-                                // css.stageOne_icons_1
                             )}
                         />
-
                     </div>
                 </div>
             </div>

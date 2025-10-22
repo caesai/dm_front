@@ -8,7 +8,7 @@ import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { useEffect, useState } from 'react';
 import { BanquetCheckbox } from '@/components/BanquetCheckbox/BanquetCheckbox.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { IBanquetAdditionalOptions } from '@/types/banquets.ts';
+import { IBanquetAdditionalOptions } from '@/types/banquets.types.ts';
 
 export const BanquetAdditionalServicesPage = () => {
     const location = useLocation();

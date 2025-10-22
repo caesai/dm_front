@@ -12,9 +12,13 @@ export const Toast: React.FC<IToastProps> = (p ) => {
         return <></>;
     }
     return (
-        <div id="snackbar" className={classNames(
-            css.snackbar,
-            p.showClose ? css.show : null
-        )}>{p.message}</div>
+        <div
+            id="snackbar"
+             className={classNames(
+                css.snackbar,
+                p.showClose ? css.show : null
+            )}
+            data-testid={'toast-message'}
+        >{p.message}</div>
     )
 }

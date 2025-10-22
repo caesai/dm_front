@@ -5,10 +5,16 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
-import { IBanquet } from '@/types/banquets.ts';
+import { IBanquet } from '@/types/banquets.types.ts';
 import { DepositIcon } from '@/components/Icons/DepositIcon.tsx';
 import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
 import { IWorkTime } from '@/types/restaurant.ts';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+// import 'swiper/css/navigation';
+import { Pagination } from 'swiper/modules';
+import classnames from 'classnames';
 
 export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
@@ -16,7 +22,6 @@ export const ChooseBanquetOptionsPage = () => {
     const banquets: IBanquet = location.state?.banquets;
     const workTime: IWorkTime[] = location.state?.workTime;
     const restaurant_title = location.state?.restaurant_title;
-
     const {id} = useParams();
 
     const goBack = () => {
@@ -40,9 +45,22 @@ export const ChooseBanquetOptionsPage = () => {
                             {banquets?.banquet_options && banquets.banquet_options.length > 0 ? (
                                 banquets?.banquet_options.map((banquet) => (
                                     <div className={css.banquetContainer} key={banquet.id}>
-                                        <img
-                                            src={banquet.images[0]} alt="banquet_img"
-                                            onDragStart={event => event.preventDefault()} />
+                                        <Swiper
+                                            pagination={{
+                                                type: 'bullets',
+                                                clickable: true
+                                            }}
+                                            observer={true}
+                                            // navigation={true}
+                                            modules={[Pagination]}
+                                            className={classnames(css.swiper)}
+                                        >
+                                            {banquet.images.map((image, index) => (
+                                                <SwiperSlide className={css.slide} key={index}>
+                                                    <img src={image} alt={'banquet_img'} />
+                                                </SwiperSlide>
+                                            ))}
+                                        </Swiper>
                                         <div className={css.banquetInfo}>
                                             <span className={css.banquet_title}>{banquet.name}</span>
                                             <div className={css.banquetInfoRow}>

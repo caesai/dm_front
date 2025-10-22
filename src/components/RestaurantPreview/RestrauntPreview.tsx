@@ -14,8 +14,9 @@ import { FC, useState } from 'react';
 import {IRestaurant} from '@/types/restaurant.ts';
 import {
     getCurrentTimeShort,
-    getCurrentWeekdayShort, getDataFromLocalStorage,
-    getRestaurantStatus, setDataToLocalStorage,
+    getCurrentWeekdayShort,
+    getRestaurantStatus,
+    setDataToLocalStorage,
 } from '@/utils.ts';
 import {useAtom} from "jotai/index";
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
@@ -40,7 +41,6 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
     const [auth] = useAtom(authAtom);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
-    const want_first = getDataFromLocalStorage('want_first');
 
     const wantToBeFirst = () => {
         if (!auth?.access_token) {
@@ -143,11 +143,11 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                             >
                                 <RestaurantBadge logo={restaurant.logo_url}/>
                             </SwiperSlide>
-                            {restaurant.photo_cards.map((card) => (
+                            {restaurant.photo_cards.map((card, index) => (
                                 <SwiperSlide
                                     className={css.swiperSlide}
                                     style={{width: '130px'}}
-                                    key={`card-${card.id}`}
+                                    key={`card-${card.id}-${index}`}
                                 >
                                     <RestaurantBadgePhoto url={card.url}/>
                                 </SwiperSlide>
@@ -191,7 +191,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                     </div>
                 ) : (
                     <div style={{ display: 'flex'}}>
-                        {toastShow || (want_first && JSON.parse(want_first).done) ? (
+                        {toastShow ? (
                             <div className={css.success_animation}>
                                 <svg className={css.checkmark} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                                     <circle className={css.checkmark__circle} cx="26" cy="26" r="25" fill="none" />
