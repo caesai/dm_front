@@ -47,6 +47,9 @@ export const CancelBookingPopup = ({ isOpen, setOpen, onCancel, popupText, succe
                 .then(() => {
                     setCurrentStep(2);
                 })
+                .catch(() => {
+                    setCurrentStep(3); // ErrorStep
+                });
             return;
         } else {
             setCurrentStep((prev) => prev + 1);

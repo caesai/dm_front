@@ -62,8 +62,6 @@ const AllergiesPage: React.FC = () => {
 
         } else {
             setOtherAllergyOptions(value);
-            console.log('wtf: ', allergies, other);
-
         }
     }
 
