@@ -4,13 +4,8 @@ import css from './CancelBookingPopup.module.css';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import React, { useState } from 'react';
 import classNames from 'classnames';
-
-import { APIPOSTCancelReason } from '@/api/restaurants.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
-import { AxiosResponse } from 'axios';
-import { useAtom } from 'jotai/index';
-import { authAtom } from '@/atoms/userAtom.ts';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 const StyledPopup = styled(Popup)`
@@ -34,34 +29,28 @@ const StyledPopup = styled(Popup)`
 interface Props {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
-    onCancelBooking: () => Promise<AxiosResponse<any, any>>;
+    onCancel: (reason: string) => Promise<void>;
     onSuccess: () => void;
     popupText: string;
     successMessage: string;
     skipStep?: boolean;
-    bookingId?: number;
 }
 
-export const CancelBookingPopup = ({ isOpen, setOpen, onCancelBooking, popupText, successMessage, skipStep, bookingId, onSuccess }: Props) => {
+export const CancelBookingPopup = ({ isOpen, setOpen, onCancel, popupText, successMessage, skipStep, onSuccess }: Props) => {
     const [currentStep, setCurrentStep] = useState(0);
     const steps = [StepOne, StepTwo, StepThree, ErrorStep];
     const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
     const cancelBooking = () => {
-        onCancelBooking()
-            .then(() => {
-                if (skipStep || tg_id && !mockEventsUsersList.includes(tg_id)) {
+        if (skipStep || tg_id && !mockEventsUsersList.includes(tg_id)) {
+            onCancel('Без причины:')
+                .then(() => {
                     setCurrentStep(2);
-                    return;
-                } else {
-                    setCurrentStep((prev) => prev + 1);
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                // Set Error Step Component
-                setCurrentStep(3);
-            });
+                })
+            return;
+        } else {
+            setCurrentStep((prev) => prev + 1);
+        }
     };
 
     const closePopup = () => {
@@ -94,8 +83,8 @@ export const CancelBookingPopup = ({ isOpen, setOpen, onCancelBooking, popupText
                         handlePreviousStep={handlePreviousStep}
                         successMessage={successMessage}
                         popupText={popupText}
-                        bookingId={bookingId}
                         setCurrentStep={setCurrentStep}
+                        onCancel={onCancel}
                     />
                 )}
             </div>
@@ -134,11 +123,10 @@ const StepOne: React.FC<StepOneProps> = ({ cancelBooking, closePopup, popupText 
 
 interface StepTwoProps {
     setCurrentStep: (step: number) => void;
-    bookingId?: number;
+    onCancel: (reason: string) => Promise<void>;
 }
 
-const StepTwo: React.FC<StepTwoProps> = ({ bookingId, setCurrentStep }) => {
-    const [auth] = useAtom(authAtom);
+const StepTwo: React.FC<StepTwoProps> = ({ setCurrentStep, onCancel }) => {
     const [reason, setReason] = React.useState<string | null>(null);
     const reasons = [
         'Поменялись планы',
@@ -146,8 +134,8 @@ const StepTwo: React.FC<StepTwoProps> = ({ bookingId, setCurrentStep }) => {
         'Забронировал(а) по ошибке'
     ];
     const sendReason = () => {
-        if (!reason || !auth?.access_token || !bookingId) return;
-        APIPOSTCancelReason(auth?.access_token, bookingId, reason)
+        if (!reason) return;
+        onCancel(reason)
             .then(() => {
                 setCurrentStep(2);
             })
