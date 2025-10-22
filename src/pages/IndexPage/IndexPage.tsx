@@ -30,7 +30,7 @@ import newres from '/img/chinois_app.png';
 import { Toast } from '@/components/Toast/Toast.tsx';
 import { IStoryBlock, IStoryObject } from '@/types/stories.types.ts';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
-// import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+import { getDataFromLocalStorage } from '@/utils.ts';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -69,6 +69,7 @@ export const IndexPage: FC = () => {
 
     const location = useLocation();
     const isBanquet = location.state?.banquet;
+    const want_first = getDataFromLocalStorage('want_first');
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -76,7 +77,7 @@ export const IndexPage: FC = () => {
         }
         setCurrentBookingsLoading(true);
 
-        Promise.all([APIGetCurrentBookings(auth.access_token),APIGetTickets(auth.access_token)])
+        Promise.all([APIGetCurrentBookings(auth.access_token), APIGetTickets(auth.access_token)])
             .then((responses) => {
                 // console.log('responses: ', responses);
                 // @ts-expect-error
@@ -228,7 +229,7 @@ export const IndexPage: FC = () => {
         [cityListConfirm, currentCityS.id],
     );
 
-    const restaurantListed = (currentCityA === 'spb') ? [{
+    const restaurantListed = (currentCityA === 'spb' && !JSON.parse(String(want_first)).done) ? [{
         'id': 12,
         'title': 'Self Edge Chinois',
         'slogan': 'Современная Азия с акцентом на Китай и культовый raw bar',
@@ -300,7 +301,6 @@ export const IndexPage: FC = () => {
                             />
                         ))
                 )}
-
                 {hasSuperEventAccess && (
                     <div style={{ marginRight: 15, height: 85 }}>
                         <Link to={'/events/super'}>
