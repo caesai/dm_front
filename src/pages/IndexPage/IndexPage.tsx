@@ -29,6 +29,7 @@ import superevent from '/img/hh2.jpg';
 import newres from '/img/chinois_app.png';
 // import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { Toast } from '@/components/Toast/Toast.tsx';
+import { getDataFromLocalStorage } from '@/utils.ts';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -66,6 +67,7 @@ export const IndexPage: FC = () => {
 
     const location = useLocation();
     const isBanquet = location.state?.banquet;
+    const want_first = getDataFromLocalStorage('want_first');
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -192,7 +194,7 @@ export const IndexPage: FC = () => {
         [cityListConfirm, currentCityS.id],
     );
 
-    const restaurantListed = (currentCityA === 'spb') ? [{
+    const restaurantListed = (currentCityA === 'spb' && !want_first) ? [{
         'id': 12,
         'title': 'Self Edge Chinois',
         'slogan': 'Современная Азия с акцентом на Китай и культовый raw bar',
