@@ -174,14 +174,14 @@ export const IndexPage: FC = () => {
             return;
         }
 
-        // Reset preferences counter for testing purposes (delete before RELEASE)
-        if (visit_number === 3) {
-            localStorage.setItem(
-                'PREFERENCES_STATUS',
-                JSON.stringify({ visit_number: 1 }),
-            );
-            return;
-        }
+        // Reset preferences counter for testing purposes (comment this part before RELEASE)
+        // if (visit_number === 3) {
+        //     localStorage.setItem(
+        //         'PREFERENCES_STATUS',
+        //         JSON.stringify({ visit_number: 1 }),
+        //     );
+        //     return;
+        // }
     }, [navigate, user?.license_agreement, user?.complete_onboarding, user?.phone_number]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
