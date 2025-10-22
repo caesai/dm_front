@@ -57,7 +57,8 @@ export const CancelBookingPopup = ({ isOpen, setOpen, onCancelBooking, popupText
                     setCurrentStep((prev) => prev + 1);
                 }
             })
-            .catch(() => {
+            .catch((err) => {
+                console.error(err);
                 // Set Error Step Component
                 setCurrentStep(3);
             });
@@ -150,8 +151,9 @@ const StepTwo: React.FC<StepTwoProps> = ({ bookingId, setCurrentStep }) => {
             .then(() => {
                 setCurrentStep(2);
             })
-            .catch(() => {
+            .catch((err) => {
                 // Set Error Step Component
+                console.error(err)
                 setCurrentStep(3);
             });
     }
