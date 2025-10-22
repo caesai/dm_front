@@ -15,7 +15,7 @@ import { CancelBookingPopup } from '@/pages/BookingInfoPage/CancelBookingPopup/C
 import { IBookingInfo } from '@/types/restaurant.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { useScript } from 'usehooks-ts';
-import { APICancelBooking, APIGetBooking } from '@/api/restaurants.ts';
+import { APICancelBooking, APIGetBooking, APIPOSTCancelReason } from '@/api/restaurants.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { Taxi } from '@/components/YandexTaxi/Taxi.tsx';
@@ -60,8 +60,9 @@ export const BookingInfoPage = () => {
         };
     }, []);
 
-    const onCancelBooking = () => {
-        return APICancelBooking(String(auth?.access_token), Number(booking?.id))
+    const onCancelBooking = async (reason: string = 'Без причины') => {
+        await APICancelBooking(String(auth?.access_token), Number(booking?.id));
+        await APIPOSTCancelReason(String(auth?.access_token), Number(booking?.id), reason);
     };
 
     useScript('https://yastatic.net/taxi-widget/ya-taxi-widget.js', {
@@ -92,11 +93,10 @@ export const BookingInfoPage = () => {
             <CancelBookingPopup
                 isOpen={cancelPopup}
                 setOpen={setCancelPopup}
-                onCancelBooking={onCancelBooking}
+                onCancel={onCancelBooking}
                 onSuccess={() => navigate('/myBookings')}
                 popupText={'Вы уверены, что хотите отменить бронирование?'}
                 successMessage={'Ваше бронирование отменено'}
-                bookingId={booking?.id}
             />
             <div className={css.absolute_footer}>
                 <div

@@ -52,9 +52,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
             .then(() => {
                 setToastShow(true);
                 setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
-                setTimeout(() => {
-                    setDataToLocalStorage('want_first', { done: true });
-                }, 3000);
+                setDataToLocalStorage('want_first', { done: true });
             })
             .catch((err) => {
                 if (err.response) {
