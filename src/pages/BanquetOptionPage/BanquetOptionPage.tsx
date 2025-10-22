@@ -168,7 +168,7 @@ export const BanquetOptionPage = () => {
                     setIsOpen={setCalendarOpen}
                     initialDate={new Date()}
                     setDate={(date) => {
-                        if (moment(date).isBefore(moment().subtract(1, 'days').startOf('day'))) {
+                        if (moment(date).isBefore(moment().add(1, 'days').startOf('day'))) {
                             return;
                         }
                         setDate(date);
