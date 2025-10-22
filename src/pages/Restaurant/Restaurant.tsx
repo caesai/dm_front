@@ -15,15 +15,12 @@ import { FreeMode } from 'swiper/modules';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
-// import {InstagramIcon} from '@/components/Icons/Instagram.tsx';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
-// import {PhoneCallIcon} from '@/components/Icons/PhoneCallIcon.tsx';
 import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-// import {HeaderSubText} from '@/components/ContentBlock/HeaderContainer/HeaderSubText/HeaderContainer.tsx';
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
 import {
     GalleryCollection,
@@ -41,7 +38,6 @@ import {
     YMapDefaultSchemeLayer,
     YMapMarker,
 } from 'ymap3-components';
-// import { LogoMapIcon } from '@/components/Icons/LogoMapIcon.tsx';
 import { ImageViewerPopup } from '@/components/ImageViewerPopup/ImageViewerPopup.tsx';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import {
@@ -51,7 +47,6 @@ import {
     getCurrentWeekdayShort,
     getRestaurantStatus,
     getTimeShort,
-    // setDataToLocalStorage,
 } from '@/utils.ts';
 import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
@@ -70,16 +65,14 @@ import {
 } from '@/atoms/bookingInfoAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
-// import {EventCard} from '@/components/EventCard/EventCard.tsx';
 import { IEventInRestaurant } from '@/types/events.ts';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { Share } from '@/components/Icons/Share.tsx';
 import { BASE_BOT } from '@/api/base.ts';
 import moment from 'moment';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
-import { IBanquet } from '@/types/banquets.ts';
-// import { banquetData } from '@/__mocks__/banquets.mock.ts';
-import { APIGetBanquetOptions } from '@/api/banquet.ts';
+import { IBanquet } from '@/types/banquets.types.ts';
+import { APIGetBanquetOptions } from '@/api/banquet.api.ts';
 
 export const transformGallery = (
     gallery: IPhotoCard[],
@@ -1100,8 +1093,8 @@ const AddressBlock: React.FC<AddressBlockProps> = (
                                     </div>
                                 </YMapMarker>
                             </YMap>
-                            <section>
-                                <div className={css.relativeRestInfo}>
+                            <section className={css.infoContainer}>
+                                <div className={css.RestInfo}>
                                     <div className={css.mapInfo}>
                                         <div
                                             className={css.mapInfoMetro}

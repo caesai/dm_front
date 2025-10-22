@@ -58,6 +58,34 @@
     }
 }
 
+.allergy {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 13px 20px;
+    margin: 0;
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    background-color: var(--secondary-background);
+    font-family: 'Mont', 'sans-serif';
+    font-size: 14px;
+    font-weight: 700;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.2s ease-in-out;
+
+    >span {
+        display: inline-flex;
+    }
+}
+
+.allergyOptions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 .delete {
     display: flex;
     padding: 13px 20px;

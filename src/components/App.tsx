@@ -31,8 +31,8 @@ import { Redirecter } from '@/components/Redirecter/Redirecter.tsx';
 import { UserPhoneConfirmationPage } from '@/pages/UserPhoneConfirmation/UserPhoneConfirmationPage.tsx';
 import { AdminScannerPage } from '@/pages/AdminScannerPage/AdminScannerPage.tsx';
 import { OnboardingPage } from '@/pages/OnboardingPage/OnboardingPage.tsx';
-import { StageFour } from '@/pages/OnboardingPage/stages/StageFour.tsx';
-import { StageFive } from '@/pages/OnboardingPage/stages/StageFive.tsx';
+import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
+import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
 import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
 import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
 import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
@@ -41,14 +41,13 @@ import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/Choos
 import { BanquetOptionPage } from '@/pages/BanquetOptionPage/BanquetOptionPage.tsx';
 import { BanquetAdditionalServicesPage } from '@/pages/BanquetAdditionalServices/BanquetAdditionalServicesPage.tsx';
 import { BanquetReservationPage } from '@/pages/BanquetReservationPage/BanquetReservationPage.tsx';
-import { StageSix } from '@/pages/OnboardingPage/stages/StageSix.tsx';
+import { StageFour } from '@/pages/OnboardingPage/stages/StageFour.tsx';
 import { PreferencesThree } from '@/pages/PreferencesPage/stages/PreferencesThree.tsx';
 import { PreferencesOne } from '@/pages/PreferencesPage/stages/PreferencesOne.tsx';
 import { PreferencesTwo } from '@/pages/PreferencesPage/stages/PreferencesTwo.tsx';
 import { PreferencesPage } from '@/pages/PreferencesPage/PreferencesPage.tsx';
 import { StageOne } from '@/pages/OnboardingPage/stages/StageOne.tsx';
-import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
-import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
+import AllergiesPage from '@/pages/AllergiesPage/AllergiesPage.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -105,6 +104,7 @@ const AppRouter = () => {
                     <Route path={'/map'} element={<RestaurantMapPage />} />
                     <Route path={'/profile'} element={<ProfilePage />} />
                     <Route path={'/me'} element={<UserProfilePage />} />
+                        <Route path={'/me/allergies'} element={<AllergiesPage />} />
                     <Route path={'/events'} element={<EventsPage />}>
                         <Route path={'/events'} element={<EventListOutlet />} />
                         <Route
@@ -153,8 +153,6 @@ const AppRouter = () => {
                         <Route path={'/onboarding/2'} element={<StageTwo />} />
                         <Route path={'/onboarding/3'} element={<StageThree />} />
                         <Route path={'/onboarding/4'} element={<StageFour />} />
-                        <Route path={'/onboarding/5'} element={<StageFive />} />
-                        <Route path={'/onboarding/6'} element={<StageSix />} />
                     </Route>
                     <Route path={'/preferences'} element={<PreferencesPage/>}>
                         <Route path={'/preferences/1'} element={<PreferencesOne />} />

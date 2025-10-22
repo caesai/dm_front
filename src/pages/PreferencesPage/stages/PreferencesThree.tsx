@@ -1,14 +1,14 @@
 import css from '../PreferencesPage.module.css';
 import classNames from 'classnames';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { eightStageOptions } from '@/__mocks__/onboarding.mock.ts';
-import { useState } from 'react';
+import { eightStageOptions } from '@/__mocks__/preferences.mock.ts';
+import React, { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { authAtom } from '@/atoms/userAtom.ts';
-import { APIUserPreferences } from '@/api/user.ts';
+import { APIUserPreferences } from '@/api/user.api.ts';
 import { useNavigate } from 'react-router-dom';
 
-export const PreferencesThree = () => {
+export const PreferencesThree: React.FC = () => {
     const navigate = useNavigate();
     const [auth] = useAtom(authAtom);
 
@@ -66,9 +66,9 @@ export const PreferencesThree = () => {
                     <div className={css.stage_options_container}>
                         {eightStageOptions.map((item) => (
                             <CommentaryOptionButton
+                                newDesign
                                 text={item.content}
                                 icon={item.icon}
-                                style={{backgroundColor: '#FFFFFF'}}
                                 active={preferences.includes(item.content)}
                                 onClick={() => changePreference(item.content)}
                                 key={item.content}

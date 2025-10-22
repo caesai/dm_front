@@ -2,13 +2,13 @@ import css from '../PreferencesPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { sixStageOptions } from '@/__mocks__/onboarding.mock.ts';
-import { FC, useState } from 'react';
+import { sixStageOptions } from '@/__mocks__/preferences.mock.ts';
+import React, { useState } from 'react';
 import { useAtom } from 'jotai/index';
 import { authAtom } from '@/atoms/userAtom.ts';
-import { APIUserPreferences } from '@/api/user.ts';
+import { APIUserPreferences } from '@/api/user.api.ts';
 
-export const PreferencesOne: FC = () => {
+export const PreferencesOne: React.FC = () => {
     const navigate = useNavigate();
 
     const [auth] = useAtom(authAtom);
@@ -65,9 +65,9 @@ export const PreferencesOne: FC = () => {
                     <div className={css.stage_options_container}>
                         {sixStageOptions.map((item) => (
                             <CommentaryOptionButton
+                                newDesign
                                 text={item.content}
                                 icon={item.icon}
-                                style={{backgroundColor: '#FFFFFF'}}
                                 active={preferences.includes(item.content)}
                                 onClick={() => changePreference(item.content)}
                                 key={item.content}
