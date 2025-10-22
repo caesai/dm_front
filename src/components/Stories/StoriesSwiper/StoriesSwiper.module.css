@@ -3,18 +3,17 @@
     /*position: relative;*/
     top: 0;
     left: 0;
-    /*z-index: 10000 !important;*/
     height: 100vh;
     width: 100%;
 }
 
 .storiesSlider {
-    position: fixed;
+    position: fixed!important;
     width: 100%;
-    z-index: 20;
     top: 0;
     left: 0;
     height: 100vh;
+    z-index: 10000 !important;
 }
 
 .slide {

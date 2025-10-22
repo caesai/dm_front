@@ -48,7 +48,7 @@ export const StoriesSwiper: React.FC<StoriesSwiperProps> = ({ storiesBlocks, onC
             freeMode
             onSwiper={onSwiper}
             // onTouchStart={onTouchStart}
-            className={classnames(css.storiesSlider)}
+            className={css.storiesSlider}
             slidesPerView={'auto'}
             centeredSlides={true}
             initialSlide={activeStoryIndex}
