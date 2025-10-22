@@ -47,17 +47,6 @@ export default defineConfig(({mode, command}) => ({
                     main: resolve(__dirname, "index.html"),
                     404: resolve(__dirname, "public/404.html"),
                 },
-                output: {
-                    manualChunks(id) {
-                        if (id.includes('node_modules')) {
-                            if (id.includes('react') || id.includes('react-dom')) {
-                                return 'react';
-                            }
-                            // All other vendors go into a smaller vendor chunk
-                            return 'vendor';
-                        }
-                    },
-                }
             },
         },
     })
