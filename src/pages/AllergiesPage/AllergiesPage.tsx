@@ -54,7 +54,7 @@ const AllergiesPage: React.FC = () => {
         if (allergies && allergies.length > 0 && other.length > 0) {
             const allergyIndexToUpdate = selectedAllergies.findIndex(item => item === otherAllergyOptions);
             if (allergyIndexToUpdate > -1) {
-                const updatedAllergies = selectedAllergies;
+                const updatedAllergies = [...selectedAllergies];
                 updatedAllergies[allergyIndexToUpdate] = value;
                 setSelectedAllergies(updatedAllergies);
                 setOtherAllergyOptions(value);
