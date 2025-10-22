@@ -20,7 +20,6 @@ import { APIGetCurrentBookings } from '@/api/restaurants.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { Stories } from '@/components/Stories/Stories.tsx';
-// import {DEV_MODE} from "@/api/base.ts";
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
