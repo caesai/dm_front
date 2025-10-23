@@ -10,7 +10,6 @@ src/components/Stories/
 │   ├── StoriesContainer.module.css
 │   └── StoriesContainer.tsx
 ├── StoriesComponents/
-│   ├── Default.tsx
 │   ├── Image.module.css
 │   ├── Image.tsx
 │   ├── Video.module.css
