@@ -66,7 +66,7 @@ export const BookingInfoPage = () => {
 
     const onSendReason = async (reason: string = 'Без причины') => {
         await APIPOSTCancelReason(String(auth?.access_token), Number(booking?.id), reason);
-    }
+    };
 
     useScript('https://yastatic.net/taxi-widget/ya-taxi-widget.js', {
         removeOnUnmount: true,
