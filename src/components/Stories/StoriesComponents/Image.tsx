@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import css from '@/components/Stories/StoriesComponents/Image.module.css';
 import { IStory } from '@/types/stories.types.ts';
 import { StoriesLoader } from '@/components/Stories/StoriesComponents/StoriesLoader.tsx';
@@ -10,6 +10,8 @@ interface ImageStoryComponentProps {
     shouldWait: boolean;
     width: number | string;
     height: number | string;
+    isLoading: boolean;
+    setIsLoading: (loading: boolean) => void;
 }
 
 export const ImageStoryComponent: React.FC<ImageStoryComponentProps> = (
@@ -17,9 +19,10 @@ export const ImageStoryComponent: React.FC<ImageStoryComponentProps> = (
         story,
         action,
         shouldWait,
+        isLoading,
+        setIsLoading,
     },
 ) => {
-    const [isLoading, setIsLoading] = useState(false);
 
     const handleImageLoad = useCallback(() => {
         if (!shouldWait) {

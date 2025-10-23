@@ -16,6 +16,8 @@ interface StoryProps {
     bufferAction: boolean;
     width: number | string;
     height: number | string;
+    isLoading: boolean; // Add isLoading prop
+    setIsLoading: (loading: boolean) => void;
 }
 
 // Define a type for the component map to ensure type safety.
@@ -28,7 +30,6 @@ const storyComponentMap: StoryComponentMap = {
     component: CustomStoryComponent,
     image: ImageStoryComponent,
     video: VideoStoryComponent,
-    // default: DefaultStoryComponent,
 };
 
 const Story: React.FC<StoryProps> = (
@@ -40,6 +41,8 @@ const Story: React.FC<StoryProps> = (
         getVideoDuration,
         playState,
         bufferAction,
+        isLoading,
+        setIsLoading,
     },
 ) => {
     // Dynamically retrieve the component based on the story type.
@@ -55,6 +58,8 @@ const Story: React.FC<StoryProps> = (
         getVideoDuration,
         playState,
         bufferAction,
+        isLoading, // Pass down
+        setIsLoading,
     };
 
     return (
