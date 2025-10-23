@@ -1,6 +1,7 @@
-import { atom } from 'jotai';
-// import { splitAtom } from 'jotai/utils';
+// atoms/localStoriesListAtom.ts
+import { atomWithStorage } from 'jotai/utils';
 
+// Define the type for a local story object
 export interface ILocalStory {
     id: number;
     index: number;
@@ -8,5 +9,5 @@ export interface ILocalStory {
     lastSeenDate: string;
 }
 
-export const localStoriesListAtom = atom<ILocalStory[]>([]);
-// export const storyLocalAtomsAtom = splitAtom(storiesLocalAtom);
+// Initialize the atom with an empty array.
+export const localStoriesListAtom = atomWithStorage<ILocalStory[]>('localStories', []);

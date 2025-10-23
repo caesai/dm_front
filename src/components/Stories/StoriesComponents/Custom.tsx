@@ -3,15 +3,13 @@ import css from './Custom.module.css';
 import classNames from 'classnames';
 import { BASE_BOT } from '@/api/base.ts';
 import { useNavigate } from 'react-router-dom';
-import { Action, IStory } from '@/types/stories.types.ts';
+import { IStory } from '@/types/stories.types.ts';
 
 interface CustomStoryComponentProps {
     story: IStory;
-    action: Action;
+    action: Function;
     isPaused: boolean;
     shouldWait: boolean;
-    width: number | string;
-    height: number | string;
 }
 
 export const CustomStoryComponent: React.FC<CustomStoryComponentProps> = (
@@ -34,7 +32,6 @@ export const CustomStoryComponent: React.FC<CustomStoryComponentProps> = (
         button_color,
         component_type,
     } = story;
-    console.log('story: ', story)
     useEffect(() => {
         if (!shouldWait) {
             action('play');

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback, useMemo } from 'react';
 import css from '@/components/Stories/StoriesSwiper/StoriesSwiper.module.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { IStoryBlock } from '@/types/stories.types.ts';
@@ -9,31 +9,45 @@ interface StoriesSwiperProps {
     storiesBlocks: IStoryBlock[];
     onClose: () => void;
     activeStoryIndex: number;
+    isPaused: boolean;
 }
 
-export const StoriesSwiper: React.FC<StoriesSwiperProps> = ({ storiesBlocks, onClose, activeStoryIndex }) => {
+export const StoriesSwiper: React.FC<StoriesSwiperProps> = ({ storiesBlocks, onClose, activeStoryIndex, isPaused }) => {
     const [realSwiperIndex, setRealSwiperIndex] = useState(activeStoryIndex);
     const swiperRef = useRef<SwiperClass | null>(null);
 
-    const onRealIndexChange = (swiper: SwiperClass) => {
+    // Use useCallback to memoize event handlers for performance.
+    const onSwiper = useCallback((swiper: SwiperClass) => {
+        swiperRef.current = swiper;
+    }, []);
+
+    const onRealIndexChange = useCallback((swiper: SwiperClass) => {
         setRealSwiperIndex(swiper.activeIndex);
-    };
+    }, []);
 
-    const onSwiper = (swiper: SwiperClass) => {
-        if (!swiperRef.current) {
-            swiperRef.current = swiper;
-        }
-    };
-
-    const onAllStoriesEnd = () => {
+    const handleAllStoriesEnd = useCallback(() => {
         if (realSwiperIndex < storiesBlocks.length - 1) {
-            if (swiperRef.current) {
-                swiperRef.current.slideNext();
-            }
+            swiperRef.current?.slideNext();
         } else {
             onClose();
         }
-    };
+    }, [realSwiperIndex, storiesBlocks.length, onClose]);
+
+    // Memoize the slides to prevent re-rendering when the component's parent re-renders.
+    const renderedSlides = useMemo(() => {
+        return storiesBlocks.map((block, index) => (
+            <SwiperSlide className={css.slide} key={block.id}>
+                <StorySlide
+                    storyId={block.id}
+                    shouldWait={realSwiperIndex !== index}
+                    stories={block.stories}
+                    onAllStoriesEnd={handleAllStoriesEnd}
+                    onClose={onClose}
+                    isPaused={isPaused}
+                />
+            </SwiperSlide>
+        ));
+    }, [storiesBlocks, realSwiperIndex, handleAllStoriesEnd, onClose]);
 
     return (
         <Swiper
@@ -45,19 +59,7 @@ export const StoriesSwiper: React.FC<StoriesSwiperProps> = ({ storiesBlocks, onC
             initialSlide={activeStoryIndex}
             onRealIndexChange={onRealIndexChange}
         >
-            {storiesBlocks.map((block, index) => {
-                return (
-                    <SwiperSlide className={css.slide} key={index}>
-                        <StorySlide
-                            storyId={block.id}
-                            shouldWait={Number(realSwiperIndex) !== Number(index)}
-                            stories={block.stories}
-                            onAllStoriesEnd={onAllStoriesEnd}
-                            onClose={onClose}
-                        />
-                    </SwiperSlide>
-                );
-            })}
+            {renderedSlides}
         </Swiper>
     );
 };

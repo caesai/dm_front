@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+// VideoStoryComponent.tsx
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import css from '@/components/Stories/StoriesComponents/Video.module.css';
 import { IStory, Action } from '@/types/stories.types.ts';
+import { StoriesLoader } from '@/components/Stories/StoriesComponents/StoriesLoader.tsx';
 
 interface VideoStoryComponentProps {
     story: IStory;
@@ -10,6 +11,10 @@ interface VideoStoryComponentProps {
     shouldWait: boolean;
     width: number | string;
     height: number | string;
+    getVideoDuration: Function;
+    // playState and bufferAction are not used but included for completeness, they can be removed if not needed.
+    // playState: boolean;
+    // bufferAction: boolean;
 }
 
 export const VideoStoryComponent: React.FC<VideoStoryComponentProps> = (
@@ -18,83 +23,62 @@ export const VideoStoryComponent: React.FC<VideoStoryComponentProps> = (
         action,
         isPaused,
         shouldWait,
-        width,
-        height,
+        getVideoDuration,
     },
 ) => {
-    const [loaded, setLoaded] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const videoRef = useRef<HTMLVideoElement>(null);
 
-    let vid = useRef<HTMLVideoElement>(null);
+    const handleWaiting = useCallback(() => {
+        setIsLoading(true);
+        action('pause', true);
+    }, [action]);
 
-    useEffect(() => {
-        if (vid.current) {
-            if (isPaused || shouldWait) {
-                vid.current.pause();
-            } else {
-                vid.current.play().then();
+    const handlePlaying = useCallback(() => {
+        setIsLoading(false);
+        action('play', false);
+    }, [action]);
+
+    const handleLoadedData = useCallback(() => {
+        if (videoRef.current) {
+            getVideoDuration(videoRef.current.duration * 1000); // Pass duration to parent
+            if (!shouldWait) {
+                videoRef.current.play().catch(error => {
+                    console.error('Video play failed:', error);
+                });
             }
         }
-    }, [isPaused, shouldWait]);
+    }, [shouldWait, getVideoDuration]);
 
-    const onWaiting = () => {
-        action('pause', true);
-    };
+    useEffect(() => {
+        const videoElement = videoRef.current;
 
-    const onPlaying = () => {
-        action('play', true);
-    };
+        if (!videoElement) return;
 
-    const videoLoaded = () => {
-        if (vid.current && !shouldWait) {
-            setLoaded(true);
-            vid.current
-                .play()
-                // .then(() => {
-                //     action('play');
-                // })
-                .catch(() => {
-                    vid.current?.play()
-                        // .finally(() => {
-                        //     action('play');
-                        // });
-                });
+        if (isPaused || shouldWait) {
+            videoElement.pause();
+        } else {
+            videoElement.play().catch(error => {
+                console.error('Video auto-play failed:', error);
+            });
         }
-    };
+    }, [isPaused, shouldWait]);
 
     return (
         <div className={css.videoContainer}>
             <video
-                ref={vid}
+                ref={videoRef}
                 className={css.storyContent}
                 src={String(story.url)}
                 controls={false}
-                onLoadedData={videoLoaded}
-                playsInline
-                onWaiting={onWaiting}
-                onPlaying={onPlaying}
-                // muted={muted}
+                onLoadedData={handleLoadedData}
+                onWaiting={handleWaiting}
+                onPlaying={handlePlaying}
                 autoPlay
-                webkit-playsinline="true"
+                playsInline
+                muted // Muting for initial auto-play is a best practice
             />
-            {!loaded && (
-                <div
-                    style={{
-                        width: width,
-                        height: height,
-                        position: 'absolute',
-                        left: 0,
-                        top: 0,
-                        background: 'rgba(0, 0, 0, 0.9)',
-                        zIndex: 9,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        color: '#ccc',
-                    }}
-                >
-                    <Loader />
-                </div>
-            )}
+            <StoriesLoader isLoading={isLoading} />
         </div>
     );
 };

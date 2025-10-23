@@ -1,10 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
-import { IStory } from '@/types/stories.types.ts';
+// StoriesContainer.tsx
+import React, { useState, useRef, useEffect, useCallback, useReducer, useMemo } from 'react';
+import { IStory, StoriesAction } from '@/types/stories.types.ts';
 import Story from '@/components/Stories/Story/Story.tsx';
 import { usePreLoader } from '@/components/Stories/usePreloader.ts';
 import ProgressArray from '@/components/Stories/StoriesProgress/ProgressArray.tsx';
 import useIsMounted from '@/components/Stories/useIsMounted.ts';
 import css from '@/components/Stories/StoriesContainer/StoriesContainer.module.css';
+import { storiesReducer } from '@/components/Stories/storiesReducer/storiesReducer.ts';
+// import { StoriesAction, storiesReducer } from './storiesReducer';
 
 type NumberOrString = number | string;
 
@@ -14,17 +17,36 @@ interface StoriesContainerProps {
     height?: NumberOrString;
     loop?: boolean;
     keyboardNavigation?: boolean;
-    onAllStoriesEnd?: Function;
-    onStoryStart: Function;
-    onStoryEnd: Function;
-    onPrevious?: Function;
-    onNext?: Function;
+    onAllStoriesEnd?: (currentId: number, stories: IStory[]) => void;
+    onStoryStart: (currentId: number, story: IStory) => void;
+    onStoryEnd: (currentId: number, story: IStory) => void;
+    onPrevious?: () => void;
+    onNext?: () => void;
     preventDefault?: boolean;
     preloadCount?: number;
     isPaused?: boolean;
     currentIndex?: number;
     stories: IStory[];
 }
+
+// Reducer for managing play/pause and buffering state.
+const playerStateReducer = (state: { pause: boolean; bufferAction: boolean }, action: {
+    type: string;
+    buffer?: boolean
+}) => {
+    switch (action.type) {
+        case 'toggle_pause':
+            return { ...state, pause: !state.pause };
+        case 'set_pause':
+            return { ...state, pause: true };
+        case 'set_play':
+            return { ...state, pause: false };
+        case 'set_buffer':
+            return { ...state, bufferAction: action.buffer ?? true };
+        default:
+            return state;
+    }
+};
 
 const StoriesContainer: React.FC<StoriesContainerProps> = (
     {
@@ -39,139 +61,128 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
         onAllStoriesEnd,
         onPrevious,
         onNext,
-        preloadCount,
+        preloadCount = 3,
         stories,
         onStoryEnd,
         onStoryStart,
-    }
-    ) => {
-    const [currentId, setCurrentId] = useState<number>(0);
-    const [pause, setPause] = useState<boolean>(true);
-    const [bufferAction, setBufferAction] = useState<boolean>(true);
+    },
+) => {
+    const [{ currentId }, dispatch] = useReducer(storiesReducer, { currentId: 0 });
+    const [{ pause, bufferAction }, playerStateDispatch] = useReducer(playerStateReducer, {
+        pause: true,
+        bufferAction: true,
+    });
     const [videoDuration, setVideoDuration] = useState<number>(0);
+    const mousedownTimeoutRef = useRef<any>();
     const isMounted = useIsMounted();
 
-    let mousedownId = useRef<any>();
+    // Custom hook for preloading logic.
+    usePreLoader(stories, currentId, preloadCount);
 
-    usePreLoader(stories, currentId, Number(preloadCount));
-
+    // Effect for handling external currentIndex prop changes.
     useEffect(() => {
-        if (typeof currentIndex === "number") {
-            if (currentIndex >= 0 && currentIndex < stories.length) {
-                setCurrentIdWrapper(() => currentIndex);
-            } else {
-                console.error(
-                    "Index out of bounds. Current index was set to value more than the length of stories array.",
-                    currentIndex
-                );
-            }
+        if (typeof currentIndex === 'number' && currentIndex >= 0 && currentIndex < stories.length) {
+            dispatch({ type: StoriesAction.SetCurrentId, payload: currentIndex });
+            playerStateDispatch({ type: 'set_pause', buffer: true });
+        } else if (typeof currentIndex === 'number') {
+            console.error(
+                `Index out of bounds. Current index (${currentIndex}) was set to a value outside the range of stories array.`,
+            );
         }
     }, [currentIndex, stories.length]);
 
+    // Effect for handling external isPaused prop changes.
     useEffect(() => {
-        if (typeof isPaused === "boolean") {
-            setPause(isPaused);
+        if (typeof isPaused === 'boolean') {
+            isPaused ? playerStateDispatch({ type: 'set_pause' }) : playerStateDispatch({ type: 'set_play' });
         }
     }, [isPaused]);
 
-    useEffect(() => {
-        const isClient = typeof window !== "undefined" && window.document;
-        if (
-            isClient &&
-            typeof keyboardNavigation === "boolean" &&
-            keyboardNavigation
-        ) {
-            document.addEventListener("keydown", handleKeyDown);
-            return () => {
-                document.removeEventListener("keydown", handleKeyDown);
-            };
+
+    // Action handlers using useCallback for performance.
+    const toggleState = useCallback((action: 'pause' | 'play', bufferAction?: boolean) => {
+        if (action === 'pause') playerStateDispatch({ type: 'set_pause', buffer: !!bufferAction });
+        else playerStateDispatch({ type: 'set_play' });
+    }, []);
+
+    const previous = useCallback(() => {
+        onPrevious?.();
+        dispatch({ type: StoriesAction.Previous });
+        playerStateDispatch({ type: 'set_pause', buffer: true });
+    }, [onPrevious]);
+
+    const next = useCallback(({ isSkippedByUser }: { isSkippedByUser?: boolean } = {}) => {
+        if (isSkippedByUser && !shouldWait) {
+            onNext?.();
         }
-    }, [keyboardNavigation]);
+        if (!isMounted()) return;
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "ArrowLeft") {
-            previous();
-        } else if (e.key === "ArrowRight") {
-            next({ isSkippedByUser: true });
+        dispatch({ type: StoriesAction.Next, payload: { loop, storiesLength: stories.length } });
+        playerStateDispatch({ type: 'set_pause', buffer: true });
+
+        if (currentId >= stories.length - 1 && !loop) {
+            onAllStoriesEnd?.(currentId, stories);
         }
-    };
+    }, [isMounted, loop, stories, onAllStoriesEnd, shouldWait, onNext, currentId]);
 
-    const toggleState = (action: string, bufferAction?: boolean) => {
-        setPause(action === "pause");
-        setBufferAction(!!bufferAction);
-    };
-
-    const setCurrentIdWrapper = (callback: (arg0: number) => number) => {
-        setCurrentId(callback);
-        toggleState("pause", true);
-    };
-
-    const previous = () => {
-        if (onPrevious != undefined) {
-            onPrevious();
-        }
-        setCurrentIdWrapper((prev:number) => (prev > 0 ? Number(prev - 1) : Number(prev)));
-    };
-
-    const next = (options?: { isSkippedByUser?: boolean }) => {
-        if (onNext != undefined && options?.isSkippedByUser && !shouldWait) {
-            onNext();
-        }
-        // Check if component is mounted - for issue #130 (https://github.com/mohitk05/react-insta-stories/issues/130)
-        if (isMounted()) {
-            if (loop) {
-                updateNextStoryIdForLoop();
-            } else {
-                updateNextStoryId();
-            }
-        }
-    };
-
-    const updateNextStoryIdForLoop = () => {
-        setCurrentIdWrapper((prev: number) => {
-            if (prev >= stories.length - 1) {
-                onAllStoriesEnd && onAllStoriesEnd(currentId, stories);
-            }
-            return (prev + 1) % stories.length;
-        });
-    };
-
-    const updateNextStoryId = () => {
-        setCurrentIdWrapper((prev) => {
-            if (prev < stories.length - 1) return prev + 1;
-            onAllStoriesEnd && onAllStoriesEnd(currentId, stories);
-            return prev;
-        });
-    };
-
-    const debouncePause = (e: React.MouseEvent | React.TouchEvent) => {
+    const debouncePause = useCallback((e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault();
-        mousedownId.current = setTimeout(() => {
-            toggleState("pause");
+        mousedownTimeoutRef.current = setTimeout(() => {
+            playerStateDispatch({ type: 'set_pause' });
         }, 200);
-    };
+    }, []);
 
-    const mouseUp =
-        (type: string) => (e: React.MouseEvent | React.TouchEvent) => {
+    const mouseUp = useCallback(
+        (type: 'next' | 'previous') => (e: React.MouseEvent | React.TouchEvent) => {
+            console.log(`Mouse up on ${type} overlay`);
             e.preventDefault();
-            mousedownId.current && clearTimeout(mousedownId.current);
+            clearTimeout(mousedownTimeoutRef.current);
             if (pause) {
-                toggleState("play");
+                playerStateDispatch({ type: 'set_play' });
             } else {
-                type === "next" ? next({ isSkippedByUser: true }) : previous();
+                type === 'next' ? next({ isSkippedByUser: true }) : previous();
             }
-        };
+        },
+        [pause, next, previous],
+    );
 
-    const getVideoDuration = (duration: number) => {
-        setVideoDuration(duration * 1000);
-    };
+    const getVideoDuration = useCallback((duration: number) => {
+        setVideoDuration(duration);
+    }, []);
+
+    const overlayHandlers = useMemo(() => ({
+        onPrevious: {
+            onTouchStart: debouncePause,
+            onTouchEnd: mouseUp('previous'),
+            onMouseDownCapture: debouncePause,
+            onMouseUpCapture: mouseUp("previous"),
+            onMouseUp: mouseUp('previous'),
+        },
+        onNext: {
+            onTouchStart: debouncePause,
+            onTouchEnd: mouseUp('next'),
+            onMouseDownCapture: debouncePause,
+            onMouseUpCapture: mouseUp("next"),
+            onMouseUp: mouseUp('next'),
+        },
+    }), [debouncePause, mouseUp]);
+
+    // Keyboard navigation effect.
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowLeft') previous();
+            else if (e.key === 'ArrowRight') next({ isSkippedByUser: true });
+        };
+        if (typeof window !== 'undefined' && keyboardNavigation) {
+            document.addEventListener('keydown', handleKeyDown);
+            return () => document.removeEventListener('keydown', handleKeyDown);
+        }
+    }, [keyboardNavigation, previous, next]);
 
     return (
         <div
             className={css.container}
-            style={{
-                ...{ width, height },
-            }}
+            style={{ width, height }}
         >
             <ProgressArray
                 bufferAction={bufferAction}
@@ -197,24 +208,13 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
             />
             {!preventDefault && (
                 <div className={css.overlay}>
-                    <div
-                        style={{ width: "50%", zIndex: 9999 }}
-                        onTouchStart={debouncePause}
-                        onTouchEnd={mouseUp("previous")}
-                        onMouseDown={debouncePause}
-                        onMouseUp={mouseUp("previous")}
-                    />
-                    <div
-                        style={{ width: "50%", zIndex: 9999 }}
-                        onTouchStart={debouncePause}
-                        onTouchEnd={mouseUp("next")}
-                        onMouseDown={debouncePause}
-                        onMouseUp={mouseUp("next")}
-                    />
+                    <div style={{ width: '50%', zIndex: 9999 }} {...overlayHandlers.onPrevious} />
+                    <div style={{ width: '50%', zIndex: 9999 }} {...overlayHandlers.onNext} />
                 </div>
             )}
         </div>
     );
-}
+};
 
 export default StoriesContainer;
+

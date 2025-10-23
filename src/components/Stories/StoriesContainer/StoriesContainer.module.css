@@ -10,4 +10,5 @@
     height: inherit;
     width: inherit;
     display: flex;
+    z-index: 9999;
 }

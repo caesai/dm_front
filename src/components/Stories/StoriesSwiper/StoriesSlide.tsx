@@ -1,12 +1,19 @@
 import { IStory } from '@/types/stories.types.ts';
-import React from 'react';
-import { useAtom } from 'jotai/index';
+import React, { useCallback, useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
 import { localStoriesListAtom } from '@/atoms/localStoriesListAtom.ts';
-import moment from 'moment/moment';
+import moment from 'moment';
 import classnames from 'classnames';
 import css from '@/components/Stories/StoriesSwiper/StoriesSwiper.module.css';
 import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
 import StoriesContainer from '@/components/Stories/StoriesContainer/StoriesContainer.tsx';
+
+interface LocalStoryMeta {
+    id: number;
+    index: number;
+    isSeen: boolean;
+    lastSeenDate: string;
+}
 
 interface StorySlideProps {
     onAllStoriesEnd: () => void;
@@ -14,6 +21,7 @@ interface StorySlideProps {
     storyId: number;
     stories: IStory[];
     shouldWait: boolean;
+    isPaused: boolean;
 }
 
 export const StorySlide: React.FC<StorySlideProps> = (
@@ -23,22 +31,40 @@ export const StorySlide: React.FC<StorySlideProps> = (
         stories,
         onClose,
         shouldWait,
+        isPaused,
     },
 ) => {
     const [localStories, setLocalStories] = useAtom(localStoriesListAtom);
-    const localStory = localStories.find((item) => item.id === storyId);
+    const [localStory, setLocalStory] = useState<LocalStoryMeta | undefined>(undefined);
 
-    const handleStoryEnd = () => {
-        setLocalStories((prevItems) => {
+    // Use a useEffect to react to changes in the Jotai atom or storyId.
+    useEffect(() => {
+        const foundStory = localStories.find(item => item.id === storyId);
+        setLocalStory(foundStory);
+    }, [localStories, storyId]);
+
+    const updateLocalStories = useCallback((updater: (prevItems: LocalStoryMeta[]) => LocalStoryMeta[]) => {
+        setLocalStories(updater);
+    }, [setLocalStories]);
+
+    const handleStoryEnd = useCallback(() => {
+        updateLocalStories(prevItems => {
             const localIndex = prevItems.findIndex(item => item.id === storyId);
-            if (localIndex === -1) return prevItems; // Item not found
+            if (localIndex === -1) {
+                return [...prevItems, {
+                    id: storyId,
+                    index: 0,
+                    isSeen: true,
+                    lastSeenDate: moment().format('YYYY-MM-DD'),
+                }];
+            }
 
-            const isStorySeen = localStory?.isSeen;
-            const updatedItem = {
-                ...prevItems[localIndex],
+            const existingItem = prevItems[localIndex];
+            const updatedItem: LocalStoryMeta = {
+                ...existingItem,
                 index: 0,
-                isSeen: !isStorySeen,
-                lastSeenDate: isStorySeen ? prevItems[localIndex].lastSeenDate : moment().format('YYYY-MM-DD'),
+                isSeen: true,
+                lastSeenDate: moment().format('YYYY-MM-DD'),
             };
 
             return [
@@ -47,48 +73,36 @@ export const StorySlide: React.FC<StorySlideProps> = (
                 ...prevItems.slice(localIndex + 1),
             ];
         });
-
         onAllStoriesEnd();
-    };
+    }, [storyId, updateLocalStories, onAllStoriesEnd]);
 
+    const handleStoryChange = useCallback((index: number) => {
+        console.log('handleStoryChange fired with index: ', index);
+        updateLocalStories(prevItems => {
+            const localIndex = prevItems.findIndex(item => item.id === storyId);
 
-    const onStoryChange = (index: number) => {
-        if (localStory) {
-            updateExistingStory(index);
-        } else {
-            addNewStory(index);
-        }
-    };
-
-    const updateExistingStory = (index: number) => {
-        if (localStory && localStory.index <= stories.length - 1) {
-            setLocalStories((prevItems) => {
-                const localIndex = prevItems.findIndex(item => item.id === storyId);
-                if (localIndex === -1) return prevItems; // Item not found
-
-                const updatedItem = {
-                    ...prevItems[localIndex],
+            if (localIndex !== -1) {
+                const existingItem = prevItems[localIndex];
+                if (index > existingItem.index && index <= stories.length - 1) {
+                    const updatedItem = { ...existingItem, index };
+                    return [
+                        ...prevItems.slice(0, localIndex),
+                        updatedItem,
+                        ...prevItems.slice(localIndex + 1),
+                    ];
+                }
+                return prevItems;
+            } else {
+                const newStoryLocalMeta: LocalStoryMeta = {
+                    id: storyId,
                     index,
+                    isSeen: false,
+                    lastSeenDate: moment().format('YYYY-MM-DD'),
                 };
-
-                return [
-                    ...prevItems.slice(0, localIndex),
-                    updatedItem,
-                    ...prevItems.slice(localIndex + 1),
-                ];
-            });
-        }
-    };
-
-    const addNewStory = (index: number) => {
-        const newStoryLocalCount = {
-            id: storyId,
-            index,
-            isSeen: false,
-            lastSeenDate: moment().format('YYYY-MM-DD'),
-        };
-        setLocalStories((prevItems) => [...prevItems, newStoryLocalCount]);
-    };
+                return [...prevItems, newStoryLocalMeta];
+            }
+        });
+    }, [storyId, stories.length, updateLocalStories]);
 
     return (
         <div className={classnames(css.stories_container)}>
@@ -102,8 +116,9 @@ export const StorySlide: React.FC<StorySlideProps> = (
                 height={'100%'}
                 preloadCount={0}
                 onAllStoriesEnd={handleStoryEnd}
-                onStoryEnd={onStoryChange}
-                currentIndex={localStory !== undefined ? localStory.index : undefined}
+                onStoryEnd={handleStoryChange}
+                isPaused={isPaused}
+                currentIndex={localStory?.index ?? 0}
                 onStoryStart={() => {}}
             />
         </div>

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+import React, { useState, useCallback } from 'react';
 import css from '@/components/Stories/StoriesComponents/Image.module.css';
-import { Action, IStory } from '@/types/stories.types.ts';
+import { IStory } from '@/types/stories.types.ts';
+import { StoriesLoader } from '@/components/Stories/StoriesComponents/StoriesLoader.tsx';
 
 interface ImageStoryComponentProps {
     story: IStory;
-    action: Action;
+    action: Function;
     isPaused: boolean;
     shouldWait: boolean;
     width: number | string;
@@ -16,43 +16,27 @@ export const ImageStoryComponent: React.FC<ImageStoryComponentProps> = (
     {
         story,
         action,
-        // isPaused,
         shouldWait,
-        width,
-        height,
     },
 ) => {
-    const [loaded, setLoaded] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const imageLoaded = () => {
+    const handleImageLoad = useCallback(() => {
         if (!shouldWait) {
-            setLoaded(true);
+            setIsLoading(true);
             action('play');
         }
-    };
+    }, [shouldWait, action]);
 
     return (
-        <div style={{ width: '100%'}}>
-            <img className={css.storyContent} src={String(story.url)} onLoad={imageLoaded} alt={''} />
-            {!loaded && (
-                <div
-                    style={{
-                        width: width,
-                        height: height,
-                        position: 'absolute',
-                        left: 0,
-                        top: 0,
-                        background: 'rgba(0, 0, 0, 0.9)',
-                        zIndex: 9,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        color: '#ccc',
-                    }}
-                >
-                    <Loader />
-                </div>
-            )}
+        <div style={{ width: '100%' }}>
+            <img
+                className={css.storyContent}
+                src={String(story.url)}
+                onLoad={handleImageLoad}
+                alt={`Story image from ${story.url}`}
+            />
+            <StoriesLoader isLoading={isLoading} />
         </div>
     );
 };

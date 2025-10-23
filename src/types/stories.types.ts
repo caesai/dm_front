@@ -38,3 +38,13 @@ export interface IStoryBlock {
 }
 
 export type Action = (action: string, bufferAction?: boolean) => void;
+
+export enum StoriesAction {
+    SetCurrentId = 'SET_CURRENT_ID',
+    Next = 'NEXT',
+    Previous = 'PREVIOUS',
+}
+
+export interface StoriesState {
+    currentId: number;
+}

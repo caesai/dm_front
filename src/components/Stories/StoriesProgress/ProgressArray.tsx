@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { IStory } from '@/types/stories.types.ts';
 import Progress from '@/components/Stories/StoriesProgress/Progress.tsx';
 import css from '@/components/Stories/StoriesProgress/Progress.module.css';
 
-const timestamp = () => {
-    return window.performance && window.performance.now
-        ? window.performance.now()
-        : new Date().getTime();
-};
+const getPerformanceTimestamp = () => (window.performance?.now ? window.performance.now() : new Date().getTime());
 
 interface ProgressArrayProps {
     shouldWait: boolean;
@@ -15,10 +11,10 @@ interface ProgressArrayProps {
     videoDuration: number;
     bufferAction: boolean;
     pause: boolean;
-    next: Function;
+    next: () => void; // Explicitly type the next function
     stories: IStory[];
-    onStoryEnd: Function;
-    onStoryStart: Function;
+    onStoryEnd: (currentId: number, story: IStory) => void; // Explicitly type callbacks
+    onStoryStart: (currentId: number, story: IStory) => void;
 }
 
 const ProgressArray: React.FC<ProgressArrayProps> = (
@@ -31,85 +27,97 @@ const ProgressArray: React.FC<ProgressArrayProps> = (
         bufferAction,
         stories,
         onStoryEnd,
-        onStoryStart,
+        // onStoryStart,
     },
 ) => {
-    const [count, setCount] = useState<number>(0);
-    const lastTime = useRef<number>(0);
-    const animationFrameId = useRef<number>(0);
-    const countCopy = useRef<number>(0);
+    const [progress, setProgress] = useState<number>(0);
+    const lastTimeRef = useRef<number>(0);
+    const animationFrameIdRef = useRef<number>(0);
 
+    // Reset progress when the current story changes.
     useEffect(() => {
-        setCount(0);
+        setProgress(0);
     }, [currentId]);
 
+    // Handle the animation frame loop.
+    const incrementProgress = useCallback(() => {
+        const interval = stories[currentId]?.type === 'video' ? videoDuration : stories[currentId]?.duration || 0;
+        if (interval === 0) {
+            // Avoid division by zero and handle instant story progression.
+            // storyEndCallback();
+            next();
+            return;
+        }
+
+        if (lastTimeRef.current === 0) {
+            lastTimeRef.current = getPerformanceTimestamp();
+            // storyStartCallback();
+        }
+
+        const currentTime = getPerformanceTimestamp();
+        const deltaTime = currentTime - lastTimeRef.current;
+        lastTimeRef.current = currentTime;
+
+        setProgress(prevProgress => {
+            const newProgress = prevProgress + (deltaTime * 100) / interval;
+            if (newProgress >= 100) {
+                cancelAnimationFrame(animationFrameIdRef.current);
+                storyEndCallback();
+                next();
+                return 100;
+            }
+            animationFrameIdRef.current = requestAnimationFrame(incrementProgress);
+            return newProgress;
+        });
+    }, [stories, currentId, videoDuration, next]);
+
+    // Effect for starting and stopping the animation loop.
     useEffect(() => {
         if (!pause && !shouldWait) {
-            animationFrameId.current = requestAnimationFrame(incrementCount);
-            lastTime.current = timestamp();
-        }
-        return () => {
-            cancelAnimationFrame(Number(animationFrameId.current));
-        };
-    }, [currentId, pause, shouldWait]);
-
-    const incrementCount = () => {
-        if (countCopy.current === 0) storyStartCallback();
-        if (lastTime.current == undefined) lastTime.current = timestamp();
-        const t = timestamp();
-
-        const dt = t - lastTime.current;
-        lastTime.current = t;
-
-        setCount((count: number) => {
-            const interval = getCurrentInterval();
-            countCopy.current = count + (dt * 100) / interval;
-            return countCopy.current;
-        });
-
-        if (countCopy.current < 100) {
-            animationFrameId.current = requestAnimationFrame(incrementCount);
+            animationFrameIdRef.current = requestAnimationFrame(incrementProgress);
         } else {
-            storyEndCallback();
-            cancelAnimationFrame(Number(animationFrameId.current));
-            next();
+            cancelAnimationFrame(animationFrameIdRef.current);
+            lastTimeRef.current = 0; // Reset timer on pause
         }
-    };
 
-    const storyStartCallback = () => {
-        onStoryStart && onStoryStart(currentId, stories[currentId]);
-    };
+        return () => {
+            cancelAnimationFrame(animationFrameIdRef.current);
+        };
+    }, [currentId, pause, shouldWait, incrementProgress]);
 
-    const storyEndCallback = () => {
-        onStoryEnd && onStoryEnd(currentId, stories[currentId]);
-    };
+    // Callback functions for story events.
+    // const storyStartCallback = useCallback(() => {
+    //     if (stories[currentId]) {
+    //         onStoryStart(currentId, stories[currentId]);
+    //     }
+    // }, [onStoryStart, currentId, stories]);
+    //
+    const storyEndCallback = useCallback(() => {
+        if (stories[currentId]) {
+            onStoryEnd(currentId, stories[currentId]);
+        }
+    }, [onStoryEnd, currentId, stories]);
 
-    const getCurrentInterval = () => {
-        if (stories[currentId]?.type === 'video') return videoDuration;
-        return stories[currentId]?.duration;
-    };
-
-    const opacityStyles = {
-        opacity: pause && !bufferAction ? 0 : 1,
-    };
+    // Memoize the rendered progress components for performance.
+    const progressIndicators = useMemo(() => stories.map((_, i) => (
+        <Progress
+            key={i}
+            count={progress}
+            width={1 / stories.length}
+            active={i === currentId ? 1 : i < currentId ? 2 : 0}
+            pause={pause}
+            bufferAction={bufferAction}
+        />
+    )), [stories, progress, currentId, pause, bufferAction]);
 
     return (
         <div
             className={css.progressArr}
             style={{
-                ...opacityStyles,
+                opacity: pause && !bufferAction ? 0 : 1,
             }}
         >
-            {stories.map((_, i) => (
-                <Progress
-                    key={i}
-                    count={count}
-                    width={1 / stories.length}
-                    active={i === currentId ? 1 : i < currentId ? 2 : 0}
-                    pause={pause}
-                    bufferAction={bufferAction}
-                />
-            ))}
+            {progressIndicators}
         </div>
     );
 };
