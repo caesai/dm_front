@@ -41,7 +41,15 @@ const ProgressArray: React.FC<ProgressArrayProps> = (
 
     // Handle the animation frame loop.
     const incrementProgress = useCallback(() => {
-        const interval = stories[currentId]?.type === 'video' ? videoDuration : stories[currentId]?.duration || 0;
+        const story = stories[currentId];
+
+        if (!story) {
+            next();
+            return;
+        }
+
+        const interval = story.type === 'video' ? videoDuration : story.duration || 0;
+
         if (interval === 0) {
             // Avoid division by zero and handle instant story progression.
             // storyEndCallback();

@@ -2,7 +2,7 @@
 
 This document provides an overview of the "Story" feature, which implements a story-viewer functionality similar to popular social media platforms. It is built using React, TypeScript, Jotai for state management, and Swiper for slide-based components.
 
-### 📁 Project structure
+### 📁 Feature structure
 The story feature is organized within the src/components/Stories directory, with sub-components organized in their own folders.
 src/components/Stories/
 ```
@@ -29,7 +29,6 @@ src/components/Stories/
 │   └── StoriesSwiper.tsx
 ├── usePreloader.ts
 ├── useIsMounted.ts
-├── stories.types.ts
 └── Stories.tsx
 ```
 ### 🧱 Component architecture

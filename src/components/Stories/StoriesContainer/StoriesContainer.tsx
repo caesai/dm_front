@@ -155,14 +155,14 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
             onTouchStart: debouncePause,
             onTouchEnd: mouseUp('previous'),
             onMouseDownCapture: debouncePause,
-            onMouseUpCapture: mouseUp("previous"),
+            onMouseUpCapture: mouseUp('previous'),
             onMouseUp: mouseUp('previous'),
         },
         onNext: {
             onTouchStart: debouncePause,
             onTouchEnd: mouseUp('next'),
             onMouseDownCapture: debouncePause,
-            onMouseUpCapture: mouseUp("next"),
+            onMouseUpCapture: mouseUp('next'),
             onMouseUp: mouseUp('next'),
         },
     }), [debouncePause, mouseUp]);
