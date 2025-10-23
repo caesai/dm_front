@@ -1,0 +1,13 @@
+.storyContent {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+}
+
+.videoContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
