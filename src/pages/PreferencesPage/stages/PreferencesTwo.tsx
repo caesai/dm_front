@@ -66,14 +66,14 @@ export const PreferencesTwo: React.FC = () => {
                         привлекает в меню?
                     </h2>
                     <div className={css.stage_options_container}>
-                        {sevenStageOptions.map((item, index) => (
+                        {sevenStageOptions.map((item) => (
                             <CommentaryOptionButton
                                 newDesign
                                 text={item.content}
                                 icon={item.icon}
                                 active={preferences.includes(item.content)}
                                 onClick={() => changePreference(item.content)}
-                                key={index}
+                                key={item.content}
                             />
                         ))}
                     </div>

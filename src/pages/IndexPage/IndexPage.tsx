@@ -182,14 +182,14 @@ export const IndexPage: FC = () => {
             return;
         }
 
-        // Reset preferences counter for testing purposes (delete before RELEASE)
-        if (visit_number === 3) {
-            localStorage.setItem(
-                'PREFERENCES_STATUS',
-                JSON.stringify({ visit_number: 1 }),
-            );
-            return;
-        }
+        // Reset preferences counter for testing purposes (comment this part before RELEASE)
+        // if (visit_number === 3) {
+        //     localStorage.setItem(
+        //         'PREFERENCES_STATUS',
+        //         JSON.stringify({ visit_number: 1 }),
+        //     );
+        //     return;
+        // }
     }, [navigate, user?.license_agreement, user?.complete_onboarding, user?.phone_number]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
@@ -202,7 +202,15 @@ export const IndexPage: FC = () => {
         [cityListConfirm, currentCityS.id],
     );
 
-    const restaurantListed = (currentCityA === 'spb' && !JSON.parse(String(want_first)).done) ? [{
+    let wantFirstParsed: any = {};
+
+    try {
+        wantFirstParsed = JSON.parse(String(want_first));
+    } catch (e) {
+        wantFirstParsed = {};
+    }
+
+    const restaurantListed = (currentCityA === 'spb' && !wantFirstParsed?.done) ? [{
         'id': 12,
         'title': 'Self Edge Chinois',
         'slogan': 'Современная Азия с акцентом на Китай и культовый raw bar',

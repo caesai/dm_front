@@ -54,12 +54,12 @@ const AllergiesPage: React.FC = () => {
         if (allergies && allergies.length > 0 && other.length > 0) {
             const allergyIndexToUpdate = selectedAllergies.findIndex(item => item === otherAllergyOptions);
             if (allergyIndexToUpdate > -1) {
-                const updatedAllergies = selectedAllergies;
+                const updatedAllergies = [...selectedAllergies];
                 updatedAllergies[allergyIndexToUpdate] = value;
                 setSelectedAllergies(updatedAllergies);
                 setOtherAllergyOptions(value);
-
             }
+
         } else {
             setOtherAllergyOptions(value);
         }
@@ -67,15 +67,16 @@ const AllergiesPage: React.FC = () => {
 
     const handleContinue = () => {
         const other = findOtherAllergies(selectedAllergies);
-        let updatedAllergies = selectedAllergies;
+        let updatedAllergies = [...selectedAllergies];
 
-        if (otherAllergyOptions == '') {
+        if (otherAllergyOptions === '') {
             updatedAllergies = updatedAllergies.filter(item => !other.includes(item));
         } else {
-            if (!allergies && other.length === 0) {
+            if (other.length === 0) {
                 updatedAllergies = [...selectedAllergies, otherAllergyOptions];
             }
         }
+
         navigate('/me', { state: {
                 allergies: updatedAllergies,
             }

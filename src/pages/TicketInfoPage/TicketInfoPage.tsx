@@ -82,8 +82,8 @@ export const TicketInfoPage = () => {
         setCancelPopup(true);
     };
 
-    const onCancel = () => {
-        return APIDeleteTicket(Number(id), String(auth?.access_token));
+    const onCancel = async () => {
+        await APIDeleteTicket(Number(id), String(auth?.access_token));
     };
 
     const goBack = () => {
@@ -100,7 +100,7 @@ export const TicketInfoPage = () => {
                 isOpen={cancelPopup}
                 popupText={'Оформить возврат?'}
                 setOpen={setCancelPopup}
-                onCancelBooking={onCancel}
+                onCancel={onCancel}
                 onSuccess={() => {
                     setDataToLocalStorage('ticket_refund', { id });
                     navigate('/tickets')

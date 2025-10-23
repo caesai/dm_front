@@ -1,28 +1,22 @@
+// CancelBookingPopup.tsx
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 import css from './CancelBookingPopup.module.css';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import classNames from 'classnames';
-
-import { APIPOSTCancelReason } from '@/api/restaurants.ts';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
-import { AxiosResponse } from 'axios';
-import { useAtom } from 'jotai/index';
-import { authAtom } from '@/atoms/userAtom.ts';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
+// Reusable styled component for the popup.
 const StyledPopup = styled(Popup)`
     &-overlay {
         background: #58585869;
         padding: 0 15px;
     }
 
-    // use your custom style for ".popup-content"
-
     &-content {
-        //background-color: transparent;
         margin: 0;
         padding: 0;
         border-radius: 10px;
@@ -31,52 +25,116 @@ const StyledPopup = styled(Popup)`
     }
 `;
 
-interface Props {
+// Defines the component's steps using a constant for clarity and easier management.
+enum PopupStep {
+    Confirmation,
+    Reason,
+    Success,
+    Error,
+}
+
+// Props for the main component.
+interface CancelBookingPopupProps {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
-    onCancelBooking: () => Promise<AxiosResponse<any, any>>;
+    onCancel: () => Promise<void>;
+    onSendReason?: (reason: string) => Promise<void>;
     onSuccess: () => void;
     popupText: string;
     successMessage: string;
     skipStep?: boolean;
-    bookingId?: number;
 }
 
-export const CancelBookingPopup = ({ isOpen, setOpen, onCancelBooking, popupText, successMessage, skipStep, bookingId, onSuccess }: Props) => {
-    const [currentStep, setCurrentStep] = useState(0);
-    const steps = [StepOne, StepTwo, StepThree, ErrorStep];
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
+    {
+        isOpen,
+        setOpen,
+        onCancel,
+        onSuccess,
+        onSendReason,
+        popupText,
+        successMessage,
+        skipStep,
+    },
+) => {
+    const [currentStep, setCurrentStep] = useState<PopupStep>(PopupStep.Confirmation);
 
-    const cancelBooking = () => {
-        onCancelBooking()
-            .then(() => {
-                if (skipStep || tg_id && !mockEventsUsersList.includes(tg_id)) {
-                    setCurrentStep(2);
-                    return;
-                } else {
-                    setCurrentStep((prev) => prev + 1);
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                // Set Error Step Component
-                setCurrentStep(3);
-            });
-    };
+    // Mocks the Telegram user ID for example purposes.
+    const tg_id = window.Telegram.WebApp.initDataUnsafe?.user?.id;
 
-    const closePopup = () => {
-        if (currentStep == 2) {
+    // Use useCallback for handler functions to prevent unnecessary re-renders.
+    const closePopup = useCallback(() => {
+        if (currentStep === PopupStep.Success) {
             onSuccess();
         }
-        setCurrentStep(0);
+        setCurrentStep(PopupStep.Confirmation);
         setOpen(false);
-    }
+    }, [currentStep, onSuccess, setOpen]);
 
-    const handlePreviousStep = () => {
-        setCurrentStep(0);
-    };
+    const handleCancelBooking = useCallback(async () => {
+        try {
+            await onCancel();
 
-    const CurrentStepComponent = steps[currentStep];
+            const isKnownUser = tg_id && mockEventsUsersList.includes(tg_id);
+            if (skipStep || !isKnownUser) {
+                setCurrentStep(PopupStep.Success);
+            } else {
+                setCurrentStep(PopupStep.Reason);
+            }
+        } catch (error) {
+            console.error('Error canceling booking:', error);
+            setCurrentStep(PopupStep.Error);
+        }
+    }, [onCancel, tg_id, skipStep]);
+
+    const handleSendReason = useCallback(async (reason: string) => {
+        if (!onSendReason) return;
+        try {
+            await onSendReason(reason);
+            setCurrentStep(PopupStep.Success);
+        } catch (error) {
+            console.error('Error sending reason:', error);
+            setCurrentStep(PopupStep.Error);
+        }
+    }, [onSendReason]);
+
+    const handleRetry = useCallback(() => {
+        setCurrentStep(PopupStep.Confirmation);
+    }, []);
+
+    // Renders the appropriate component based on the current step.
+    const renderStepContent = useMemo(() => {
+        switch (currentStep) {
+            case PopupStep.Confirmation:
+                return (
+                    <StepOne
+                        popupText={popupText}
+                        onCancelConfirm={handleCancelBooking}
+                        onCancelClose={closePopup}
+                    />
+                );
+            case PopupStep.Reason:
+                return (
+                    <StepTwo
+                        onSendReason={handleSendReason}
+                    />
+                );
+            case PopupStep.Success:
+                return <StepThree successMessage={successMessage} />;
+            case PopupStep.Error:
+                return <ErrorStep onRetry={handleRetry} />;
+            default:
+                return null;
+        }
+    }, [
+        currentStep,
+        popupText,
+        handleCancelBooking,
+        closePopup,
+        handleSendReason,
+        successMessage,
+        handleRetry,
+    ]);
 
     return (
         <StyledPopup open={isOpen} onClose={closePopup}>
@@ -87,45 +145,33 @@ export const CancelBookingPopup = ({ isOpen, setOpen, onCancelBooking, popupText
                         action={closePopup}
                     />
                 </div>
-                {CurrentStepComponent && (
-                    <CurrentStepComponent
-                        cancelBooking={cancelBooking}
-                        closePopup={closePopup}
-                        handlePreviousStep={handlePreviousStep}
-                        successMessage={successMessage}
-                        popupText={popupText}
-                        bookingId={bookingId}
-                        setCurrentStep={setCurrentStep}
-                    />
-                )}
+                {renderStepContent}
             </div>
         </StyledPopup>
     );
 };
 
+// =======================
+// Step Components
+// =======================
+
 interface StepOneProps {
-    cancelBooking: () => void;
-    closePopup: () => void;
     popupText: string;
+    onCancelConfirm: () => void;
+    onCancelClose: () => void;
 }
 
-const StepOne: React.FC<StepOneProps> = ({ cancelBooking, closePopup, popupText }) => {
+const StepOne: React.FC<StepOneProps> = ({ popupText, onCancelConfirm, onCancelClose }) => {
     return (
         <>
-            <span className={css.text}>
-                {popupText}
-            </span>
+            <span className={css.text}>{popupText}</span>
             <div className={css.buttons}>
-                <UniversalButton
-                    width={'full'}
-                    title={'Нет'}
-                    action={closePopup}
-                />
+                <UniversalButton width={'full'} title={'Нет'} action={onCancelClose} />
                 <UniversalButton
                     width={'full'}
                     title={'Да'}
                     theme={'red'}
-                    action={cancelBooking}
+                    action={onCancelConfirm}
                 />
             </div>
         </>
@@ -133,41 +179,29 @@ const StepOne: React.FC<StepOneProps> = ({ cancelBooking, closePopup, popupText 
 };
 
 interface StepTwoProps {
-    setCurrentStep: (step: number) => void;
-    bookingId?: number;
+    onSendReason: (reason: string) => Promise<void>;
 }
 
-const StepTwo: React.FC<StepTwoProps> = ({ bookingId, setCurrentStep }) => {
-    const [auth] = useAtom(authAtom);
-    const [reason, setReason] = React.useState<string | null>(null);
+const StepTwo: React.FC<StepTwoProps> = ({ onSendReason }) => {
+    const [selectedReason, setSelectedReason] = useState<string | null>(null);
     const reasons = [
         'Поменялись планы',
         'Решили пойти в другое место',
-        'Забронировал(а) по ошибке'
+        'Забронировал(а) по ошибке',
     ];
-    const sendReason = () => {
-        if (!reason || !auth?.access_token || !bookingId) return;
-        APIPOSTCancelReason(auth?.access_token, bookingId, reason)
-            .then(() => {
-                setCurrentStep(2);
-            })
-            .catch((err) => {
-                // Set Error Step Component
-                console.error(err)
-                setCurrentStep(3);
-            });
-    }
+
     return (
         <>
-            <span className={css.text}>
-                {'Укажите причину отмены, пожалуйста'}
-            </span>
+            <span className={css.text}>{'Укажите причину отмены, пожалуйста'}</span>
             <div className={css.reasons}>
                 {reasons.map((text, index) => (
-                    <button key={index} className={classNames(
-                        css.reasonBtn,
-                        reason === text ? css.active : null
-                    )} onClick={() => setReason(text)}>
+                    <button
+                        key={index}
+                        className={classNames(css.reasonBtn, {
+                            [css.active]: selectedReason === text,
+                        })}
+                        onClick={() => setSelectedReason(text)}
+                    >
                         {text}
                     </button>
                 ))}
@@ -175,12 +209,12 @@ const StepTwo: React.FC<StepTwoProps> = ({ bookingId, setCurrentStep }) => {
             <UniversalButton
                 width={'full'}
                 title={'Подтвердить'}
-                theme={reason ? 'red' : undefined}
-                action={sendReason}
+                theme={selectedReason ? 'red' : undefined}
+                action={() => selectedReason && onSendReason(selectedReason)}
             />
         </>
-    )
-}
+    );
+};
 
 interface StepThreeProps {
     successMessage: string;
@@ -188,29 +222,21 @@ interface StepThreeProps {
 
 const StepThree: React.FC<StepThreeProps> = ({ successMessage }) => {
     return (
-        <>
-            <span className={css.text} style={{ marginBottom: 30 }}>
-                {successMessage}
-            </span>
-        </>
-    )
-}
+        <span className={css.text} style={{ marginBottom: 30 }}>
+            {successMessage}
+        </span>
+    );
+};
 
 interface ErrorStepProps {
-    handlePreviousStep: () => void;
+    onRetry: () => void;
 }
 
-const ErrorStep: React.FC<ErrorStepProps> = ({ handlePreviousStep }) => (
+const ErrorStep: React.FC<ErrorStepProps> = ({ onRetry }) => (
     <>
-        <span className={css.text}>
-            {'Произошла ошибка'}
-        </span>
+        <span className={css.text}>{'Произошла ошибка'}</span>
         <div className={css.buttons}>
-            <UniversalButton
-                width={'full'}
-                title={'Попробовать снова'}
-                action={handlePreviousStep}
-            />
+            <UniversalButton width={'full'} title={'Попробовать снова'} action={onRetry} />
         </div>
     </>
-)
+);
