@@ -14,26 +14,8 @@ interface IStoriesBlocksSwiperProps {
 export const StoriesBlocksSwiper: React.FC<IStoriesBlocksSwiperProps> = ({ storiesBlocks, openStory }) => {
     const [localStories] = useAtom(localStoriesListAtom);
 
-    // Memoize the sorted and mapped story blocks for performance.
-    // This prevents the sorting and mapping logic from running on every re-render,
-    // only recalculating when `storiesBlocks` or `localStories` change.
     const sortedStories = useMemo(() => {
-        const sorted = [...storiesBlocks].sort((a, b) => {
-            const aRef = localStories.find((item: ILocalStory) => item.id === a.id);
-            const bRef = localStories.find((item: ILocalStory) => item.id === b.id);
-
-            // Prioritize stories that have not been seen
-            if (aRef?.isSeen && !bRef?.isSeen) {
-                return 1;
-            }
-            if (!aRef?.isSeen && bRef?.isSeen) {
-                return -1;
-            }
-            // All stories seen or unseen, maintain original order
-            return 0;
-        });
-
-        return sorted.map((block, index) => {
+        return [...storiesBlocks].map((block, index) => {
             const isSeen = localStories.find((item: ILocalStory) => item.id === block.id)?.isSeen;
             return (
                 <SwiperSlide style={{ width: '93px' }} key={block.id}>

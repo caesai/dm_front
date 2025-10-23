@@ -1,5 +1,5 @@
 // VideoStoryComponent.tsx
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import css from '@/components/Stories/StoriesComponents/Video.module.css';
 import { IStory, Action } from '@/types/stories.types.ts';
 import { StoriesLoader } from '@/components/Stories/StoriesComponents/StoriesLoader.tsx';
@@ -12,9 +12,8 @@ interface VideoStoryComponentProps {
     width: number | string;
     height: number | string;
     getVideoDuration: Function;
-    // playState and bufferAction are not used but included for completeness, they can be removed if not needed.
-    // playState: boolean;
-    // bufferAction: boolean;
+    isLoading: boolean;
+    setIsLoading: (loading: boolean) => void;
 }
 
 export const VideoStoryComponent: React.FC<VideoStoryComponentProps> = (
@@ -24,9 +23,10 @@ export const VideoStoryComponent: React.FC<VideoStoryComponentProps> = (
         isPaused,
         shouldWait,
         getVideoDuration,
+        setIsLoading,
+        isLoading,
     },
 ) => {
-    const [isLoading, setIsLoading] = useState(true);
     const videoRef = useRef<HTMLVideoElement>(null);
 
     const handleWaiting = useCallback(() => {
@@ -76,7 +76,7 @@ export const VideoStoryComponent: React.FC<VideoStoryComponentProps> = (
                 onPlaying={handlePlaying}
                 autoPlay
                 playsInline
-                muted // Muting for initial auto-play is a best practice
+                // muted // Muting for initial autoplay is a best practice
             />
             <StoriesLoader isLoading={isLoading} />
         </div>

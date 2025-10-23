@@ -75,6 +75,7 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
     const [videoDuration, setVideoDuration] = useState<number>(0);
     const mousedownTimeoutRef = useRef<any>();
     const isMounted = useIsMounted();
+    const [isLoading, setIsLoading] = useState(false); // Add isLoading state here
 
     // Custom hook for preloading logic.
     usePreLoader(stories, currentId, preloadCount);
@@ -98,11 +99,17 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
         }
     }, [isPaused]);
 
-
     // Action handlers using useCallback for performance.
     const toggleState = useCallback((action: 'pause' | 'play', bufferAction?: boolean) => {
-        if (action === 'pause') playerStateDispatch({ type: 'set_pause', buffer: !!bufferAction });
-        else playerStateDispatch({ type: 'set_play' });
+        if (action === 'pause') {
+            playerStateDispatch({ type: 'set_pause', buffer: !!bufferAction });
+            if (bufferAction) {
+                setIsLoading(true);
+            }
+        } else {
+            playerStateDispatch({ type: 'set_play' });
+            setIsLoading(false);
+        }
     }, []);
 
     const previous = useCallback(() => {
@@ -134,7 +141,6 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
 
     const mouseUp = useCallback(
         (type: 'next' | 'previous') => (e: React.MouseEvent | React.TouchEvent) => {
-            console.log(`Mouse up on ${type} overlay`);
             e.preventDefault();
             clearTimeout(mousedownTimeoutRef.current);
             if (pause) {
@@ -205,6 +211,8 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
                 isPaused={pause}
                 width={'100%'}
                 height={'100%'}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
             />
             {!preventDefault && (
                 <div className={css.overlay}>

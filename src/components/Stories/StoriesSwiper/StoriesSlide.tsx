@@ -77,7 +77,6 @@ export const StorySlide: React.FC<StorySlideProps> = (
     }, [storyId, updateLocalStories, onAllStoriesEnd]);
 
     const handleStoryChange = useCallback((index: number) => {
-        console.log('handleStoryChange fired with index: ', index);
         updateLocalStories(prevItems => {
             const localIndex = prevItems.findIndex(item => item.id === storyId);
 
@@ -104,6 +103,17 @@ export const StorySlide: React.FC<StorySlideProps> = (
         });
     }, [storyId, stories.length, updateLocalStories]);
 
+    let initialStoryIndex = 0;
+    if (localStory) {
+        if (localStory.isSeen) {
+            // Если история уже просмотрена, начинаем с начала
+            initialStoryIndex = 0;
+        } else {
+            // Если история не полностью просмотрена, находим следующий непросмотренный индекс
+            const nextUnseenIndex = localStory.index + 1;
+            initialStoryIndex = nextUnseenIndex < stories.length ? nextUnseenIndex : 0;
+        }
+    }
     return (
         <div className={classnames(css.stories_container)}>
             <span className={classnames(css.closeIcon)} onClick={onClose}>
@@ -118,7 +128,7 @@ export const StorySlide: React.FC<StorySlideProps> = (
                 onAllStoriesEnd={handleStoryEnd}
                 onStoryEnd={handleStoryChange}
                 isPaused={isPaused}
-                currentIndex={localStory?.index ?? 0}
+                currentIndex={initialStoryIndex}
                 onStoryStart={() => {}}
             />
         </div>
