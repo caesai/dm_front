@@ -38,7 +38,7 @@ export const useRedirectLogic = () => {
     const [params] = useSearchParams();
     const state = location?.state;
     const paramsObject = Object.fromEntries(params.entries());
-    console.log('handleNavigation',  paramsObject)
+
     const handleNavigation = useCallback((paramKey: string, path: string) => {
         const id = getEventIdFromParams(paramsObject, paramKey);
         if (id) {
