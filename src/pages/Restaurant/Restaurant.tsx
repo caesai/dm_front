@@ -150,7 +150,7 @@ export const Restaurant = () => {
 
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
-            navigate('/onboarding/5', { state: { id, date: bookingDate, time: currentSelectedTime, sharedRestaurant: true } });
+            navigate('/onboarding/3', { state: { id, date: bookingDate, time: currentSelectedTime, sharedRestaurant: true } });
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
         }
