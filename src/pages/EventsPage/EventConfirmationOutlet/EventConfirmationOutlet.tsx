@@ -47,7 +47,7 @@ export const EventConfirmationOutlet: React.FC = () => {
             }
             navigate(`/events/${bookingInfo.event?.id}/confirm`);
         } else {
-            navigate(`/onboarding/5`, { state: { id: bookingInfo.event?.id, sharedEvent: true }});
+            navigate(`/onboarding/3`, { state: { id: bookingInfo.event?.id, sharedEvent: true }});
         }
     };
     return (
