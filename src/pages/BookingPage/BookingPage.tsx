@@ -385,7 +385,7 @@ export const BookingPage: FC = () => {
     const createBooking = () => {
         if (!user?.complete_onboarding) {
             navigate('/onboarding/3', { state: { id: Number(bookingRestaurant.value), date: bookingDate, time: currentSelectedTime, sharedRestaurant: true } });
-            return
+            return;
         }
         if (validateForm() && auth?.access_token && currentSelectedTime) {
             setRequestLoading(true);
