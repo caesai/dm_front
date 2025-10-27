@@ -673,6 +673,7 @@ const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
                         {currentGalleryPhotos.map((photo, index) => (
                             <SwiperSlide
                                 key={`${index}${photo}`}
+                                style={{ width: 'max-content' }}
                                 className={
                                     Array.isArray(photo)
                                         ? css.smallPhotoSlideContainer
