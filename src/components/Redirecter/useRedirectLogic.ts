@@ -42,7 +42,12 @@ export const useRedirectLogic = () => {
     const handleNavigation = useCallback((paramKey: string, path: string) => {
         const id = getEventIdFromParams(paramsObject, paramKey);
         if (id) {
-            navigate(`${path}${path.includes('booking') ? '?id=' : ''}${id}?shared=true`, { replace: true });
+            if (path.includes('booking')) {
+                const params = new URLSearchParams({ id, shared: 'true' });
+                navigate(`${path}?${params.toString()}`, { replace: true });
+            } else {
+                navigate(`${path}${id}?shared=true`, { replace: true });
+            }
             return true;
         }
         return false;
