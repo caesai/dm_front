@@ -9,10 +9,11 @@ export const OnboardingPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [params] = useSearchParams();
+    const state = location?.state;
 
     useEffect(() => {
         if (location.pathname == '/onboarding') {
-            navigate('/onboarding/1');
+            navigate('/onboarding/1', { state });
         }
     }, [location]);
 
@@ -37,25 +38,25 @@ export const OnboardingPage = () => {
                                 className={classNames(css.stage, {
                                     [css.stage__active]: checkIsPageActive(1),
                                 })}
-                                onClick={() => navigate('/onboarding/1')}
+                                onClick={() => navigate('/onboarding/1', { state })}
                             ></div>
                             <div
                                 className={classNames(css.stage, {
                                     [css.stage__active]: checkIsPageActive(2),
                                 })}
-                                onClick={() => navigate('/onboarding/2')}
+                                onClick={() => navigate('/onboarding/2', { state })}
                             ></div>
                             <div
                                 className={classNames(css.stage, {
                                     [css.stage__active]: checkIsPageActive(3),
                                 })}
-                                onClick={() => navigate('/onboarding/3')}
+                                onClick={() => navigate('/onboarding/3', { state })}
                             ></div>
                             <div
                                 className={classNames(css.stage, {
                                     [css.stage__active]: checkIsPageActive(4),
                                 })}
-                                onClick={() => navigate('/onboarding/4')}
+                                onClick={() => navigate('/onboarding/4', { state })}
                             ></div>
                         </div>
                     )}
