@@ -164,6 +164,7 @@ export const BanquetOptionPage = () => {
             />
             <div className={css.page}>
                 <CalendarPopup
+                    isBanquet
                     isOpen={calendarOpen}
                     setIsOpen={setCalendarOpen}
                     initialDate={new Date()}
