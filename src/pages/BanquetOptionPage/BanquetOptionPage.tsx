@@ -133,8 +133,13 @@ export const BanquetOptionPage = () => {
         }
     }, [banquet, navigate]);
 
+
     const subtractOneHour = (timeString: string) => {
         return moment(timeString, 'HH:mm').subtract(1, 'hour').format('HH:mm');
+    }
+
+    const addOneHour = (timeString: string) => {
+        return moment(timeString, 'HH:mm').add(1, 'hour').format('HH:mm');
     }
 
     return (
@@ -147,20 +152,48 @@ export const BanquetOptionPage = () => {
                 minGuests={Number(banquet.guests_min)}
                 maxGuests={banquet.guests_max}
             />
-            <TimeSelectorPopup
+            {/* <TimeSelectorPopup
                 isOpen={!!date && isTimeFromPopup}
                 closePopup={closeTimeFromPopup}
                 time={timeFrom}
                 setTimeOption={setTimeFrom}
                 minTime={date ? subtractOneHour(workTime[Number(date?.getDay())].time_start) :  undefined}
                 maxTime={timeTo.value !== 'до' ? timeTo.value : undefined}
-            />
+            /> */}
             <TimeSelectorPopup
+                isOpen={!!date && isTimeFromPopup}
+                closePopup={closeTimeFromPopup}
+                time={timeFrom}
+                setTimeOption={setTimeFrom}
+                minTime={date ? workTime[date.getDay()].time_start : undefined}
+                maxTime={
+                    date
+                        ? (timeTo.value !== 'до'
+                            ? subtractOneHour(timeTo.value)
+                            : subtractOneHour(workTime[date.getDay()].time_end))
+                        : undefined
+                }
+            />
+            {/* <TimeSelectorPopup
                 isOpen={!!date && isTimeToPopup && timeFrom.value !== 'с'}
                 closePopup={closeTimeToPopup}
                 time={timeTo}
                 setTimeOption={setTimeTo}
                 minTime={timeFrom.value !== 'с' ? timeFrom.value : undefined}
+            /> */}
+            <TimeSelectorPopup
+                isOpen={!!date && isTimeToPopup}
+                closePopup={closeTimeToPopup}
+                time={timeTo}
+                setTimeOption={setTimeTo}
+                minTime={
+                    date
+                        ? (timeFrom.value !== 'с'
+                            ? addOneHour(timeFrom.value)
+                            : addOneHour(workTime[date.getDay()].time_start))
+                        : undefined
+                }
+                maxTime={date ? workTime[date.getDay()].time_end : undefined}
             />
             <div className={css.page}>
                 <CalendarPopup
@@ -172,6 +205,14 @@ export const BanquetOptionPage = () => {
                             return;
                         }
                         setDate(date);
+                        setTimeFrom({
+                            value: 'с',
+                            title: '',
+                        });
+                        setTimeTo({
+                            value: 'до',
+                            title: '',
+                        });
                         setCalendarOpen(false);
                     }}
                 />

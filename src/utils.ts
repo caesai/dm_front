@@ -279,6 +279,16 @@ const dayIndexMap: Record<string, number> = {
     вс: 6,
 };
 
+export const workdayIndexMap: Record<string, number> = {
+    вс: 0,
+    пн: 1,
+    вт: 2,
+    ср: 3,
+    чт: 4,
+    пт: 5,
+    сб: 6,
+};
+
 // Функция для перевода строки 'HH:mm' в количество минут с начала суток.
 function parseTimeToMinutes(timeStr: string): number {
     const [hh, mm] = timeStr.split(':').map(Number);
