@@ -50,6 +50,9 @@ import { StageOne } from '@/pages/OnboardingPage/stages/StageOne.tsx';
 import AllergiesPage from '@/pages/AllergiesPage/AllergiesPage.tsx';
 import { CertificatesCreatePage } from '@/pages/CertificatesCreatePage/CertificatesCreatePage.tsx';
 import { CertificatesCreateOnePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOnePage.tsx';
+import { CertificatesCreateTwoPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateTwoPage.tsx';
+import { CertificatesCreateOnlinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOnlinePage.tsx';
+import { CertificatesListPage } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -169,6 +172,9 @@ const AppRouter = () => {
 
                     <Route path={'/certificates'} element={<CertificatesCreatePage />}>
                         <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
+                        <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
+                        <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
+                        <Route path={'/certificates/my'} element={<CertificatesListPage />} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/" />} />
