@@ -165,8 +165,14 @@ export const BanquetOptionPage = () => {
                 closePopup={closeTimeFromPopup}
                 time={timeFrom}
                 setTimeOption={setTimeFrom}
-                minTime={date ? workTime[Number(date?.getDay())].time_start : undefined} 
-                maxTime={date ? subtractOneHour(workTime[Number(date.getDay())].time_end) : undefined} // старт банкета минимум за один час до закрытия
+                minTime={date ? workTime[date.getDay()].time_start : undefined}
+                maxTime={
+                    date
+                        ? (timeTo.value !== 'до'
+                            ? subtractOneHour(timeTo.value)
+                            : subtractOneHour(workTime[date.getDay()].time_end))
+                        : undefined
+                }
             />
             {/* <TimeSelectorPopup
                 isOpen={!!date && isTimeToPopup && timeFrom.value !== 'с'}
@@ -180,7 +186,13 @@ export const BanquetOptionPage = () => {
                 closePopup={closeTimeToPopup}
                 time={timeTo}
                 setTimeOption={setTimeTo}
-                minTime={date ? addOneHour(workTime[Number(date.getDay())].time_start) : undefined} // окончание банкета минимум спустя один час после открытия
+                minTime={
+                    date
+                        ? (timeFrom.value !== 'с'
+                            ? addOneHour(timeFrom.value)
+                            : addOneHour(workTime[date.getDay()].time_start))
+                        : undefined
+                }
                 maxTime={date ? workTime[date.getDay()].time_end : undefined}
             />
             <div className={css.page}>
