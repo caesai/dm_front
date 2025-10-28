@@ -5,7 +5,7 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
-import { IBanquet } from '@/types/banquets.types.ts';
+import { IBanquet, IBanquetOptions } from '@/types/banquets.types.ts';
 import { DepositIcon } from '@/components/Icons/DepositIcon.tsx';
 import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
 import { IWorkTime } from '@/types/restaurant.ts';
@@ -15,6 +15,8 @@ import 'swiper/css/pagination';
 // import 'swiper/css/navigation';
 import { Pagination } from 'swiper/modules';
 import classnames from 'classnames';
+import BanquetGallery from '@/components/BanquetGallery/BanquetGallery.tsx';
+import { useState } from 'react';
 
 export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
@@ -24,12 +26,21 @@ export const ChooseBanquetOptionsPage = () => {
     const restaurant_title = location.state?.restaurant_title;
     const {id} = useParams();
 
+    const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
+    const [currentImages, setCurrentImages] = useState<string[]>([])
+
     const goBack = () => {
         navigate(-1);
     }
 
+    const openPopup = (banquet: IBanquetOptions) => {
+        setOpenPopup(true);
+        setCurrentImages(banquet.images)
+    }
+
     return (
         <Page back={true}>
+            <BanquetGallery isOpen={isOpenPopup} setOpen={setOpenPopup} images={currentImages} />
             <div className={css.page}>
                 <div className={css.pageWrapper}>
                     <div className={css.header}>
@@ -44,55 +55,64 @@ export const ChooseBanquetOptionsPage = () => {
                         <ContentBlock>
                             {banquets?.banquet_options && banquets.banquet_options.length > 0 ? (
                                 banquets?.banquet_options.map((banquet) => (
-                                    <div className={css.banquetContainer} key={banquet.id}>
-                                        <Swiper
-                                            pagination={{
-                                                type: 'bullets',
-                                                clickable: true
-                                            }}
-                                            observer={true}
-                                            // navigation={true}
-                                            modules={[Pagination]}
-                                            className={classnames(css.swiper)}
-                                        >
-                                            {banquet.images.map((image, index) => (
-                                                <SwiperSlide className={css.slide} key={index}>
-                                                    <img src={image} alt={'banquet_img'} />
-                                                </SwiperSlide>
-                                            ))}
-                                        </Swiper>
-                                        <div className={css.banquetInfo}>
-                                            <span className={css.banquet_title}>{banquet.name}</span>
-                                            <div className={css.banquetInfoRow}>
-                                                <div className={css.banquetInfoCol}>
-                                                    <div>
-                                                        <GuestsIcon />
-                                                        <span
-                                                            className={css.banquet_text}>до {banquet.guests_max} человек</span>
-                                                    </div>
-                                                    <div>
-                                                        <DepositIcon />
-                                                        <span className={css.banquet_text}>
-                                                            {banquet.deposit ?  `от ${banquet.deposit} ₽ на гостя` : banquet.deposit_message}
+                                    <>
+                                        <div className={css.banquetContainer} key={banquet.id}>
+                                            <Swiper
+                                                pagination={{
+                                                    type: 'bullets',
+                                                    clickable: true
+                                                }}
+                                                observer={true}
+                                                // navigation={true}
+                                                modules={[Pagination]}
+                                                className={classnames(css.swiper)}
+                                            >
+                                                {banquet.images.map((image, index) => (
+                                                    <SwiperSlide className={css.slide} key={index} onClick={() => openPopup(banquet)}>
+                                                        <img src={image} alt={'banquet_img'} />
+                                                    </SwiperSlide>
+                                                ))}
+                                            </Swiper>
+                                            <div className={css.banquetInfo}>
+                                                <span className={css.banquet_title}>{banquet.name}</span>
+                                                <div className={css.banquetInfoRow}>
+                                                    <div className={css.banquetInfoCol}>
+                                                        <div>
+                                                            <GuestsIcon />
+                                                            <span
+                                                                className={css.banquet_text}>до {banquet.guests_max} человек</span>
+                                                        </div>
+                                                        <div>
+                                                            <DepositIcon />
+                                                            <span className={css.banquet_text}>
+                                                            {banquet.deposit ? `от ${banquet.deposit} ₽ на гостя` : banquet.deposit_message}
                                                         </span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className={css.buttonContainer}>
-                                                    <button
-                                                        className={css.infoButton}
-                                                        onClick={() => navigate(`/banquets/${id}/option`, { state: { banquet, additional_options: banquets.additional_options, restaurant_title, workTime } })}
-                                                    >
-                                                        Выбрать
-                                                    </button>
+                                                    <div className={css.buttonContainer}>
+                                                        <button
+                                                            className={css.infoButton}
+                                                            onClick={() => navigate(`/banquets/${id}/option`, {
+                                                                state: {
+                                                                    banquet,
+                                                                    additional_options: banquets.additional_options,
+                                                                    restaurant_title,
+                                                                    workTime
+                                                                }
+                                                            })}
+                                                        >
+                                                            Выбрать
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </>
                                 ))
 
-                                ) : (
+                            ) : (
                                 <h1 className={css.no_banquets}>Нет доступных опций для банкета</h1>)
-                        }
+                            }
                         </ContentBlock>
                     </ContentContainer>
                 </div>
