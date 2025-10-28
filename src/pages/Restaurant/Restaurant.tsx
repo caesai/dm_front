@@ -322,6 +322,7 @@ export const Restaurant = () => {
                         data-point-b={restaurant?.address_lonlng}
                     ></div>
                 </div>
+                <a href={'/certificates/1'}>Certificates</a>
                 <BookingBlock
                     currentSelectedTime={currentSelectedTime}
                     workTime={restaurant?.worktime}
