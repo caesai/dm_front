@@ -67,8 +67,12 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
         if (currentStep === PopupStep.Success) {
             onSuccess();
         }
-        setCurrentStep(PopupStep.Confirmation);
-        setOpen(false);
+        if (currentStep === PopupStep.Reason) {
+            setCurrentStep(PopupStep.Success);
+        } else {
+            setCurrentStep(PopupStep.Confirmation);
+            setOpen(false);
+        }
     }, [currentStep, onSuccess, setOpen]);
 
     const handleCancelBooking = useCallback(async () => {
