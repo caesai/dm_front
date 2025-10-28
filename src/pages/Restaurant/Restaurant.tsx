@@ -323,11 +323,13 @@ export const Restaurant = () => {
                         data-point-b={restaurant?.address_lonlng}
                     ></div>
                 </div>
-                <div>
-                    <Link to={'/certificates/1'}>
-                        <img src={certificates_link} alt={'certificates'} style={{ width: '100%' }} />
-                    </Link>
-                </div>
+                {tg_id && mockEventsUsersList.includes(tg_id) &&  (
+                    <div>
+                        <Link to={'/certificates/1'}>
+                            <img src={certificates_link} alt={'certificates'} style={{ width: '100%' }} />
+                        </Link>
+                    </div>
+                )}
                 <BookingBlock
                     currentSelectedTime={currentSelectedTime}
                     workTime={restaurant?.worktime}
