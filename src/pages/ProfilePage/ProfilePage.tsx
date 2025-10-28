@@ -19,6 +19,7 @@ import {
     // reviewAtom,
     userAtom
 } from '@/atoms/userAtom.ts';
+import { WalletIcon } from '@/components/Icons/WalletIcon.tsx';
 // import {DEV_MODE} from "@/api/base.ts";
 
 export const ProfilePage = () => {
@@ -86,6 +87,12 @@ export const ProfilePage = () => {
                             <UserProfileIcon size={24} color={'black'}/>
                             <span className={css.navLinkTitle}>
                                 Личные данные
+                            </span>
+                        </Link>
+                        <Link to={'/certificates/my'} className={css.navLink}>
+                            <WalletIcon size={24} color={'black'}/>
+                            <span className={css.navLinkTitle}>
+                                Подарочные сертификаты
                             </span>
                         </Link>
                         {user?.administrator?.is_active ? (
