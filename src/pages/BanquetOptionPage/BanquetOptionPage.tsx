@@ -205,6 +205,14 @@ export const BanquetOptionPage = () => {
                             return;
                         }
                         setDate(date);
+                        setTimeFrom({
+                            value: 'с',
+                            title: '',
+                        });
+                        setTimeTo({
+                            value: 'до',
+                            title: '',
+                        });
                         setCalendarOpen(false);
                     }}
                 />

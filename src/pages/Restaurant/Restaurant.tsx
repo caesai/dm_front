@@ -46,7 +46,7 @@ import {
     getCurrentTimeShort,
     getCurrentWeekdayShort,
     getRestaurantStatus,
-    getTimeShort,
+    getTimeShort, workdayIndexMap,
 } from '@/utils.ts';
 import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
@@ -1010,7 +1010,8 @@ interface BanquetsBlockProps {
 const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, restaurant_id, restaurant_title, banquets, workTime }) => {
     const navigate = useNavigate();
     const navigateToBanquet = () => {
-        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title, banquets, workTime } });
+        const workTimeSorted = workTime?.sort((a, b) => workdayIndexMap[a.weekday] - workdayIndexMap[b.weekday]);
+        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title, banquets, workTime: workTimeSorted } });
     };
     return (
         <ContentContainer>
