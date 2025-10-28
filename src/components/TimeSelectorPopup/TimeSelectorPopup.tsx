@@ -7,10 +7,45 @@ import Picker, { PickerValue } from '@/lib/react-mobile-picker';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import classNames from 'classnames';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import moment from 'moment';
 
-const timeToHours = (timeStr: string): number => {
-    if (!timeStr || timeStr === 'от' || timeStr === 'до') return 0;
-    return parseInt(timeStr.split(':')[0]);
+const generateTimeOptions = (start: string, end: string): PickerValueObj[] => {
+    if (!start || !end) return [];
+    const options: PickerValueObj[] = [];
+    let current = moment(start, 'HH:mm');
+    const endMoment = moment(end, 'HH:mm');
+    // если end <= start, значит диапазон через полночь
+    while (
+        current.isBefore(endMoment) ||
+        (endMoment.isBefore(moment(start, 'HH:mm')) && current.format('HH:mm') !== endMoment.format('HH:mm'))
+    ) {
+        options.push({
+            title: current.format('H:mm'),
+            value: current.format('HH:mm')
+        });
+        current.add(1, 'hour');
+        if (options.length > 48) break;
+    }
+    if (current.format('HH:mm') === endMoment.format('HH:mm')) {
+        options.push({
+            title: endMoment.format('H:mm'),
+            value: endMoment.format('HH:mm')
+        });
+    }
+    return options;
+};
+
+const getFullDayOptions = (): PickerValueObj[] => {
+    const options: PickerValueObj[] = [];
+    let current = moment('08:00', 'HH:mm');
+    for (let i = 0; i < 24; i++) {
+        options.push({
+            title: current.format('H:mm'),
+            value: current.format('HH:mm')
+        });
+        current.add(1, 'hour');
+    }
+    return options;
 };
 
 interface Props {
@@ -47,28 +82,15 @@ export const TimeSelectorPopup: FC<Props> = (
         maxTime,
     },
 ) => {
-    const allTimeOptions: PickerValueObj[] = [
-        '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
-        '18:00', '19:00', '20:00', '21:00', '22:00', '23:00',
-    ].map((val) => ({
-        title: val,
-        value: val,
-    }));
-
-    const timeOptions = allTimeOptions.filter(option => {
-        const optionHours = timeToHours(option.value);
-
-        if (minTime && optionHours <= timeToHours(minTime)) return false;
-        return !(maxTime && optionHours >= timeToHours(maxTime));
-
-
-    });
+    const timeOptions = (minTime && maxTime)
+        ? generateTimeOptions(minTime, maxTime)
+        : getFullDayOptions();
 
     useEffect(() => {
-        if (isOpen && time.value === 'unset') {
+        if (isOpen && timeOptions.length && time.value === 'unset') {
             setTimeOption(timeOptions[0]);
         }
-    }, [isOpen]);
+    }, [isOpen, timeOptions]);
 
     const onChange = (val: PickerValueObj) => {
         setTimeOption({
@@ -105,7 +127,12 @@ export const TimeSelectorPopup: FC<Props> = (
                     ))}
                 </Picker.Column>
             </Picker>
-            <UniversalButton width={'full'} title={'Сохранить'} theme={'red'} action={closePopup} />
+            <UniversalButton
+                width={'full'}
+                title={'Сохранить'}
+                theme={'red'}
+                action={closePopup}
+            />
         </>
     );
 
