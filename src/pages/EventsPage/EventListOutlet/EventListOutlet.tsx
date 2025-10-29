@@ -17,7 +17,7 @@ export const EventListOutlet: React.FC = () => {
         navigate(`/events/${event.id}`)
     };
     const filteredEvents = events.filter((event) => {
-        return event.ticket_price == 0 ? event.tickets_left > 0 : null;
+        return event.tickets_left > 0;
     });
     return (
         <div className={css.cards}>

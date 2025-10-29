@@ -228,7 +228,7 @@ export const Restaurant = () => {
     }, [bookingDate]);
 
     const filteredEvents = events?.filter((event) => {
-        return event.ticket_price == 0 ? event.tickets_left > 0 : null;
+        return event.tickets_left > 0;
     });
 
     return (
