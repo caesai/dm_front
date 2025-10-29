@@ -8,6 +8,7 @@ interface ICalendarPopup {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     initialDate?: Date;
+    currentDate?: Date;
     setDate: (date: Date) => void;
     isBanquet?: boolean
 }
@@ -34,6 +35,7 @@ export const CalendarPopup: FC<ICalendarPopup> = (p) => {
                 {p.isBanquet ? (
                     <BanquetDatepicker
                         initialDate={p.initialDate}
+                        currentDate={p.currentDate}
                         onSelectDate={p.setDate}
                     />
                 ) : (

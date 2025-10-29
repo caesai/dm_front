@@ -1,15 +1,17 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { getCalendarDaysUTC } from '@/components/DatePicker/dateUtils.ts';
 import css from './BanquetDatepicker.module.css';
 
 interface DatePickerProps {
     onSelectDate?: (date: Date) => void;
     initialDate?: Date;
+    currentDate?: Date;
 }
 
 export const BanquetDatepicker: React.FC<DatePickerProps> = ({
                                                                  onSelectDate,
                                                                  initialDate,
+                                                                 currentDate
                                                              }) => {
     const now = initialDate || new Date();
     const [currentYear, setCurrentYear] = useState(now.getUTCFullYear());
@@ -80,7 +82,7 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
             const classNames = [
                 css.datepickerDay,
                 isCurrentMonth ? css.inMonth : css.disabled,
-                isSelected ? css.selected : '',
+                isSelected ? css.current : '',
                 isPast ? css.disabled : '',
             ]
                 .filter(Boolean)
@@ -118,6 +120,11 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
         'Декабрь',
     ];
     const monthName = months[currentMonth];
+
+    useEffect(() => {
+        if (!currentDate) return
+        setSelectedDate(currentDate);
+    }, [currentDate]);
 
     return (
         <div className={css.datepickerContainer}>
