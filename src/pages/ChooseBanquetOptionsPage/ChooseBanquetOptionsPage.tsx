@@ -24,19 +24,19 @@ export const ChooseBanquetOptionsPage = () => {
     const banquets: IBanquet = location.state?.banquets;
     const workTime: IWorkTime[] = location.state?.workTime;
     const restaurant_title = location.state?.restaurant_title;
-    const {id} = useParams();
+    const { id } = useParams();
 
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
-    const [currentImages, setCurrentImages] = useState<string[]>([])
+    const [currentImages, setCurrentImages] = useState<string[]>([]);
 
     const goBack = () => {
         navigate(-1);
-    }
+    };
 
     const openPopup = (banquet: IBanquetOptions) => {
         setOpenPopup(true);
-        setCurrentImages(banquet.images)
-    }
+        setCurrentImages(banquet.images);
+    };
 
     return (
         <Page back={true}>
@@ -49,65 +49,64 @@ export const ChooseBanquetOptionsPage = () => {
                             action={goBack}
                         ></RoundedButton>
                         <span className={css.header_title}>Подбор опций для банкета</span>
-                        <div style={{ width: 20 }}/>
+                        <div style={{ width: 20 }} />
                     </div>
                     <ContentContainer>
                         <ContentBlock>
                             {banquets?.banquet_options && banquets.banquet_options.length > 0 ? (
                                 banquets?.banquet_options.map((banquet) => (
-                                    <>
-                                        <div className={css.banquetContainer} key={banquet.id}>
-                                            <Swiper
-                                                pagination={{
-                                                    type: 'bullets',
-                                                    clickable: true
-                                                }}
-                                                observer={true}
-                                                // navigation={true}
-                                                modules={[Pagination]}
-                                                className={classnames(css.swiper)}
-                                            >
-                                                {banquet.images.map((image, index) => (
-                                                    <SwiperSlide className={css.slide} key={index} onClick={() => openPopup(banquet)}>
-                                                        <img src={image} alt={'banquet_img'} />
-                                                    </SwiperSlide>
-                                                ))}
-                                            </Swiper>
-                                            <div className={css.banquetInfo}>
-                                                <span className={css.banquet_title}>{banquet.name}</span>
-                                                <div className={css.banquetInfoRow}>
-                                                    <div className={css.banquetInfoCol}>
-                                                        <div>
-                                                            <GuestsIcon />
-                                                            <span
-                                                                className={css.banquet_text}>до {banquet.guests_max} человек</span>
-                                                        </div>
-                                                        <div>
-                                                            <DepositIcon />
-                                                            <span className={css.banquet_text}>
+                                    <div className={css.banquetContainer} key={banquet.id}>
+                                        <Swiper
+                                            pagination={{
+                                                type: 'bullets',
+                                                clickable: true,
+                                            }}
+                                            observer={true}
+                                            // navigation={true}
+                                            modules={[Pagination]}
+                                            className={classnames(css.swiper)}
+                                        >
+                                            {banquet.images.map((image, index) => (
+                                                <SwiperSlide className={css.slide} key={index}
+                                                             onClick={() => openPopup(banquet)}>
+                                                    <img src={image} alt={'banquet_img'} />
+                                                </SwiperSlide>
+                                            ))}
+                                        </Swiper>
+                                        <div className={css.banquetInfo}>
+                                            <span className={css.banquet_title}>{banquet.name}</span>
+                                            <div className={css.banquetInfoRow}>
+                                                <div className={css.banquetInfoCol}>
+                                                    <div>
+                                                        <GuestsIcon />
+                                                        <span
+                                                            className={css.banquet_text}>до {banquet.guests_max} человек</span>
+                                                    </div>
+                                                    <div>
+                                                        <DepositIcon />
+                                                        <span className={css.banquet_text}>
                                                             {banquet.deposit ? `от ${banquet.deposit} ₽ на гостя` : banquet.deposit_message}
                                                         </span>
-                                                        </div>
                                                     </div>
-                                                    <div className={css.buttonContainer}>
-                                                        <button
-                                                            className={css.infoButton}
-                                                            onClick={() => navigate(`/banquets/${id}/option`, {
-                                                                state: {
-                                                                    banquet,
-                                                                    additional_options: banquets.additional_options,
-                                                                    restaurant_title,
-                                                                    workTime
-                                                                }
-                                                            })}
-                                                        >
-                                                            Выбрать
-                                                        </button>
-                                                    </div>
+                                                </div>
+                                                <div className={css.buttonContainer}>
+                                                    <button
+                                                        className={css.infoButton}
+                                                        onClick={() => navigate(`/banquets/${id}/option`, {
+                                                            state: {
+                                                                banquet,
+                                                                additional_options: banquets.additional_options,
+                                                                restaurant_title,
+                                                                workTime,
+                                                            },
+                                                        })}
+                                                    >
+                                                        Выбрать
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                    </>
+                                    </div>
                                 ))
 
                             ) : (
@@ -118,5 +117,5 @@ export const ChooseBanquetOptionsPage = () => {
                 </div>
             </div>
         </Page>
-    )
-}
+    );
+};

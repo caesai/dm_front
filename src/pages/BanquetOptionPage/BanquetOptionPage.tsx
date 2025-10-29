@@ -152,14 +152,6 @@ export const BanquetOptionPage = () => {
                 minGuests={Number(banquet.guests_min)}
                 maxGuests={banquet.guests_max}
             />
-            {/* <TimeSelectorPopup
-                isOpen={!!date && isTimeFromPopup}
-                closePopup={closeTimeFromPopup}
-                time={timeFrom}
-                setTimeOption={setTimeFrom}
-                minTime={date ? subtractOneHour(workTime[Number(date?.getDay())].time_start) :  undefined}
-                maxTime={timeTo.value !== 'до' ? timeTo.value : undefined}
-            /> */}
             <TimeSelectorPopup
                 isOpen={!!date && isTimeFromPopup}
                 closePopup={closeTimeFromPopup}
@@ -174,13 +166,6 @@ export const BanquetOptionPage = () => {
                         : undefined
                 }
             />
-            {/* <TimeSelectorPopup
-                isOpen={!!date && isTimeToPopup && timeFrom.value !== 'с'}
-                closePopup={closeTimeToPopup}
-                time={timeTo}
-                setTimeOption={setTimeTo}
-                minTime={timeFrom.value !== 'с' ? timeFrom.value : undefined}
-            /> */}
             <TimeSelectorPopup
                 isOpen={!!date && isTimeToPopup}
                 closePopup={closeTimeToPopup}

@@ -68,7 +68,7 @@ import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/
 import { IEventInRestaurant } from '@/types/events.ts';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { Share } from '@/components/Icons/Share.tsx';
-import { BASE_BOT } from '@/api/base.ts';
+import { BASE_BOT, DEV_MODE } from '@/api/base.ts';
 import moment from 'moment';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { IBanquet } from '@/types/banquets.types.ts';
@@ -323,7 +323,7 @@ export const Restaurant = () => {
                         data-point-b={restaurant?.address_lonlng}
                     ></div>
                 </div>
-                {tg_id && mockEventsUsersList.includes(tg_id) &&  (
+                {DEV_MODE &&  (
                     <div>
                         <Link to={'/certificates/1'}>
                             <img src={certificates_link} alt={'certificates'} style={{ width: '100%' }} />

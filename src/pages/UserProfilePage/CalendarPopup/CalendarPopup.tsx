@@ -10,7 +10,7 @@ interface ICalendarPopup {
     initialDate?: Date;
     currentDate?: Date;
     setDate: (date: Date) => void;
-    isBanquet?: boolean
+    isBanquet?: boolean;
 }
 
 const StyledPopup = styled(Popup)`

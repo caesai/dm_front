@@ -13,7 +13,7 @@ export const CertificatesCreateOnePage: React.FC = () => {
     return (
         <div className={css.content}>
             <div>
-                <span className={css.page_title}>Подарите сертификат <br />на приятный вечер в одном <br />из ресторнов DreamTeam</span>
+                <span className={css.page_title}>Подарите сертификат <br />на приятный вечер в одном <br />из ресторанов DreamTeam</span>
             </div>
             <div className={css.animationContainer}>
                 <img src={certificate} alt={'certificate'} className={css.animatedImageOne} />

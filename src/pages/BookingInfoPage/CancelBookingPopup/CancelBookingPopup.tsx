@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 // Reusable styled component for the popup.
 const StyledPopup = styled(Popup)`
@@ -59,8 +58,6 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
 ) => {
     const [currentStep, setCurrentStep] = useState<PopupStep>(PopupStep.Confirmation);
 
-    // Mocks the Telegram user ID for example purposes.
-    const tg_id = window.Telegram.WebApp.initDataUnsafe?.user?.id;
 
     // Use useCallback for handler functions to prevent unnecessary re-renders.
     const closePopup = useCallback(() => {
@@ -79,8 +76,7 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
         try {
             await onCancel();
 
-            const isKnownUser = tg_id && mockEventsUsersList.includes(tg_id);
-            if (skipStep || !isKnownUser) {
+            if (skipStep) {
                 setCurrentStep(PopupStep.Success);
             } else {
                 setCurrentStep(PopupStep.Reason);
@@ -89,7 +85,7 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
             console.error('Error canceling booking:', error);
             setCurrentStep(PopupStep.Error);
         }
-    }, [onCancel, tg_id, skipStep]);
+    }, [onCancel, skipStep]);
 
     const handleSendReason = useCallback(async (reason: string) => {
         if (!onSendReason) return;
