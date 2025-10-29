@@ -113,7 +113,10 @@ export const IndexPage: FC = () => {
         if (auth?.access_token !== undefined && cityId !== undefined) {
             ApiGetStoriesBlocks(auth?.access_token, cityId)
                 .then((storiesBlockResponse) => {
-                    setStoriesBlocks(storiesBlockResponse.data);
+                    const stories = storiesBlockResponse.data.filter((s) => {
+                        return s.stories.length > 0;
+                    });
+                    setStoriesBlocks(stories);
                 });
         }
     }, [cityId]);
