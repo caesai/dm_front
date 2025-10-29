@@ -1,4 +1,4 @@
-import {IStoriesBlockResponse} from "@/types/stories.ts";
+import {IStoriesBlockResponse} from "@/types/stories.types.ts";
 import axios from 'axios';
 import { BASE_URL } from '@/api/base.ts';
 // import { mockedStories } from '@/__mocks__/stories.mock.ts';

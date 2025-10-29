@@ -1,4 +1,4 @@
-import {IStoriesBlockResponse} from "@/types/stories.ts";
+import {IStoriesBlockResponse} from "@/types/stories.types.ts";
 
 export const mockedStories: IStoriesBlockResponse[] = [{
     "name": "1AASDffff",

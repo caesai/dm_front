@@ -5,7 +5,7 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
-import { IBanquet } from '@/types/banquets.types.ts';
+import { IBanquet, IBanquetOptions } from '@/types/banquets.types.ts';
 import { DepositIcon } from '@/components/Icons/DepositIcon.tsx';
 import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
 import { IWorkTime } from '@/types/restaurant.ts';
@@ -15,6 +15,8 @@ import 'swiper/css/pagination';
 // import 'swiper/css/navigation';
 import { Pagination } from 'swiper/modules';
 import classnames from 'classnames';
+import BanquetGallery from '@/components/BanquetGallery/BanquetGallery.tsx';
+import { useState } from 'react';
 
 export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
@@ -22,14 +24,23 @@ export const ChooseBanquetOptionsPage = () => {
     const banquets: IBanquet = location.state?.banquets;
     const workTime: IWorkTime[] = location.state?.workTime;
     const restaurant_title = location.state?.restaurant_title;
-    const {id} = useParams();
+    const { id } = useParams();
+
+    const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
+    const [currentImages, setCurrentImages] = useState<string[]>([]);
 
     const goBack = () => {
         navigate(-1);
-    }
+    };
+
+    const openPopup = (banquet: IBanquetOptions) => {
+        setOpenPopup(true);
+        setCurrentImages(banquet.images);
+    };
 
     return (
         <Page back={true}>
+            <BanquetGallery isOpen={isOpenPopup} setOpen={setOpenPopup} images={currentImages} />
             <div className={css.page}>
                 <div className={css.pageWrapper}>
                     <div className={css.header}>
@@ -38,7 +49,7 @@ export const ChooseBanquetOptionsPage = () => {
                             action={goBack}
                         ></RoundedButton>
                         <span className={css.header_title}>Подбор опций для банкета</span>
-                        <div style={{ width: 20 }}/>
+                        <div style={{ width: 20 }} />
                     </div>
                     <ContentContainer>
                         <ContentBlock>
@@ -48,7 +59,7 @@ export const ChooseBanquetOptionsPage = () => {
                                         <Swiper
                                             pagination={{
                                                 type: 'bullets',
-                                                clickable: true
+                                                clickable: true,
                                             }}
                                             observer={true}
                                             // navigation={true}
@@ -56,7 +67,8 @@ export const ChooseBanquetOptionsPage = () => {
                                             className={classnames(css.swiper)}
                                         >
                                             {banquet.images.map((image, index) => (
-                                                <SwiperSlide className={css.slide} key={index}>
+                                                <SwiperSlide className={css.slide} key={index}
+                                                             onClick={() => openPopup(banquet)}>
                                                     <img src={image} alt={'banquet_img'} />
                                                 </SwiperSlide>
                                             ))}
@@ -73,14 +85,21 @@ export const ChooseBanquetOptionsPage = () => {
                                                     <div>
                                                         <DepositIcon />
                                                         <span className={css.banquet_text}>
-                                                            {banquet.deposit ?  `от ${banquet.deposit} ₽ на гостя` : banquet.deposit_message}
+                                                            {banquet.deposit ? `от ${banquet.deposit} ₽ на гостя` : banquet.deposit_message}
                                                         </span>
                                                     </div>
                                                 </div>
                                                 <div className={css.buttonContainer}>
                                                     <button
                                                         className={css.infoButton}
-                                                        onClick={() => navigate(`/banquets/${id}/option`, { state: { banquet, additional_options: banquets.additional_options, restaurant_title, workTime } })}
+                                                        onClick={() => navigate(`/banquets/${id}/option`, {
+                                                            state: {
+                                                                banquet,
+                                                                additional_options: banquets.additional_options,
+                                                                restaurant_title,
+                                                                workTime,
+                                                            },
+                                                        })}
                                                     >
                                                         Выбрать
                                                     </button>
@@ -90,13 +109,13 @@ export const ChooseBanquetOptionsPage = () => {
                                     </div>
                                 ))
 
-                                ) : (
+                            ) : (
                                 <h1 className={css.no_banquets}>Нет доступных опций для банкета</h1>)
-                        }
+                            }
                         </ContentBlock>
                     </ContentContainer>
                 </div>
             </div>
         </Page>
-    )
-}
+    );
+};

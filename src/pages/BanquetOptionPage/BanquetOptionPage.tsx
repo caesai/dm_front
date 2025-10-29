@@ -133,8 +133,13 @@ export const BanquetOptionPage = () => {
         }
     }, [banquet, navigate]);
 
+
     const subtractOneHour = (timeString: string) => {
         return moment(timeString, 'HH:mm').subtract(1, 'hour').format('HH:mm');
+    }
+
+    const addOneHour = (timeString: string) => {
+        return moment(timeString, 'HH:mm').add(1, 'hour').format('HH:mm');
     }
 
     return (
@@ -152,26 +157,49 @@ export const BanquetOptionPage = () => {
                 closePopup={closeTimeFromPopup}
                 time={timeFrom}
                 setTimeOption={setTimeFrom}
-                minTime={date ? subtractOneHour(workTime[Number(date?.getDay())].time_start) :  undefined}
-                maxTime={timeTo.value !== 'до' ? timeTo.value : undefined}
+                minTime={date ? workTime[date.getDay()].time_start : undefined}
+                maxTime={
+                    date
+                        ? (timeTo.value !== 'до'
+                            ? subtractOneHour(timeTo.value)
+                            : subtractOneHour(workTime[date.getDay()].time_end))
+                        : undefined
+                }
             />
             <TimeSelectorPopup
-                isOpen={!!date && isTimeToPopup && timeFrom.value !== 'с'}
+                isOpen={!!date && isTimeToPopup}
                 closePopup={closeTimeToPopup}
                 time={timeTo}
                 setTimeOption={setTimeTo}
-                minTime={timeFrom.value !== 'с' ? timeFrom.value : undefined}
+                minTime={
+                    date
+                        ? (timeFrom.value !== 'с'
+                            ? addOneHour(timeFrom.value)
+                            : addOneHour(workTime[date.getDay()].time_start))
+                        : undefined
+                }
+                maxTime={date ? workTime[date.getDay()].time_end : undefined}
             />
             <div className={css.page}>
                 <CalendarPopup
+                    isBanquet
                     isOpen={calendarOpen}
                     setIsOpen={setCalendarOpen}
                     initialDate={new Date()}
+                    currentDate={date ? date : undefined}
                     setDate={(date) => {
                         if (moment(date).isBefore(moment().add(1, 'days').startOf('day'))) {
                             return;
                         }
                         setDate(date);
+                        setTimeFrom({
+                            value: 'с',
+                            title: '',
+                        });
+                        setTimeTo({
+                            value: 'до',
+                            title: '',
+                        });
                         setCalendarOpen(false);
                     }}
                 />

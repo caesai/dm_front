@@ -1,5 +1,3 @@
-import {IStoryObject} from "stories-react/src/types";
-
 export interface IStoriesBlockResponse {
     id: number;
     thumbnail: string;
@@ -13,7 +11,7 @@ export interface IStoriesBlockResponse {
 }
 
 type TStoryUsersIds = number[];
-type TStoriesCitiesIds = number[]
+type TStoriesCitiesIds = number[];
 
 export interface IStory {
     id: number;
@@ -35,6 +33,18 @@ export type TStory = 'image' | 'video' | 'component';
 export interface IStoryBlock {
     id: number;
     thumbnail: string;
-    stories: IStoryObject[];
+    stories: IStory[];
     name: string;
+}
+
+export type Action = (action: string, bufferAction?: boolean) => void;
+
+export enum StoriesAction {
+    SetCurrentId = 'SET_CURRENT_ID',
+    Next = 'NEXT',
+    Previous = 'PREVIOUS',
+}
+
+export interface StoriesState {
+    currentId: number;
 }

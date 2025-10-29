@@ -20,15 +20,15 @@ import { APIGetCurrentBookings } from '@/api/restaurants.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { Stories } from '@/components/Stories/Stories.tsx';
-// import {DEV_MODE} from "@/api/base.ts";
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
 import superevent from '/img/hh2.jpg';
 import newres from '/img/chinois_app.png';
-// import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { Toast } from '@/components/Toast/Toast.tsx';
+import { IStoryBlock } from '@/types/stories.types.ts';
+import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
 import { getDataFromLocalStorage } from '@/utils.ts';
 
 const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
@@ -64,6 +64,7 @@ export const IndexPage: FC = () => {
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
+    const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
 
     const location = useLocation();
     const isBanquet = location.state?.banquet;
@@ -74,12 +75,7 @@ export const IndexPage: FC = () => {
             return;
         }
         setCurrentBookingsLoading(true);
-        // APIGetCurrentBookings(auth.access_token)
-        //     .then((res) => setCurrentBookings(res.data.currentBookings))
-        //     .finally(() => setCurrentBookingsLoading(false));
-        // APIGetTickets(auth.access_token)
-        //     .then((res) => setTickets(res.data))
-        //     .finally(() => setEventsLoading(false));
+
         Promise.all([APIGetCurrentBookings(auth.access_token), APIGetTickets(auth.access_token)])
             .then((responses) => {
                 // console.log('responses: ', responses);
@@ -105,10 +101,22 @@ export const IndexPage: FC = () => {
             .finally(() => {
                 setCurrentBookingsLoading(false);
             });
-        APIGetSuperEventHasAccess(auth.access_token).then((response) => {
-            setHasSuperEventAccess(response.data);
-        });
+
+        APIGetSuperEventHasAccess(auth.access_token)
+            .then((response) => {
+                setHasSuperEventAccess(response.data);
+            });
     }, []);
+
+    const cityId = cityListA.find(item => item.name_english === currentCityS.id)?.id;
+    useEffect(() => {
+        if (auth?.access_token !== undefined && cityId !== undefined) {
+            ApiGetStoriesBlocks(auth?.access_token, cityId)
+                .then((storiesBlockResponse) => {
+                    setStoriesBlocks(storiesBlockResponse.data);
+                });
+        }
+    }, [cityId]);
 
     useEffect(() => {
         setCurrentCityS(
@@ -237,9 +245,8 @@ export const IndexPage: FC = () => {
     return (
         <Page back={false}>
             <div className={css.pageContainer}>
-                <Header />
-                <Stories token={auth?.access_token}
-                         cityId={cityListA.find(item => item.name_english === currentCityS.id)?.id} />
+                <Header/>
+                <Stories storiesBlocks={storiesBlocks} />
                 <div style={{ marginRight: 15 }}>
                     <CitySelect
                         options={cityOptions}
@@ -283,8 +290,8 @@ export const IndexPage: FC = () => {
                         </Link>
                     </div>
                 )}
-                <OptionsNavigation />
 
+                <OptionsNavigation/>
 
                 <div className={css.restaurants}>
 

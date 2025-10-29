@@ -4,7 +4,7 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { UnmountClosed } from 'react-collapse';
@@ -46,7 +46,7 @@ import {
     getCurrentTimeShort,
     getCurrentWeekdayShort,
     getRestaurantStatus,
-    getTimeShort,
+    getTimeShort, workdayIndexMap,
 } from '@/utils.ts';
 import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
@@ -68,11 +68,12 @@ import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/
 import { IEventInRestaurant } from '@/types/events.ts';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { Share } from '@/components/Icons/Share.tsx';
-import { BASE_BOT } from '@/api/base.ts';
+import { BASE_BOT, DEV_MODE } from '@/api/base.ts';
 import moment from 'moment';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { IBanquet } from '@/types/banquets.types.ts';
 import { APIGetBanquetOptions } from '@/api/banquet.api.ts';
+import certificates_link from '/img/certificate_link.png';
 
 export const transformGallery = (
     gallery: IPhotoCard[],
@@ -150,7 +151,7 @@ export const Restaurant = () => {
 
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
-            navigate('/onboarding/5', { state: { id, date: bookingDate, time: currentSelectedTime, sharedRestaurant: true } });
+            navigate('/onboarding/3', { state: { id, date: bookingDate, time: currentSelectedTime, sharedRestaurant: true } });
         } else {
             navigate(`/booking?id=${restaurant?.id}`);
         }
@@ -322,6 +323,13 @@ export const Restaurant = () => {
                         data-point-b={restaurant?.address_lonlng}
                     ></div>
                 </div>
+                {DEV_MODE &&  (
+                    <div>
+                        <Link to={'/certificates/1'}>
+                            <img src={certificates_link} alt={'certificates'} style={{ width: '100%' }} />
+                        </Link>
+                    </div>
+                )}
                 <BookingBlock
                     currentSelectedTime={currentSelectedTime}
                     workTime={restaurant?.worktime}
@@ -673,6 +681,7 @@ const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
                         {currentGalleryPhotos.map((photo, index) => (
                             <SwiperSlide
                                 key={`${index}${photo}`}
+                                style={{ width: 'max-content' }}
                                 className={
                                     Array.isArray(photo)
                                         ? css.smallPhotoSlideContainer
@@ -1009,7 +1018,8 @@ interface BanquetsBlockProps {
 const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, restaurant_id, restaurant_title, banquets, workTime }) => {
     const navigate = useNavigate();
     const navigateToBanquet = () => {
-        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title, banquets, workTime } });
+        const workTimeSorted = workTime?.sort((a, b) => workdayIndexMap[a.weekday] - workdayIndexMap[b.weekday]);
+        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title, banquets, workTime: workTimeSorted } });
     };
     return (
         <ContentContainer>

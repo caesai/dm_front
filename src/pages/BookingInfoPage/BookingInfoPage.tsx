@@ -60,8 +60,11 @@ export const BookingInfoPage = () => {
         };
     }, []);
 
-    const onCancelBooking = async (reason: string = 'Без причины') => {
+    const onCancelBooking = async () => {
         await APICancelBooking(String(auth?.access_token), Number(booking?.id));
+    };
+
+    const onSendReason = async (reason: string = 'Без причины') => {
         await APIPOSTCancelReason(String(auth?.access_token), Number(booking?.id), reason);
     };
 
@@ -95,6 +98,7 @@ export const BookingInfoPage = () => {
                 setOpen={setCancelPopup}
                 onCancel={onCancelBooking}
                 onSuccess={() => navigate('/myBookings')}
+                onSendReason={onSendReason}
                 popupText={'Вы уверены, что хотите отменить бронирование?'}
                 successMessage={'Ваше бронирование отменено'}
             />

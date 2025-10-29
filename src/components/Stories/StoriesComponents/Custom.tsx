@@ -1,35 +1,62 @@
-import React from 'react';
-import css from './StoryComponent.module.css';
+import React, { useEffect } from 'react';
+import css from './Custom.module.css';
 import classNames from 'classnames';
-import { IStory } from '@/types/stories.ts';
 import { BASE_BOT } from '@/api/base.ts';
 import { useNavigate } from 'react-router-dom';
-// import classnames from 'classnames';
+import { IStory } from '@/types/stories.types.ts';
 
-interface StoryComponentProps extends IStory {
-
+interface CustomStoryComponentProps {
+    story: IStory;
+    action: Function;
+    isPaused: boolean;
+    shouldWait: boolean;
 }
 
-export const StoryComponent: React.FC<StoryComponentProps> = ({ title, description, url, button_url, button_text, button_color, component_type }) => {
+export const CustomStoryComponent: React.FC<CustomStoryComponentProps> = (
+    {
+        story,
+        action,
+        shouldWait,
+        // config,
+    }
+    ,
+) => {
     const navigate = useNavigate();
+
+    const {
+        title,
+        description,
+        url,
+        button_url,
+        button_text,
+        button_color,
+        component_type,
+    } = story;
+    useEffect(() => {
+        if (!shouldWait) {
+            action('play');
+        }
+    }, [story, shouldWait]);
+
     const openButtonUrl = () => {
         if (button_url) {
             if (button_url.includes(BASE_BOT)) {
-                const url = button_url.split("?")[1];
-                const slicedUrl = url.slice(url.lastIndexOf('=')+1);
+                const url = button_url.split('?')[1];
+                const slicedUrl = url.slice(url.lastIndexOf('=') + 1);
                 if (slicedUrl.includes('restaurantId')) {
-                    navigate('/restaurant/' + slicedUrl.slice(slicedUrl.lastIndexOf('_')+1));
+                    navigate('/restaurant/' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1));
                 }
                 if (slicedUrl.includes('eventId')) {
-                    navigate('/events/' + slicedUrl.slice(slicedUrl.lastIndexOf('_')+1));
+                    navigate('/events/' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1));
                 }
                 if (slicedUrl.includes('bookingId')) {
-                    navigate('/booking/?id=' + slicedUrl.slice(slicedUrl.lastIndexOf('_')+1));
+                    navigate('/booking/?id=' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1));
                 }
             }
             window.open(button_url);
         }
-    }
+    };
+
     return (
         <div className={classNames(css.storyComponent)} style={{
             backgroundImage: component_type && component_type == 2 ? `url(${url})` : undefined,
@@ -70,3 +97,4 @@ export const StoryComponent: React.FC<StoryComponentProps> = ({ title, descripti
         </div>
     );
 };
+

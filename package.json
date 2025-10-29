@@ -53,7 +53,6 @@
     "react-router-dom": "^6.23.0",
     "react-zoom-pan-pinch": "^3.7.0",
     "reactjs-popup": "^2.0.6",
-    "stories-react": "^1.1.2",
     "styled-components": "^6.1.15",
     "swiper": "^11.2.10",
     "usehooks-ts": "^3.1.1",

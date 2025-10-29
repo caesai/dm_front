@@ -48,6 +48,11 @@ import { PreferencesTwo } from '@/pages/PreferencesPage/stages/PreferencesTwo.ts
 import { PreferencesPage } from '@/pages/PreferencesPage/PreferencesPage.tsx';
 import { StageOne } from '@/pages/OnboardingPage/stages/StageOne.tsx';
 import AllergiesPage from '@/pages/AllergiesPage/AllergiesPage.tsx';
+import { CertificatesCreatePage } from '@/pages/CertificatesCreatePage/CertificatesCreatePage.tsx';
+import { CertificatesCreateOnePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOnePage.tsx';
+import { CertificatesCreateTwoPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateTwoPage.tsx';
+import { CertificatesCreateOnlinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOnlinePage.tsx';
+import { CertificatesListPage } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -90,6 +95,7 @@ const AppRouter = () => {
             setLoadingComplete(true);
         }
     }, [cities, restaurants]);
+
     return (
         <BrowserRouter basename={import.meta.env.MODE !== 'development' ? undefined : '/dm_front/'}>
             <ScrollToTop />
@@ -163,6 +169,13 @@ const AppRouter = () => {
                     <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />
                     <Route path={'banquets/:id/additional-services'} element={<BanquetAdditionalServicesPage />} />
                     <Route path={'banquets/:id/reservation'} element={<BanquetReservationPage />} />
+
+                    <Route path={'/certificates'} element={<CertificatesCreatePage />}>
+                        <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
+                        <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
+                        <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
+                        <Route path={'/certificates/my'} element={<CertificatesListPage />} />
+                    </Route>
 
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
