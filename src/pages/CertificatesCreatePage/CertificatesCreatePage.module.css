@@ -1,0 +1,176 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 15px;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.spacer {
+    width: 44px;
+    height: 44px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.page_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    color: var(--black);
+    text-align: center;
+}
+
+.absoluteBottom {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.bottomWrapper {
+    padding: 0 15px;
+    display: flex;
+}
+
+.certificateOption {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    gap: 10px;
+    border-radius: 12px;
+    background-color: white;
+    font-family: 'Mont', sans-serif;
+
+    span {
+        color: var(--dark-grey);
+    }
+}
+
+.certificateExample {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-image: url('/img/cert.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 100%;
+    height: 200px;
+    justify-content: center;
+    align-items: center;
+}
+
+.compliment {
+    font-family: 'Mont', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    color: #3B3C40;
+}
+
+.certificateBottom {
+    position: absolute;
+    bottom: 30px;
+    display: flex;
+    gap: 20px;
+    font-family: 'Mont', sans-serif;
+    justify-content: space-evenly;
+    width: 100%;
+
+    span {
+        color: var(--dark-grey);
+        font-size: 11px;
+    }
+
+    div {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.ratings {
+    display: flex;
+}
+
+.rating {
+    display: flex;
+    gap: 8px;
+    padding: 11px 16px;
+    border-radius: 20px;
+    width: max-content;
+    font-family: "Mont", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--black);
+    background-color: var(--secondary-background);
+    cursor: pointer;
+    align-items: center;
+}
+
+.ratingActive {
+    border: 1px solid var(--black);
+}
+
+.fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.animationContainer {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.animatedImageOne {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(100%, 0);
+    animation-name: slide-in-center;
+    animation-duration: 2s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+}
+
+.animatedImageTwo {
+    position: absolute;
+    top: 30%;
+    left: 0;
+    animation-name: slide-in-center-2;
+    animation-duration: 2s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    transform: translate(-100%, 0);
+}
+
+@keyframes slide-in-center {
+    to {
+        right: 270px;
+    }
+}
+
+@keyframes slide-in-center-2 {
+    to {
+        left: 270px;
+    }
+}

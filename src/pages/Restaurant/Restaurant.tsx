@@ -4,7 +4,7 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { UnmountClosed } from 'react-collapse';
@@ -46,7 +46,7 @@ import {
     getCurrentTimeShort,
     getCurrentWeekdayShort,
     getRestaurantStatus,
-    getTimeShort,
+    getTimeShort, workdayIndexMap,
 } from '@/utils.ts';
 import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
@@ -73,6 +73,7 @@ import moment from 'moment';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { IBanquet } from '@/types/banquets.types.ts';
 import { APIGetBanquetOptions } from '@/api/banquet.api.ts';
+import certificates_link from '/img/certificate_link.png';
 
 export const transformGallery = (
     gallery: IPhotoCard[],
@@ -322,6 +323,13 @@ export const Restaurant = () => {
                         data-point-b={restaurant?.address_lonlng}
                     ></div>
                 </div>
+                {tg_id && mockEventsUsersList.includes(tg_id) &&  (
+                    <div>
+                        <Link to={'/certificates/1'}>
+                            <img src={certificates_link} alt={'certificates'} style={{ width: '100%' }} />
+                        </Link>
+                    </div>
+                )}
                 <BookingBlock
                     currentSelectedTime={currentSelectedTime}
                     workTime={restaurant?.worktime}
@@ -1010,7 +1018,8 @@ interface BanquetsBlockProps {
 const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, restaurant_id, restaurant_title, banquets, workTime }) => {
     const navigate = useNavigate();
     const navigateToBanquet = () => {
-        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title, banquets, workTime } });
+        const workTimeSorted = workTime?.sort((a, b) => workdayIndexMap[a.weekday] - workdayIndexMap[b.weekday]);
+        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title, banquets, workTime: workTimeSorted } });
     };
     return (
         <ContentContainer>
