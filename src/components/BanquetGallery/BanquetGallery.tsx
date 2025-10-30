@@ -24,9 +24,6 @@ const StyledPopup = styled(Popup)`
     }
 `;
 
-const contentSizeWithArrows = '310px'
-const contentSizeWithoutArrows = '345px'
-
 const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
     const [currentImage, setCurrentImage] = useState(0);
 
@@ -59,8 +56,7 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
         <StyledPopup
             open={p.isOpen}
             onClose={onClose}
-            closeOnDocumentClick
-            closeOnEscape
+            closeOnDocumentClick={false}
         >
             <div className={css.content}>
                 {p.images.length > 1 && (
@@ -73,12 +69,7 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
                     </button>
                 )}
                 <div
-                    className={css.imageContainer}
-                    style={{
-                        backgroundImage: `url(${p.images[currentImage]})`,
-                        width: p.images.length > 1 ? contentSizeWithArrows : contentSizeWithoutArrows
-                    }}
-                >
+                    className={css.imageContainer}>
                    <div className={css.closeButton}>
                        <RoundedButton
                            icon={<MiniCrossIcon color={'black'} />}
@@ -91,6 +82,7 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
                            }}
                        />
                    </div>
+                    <img src={p.images[currentImage]} alt={''} className={css.image} />
                 </div>
                 {p.images.length > 1 && (
                     <button
