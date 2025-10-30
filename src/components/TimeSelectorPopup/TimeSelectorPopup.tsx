@@ -32,7 +32,6 @@ const generateTimeOptions = (start: string, end: string): PickerValueObj[] => {
             value: endMoment.format('HH:mm')
         });
     }
-    console.log('Generated time options from', start, 'to', end, ':', options);
     return options;
 };
 
@@ -83,7 +82,6 @@ export const TimeSelectorPopup: FC<Props> = (
         maxTime,
     },
 ) => {
-    console.log('TimeSelectorPopup minTime:', minTime, 'maxTime:', maxTime);
     const timeOptions = (minTime && maxTime)
         ? generateTimeOptions(minTime, maxTime)
         : getFullDayOptions();
