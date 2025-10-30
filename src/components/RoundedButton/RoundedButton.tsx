@@ -1,5 +1,5 @@
 import css from './roundedButton.module.css';
-import { FC, ReactNode } from 'react';
+import { CSSProperties, FC, ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 type Props = {
@@ -11,6 +11,7 @@ type Props = {
     bgColor?: string;
     radius?: string;
     isBack?: boolean;
+    style?: CSSProperties;
 };
 
 export const RoundedButton: FC<Props> = (props) => {
@@ -24,6 +25,7 @@ export const RoundedButton: FC<Props> = (props) => {
                 backgroundColor: `${props.bgColor} `,
                 minWidth: `${props.radius ? `${props.radius}` : null}`,
                 height: `${props.radius ? `${props.radius}` : null}`,
+                ...props.style,
             }}
         >
             {props.icon}

@@ -3,6 +3,8 @@ import css from './BanquetGallery.module.css';
 import styled from 'styled-components';
 import Popup from 'reactjs-popup';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
+import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
+import { MiniCrossIcon } from '@/components/Icons/MiniCrossIcon.tsx';
 
 interface IBanquetGalleryProps {
     isOpen: boolean;
@@ -18,13 +20,17 @@ const StyledPopup = styled(Popup)`
     &-content {
         background: transparent;
         border: 0;
-        width: 100%;
+        width: fit-content;
     }
 `;
 
 const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
-    const onClose = () => p.setOpen(false);
     const [currentImage, setCurrentImage] = useState(0);
+
+    const onClose = () => {
+        p.setOpen(false)
+        setCurrentImage(0)
+    };
 
     const nextImage = () => {
         setCurrentImage((prev) => {
@@ -57,26 +63,33 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
                 {p.images.length > 1 && (
                     <button
                         onClick={prevImage}
-                        style={{ transform: 'rotate(90deg)' }}
+                        style={{ transform: 'rotate(90deg)', left: '-24px' }}
                         className={css.icon}
                     >
-                        <DownArrow size={14} color={'var(--primary-background)'} />
+                        <DownArrow size={16} color={'var(--primary-background)'} />
                     </button>
                 )}
-                <div className={css.imageContainer}>
-                    <img
-                        src={p.images[currentImage]}
-                        alt={''}
-                        className={css.currentImage}
-                    />
+                <div className={css.imageContainer} style={{ backgroundImage: `url(${p.images[currentImage]})`, width: p.images.length > 1 ? '310px' : '345px' }}>
+                   <div className={css.closeButton}>
+                       <RoundedButton
+                           icon={<MiniCrossIcon color={'black'} />}
+                           bgColor={'var(--primary-background) !important'}
+                           action={() => onClose()}
+                           style={{
+                               width: '24px',
+                               height: '24px',
+                               minWidth: '24px',
+                           }}
+                       />
+                   </div>
                 </div>
                 {p.images.length > 1 && (
                     <button
                         onClick={nextImage}
-                        style={{ transform: 'rotate(270deg)' }}
+                        style={{ transform: 'rotate(270deg)', right: '-24px' }}
                         className={css.icon}
                     >
-                        <DownArrow size={14} color={'var(--primary-background)'} />
+                        <DownArrow size={16} color={'var(--primary-background)'} />
                     </button>
                 )}
             </div>
