@@ -66,22 +66,22 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
         setCurrentYear(parseInt(e.target.value, 10));
     };
 
-    const handleDayClick = (fullDate: Date, isCurrentMonth: boolean) => {
-        if (!isCurrentMonth || isPastDay(fullDate)) return;
+    const handleDayClick = (fullDate: Date) => {
+        if (isPastDay(fullDate)) return;
         setSelectedDate(fullDate);
         onSelectDate?.(fullDate);
     };
 
     const renderDays = () =>
         calendarDays.map((dayObj, idx) => {
-            const { fullDate, isCurrentMonth } = dayObj;
+            const { fullDate } = dayObj;
             const dayNumber = fullDate.getUTCDate();
             const isSelected = fullDate.getTime() === selectedDate.getTime();
             const isPast = isPastDay(fullDate);
 
             const classNames = [
                 css.datepickerDay,
-                isCurrentMonth ? css.inMonth : css.disabled,
+                css.inMonth,
                 isSelected ? css.current : '',
                 isPast ? css.disabled : '',
             ]
@@ -92,7 +92,7 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
                 <div
                     key={idx}
                     className={classNames}
-                    onClick={() => handleDayClick(fullDate, isCurrentMonth)}
+                    onClick={() => handleDayClick(fullDate)}
                 >
                     {dayNumber}
                 </div>
