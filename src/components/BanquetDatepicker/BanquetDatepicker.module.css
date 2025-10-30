@@ -83,7 +83,7 @@
     font-weight: 700;
 }
 
-.datepickerDay.inMonth {
+.datepickerDay.active {
     color: var(--dark-grey);
 }
 
@@ -92,7 +92,7 @@
     border-radius: 6px;
 }
 
-.datepickerDay.inMonth:hover {
+.datepickerDay.active:hover {
     background-color: var(--red);
     color: #ffffff;
 }

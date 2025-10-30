@@ -81,7 +81,7 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
 
             const classNames = [
                 css.datepickerDay,
-                css.inMonth,
+                css.active,
                 isSelected ? css.current : '',
                 isPast ? css.disabled : '',
             ]
