@@ -143,7 +143,19 @@ export const BanquetOptionPage = () => {
     }
 
     const getMinTimeForStart = () => {
-      return date ? workTime[date.getDay()].time_start : undefined
+      if (date) {
+        // Start of restaurant working day
+        const dayStart = workTime[date.getDay()].time_start;
+        const { max_duration } = banquet;
+        if (timeTo && timeTo.value !== 'до' && max_duration && max_duration > 0) {
+          // Most earliest start: not earlier than end minus max_duration
+          const minStart = moment(timeTo.value, 'HH:mm').subtract(max_duration, 'hours').format('HH:mm');
+          // But not earlier than the start of the working day
+          return moment.max(moment(minStart, 'HH:mm'), moment(dayStart, 'HH:mm')).format('HH:mm');
+       }
+        return workTime[date.getDay()].time_start;
+      }
+      return undefined;
     }
 
     const getMaxTimeForStart = () => {
@@ -155,7 +167,19 @@ export const BanquetOptionPage = () => {
     }
 
     const getMaxTimeForEnd = () => {
-      return date ? workTime[date.getDay()].time_end : undefined
+      if (date) {
+        // End of restaurant working day
+        const dayEnd = workTime[date.getDay()].time_end;
+        const { max_duration } = banquet;
+        if (timeFrom && timeFrom.value !== 'с' && max_duration && max_duration > 0) {
+          // Most latest end: not later than start plus max_duration
+          const maxEnd = moment(timeFrom.value, 'HH:mm').add(max_duration, 'hours').format('HH:mm');
+          // But not later than the end of the working day
+          return moment.min(moment(maxEnd, 'HH:mm'), moment(dayEnd, 'HH:mm')).format('HH:mm');
+       }
+        return workTime[date.getDay()].time_end;
+      }
+      return undefined;
     }
 
     return (
