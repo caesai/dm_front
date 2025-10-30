@@ -44,6 +44,7 @@ export const BanquetOptionPage = () => {
     const location = useLocation();
     const { id } = useParams();
     const banquet: IBanquetOptions = location.state?.banquet;
+    console.log('BanquetOptionPage banquet:', banquet);
     const restaurant_title: string = location.state?.restaurant_title;
     const workTime: IWorkTime[] = location.state?.workTime;
     const additional_options: IBanquetAdditionalOptions[] = location.state?.additional_options;
@@ -142,6 +143,52 @@ export const BanquetOptionPage = () => {
         return moment(timeString, 'HH:mm').add(1, 'hour').format('HH:mm');
     }
 
+    const getMinTimeForStart = () => {
+      if (date) {
+        // Start of restaurant working day
+        const dayStart = workTime[date.getDay()].time_start;
+        console.log('dayStart in getMinTimeForStart:', dayStart);
+        const { max_duration } = banquet;
+        console.log('max_duration in getMinTimeForStart:', max_duration);
+        if (timeTo && timeTo.value !== 'до' && max_duration && max_duration > 0) {
+          // Most earliest start: not earlier than end minus max_duration
+          const minStart = moment(timeTo.value, 'HH:mm').subtract(max_duration, 'hours').format('HH:mm');
+          console.log('minStart in getMinTimeForStart:', minStart);
+          // But not earlier than the start of the working day
+          return moment.max(moment(minStart, 'HH:mm'), moment(dayStart, 'HH:mm')).format('HH:mm');
+       }
+        return workTime[date.getDay()].time_start;
+      }
+      return undefined;
+    }
+
+    const getMaxTimeForStart = () => {
+      return date ? (timeTo.value !== 'до' ? subtractOneHour(timeTo.value) : subtractOneHour(workTime[date.getDay()].time_end)) : undefined
+    }
+
+    const getMinTimeForEnd = () => {
+      return date ? (timeFrom.value !== 'с' ? addOneHour(timeFrom.value) : addOneHour(workTime[date.getDay()].time_start)) : undefined
+    }
+
+    const getMaxTimeForEnd = () => {
+      if (date) {
+        // End of restaurant working day
+        const dayEnd = workTime[date.getDay()].time_end;
+        console.log('dayEnd in getMaxTimeForEnd:', dayEnd);
+        const { max_duration } = banquet;
+        console.log('max_duration in getMaxTimeForEnd:', max_duration);
+        if (timeFrom && timeFrom.value !== 'с' && max_duration && max_duration > 0) {
+          // Most latest end: not later than start plus max_duration
+          const maxEnd = moment(timeFrom.value, 'HH:mm').add(max_duration, 'hours').format('HH:mm');
+          console.log('maxEnd in getMaxTimeForEnd:', maxEnd);
+          // But not later than the end of the working day
+          return moment.min(moment(maxEnd, 'HH:mm'), moment(dayEnd, 'HH:mm')).format('HH:mm');
+       }
+        return workTime[date.getDay()].time_end;
+      }
+      return undefined;
+    }
+
     return (
         <Page back={true}>
             <BanquetOptionsPopup
@@ -157,28 +204,16 @@ export const BanquetOptionPage = () => {
                 closePopup={closeTimeFromPopup}
                 time={timeFrom}
                 setTimeOption={setTimeFrom}
-                minTime={date ? workTime[date.getDay()].time_start : undefined}
-                maxTime={
-                    date
-                        ? (timeTo.value !== 'до'
-                            ? subtractOneHour(timeTo.value)
-                            : subtractOneHour(workTime[date.getDay()].time_end))
-                        : undefined
-                }
+                minTime={getMinTimeForStart()}
+                maxTime={getMaxTimeForStart()}
             />
             <TimeSelectorPopup
                 isOpen={!!date && isTimeToPopup}
                 closePopup={closeTimeToPopup}
                 time={timeTo}
                 setTimeOption={setTimeTo}
-                minTime={
-                    date
-                        ? (timeFrom.value !== 'с'
-                            ? addOneHour(timeFrom.value)
-                            : addOneHour(workTime[date.getDay()].time_start))
-                        : undefined
-                }
-                maxTime={date ? workTime[date.getDay()].time_end : undefined}
+                minTime={getMinTimeForEnd()}
+                maxTime={getMaxTimeForEnd()}
             />
             <div className={css.page}>
                 <CalendarPopup

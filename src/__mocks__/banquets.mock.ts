@@ -10,6 +10,7 @@ export const banquetData: IBanquet = {
             "deposit": 5000,
             "deposit_message": null,
             "service_fee": 10,
+            "max_duration": null,
             "images": [
                 "https://storage.yandexcloud.net/dreamteam-storage/3790ff7670bf4f1bb045cf2d37646bfa.jpg"
             ]
@@ -22,6 +23,7 @@ export const banquetData: IBanquet = {
             "deposit": 10000,
             "deposit_message": null,
             "service_fee": 10,
+            "max_duration": null,
             "images": [
                 "https://storage.yandexcloud.net/dreamteam-storage/14a57e50743c4cde8fe830afcf3ab938.jpg"
             ]
@@ -34,6 +36,7 @@ export const banquetData: IBanquet = {
             "deposit": 15000,
             "deposit_message": null,
             "service_fee": 10,
+            "max_duration": null,
             "images": [
                 "https://storage.yandexcloud.net/dreamteam-storage/f187c97f96ab43f8be1c34ff3eefac78.JPG"
             ]

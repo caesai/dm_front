@@ -18,6 +18,7 @@ export interface IBanquetOptions {
     deposit?: number | null,
     deposit_message: string | null,
     service_fee: number,
+    max_duration: number | null,
     images: string[]
 }
 
