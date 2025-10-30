@@ -73,7 +73,7 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
                    <div className={css.closeButton}>
                        <RoundedButton
                            icon={<MiniCrossIcon color={'black'} />}
-                           bgColor={'var(--primary-background) !important'}
+                           bgColor={'var(--primary-background)'}
                            action={() => onClose()}
                            style={{
                                width: '24px',
