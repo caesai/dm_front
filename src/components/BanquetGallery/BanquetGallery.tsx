@@ -29,7 +29,7 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
 
     const onClose = () => {
         p.setOpen(false)
-        setCurrentImage(0)
+        setCurrentImage(0);
     };
 
     const nextImage = () => {
