@@ -156,7 +156,7 @@ export const BanquetOptionPage = () => {
           const minStartIsTheDayBefore = moment(minStart, 'HH:mm').isAfter(moment(timeTo.value, 'HH:mm')) || moment(timeTo.value, 'HH:mm').isAfter(moment(dayEnd, 'HH:mm'));
           
           // Check that restaurant closed before midnight
-          if (moment(workTime[date.getDay()].time_end, 'HH:mm').isAfter(moment(dayStart, 'HH:mm'))) {
+          if (moment(dayEnd, 'HH:mm').isAfter(moment(dayStart, 'HH:mm'))) {
             if (!minStartIsTheDayBefore) {
               // Both minStart and dayStart are in the same day
               return moment.max(moment(minStart, 'HH:mm'), moment(dayStart, 'HH:mm')).format('HH:mm');
@@ -164,7 +164,7 @@ export const BanquetOptionPage = () => {
               // minStart is the day before restaurant is open
               return moment(dayStart, 'HH:mm').format('HH:mm');
             }
-          } else {// Restaurant closes after midnight
+          } else { // Restaurant closes after midnight
             if (!minStartIsTheDayBefore) {
               // dayStart is the day before minStart
               return moment(minStart, 'HH:mm').format('HH:mm');
@@ -174,7 +174,7 @@ export const BanquetOptionPage = () => {
             }
           }
         }
-        return workTime[date.getDay()].time_start;
+        return dayStart;
       }
       return undefined;
     }
@@ -209,18 +209,18 @@ export const BanquetOptionPage = () => {
               // dayEnd is before midnight, but maxEnd is after
               return moment(dayEnd, 'HH:mm').format('HH:mm');
             }
-          } else {// Restaurant closes after midnight
-              if (!maxEndIsAfterMidnight) {
-                // maxEnd is before midnight, but dayEnd is after
-                return moment(maxEnd, 'HH:mm').format('HH:mm');
-              } else {
-                // Both maxEnd and dayEnd are after midnight
-                return moment.min(moment(maxEnd, 'HH:mm'), moment(dayEnd, 'HH:mm')).format('HH:mm');
-              }
+          } else { // Restaurant closes after midnight
+            if (!maxEndIsAfterMidnight) {
+              // maxEnd is before midnight, but dayEnd is after
+              return moment(maxEnd, 'HH:mm').format('HH:mm');
+            } else {
+              // Both maxEnd and dayEnd are after midnight
+              return moment.min(moment(maxEnd, 'HH:mm'), moment(dayEnd, 'HH:mm')).format('HH:mm');
+            }
           } 
         }
         // if max_duration is not set, return the end of working day
-        return workTime[date.getDay()].time_end;
+        return dayEnd;
       }
       return undefined;
     }
