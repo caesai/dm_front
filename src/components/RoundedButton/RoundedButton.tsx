@@ -41,7 +41,7 @@ export const RoundedButton: FC<Props> = (props) => {
                     onClick={() => navigate(-1)}
                     className={css.rounded_button}
                     style={{
-                        backgroundColor: `${props.bgColor} `,
+                        backgroundColor: `${props.bgColor}`,
                         minWidth: `${props.radius ? `${props.radius}` : null}`,
                         height: `${props.radius ? `${props.radius}` : null}`,
                     }}
