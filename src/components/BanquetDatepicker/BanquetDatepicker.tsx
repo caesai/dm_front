@@ -10,6 +10,8 @@ interface DatePickerProps {
     banquet: IBanquetOptions;
 }
 
+const WEEKDAYS_ONLY_MESSAGE = "Только будни";
+
 export const BanquetDatepicker: React.FC<DatePickerProps> = ({
                                                                  onSelectDate,
                                                                  initialDate,
@@ -138,7 +140,7 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
     }, [currentDate]);
 
     useEffect(() => {
-        if (banquet.deposit_message === "Только будни") setDisabledWeekend(true)
+        if (banquet.deposit_message === WEEKDAYS_ONLY_MESSAGE) setDisabledWeekend(true)
     }, [banquet]);
 
     return (
