@@ -14,7 +14,7 @@ const generateTimeOptions = (start: string, end: string): PickerValueObj[] => {
     const options: PickerValueObj[] = [];
     let current = moment(start, 'HH:mm');
     const endMoment = moment(end, 'HH:mm');
-    // если end <= start, значит диапазон через полночь
+    // If end <= start, it means the range crosses midnight
     while (
         current.isBefore(endMoment) ||
         (endMoment.isBefore(moment(start, 'HH:mm')) && current.format('HH:mm') !== endMoment.format('HH:mm'))
@@ -24,7 +24,7 @@ const generateTimeOptions = (start: string, end: string): PickerValueObj[] => {
             value: current.format('HH:mm')
         });
         current.add(1, 'hour');
-        if (options.length > 48) break;
+        if (options.length > 24) break;
     }
     if (current.format('HH:mm') === endMoment.format('HH:mm')) {
         options.push({
@@ -32,6 +32,7 @@ const generateTimeOptions = (start: string, end: string): PickerValueObj[] => {
             value: endMoment.format('HH:mm')
         });
     }
+    console.log('Generated time options from', start, 'to', end, ':', options);
     return options;
 };
 
@@ -82,6 +83,7 @@ export const TimeSelectorPopup: FC<Props> = (
         maxTime,
     },
 ) => {
+    console.log('TimeSelectorPopup minTime:', minTime, 'maxTime:', maxTime);
     const timeOptions = (minTime && maxTime)
         ? generateTimeOptions(minTime, maxTime)
         : getFullDayOptions();
