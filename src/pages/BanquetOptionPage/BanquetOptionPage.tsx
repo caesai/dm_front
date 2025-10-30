@@ -44,7 +44,6 @@ export const BanquetOptionPage = () => {
     const location = useLocation();
     const { id } = useParams();
     const banquet: IBanquetOptions = location.state?.banquet;
-    console.log('BanquetOptionPage banquet:', banquet);
     const restaurant_title: string = location.state?.restaurant_title;
     const workTime: IWorkTime[] = location.state?.workTime;
     const additional_options: IBanquetAdditionalOptions[] = location.state?.additional_options;
@@ -145,19 +144,37 @@ export const BanquetOptionPage = () => {
 
     const getMinTimeForStart = () => {
       if (date) {
-        // Start of restaurant working day
+        // Start and end of restaurant working day
+        const dayEnd = workTime[date.getDay()].time_end;
         const dayStart = workTime[date.getDay()].time_start;
-        console.log('dayStart in getMinTimeForStart:', dayStart);
         const { max_duration } = banquet;
-        console.log('max_duration in getMinTimeForStart:', max_duration);
+
+        // If max_duration is set, calculate the most earliest start time
         if (timeTo && timeTo.value !== 'до' && max_duration && max_duration > 0) {
-          // Most earliest start: not earlier than end minus max_duration
+          // Compute the limit to banquet start time: timeTo - max_duration
           const minStart = moment(timeTo.value, 'HH:mm').subtract(max_duration, 'hours').format('HH:mm');
-          console.log('minStart in getMinTimeForStart:', minStart);
-          // But not earlier than the start of the working day
-          return moment.max(moment(minStart, 'HH:mm'), moment(dayStart, 'HH:mm')).format('HH:mm');
-       }
-        return workTime[date.getDay()].time_start;
+          const minStartIsTheDayBefore = moment(minStart, 'HH:mm').isAfter(moment(timeTo.value, 'HH:mm')) || moment(timeTo.value, 'HH:mm').isAfter(moment(dayEnd, 'HH:mm'));
+          
+          // Check that restaurant closed before midnight
+          if (moment(dayEnd, 'HH:mm').isAfter(moment(dayStart, 'HH:mm'))) {
+            if (!minStartIsTheDayBefore) {
+              // Both minStart and dayStart are in the same day
+              return moment.max(moment(minStart, 'HH:mm'), moment(dayStart, 'HH:mm')).format('HH:mm');
+            } else {
+              // minStart is the day before restaurant is open
+              return moment(dayStart, 'HH:mm').format('HH:mm');
+            }
+          } else { // Restaurant closes after midnight
+            if (!minStartIsTheDayBefore) {
+              // dayStart is the day before minStart
+              return moment(minStart, 'HH:mm').format('HH:mm');
+            } else {
+              // Both minStart and dayStart are in the day before
+              return moment.max(moment(minStart, 'HH:mm'), moment(dayStart, 'HH:mm')).format('HH:mm');
+            }
+          }
+        }
+        return dayStart;
       }
       return undefined;
     }
@@ -172,19 +189,38 @@ export const BanquetOptionPage = () => {
 
     const getMaxTimeForEnd = () => {
       if (date) {
-        // End of restaurant working day
+        // Start and end of restaurant working day
         const dayEnd = workTime[date.getDay()].time_end;
-        console.log('dayEnd in getMaxTimeForEnd:', dayEnd);
+        const dayStart = workTime[date.getDay()].time_start;
         const { max_duration } = banquet;
-        console.log('max_duration in getMaxTimeForEnd:', max_duration);
+
+        // If max_duration is set, calculate the most latest end time
         if (timeFrom && timeFrom.value !== 'с' && max_duration && max_duration > 0) {
-          // Most latest end: not later than start plus max_duration
+          // Compute the limit to banquet end time: timeFrom + max_duration
           const maxEnd = moment(timeFrom.value, 'HH:mm').add(max_duration, 'hours').format('HH:mm');
-          console.log('maxEnd in getMaxTimeForEnd:', maxEnd);
-          // But not later than the end of the working day
-          return moment.min(moment(maxEnd, 'HH:mm'), moment(dayEnd, 'HH:mm')).format('HH:mm');
-       }
-        return workTime[date.getDay()].time_end;
+          const maxEndIsAfterMidnight = moment(maxEnd, 'HH:mm').isBefore(moment(timeFrom.value, 'HH:mm')) || moment(timeFrom.value, 'HH:mm').isBefore(moment(dayStart, 'HH:mm'));
+                    
+          // Check that restaurant closed before midnight
+          if (moment(dayStart, 'HH:mm').isBefore(moment(dayEnd, 'HH:mm'))) {
+            if (!maxEndIsAfterMidnight) {
+              // Both maxEnd and dayEnd are before midnight
+              return moment.min(moment(maxEnd, 'HH:mm'), moment(dayEnd, 'HH:mm')).format('HH:mm');
+            } else {
+              // dayEnd is before midnight, but maxEnd is after
+              return moment(dayEnd, 'HH:mm').format('HH:mm');
+            }
+          } else { // Restaurant closes after midnight
+            if (!maxEndIsAfterMidnight) {
+              // maxEnd is before midnight, but dayEnd is after
+              return moment(maxEnd, 'HH:mm').format('HH:mm');
+            } else {
+              // Both maxEnd and dayEnd are after midnight
+              return moment.min(moment(maxEnd, 'HH:mm'), moment(dayEnd, 'HH:mm')).format('HH:mm');
+            }
+          } 
+        }
+        // if max_duration is not set, return the end of working day
+        return dayEnd;
       }
       return undefined;
     }
