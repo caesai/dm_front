@@ -142,6 +142,22 @@ export const BanquetOptionPage = () => {
         return moment(timeString, 'HH:mm').add(1, 'hour').format('HH:mm');
     }
 
+    const getMinTimeForStart = () => {
+      return date ? workTime[date.getDay()].time_start : undefined
+    }
+
+    const getMaxTimeForStart = () => {
+      return date ? (timeTo.value !== 'до' ? subtractOneHour(timeTo.value) : subtractOneHour(workTime[date.getDay()].time_end)) : undefined
+    }
+
+    const getMinTimeForEnd = () => {
+      return date ? (timeFrom.value !== 'с' ? addOneHour(timeFrom.value) : addOneHour(workTime[date.getDay()].time_start)) : undefined
+    }
+
+    const getMaxTimeForEnd = () => {
+      return date ? workTime[date.getDay()].time_end : undefined
+    }
+
     return (
         <Page back={true}>
             <BanquetOptionsPopup
@@ -157,28 +173,16 @@ export const BanquetOptionPage = () => {
                 closePopup={closeTimeFromPopup}
                 time={timeFrom}
                 setTimeOption={setTimeFrom}
-                minTime={date ? workTime[date.getDay()].time_start : undefined}
-                maxTime={
-                    date
-                        ? (timeTo.value !== 'до'
-                            ? subtractOneHour(timeTo.value)
-                            : subtractOneHour(workTime[date.getDay()].time_end))
-                        : undefined
-                }
+                minTime={getMinTimeForStart()}
+                maxTime={getMaxTimeForStart()}
             />
             <TimeSelectorPopup
                 isOpen={!!date && isTimeToPopup}
                 closePopup={closeTimeToPopup}
                 time={timeTo}
                 setTimeOption={setTimeTo}
-                minTime={
-                    date
-                        ? (timeFrom.value !== 'с'
-                            ? addOneHour(timeFrom.value)
-                            : addOneHour(workTime[date.getDay()].time_start))
-                        : undefined
-                }
-                maxTime={date ? workTime[date.getDay()].time_end : undefined}
+                minTime={getMinTimeForEnd()}
+                maxTime={getMaxTimeForEnd()}
             />
             <div className={css.page}>
                 <CalendarPopup
