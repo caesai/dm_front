@@ -1,22 +1,26 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { getCalendarDaysUTC } from '@/components/DatePicker/dateUtils.ts';
 import css from './BanquetDatepicker.module.css';
+import { IBanquetOptions } from '@/types/banquets.types.ts';
 
 interface DatePickerProps {
     onSelectDate?: (date: Date) => void;
     initialDate?: Date;
     currentDate?: Date;
+    banquet: IBanquetOptions;
 }
 
 export const BanquetDatepicker: React.FC<DatePickerProps> = ({
                                                                  onSelectDate,
                                                                  initialDate,
-                                                                 currentDate
+                                                                 currentDate,
+                                                                 banquet
                                                              }) => {
     const now = initialDate || new Date();
     const [currentYear, setCurrentYear] = useState(now.getUTCFullYear());
     const [currentMonth, setCurrentMonth] = useState(now.getUTCMonth());
     const [selectedDate, setSelectedDate] = useState<Date>(now);
+    const [isDisabledWeekend, setDisabledWeekend] = useState<boolean>(false);
 
     const calendarDays = getCalendarDaysUTC(currentYear, currentMonth);
 
@@ -36,6 +40,11 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
         compareDate.setHours(0, 0, 0, 0);
 
         return compareDate <= today;
+    };
+
+    const isWeekend = (date: Date): boolean => {
+        const dayOfWeek = date.getUTCDay();
+        return dayOfWeek === 0 || dayOfWeek === 6; // 0 - воскресенье, 6 - суббота
     };
 
     const handlePrevMonth = () => {
@@ -68,6 +77,7 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
 
     const handleDayClick = (fullDate: Date) => {
         if (isPastDay(fullDate)) return;
+        if (isDisabledWeekend && isWeekend(fullDate)) return;
         setSelectedDate(fullDate);
         onSelectDate?.(fullDate);
     };
@@ -84,6 +94,7 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
                 css.active,
                 isSelected ? css.current : '',
                 isPast ? css.disabled : '',
+                isWeekend(fullDate) ? css.disabled : '',
             ]
                 .filter(Boolean)
                 .join(' ');
@@ -125,6 +136,10 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
         if (!currentDate) return
         setSelectedDate(currentDate);
     }, [currentDate]);
+
+    useEffect(() => {
+        if (banquet.deposit_message === "Только будни") setDisabledWeekend(true)
+    }, [banquet]);
 
     return (
         <div className={css.datepickerContainer}>
