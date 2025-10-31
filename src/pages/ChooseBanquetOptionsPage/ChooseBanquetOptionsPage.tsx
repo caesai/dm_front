@@ -30,7 +30,7 @@ export const ChooseBanquetOptionsPage = () => {
     const [currentImages, setCurrentImages] = useState<string[]>([]);
 
     const goBack = () => {
-        navigate(-1);
+        navigate(`/restaurant/${id}`);
     };
 
     const openPopup = (banquet: IBanquetOptions) => {
@@ -98,6 +98,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                                 additional_options: banquets.additional_options,
                                                                 restaurant_title,
                                                                 workTime,
+                                                                banquets,
                                                             },
                                                         })}
                                                     >

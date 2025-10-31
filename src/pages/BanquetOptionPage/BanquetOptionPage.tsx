@@ -44,6 +44,7 @@ export const BanquetOptionPage = () => {
     const location = useLocation();
     const { id } = useParams();
     const banquet: IBanquetOptions = location.state?.banquet;
+    const banquets = location.state?.banquets;
     const restaurant_title: string = location.state?.restaurant_title;
     const workTime: IWorkTime[] = location.state?.workTime;
     const additional_options: IBanquetAdditionalOptions[] = location.state?.additional_options;
@@ -74,7 +75,16 @@ export const BanquetOptionPage = () => {
     const closeTimeFromPopup = () => setTimeFromPopup(false);
     const closeTimeToPopup = () => setTimeToPopup(false);
     const goBack = () => {
-        navigate(-1);
+        console.log('Back: ', {
+            restaurant_title,
+            workTime,
+            banquets,
+        })
+        navigate(`/banquets/${id}/choose`, { state: {
+                restaurant_title,
+                workTime,
+                banquets,
+            }});
     };
 
     const handleReasonSelect = (reason: string) => {
@@ -118,21 +128,36 @@ export const BanquetOptionPage = () => {
         };
         if (banquetData.additionalOptions && banquetData.additionalOptions.length > 0) {
             navigate(`/banquets/${id}/additional-services`, {
-                state: banquetData,
+                state: { banquetData, banquet, workTime, banquets, restaurant_title, additional_options },
             });
         } else {
             navigate(`/banquets/${id}/reservation`, {
-                state: banquetData,
+                state: { banquetData, banquet, workTime, banquets, restaurant_title, reservationData: { ...banquetData } },
             });
         }
     };
-
     useEffect(() => {
         if (!banquet) {
             navigate('/');
         }
     }, [banquet, navigate]);
 
+    useEffect(() => {
+        const banquetData = location.state?.banquetData;
+        if (banquetData) {
+            setDate(new Date(banquetData.date));
+            setTimeFrom({
+                value: banquetData.timeFrom,
+                title: banquetData.timeFrom,
+            });
+            setTimeTo({
+                value: banquetData.timeTo,
+                title: banquetData.timeTo,
+            });
+            setGuestCount(banquetData.guestCount);
+            handleReasonSelect(banquetData.reason);
+        }
+    },[location.state]);
 
     const subtractOneHour = (timeString: string) => {
         return moment(timeString, 'HH:mm').subtract(1, 'hour').format('HH:mm');
@@ -154,7 +179,7 @@ export const BanquetOptionPage = () => {
           // Compute the limit to banquet start time: timeTo - max_duration
           const minStart = moment(timeTo.value, 'HH:mm').subtract(max_duration, 'hours').format('HH:mm');
           const minStartIsTheDayBefore = moment(minStart, 'HH:mm').isAfter(moment(timeTo.value, 'HH:mm')) || moment(timeTo.value, 'HH:mm').isAfter(moment(dayEnd, 'HH:mm'));
-          
+
           // Check that restaurant closed before midnight
           if (moment(dayEnd, 'HH:mm').isAfter(moment(dayStart, 'HH:mm'))) {
             if (!minStartIsTheDayBefore) {
@@ -199,7 +224,7 @@ export const BanquetOptionPage = () => {
           // Compute the limit to banquet end time: timeFrom + max_duration
           const maxEnd = moment(timeFrom.value, 'HH:mm').add(max_duration, 'hours').format('HH:mm');
           const maxEndIsAfterMidnight = moment(maxEnd, 'HH:mm').isBefore(moment(timeFrom.value, 'HH:mm')) || moment(timeFrom.value, 'HH:mm').isBefore(moment(dayStart, 'HH:mm'));
-                    
+
           // Check that restaurant closed before midnight
           if (moment(dayStart, 'HH:mm').isBefore(moment(dayEnd, 'HH:mm'))) {
             if (!maxEndIsAfterMidnight) {
@@ -217,7 +242,7 @@ export const BanquetOptionPage = () => {
               // Both maxEnd and dayEnd are after midnight
               return moment.min(moment(maxEnd, 'HH:mm'), moment(dayEnd, 'HH:mm')).format('HH:mm');
             }
-          } 
+          }
         }
         // if max_duration is not set, return the end of working day
         return dayEnd;
@@ -333,7 +358,7 @@ export const BanquetOptionPage = () => {
                                             Количество гостей
                                         </span>
                                     ) : (
-                                        <span>{guestCount.title}</span>
+                                        <span>{guestCount?.title}</span>
                                     )}
                                 </div>
                                 <div className={css.reasonContainer}>
