@@ -28,8 +28,6 @@ export const BanquetAdditionalServicesPage = () => {
         });
     };
 
-    console.log('{ ...location.state }: ', banquetData)
-
     const goBack = () => {
         navigate(`/banquets/${id}/option`, { state: { ...location.state } });
     }

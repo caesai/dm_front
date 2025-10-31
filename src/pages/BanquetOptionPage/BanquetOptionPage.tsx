@@ -152,7 +152,7 @@ export const BanquetOptionPage = () => {
             setGuestCount(banquetData.guestCount);
             handleReasonSelect(banquetData.reason);
         }
-    },[location.state]);
+    }, [location.state]);
 
     const subtractOneHour = (timeString: string) => {
         return moment(timeString, 'HH:mm').subtract(1, 'hour').format('HH:mm');
