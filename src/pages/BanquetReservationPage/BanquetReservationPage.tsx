@@ -53,17 +53,17 @@ export const BanquetReservationPage = () => {
     });
 
     const goBack = () => {
-        navigate(-1);
+        navigate(`/banquets/${id}/option`, { state: { ...location.state } });
     }
-
     const formattedDate = new Date(date).toLocaleDateString('ru-RU')
     const formatNumber = (number: string) => {
         return number[0] === '7' ?  `+ ${number}` : number
     }
 
     const services = selectedServices.length > 0
-        ? selectedServices.join(', ')
+        ? selectedServices.map((service: string, index: number) => index !== 0 ? service.toLowerCase() : service).join(', ')
         : 'Не выбраны';
+
     const createBooking = () => {
         if (!auth?.access_token) return;
         APIPostBanquetRequest(auth?.access_token, {
@@ -111,7 +111,7 @@ export const BanquetReservationPage = () => {
                                     </div>
                                     <div>
                                         <span>Гости</span>
-                                        <span>{guestCount.title}</span>
+                                        <span>{guestCount?.title}</span>
                                     </div>
                                 </div>
                                 <div className={css.info__right}>
@@ -167,19 +167,19 @@ export const BanquetReservationPage = () => {
                         <div className={css.price}>
                             <div>
                                 <span>Депозит за человека:</span>
-                                <span>{price.deposit} ₽</span>
+                                <span>{price?.deposit} ₽</span>
                             </div>
                             <div>
                                 <span>Депозит итого:</span>
-                                <span>{price.totalDeposit} ₽</span>
+                                <span>{price?.totalDeposit} ₽</span>
                             </div>
                             <div>
                                 <span>Сервисный сбор:</span>
-                                <span>{price.serviceFee}%</span>
+                                <span>{price?.serviceFee}%</span>
                             </div>
                             <div>
                                 <span>Итого:</span>
-                                <span>{price.total} ₽</span>
+                                <span>{price?.total} ₽</span>
                             </div>
                             <p>
                                 *Окончательная стоимость банкета будет

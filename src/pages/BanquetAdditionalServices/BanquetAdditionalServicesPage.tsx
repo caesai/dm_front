@@ -14,7 +14,7 @@ export const BanquetAdditionalServicesPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const {id} = useParams();
-    const banquetData = location.state;
+    const banquetData = location.state.banquetData;
     const options: IBanquetAdditionalOptions[] = banquetData.additionalOptions;
     const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
@@ -29,7 +29,7 @@ export const BanquetAdditionalServicesPage = () => {
     };
 
     const goBack = () => {
-        navigate(-1);
+        navigate(`/banquets/${id}/option`, { state: { ...location.state } });
     }
 
     const goNext = () => {
@@ -38,7 +38,7 @@ export const BanquetAdditionalServicesPage = () => {
             selectedServices
         };
 
-        navigate(`/banquets/${id}/reservation`, {state: {reservationData}});
+        navigate(`/banquets/${id}/reservation`, {state: { ...location.state, reservationData}});
     }
 
     useEffect(() => {
