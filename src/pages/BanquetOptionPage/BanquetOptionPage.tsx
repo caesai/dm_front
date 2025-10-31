@@ -75,11 +75,6 @@ export const BanquetOptionPage = () => {
     const closeTimeFromPopup = () => setTimeFromPopup(false);
     const closeTimeToPopup = () => setTimeToPopup(false);
     const goBack = () => {
-        console.log('Back: ', {
-            restaurant_title,
-            workTime,
-            banquets,
-        })
         navigate(`/banquets/${id}/choose`, { state: {
                 restaurant_title,
                 workTime,
