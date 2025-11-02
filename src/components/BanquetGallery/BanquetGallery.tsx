@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import css from './BanquetGallery.module.css';
 import styled from 'styled-components';
 import Popup from 'reactjs-popup';
@@ -10,6 +10,7 @@ interface IBanquetGalleryProps {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
     images: string[];
+    currentIndex: number;
 }
 
 const StyledPopup = styled(Popup)`
@@ -25,7 +26,7 @@ const StyledPopup = styled(Popup)`
 `;
 
 const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
-    const [currentImage, setCurrentImage] = useState(0);
+    const [currentImage, setCurrentImage] = useState(p.currentIndex);
 
     const onClose = () => {
         p.setOpen(false)
@@ -51,6 +52,10 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
             }
         });
     };
+
+    useEffect(() => {
+        setCurrentImage(p.currentIndex);
+    }, [p.currentIndex, p.isOpen]);
 
     return (
         <StyledPopup
