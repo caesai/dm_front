@@ -96,7 +96,7 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
                 css.active,
                 isSelected ? css.current : '',
                 isPast ? css.disabled : '',
-                isWeekend(fullDate) ? css.disabled : '',
+                (isWeekend(fullDate) && isDisabledWeekend) ? css.disabled : '',
             ]
                 .filter(Boolean)
                 .join(' ');
