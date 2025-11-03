@@ -53,6 +53,7 @@ import { CertificatesCreateOnePage } from '@/pages/CertificatesCreatePage/stages
 import { CertificatesCreateTwoPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateTwoPage.tsx';
 import { CertificatesCreateOnlinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOnlinePage.tsx';
 import { CertificatesListPage } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
+import { CertificatesCreateOfflinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOfflinePage.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -174,6 +175,7 @@ const AppRouter = () => {
                         <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
                         <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
                         <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
+                        <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
                         <Route path={'/certificates/my'} element={<CertificatesListPage />} />
                     </Route>
 

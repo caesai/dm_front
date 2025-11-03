@@ -44,10 +44,16 @@
     width: 100%;
     z-index: 100;
 }
+.relativeBottom {
+    position: relative !important;
+    bottom: 0 !important;
+}
 
 .bottomWrapper {
     padding: 0 15px;
     display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .certificateOption {
@@ -58,23 +64,23 @@
     border-radius: 12px;
     background-color: white;
     font-family: 'Mont', sans-serif;
-
-    span {
-        color: var(--dark-grey);
-    }
+    color: var(--dark-grey);
 }
 
 .certificateExample {
     position: relative;
     display: flex;
     flex-direction: column;
-    background-image: url('/img/cert.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
+    background-color: #FCC200;
+    border-radius: 12px;
+    padding: 16px;
+    /*background-image: url('/img/cert.png');*/
+    /*background-repeat: no-repeat;*/
+    /*background-position: center;*/
+    /*background-size: contain;*/
     width: 100%;
     height: 200px;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -83,15 +89,20 @@
     font-weight: bold;
     font-size: 20px;
     color: #3B3C40;
+    text-align: center;
+}
+
+.complimentOffline {
+    font-size: 37px;
 }
 
 .certificateBottom {
-    position: absolute;
-    bottom: 30px;
+    /*position: absolute;*/
+    /*bottom: 30px;*/
     display: flex;
     gap: 20px;
     font-family: 'Mont', sans-serif;
-    justify-content: space-evenly;
+    justify-content: space-between;
     width: 100%;
 
     span {
@@ -102,6 +113,7 @@
     div {
         display: flex;
         flex-direction: column;
+        flex-basis: 18%;
     }
 }
 
@@ -122,10 +134,11 @@
     background-color: var(--secondary-background);
     cursor: pointer;
     align-items: center;
+    border: 1px solid transparent;
 }
 
 .ratingActive {
-    border: 1px solid var(--black);
+    border-color: var(--black);
 }
 
 .fields {
@@ -144,7 +157,7 @@
 .animatedImageOne {
     position: absolute;
     top: 0;
-    right: 0;
+    right: -15px;
     transform: translate(100%, 0);
     animation-name: slide-in-center;
     animation-duration: 2s;
@@ -155,7 +168,7 @@
 .animatedImageTwo {
     position: absolute;
     top: 30%;
-    left: 0;
+    left: -15px;
     animation-name: slide-in-center-2;
     animation-duration: 2s;
     animation-timing-function: ease-out;

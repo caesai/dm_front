@@ -31,6 +31,7 @@ export const UniversalButton: FC<UniversalButtonProps> = (p) => {
                 </Link>
             ) : (
                 <div
+                    role={'button'}
                     className={classNames(
                         css.universalButton,
                         p.theme == 'red' ? css.redTheme : null,

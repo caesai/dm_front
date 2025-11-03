@@ -27,6 +27,7 @@ export const TextInput: FC<ITextInput> = (p) => {
                 p.validation_failed ? css.failed : null
             )}
             ref={inputRef}
+            role={'textbox'}
         />
     );
 };
