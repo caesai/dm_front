@@ -412,7 +412,7 @@ export const BanquetOptionPage = () => {
                                         Предварительная стоимость*:
                                     </span>
                                     <div className={css.payment_text}>
-                                        <span>Депозит за человека:</span>
+                                        <span>Депозит на человека:</span>
                                         <span>
                                             {
                                                 banquet?.deposit
