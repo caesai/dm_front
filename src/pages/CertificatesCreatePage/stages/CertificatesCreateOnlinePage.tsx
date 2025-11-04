@@ -75,7 +75,7 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
         <div className={css.content}>
             <div className={css.certificateExample}>
                 <div className={css.certificateLogo}>
-                    <img src={logo} alt={'DreamTeam'} />
+                    <img src={String(logo)} alt={'DreamTeam'} />
                 </div>
                 <div>
                     <span className={css.compliment}>

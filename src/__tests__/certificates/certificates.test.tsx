@@ -36,7 +36,7 @@ describe('CertificatesCreateOnlinePage', () => {
         render(<CertificatesCreateOnlinePage />);
 
         // Check for initial placeholder text in the display area
-        expect(screen.getByText('Ваше поздравление')).toBeInTheDocument();
+        expect(screen.getByText('Добавьте приятных слов к подарку')).toBeInTheDocument();
         expect(screen.getByText('Имя')).toBeInTheDocument();
         expect(screen.getByText('Номинал')).toBeInTheDocument(); // Initial nominal should be empty or a specific placeholder
 
