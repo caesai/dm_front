@@ -64,7 +64,7 @@ import {
     timeslotAtom,
 } from '@/atoms/bookingInfoAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
+import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { IEventInRestaurant } from '@/types/events.ts';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { Share } from '@/components/Icons/Share.tsx';
@@ -151,9 +151,9 @@ export const Restaurant = () => {
 
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
-            navigate('/onboarding/3', { state: { id, date: bookingDate, time: currentSelectedTime, sharedRestaurant: true } });
+            navigate('/onboarding/3', { state: { id, bookedDate: bookingDate, bookedTime: currentSelectedTime, sharedRestaurant: true } });
         } else {
-            navigate(`/restaurant/${id}/booking`);
+            navigate(`/restaurant/${id}/booking`, { state: { bookedDate: bookingDate, bookedTime: currentSelectedTime } });
         }
     };
 
@@ -436,11 +436,11 @@ const BookingBlock: React.FC<BookingBlockProps> = (
 
     return (
         <ContentContainer>
-            <BookingDateSelectorPopup
+            <DateListSelector
                 isOpen={bookingDatePopup}
                 setOpen={setBookingDatePopup}
-                bookingDate={bookingDate}
-                setBookingDate={setBookingDate}
+                date={bookingDate}
+                setDate={setBookingDate}
                 values={bookingDates}
             />
             <ContentBlock id={'booking'}>

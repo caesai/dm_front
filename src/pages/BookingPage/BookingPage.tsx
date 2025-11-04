@@ -21,7 +21,7 @@ import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
+import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
@@ -165,11 +165,11 @@ export const BookingPage: FC = () => {
                 maxGuestsNumber={getGuestMaxNumber(String(restaurant.value))}
                 serviceFeeMessage={getServiceFeeData(String(restaurant.value))}
             />
-            <BookingDateSelectorPopup
+            <DateListSelector
                 isOpen={bookingDatePopup}
                 setOpen={setBookingDatePopup}
-                bookingDate={date}
-                setBookingDate={setDate}
+                date={date}
+                setDate={setDate}
                 values={availableDates}
             />
             <RestaurantsListSelector

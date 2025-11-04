@@ -12,6 +12,10 @@ import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import { useAtom } from 'jotai/index';
 import { bookingRestaurantAtom } from '@/atoms/restaurantsListAtom.ts';
+import { formatDateShort } from '@/utils.ts';
+import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 
 const ratings = [
     '3 000',
@@ -25,10 +29,14 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
 
     const [restaurant, setRestaurant] = useAtom(bookingRestaurantAtom);
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
-
+    const [date, setDate] = useState<PickerValueObj>({
+        title: 'unset',
+        value: 'unset',
+    });
     // const [compliment, setCompliment] = useState<string>('');
     const [rating, setRating] = useState<string>('');
     const [isReady, setIsReady] = useState(false);
+    const [datePopup, setDatePopup] = useState(false);
     // Use state to manage the button's position style declaratively
     // const [isInputFocused, setIsInputFocused] = useState(false);
 
@@ -84,6 +92,13 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
 
     return (
         <div className={css.content}>
+            <DateListSelector
+                isOpen={datePopup}
+                setOpen={setDatePopup}
+                date={date}
+                setDate={setDate}
+                values={[]}
+            />
             <RestaurantsListSelector
                 isOpen={restaurantListSelectorIsOpen}
                 setOpen={setRestaurantListSelectorIsOpen}
@@ -133,7 +148,19 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
                     icon={<KitchenIcon size={24} />}
                     onClick={() => {
                         setRestaurantListSelectorIsOpen(true);
-                    }} isValid={true}                />
+                    }} isValid={true}
+                />
+                <DropDownSelect
+                    title={date.value !== 'unset' ? formatDateShort(
+                        date.value
+                    ) : 'Когда заберете сертификат?'}
+                    isValid={true}
+
+                    icon={<CalendarIcon size={24}/>}
+                    onClick={() =>
+                        setDatePopup(true)
+                    }
+                />
                 {/*<TextInput*/}
                 {/*    value={name}*/}
                 {/*    onChange={handleNameChange}*/}

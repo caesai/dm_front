@@ -26,7 +26,7 @@ import {
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
+import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import {
     APICreateBooking,
@@ -69,7 +69,6 @@ export const BookingRestaurantPage: FC = () => {
     const [user] = useAtom(userAtom);
     const [comms] = useAtom(commAtom)
     const [restaurants] = useAtom(restaurantsListAtom);
-    ;
     const [guestCount, setGuestCount] = useState(0);
     const [childrenCount, setChildrenCount] = useState(0);
     const [date, setDate] = useState<PickerValueObj>({
@@ -134,9 +133,9 @@ export const BookingRestaurantPage: FC = () => {
 
     useEffect(() => {
         if (state) {
-            const { date, time } = state;
-            setDate(date);
-            setCurrentSelectedTime(time);
+            const { bookedDate, bookedTime } = state;
+            setDate(bookedDate);
+            setCurrentSelectedTime(bookedTime);
         }
     },[state]);
 
@@ -221,11 +220,11 @@ export const BookingRestaurantPage: FC = () => {
                 maxGuestsNumber={getGuestMaxNumber(String(restaurant.value))}
                 serviceFeeMessage={getServiceFeeData(String(restaurant.value))}
             />
-            <BookingDateSelectorPopup
+            <DateListSelector
                 isOpen={bookingDatePopup}
                 setOpen={setBookingDatePopup}
-                bookingDate={date}
-                setBookingDate={setDate}
+                date={date}
+                setDate={setDate}
                 values={availableDates}
             />
             <div className={css.page}>

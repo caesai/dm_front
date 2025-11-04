@@ -27,7 +27,7 @@ import {
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
+import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import {
     APICreateBooking,
@@ -204,11 +204,11 @@ export const BookingFreeEventPage: FC = () => {
                 maxGuestsNumber={getGuestMaxNumber(String(id))}
                 serviceFeeMessage={getServiceFeeData(String(id))}
             />
-            <BookingDateSelectorPopup
+            <DateListSelector
                 isOpen={bookingDatePopup}
                 setOpen={setBookingDatePopup}
-                bookingDate={date}
-                setBookingDate={setDate}
+                date={date}
+                setDate={setDate}
                 values={availableDates}
             />
             <div className={css.page}>
