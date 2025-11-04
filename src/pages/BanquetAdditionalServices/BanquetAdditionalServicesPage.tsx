@@ -52,7 +52,6 @@ export const BanquetAdditionalServicesPage = () => {
         }
     }, [options, banquetData]);
 
-    console.log(services)
     return (
         <Page back={true}>
             <div className={css.page}>
