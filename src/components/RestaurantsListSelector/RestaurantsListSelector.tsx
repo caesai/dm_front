@@ -1,5 +1,5 @@
 import Popup from 'reactjs-popup';
-import { FC, SetStateAction, useEffect, useCallback, useMemo } from 'react';
+import { FC, SetStateAction, useCallback, useMemo } from 'react';
 import Picker from '@/lib/react-mobile-picker';
 import styled from 'styled-components';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
@@ -76,12 +76,12 @@ export const RestaurantsListSelector: FC<RestaurantsListSelectorProps> = (
     }, [selectRestaurant, restaurantList]); // Depend on restaurantList
 
     // Set default selection logic when the popup opens
-    useEffect(() => {
-        // Check if we have values, if the popup is open, and if a value hasn't been set yet (using a reliable 'unset' check)
-        if (restaurant?.value === 'unset') {
-            selectRestaurant(restaurantList[0]);
-        }
-    }, [isOpen, restaurantList, restaurant, selectRestaurant]);
+    // useEffect(() => {
+    //     // Check if we have values, if the popup is open, and if a value hasn't been set yet (using a reliable 'unset' check)
+    //     if (restaurant?.value === 'unset') {
+    //         selectRestaurant(restaurantList[0]);
+    //     }
+    // }, [isOpen, restaurantList, restaurant, selectRestaurant]);
     // Memoize the picker UI part if values are loaded
     const picker = useMemo(() => (
         <>

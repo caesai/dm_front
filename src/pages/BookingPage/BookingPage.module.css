@@ -233,6 +233,18 @@
     border-color: var(--black);
 }
 
+.preorder {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Mont', sans-serif;
+    font-size: 14px;
+    label {
+        width: 100%;
+        padding: 12px;
+    }
+}
+
 .commentary_options {
     width: 100%;
 }

@@ -54,6 +54,8 @@ import { CertificatesCreateTwoPage } from '@/pages/CertificatesCreatePage/stages
 import { CertificatesCreateOnlinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOnlinePage.tsx';
 import { CertificatesListPage } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
 import { CertificatesCreateOfflinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOfflinePage.tsx';
+import { BookingRestaurantPage } from '@/pages/BookingRestaurantPage/BookingRestaurantPage.tsx';
+import { BookingFreeEventPage } from '@/pages/BookingFreeEventPage/BookingFreeEventPage.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -131,6 +133,7 @@ const AppRouter = () => {
                             element={<EventSuperApplyOutlet />}
                         />
                     </Route>
+                    <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
                     <Route path={'/tickets'} element={<UserTicketsPage />} />
                     <Route path={'/tickets/:id'} element={<TicketInfoPage />} />
                     <Route path={'/myBookings'} element={<MyBookingsPage />} />
@@ -139,6 +142,7 @@ const AppRouter = () => {
                         element={<BookingInfoPage />}
                     />
                     <Route path={'/restaurant/:id'} element={<Restaurant />} />
+                    <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
                     <Route path={'/newrestaurant'} element={<NewRestaurant />} />
                     <Route path={'/booking'} element={<BookingPage />} />
                     <Route

@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
+import { getTimeShort } from '@/utils.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-import { getTimeShort } from '@/utils.ts';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import classNames from 'classnames';
 import css from '@/pages/BookingPage/BookingPage.module.css';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+// import { BASE_BOT } from '@/api/base.ts';
 
 // Define the type for the part of the day
 type PartOfDay = 'morning' | 'day' | 'evening';
@@ -147,6 +149,16 @@ export const TimeSlots: React.FC<TimeSlotProps> = ({ loading, availableTimeslots
     // Check if there are any slots at all
     const hasAnyTimeSlots = availableTimeslots.length > 0;
 
+    const hideApp = () => {
+        // window.location.href = "tg:resolve";
+        if (window.Telegram.WebApp) {
+            // window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(bookingRestaurant.value)}`
+            window.Telegram.WebApp.close();
+        } else {
+            // window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${Number(bookingRestaurant.value)}`
+        }
+    }
+
     return (
         <ContentContainer>
             <div className={css.timeOfDayContainer}>
@@ -196,6 +208,11 @@ export const TimeSlots: React.FC<TimeSlotProps> = ({ loading, availableTimeslots
                         )}
                     </div>
                 )}
+                <UniversalButton
+                    action={hideApp}
+                    width={'full'}
+                    title={'Не нашли стол на желаемую дату и время?'}
+                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />
             </div>
         </ContentContainer>
     );

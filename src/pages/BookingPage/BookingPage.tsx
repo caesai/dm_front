@@ -1,39 +1,37 @@
-import {FC, useEffect, useMemo, useRef, useState} from 'react';
-import css from './BookingPage.module.css';
+import {FC, useEffect, useRef, useState} from 'react';
+import { useAtom } from 'jotai';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { commAtom } from '@/atoms/bookingCommAtom.ts';
+import { APICreateBooking, APIGetAvailableDays, APIGetAvailableTimeSlots } from '@/api/restaurants.ts';
+import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
+import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { Page } from '@/components/Page.tsx';
 import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { useNavigate } from 'react-router-dom';
-import classNames from 'classnames';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
 import { BookingGuestCountSelectorPopup } from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { BookingDateSelectorPopup } from '@/components/BookingDateSelectorPopup/BookingDateSelectorPopup.tsx';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { APICreateBooking, APIGetAvailableDays, APIGetAvailableTimeSlots } from '@/api/restaurants.ts';
-import { useAtom } from 'jotai';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { commAtom } from '@/atoms/bookingCommAtom.ts';
-import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
-import { childrenCountAtom, guestCountAtom} from "@/atoms/eventBookingAtom.ts";
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
-import { bookingRestaurantAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
+import classNames from 'classnames';
+import css from './BookingPage.module.css';
+import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -55,26 +53,28 @@ export const BookingPage: FC = () => {
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [comms] = useAtom(commAtom);
-    const [guestCount, setGuestCount] = useAtom(guestCountAtom);
-    const [childrenCount, setChildrenCount] = useAtom(childrenCountAtom);
-    const [date, setDate] = useAtom(bookingDateAtom);
-    const [currentSelectedTime, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
-    const [restaurant, setRestaurant] = useAtom(bookingRestaurantAtom);
-    const [guestCountPopup, setGuestCountPopup] = useState(false);
-    const [bookingDatePopup, setBookingDatePopup] = useState(false);
-    const [bookingRestaurantPopup, setBookingRestaurantPopup] = useState(false);
-    const [timeslotsLoading, setTimeslotsLoading] = useState(true);
+    const [guestCount, setGuestCount] = useState(0);
+    const [childrenCount, setChildrenCount] = useState(0);
+    const [date, setDate] = useState<PickerValueObj>({
+        title: 'unset',
+        value: 'unset',
+    });
+    const [currentSelectedTime, setCurrentSelectedTime] = useState<ITimeSlot | null>(null);
+    const [restaurant, setRestaurant] = useState<PickerValueObj>({
+        title: 'unset',
+        value: 'unset',
+    });
     const [userName, setUserName] = useState<string>(user?.first_name ? user.first_name : '');
     const [userPhone, setUserPhone] = useState<string>(user?.phone_number ? user.phone_number : '');
     const [userEmail] = useState<string>(user?.email ? user.email : '');
     const [commentary, setCommentary] = useState('');
     const [confirmation, setConfirmation] = useState<IConfirmationType>(confirmationList[0]);
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
-    const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
-    const [phoneValidated, setPhoneValidated] = useState(true);
-    const [nameValidated, setNameValidated] = useState(true);
-    const [dateValidated, setDateValidated] = useState(true);
-    const [guestsValidated, setGuestsValidated] = useState(true);
+    const [availableDates, setAvailableDates] = useState<PickerValueObj[]>([]);
+    const [guestCountPopup, setGuestCountPopup] = useState(false);
+    const [bookingDatePopup, setBookingDatePopup] = useState(false);
+    const [bookingRestaurantPopup, setBookingRestaurantPopup] = useState(false);
+    const [timeslotsLoading, setTimeslotsLoading] = useState(true);
     const [requestLoading, setRequestLoading] = useState(false);
     const [errorPopup, setErrorPopup] = useState(false);
     const [botError, setBotError] = useState(false);
@@ -85,7 +85,7 @@ export const BookingPage: FC = () => {
         auth?.access_token && restaurant.value !== 'unset'
             ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1).then(
                   (res) =>
-                      setBookingDates(
+                      setAvailableDates(
                           res.data.map((v) => ({
                               title: formatDate(v),
                               value: v,
@@ -106,30 +106,18 @@ export const BookingPage: FC = () => {
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount, restaurant]);
-    const nameValidate = useMemo(() => Boolean(userName?.trim().length), [userName]);
-    const phoneValidate = useMemo(() => Boolean(userPhone.trim().match('^\\+?[78][-\\(]?\\d{3}\\)?-?\\d{3}-?\\d{2}-?\\d{2}$')), [userPhone]);
-    const timeslotValidate = useMemo(() => !!currentSelectedTime, [currentSelectedTime]);
-    const guestsValidate = useMemo(() => !!guestCount, [guestCount]);
-    const validateFormMemo = useMemo(() => [nameValidate, phoneValidate, currentSelectedTime, guestCount].every(Boolean),[nameValidate, phoneValidate, currentSelectedTime, guestCount]);
-    const validateForm = () => {
-        if (!nameValidate) {
-            setNameValidated(false);
-            setTimeout(() => setNameValidated(true), 5000);
-        }
-        if (!phoneValidate) {
-            setPhoneValidated(false);
-            setTimeout(() => setPhoneValidated(true), 5000);
-        }
-        if (!timeslotValidate) {
-            setDateValidated(false);
-            setTimeout(() => setDateValidated(true), 5000);
-        }
-        if (!guestsValidate) {
-            setGuestsValidated(false);
-            setTimeout(() => setGuestsValidated(true), 5000);
-        }
-        return validateFormMemo;
-    };
+    // 2. States specifically for controlling the temporary *error display* in the UI (start as true/validated)
+    const [nameValidatedDisplay, setNameValidated] = useState(true);
+    const [phoneValidatedDisplay, setPhoneValidated] = useState(true);
+    const [dateValidatedDisplay, setDateValidated] = useState(true);
+    const [, setSelectedTimeValidated] = useState(true);
+    const [guestsValidatedDisplay, setGuestsValidated] = useState(true);
+    const { isFormValid, validateForm  } = useBookingFormValidation(
+        // Pass the raw values
+        { userName, userPhone, currentSelectedTime, guestCount, date },
+        // Pass the setters for the *display* states
+        { setNameValidated, setPhoneValidated, setDateValidated, setGuestsValidated, setSelectedTimeValidated }
+    );
     const createBooking = () => {
         if (!user?.complete_onboarding) {
             navigate('/onboarding/3', { state: { id: Number(restaurant.value), date, time: currentSelectedTime, sharedRestaurant: true } });
@@ -182,7 +170,7 @@ export const BookingPage: FC = () => {
                 setOpen={setBookingDatePopup}
                 bookingDate={date}
                 setBookingDate={setDate}
-                values={bookingDates}
+                values={availableDates}
             />
             <RestaurantsListSelector
                 isOpen={bookingRestaurantPopup}
@@ -211,21 +199,21 @@ export const BookingPage: FC = () => {
                             <div className={css.header_bottom}>
                                 <DropDownSelect
                                     title={restaurant.value !== 'unset'? restaurant?.title : 'Ресторан'}
-                                    isValid={dateValidated}
+                                    isValid={dateValidatedDisplay}
                                     icon={<KitchenIcon size={24}/>}
                                     onClick={() => setBookingRestaurantPopup(true)}
                                 />
                                 <div className={classNames(css.header__selector)}>
                                     <DropDownSelect
                                         title={date.value !== 'unset' ? formatDateShort(date.value) : 'Дата'}
-                                        isValid={dateValidated}
+                                        isValid={dateValidatedDisplay}
 
                                         icon={<CalendarIcon size={24}/>}
                                         onClick={() =>setBookingDatePopup(true)}
                                     />
                                     <DropDownSelect
                                         title={guestCount ? getGuestsString(guestCount + childrenCount) : 'Гости'}
-                                        isValid={guestsValidated}
+                                        isValid={guestsValidatedDisplay}
                                         icon={<UsersIcon size={24}/>}
                                         onClick={() => setGuestCountPopup(!guestCountPopup)}
                                     />
@@ -254,13 +242,13 @@ export const BookingPage: FC = () => {
                                 value={userName}
                                 onChange={setUserName}
                                 placeholder={'Имя'}
-                                validation_failed={!nameValidated}
+                                validation_failed={!nameValidatedDisplay}
                             />
                             <TextInput
                                 value={userPhone}
                                 onChange={setUserPhone}
                                 placeholder={'Телефон'}
-                                validation_failed={!phoneValidated}
+                                validation_failed={!phoneValidatedDisplay}
                             />
                         </div>
                     </ContentContainer>
@@ -274,7 +262,7 @@ export const BookingPage: FC = () => {
             </div>
             <BottomButtonWrapper
                 forwardedRef={bookingBtn}
-                isDisabled={validateFormMemo}
+                isDisabled={isFormValid}
                 isLoading={requestLoading}
                 onClick={createBooking}
             />

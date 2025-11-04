@@ -40,7 +40,7 @@ export const BookingWish: React.FC<BookingWishProps> = (
                 <HeaderContent title={'Пожелания к брони'} />
             </HeaderContainer>
             {(guestCount + childrenCount) >= 8 && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <div className={css.preorder}>
                     <CheckBoxInput
                         checked={preOrder}
                         toggle={() => setPreOrder(!preOrder)}
