@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import classnames from 'classnames';
-import logo from '/img/DT_hospitality_logo_eng_black 1.png';
+import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 
 const ratings = ['3 000', '5 000', '10 000'];
 const MAX_NAME_LENGTH = 15;
@@ -12,7 +12,7 @@ const MAX_COMPLIMENT_LENGTH = 30;
 export const CertificatesCreateOnlinePage: React.FC = () => {
     const [name, setName] = useState<string>('');
     const [compliment, setCompliment] = useState<string>('');
-    const [rating, setRating] = useState<string>('');
+    const [rating, setRating] = useState<string>('****');
     const [isInputFocused, setIsInputFocused] = useState(false);
     const [isReady, setIsReady] = useState(false);
 
@@ -62,32 +62,12 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
 
     return (
         <div className={css.content}>
-            <div className={css.certificateExample}>
-                <div className={css.certificateLogo}>
-                    <img src={String(logo)} alt={'DreamTeam'} />
-                </div>
-                <div>
-                    <span className={css.compliment}>
-                        {compliment || 'Добавьте приятных слов к подарку'}
-                    </span>
-                </div>
-                <div className={css.certificateBottom}>
-                    <div>
-                        <span>{name || 'Имя'}</span>
-                        <span>*********</span> {/* This is likely a placeholder for some ID */}
-                    </div>
-                    <div>
-                        <span>Действителен:</span>
-                        {/* The date should ideally be dynamic */}
-                        <span>до 20.11.2025</span>
-                    </div>
-                    <div>
-                        <span>Номинал</span>
-                        <span>{rating }</span>
-                    </div>
-                </div>
-            </div>
-
+            <Certificate
+                placeholder={compliment || 'Добавьте приятных слов к подарку'}
+                date={'20.11.2025'}
+                rating={rating}
+                cardholder={name || 'Имя'}
+            />
             {!isReady && (
                 <div className={css.ratings}>
                     {ratings.map((ratingString) => (

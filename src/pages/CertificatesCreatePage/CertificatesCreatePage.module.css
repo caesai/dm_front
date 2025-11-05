@@ -101,6 +101,10 @@
     font-size: 37px;
 }
 
+.fontSMaller {
+    font-size: 20px;
+}
+
 .certificateBottom {
     /*position: absolute;*/
     /*bottom: 30px;*/

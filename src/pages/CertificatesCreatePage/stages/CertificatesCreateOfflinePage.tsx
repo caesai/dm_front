@@ -1,10 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 // import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 // import { useNavigate } from 'react-router-dom';
-import classnames from 'classnames';
-import logo from '/img/DT_hospitality_logo_eng_black 1.png';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
@@ -12,6 +8,10 @@ import { formatDateShort } from '@/utils.ts';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
+import { Certificate } from '@/components/Certificate/Certificate.tsx';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
+import classnames from 'classnames';
 
 const ratings = [ '3 000', '5 000', '10 000' ];
 
@@ -29,7 +29,7 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
         value: 'unset',
     });
     // const [compliment, setCompliment] = useState<string>('');
-    const [rating, setRating] = useState<string>('');
+    const [rating, setRating] = useState<string>('****');
     const [isReady, setIsReady] = useState(false);
     const [datePopup, setDatePopup] = useState(false);
     // Use state to manage the button's position style declaratively
@@ -100,30 +100,13 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
                 restaurant={restaurant}
                 selectRestaurant={setRestaurant}
             />
-            <div className={css.certificateExample}>
-                <div className={css.certificateLogo}>
-                    <img src={logo} alt={'DreamTeam'} />
-                </div>
-                <div>
-                    <span className={classnames(css.compliment, css.complimentOffline)}>
-                        {rating == '' ? '10 000 ₽' : rating + ' ₽'}
-                    </span>
-                </div>
-                <div className={css.certificateBottom}>
-                    <div>
-                        <span></span>
-                        <span>*********</span>
-                    </div>
-                    <div>
-                        <span>Действителен:</span>
-                        <span>до 20.11.2025</span>
-                    </div>
-                    <div>
-                        <span>Номинал</span>
-                        <span>{rating + ' ₽'}</span>
-                    </div>
-                </div>
-            </div>
+            <Certificate
+                placeholder={rating === '****' ? 'Введите сумму' : rating + ' ₽'}
+                date={'20.11.2025'}
+                rating={rating}
+                cardholder={''}
+                big={rating !== '****'}
+            />
             {!isReady && (
                 <div className={css.ratings}>
                     {ratings.map((ratingString) => (
