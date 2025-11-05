@@ -19,7 +19,6 @@ export const BanquetReservationPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const {id} = useParams();
-
     const [user] = useAtom(userAtom)
     const [auth] = useAtom(authAtom);
     const reservationData = location.state?.reservationData || location.state;
@@ -44,6 +43,7 @@ export const BanquetReservationPage = () => {
         reason,
         selectedServices = [],
         price,
+        withAdditionalPage,
     } = reservationData;
 
     const [commentary, setCommentary] = useState<string>('');
@@ -53,7 +53,12 @@ export const BanquetReservationPage = () => {
     });
 
     const goBack = () => {
-        navigate(`/banquets/${id}/option`, { state: { ...location.state } });
+        if (withAdditionalPage) {
+            navigate(`/banquets/${id}/additional-services`, { state: { ...location.state, selectedServices } });
+        }
+        else {
+            navigate(`/banquets/${id}/option`, { state: { ...location.state } });
+        }
     }
     const formattedDate = new Date(date).toLocaleDateString('ru-RU')
     const formatNumber = (number: string) => {

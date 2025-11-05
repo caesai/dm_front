@@ -43,10 +43,11 @@ export const BanquetOptionPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
-    const banquet: IBanquetOptions = location.state?.banquet;
     const banquets = location.state?.banquets;
-    const restaurant_title: string = location.state?.restaurant_title;
+    const selectedServices = location.state.selectedServices;
     const workTime: IWorkTime[] = location.state?.workTime;
+    const banquet: IBanquetOptions = location.state?.banquet;
+    const restaurant_title: string = location.state?.restaurant_title;
     const additional_options: IBanquetAdditionalOptions[] = location.state?.additional_options;
     const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);
@@ -112,6 +113,7 @@ export const BanquetOptionPage = () => {
             additionalOptions: additional_options,
             restaurant_title,
             reason: finalReason,
+            withAdditionalPage: false,
             price: guestCount.value !== 'unset' ? {
                 deposit: banquet.deposit,
                 totalDeposit: Number(banquet.deposit) * parseInt(guestCount.value),
@@ -123,7 +125,7 @@ export const BanquetOptionPage = () => {
         };
         if (banquetData.additionalOptions && banquetData.additionalOptions.length > 0) {
             navigate(`/banquets/${id}/additional-services`, {
-                state: { banquetData, banquet, workTime, banquets, restaurant_title, additional_options },
+                state: { banquetData, banquet, workTime, banquets, restaurant_title, additional_options, selectedServices },
             });
         } else {
             navigate(`/banquets/${id}/reservation`, {
