@@ -2,16 +2,17 @@ import Popup from 'reactjs-popup';
 import { Dispatch, FC, SetStateAction, useEffect } from 'react';
 import styled from 'styled-components';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
+import css from './DateListSelector.module.css';
 import Picker, { PickerValue } from '@/lib/react-mobile-picker';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { formatDate } from '@/utils.ts';
 import classNames from 'classnames';
-import css from './BookingRestaurantsSelectorPopup.module.css';
 
 interface Props {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
-    bookingRestaurant: PickerValue;
-    setBookingRestaurant: Dispatch<SetStateAction<PickerValueObj>>;
+    date: PickerValue;
+    setDate: Dispatch<SetStateAction<PickerValueObj>>;
     values: PickerValueObj[];
 }
 
@@ -32,33 +33,38 @@ const StyledPopup = styled(Popup)`
     }
 `;
 
-export const BookingRestaurantsSelectorPopup: FC<Props> = ({
+export const DateListSelector: FC<Props> = ({
     isOpen,
     setOpen,
-    bookingRestaurant,
-    setBookingRestaurant,
+    date,
+    setDate,
     values,
 }) => {
     const onClose = () => setOpen(false);
+
     useEffect(() => {
-        if (values.length && isOpen && bookingRestaurant.value == 'unset') {
-            setBookingRestaurant(values[0]);
+        if (values.length && isOpen && date.value == 'unset') {
+            setDate(values[0]);
         }
     }, [isOpen, values]);
-
+    const onChange = (val: PickerValueObj) => {
+        setDate({
+            title: formatDate(val.value),
+            value: val.value
+        });
+    }
     const picker = (
         <>
             <Picker
-                value={bookingRestaurant}
                 // @ts-expect-error broken-lib
-                onChange={setBookingRestaurant}
+                value={date}
+                onChange={onChange}
                 wheelMode="natural"
-                height={200}
-                itemHeight={66}
+                height={120}
             >
                 <Picker.Column name={'value'}>
                     {values.map((option) => (
-                        <Picker.Item key={option.value} value={option} >
+                        <Picker.Item key={option.value} value={option}>
                             {({ selected }) => (
                                 <div className={css.selectorItem}>
                                     <span
@@ -67,10 +73,7 @@ export const BookingRestaurantsSelectorPopup: FC<Props> = ({
                                             selected ? css.item__selected : null
                                         )}
                                     >
-                                        {option.title}
-                                    </span>
-                                    <span>
-                                        {option?.address}
+                                        {formatDate(option.value)}
                                     </span>
                                 </div>
                             )}
@@ -90,7 +93,7 @@ export const BookingRestaurantsSelectorPopup: FC<Props> = ({
         <StyledPopup open={isOpen} onClose={onClose} modal>
             <ContentContainer>
                 <div className={css.content}>
-                    <h3>Выберите ресторан</h3>
+                    <h3>Выберите дату</h3>
 
                     {values.length ? picker : <h3>Загрузка</h3>}
                 </div>

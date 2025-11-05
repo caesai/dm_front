@@ -8,6 +8,10 @@
     cursor: pointer;
 }
 
+.noBackground {
+    background-color: transparent;
+}
+
 .checkbox {
     display: flex;
     align-items: center;

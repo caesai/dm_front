@@ -53,6 +53,9 @@ import { CertificatesCreateOnePage } from '@/pages/CertificatesCreatePage/stages
 import { CertificatesCreateTwoPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateTwoPage.tsx';
 import { CertificatesCreateOnlinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOnlinePage.tsx';
 import { CertificatesListPage } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
+import { CertificatesCreateOfflinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOfflinePage.tsx';
+import { BookingRestaurantPage } from '@/pages/BookingRestaurantPage/BookingRestaurantPage.tsx';
+import { BookingFreeEventPage } from '@/pages/BookingFreeEventPage/BookingFreeEventPage.tsx';
 
 const AppRouter = () => {
     // const [user] = useAtom(userAtom);
@@ -130,6 +133,7 @@ const AppRouter = () => {
                             element={<EventSuperApplyOutlet />}
                         />
                     </Route>
+                    <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
                     <Route path={'/tickets'} element={<UserTicketsPage />} />
                     <Route path={'/tickets/:id'} element={<TicketInfoPage />} />
                     <Route path={'/myBookings'} element={<MyBookingsPage />} />
@@ -138,6 +142,7 @@ const AppRouter = () => {
                         element={<BookingInfoPage />}
                     />
                     <Route path={'/restaurant/:id'} element={<Restaurant />} />
+                    <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
                     <Route path={'/newrestaurant'} element={<NewRestaurant />} />
                     <Route path={'/booking'} element={<BookingPage />} />
                     <Route
@@ -174,6 +179,7 @@ const AppRouter = () => {
                         <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
                         <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
                         <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
+                        <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
                         <Route path={'/certificates/my'} element={<CertificatesListPage />} />
                     </Route>
 

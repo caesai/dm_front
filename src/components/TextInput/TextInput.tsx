@@ -9,6 +9,7 @@ interface ITextInput {
     onFocus?: () => void;
     onBlur?: () => void;
     validation_failed?: boolean;
+    disabled?: boolean;
 }
 
 export const TextInput: FC<ITextInput> = (p) => {
@@ -21,12 +22,14 @@ export const TextInput: FC<ITextInput> = (p) => {
             value={p.value}
             onFocus={p.onFocus}
             onBlur={p.onBlur}
+            disabled={p.disabled}
             onChange={(e) => p.onChange(e.target.value)}
             className={classNames(
                 css.text_input,
                 p.validation_failed ? css.failed : null
             )}
             ref={inputRef}
+            role={'textbox'}
         />
     );
 };
