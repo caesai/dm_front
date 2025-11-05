@@ -26,28 +26,32 @@ export const EventConfirmationOutlet: React.FC = () => {
     };
     const next = () => {
         if (guestCount === 0) return;
+        let sharedState = {};
+        if (bookingInfo.event?.ticket_price === 0) {
+            sharedState = {
+                    eventName: bookingInfo.event.name,
+                    eventId: bookingInfo.event.id,
+                    eventDate: {
+                        title: moment(bookingInfo.event?.date_start).format('YYYY-MM-DD'),
+                        value: moment(bookingInfo.event?.date_start).format('YYYY-MM-DD'),
+                    },
+                    eventTime: {
+                        start_datetime: String(bookingInfo.event?.date_start),
+                        end_datetime: moment(bookingInfo.event?.date_start).add(2, 'hours').toISOString(),
+                        is_free: true,
+                    }
+                };
+        }
         if (user?.complete_onboarding) {
             if (bookingInfo.event?.ticket_price === 0) {
                 navigate('/events/' + bookingInfo.restaurant?.id + '/booking' , {
-                    state: {
-                        eventName: bookingInfo.event.name,
-                        eventId: bookingInfo.event.id,
-                        eventDate: {
-                            title: moment(bookingInfo.event?.date_start).format('YYYY-MM-DD'),
-                            value: moment(bookingInfo.event?.date_start).format('YYYY-MM-DD'),
-                        },
-                        eventTime: {
-                            start_datetime: String(bookingInfo.event?.date_start),
-                            end_datetime: moment(bookingInfo.event?.date_start).add(2, 'hours').toISOString(),
-                            is_free: true,
-                        }
-                    }
+                    state: {...sharedState}
                 });
                 return;
             }
             navigate(`/events/${bookingInfo.event?.id}/confirm`);
         } else {
-            navigate(`/onboarding/3`, { state: { id: bookingInfo.event?.id, sharedEvent: true }});
+            navigate(`/onboarding/3`, { state: { id: bookingInfo.event?.id, sharedEvent: true, ...sharedState }});
         }
     };
     return (

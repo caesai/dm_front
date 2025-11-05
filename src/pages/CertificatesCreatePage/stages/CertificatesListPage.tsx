@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
-import { authAtom } from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { APIGetCertificates } from '@/api/certificates.api.ts';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
@@ -10,6 +10,7 @@ import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.cs
 
 export const CertificatesListPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
+    const [user] = useAtom(userAtom);
 
     // const navigate = useNavigate();
     const selectOption = () => {
@@ -18,7 +19,7 @@ export const CertificatesListPage: React.FC = () => {
 
     useEffect(() => {
         if (auth?.access_token) {
-            APIGetCertificates(auth?.access_token).then();
+            APIGetCertificates(auth?.access_token, Number(user?.id)).then();
         }
     }, []);
     return (

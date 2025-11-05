@@ -247,7 +247,13 @@ export const BookingRestaurantPage: FC = () => {
                                 <div>
                                     <RoundedButton
                                         icon={<CrossIcon size={44} />}
-                                        action={() => navigate(-1)}
+                                        action={() => {
+                                            if (state.sharedRestaurant) {
+                                                navigate('/');
+                                            } else {
+                                                navigate(-1)
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>

@@ -226,7 +226,13 @@ export const BookingFreeEventPage: FC = () => {
                                 <div>
                                     <RoundedButton
                                         icon={<CrossIcon size={44} />}
-                                        action={() => navigate(-1)}
+                                        action={() => {
+                                            if (state.sharedEvent) {
+                                                navigate('/');
+                                            } else {
+                                                navigate(-1);
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>

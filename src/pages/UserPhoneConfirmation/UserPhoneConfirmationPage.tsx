@@ -37,7 +37,7 @@ export const UserPhoneConfirmationPage = () => {
         if (user?.phone_number) {
             if (state) {
                 if (state.sharedEvent) {
-                    navigate(`/events/${state.id}/confirm`, { state });
+                    navigate(`/events/${state.id}/booking`, { state });
                 }
                 if (state.superEvent) {
                     navigate('/events/super', { state });
