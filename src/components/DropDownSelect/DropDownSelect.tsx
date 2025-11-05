@@ -6,19 +6,22 @@ import css from './DropDownSelect.module.css';
 interface DropDownSelectProps {
     title: string;
     onClick?: () => void;
-    isValid: boolean;
+    isValid?: boolean;
     icon?: ReactNode;
     textStyle?: CSSProperties;
+    disabled?: boolean;
 }
 
-export const DropDownSelect: React.FC<DropDownSelectProps> = ({title, onClick, isValid, icon, textStyle}) => {
+export const DropDownSelect: React.FC<DropDownSelectProps> = ({title, onClick, isValid, icon, textStyle, disabled}) => {
     return (
         <div
             className={classNames(
-                css.dropdown,
-                !isValid ? css.invalid : null,
+                css.dropdown, {
+                    [css.disabled]: disabled,
+                    [css.invalid]: !isValid,
+                },
             )}
-            onClick={onClick}
+            onClick={disabled ? undefined : onClick}
         >
             <div
                 className={css.select}

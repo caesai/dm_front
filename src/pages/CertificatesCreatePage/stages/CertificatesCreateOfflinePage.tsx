@@ -5,29 +5,24 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 // import { useNavigate } from 'react-router-dom';
 import classnames from 'classnames';
 import logo from '/img/DT_hospitality_logo_eng_black 1.png';
-import {
-    RestaurantsListSelector
-} from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
+import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
-import { useAtom } from 'jotai/index';
-import { bookingRestaurantAtom } from '@/atoms/restaurantsListAtom.ts';
 import { formatDateShort } from '@/utils.ts';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 
-const ratings = [
-    '3 000',
-    '5 000',
-    '10 000',
-];
+const ratings = [ '3 000', '5 000', '10 000' ];
 
 export const CertificatesCreateOfflinePage: React.FC = () => {
     // const navigate = useNavigate();
     // const [name, setName] = useState<string>('');
 
-    const [restaurant, setRestaurant] = useAtom(bookingRestaurantAtom);
+    const [restaurant, setRestaurant] = useState<PickerValueObj>({
+        title: 'unset',
+        value: 'unset',
+    });
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
     const [date, setDate] = useState<PickerValueObj>({
         title: 'unset',
@@ -155,7 +150,7 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
                         date.value
                     ) : 'Когда заберете сертификат?'}
                     isValid={true}
-
+                    disabled={restaurant.value === 'unset'}
                     icon={<CalendarIcon size={24}/>}
                     onClick={() =>
                         setDatePopup(true)
