@@ -33,6 +33,7 @@ import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import classNames from 'classnames';
 import css from './BookingPage.module.css';
+import { DEV_MODE } from '@/api/base.ts';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -233,7 +234,7 @@ export const BookingPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    <CertificatesSelector />
+                    {DEV_MODE && <CertificatesSelector />}
                     <BookingWish guestCount={guestCount} childrenCount={childrenCount} preOrder={preOrder} setPreOrder={setPreOrder} restaurant={restaurant.value} commentary={commentary} setCommentary={setCommentary} />
                     <ContentContainer>
                         <HeaderContainer>

@@ -4,7 +4,7 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { UnmountClosed } from 'react-collapse';
@@ -68,12 +68,11 @@ import { DateListSelector } from '@/components/DateListSelector/DateListSelector
 import { IEventInRestaurant } from '@/types/events.ts';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { Share } from '@/components/Icons/Share.tsx';
-import { BASE_BOT, DEV_MODE } from '@/api/base.ts';
+import { BASE_BOT } from '@/api/base.ts';
 import moment from 'moment';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { IBanquet } from '@/types/banquets.types.ts';
 import { APIGetBanquetOptions } from '@/api/banquet.api.ts';
-import certificates_link from '/img/certificate_link.png';
 
 export const transformGallery = (
     gallery: IPhotoCard[],
@@ -323,13 +322,6 @@ export const Restaurant = () => {
                         data-point-b={restaurant?.address_lonlng}
                     ></div>
                 </div>
-                {DEV_MODE &&  (
-                    <div>
-                        <Link to={'/certificates/1'}>
-                            <img src={certificates_link} alt={'certificates'} style={{ width: '100%' }} />
-                        </Link>
-                    </div>
-                )}
                 <BookingBlock
                     currentSelectedTime={currentSelectedTime}
                     workTime={restaurant?.worktime}
