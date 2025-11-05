@@ -1,11 +1,11 @@
 import css from './Header.module.css';
 import { IconlyProfile } from '@/components/Icons/Profile.tsx';
-import { IconlyLocation } from '@/components/Icons/Location.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
 import logoNew from "/img/DT_concierge_logo_color1.svg";
+import { GiftIcon } from '@/components/Icons/GiftIcon.tsx';
 
 export const Header = () => {
     const navigate = useNavigate();
@@ -25,8 +25,8 @@ export const Header = () => {
             />
             <div className={css.buttons}>
                 <RoundedButton
-                    icon={<IconlyLocation color={'var(--dark-grey)'} />}
-                    action={() => navigate('/map')}
+                    icon={<GiftIcon color={'var(--dark-grey)'} size={44} />}
+                    action={() => navigate('/certificates/1')}
                 />
                 <RoundedButton
                     icon={<IconlyProfile color={'var(--dark-grey)'} />}
