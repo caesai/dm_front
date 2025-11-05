@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { DatePicker } from '@/components/DatePicker/DateInput.tsx';
 import styled from 'styled-components';
 import { BanquetDatepicker } from '@/components/BanquetDatepicker/BanquetDatepicker.tsx';
+import { IBanquetOptions } from '@/types/banquets.types.ts';
 
 interface ICalendarPopup {
     isOpen: boolean;
@@ -10,7 +11,7 @@ interface ICalendarPopup {
     initialDate?: Date;
     currentDate?: Date;
     setDate: (date: Date) => void;
-    isBanquet?: boolean;
+    banquet?: IBanquetOptions;
 }
 
 const StyledPopup = styled(Popup)`
@@ -32,11 +33,12 @@ export const CalendarPopup: FC<ICalendarPopup> = (p) => {
     return (
         <StyledPopup open={p.isOpen} onClose={onClose}>
             <div>
-                {p.isBanquet ? (
+                {p.banquet ? (
                     <BanquetDatepicker
                         initialDate={p.initialDate}
                         currentDate={p.currentDate}
                         onSelectDate={p.setDate}
+                        banquet={p.banquet}
                     />
                 ) : (
                     <DatePicker

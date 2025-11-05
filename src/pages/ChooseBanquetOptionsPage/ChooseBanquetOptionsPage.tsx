@@ -28,19 +28,21 @@ export const ChooseBanquetOptionsPage = () => {
 
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
     const [currentImages, setCurrentImages] = useState<string[]>([]);
+    const [imageIndex, setImageIndex] = useState<number | null>(null);
 
     const goBack = () => {
-        navigate(-1);
+        navigate(`/restaurant/${id}`);
     };
 
-    const openPopup = (banquet: IBanquetOptions) => {
+    const openPopup = (banquet: IBanquetOptions, index: number) => {
         setOpenPopup(true);
+        setImageIndex(index)
         setCurrentImages(banquet.images);
     };
 
     return (
         <Page back={true}>
-            <BanquetGallery isOpen={isOpenPopup} setOpen={setOpenPopup} images={currentImages} />
+            <BanquetGallery isOpen={isOpenPopup} setOpen={setOpenPopup} images={currentImages} currentIndex={imageIndex!} />
             <div className={css.page}>
                 <div className={css.pageWrapper}>
                     <div className={css.header}>
@@ -68,7 +70,7 @@ export const ChooseBanquetOptionsPage = () => {
                                         >
                                             {banquet.images.map((image, index) => (
                                                 <SwiperSlide className={css.slide} key={index}
-                                                             onClick={() => openPopup(banquet)}>
+                                                             onClick={() => openPopup(banquet, index)}>
                                                     <img src={image} alt={'banquet_img'} />
                                                 </SwiperSlide>
                                             ))}
@@ -98,6 +100,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                                 additional_options: banquets.additional_options,
                                                                 restaurant_title,
                                                                 workTime,
+                                                                banquets,
                                                             },
                                                         })}
                                                     >

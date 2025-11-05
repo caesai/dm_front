@@ -16,6 +16,12 @@
     border-bottom: 1px solid var(--red);
 }
 
+.disabled {
+    span, svg {
+        opacity: 0.2;
+    }
+}
+
 .select {
     display: flex;
     gap: 8px;

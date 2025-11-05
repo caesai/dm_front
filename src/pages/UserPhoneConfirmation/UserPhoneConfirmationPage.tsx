@@ -37,13 +37,13 @@ export const UserPhoneConfirmationPage = () => {
         if (user?.phone_number) {
             if (state) {
                 if (state.sharedEvent) {
-                    navigate(`/events/${state.id}/confirm?shared=true`);
+                    navigate(`/events/${state.id}/booking`, { state });
                 }
                 if (state.superEvent) {
-                    navigate('/events/super?shared=true');
+                    navigate('/events/super', { state });
                 }
                 if (state.sharedRestaurant) {
-                    navigate('/booking?id=' + state.id + '&shared=true', { state });
+                    navigate('/restaurant/' + state.id + '/booking', { state });
                 }
             } else {
                 navigate('/');

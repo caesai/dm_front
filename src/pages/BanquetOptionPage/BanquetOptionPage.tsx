@@ -43,9 +43,11 @@ export const BanquetOptionPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
+    const banquets = location.state?.banquets;
+    const selectedServices = location.state.selectedServices;
+    const workTime: IWorkTime[] = location.state?.workTime;
     const banquet: IBanquetOptions = location.state?.banquet;
     const restaurant_title: string = location.state?.restaurant_title;
-    const workTime: IWorkTime[] = location.state?.workTime;
     const additional_options: IBanquetAdditionalOptions[] = location.state?.additional_options;
     const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);
@@ -74,7 +76,11 @@ export const BanquetOptionPage = () => {
     const closeTimeFromPopup = () => setTimeFromPopup(false);
     const closeTimeToPopup = () => setTimeToPopup(false);
     const goBack = () => {
-        navigate(-1);
+        navigate(`/banquets/${id}/choose`, { state: {
+                restaurant_title,
+                workTime,
+                banquets,
+            }});
     };
 
     const handleReasonSelect = (reason: string) => {
@@ -107,6 +113,7 @@ export const BanquetOptionPage = () => {
             additionalOptions: additional_options,
             restaurant_title,
             reason: finalReason,
+            withAdditionalPage: false,
             price: guestCount.value !== 'unset' ? {
                 deposit: banquet.deposit,
                 totalDeposit: Number(banquet.deposit) * parseInt(guestCount.value),
@@ -118,21 +125,36 @@ export const BanquetOptionPage = () => {
         };
         if (banquetData.additionalOptions && banquetData.additionalOptions.length > 0) {
             navigate(`/banquets/${id}/additional-services`, {
-                state: banquetData,
+                state: { banquetData, banquet, workTime, banquets, restaurant_title, additional_options, selectedServices },
             });
         } else {
             navigate(`/banquets/${id}/reservation`, {
-                state: banquetData,
+                state: { banquetData, banquet, workTime, banquets, restaurant_title, reservationData: { ...banquetData } },
             });
         }
     };
-
     useEffect(() => {
         if (!banquet) {
             navigate('/');
         }
     }, [banquet, navigate]);
 
+    useEffect(() => {
+        const banquetData = location.state?.banquetData;
+        if (banquetData) {
+            setDate(new Date(banquetData.date));
+            setTimeFrom({
+                value: banquetData.timeFrom,
+                title: banquetData.timeFrom,
+            });
+            setTimeTo({
+                value: banquetData.timeTo,
+                title: banquetData.timeTo,
+            });
+            setGuestCount(banquetData.guestCount);
+            handleReasonSelect(banquetData.reason);
+        }
+    }, [location.state]);
 
     const subtractOneHour = (timeString: string) => {
         return moment(timeString, 'HH:mm').subtract(1, 'hour').format('HH:mm');
@@ -140,6 +162,89 @@ export const BanquetOptionPage = () => {
 
     const addOneHour = (timeString: string) => {
         return moment(timeString, 'HH:mm').add(1, 'hour').format('HH:mm');
+    }
+
+    const getMinTimeForStart = () => {
+      if (date) {
+        // Start and end of restaurant working day
+        const dayEnd = workTime[date.getDay()].time_end;
+        const dayStart = workTime[date.getDay()].time_start;
+        const { max_duration } = banquet;
+
+        // If max_duration is set, calculate the most earliest start time
+        if (timeTo && timeTo.value !== 'до' && max_duration && max_duration > 0) {
+          // Compute the limit to banquet start time: timeTo - max_duration
+          const minStart = moment(timeTo.value, 'HH:mm').subtract(max_duration, 'hours').format('HH:mm');
+          const minStartIsTheDayBefore = moment(minStart, 'HH:mm').isAfter(moment(timeTo.value, 'HH:mm')) || moment(timeTo.value, 'HH:mm').isAfter(moment(dayEnd, 'HH:mm'));
+
+          // Check that restaurant closed before midnight
+          if (moment(dayEnd, 'HH:mm').isAfter(moment(dayStart, 'HH:mm'))) {
+            if (!minStartIsTheDayBefore) {
+              // Both minStart and dayStart are in the same day
+              return moment.max(moment(minStart, 'HH:mm'), moment(dayStart, 'HH:mm')).format('HH:mm');
+            } else {
+              // minStart is the day before restaurant is open
+              return moment(dayStart, 'HH:mm').format('HH:mm');
+            }
+          } else { // Restaurant closes after midnight
+            if (!minStartIsTheDayBefore) {
+              // dayStart is the day before minStart
+              return moment(minStart, 'HH:mm').format('HH:mm');
+            } else {
+              // Both minStart and dayStart are in the day before
+              return moment.max(moment(minStart, 'HH:mm'), moment(dayStart, 'HH:mm')).format('HH:mm');
+            }
+          }
+        }
+        return dayStart;
+      }
+      return undefined;
+    }
+
+    const getMaxTimeForStart = () => {
+      return date ? (timeTo.value !== 'до' ? subtractOneHour(timeTo.value) : subtractOneHour(workTime[date.getDay()].time_end)) : undefined
+    }
+
+    const getMinTimeForEnd = () => {
+      return date ? (timeFrom.value !== 'с' ? addOneHour(timeFrom.value) : addOneHour(workTime[date.getDay()].time_start)) : undefined
+    }
+
+    const getMaxTimeForEnd = () => {
+      if (date) {
+        // Start and end of restaurant working day
+        const dayEnd = workTime[date.getDay()].time_end;
+        const dayStart = workTime[date.getDay()].time_start;
+        const { max_duration } = banquet;
+
+        // If max_duration is set, calculate the most latest end time
+        if (timeFrom && timeFrom.value !== 'с' && max_duration && max_duration > 0) {
+          // Compute the limit to banquet end time: timeFrom + max_duration
+          const maxEnd = moment(timeFrom.value, 'HH:mm').add(max_duration, 'hours').format('HH:mm');
+          const maxEndIsAfterMidnight = moment(maxEnd, 'HH:mm').isBefore(moment(timeFrom.value, 'HH:mm')) || moment(timeFrom.value, 'HH:mm').isBefore(moment(dayStart, 'HH:mm'));
+
+          // Check that restaurant closed before midnight
+          if (moment(dayStart, 'HH:mm').isBefore(moment(dayEnd, 'HH:mm'))) {
+            if (!maxEndIsAfterMidnight) {
+              // Both maxEnd and dayEnd are before midnight
+              return moment.min(moment(maxEnd, 'HH:mm'), moment(dayEnd, 'HH:mm')).format('HH:mm');
+            } else {
+              // dayEnd is before midnight, but maxEnd is after
+              return moment(dayEnd, 'HH:mm').format('HH:mm');
+            }
+          } else { // Restaurant closes after midnight
+            if (!maxEndIsAfterMidnight) {
+              // maxEnd is before midnight, but dayEnd is after
+              return moment(maxEnd, 'HH:mm').format('HH:mm');
+            } else {
+              // Both maxEnd and dayEnd are after midnight
+              return moment.min(moment(maxEnd, 'HH:mm'), moment(dayEnd, 'HH:mm')).format('HH:mm');
+            }
+          }
+        }
+        // if max_duration is not set, return the end of working day
+        return dayEnd;
+      }
+      return undefined;
     }
 
     return (
@@ -157,32 +262,20 @@ export const BanquetOptionPage = () => {
                 closePopup={closeTimeFromPopup}
                 time={timeFrom}
                 setTimeOption={setTimeFrom}
-                minTime={date ? workTime[date.getDay()].time_start : undefined}
-                maxTime={
-                    date
-                        ? (timeTo.value !== 'до'
-                            ? subtractOneHour(timeTo.value)
-                            : subtractOneHour(workTime[date.getDay()].time_end))
-                        : undefined
-                }
+                minTime={getMinTimeForStart()}
+                maxTime={getMaxTimeForStart()}
             />
             <TimeSelectorPopup
                 isOpen={!!date && isTimeToPopup}
                 closePopup={closeTimeToPopup}
                 time={timeTo}
                 setTimeOption={setTimeTo}
-                minTime={
-                    date
-                        ? (timeFrom.value !== 'с'
-                            ? addOneHour(timeFrom.value)
-                            : addOneHour(workTime[date.getDay()].time_start))
-                        : undefined
-                }
-                maxTime={date ? workTime[date.getDay()].time_end : undefined}
+                minTime={getMinTimeForEnd()}
+                maxTime={getMaxTimeForEnd()}
             />
             <div className={css.page}>
                 <CalendarPopup
-                    isBanquet
+                    banquet={banquet}
                     isOpen={calendarOpen}
                     setIsOpen={setCalendarOpen}
                     initialDate={new Date()}
@@ -262,7 +355,7 @@ export const BanquetOptionPage = () => {
                                             Количество гостей
                                         </span>
                                     ) : (
-                                        <span>{guestCount.title}</span>
+                                        <span>{guestCount?.title}</span>
                                     )}
                                 </div>
                                 <div className={css.reasonContainer}>
@@ -321,7 +414,7 @@ export const BanquetOptionPage = () => {
                                         Предварительная стоимость*:
                                     </span>
                                     <div className={css.payment_text}>
-                                        <span>Депозит за человека:</span>
+                                        <span>Депозит на человека:</span>
                                         <span>
                                             {
                                                 banquet?.deposit

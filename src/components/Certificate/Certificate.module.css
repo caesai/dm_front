@@ -1,0 +1,48 @@
+
+.certificate {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: #FCC200;
+    border-radius: 12px;
+    padding: 16px;
+    width: 100%;
+    height: 200px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.placeholder {
+    font-family: 'Mont', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    color: #3B3C40;
+    text-align: center;
+}
+
+.bigFont {
+    font-size: 37px;
+}
+
+.fontSMaller {
+    font-size: 20px;
+}
+
+.certificateData {
+    display: flex;
+    gap: 20px;
+    font-family: 'Mont', sans-serif;
+    justify-content: space-between;
+    width: 100%;
+
+    span {
+        color: var(--dark-grey);
+        font-size: 11px;
+    }
+
+    div {
+        display: flex;
+        flex-direction: column;
+        flex-basis: 18%;
+    }
+}
