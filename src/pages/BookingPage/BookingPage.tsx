@@ -29,9 +29,10 @@ import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
+import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
+import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import classNames from 'classnames';
 import css from './BookingPage.module.css';
-import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -232,6 +233,7 @@ export const BookingPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
+                    <CertificatesSelector />
                     <BookingWish guestCount={guestCount} childrenCount={childrenCount} preOrder={preOrder} setPreOrder={setPreOrder} restaurant={restaurant.value} commentary={commentary} setCommentary={setCommentary} />
                     <ContentContainer>
                         <HeaderContainer>

@@ -1,0 +1,38 @@
+.certificatesSelector {
+    display: flex;
+    font-family: 'Mont', sans-serif;
+    font-size: 14px;
+    background-color: white;
+    padding: 20px 15px;
+    border-radius: 20px;
+}
+
+.certificateOption {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 6px;
+}
+
+.optionRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px 15px;
+    background-color: #f4f4f4;
+    border-radius: 12px;
+    border: 1px solid #f4f4f4;
+    span {
+        color: #989898;
+    }
+}
+
+.optionColumn {
+    display: flex;
+    flex-direction: column;
+}
+
+.rating, .date {
+    font-weight: bold;
+    color: black!important;
+}

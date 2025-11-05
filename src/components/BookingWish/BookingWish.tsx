@@ -4,13 +4,13 @@ import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderC
 import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
 import { InfoIcon } from '@/components/Icons/InfoIcon.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import css from '@/pages/BookingPage/BookingPage.module.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import { getBookingCommentMock } from '@/mockData.ts';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { BookingInfoPopup } from '@/components/BookingInfoPopup/BookingInfoPopup.tsx';
+import css from '@/pages/BookingPage/BookingPage.module.css';
 
 interface BookingWishProps {
     guestCount: number;
@@ -30,7 +30,7 @@ export const BookingWish: React.FC<BookingWishProps> = (
         setPreOrder,
         restaurant,
         commentary,
-        setCommentary
+        setCommentary,
     }) => {
     const [infoPopup, setInfoPopup] = useState(false);
     return (
@@ -44,7 +44,8 @@ export const BookingWish: React.FC<BookingWishProps> = (
                     <CheckBoxInput
                         checked={preOrder}
                         toggle={() => setPreOrder(!preOrder)}
-                        label={'Оформить предзаказ блюд и напитков'} />
+                        label={'Оформить предзаказ блюд и напитков'}
+                    />
                     <span onClick={() => setInfoPopup(true)}>
                         <InfoIcon size={14} />
                     </span>
