@@ -50,7 +50,7 @@ export const ChooseBanquetOptionsPage = () => {
                             icon={<BackIcon color={'var(--dark-grey)'} />}
                             action={goBack}
                         ></RoundedButton>
-                        <span className={css.header_title}>Подбор опций для банкета</span>
+                        <span className={css.header_title}>Выберите место для мероприятия</span>
                         <div style={{ width: 20 }} />
                     </div>
                     <ContentContainer>
