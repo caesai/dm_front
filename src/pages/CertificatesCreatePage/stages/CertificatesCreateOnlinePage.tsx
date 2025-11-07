@@ -8,6 +8,7 @@ import { APIPostCreateWithPayment } from '@/api/certificates.api.ts';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+import moment from 'moment';
 
 const ratings = ['3 000', '5 000', '10 000'];
 const MAX_NAME_LENGTH = 15;
@@ -72,7 +73,7 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
         <div className={css.content}>
             <Certificate
                 placeholder={compliment || 'Добавьте приятных слов к подарку'}
-                date={'20.11.2025'}
+                date={moment().add(1, 'year').format('DD.MM.YYYY')}
                 rating={rating}
                 cardholder={name || 'Имя'}
             />
