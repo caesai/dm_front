@@ -53,7 +53,7 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
     const handleNextClick = () => {
         if (isValid) {
             setLoading(true);
-            APIPostCreateWithPayment(String(auth?.access_token), Number(user?.id), 'online', Number(rating.replace(' ', '')), name, compliment)
+            APIPostCreateWithPayment(String(auth?.access_token), Number(user?.id), 'online', Number(rating.replace(/\s/g, '')), name, compliment)
                 .then(response => {
                     window.location.href = response.data.form_url
                 })

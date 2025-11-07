@@ -26,11 +26,12 @@ export const CertificatesPaymentPage: React.FC = () => {
     useEffect(() => {
         if (auth?.access_token && user?.id) {
             if (paramsObject.certificate_id) {
+                console.log(paramsObject)
                 APIGetCertificateById(auth.access_token, user?.id, paramsObject.certificate_id)
                     .then(response => setCertificate(response.data));
             }
         }
-    }, [auth, params]);
+    }, [auth, paramsObject]);
     return (
         <div className={css.content}>
             {certificate && (

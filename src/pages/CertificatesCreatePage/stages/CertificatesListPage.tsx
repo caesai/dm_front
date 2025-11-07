@@ -21,8 +21,8 @@ export const CertificatesListPage: React.FC = () => {
     }, []);
     return (
         <div className={css.content}>
-            {certificates.map((certificate, index) => (
-                <div key={index} className={css.certificateOption}>
+            {certificates.map((certificate) => (
+                <div key={certificate.id} className={css.certificateOption}>
                     <Certificate
                         placeholder={certificate.message}
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}

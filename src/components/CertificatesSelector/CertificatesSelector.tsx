@@ -97,7 +97,7 @@ export const CertificatesSelector: React.FC = () => {
             >
                 {onlineCertificates.map((certificate, index) => (
                     <CertificateOption
-                        key={certificate.id || index} // Use unique ID if available, fallback to index
+                        key={certificate.id} // Use unique ID if available, fallback to index
                         onClick={() => toggleSelectedOnlineOption(index)}
                         isSelected={index === selectedOnlineOptionIndex}
                         // Ensure value is formatted correctly as string
