@@ -56,12 +56,16 @@ import { CertificatesListPage } from '@/pages/CertificatesCreatePage/stages/Cert
 import { CertificatesCreateOfflinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOfflinePage.tsx';
 import { BookingRestaurantPage } from '@/pages/BookingRestaurantPage/BookingRestaurantPage.tsx';
 import { BookingFreeEventPage } from '@/pages/BookingFreeEventPage/BookingFreeEventPage.tsx';
+import { APIGetCertificates } from '@/api/certificates.api.ts';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
+import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/CertificatesPaymentPage.tsx';
 
 const AppRouter = () => {
-    // const [user] = useAtom(userAtom);
+    const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const [cities, setCities] = useAtom(cityListAtom);
     const [restaurants, setRestaurants] = useAtom(restaurantsListAtom);
+    const [, setCertificates] = useAtom(certificatesListAtom);
     // const [earlyAccess, setEarlyAccess] = useState(true);
     const [loadingComplete, setLoadingComplete] = useState<boolean>();
     const [, setReview] = useAtom(reviewAtom);
@@ -69,25 +73,29 @@ const AppRouter = () => {
     // Auth and preloading
     useEffect(() => {
         if (!loadingComplete && auth?.access_token) {
-            APIGetCityList().then((res) => setCities(res.data));
-            APIGetRestaurants(auth.access_token).then((res) => {
-                setRestaurants(res.data);
-            });
+            APIGetCityList()
+                .then((res) => setCities(res.data));
+            APIGetRestaurants(auth.access_token)
+                .then((res) => setRestaurants(res.data));
         }
     }, [loadingComplete]);
 
-    // useEffect(() => {
-    //     APIGetEA().then((res) => setEarlyAccess(res.data.result));
-    // }, []);
+    useEffect(() => {
+        if (auth?.access_token) {
+            APIGetCertificates(auth?.access_token, Number(user?.id))
+                .then(response => setCertificates(response.data));
+        }
+    }, [auth]);
 
     useEffect(() => {
         if (auth?.access_token)
-            APIIsReviewAvailable(auth.access_token).then((res) =>
-                setReview({
-                    loading: false,
-                    available: res.data.available,
-                })
-            );
+            APIIsReviewAvailable(auth.access_token)
+                .then((res) =>
+                    setReview({
+                        loading: false,
+                        available: res.data.available,
+                    })
+                );
     }, [auth]);
 
     useEffect(() => {
@@ -181,6 +189,7 @@ const AppRouter = () => {
                         <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
                         <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
                         <Route path={'/certificates/my'} element={<CertificatesListPage />} />
+                        <Route path={'/certificates/payment'} element={<CertificatesPaymentPage />} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/" />} />

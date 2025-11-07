@@ -37,3 +37,8 @@ export interface IUserPreferences {
         choices: string[]
     }]
 }
+
+export interface IAuthInfo {
+    access_token: string;
+    expires_in: number;
+}
