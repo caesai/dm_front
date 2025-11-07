@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APIGetCertificates } from '@/api/certificates.api.ts';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
+import moment from 'moment';
 
 
 export const CertificatesListPage: React.FC = () => {
-    const [auth] = useAtom(authAtom);
-    const [user] = useAtom(userAtom);
+    const [certificates] = useAtom(certificatesListAtom);
 
     // const navigate = useNavigate();
     const selectOption = () => {
@@ -18,16 +17,21 @@ export const CertificatesListPage: React.FC = () => {
     }
 
     useEffect(() => {
-        if (auth?.access_token) {
-            APIGetCertificates(auth?.access_token, Number(user?.id)).then();
-        }
+
     }, []);
     return (
         <div className={css.content}>
-            <div className={css.certificateOption}>
-                <Certificate placeholder={''} date={''} rating={''} cardholder={''} />
-                <UniversalButton width={'full'} title={'Поделиться'} action={selectOption}/>
-            </div>
+            {certificates.map((certificate, index) => (
+                <div key={index} className={css.certificateOption}>
+                    <Certificate
+                        placeholder={certificate.message}
+                        date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
+                        rating={Number(certificate.value).toFixed().toString()}
+                        cardholder={certificate.recipient_name}
+                    />
+                    <UniversalButton width={'full'} title={'Поделиться'} action={selectOption}/>
+                </div>
+            ))}
         </div>
     )
 }

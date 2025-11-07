@@ -7,6 +7,7 @@ import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.cs
 import { APIPostCreateWithPayment } from '@/api/certificates.api.ts';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 
 const ratings = ['3 000', '5 000', '10 000'];
 const MAX_NAME_LENGTH = 15;
@@ -19,6 +20,7 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
     const [compliment, setCompliment] = useState<string>('');
     const [rating, setRating] = useState<string>('****');
     const [isInputFocused, setIsInputFocused] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleNameChange = useCallback((value: string) => {
         if (value.length < MAX_NAME_LENGTH) {
@@ -50,9 +52,21 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
 
     const handleNextClick = () => {
         if (isValid) {
-            APIPostCreateWithPayment(String(auth?.access_token), Number(user?.id), 'online', 1, name, compliment).then();
+            setLoading(true);
+            APIPostCreateWithPayment(String(auth?.access_token), Number(user?.id), 'online', Number(rating.replace(' ', '')), name, compliment)
+                .then(response => {
+                    window.location.href = response.data.form_url
+                })
+                .catch(error => {
+                    console.log(error);
+                    setLoading(false);
+                });
         }
     };
+
+    if (loading) {
+        return <div className={css.loader}><Loader /></div>;
+    }
 
     return (
         <div className={css.content}>
