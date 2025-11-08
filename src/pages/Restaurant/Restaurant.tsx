@@ -73,6 +73,8 @@ import moment from 'moment';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { IBanquet } from '@/types/banquets.types.ts';
 import { APIGetBanquetOptions } from '@/api/banquet.api.ts';
+import { ICertificateBlockProps } from '@/types/certificates.types.ts';
+import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 
 export const transformGallery = (
     gallery: IPhotoCard[],
@@ -337,6 +339,7 @@ export const Restaurant = () => {
                 />
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
                 <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
+                <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />
                 {tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0 && (
                     <BanquetsBlock
                         image={banquets.image}
@@ -802,6 +805,36 @@ const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
     );
 };
 
+const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, description }) => {
+    return (
+        <ContentContainer>
+            <ContentBlock>
+                <HeaderContainer id={'certificate'}>
+                    <HeaderContent title={'Подарочные сертификаты'} />
+                </HeaderContainer>
+                <div className={css.banquetContainer}>
+                    <div className={css.banquetImg}>
+                        <div
+                            className={classNames(
+                                css.banquetImage,
+                                css.bgImage,
+                            )}
+                            style={{
+                                backgroundImage: `url(${image})`,
+                            }}
+                        ></div>
+                    </div>
+                    <span className={css.banquetDescription}>{description}</span>
+                    <UniversalButton
+                        width={'full'}
+                        title={'Подробнее'}
+                    />
+                </div>
+            </ContentBlock>
+        </ContentContainer>
+    )
+}
+
 interface AboutBlockProps {
     about_text: string;
     workTime: IWorkTime[] | undefined;
@@ -832,7 +865,7 @@ const AboutBlock: React.FC<AboutBlockProps> = (
     return (
         <ContentContainer>
             <ContentBlock>
-                <HeaderContainer>
+            <HeaderContainer>
                     <HeaderContent id={'about'} title={'О месте'} />
                 </HeaderContainer>
                 <div className={css.aboutContainer}>

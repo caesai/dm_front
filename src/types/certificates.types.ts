@@ -16,5 +16,10 @@ export interface ICertificate {
     message: string;
 }
 
+export interface ICertificateBlockProps {
+    image: string,
+    description: string,
+}
+
 export type TCertificate = 'online' | 'offline';
 export type TCertificateStatus = 'paid' | 'not_paid';
