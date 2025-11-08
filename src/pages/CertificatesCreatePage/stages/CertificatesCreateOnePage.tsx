@@ -14,7 +14,7 @@ export const CertificatesCreateOnePage: React.FC = () => {
             <div className={css.certificateOption}>
                 <span className={css.page_title}>Подарите приятный вечер <br /> в ресторанах Dreamteam</span>
                 <div className={css.certificateImage}>
-                    <img src={CertificateImage} alt={''} />
+                    <img src={CertificateImage} alt="Dreamteam gift certificate" />
                 </div>
                 <ul className={css.certificateList}>
                     <li>Сертификат действует во всех ресторанах Dreamteam.</li>
