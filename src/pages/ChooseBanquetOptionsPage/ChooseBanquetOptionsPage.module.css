@@ -32,14 +32,15 @@
 .swiper {
     --swiper-navigation-color: #fff !important;
     --swiper-pagination-color: #fff !important;
-    max-width: 370px;
+    aspect-ratio: 120/85;
+    max-height: 270px;
+    width: 100%;
 }
 
 .slide {
     > img {
-        aspect-ratio: 120/85;
         width: 100%;
-        max-width: 370px;
+        height: 100%;
         border-radius: 12px;
         object-fit: cover;
     }
