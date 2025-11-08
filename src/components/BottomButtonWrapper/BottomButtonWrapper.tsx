@@ -18,7 +18,7 @@ export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> =
          onClick,
          forwardedRef,
          additionalBtns,
-         content= 'Забронировать'
+         content = 'Забронировать'
     }) => {
     return (
         <div className={css.absoluteBottom} ref={forwardedRef}>
