@@ -111,7 +111,7 @@ export const BanquetReservationPage = () => {
                                         <span>{user?.first_name}</span>
                                     </div>
                                     <div>
-                                        <span>Дата</span>
+                                        <span>Желаемая дата</span>
                                         <span>{formattedDate}</span>
                                     </div>
                                     <div>
