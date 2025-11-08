@@ -836,7 +836,7 @@ const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, description
             </ContentBlock>
         </ContentContainer>
     )
-}
+};
 
 interface AboutBlockProps {
     about_text: string;
