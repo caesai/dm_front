@@ -1,5 +1,6 @@
 .certificatesSelector {
     display: flex;
+    flex-direction: column;
     font-family: 'Mont', sans-serif;
     font-size: 14px;
     background-color: white;
@@ -25,6 +26,10 @@
     span {
         color: #989898;
     }
+}
+
+.optionSelected {
+    border-color: black;
 }
 
 .optionColumn {

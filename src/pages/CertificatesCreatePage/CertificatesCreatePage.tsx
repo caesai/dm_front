@@ -10,10 +10,15 @@ export const CertificatesCreatePage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const state = location?.state;
-    const isWhiteBackground = !location.pathname.match(/[12]/)
+    const isWhiteBackground = !location.pathname.match(/[12]/);
+    const isPaymentLocation = location.pathname.includes('payment');
 
     const goBack = () => {
-        navigate(-1);
+        if (isPaymentLocation) {
+            navigate('/');
+        } else {
+            navigate(-1);
+        }
     };
 
     return (
