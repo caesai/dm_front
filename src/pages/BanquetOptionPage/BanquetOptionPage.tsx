@@ -325,7 +325,7 @@ export const BanquetOptionPage = () => {
                                                 css.datePicker__placeholder
                                             }
                                         >
-                                            Дата
+                                            Желаемая дата
                                         </span>
                                     )}
                                 </div>
