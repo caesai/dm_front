@@ -17,8 +17,8 @@ export interface ICertificate {
 }
 
 export interface ICertificateBlockProps {
-    image: string,
-    description: string,
+    image: string;
+    description: string;
 }
 
 export type TCertificate = 'online' | 'offline';
