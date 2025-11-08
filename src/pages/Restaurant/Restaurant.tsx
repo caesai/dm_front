@@ -1035,7 +1035,6 @@ const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, resta
                     <UniversalButton
                         width={'full'}
                         title={'Подробнее'}
-                        theme={'red'}
                         action={navigateToBanquet}
                     />
                 </div>
