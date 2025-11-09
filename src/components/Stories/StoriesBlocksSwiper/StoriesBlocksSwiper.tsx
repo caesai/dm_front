@@ -18,11 +18,12 @@ export const StoriesBlocksSwiper: React.FC<IStoriesBlocksSwiperProps> = ({ stori
         return [...storiesBlocks].map((block, index) => {
             const isSeen = localStories.find((item: ILocalStory) => item.id === block.id)?.isSeen;
             return (
-                <SwiperSlide style={{ width: '93px' }} key={block.id}>
+                <SwiperSlide style={{ width: '80px' }} key={block.id}>
                     <StoriesBlock
                         onClick={openStory}
                         index={index}
                         thumbnail={block.thumbnail}
+                        name={block.name}
                         isSeen={isSeen}
                     />
                 </SwiperSlide>
@@ -31,12 +32,7 @@ export const StoriesBlocksSwiper: React.FC<IStoriesBlocksSwiperProps> = ({ stori
     }, [storiesBlocks, localStories, openStory]);
 
     return (
-        <Swiper
-            slidesPerView="auto"
-            modules={[FreeMode]}
-            freeMode={true}
-            spaceBetween={10}
-        >
+        <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={10}>
             {sortedStories}
         </Swiper>
     );
