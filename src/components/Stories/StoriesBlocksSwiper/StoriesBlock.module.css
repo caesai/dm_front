@@ -1,17 +1,31 @@
+.storyContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    > span {
+        font-family: "Mont", sans-serif;
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-align: center;
+    }
+}
+
 .storyBlock {
-    width: 93px;
-    height: 93px;
+    width: 72px;
+    height: 72px;
+    border: 2px solid transparent;
+    border-radius: 86px;
     background-color: var(--secondary-background);
-    border-radius: 20px;
     overflow: hidden;
     text-align: center;
     position: relative;
-    margin-right: 10px;
 }
 
 .storyBlockImage {
     width: 100%;
-    height: 93px;
+    height: 72px;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -19,12 +33,28 @@
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
 }
+
 .storyBlockImage img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.isClicked {
+
+.active {
     border: 2px solid var(--red);
     align-self: flex-end;
+}
+
+.storyBorder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border: 2px solid transparent;
+    border-radius: 86px;
+
+    &.clicked {
+        border-color: var(--grey);
+    }
 }
