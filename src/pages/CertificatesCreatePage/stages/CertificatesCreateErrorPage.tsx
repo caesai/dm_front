@@ -19,16 +19,15 @@ export const CertificatesCreateErrorPage: React.FC = () => {
     const paramsObject = Object.fromEntries(params.entries());
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const [loading, setLoading] = useState(false);
-    console.log(paramsObject);
 
     useEffect(() => {
         if (auth?.access_token && user?.id) {
-            // if (paramsObject.certificate_id) {
+            if (paramsObject.certificate_id) {
                 console.log(paramsObject)
-                APIGetCertificateById(auth.access_token, user?.id, 'SUGNS0AG')
+                APIGetCertificateById(auth.access_token, user?.id, paramsObject.certificate_id)
                     .then(response => setCertificate(response.data));
             }
-        // }
+        }
     }, []);
 
     const repeatPayment = () => {
@@ -52,7 +51,7 @@ export const CertificatesCreateErrorPage: React.FC = () => {
         }
     }
 
-    const backToHome= () => navigate('/');
+    const backToHome = () => navigate('/');
 
     if (loading) {
         return <div className={css.loader}><Loader /></div>;

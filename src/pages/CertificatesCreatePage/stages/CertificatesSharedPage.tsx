@@ -53,7 +53,7 @@ export const CertificatesSharedPage: React.FC = () => {
         }
     }
 
-    const backToHome= () => navigate('/');
+    const backToHome = () => navigate('/');
 
     if (loading) {
         return <div className={css.loader}><Loader /></div>;

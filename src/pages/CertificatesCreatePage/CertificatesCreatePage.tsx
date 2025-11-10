@@ -14,7 +14,7 @@ export const CertificatesCreatePage: React.FC = () => {
     const paramsObject = Object.fromEntries(params.entries());
     const isWhiteBackground = !location.pathname.match(/[12]/);
     const isPaymentLocation = location.pathname.includes('payment');
-    console.log('paramsObject: ', )
+
     const goBack = () => {
         if (isPaymentLocation || paramsObject.shared) {
             navigate('/');

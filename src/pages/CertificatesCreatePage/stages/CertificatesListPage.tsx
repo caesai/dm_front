@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 // import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
@@ -86,11 +86,11 @@ interface CertificateOptionProps {
 
 const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) => {
     const navigate = useNavigate();
-    const certificateRef = useRef<HTMLDivElement>(null);
 
     const openCertificate = () => {
         navigate('/certificates/landing');
     };
+
     return (
         <div className={css.certificateOption}>
             <Certificate
@@ -98,7 +98,6 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) =>
                 date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
                 rating={Number(certificate.value).toFixed().toString()}
                 cardholder={certificate.recipient_name}
-                forwardRef={certificateRef}
             />
             <UniversalButton width={'full'} title={'Поделиться'} action={() => shareCertificate(certificate)} />
             <UniversalButton width={'full'} title={'Открыть'} theme={'red'} action={openCertificate} />
