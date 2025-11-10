@@ -4,17 +4,11 @@ import moment from 'moment/moment';
 import { useAtom } from 'jotai/index';
 
 import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
-import { TextInput } from '@/components/TextInput/TextInput.tsx';
+// import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
-import { TCertificate } from '@/types/certificates.types.ts';
+import { TCertificate, CERTIFICATION_TYPES } from '@/types/certificates.types.ts';
 import css from '@/components/CertificatesSelector/CertificatesSelector.module.css';
 
-const CERTIFICATION_TYPES: Record<string, TCertificate> = {
-    ONLINE: 'online',
-    OFFLINE: 'offline',
-};
-
-// --- Sub-Components ---
 
 interface CertificateOptionProps {
     onClick: () => void;
@@ -61,7 +55,7 @@ export const CertificatesSelector: React.FC = () => {
     const [certificates] = useAtom(certificatesListAtom);
     // Renamed state variable for clarity
     const [selectedType, setSelectedType] = useState<TCertificate | null>(null);
-    const [offlineCertificateId, setOfflineCertificateId] = useState<string>('');
+    // const [offlineCertificateId, setOfflineCertificateId] = useState<string>('');
     // Renamed state variable for clarity
     const [selectedOnlineOptionIndex, setSelectedOnlineOptionIndex] = useState<number | null>(null);
 
@@ -79,7 +73,7 @@ export const CertificatesSelector: React.FC = () => {
         if (type === CERTIFICATION_TYPES.OFFLINE) {
             setSelectedOnlineOptionIndex(null);
         } else {
-            setOfflineCertificateId('');
+            // setOfflineCertificateId('');
         }
     };
 
@@ -107,18 +101,18 @@ export const CertificatesSelector: React.FC = () => {
                 ))}
             </CertificateTypeSelector>
 
-            <CertificateTypeSelector
-                type={CERTIFICATION_TYPES.OFFLINE}
-                currentType={selectedType}
-                toggleType={toggleCertificateType}
-                label={'Использовать офлайн-сертификат'}
-            >
-                <TextInput
-                    value={offlineCertificateId}
-                    onChange={(e) => setOfflineCertificateId(e)}
-                    placeholder={'Введите ID оффлайн-сертификата'}
-                />
-            </CertificateTypeSelector>
+            {/*<CertificateTypeSelector*/}
+            {/*    type={CERTIFICATION_TYPES.OFFLINE}*/}
+            {/*    currentType={selectedType}*/}
+            {/*    toggleType={toggleCertificateType}*/}
+            {/*    label={'Использовать офлайн-сертификат'}*/}
+            {/*>*/}
+            {/*    <TextInput*/}
+            {/*        value={offlineCertificateId}*/}
+            {/*        onChange={(e) => setOfflineCertificateId(e)}*/}
+            {/*        placeholder={'Введите ID оффлайн-сертификата'}*/}
+            {/*    />*/}
+            {/*</CertificateTypeSelector>*/}
         </div>
     );
 };

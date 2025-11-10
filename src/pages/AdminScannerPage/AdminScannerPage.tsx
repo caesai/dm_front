@@ -140,7 +140,7 @@ export const AdminScannerPage = () => {
                                         css.bgImage
                                     )}
                                     style={{
-                                        backgroundImage: `url(${ticket?.event_img || 'https://storage.yandexcloud.net/bottec-dreamteam/event_placeholder.png'})`,
+                                        backgroundImage: `url(${ticket?.event_img || 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg'})`,
                                     }}
                                 />
                                 <div className={css.ticket_header_details}>

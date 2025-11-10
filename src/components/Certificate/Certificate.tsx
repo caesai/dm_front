@@ -9,11 +9,12 @@ interface CertificateProps {
     rating: string;
     cardholder: string;
     big?: boolean;
+    forwardRef?: React.Ref<HTMLDivElement>;
 }
 
-export const Certificate: React.FC<CertificateProps> = ({ placeholder, date, rating, cardholder, big }) => {
+export const Certificate: React.FC<CertificateProps> = ({ placeholder, date, rating, cardholder, big, forwardRef }) => {
     return (
-        <div className={css.certificate}>
+        <div className={css.certificate} ref={forwardRef}>
             <div className={css.certificateLogo}>
                 <img src={logo} alt={'DreamTeam'} />
             </div>

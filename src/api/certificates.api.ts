@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { BASE_URL, CLIENT_URL } from '@/api/base.ts';
+import { ADMIN_URL, BASE_URL, CLIENT_URL } from '@/api/base.ts';
+import { ICertificate } from '@/types/certificates.types.ts';
 
 export const APIGetCertificates = async (token: string, user_id: number) => {
     return axios.get(`${BASE_URL}/certificates`, {
@@ -50,7 +51,33 @@ export const APIPostCreateWithPayment = async (
         recipient_name,
         message,
         return_url: `${CLIENT_URL}/certificates/payment`,
+        // return_url: `https://dt-mini-app.local/dm_front/certificates/payment`,
+        fail_url: `${CLIENT_URL}/certificates/error`,
+        // fail_url: `https://dt-mini-app.local/dm_front/certificates/error`,
+
     }, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    })
+}
+
+export const APIPutCertificateUpdate = async (token: string, certificate_id: string, certificate: ICertificate) => {
+    return axios.put(`${ADMIN_URL}/certificates/${certificate_id}`, {
+        ...certificate,
+    },{
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
+}
+
+export const APIPostCertificateShare = async (token: string, certificate_id: string, recipient_id: number, message: string) => {
+    return axios.post(`${ADMIN_URL}/certificates/${certificate_id}/share`, {
+        certificate_id,
+        recipient_id,
+        message,
+    },{
         headers: {
             Authorization: `Bearer ${token}`,
         }

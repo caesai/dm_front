@@ -66,7 +66,7 @@ export const EventConfirmationOutlet: React.FC = () => {
                 <div
                     className={css.event_img}
                     style={{
-                        backgroundImage: `url(${bookingInfo.event?.image_url ? bookingInfo.event?.image_url : 'https://storage.yandexcloud.net/bottec-dreamteam/event_placeholder.png'}`,
+                        backgroundImage: `url(${bookingInfo.event?.image_url ? bookingInfo.event?.image_url : 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg'}`,
                     }}
                 />
             )}
