@@ -26,12 +26,20 @@ export const CertificatesPaymentPage: React.FC = () => {
     useEffect(() => {
         if (auth?.access_token && user?.id) {
             if (paramsObject.certificate_id) {
-                console.log(paramsObject)
                 APIGetCertificateById(auth.access_token, user?.id, paramsObject.certificate_id)
                     .then(response => setCertificate(response.data));
             }
         }
-    }, []);
+    }, [auth, user, paramsObject.certificate_id]);
+
+    useEffect(() => {
+        if (certificate) {
+            navigate('.', {
+                state: { title: 'Электронный сертификат' },
+                replace: true
+            });
+        }
+    }, [certificate, navigate]);
 
     return (
         <div className={css.content}>
