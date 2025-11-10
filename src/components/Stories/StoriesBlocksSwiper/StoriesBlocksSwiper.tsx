@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { StoriesBlock } from '@/components/Stories/StoriesBlocksSwiper/StoriesBlock.tsx';
 import { IStoryBlock } from '@/types/stories.types.ts';
 import { useAtom } from 'jotai';
-import { ILocalStory, localStoriesListAtom } from '@/atoms/localStoriesListAtom.ts';
+import { localStoriesListAtom } from '@/atoms/localStoriesListAtom.ts';
 
 interface IStoriesBlocksSwiperProps {
     storiesBlocks: IStoryBlock[];
@@ -16,7 +16,7 @@ export const StoriesBlocksSwiper: React.FC<IStoriesBlocksSwiperProps> = ({ stori
 
     const sortedStories = useMemo(() => {
         return [...storiesBlocks].map((block, index) => {
-            const isSeen = localStories.find((item: ILocalStory) => item.id === block.id)?.isSeen;
+            // const isSeen = localStories.find((item: ILocalStory) => item.id === block.id)?.isSeen;
             return (
                 <SwiperSlide style={{ width: '80px' }} key={block.id}>
                     <StoriesBlock
@@ -24,7 +24,6 @@ export const StoriesBlocksSwiper: React.FC<IStoriesBlocksSwiperProps> = ({ stori
                         index={index}
                         thumbnail={block.thumbnail}
                         name={block.name}
-                        isSeen={isSeen}
                     />
                 </SwiperSlide>
             );
