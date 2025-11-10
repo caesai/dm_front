@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { CERTIFICATION_TYPES } from '@/types/certificates.types.ts';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
@@ -54,9 +55,16 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
     const handleNextClick = () => {
         if (isValid) {
             setLoading(true);
-            APIPostCreateWithPayment(String(auth?.access_token), Number(user?.id), 'online', Number(rating.replace(/\s/g, '')), name, compliment)
+            APIPostCreateWithPayment(
+                String(auth?.access_token),
+                Number(user?.id),
+                CERTIFICATION_TYPES.ONLINE,
+                Number(rating.replace(/\s/g, '')),
+                name,
+                compliment,
+            )
                 .then(response => {
-                    window.location.href = response.data.form_url
+                    window.location.href = response.data.form_url;
                 })
                 .catch(error => {
                     console.log(error);

@@ -43,6 +43,8 @@ import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
 import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { DEV_MODE } from '@/api/base.ts';
+import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -294,6 +296,7 @@ export const BookingRestaurantPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
+                    {DEV_MODE && <CertificatesSelector />}
                     <BookingWish
                         guestCount={guestCount}
                         childrenCount={childrenCount}

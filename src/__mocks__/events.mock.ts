@@ -13,7 +13,7 @@ export const mockEventsList: IEventInRestaurant[] = [{
         'title': 'Self Edge Japanese',
         'address': 'Санкт-Петербург, ул. Радищева, 34',
         'address_lonlng': '',
-        'thumbnail_photo': 'https://storage.yandexcloud.net/bottec-dreamteam/SEJ/main.jpg',
+        'thumbnail_photo': 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg',
     },
     date_end: '',
 }, {
@@ -29,7 +29,7 @@ export const mockEventsList: IEventInRestaurant[] = [{
         'title': 'Self Edge Japanese',
         'address': 'Санкт-Петербург, ул. Радищева, 34',
         'address_lonlng': '',
-        'thumbnail_photo': 'https://storage.yandexcloud.net/bottec-dreamteam/SEJ/main.jpg',
+        'thumbnail_photo': 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg',
     },
     date_end: '',
 }, {
@@ -45,7 +45,7 @@ export const mockEventsList: IEventInRestaurant[] = [{
         'title': 'Self Edge Japanese',
         'address': 'Санкт-Петербург, ул. Радищева, 34',
         'address_lonlng': '',
-        'thumbnail_photo': 'https://storage.yandexcloud.net/bottec-dreamteam/SEJ/main.jpg',
+        'thumbnail_photo': 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg',
     },
     date_end: '',
 }, {
@@ -61,7 +61,7 @@ export const mockEventsList: IEventInRestaurant[] = [{
         'title': 'Self Edge Japanese',
         'address': 'Санкт-Петербург, ул. Радищева, 34',
         'address_lonlng': '',
-        'thumbnail_photo': 'https://storage.yandexcloud.net/bottec-dreamteam/SEJ/main.jpg',
+        'thumbnail_photo': 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg',
     },
     date_end: '',
 }];

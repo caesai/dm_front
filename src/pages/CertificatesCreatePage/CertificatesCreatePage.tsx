@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Page } from '@/components/Page.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
@@ -9,12 +9,14 @@ import classnames from 'classnames';
 export const CertificatesCreatePage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [params] = useSearchParams();
     const state = location?.state;
+    const paramsObject = Object.fromEntries(params.entries());
     const isWhiteBackground = !location.pathname.match(/[12]/);
     const isPaymentLocation = location.pathname.includes('payment');
-
+    console.log('paramsObject: ', )
     const goBack = () => {
-        if (isPaymentLocation) {
+        if (isPaymentLocation || paramsObject.shared) {
             navigate('/');
         } else {
             navigate(-1);

@@ -60,6 +60,8 @@ import { APIGetCertificates } from '@/api/certificates.api.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/CertificatesPaymentPage.tsx';
 import CertificateLandingPage from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
+import { CertificatesCreateErrorPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateErrorPage.tsx';
+import { CertificatesSharedPage } from '@/pages/CertificatesCreatePage/stages/CertificatesSharedPage.tsx';
 
 const AppRouter = () => {
     const [user] = useAtom(userAtom);
@@ -191,6 +193,8 @@ const AppRouter = () => {
                         <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
                         <Route path={'/certificates/my'} element={<CertificatesListPage />} />
                         <Route path={'/certificates/payment'} element={<CertificatesPaymentPage />} />
+                        <Route path={'/certificates/error'} element={<CertificatesCreateErrorPage />} />
+                        <Route path={'/certificates/shared/:id'} element={<CertificatesSharedPage />} />
                     </Route>
                     <Route path={'/certificates/landing'} element={<CertificateLandingPage />} />
 
