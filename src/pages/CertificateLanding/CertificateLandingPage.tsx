@@ -38,7 +38,7 @@ const CertificateLandingPage: React.FC = () => {
                             </span>
                         </div>
                         <div className={css.row}>
-                            <span>Действителен до::</span>
+                            <span>Действителен до:</span>
                             <span>
                                 <b>10.11.2025</b>
                             </span>
