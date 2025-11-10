@@ -59,6 +59,7 @@ import { BookingFreeEventPage } from '@/pages/BookingFreeEventPage/BookingFreeEv
 import { APIGetCertificates } from '@/api/certificates.api.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/CertificatesPaymentPage.tsx';
+import CertificateLandingPage from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
 
 const AppRouter = () => {
     const [user] = useAtom(userAtom);
@@ -191,6 +192,7 @@ const AppRouter = () => {
                         <Route path={'/certificates/my'} element={<CertificatesListPage />} />
                         <Route path={'/certificates/payment'} element={<CertificatesPaymentPage />} />
                     </Route>
+                    <Route path={'/certificates/landing'} element={<CertificateLandingPage />} />
 
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>

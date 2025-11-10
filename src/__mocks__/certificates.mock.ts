@@ -1,4 +1,5 @@
-import { ICertificate } from '@/types/certificates.types.ts';
+import { ICertificate, ICertificateBlockProps } from '@/types/certificates.types.ts';
+import CertificateImage from '../../public/img/certificate_2.png';
 
 export const certificates: ICertificate[] = [{
     "certificate_type": "online",
@@ -33,3 +34,8 @@ export const certificates: ICertificate[] = [{
     "updated_at": "2025-11-05T20:10:08.892000Z",
     "shared_at": null
 }];
+
+export const certificateBlock: ICertificateBlockProps = {
+    image: CertificateImage,
+    description: 'Приятный подарок на любые праздники',
+}

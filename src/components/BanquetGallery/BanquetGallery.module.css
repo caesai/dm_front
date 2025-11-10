@@ -1,6 +1,5 @@
 .content {
     display: flex;
-    align-items: center;
     justify-content: center;
     gap: 15px;
     padding: 0 15px;
@@ -9,6 +8,7 @@
 
 .icon {
     position: absolute;
+    align-self: center;
     height: fit-content;
     background: none;
     border: none;

@@ -17,11 +17,7 @@ export const Certificate: React.FC<CertificateProps> = ({ placeholder, date, rat
             <div className={css.certificateLogo}>
                 <img src={logo} alt={'DreamTeam'} />
             </div>
-            <div>
-                <span className={classnames(css.placeholder, { [css.bigFont] : big })}>
-                    {placeholder}
-                </span>
-            </div>
+            <span className={classnames(css.placeholder, { [css.bigFont]: big })}>{placeholder}</span>
             <div className={css.certificateData}>
                 <div>
                     <span>{cardholder}</span>
@@ -37,5 +33,5 @@ export const Certificate: React.FC<CertificateProps> = ({ placeholder, date, rat
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};

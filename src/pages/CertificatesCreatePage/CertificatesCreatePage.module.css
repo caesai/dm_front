@@ -29,6 +29,7 @@
     font-family: 'Mont', sans-serif;
     font-weight: bold;
     font-size: 14px;
+    text-align: center;
 }
 
 .spacer {
@@ -73,6 +74,7 @@
     display: flex;
     flex-direction: column;
     padding: 15px;
+    margin-bottom: 90px;
     gap: 10px;
     border-radius: 12px;
     background-color: white;
@@ -80,58 +82,8 @@
     color: var(--dark-grey);
 }
 
-.certificateExample {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    background-color: #FCC200;
-    border-radius: 12px;
-    padding: 16px;
-    /*background-image: url('/img/cert.png');*/
-    /*background-repeat: no-repeat;*/
-    /*background-position: center;*/
-    /*background-size: contain;*/
-    width: 100%;
-    height: 200px;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.compliment {
-    font-family: 'Mont', sans-serif;
-    font-weight: bold;
-    font-size: 20px;
-    color: #3B3C40;
-    text-align: center;
-}
-
-.complimentOffline {
-    font-size: 37px;
-}
-
 .fontSMaller {
     font-size: 20px;
-}
-
-.certificateBottom {
-    /*position: absolute;*/
-    /*bottom: 30px;*/
-    display: flex;
-    gap: 20px;
-    font-family: 'Mont', sans-serif;
-    justify-content: space-between;
-    width: 100%;
-
-    span {
-        color: var(--dark-grey);
-        font-size: 11px;
-    }
-
-    div {
-        display: flex;
-        flex-direction: column;
-        flex-basis: 18%;
-    }
 }
 
 .ratings {
@@ -165,44 +117,24 @@
     gap: 12px;
 }
 
-.animationContainer {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    margin-left: -15px;
-    overflow: hidden;
-}
+.certificateImage {
+    max-height: 185px;
 
-.animatedImageOne {
-    position: absolute;
-    top: 0;
-    right: -15px;
-    transform: translate(100%, 0);
-    animation-name: slide-in-center;
-    animation-duration: 2s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
-}
-
-.animatedImageTwo {
-    position: absolute;
-    top: 30%;
-    left: -15px;
-    animation-name: slide-in-center-2;
-    animation-duration: 2s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
-    transform: translate(-100%, 0);
-}
-
-@keyframes slide-in-center {
-    to {
-        right: 270px;
+    > img {
+        width: 100%;
+        height: 100%;
     }
 }
 
-@keyframes slide-in-center-2 {
-    to {
-        left: 270px;
+.certificateList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 300;
+    padding: 0;
+    margin-left: 20px;
+
+    > li::marker {
+        font-size: 0.8rem;
     }
 }

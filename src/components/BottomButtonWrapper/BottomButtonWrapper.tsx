@@ -8,9 +8,18 @@ interface BottomButtonWrapperProps {
     onClick?: () => void;
     forwardedRef?: Ref<HTMLDivElement>;
     additionalBtns?: ReactNode;
+    content?: ReactNode;
 }
 
-export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> = ({ isDisabled, isLoading, onClick, forwardedRef, additionalBtns }) => {
+export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> =
+    ({
+         isDisabled,
+         isLoading,
+         onClick,
+         forwardedRef,
+         additionalBtns,
+         content = 'Забронировать'
+    }) => {
     return (
         <div className={css.absoluteBottom} ref={forwardedRef}>
             <div className={css.absoluteBottom_wrapper}>
@@ -22,7 +31,7 @@ export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> = ({ isDisa
                     )}
                     onClick={onClick}
                 >
-                    <span className={css.text}>Забронировать</span>
+                    <span className={css.text}>{content}</span>
                 </div>
                 {additionalBtns && additionalBtns}
             </div>
