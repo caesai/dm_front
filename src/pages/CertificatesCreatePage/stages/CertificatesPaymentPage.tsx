@@ -42,7 +42,7 @@ export const CertificatesPaymentPage: React.FC = () => {
     }, [certificate, navigate]);
 
     return (
-        <div className={css.content}>
+        <div className={css.paymentContent}>
             {certificate && (
                 <>
                     <h3 className={css.page_title}>Ваш сертификат оплачен!</h3>
