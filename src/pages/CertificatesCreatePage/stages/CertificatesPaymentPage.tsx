@@ -45,7 +45,7 @@ export const CertificatesPaymentPage: React.FC = () => {
         <div className={css.content}>
             {certificate && (
                 <>
-                    <h3 className={css.page_title}>Ваш сертификат оплачен</h3>
+                    <h3 className={css.page_title}>Ваш сертификат оплачен!</h3>
                     <Certificate
                         placeholder={certificate.message}
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}

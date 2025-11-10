@@ -40,7 +40,9 @@
 .content {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 16px;
+    height: calc(100% - 300px);
 }
 
 .page_title {
@@ -67,7 +69,7 @@
     padding: 0 15px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 8px;
 }
 
 .certificateOption {
