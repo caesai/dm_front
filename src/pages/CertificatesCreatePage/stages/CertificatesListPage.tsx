@@ -6,19 +6,21 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import moment from 'moment';
-
+import { useNavigate } from 'react-router-dom';
 
 export const CertificatesListPage: React.FC = () => {
     const [certificates] = useAtom(certificatesListAtom);
 
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const selectOption = () => {
         // navigate('/certificates/online', { state: { title: 'Онлайн сертификат' }});
-    }
+    };
 
-    useEffect(() => {
+    const openCertificate = () => {
+        navigate('/certificates/landing');
+    };
 
-    }, []);
+    useEffect(() => {}, []);
     return (
         <div className={css.content}>
             {certificates.map((certificate) => (
@@ -29,9 +31,10 @@ export const CertificatesListPage: React.FC = () => {
                         rating={Number(certificate.value).toFixed().toString()}
                         cardholder={certificate.recipient_name}
                     />
-                    <UniversalButton width={'full'} title={'Поделиться'} action={selectOption}/>
+                    <UniversalButton width={'full'} title={'Поделиться'} action={selectOption} />
+                    <UniversalButton width={'full'} title={'Открыть'} theme={'red'} action={openCertificate} />
                 </div>
             ))}
         </div>
-    )
-}
+    );
+};
