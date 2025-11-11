@@ -1,14 +1,28 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import CertificateImage from '/img/certificate_1.png';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { useAtom } from 'jotai/index';
+import { userAtom } from '@/atoms/userAtom.ts';
 
 export const CertificatesCreateOnePage: React.FC = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
+    const [user] = useAtom(userAtom);
+
     const next = () => {
-        navigate('/certificates/2', { state: { title: 'Выберите способ получения'}});
+        if (user?.complete_onboarding) {
+            if (!id) {
+                navigate('/certificates/2', { state: { title: 'Выберите способ получения' } });
+            } else {
+                navigate(`/certificates/shared/${id}`);
+            }
+        } else {
+            navigate('/onboarding/3', { state: { sharedCertificate: true, id } })
+        }
     }
+
     return (
         <div className={css.content}>
             <div className={css.certificateOption}>
@@ -29,6 +43,7 @@ export const CertificatesCreateOnePage: React.FC = () => {
                 </ul>
             </div>
             <BottomButtonWrapper
+                isFixed={false}
                 content={'Оформить'}
                 onClick={next}
             />

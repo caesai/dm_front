@@ -188,6 +188,7 @@ const AppRouter = () => {
 
                     <Route path={'/certificates'} element={<CertificatesCreatePage />}>
                         <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
+                        <Route path={'/certificates/1/:id'} element={<CertificatesCreateOnePage />} />
                         <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
                         <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
                         <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
