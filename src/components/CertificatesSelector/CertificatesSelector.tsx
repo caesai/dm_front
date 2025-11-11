@@ -83,7 +83,7 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
 
     useEffect(() => {
         let certificateId = null;
-        if (selectedOnlineOptionIndex) {
+        if (selectedOnlineOptionIndex !== null) {
             certificateId = certificates.find((_item, index) => index === selectedOnlineOptionIndex)?.id || null;
         }
         setCertificateId(certificateId);

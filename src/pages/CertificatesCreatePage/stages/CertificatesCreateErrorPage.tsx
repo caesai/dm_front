@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { CERTIFICATION_TYPES, ICertificate } from '@/types/certificates.types.ts';
@@ -12,7 +12,6 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 
 export const CertificatesCreateErrorPage: React.FC = () => {
-    const navigate = useNavigate();
     const [params] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);

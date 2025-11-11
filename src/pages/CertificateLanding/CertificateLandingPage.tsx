@@ -66,7 +66,7 @@ const CertificateLandingPage: React.FC = () => {
                 .catch(err => {
                     console.log(err);
                     setToastShow(true);
-                    setToastMessage('Что-то пошло не так. Попробуйте перезагрузить страницу');
+                    setToastMessage('Произошла ошибка. Попробуйте перезагрузить страницу');
                 })
                 .finally(() => {
                     setTimeout(() => {
@@ -84,7 +84,7 @@ const CertificateLandingPage: React.FC = () => {
                 .catch(err => {
                     console.log(err);
                     setToastShow(true);
-                    setToastMessage('Что-то пошло не так. Попробуйте перезагрузить страницу');
+                    setToastMessage('Произошла ошибка. Попробуйте перезагрузить страницу');
                 })
                 .finally(() => {
                     setTimeout(() => {
@@ -100,11 +100,11 @@ const CertificateLandingPage: React.FC = () => {
     };
 
     const goToOnboarding = () => {
-        navigate('/onboarding/3', { state : { id } })
+        navigate('/onboarding/3', { state: { id } })
     }
 
     const goToBooking = () => {
-        navigate('/booking', { state : { certificate: true } })
+        navigate('/booking', { state: { certificate: true } })
     }
 
     return (
