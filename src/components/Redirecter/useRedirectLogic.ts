@@ -78,7 +78,7 @@ export const useRedirectLogic = () => {
             handleNavigation('restaurantId', '/restaurant/') ||
             handleNavigation('bookingId', '/booking/') ||
             handleNavigation('ticketId', '/tickets/') ||
-            handleNavigation('certificateId', '/certificates/shared/');
+            handleNavigation('certificateId', '/certificates/1/');
 
         if (hasRedirectedByParam) return;
 
