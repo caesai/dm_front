@@ -325,7 +325,7 @@ export const Restaurant = () => {
                     />
                 )}
                 {Boolean(filteredEvents && filteredEvents?.length > 0) && <EventsBlock events={events} />}
-                <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />
+                <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} restaurant_id={String(id)}/>
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}
                     about_dishes={String(restaurant?.about_dishes)}
@@ -670,7 +670,7 @@ const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
     );
 };
 
-const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, description }) => {
+const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, description, restaurant_id }) => {
     const navigate = useNavigate();
 
     return (
@@ -689,7 +689,7 @@ const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, description
                         ></div>
                     </div>
                     <span className={css.banquetDescription}>{description}</span>
-                    <UniversalButton width={'full'} title={'Подробнее'} action={() => navigate('/certificates/1')} />
+                    <UniversalButton width={'full'} title={'Подробнее'} action={() => navigate('/certificates/1', { state: { restaurant_id }})} />
                 </div>
             </ContentBlock>
         </ContentContainer>
