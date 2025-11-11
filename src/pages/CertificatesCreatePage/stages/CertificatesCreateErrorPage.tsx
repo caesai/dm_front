@@ -61,13 +61,14 @@ export const CertificatesCreateErrorPage: React.FC = () => {
         <div className={css.paymentContent}>
             {certificate && (
                 <>
-                    <h3 className={css.page_title}>Ваш сертификат не оплачен!</h3>
+                    <h3 className={css.page_title}>Оплата не прошла.</h3>
                     <Certificate
                         placeholder={certificate.message}
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
                         rating={Number(certificate.value).toFixed().toString()}
                         cardholder={certificate.recipient_name}
                     />
+                    <h3 className={css.page_title}>Попробуйте ещё раз или выберите другой способ оплаты.</h3>
                     <div
                         data-testid="button-container"
                         className={classnames(

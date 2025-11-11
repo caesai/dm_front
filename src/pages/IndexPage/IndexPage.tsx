@@ -154,7 +154,7 @@ export const IndexPage: FC = () => {
     useEffect(() => {
         if (isBanquet) {
             setToastShow(true);
-            setToastMessage('Запрос на бронирование банкета успешен. С вами свяжутся наши менеджеры.');
+            setToastMessage('Ваш запрос на бронирование банкета принят. Наш менеджер скоро свяжется с вами.');
             setTimeout(() => {
                 setToastShow(false);
                 setToastMessage(null);

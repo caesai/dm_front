@@ -24,6 +24,12 @@
     }
 }
 
+.close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
 .certificateFields {
     display: flex;
     flex-direction: column;

@@ -11,7 +11,7 @@ import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import { BookingGuestCountSelectorPopup } from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
@@ -52,6 +52,8 @@ const confirmationList: IConfirmationType[] = [
 
 export const BookingPage: FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location.state;
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [comms] = useAtom(commAtom);
@@ -82,6 +84,7 @@ export const BookingPage: FC = () => {
     const [botError, setBotError] = useState(false);
     const [errorPopupCount, setErrorPopupCount] = useState(0);
     const [preOrder, setPreOrder] = useState(false);
+    const [certificate_id, setCertificateId] = useState<string | null>(null);
     const bookingBtn = useRef<HTMLDivElement>(null);
     useEffect(() => {
         auth?.access_token && restaurant.value !== 'unset'
@@ -136,7 +139,8 @@ export const BookingPage: FC = () => {
                 comms,
                 confirmation.text,
                 (guestCount + childrenCount) < 8 ? false : preOrder,
-                null
+                null,
+                certificate_id
             )
                 .then((res) => {
                     if (res.data?.error) {
@@ -234,7 +238,7 @@ export const BookingPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    {DEV_MODE && <CertificatesSelector />}
+                    {DEV_MODE && <CertificatesSelector setCertificateId={setCertificateId} isOpened={state.certificate}/>}
                     <BookingWish guestCount={guestCount} childrenCount={childrenCount} preOrder={preOrder} setPreOrder={setPreOrder} restaurant={restaurant.value} commentary={commentary} setCommentary={setCommentary} />
                     <ContentContainer>
                         <HeaderContainer>
