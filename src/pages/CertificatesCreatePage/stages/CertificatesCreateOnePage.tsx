@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
-import CertificateImage from '../../../../public/img/certificate_1.png';
+import CertificateImage from '/img/certificate_1.png';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 
 export const CertificatesCreateOnePage: React.FC = () => {
