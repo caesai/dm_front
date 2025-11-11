@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APIGetCertificateById } from '@/api/certificates.api.ts';
+import { APIGetCertificateById, APIPostCheckAlfaPayment } from '@/api/certificates.api.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import moment from 'moment/moment';
@@ -31,6 +31,19 @@ export const CertificatesPaymentPage: React.FC = () => {
             }
         }
     }, [auth, user, paramsObject.certificate_id]);
+
+    useEffect(() => {
+        if (auth?.access_token && certificate && user?.id) {
+            if (paramsObject.order_number) {
+                APIPostCheckAlfaPayment(auth?.access_token, user?.id, paramsObject.order_number, certificate.id)
+                    .then()
+                    .catch(error => {
+                        // Handle error, e.g., log or show notification
+                        console.error('Error checking payment status:', error);
+                    });;
+            }
+        }
+    }, [auth?.access_token, user?.id, paramsObject.order_number, certificate]);
 
     useEffect(() => {
         if (certificate) {

@@ -8,13 +8,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
-import { APIGetCertificateById, APIPostCertificateShare, APIPutCertificateUpdate } from '@/api/certificates.api.ts';
+import { APIGetCertificateById, APIPostCertificateClaim } from '@/api/certificates.api.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { Toast } from '@/components/Toast/Toast.tsx';
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
-import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
+import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
 
 const CertificateLandingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -28,8 +28,6 @@ const CertificateLandingPage: React.FC = () => {
     const [toastShow, setToastShow] = useState<boolean>(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const { isShowing, toggle } = useModal();
-    // const [loading, setLoading] = useState(false);
-    console.log(id);
 
     useEffect(() => {
         if (auth?.access_token && user?.id) {
@@ -57,28 +55,12 @@ const CertificateLandingPage: React.FC = () => {
     }, []);
 
     const acceptCertificate = () => {
-        if (certificate) {
-            APIPutCertificateUpdate(String(auth?.access_token), String(id), {
-                ...certificate,
-                recipient_id: Number(user?.id),
-            })
-                .then()
-                .catch(err => {
-                    console.log(err);
-                    setToastShow(true);
-                    setToastMessage('Произошла ошибка. Попробуйте перезагрузить страницу');
-                })
-                .finally(() => {
-                    setTimeout(() => {
-                        setToastShow(false);
-                        setToastMessage(null);
-                    }, 3000);
-                });
-            APIPostCertificateShare(
+        if (certificate && id) {
+            APIPostCertificateClaim(
                 String(auth?.access_token),
-                String(id),
                 Number(user?.id),
-                certificate.message,
+                id,
+                certificate.recipient_name,
             )
                 .then()
                 .catch(err => {
@@ -100,12 +82,12 @@ const CertificateLandingPage: React.FC = () => {
     };
 
     const goToOnboarding = () => {
-        navigate('/onboarding/3', { state: { id } })
-    }
+        navigate('/onboarding/3', { state: { id } });
+    };
 
     const goToBooking = () => {
-        navigate('/booking', { state: { certificate: true } })
-    }
+        navigate('/booking', { state: { certificate: true } });
+    };
 
     return (
         <Page back={true}>
@@ -190,7 +172,7 @@ const CertificateLandingPage: React.FC = () => {
                     </div>
                     {certificate?.status !== 'used' && user?.complete_onboarding && (
                         <div className={css.button}>
-                            <UniversalButton width={'full'} title={'Выбрать ресторан'} action={goToBooking}/>
+                            <UniversalButton width={'full'} title={'Выбрать ресторан'} action={goToBooking} />
                         </div>
                     )}
                 </div>
