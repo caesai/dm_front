@@ -1,12 +1,10 @@
 import React from 'react';
-// import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 import { useAtom } from 'jotai/index';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
-import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
 import { BASE_BOT } from '@/api/base.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
 import certificateImage from '/img/certificate_2.png';
@@ -42,7 +40,7 @@ export const shareCertificate = async (certificate: ICertificate) => {
         }
         // 3. Fallback: Use the Telegram specific URL scheme
         // This is the most reliable way to ensure both message and url are present if the native API fails
-        window.open(`https://t.me/share/url?url=${url}&text=${encodeURI(message)}`, "_blank");
+        window.open(`https://t.me/share/url?text=${encodeURI(message)}`, "_blank");
 
     } catch (error) {
         console.error('Error handling image fetch or initial share attempt:', error);
@@ -71,12 +69,6 @@ interface CertificateOptionProps {
 }
 
 const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) => {
-    const navigate = useNavigate();
-
-    const openCertificate = () => {
-        navigate('/certificates/landing');
-    };
-
     return (
         <div className={css.certificateOption}>
             <Certificate
@@ -86,7 +78,6 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) =>
                 cardholder={certificate.recipient_name}
             />
             <UniversalButton width={'full'} title={'Поделиться'} action={() => shareCertificate(certificate)} />
-            <UniversalButton width={'full'} title={'Открыть'} theme={'red'} action={openCertificate} />
         </div>
     )
 }

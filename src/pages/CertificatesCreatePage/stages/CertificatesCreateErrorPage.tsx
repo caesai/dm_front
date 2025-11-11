@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { CERTIFICATION_TYPES, ICertificate } from '@/types/certificates.types.ts';
@@ -12,7 +12,6 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 
 export const CertificatesCreateErrorPage: React.FC = () => {
-    const navigate = useNavigate();
     const [params] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
@@ -51,8 +50,6 @@ export const CertificatesCreateErrorPage: React.FC = () => {
         }
     }
 
-    const backToHome = () => navigate('/');
-
     if (loading) {
         return <div className={css.loader}><Loader /></div>;
     }
@@ -61,13 +58,14 @@ export const CertificatesCreateErrorPage: React.FC = () => {
         <div className={css.paymentContent}>
             {certificate && (
                 <>
-                    <h3 className={css.page_title}>Ваш сертификат не оплачен!</h3>
+                    <h3 className={css.page_title}>Оплата не прошла.</h3>
                     <Certificate
                         placeholder={certificate.message}
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
                         rating={Number(certificate.value).toFixed().toString()}
                         cardholder={certificate.recipient_name}
                     />
+                    <h3 className={css.page_title}>Попробуйте ещё раз или выберите другой способ оплаты.</h3>
                     <div
                         data-testid="button-container"
                         className={classnames(
@@ -76,7 +74,6 @@ export const CertificatesCreateErrorPage: React.FC = () => {
                     >
                         <div className={css.bottomWrapper}>
                             <UniversalButton width={'full'} title={'Оплатить'} theme={'red'} action={repeatPayment}/>
-                            <UniversalButton width={'full'} title={'Позже'} action={backToHome}/>
                         </div>
                     </div>
                 </>

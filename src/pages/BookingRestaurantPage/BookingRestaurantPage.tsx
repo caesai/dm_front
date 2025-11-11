@@ -97,6 +97,7 @@ export const BookingRestaurantPage: FC = () => {
     const [botError, setBotError] = useState(false);
     const [errorPopupCount, setErrorPopupCount] = useState(0);
     const [preOrder, setPreOrder] = useState(false);
+    const [certificate_id, setCertificateId] = useState<string | null>(null);
     const bookingBtn = useRef<HTMLDivElement>(null);
     // Update bookingDates when guestCount changes
     useEffect(() => {
@@ -190,7 +191,8 @@ export const BookingRestaurantPage: FC = () => {
                 comms,
                 confirmation.text,
                 (guestCount + childrenCount) < 8 ? false : preOrder,
-                null
+                null,
+                certificate_id
             )
                 .then((res) => {
                     if (res.data?.error) {
@@ -296,7 +298,7 @@ export const BookingRestaurantPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    {DEV_MODE && <CertificatesSelector />}
+                    {DEV_MODE && <CertificatesSelector setCertificateId={setCertificateId} />}
                     <BookingWish
                         guestCount={guestCount}
                         childrenCount={childrenCount}

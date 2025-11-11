@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import classnames from 'classnames';
 import moment from 'moment/moment';
 import { useAtom } from 'jotai/index';
@@ -50,8 +50,12 @@ const CertificateTypeSelector: React.FC<CertificateTypeSelectorProps> = ({ type,
     </div>
 );
 
+interface CertificatesSelectorProps {
+    setCertificateId: (id: string | null) => void;
+    isOpened?: boolean;
+}
 
-export const CertificatesSelector: React.FC = () => {
+export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setCertificateId, isOpened }) => {
     const [certificates] = useAtom(certificatesListAtom);
     // Renamed state variable for clarity
     const [selectedType, setSelectedType] = useState<TCertificate | null>(null);
@@ -76,6 +80,20 @@ export const CertificatesSelector: React.FC = () => {
             // setOfflineCertificateId('');
         }
     };
+
+    useEffect(() => {
+        let certificateId = null;
+        if (selectedOnlineOptionIndex !== null) {
+            certificateId = certificates.find((_item, index) => index === selectedOnlineOptionIndex)?.id || null;
+        }
+        setCertificateId(certificateId);
+    }, [selectedOnlineOptionIndex]);
+
+    useEffect(() => {
+        if (isOpened) {
+            setSelectedType(CERTIFICATION_TYPES.ONLINE);
+        }
+    }, []);
 
     if (certificates.length === 0) {
         return null;
