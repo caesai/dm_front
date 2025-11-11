@@ -12,7 +12,7 @@ export const CertificatesCreateOnePage: React.FC = () => {
     }
 
     return (
-        <div className={css.content}>
+        <div className={css.content} style={{ paddingBottom: '90px' }}>
             <div className={css.certificateOption}>
                 <span className={css.page_title}>Подарите приятный вечер <br /> в ресторанах Dreamteam</span>
                 <div className={css.certificateImage}>
@@ -31,7 +31,7 @@ export const CertificatesCreateOnePage: React.FC = () => {
                 </ul>
             </div>
             <BottomButtonWrapper
-                isFixed={false}
+                isFixed={true}
                 content={'Оформить'}
                 onClick={next}
             />

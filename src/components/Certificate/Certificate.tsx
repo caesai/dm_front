@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import css from '@/components/Certificate/Certificate.module.css';
-import logo from '/img/DT_hospitality_logo_eng_black 1.png';
+import logo from '/img/DT_hospitality_logo_1.png';
 
 interface CertificateProps {
     placeholder: string;
