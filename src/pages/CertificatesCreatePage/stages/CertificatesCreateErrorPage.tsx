@@ -51,8 +51,6 @@ export const CertificatesCreateErrorPage: React.FC = () => {
         }
     }
 
-    const backToHome = () => navigate('/');
-
     if (loading) {
         return <div className={css.loader}><Loader /></div>;
     }
@@ -77,7 +75,6 @@ export const CertificatesCreateErrorPage: React.FC = () => {
                     >
                         <div className={css.bottomWrapper}>
                             <UniversalButton width={'full'} title={'Оплатить'} theme={'red'} action={repeatPayment}/>
-                            <UniversalButton width={'full'} title={'Позже'} action={backToHome}/>
                         </div>
                     </div>
                 </>
