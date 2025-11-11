@@ -36,10 +36,14 @@ export const CertificatesPaymentPage: React.FC = () => {
         if (auth?.access_token && certificate && user?.id) {
             if (paramsObject.order_number) {
                 APIPostCheckAlfaPayment(auth?.access_token, user?.id, paramsObject.order_number, certificate.id)
-                    .then();
+                    .then()
+                    .catch(error => {
+                        // Handle error, e.g., log or show notification
+                        console.error('Error checking payment status:', error);
+                    });;
             }
         }
-    }, [certificate]);
+    }, [auth?.access_token, user?.id, paramsObject.order_number, certificate]);
 
     useEffect(() => {
         if (certificate) {
