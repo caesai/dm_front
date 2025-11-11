@@ -8,7 +8,7 @@ import { userAtom } from '@/atoms/userAtom.ts';
 
 export const CertificatesCreateOnePage: React.FC = () => {
     const navigate = useNavigate();
-    const {id} = useParams();
+    const { id } = useParams();
     const [user] = useAtom(userAtom);
 
     const next = () => {
