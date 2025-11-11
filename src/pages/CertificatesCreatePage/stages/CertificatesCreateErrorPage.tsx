@@ -58,10 +58,10 @@ export const CertificatesCreateErrorPage: React.FC = () => {
     }
 
     return (
-        <div className={css.content}>
+        <div className={css.paymentContent}>
             {certificate && (
                 <>
-                    <h3 className={css.page_title}>При оплате возникла ошибка</h3>
+                    <h3 className={css.page_title}>Ваш сертификат не оплачен!</h3>
                     <Certificate
                         placeholder={certificate.message}
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
@@ -75,7 +75,7 @@ export const CertificatesCreateErrorPage: React.FC = () => {
                         )}
                     >
                         <div className={css.bottomWrapper}>
-                            <UniversalButton width={'full'} title={'Оплатить снова'} theme={'red'} action={repeatPayment}/>
+                            <UniversalButton width={'full'} title={'Оплатить'} theme={'red'} action={repeatPayment}/>
                             <UniversalButton width={'full'} title={'Позже'} action={backToHome}/>
                         </div>
                     </div>

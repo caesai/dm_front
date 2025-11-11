@@ -26,18 +26,26 @@ export const CertificatesPaymentPage: React.FC = () => {
     useEffect(() => {
         if (auth?.access_token && user?.id) {
             if (paramsObject.certificate_id) {
-                console.log(paramsObject)
                 APIGetCertificateById(auth.access_token, user?.id, paramsObject.certificate_id)
                     .then(response => setCertificate(response.data));
             }
         }
-    }, []);
+    }, [auth, user, paramsObject.certificate_id]);
+
+    useEffect(() => {
+        if (certificate) {
+            navigate('.', {
+                state: { title: 'Электронный сертификат' },
+                replace: true
+            });
+        }
+    }, [certificate, navigate]);
 
     return (
-        <div className={css.content}>
+        <div className={css.paymentContent}>
             {certificate && (
                 <>
-                    <h3 className={css.page_title}>Ваш сертификат оплачен</h3>
+                    <h3 className={css.page_title}>Ваш сертификат оплачен!</h3>
                     <Certificate
                         placeholder={certificate.message}
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
