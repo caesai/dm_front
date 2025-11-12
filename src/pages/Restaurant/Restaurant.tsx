@@ -670,7 +670,7 @@ const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
     );
 };
 
-const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, description, restaurant_id }) => {
+const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, description }) => {
     const navigate = useNavigate();
 
     return (
@@ -689,7 +689,7 @@ const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, description
                         ></div>
                     </div>
                     <span className={css.banquetDescription}>{description}</span>
-                    <UniversalButton width={'full'} title={'Подробнее'} action={() => navigate('/certificates/1', { state: { restaurant_id }})} />
+                    <UniversalButton width={'full'} title={'Подробнее'} action={() => navigate('/certificates/1')} />
                 </div>
             </ContentBlock>
         </ContentContainer>

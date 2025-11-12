@@ -19,7 +19,6 @@ export interface ICertificate {
 export interface ICertificateBlockProps {
     image: string;
     description: string;
-    restaurant_id: string;
 }
 
 export type TCertificate = 'online' | 'offline';
