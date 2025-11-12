@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import moment from 'moment';
 import { useAtom } from 'jotai/index';
-import { Certificate } from '@/components/Certificate/Certificate.tsx';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { BASE_BOT } from '@/api/base.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
+import { APIGetCertificates } from '@/api/certificates.api.ts';
+import { Certificate } from '@/components/Certificate/Certificate.tsx';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import certificateImage from '/img/certificate_2.png';
 
 export const shareCertificate = async (certificate: ICertificate) => {
@@ -54,7 +56,15 @@ export const shareCertificate = async (certificate: ICertificate) => {
 };
 
 export const CertificatesListPage: React.FC = () => {
-    const [certificates] = useAtom(certificatesListAtom);
+    const [certificates, setCertificates] = useAtom(certificatesListAtom);
+    const [auth] = useAtom(authAtom);
+    const [user] = useAtom(userAtom);
+    useEffect(() => {
+        if (auth?.access_token) {
+            APIGetCertificates(auth?.access_token, Number(user?.id))
+                .then(response => setCertificates(response.data));
+        }
+    }, [auth?.access_token, user?.id, setCertificates]);
     return (
         <div className={css.content}>
             {certificates.map((certificate) => (
@@ -77,7 +87,7 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) =>
                 rating={Number(certificate.value).toFixed().toString()}
                 cardholder={certificate.recipient_name}
             />
-            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} action={() => shareCertificate(certificate)} />}
+            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} theme={'red'} action={() => shareCertificate(certificate)} />}
         </div>
     )
 }

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import classnames from 'classnames';
 import { Page } from '@/components/Page.tsx';
-import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import classnames from 'classnames';
+import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 
 export const CertificatesCreatePage: React.FC = () => {
     const navigate = useNavigate();

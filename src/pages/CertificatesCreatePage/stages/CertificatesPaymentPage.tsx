@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APIGetCertificateById, APIPostCheckAlfaPayment } from '@/api/certificates.api.ts';
-import { ICertificate } from '@/types/certificates.types.ts';
-import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import moment from 'moment/moment';
-import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import classnames from 'classnames';
+import { ICertificate } from '@/types/certificates.types.ts';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { APIGetCertificateById, APIGetCertificates, APIPostCheckAlfaPayment } from '@/api/certificates.api.ts';
+import { Certificate } from '@/components/Certificate/Certificate.tsx';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { shareCertificate } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 
 export const CertificatesPaymentPage: React.FC = () => {
     const navigate = useNavigate();
     const [params] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
+    const [, setCertificates] = useAtom(certificatesListAtom);
     const paramsObject = Object.fromEntries(params.entries());
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -24,7 +26,7 @@ export const CertificatesPaymentPage: React.FC = () => {
 
     const backToHome = () => {
         navigate('/');
-    }
+    };
 
     useEffect(() => {
         if (auth?.access_token) {
@@ -41,6 +43,9 @@ export const CertificatesPaymentPage: React.FC = () => {
                 APIPostCheckAlfaPayment(auth?.access_token, user?.id, paramsObject.order_number, certificate.id)
                     .then((response) => {
                         setIsPaid(response.data.is_paid);
+                        // Updating Certificates List In App
+                        APIGetCertificates(auth?.access_token, Number(user?.id))
+                            .then(response => setCertificates(response.data));
                     })
                     .catch(error => {
                         // Handle error, e.g., log or show notification
@@ -52,15 +57,6 @@ export const CertificatesPaymentPage: React.FC = () => {
             }
         }
     }, [certificate]);
-
-    // useEffect(() => {
-    //     if (certificate) {
-    //         navigate('.', {
-    //             state: { title: 'Электронный сертификат' },
-    //             replace: true
-    //         });
-    //     }
-    // }, [certificate, navigate]);
 
     if (loading) {
         return <div className={css.loader}><Loader /></div>;
@@ -78,7 +74,8 @@ export const CertificatesPaymentPage: React.FC = () => {
                         cardholder={certificate.recipient_name}
                     />
                     {!isPaid && (
-                        <h3 className={css.page_title}>Сертификат появится в личном кабинете после подтверждения оплаты.</h3>
+                        <h3 className={css.page_title}>Сертификат появится в личном кабинете после подтверждения
+                            оплаты.</h3>
                     )}
                     <div
                         data-testid="button-container"
@@ -86,15 +83,16 @@ export const CertificatesPaymentPage: React.FC = () => {
                             css.absoluteBottom,
                         )}
                     >
-                        {isPaid &&(
+                        {isPaid && (
                             <div className={css.bottomWrapper}>
-                                <UniversalButton width={'full'} title={'Поделиться'} theme={'red'} action={() => shareCertificate(certificate)}/>
-                                <UniversalButton width={'full'} title={'Позже'} action={backToHome}/>
+                                <UniversalButton width={'full'} title={'Поделиться'} theme={'red'}
+                                                 action={() => shareCertificate(certificate)} />
+                                <UniversalButton width={'full'} title={'Позже'} action={backToHome} />
                             </div>
                         )}
                     </div>
                 </>
             )}
         </div>
-    )
-}
+    );
+};

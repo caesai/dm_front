@@ -27,16 +27,16 @@ export const CertificatesCreateTwoPage: React.FC = () => {
                     }
                 />
             </div>
-            <div className={css.certificateOption}>
-                <span>Забрать в ресторане</span>
-                <Certificate placeholder={'10 000'} date={'****'} rating={'10000'} cardholder={''} big={true} />
-                <UniversalButton
-                    width={'full'}
-                    title={'Выбрать'}
-                    theme={'red'}
-                    action={() => navigate('/certificates/offline', { state: { title: 'Офлайн сертификат' }})}
-                />
-            </div>
+            {/*<div className={css.certificateOption}>*/}
+            {/*    <span>Забрать в ресторане</span>*/}
+            {/*    <Certificate placeholder={'10 000'} date={'****'} rating={'10000'} cardholder={''} big={true} />*/}
+            {/*    <UniversalButton*/}
+            {/*        width={'full'}*/}
+            {/*        title={'Выбрать'}*/}
+            {/*        theme={'red'}*/}
+            {/*        action={() => navigate('/certificates/offline', { state: { title: 'Офлайн сертификат' }})}*/}
+            {/*    />*/}
+            {/*</div>*/}
         </div>
     );
 };
