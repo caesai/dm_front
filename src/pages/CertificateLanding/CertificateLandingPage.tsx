@@ -39,38 +39,6 @@ const CertificateLandingPage: React.FC = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (user?.complete_onboarding) {
-            if (!certificate?.shared_at) {
-                if (certificate?.customer_id === user.id) {
-                    // Nothing to do
-                    setLoading(false);
-                    return;
-                } else {
-                    acceptCertificate();
-                    setLoading(false);
-                    return;
-                }
-            } else {
-                if (certificate.recipient_id === user.id) {
-                    setLoading(false);
-                    return;
-                } else {
-                    navigate('/certificates/1');
-                }
-            }
-        } else {
-            if (!certificate?.shared_at) {
-                // Toggle Modal Popup With Need to Register Info
-                setLoading(false);
-                toggle();
-                return;
-            } else {
-                navigate('/onboarding/1');
-            }
-        }
-    }, [certificate]);
-
     const acceptCertificate = () => {
         if (auth?.access_token && certificate && id) {
             APIPostCertificateClaim(
@@ -97,6 +65,72 @@ const CertificateLandingPage: React.FC = () => {
                 });
         }
     };
+    /**
+     * A `useEffect` hook that manages navigation and actions based on the user's onboarding status
+     * and the status of a specific certificate.
+     *
+     * It evaluates different scenarios:
+     * 1. If the user has completed onboarding:
+     *    - If the certificate is not yet shared (`shared_at` is null):
+     *      - If the user is the customer/owner, it does nothing and stops loading.
+     *      - If the user is not the owner, it attempts to accept the certificate and stops loading.
+     *    - If the certificate is already shared:
+     *      - If the user is the intended recipient, it stops loading.
+     *      - If the user is not the intended recipient, it navigates to the main certificates page.
+     * 2. If the user has *not* completed onboarding:
+     *    - If the certificate is not yet shared, it stops loading and toggles a modal popup
+     *      prompting the user to register/onboard.
+     *    - If the certificate is already shared, it navigates the user to the onboarding flow.
+     *
+     * @hook
+     * @inner
+     * @param {object | null | undefined} user - The current user object from context/state (must have `id` and `complete_onboarding` properties).
+     * @param {object | null | undefined} certificate - The current certificate object from context/state (must have `shared_at`, `customer_id`, and `recipient_id` properties).
+     * @param {function} setLoading - State setter function to control a loading indicator.
+     * @param {function} navigate - React Router navigation function.
+     * @param {function} acceptCertificate - Function to handle accepting the certificate claim.
+     * @param {function} toggle - Function to toggle a modal visibility (e.g., registration prompt).
+     * @returns {void}
+     */
+    useEffect(() => {
+        if (user?.complete_onboarding) {
+            // User is onboarded
+            if (!certificate?.shared_at) {
+                // Certificate is not yet shared/claimed
+                if (certificate?.customer_id === user.id) {
+                    // User is the owner -> No action needed
+                    setLoading(false);
+                    return;
+                } else {
+                    // User is not the owner -> Attempt to accept the claim
+                    acceptCertificate();
+                    setLoading(false);
+                    return;
+                }
+            } else {
+                // Certificate is already shared
+                if (certificate.recipient_id === user.id) {
+                    // User is the intended recipient -> No action needed
+                    setLoading(false);
+                    return;
+                } else {
+                    // User is not the recipient -> Navigate away
+                    navigate('/certificates/1');
+                }
+            }
+        } else {
+            // User is NOT onboarded
+            if (!certificate?.shared_at) {
+                // Certificate is not shared -> Prompt user to register/onboard
+                setLoading(false);
+                toggle(); // Toggle Modal Popup With Need to Register Info
+                return;
+            } else {
+                // Certificate is shared -> Force user to complete onboarding
+                navigate('/onboarding/1');
+            }
+        }
+    }, [certificate, user, navigate, acceptCertificate, toggle, setLoading]); // Added all dependencies to the dependency array for correctness
 
     const goHome = () => {
         navigate('/');

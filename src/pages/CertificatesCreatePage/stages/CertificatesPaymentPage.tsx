@@ -56,7 +56,7 @@ export const CertificatesPaymentPage: React.FC = () => {
                     });
             }
         }
-    }, [certificate]);
+    }, [certificate, auth, user, paramsObject, setIsPaid, setCertificates, setLoading]);
 
     if (loading) {
         return <div className={css.loader}><Loader /></div>;

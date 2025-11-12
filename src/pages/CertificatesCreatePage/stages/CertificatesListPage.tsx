@@ -59,12 +59,14 @@ export const CertificatesListPage: React.FC = () => {
     const [certificates, setCertificates] = useAtom(certificatesListAtom);
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
+
     useEffect(() => {
         if (auth?.access_token) {
             APIGetCertificates(auth?.access_token, Number(user?.id))
                 .then(response => setCertificates(response.data));
         }
     }, [auth?.access_token, user?.id, setCertificates]);
+
     return (
         <div className={css.content}>
             {certificates.map((certificate) => (
