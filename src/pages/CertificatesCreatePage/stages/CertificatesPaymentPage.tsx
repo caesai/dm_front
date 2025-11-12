@@ -40,10 +40,10 @@ export const CertificatesPaymentPage: React.FC = () => {
                     .catch(error => {
                         // Handle error, e.g., log or show notification
                         console.error('Error checking payment status:', error);
-                    });;
+                    });
             }
         }
-    }, [auth?.access_token, user?.id, paramsObject.order_number, certificate]);
+    }, [certificate]);
 
     useEffect(() => {
         if (certificate) {
