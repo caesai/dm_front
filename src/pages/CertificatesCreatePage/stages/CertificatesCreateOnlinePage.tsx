@@ -1,13 +1,14 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { useAtom } from 'jotai/index';
+import classnames from 'classnames';
+import { APIPostCreateWithPayment } from '@/api/certificates.api.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { CERTIFICATION_TYPES } from '@/types/certificates.types.ts';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
-import classnames from 'classnames';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
-import { APIPostCreateWithPayment } from '@/api/certificates.api.ts';
-import { useAtom } from 'jotai/index';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import moment from 'moment';
 

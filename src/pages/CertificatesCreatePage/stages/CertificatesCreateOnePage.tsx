@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import CertificateImage from '/img/certificate_1.png';
-import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 
 export const CertificatesCreateOnePage: React.FC = () => {
     const navigate = useNavigate();

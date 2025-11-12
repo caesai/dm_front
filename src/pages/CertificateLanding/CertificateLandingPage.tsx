@@ -1,32 +1,29 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAtom } from 'jotai/index';
 import moment from 'moment';
+import { useModal } from '@/components/ModalPopup/useModal.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { ICertificate } from '@/types/certificates.types.ts';
+import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
 import { Page } from '@/components/Page.tsx';
 import { DTHospitalityIcon } from '@/components/Icons/DTHospitalityIcon.tsx';
 import AccordionComponent from '@/components/Accordion/AccordionComponent.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useAtom } from 'jotai/index';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { ICertificate } from '@/types/certificates.types.ts';
-import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { Toast } from '@/components/Toast/Toast.tsx';
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
-import { useModal } from '@/components/ModalPopup/useModal.ts';
-import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
+import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
 
 const CertificateLandingPage: React.FC = () => {
     const navigate = useNavigate();
-    // const [params] = useSearchParams();
     const { id } = useParams();
-
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [, setCertificates] = useAtom(certificatesListAtom);
-    // const paramsObject = Object.fromEntries(params.entries());
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);

@@ -6,10 +6,10 @@ import classnames from 'classnames';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { CERTIFICATION_TYPES, ICertificate } from '@/types/certificates.types.ts';
 import { APIGetCertificateById, APIPostCreateWithPayment } from '@/api/certificates.api.ts';
-import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 
 export const CertificatesCreateErrorPage: React.FC = () => {
     const [params] = useSearchParams();

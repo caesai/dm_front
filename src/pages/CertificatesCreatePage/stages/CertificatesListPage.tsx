@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import moment from 'moment';
 import { useAtom } from 'jotai/index';
-import { Certificate } from '@/components/Certificate/Certificate.tsx';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { BASE_BOT } from '@/api/base.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
-import certificateImage from '/img/certificate_2.png';
 import { APIGetCertificates } from '@/api/certificates.api.ts';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { Certificate } from '@/components/Certificate/Certificate.tsx';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
+import certificateImage from '/img/certificate_2.png';
 
 export const shareCertificate = async (certificate: ICertificate) => {
     const url = encodeURI(
@@ -64,7 +64,7 @@ export const CertificatesListPage: React.FC = () => {
             APIGetCertificates(auth?.access_token, Number(user?.id))
                 .then(response => setCertificates(response.data));
         }
-    }, [auth?.access_token]);
+    }, [auth?.access_token, user?.id, setCertificates]);
     return (
         <div className={css.content}>
             {certificates.map((certificate) => (
