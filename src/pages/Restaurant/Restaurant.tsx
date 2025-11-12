@@ -325,7 +325,7 @@ export const Restaurant = () => {
                     />
                 )}
                 {Boolean(filteredEvents && filteredEvents?.length > 0) && <EventsBlock events={events} />}
-                <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} restaurant_id={String(id)}/>
+                <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}
                     about_dishes={String(restaurant?.about_dishes)}
