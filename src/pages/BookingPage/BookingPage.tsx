@@ -238,7 +238,7 @@ export const BookingPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    {DEV_MODE && <CertificatesSelector setCertificateId={setCertificateId} isOpened={state?.certificate}/>}
+                    {DEV_MODE && <CertificatesSelector setCertificateId={setCertificateId} isOpened={state?.certificate} selectedCertificateId={state?.certificateId}/>}
                     <BookingWish guestCount={guestCount} childrenCount={childrenCount} preOrder={preOrder} setPreOrder={setPreOrder} restaurant={restaurant.value} commentary={commentary} setCommentary={setCommentary} />
                     <ContentContainer>
                         <HeaderContainer>

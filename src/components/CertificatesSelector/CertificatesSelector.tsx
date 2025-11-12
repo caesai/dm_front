@@ -53,9 +53,10 @@ const CertificateTypeSelector: React.FC<CertificateTypeSelectorProps> = ({ type,
 interface CertificatesSelectorProps {
     setCertificateId: (id: string | null) => void;
     isOpened?: boolean;
+    selectedCertificateId?: string;
 }
 
-export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setCertificateId, isOpened }) => {
+export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setCertificateId, isOpened, selectedCertificateId }) => {
     const [certificates] = useAtom(certificatesListAtom);
     // Renamed state variable for clarity
     const [selectedType, setSelectedType] = useState<TCertificate | null>(null);
@@ -90,10 +91,11 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
     }, [selectedOnlineOptionIndex]);
 
     useEffect(() => {
-        if (isOpened) {
+        if (isOpened && selectedCertificateId) {
             setSelectedType(CERTIFICATION_TYPES.ONLINE);
+            setCertificateId(selectedCertificateId)
         }
-    }, []);
+    }, [isOpened, selectedCertificateId]);
 
     if (certificates.length === 0) {
         return null;

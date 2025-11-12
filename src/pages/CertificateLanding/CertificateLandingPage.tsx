@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
-import { APIGetCertificateById, APIPostCertificateClaim } from '@/api/certificates.api.ts';
+import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { Toast } from '@/components/Toast/Toast.tsx';
@@ -16,6 +16,7 @@ import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 
 const CertificateLandingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ const CertificateLandingPage: React.FC = () => {
 
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
+    const [, setCertificates] = useAtom(certificatesListAtom);
     // const paramsObject = Object.fromEntries(params.entries());
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
@@ -73,14 +75,18 @@ const CertificateLandingPage: React.FC = () => {
     }, [certificate]);
 
     const acceptCertificate = () => {
-        if (certificate && id) {
+        if (auth?.access_token && certificate && id) {
             APIPostCertificateClaim(
                 String(auth?.access_token),
                 Number(user?.id),
                 id,
                 certificate.recipient_name,
             )
-                .then()
+                .then(() => {
+                    // Updating Certificates List After Accepting New Certificate
+                    APIGetCertificates(auth?.access_token, Number(user?.id))
+                        .then(response => setCertificates(response.data));
+                })
                 .catch(err => {
                     console.log(err);
                     setToastShow(true);
@@ -104,11 +110,15 @@ const CertificateLandingPage: React.FC = () => {
     };
 
     const goToBooking = () => {
-        navigate('/booking', { state: { certificate: true } });
+        navigate('/booking', { state: { certificate: true, certificateId: certificate?.id } });
     };
 
     if (loading) {
-        return <div className={css.loader}><Loader /></div>;
+        return (
+            <Page back={true}>
+                <div className={css.loader}><Loader /></div>
+            </Page>
+        );
     }
 
     return (

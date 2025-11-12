@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APIGetCertificateById, APIPostCheckAlfaPayment } from '@/api/certificates.api.ts';
+import { APIGetCertificateById, APIGetCertificates, APIPostCheckAlfaPayment } from '@/api/certificates.api.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import moment from 'moment/moment';
@@ -11,12 +11,14 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 import classnames from 'classnames';
 import { shareCertificate } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 
 export const CertificatesPaymentPage: React.FC = () => {
     const navigate = useNavigate();
     const [params] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
+    const [, setCertificates] = useAtom(certificatesListAtom);
     const paramsObject = Object.fromEntries(params.entries());
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -41,6 +43,9 @@ export const CertificatesPaymentPage: React.FC = () => {
                 APIPostCheckAlfaPayment(auth?.access_token, user?.id, paramsObject.order_number, certificate.id)
                     .then((response) => {
                         setIsPaid(response.data.is_paid);
+                        // Updating Certificates List In App
+                        APIGetCertificates(auth?.access_token, Number(user?.id))
+                            .then(response => setCertificates(response.data));
                     })
                     .catch(error => {
                         // Handle error, e.g., log or show notification
