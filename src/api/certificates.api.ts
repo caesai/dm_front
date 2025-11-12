@@ -14,13 +14,13 @@ export const APIGetCertificates = async (token: string, user_id: number) => {
     });
 };
 
-export const APIGetCertificateById = async (token: string, user_id: number, certificate_id: string) => {
+export const APIGetCertificateById = async (token: string, certificate_id: string) => {
     return axios.get(`${BASE_URL}/certificates/${certificate_id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
         params: {
-            user_id,
+            // user_id,
             certificate_id,
         },
     });

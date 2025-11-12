@@ -15,6 +15,7 @@ import { Toast } from '@/components/Toast/Toast.tsx';
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
+import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 
 const CertificateLandingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -27,12 +28,13 @@ const CertificateLandingPage: React.FC = () => {
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const [toastShow, setToastShow] = useState<boolean>(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
     const { isShowing, toggle } = useModal();
 
     useEffect(() => {
-        if (auth?.access_token && user?.id) {
+        if (auth?.access_token) {
             if (id) {
-                APIGetCertificateById(auth.access_token, user?.id, id)
+                APIGetCertificateById(auth.access_token,  id)
                     .then(response => setCertificate(response.data));
             }
         }
@@ -40,19 +42,35 @@ const CertificateLandingPage: React.FC = () => {
 
     useEffect(() => {
         if (user?.complete_onboarding) {
-            if (certificate?.shared_at && certificate?.recipient_id !== user?.id) {
-                navigate('/certificates/1');
+            if (!certificate?.shared_at) {
+                if (certificate?.customer_id === user.id) {
+                    // Nothing to do
+                    setLoading(false);
+                    return;
+                } else {
+                    acceptCertificate();
+                    setLoading(false);
+                    return;
+                }
             } else {
-                acceptCertificate();
+                if (certificate.recipient_id === user.id) {
+                    setLoading(false);
+                    return;
+                } else {
+                    navigate('/certificates/1');
+                }
+            }
+        } else {
+            if (!certificate?.shared_at) {
+                // Toggle Modal Popup With Need to Register Info
+                setLoading(false);
+                toggle();
+                return;
+            } else {
+                navigate('/onboarding/1');
             }
         }
     }, [certificate]);
-
-    useEffect(() => {
-        if (!user?.complete_onboarding) {
-            toggle();
-        }
-    }, []);
 
     const acceptCertificate = () => {
         if (certificate && id) {
@@ -88,6 +106,10 @@ const CertificateLandingPage: React.FC = () => {
     const goToBooking = () => {
         navigate('/booking', { state: { certificate: true } });
     };
+
+    if (loading) {
+        return <div className={css.loader}><Loader /></div>;
+    }
 
     return (
         <Page back={true}>

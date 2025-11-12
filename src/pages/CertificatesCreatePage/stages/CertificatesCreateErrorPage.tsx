@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
+import moment from 'moment';
+import classnames from 'classnames';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { CERTIFICATION_TYPES, ICertificate } from '@/types/certificates.types.ts';
 import { APIGetCertificateById, APIPostCreateWithPayment } from '@/api/certificates.api.ts';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
-import moment from 'moment';
-import classnames from 'classnames';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 
@@ -20,10 +20,10 @@ export const CertificatesCreateErrorPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (auth?.access_token && user?.id) {
+        if (auth?.access_token) {
             if (paramsObject.certificate_id) {
                 console.log(paramsObject)
-                APIGetCertificateById(auth.access_token, user?.id, paramsObject.certificate_id)
+                APIGetCertificateById(auth.access_token, paramsObject.certificate_id)
                     .then(response => setCertificate(response.data));
             }
         }

@@ -77,7 +77,7 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) =>
                 rating={Number(certificate.value).toFixed().toString()}
                 cardholder={certificate.recipient_name}
             />
-            <UniversalButton width={'full'} title={'Поделиться'} action={() => shareCertificate(certificate)} />
+            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} action={() => shareCertificate(certificate)} />}
         </div>
     )
 }
