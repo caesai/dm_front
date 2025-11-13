@@ -26,28 +26,27 @@ export const UserPhoneConfirmationPage = () => {
         });
         setTimeout(
             () =>
-                APIUserInfo(auth.access_token).then((data) =>
-                    setUser(data.data),
-                ),
+                APIUserInfo(auth.access_token)
+                    .then((data) => setUser(data.data)),
             5000,
         );
     };
 
     useEffect(() => {
         if (user?.phone_number) {
-            if (state) {
-                if (state.sharedEvent) {
-                    navigate(`/events/${state.id}/booking`, { state });
-                }
-                if (state.superEvent) {
-                    navigate('/events/super', { state });
-                }
-                if (state.sharedRestaurant) {
-                    navigate('/restaurant/' + state.id + '/booking', { state });
-                }
-            } else {
-                navigate('/');
+            if (state.sharedEvent) {
+                navigate(`/events/${state.id}/booking`, { state });
+                return;
             }
+            if (state.superEvent) {
+                navigate('/events/super', { state });
+                return;
+            }
+            if (state.sharedRestaurant) {
+                navigate('/restaurant/' + state.id + '/booking', { state });
+                return;
+            }
+            navigate('/');
         }
     }, [user]);
 
