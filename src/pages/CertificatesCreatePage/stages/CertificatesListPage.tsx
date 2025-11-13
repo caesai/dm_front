@@ -12,6 +12,7 @@ import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.cs
 import certificateImage from '/img/certificate_2.png';
 
 export const shareCertificate = async (certificate: ICertificate) => {
+    console.log(certificate)
     const url = encodeURI(
         `https://t.me/${BASE_BOT}?startapp=certificateId_${certificate.id}`
     );
