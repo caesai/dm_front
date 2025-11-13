@@ -22,10 +22,7 @@ import { ContentContainer } from '@/components/ContentContainer/ContentContainer
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
-import {
-    GalleryCollection,
-    GalleryPhoto,
-} from '@/pages/Restaurant/Restaurant.types.ts';
+import { GalleryCollection, GalleryPhoto } from '@/pages/Restaurant/Restaurant.types.ts';
 import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
 import { useAtom } from 'jotai';
@@ -46,23 +43,16 @@ import {
     getCurrentTimeShort,
     getCurrentWeekdayShort,
     getRestaurantStatus,
-    getTimeShort, workdayIndexMap,
+    getTimeShort,
+    workdayIndexMap,
 } from '@/utils.ts';
 import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import {
-    APIGetAvailableDays,
-    APIGetAvailableTimeSlots,
-    APIGetEventsInRestaurant,
-} from '@/api/restaurants.ts';
-import {
-    bookingDateAtom,
-    guestCountAtom,
-    timeslotAtom,
-} from '@/atoms/bookingInfoAtom.ts';
+import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.ts';
+import { bookingDateAtom, guestCountAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { IEventInRestaurant } from '@/types/events.ts';
@@ -73,10 +63,10 @@ import moment from 'moment';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { IBanquet } from '@/types/banquets.types.ts';
 import { APIGetBanquetOptions } from '@/api/banquet.api.ts';
+import { ICertificateBlockProps } from '@/types/certificates.types.ts';
+import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 
-export const transformGallery = (
-    gallery: IPhotoCard[],
-): GalleryCollection[] => {
+export const transformGallery = (gallery: IPhotoCard[]): GalleryCollection[] => {
     // Создаем объект для группировки по категориям
     const groupedByCategory: Record<string, GalleryPhoto[]> = {};
 
@@ -103,14 +93,11 @@ export const Restaurant = () => {
     const [restaurants] = useAtom(restaurantsListAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
     const [, setBackUrlAtom] = useAtom(backButtonAtom);
-    const [currentSelectedTime, setCurrentSelectedTime] =
-        useAtom<ITimeSlot | null>(timeslotAtom);
+    const [currentSelectedTime, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
 
     const [restaurant, setRestaurant] = useState<IRestaurant>();
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
-    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>(
-        [],
-    );
+    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
 
     const [timeslotLoading, setTimeslotLoading] = useState(true);
 
@@ -129,9 +116,7 @@ export const Restaurant = () => {
     };
 
     const shareRestaurant = () => {
-        const url = encodeURI(
-            `https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`,
-        );
+        const url = encodeURI(`https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`);
         const title = encodeURI(String(restaurant?.title));
         const shareData = {
             title,
@@ -139,9 +124,12 @@ export const Restaurant = () => {
         };
         try {
             if (navigator && navigator.canShare(shareData)) {
-                navigator.share(shareData).then().catch((err) => {
-                    console.error(JSON.stringify(err));
-                });
+                navigator
+                    .share(shareData)
+                    .then()
+                    .catch((err) => {
+                        console.error(JSON.stringify(err));
+                    });
             }
         } catch (e) {
             window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
@@ -150,9 +138,13 @@ export const Restaurant = () => {
 
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
-            navigate('/onboarding/3', { state: { id, bookedDate: bookingDate, bookedTime: currentSelectedTime, sharedRestaurant: true } });
+            navigate('/onboarding/3', {
+                state: { id, bookedDate: bookingDate, bookedTime: currentSelectedTime, sharedRestaurant: true },
+            });
         } else {
-            navigate(`/restaurant/${id}/booking`, { state: { bookedDate: bookingDate, bookedTime: currentSelectedTime } });
+            navigate(`/restaurant/${id}/booking`, {
+                state: { bookedDate: bookingDate, bookedTime: currentSelectedTime },
+            });
         }
     };
 
@@ -165,18 +157,16 @@ export const Restaurant = () => {
     };
 
     useEffect(() => {
-        APIGetBanquetOptions(String(auth?.access_token), Number(id))
-            .then((res) => {
-                setBanquets(res.data);
-            });
+        APIGetBanquetOptions(String(auth?.access_token), Number(id)).then((res) => {
+            setBanquets(res.data);
+        });
     }, [id]);
 
     useEffect(() => {
         setRestaurant(restaurants.find((v) => v.id === Number(id)));
         setCurrentSelectedTime(null);
         setBookingDate({ value: 'unset', title: 'unset' });
-        APIGetEventsInRestaurant(Number(id), String(auth?.access_token))
-            .then((res) => setEvents(res.data));
+        APIGetEventsInRestaurant(Number(id), String(auth?.access_token)).then((res) => setEvents(res.data));
     }, [id]);
 
     useEffect(() => {
@@ -198,17 +188,16 @@ export const Restaurant = () => {
                     res.data.map((v) => ({
                         title: formatDate(v),
                         value: v,
-                    })),
+                    }))
                 );
                 return res;
             })
             .then((res) => {
-                    setBookingDate({
-                        title: formatDate(res.data[0]),
-                        value: res.data[0],
-                    });
-                },
-            );
+                setBookingDate({
+                    title: formatDate(res.data[0]),
+                    value: res.data[0],
+                });
+            });
     }, []);
 
     useEffect(() => {
@@ -216,12 +205,7 @@ export const Restaurant = () => {
             return;
         }
         setTimeslotLoading(true);
-        APIGetAvailableTimeSlots(
-            auth.access_token,
-            Number(id),
-            bookingDate.value,
-            1,
-        )
+        APIGetAvailableTimeSlots(auth.access_token, Number(id), bookingDate.value, 1)
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotLoading(false));
     }, [bookingDate]);
@@ -237,12 +221,7 @@ export const Restaurant = () => {
                 setOpen={setCallPopup}
                 phone={restaurant?.phone_number ? restaurant?.phone_number : ''}
             />
-            <div
-                className={classNames(
-                    css.header,
-                    headerScrolled ? css.scrolled : null,
-                )}
-            >
+            <div className={classNames(css.header, headerScrolled ? css.scrolled : null)}>
                 <div className={css.headerNav}>
                     <div className={css.headerTop}>
                         <div className={css.headerNavBlock}>
@@ -251,54 +230,50 @@ export const Restaurant = () => {
                                 action={goBack}
                             ></RoundedButton>
                         </div>
-                        {headerScrolled ? (
-                            <span className={css.headerTitle}>
-                                {restaurant?.title}
-                            </span>
-                        ) : null}
+                        {headerScrolled ? <span className={css.headerTitle}>{restaurant?.title}</span> : null}
                         <div className={css.headerNavBlock}>
                             <RoundedButton
-                                icon={
-                                    <Share color={'var(--dark-grey)'} />
-                                }
+                                icon={<Share color={'var(--dark-grey)'} />}
                                 action={() => shareRestaurant()}
                             />
                             {user && user.complete_onboarding && (
                                 <RoundedButton
-                                    icon={
-                                        <IconlyProfile color={'var(--dark-grey)'} />
-                                    }
+                                    icon={<IconlyProfile color={'var(--dark-grey)'} />}
                                     action={() => goToProfile()}
                                 />
                             )}
                         </div>
                     </div>
-                    {headerScrolled ?
-                        <RestaurantNavigation isLoading={events == null && banquets == null} isShow={tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0}
-                                              isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}/> : null}
+                    {headerScrolled ? (
+                        <RestaurantNavigation
+                            isLoading={events == null && banquets == null}
+                            isShow={
+                                tg_id &&
+                                mockEventsUsersList.includes(tg_id) &&
+                                banquets &&
+                                banquets?.banquet_options.length > 0
+                            }
+                            isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
+                        />
+                    ) : null}
                 </div>
             </div>
             <div className={css.floatingFooter}>
                 <BottomButtonWrapper
                     onClick={handleNextBtn}
-                    additionalBtns={(
+                    additionalBtns={
                         <>
                             <RoundedButton
-                                icon={
-                                    <GoToPathIcon
-                                        size={24}
-                                        color={'var(--dark-grey)'}
-                                    />
-                                }
+                                icon={<GoToPathIcon size={24} color={'var(--dark-grey)'} />}
                                 action={() =>
                                     // ,
                                     window.open(
-                                        `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`,
+                                        `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`
                                     )
                                 }
                             />
                         </>
-                    )}
+                    }
                 />
             </div>
             <div className={css.pageContainer}>
@@ -332,7 +307,9 @@ export const Restaurant = () => {
                     availableTimeslots={availableTimeslots}
                     setCurrentSelectedTime={setCurrentSelectedTime}
                     isNavigationLoading={events == null && banquets == null}
-                    isShow={tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0}
+                    isShow={
+                        tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0
+                    }
                     isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
                 />
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
@@ -348,6 +325,7 @@ export const Restaurant = () => {
                     />
                 )}
                 {Boolean(filteredEvents && filteredEvents?.length > 0) && <EventsBlock events={events} />}
+                <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}
                     about_dishes={String(restaurant?.about_dishes)}
@@ -362,16 +340,8 @@ export const Restaurant = () => {
                     chef_name={String(restaurant?.brand_chef.name)}
                 />
                 <AddressBlock
-                    longitude={Number(
-                        restaurant?.address_lonlng.split(
-                            ',',
-                        )[0],
-                    )}
-                    latitude={Number(
-                        restaurant?.address_lonlng.split(
-                            ',',
-                        )[1],
-                    ) - 0.0003}
+                    longitude={Number(restaurant?.address_lonlng.split(',')[0])}
+                    latitude={Number(restaurant?.address_lonlng.split(',')[1]) - 0.0003}
                     address={String(restaurant?.address)}
                     logo_url={String(restaurant?.logo_url)}
                     address_station_color={String(restaurant?.address_station_color)}
@@ -396,24 +366,23 @@ interface BookingBlockProps {
     isNavigationLoading: boolean;
 }
 
-const BookingBlock: React.FC<BookingBlockProps> = (
-    {
-        currentSelectedTime,
-        workTime,
-        bookingDate,
-        setBookingDate,
-        bookingDates,
-        timeslotLoading,
-        availableTimeslots,
-        setCurrentSelectedTime,
-        isShow,
-        isEvents,
-        isNavigationLoading
-    }) => {
+const BookingBlock: React.FC<BookingBlockProps> = ({
+    currentSelectedTime,
+    workTime,
+    bookingDate,
+    setBookingDate,
+    bookingDates,
+    timeslotLoading,
+    availableTimeslots,
+    setCurrentSelectedTime,
+    isShow,
+    isEvents,
+    isNavigationLoading,
+}) => {
     const [, setGuestCount] = useAtom(guestCountAtom);
     const [bookingDatePopup, setBookingDatePopup] = useState<boolean>(false);
-    const restaurantWorkEndTime = workTime && workTime
-        .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+    const restaurantWorkEndTime =
+        workTime && workTime.find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
     let workEndTime = moment(bookingDate.value);
     if (restaurantWorkEndTime !== undefined) {
         const endOfDay = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) < 12;
@@ -448,24 +417,12 @@ const BookingBlock: React.FC<BookingBlockProps> = (
                                 marginLeft: '0',
                             }}
                         >
-                            {bookingDate.value == 'unset' ||
-                            !bookingDates.length ? (
-                                <SwiperSlide
-                                    style={{ width: 'min-content' }}
-                                >
-                                    <PlaceholderBlock
-                                        width={'150px'}
-                                        height={'41px'}
-                                        rounded={'20px'}
-                                    />
+                            {bookingDate.value == 'unset' || !bookingDates.length ? (
+                                <SwiperSlide style={{ width: 'min-content' }}>
+                                    <PlaceholderBlock width={'150px'} height={'41px'} rounded={'20px'} />
                                 </SwiperSlide>
                             ) : (
-                                <SwiperSlide
-                                    style={{ width: 'min-content' }}
-                                    onClick={() =>
-                                        setBookingDatePopup(true)
-                                    }
-                                >
+                                <SwiperSlide style={{ width: 'min-content' }} onClick={() => setBookingDatePopup(true)}>
                                     <div className={css.timeItem}>
                                         <Calendar size={18} />
                                         {formatDateAlt(bookingDate.value)}
@@ -475,32 +432,14 @@ const BookingBlock: React.FC<BookingBlockProps> = (
                             )}
                             {timeslotLoading ? (
                                 <>
-                                    <SwiperSlide
-                                        style={{ width: 'min-content' }}
-                                    >
-                                        <PlaceholderBlock
-                                            width={'68px'}
-                                            height={'41px'}
-                                            rounded={'20px'}
-                                        />
+                                    <SwiperSlide style={{ width: 'min-content' }}>
+                                        <PlaceholderBlock width={'68px'} height={'41px'} rounded={'20px'} />
                                     </SwiperSlide>
-                                    <SwiperSlide
-                                        style={{ width: 'min-content' }}
-                                    >
-                                        <PlaceholderBlock
-                                            width={'68px'}
-                                            height={'41px'}
-                                            rounded={'20px'}
-                                        />
+                                    <SwiperSlide style={{ width: 'min-content' }}>
+                                        <PlaceholderBlock width={'68px'} height={'41px'} rounded={'20px'} />
                                     </SwiperSlide>
-                                    <SwiperSlide
-                                        style={{ width: 'min-content' }}
-                                    >
-                                        <PlaceholderBlock
-                                            width={'68px'}
-                                            height={'41px'}
-                                            rounded={'20px'}
-                                        />
+                                    <SwiperSlide style={{ width: 'min-content' }}>
+                                        <PlaceholderBlock width={'68px'} height={'41px'} rounded={'20px'} />
                                     </SwiperSlide>
                                 </>
                             ) : (
@@ -519,18 +458,16 @@ const BookingBlock: React.FC<BookingBlockProps> = (
                                         <div
                                             className={classNames(
                                                 css.timeItem,
-                                                currentSelectedTime == ts
-                                                    ? css.timeItemActive
-                                                    : null,
+                                                currentSelectedTime == ts ? css.timeItemActive : null
                                             )}
                                         >
-                                            {currentSelectedTime == ts ? `${getTimeShort(
-                                                ts.start_datetime,
-                                            )} -  ${moment(ts.end_datetime).isBefore(workEndTime) ? getTimeShort(
-                                                ts.end_datetime,
-                                            ) : restaurantWorkEndTime}` : getTimeShort(
-                                                ts.start_datetime,
-                                            )}
+                                            {currentSelectedTime == ts
+                                                ? `${getTimeShort(ts.start_datetime)} -  ${
+                                                      moment(ts.end_datetime).isBefore(workEndTime)
+                                                          ? getTimeShort(ts.end_datetime)
+                                                          : restaurantWorkEndTime
+                                                  }`
+                                                : getTimeShort(ts.start_datetime)}
                                         </div>
                                     </SwiperSlide>
                                 ))
@@ -552,9 +489,7 @@ const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
     const [currentImageViewerPhoto, setCurrentImageViewerPhoto] = useState('');
     const [gallery, setGallery] = useState<GalleryCollection[]>([]);
     const [currentGalleryCategory, setCurrentGalleryCategory] = useState('Все фото');
-    const [currentGalleryPhotos, setCurrentGalleryPhotos] = useState<
-        (string | string[])[]
-    >([]);
+    const [currentGalleryPhotos, setCurrentGalleryPhotos] = useState<(string | string[])[]>([]);
     const getGalleryPhotos = () => {
         let photoList: string[] = [];
 
@@ -564,12 +499,8 @@ const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
             });
             photoList = [...new Set(photoList)];
         } else {
-            const searchedGallery = gallery.find(
-                (item) => item.title === currentGalleryCategory,
-            );
-            searchedGallery?.photos.forEach((photo) =>
-                photoList.push(photo.link),
-            );
+            const searchedGallery = gallery.find((item) => item.title === currentGalleryCategory);
+            searchedGallery?.photos.forEach((photo) => photoList.push(photo.link));
         }
 
         const groupedPhotos: (string | string[])[] = [];
@@ -611,27 +542,15 @@ const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
                 <HeaderContainer>
                     <HeaderContent title={'Галерея'} />
                     <div className={css.photoSliderNavigationContainer}>
-                        <Swiper
-                            modules={[FreeMode]}
-                            freeMode={true}
-                            slidesPerView={'auto'}
-                            spaceBetween={4}
-                        >
+                        <Swiper modules={[FreeMode]} freeMode={true} slidesPerView={'auto'} spaceBetween={4}>
                             <SwiperSlide
                                 style={{ width: 'max-content' }}
-                                onClick={() =>
-                                    setCurrentGalleryCategory(
-                                        'Все фото',
-                                    )
-                                }
+                                onClick={() => setCurrentGalleryCategory('Все фото')}
                             >
                                 <div
                                     className={classNames(
                                         css.photoSliderNavigationItem,
-                                        currentGalleryCategory ==
-                                        'Все фото'
-                                            ? css.photoSliderNavigationActive
-                                            : null,
+                                        currentGalleryCategory == 'Все фото' ? css.photoSliderNavigationActive : null
                                     )}
                                 >
                                     Все фото
@@ -641,19 +560,12 @@ const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
                                 <SwiperSlide
                                     style={{ width: 'max-content' }}
                                     key={i}
-                                    onClick={() =>
-                                        setCurrentGalleryCategory(
-                                            d.title,
-                                        )
-                                    }
+                                    onClick={() => setCurrentGalleryCategory(d.title)}
                                 >
                                     <div
                                         className={classNames(
                                             css.photoSliderNavigationItem,
-                                            currentGalleryCategory ==
-                                            d.title
-                                                ? css.photoSliderNavigationActive
-                                                : null,
+                                            currentGalleryCategory == d.title ? css.photoSliderNavigationActive : null
                                         )}
                                     >
                                         {d.title}
@@ -664,62 +576,37 @@ const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
                     </div>
                 </HeaderContainer>
                 <div className={css.photoSliderContainer}>
-                    <Swiper
-                        slidesPerView="auto"
-                        modules={[FreeMode]}
-                        freeMode={true}
-                        spaceBetween={8}
-                    >
+                    <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
                         {currentGalleryPhotos.map((photo, index) => (
                             <SwiperSlide
                                 key={`${index}${photo}`}
                                 style={{ width: 'max-content' }}
-                                className={
-                                    Array.isArray(photo)
-                                        ? css.smallPhotoSlideContainer
-                                        : css.photoBig
-                                }
+                                className={Array.isArray(photo) ? css.smallPhotoSlideContainer : css.photoBig}
                             >
                                 {Array.isArray(photo) ? (
-                                    <div
-                                        className={
-                                            css.smallPhotoContainer
-                                        }
-                                    >
+                                    <div className={css.smallPhotoContainer}>
                                         {photo.map((smallPhoto, i) => (
                                             <div
                                                 key={`${i}${smallPhoto}`}
-                                                className={classNames(
-                                                    css.photo,
-                                                    css.photoSmall,
-                                                )}
+                                                className={classNames(css.photo, css.photoSmall)}
                                                 style={{
                                                     backgroundImage: `url(${smallPhoto})`,
                                                 }}
                                                 onClick={() => {
-                                                    setCurrentImageViewerPhoto(
-                                                        smallPhoto,
-                                                    );
-                                                    setImageViewerOpen(
-                                                        true,
-                                                    );
+                                                    setCurrentImageViewerPhoto(smallPhoto);
+                                                    setImageViewerOpen(true);
                                                 }}
                                             />
                                         ))}
                                     </div>
                                 ) : (
                                     <div
-                                        className={classNames(
-                                            css.photo,
-                                            css.photoBig,
-                                        )}
+                                        className={classNames(css.photo, css.photoBig)}
                                         style={{
                                             backgroundImage: `url(${photo})`,
                                         }}
                                         onClick={() => {
-                                            setCurrentImageViewerPhoto(
-                                                photo,
-                                            );
+                                            setCurrentImageViewerPhoto(photo);
                                             setImageViewerOpen(true);
                                         }}
                                     />
@@ -746,9 +633,7 @@ const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
                 <MenuPopup
                     isOpen={menuPopupOpen}
                     setOpen={setMenuPopupOpen}
-                    menuItems={menu_imgs
-                        .sort((a, b) => (a.order > b.order ? 1 : -1))
-                        .map((v) => v.image_url)}
+                    menuItems={menu_imgs.sort((a, b) => (a.order > b.order ? 1 : -1)).map((v) => v.image_url)}
                 />
             ) : null}
             <ContentBlock>
@@ -757,46 +642,55 @@ const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
                     {/*<HeaderSubText text={'Рекомендуем'}/>*/}
                 </HeaderContainer>
                 <div className={css.photoSliderContainer}>
-                    <Swiper
-                        slidesPerView="auto"
-                        modules={[FreeMode]}
-                        freeMode={true}
-                        spaceBetween={8}
-                    >
-                        {menu && menu
-                            .sort((a, b) => (a.id > b.id ? 1 : -1))
-                            .map((item, index) => (
-                                <SwiperSlide style={{ width: '162px' }}
-                                             key={`${index}${item.photo_url}`}
-                                >
-                                    <div className={css.menuItem}>
-                                        <div
-                                            className={classNames(
-                                                css.menuItemPhoto,
-                                                css.bgImage,
-                                            )}
-                                            style={{
-                                                backgroundImage: `url(${item.photo_url})`,
-                                            }}
-                                        ></div>
-                                        <div className={css.menuItemInfo}>
-                                            <span className={css.title}>
-                                                {item.title}
-                                            </span>
-                                            <span className={css.subtitle}>
-                                                {item.price} ₽
-                                            </span>
+                    <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
+                        {menu &&
+                            menu
+                                .sort((a, b) => (a.id > b.id ? 1 : -1))
+                                .map((item, index) => (
+                                    <SwiperSlide style={{ width: '162px' }} key={`${index}${item.photo_url}`}>
+                                        <div className={css.menuItem}>
+                                            <div
+                                                className={classNames(css.menuItemPhoto, css.bgImage)}
+                                                style={{
+                                                    backgroundImage: `url(${item.photo_url})`,
+                                                }}
+                                            ></div>
+                                            <div className={css.menuItemInfo}>
+                                                <span className={css.title}>{item.title}</span>
+                                                <span className={css.subtitle}>{item.price} ₽</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))}
+                                    </SwiperSlide>
+                                ))}
                     </Swiper>
                 </div>
-                <UniversalButton
-                    title={'Посмотреть меню'}
-                    width={'full'}
-                    action={() => setMenuPopupOpen(true)}
-                />
+                <UniversalButton title={'Посмотреть меню'} width={'full'} action={() => setMenuPopupOpen(true)} />
+            </ContentBlock>
+        </ContentContainer>
+    );
+};
+
+const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, description }) => {
+    const navigate = useNavigate();
+
+    return (
+        <ContentContainer>
+            <ContentBlock id={'certificates'}>
+                <HeaderContainer id={'certificate'}>
+                    <HeaderContent title={'Подарочные сертификаты'} />
+                </HeaderContainer>
+                <div className={css.banquetContainer}>
+                    <div className={css.banquetImg}>
+                        <div
+                            className={classNames(css.banquetImage, css.bgImage)}
+                            style={{
+                                backgroundImage: `url(${image})`,
+                            }}
+                        ></div>
+                    </div>
+                    <span className={css.banquetDescription}>{description}</span>
+                    <UniversalButton width={'full'} title={'Подробнее'} action={() => navigate('/certificates/1')} />
+                </div>
             </ContentBlock>
         </ContentContainer>
     );
@@ -811,16 +705,14 @@ interface AboutBlockProps {
     avg_cheque: string;
 }
 
-const AboutBlock: React.FC<AboutBlockProps> = (
-    {
-        about_text,
-        workTime,
-        about_dishes,
-        about_kitchen,
-        about_features,
-        avg_cheque,
-    },
-) => {
+const AboutBlock: React.FC<AboutBlockProps> = ({
+    about_text,
+    workTime,
+    about_dishes,
+    about_kitchen,
+    about_features,
+    avg_cheque,
+}) => {
     const [hideAbout, setHideAbout] = useState(true);
     const [hideWorkHours, setHideWorkHours] = useState(true);
     const toggleAbout = () => {
@@ -836,14 +728,7 @@ const AboutBlock: React.FC<AboutBlockProps> = (
                     <HeaderContent id={'about'} title={'О месте'} />
                 </HeaderContainer>
                 <div className={css.aboutContainer}>
-                    <span
-                        className={classNames(
-                            css.aboutText,
-                            hideAbout ? css.trimLines : null,
-                        )}
-                    >
-                        {about_text}
-                    </span>
+                    <span className={classNames(css.aboutText, hideAbout ? css.trimLines : null)}>{about_text}</span>
                     <div className={css.trimLinesButton} onClick={toggleAbout}>
                         <span className={css.text}>{hideAbout ? 'Читать больше' : 'Скрыть'}</span>
                     </div>
@@ -854,23 +739,15 @@ const AboutBlock: React.FC<AboutBlockProps> = (
                     <div className={css.top}>
                         <span className={css.title}>
                             {workTime
-                                ? getRestaurantStatus(
-                                    workTime,
-                                    getCurrentWeekdayShort(),
-                                    getCurrentTimeShort(),
-                                )
+                                ? getRestaurantStatus(workTime, getCurrentWeekdayShort(), getCurrentTimeShort())
                                 : ''}
                         </span>
                         <div className={css.right} onClick={toggleWorkHours}>
                             <span className={css.expandButton}>График</span>
                             <div
-                                className={classNames(
-                                    css.right,
-                                    css.opened,
-                                    {
-                                        [css.closed]: hideWorkHours,
-                                    },
-                                )}
+                                className={classNames(css.right, css.opened, {
+                                    [css.closed]: hideWorkHours,
+                                })}
                             >
                                 <DownArrow size={20} color={'var(--grey)'} />
                             </div>
@@ -878,11 +755,12 @@ const AboutBlock: React.FC<AboutBlockProps> = (
                     </div>
                     <UnmountClosed isOpened={!hideWorkHours} className={css.collapse}>
                         <div className={css.workHours}>
-                            {workTime && workTime.map((r) => (
-                                <span key={`weekday-${r.weekday}`} className={css.text}>
-                                    {r.weekday}: {r.time_start}-{r.time_end}
-                                </span>
-                            ))}
+                            {workTime &&
+                                workTime.map((r) => (
+                                    <span key={`weekday-${r.weekday}`} className={css.text}>
+                                        {r.weekday}: {r.time_start}-{r.time_end}
+                                    </span>
+                                ))}
                         </div>
                     </UnmountClosed>
                 </div>
@@ -895,7 +773,9 @@ const AboutBlock: React.FC<AboutBlockProps> = (
                     <div className={css.infoBlock}>
                         <div className={css.textRow}>
                             <span className={css.title}>Кухня:</span>
-                            <span className={css.value}>{about_kitchen}, {about_dishes}</span>
+                            <span className={css.value}>
+                                {about_kitchen}, {about_dishes}
+                            </span>
                         </div>
                         <div className={css.textRow}>
                             <span className={css.title}>Особенности:</span>
@@ -930,26 +810,14 @@ const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_name }) =>
                     <HeaderContent id={'chef'} title={'О шефе'} />
                 </HeaderContainer>
                 <div className={css.aboutContainer}>
-                    <span
-                        className={classNames(
-                            css.aboutText,
-                            hideChefAbout ? css.trimLines : null,
-                        )}
-                    >
-                        {about}
-                    </span>
+                    <span className={classNames(css.aboutText, hideChefAbout ? css.trimLines : null)}>{about}</span>
                     <div className={css.trimLinesButton} onClick={toggleChefInfo}>
-                        <span className={css.text}>
-                            {hideChefAbout ? 'Читать больше' : 'Скрыть'}
-                        </span>
+                        <span className={css.text}>{hideChefAbout ? 'Читать больше' : 'Скрыть'}</span>
                     </div>
                 </div>
                 <div className={css.chefInfoContainer}>
                     <div
-                        className={classNames(
-                            css.chefImage,
-                            css.bgImage,
-                        )}
+                        className={classNames(css.chefImage, css.bgImage)}
                         style={{ backgroundImage: `url(${photo_url})` }}
                     />
                     <div className={css.chefInfo}>
@@ -973,17 +841,12 @@ const EventsBlock: React.FC<EventsBlockProps> = ({ events }) => {
         <ContentContainer>
             <ContentBlock>
                 <HeaderContainer>
-                    <HeaderContent
-                        title={'Мероприятия'}
-                        id={'events'}
-                    />
+                    <HeaderContent title={'Мероприятия'} id={'events'} />
                 </HeaderContainer>
                 {events?.map((e) => (
                     <EventCard
                         key={e.name}
-                        onClick={() => navigate(
-                            `/events/${e.id}`,
-                        )}
+                        onClick={() => navigate(`/events/${e.id}`)}
                         event_price={e.ticket_price}
                         event_name={e.name}
                         event_img={e.image_url}
@@ -1007,11 +870,20 @@ interface BanquetsBlockProps {
     workTime: IWorkTime[] | undefined;
 }
 
-const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, restaurant_id, restaurant_title, banquets, workTime }) => {
+const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
+    description,
+    image,
+    restaurant_id,
+    restaurant_title,
+    banquets,
+    workTime,
+}) => {
     const navigate = useNavigate();
     const navigateToBanquet = () => {
         const workTimeSorted = workTime?.sort((a, b) => workdayIndexMap[a.weekday] - workdayIndexMap[b.weekday]);
-        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title, banquets, workTime: workTimeSorted } });
+        navigate(`/banquets/${restaurant_id}/choose`, {
+            state: { restaurant_title, banquets, workTime: workTimeSorted },
+        });
     };
     return (
         <ContentContainer>
@@ -1022,21 +894,14 @@ const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, resta
                 <div className={css.banquetContainer}>
                     <div className={css.banquetImg}>
                         <div
-                            className={classNames(
-                                css.banquetImage,
-                                css.bgImage,
-                            )}
+                            className={classNames(css.banquetImage, css.bgImage)}
                             style={{
                                 backgroundImage: `url(${image})`,
                             }}
                         ></div>
                     </div>
                     <span className={css.banquetDescription}>{description}</span>
-                    <UniversalButton
-                        width={'full'}
-                        title={'Подробнее'}
-                        action={navigateToBanquet}
-                    />
+                    <UniversalButton width={'full'} title={'Подробнее'} action={navigateToBanquet} />
                 </div>
             </ContentBlock>
         </ContentContainer>
@@ -1051,20 +916,15 @@ interface AddressBlockProps {
     address_station_color?: string;
 }
 
-const AddressBlock: React.FC<AddressBlockProps> = (
-    {
-        longitude,
-        latitude,
-        logo_url,
-        address_station_color,
-        address,
-    },
-) => {
+const AddressBlock: React.FC<AddressBlockProps> = ({
+    longitude,
+    latitude,
+    logo_url,
+    address_station_color,
+    address,
+}) => {
     const location = {
-        center: [
-            longitude,
-            latitude,
-        ],
+        center: [longitude, latitude],
         zoom: 17,
     };
     return (
@@ -1075,20 +935,11 @@ const AddressBlock: React.FC<AddressBlockProps> = (
                 </HeaderContainer>
                 <div className={css.mapContainer}>
                     <div className={css.map}>
-                        <YMapComponentsProvider
-                            apiKey={'73a95f3b-fa74-4525-99e3-86ee1309f266'}
-                            lang={'ru_RU'}
-                        >
+                        <YMapComponentsProvider apiKey={'73a95f3b-fa74-4525-99e3-86ee1309f266'} lang={'ru_RU'}>
                             <YMap location={location}>
                                 <YMapDefaultSchemeLayer />
                                 <YMapDefaultFeaturesLayer />
-                                <YMapMarker
-                                    coordinates={[
-                                        longitude,
-                                        latitude,
-                                    ]}
-                                    draggable={false}
-                                >
+                                <YMapMarker coordinates={[longitude, latitude]} draggable={false}>
                                     <div className={css.mapPoint}>
                                         <img width={50} src={logo_url} alt={''} />
                                     </div>
@@ -1097,9 +948,7 @@ const AddressBlock: React.FC<AddressBlockProps> = (
                             <section className={css.infoContainer}>
                                 <div className={css.RestInfo}>
                                     <div className={css.mapInfo}>
-                                        <div
-                                            className={css.mapInfoMetro}
-                                        >
+                                        <div className={css.mapInfoMetro}>
                                             {address_station_color ? (
                                                 <div
                                                     className={css.mapInfoMetroCircle}
@@ -1108,13 +957,9 @@ const AddressBlock: React.FC<AddressBlockProps> = (
                                                     }}
                                                 ></div>
                                             ) : null}
-                                            <span className={css.mapInfoMetroText}>
-                                                {address}
-                                            </span>
+                                            <span className={css.mapInfoMetroText}>{address}</span>
                                         </div>
-                                        <div className={css.mapInfoAddress}>
-                                            {address}
-                                        </div>
+                                        <div className={css.mapInfoAddress}>{address}</div>
                                     </div>
                                 </div>
                             </section>

@@ -12,6 +12,10 @@
     box-shadow: 3px 0 10px #938e8e;
 }
 
+.relativeBottom {
+    position: relative;
+}
+
 .absoluteBottom_wrapper {
     display: flex;
     padding: 0 15px;

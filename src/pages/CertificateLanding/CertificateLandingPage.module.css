@@ -1,0 +1,87 @@
+.container {
+    background-color: var(--certificate-background);
+    min-height: 100vh;
+    height: 100%;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    padding: 30px 15px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 45px;
+
+    > h1 {
+        font-family: "Mont", sans-serif;
+        font-weight: 400;
+        font-size: 1.25rem;
+        text-align: center;
+    }
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.certificateFields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 50px;
+}
+
+.row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    > span {
+        font-family: "Mont", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+
+        > b {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+    }
+
+    &:not(:last-child) {
+        border-bottom: 1px dashed var(--black);
+        padding-bottom: 1rem;
+    }
+}
+
+.conditions {
+    display: flex;
+    flex-direction: column;
+    font-family: "Mont", sans-serif;
+    font-size: 0.75rem;
+
+    > b {
+        text-decoration: underline;
+    }
+}
+
+.conditionsList {
+    display: flex;
+    flex-direction: column;
+    margin-top: 24px;
+
+    > ul {
+        padding-left: 1rem;
+    }
+}
+
+.button {
+    position: relative;
+    bottom: 0;
+    margin-top: 60px;
+}

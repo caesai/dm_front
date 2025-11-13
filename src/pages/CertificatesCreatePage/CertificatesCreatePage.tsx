@@ -1,19 +1,26 @@
 import React from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import classnames from 'classnames';
 import { Page } from '@/components/Page.tsx';
-import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import classnames from 'classnames';
+import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 
 export const CertificatesCreatePage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [params] = useSearchParams();
     const state = location?.state;
-    const isWhiteBackground = !location.pathname.match(/[12]/)
+    const paramsObject = Object.fromEntries(params.entries());
+    const isWhiteBackground = !location.pathname.match(/[12]/);
+    const isPaymentLocation = location.pathname.includes('payment');
 
     const goBack = () => {
-        navigate(-1);
+        if (isPaymentLocation || paramsObject.shared) {
+            navigate('/');
+        } else {
+            navigate(-1);
+        }
     };
 
     return (

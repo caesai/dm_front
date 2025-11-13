@@ -12,12 +12,19 @@ export const CertificatesCreateTwoPage: React.FC = () => {
             <div className={css.certificateOption}>
                 <span>Получить онлайн</span>
 
-                <Certificate placeholder={'Добавьте приятных слов к подарку'} date={'****'} rating={'****'} cardholder={'Имя'} />
+                <Certificate
+                    placeholder={'Добавьте приятных слов к подарку'}
+                    date={'****'}
+                    rating={'****'}
+                    cardholder={'Имя'}
+                />
                 <UniversalButton
                     width={'full'}
                     title={'Выбрать'}
                     theme={'red'}
-                    action={() => navigate('/certificates/online', { state: { title: 'Онлайн сертификат' }})}
+                    action={() =>
+                        navigate('/certificates/online', { state: { title: 'Электронный подарочный сертификат' } })
+                    }
                 />
             </div>
             {/*<div className={css.certificateOption}>*/}
@@ -31,5 +38,5 @@ export const CertificatesCreateTwoPage: React.FC = () => {
             {/*    />*/}
             {/*</div>*/}
         </div>
-    )
-}
+    );
+};

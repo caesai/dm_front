@@ -18,7 +18,7 @@ export const Ticket = ({ ticket }: Props) => {
                 new Date().getTime() > new Date(ticket.date_start).getTime() ? css.card_date__notActive : null
                 )}
             style={{
-                backgroundImage: `url(${ticket.event_img || 'https://storage.yandexcloud.net/bottec-dreamteam/event_placeholder.png'})`,
+                backgroundImage: `url(${ticket.event_img || 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg'})`,
             }}
             onClick={() => navigate(`/tickets/${ticket.id}`)}
         >
