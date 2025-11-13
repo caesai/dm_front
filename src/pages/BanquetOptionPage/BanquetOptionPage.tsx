@@ -91,6 +91,12 @@ export const BanquetOptionPage = () => {
         }
     };
 
+    const getTotalPrice = () => {
+        return Math.round((1 + banquet.service_fee / 100) *
+            Number(banquet.deposit) *
+            parseInt(guestCount.value))
+    }
+
     const isTimeRangeValid = isTimeValid(timeFrom.value, timeTo.value);
 
     const isFormValid =
@@ -118,9 +124,7 @@ export const BanquetOptionPage = () => {
                 deposit: banquet.deposit,
                 totalDeposit: Number(banquet.deposit) * parseInt(guestCount.value),
                 serviceFee: banquet.service_fee,
-                total: (1 + banquet.service_fee / 100) *
-                    Number(banquet.deposit) *
-                    parseInt(guestCount.value),
+                total: getTotalPrice(),
             } : null,
         };
         if (banquetData.additionalOptions && banquetData.additionalOptions.length > 0) {
@@ -441,13 +445,7 @@ export const BanquetOptionPage = () => {
                                     <div className={css.payment_text}>
                                         <span>Итого:</span>
                                         <span>
-                                            {banquet &&
-                                                ((1 +
-                                                        banquet?.service_fee /
-                                                        100) *
-                                                    Number(banquet?.deposit) *
-                                                    parseInt(guestCount.value)) + ' ₽'
-                                            }
+                                            {banquet && getTotalPrice() + ' ₽'}
                                         </span>
                                     </div>
                                     <p>
