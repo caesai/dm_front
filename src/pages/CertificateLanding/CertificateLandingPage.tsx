@@ -146,7 +146,7 @@ const CertificateLandingPage: React.FC = () => {
                         <div className={css.row}>
                             <span>Номинал:</span>
                             <span>
-                                <b>{certificate?.value}</b>
+                                <b>{Number(certificate?.value).toFixed()}</b>
                             </span>
                         </div>
                         <div className={css.row}>
