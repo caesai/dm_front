@@ -17,6 +17,7 @@ export interface IBanquetOptions {
     guests_max: number,
     deposit?: number | null,
     deposit_message: string | null,
+    description: string | null,
     service_fee: number,
     max_duration: number | null,
     images: string[]

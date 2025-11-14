@@ -32,12 +32,36 @@
 .swiper {
     --swiper-navigation-color: #fff !important;
     --swiper-pagination-color: #fff !important;
+    --swiper-pagination-bullet-inactive-color: #B8B8B8 !important;
     aspect-ratio: 120/85;
     max-height: 270px;
     width: 100%;
 }
 
+:global(.swiper-pagination) {
+    top: 10px !important;
+    bottom: auto !important;
+    right: 10px !important;
+    left: auto !important;
+    width: auto !important;
+    display: flex;
+    gap: 4px;
+}
+
+:global(.swiper-pagination-bullet) {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+}
+
+:global(.swiper-pagination-bullet-active) {
+    background: white;
+}
+
 .slide {
+    position: relative;
+
     > img {
         width: 100%;
         height: 100%;
@@ -46,33 +70,38 @@
     }
 }
 
+.banquetStats {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    > div {
+        display: flex;
+        gap: 4px;
+        width: fit-content;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(20px);
+
+        > span {
+            color: var(--primary-background);
+            text-align: center;
+            font-family: "Mont", sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+    }
+}
+
 .banquetInfo {
     display: flex;
     flex-direction: column;
     gap: 8px;
-
-    /*> div {*/
-    /*    display: flex;*/
-    /*    align-items: center;*/
-    /*    gap: 6px;*/
-    /*    justify-content: space-between;*/
-    /*}*/
-}
-
-.banquetInfoRow {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-}
-
-.banquetInfoCol {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    > div {
-        display: flex;
-        gap: 3px;
-    }
 }
 
 .buttonContainer {
@@ -100,13 +129,13 @@
 
 .banquet_title {
     font-family: 'Mont', sans-serif;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 16px;
 }
 
 .banquet_text {
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 12px;
 }
 
@@ -117,4 +146,21 @@
     font-family: 'Mont', sans-serif;
     font-weight: 800;
     font-size: 24px;
+}
+
+.trimLines {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+.trimLinesButton {
+    .text {
+        font-size: 14px;
+        font-family: 'Mont', sans-serif;
+        font-weight: 400;
+        color: var(--red);
+    }
 }
