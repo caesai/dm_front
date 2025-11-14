@@ -8,7 +8,7 @@ export const CertificatesCreateOnePage: React.FC = () => {
     const navigate = useNavigate();
 
     const next = () => {
-        navigate('/certificates/2', { state: { title: 'Выберите способ получения' } });
+        navigate('/certificates/online', { state: { title: 'Электронный подарочный сертификат' } });
     }
 
     return (
