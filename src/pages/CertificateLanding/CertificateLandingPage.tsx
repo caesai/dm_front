@@ -28,7 +28,7 @@ const CertificateLandingPage: React.FC = () => {
     const [toastShow, setToastShow] = useState<boolean>(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-    const { isShowing, toggle } = useModal();
+    const { isShowing, toggle, setIsShowing } = useModal();
 
     useEffect(() => {
         if (auth?.access_token) {
@@ -64,7 +64,7 @@ const CertificateLandingPage: React.FC = () => {
             if (!certificate?.shared_at) {
                 // Toggle Modal Popup With Need to Register Info
                 setLoading(false);
-                toggle();
+                setIsShowing(true);
                 return;
             } else {
                 navigate('/onboarding/1');
