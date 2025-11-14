@@ -12,11 +12,12 @@ import { IWorkTime } from '@/types/restaurant.ts';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
-// import 'swiper/css/navigation';
 import { Pagination } from 'swiper/modules';
 import classnames from 'classnames';
 import BanquetGallery from '@/components/BanquetGallery/BanquetGallery.tsx';
 import { useState } from 'react';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import classNames from 'classnames';
 
 export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
@@ -29,6 +30,7 @@ export const ChooseBanquetOptionsPage = () => {
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
     const [currentImages, setCurrentImages] = useState<string[]>([]);
     const [imageIndex, setImageIndex] = useState<number | null>(null);
+    const [hideAbout, setHideAbout] = useState<boolean>(true);
 
     const goBack = () => {
         navigate(`/restaurant/${id}`);
@@ -50,7 +52,7 @@ export const ChooseBanquetOptionsPage = () => {
                             icon={<BackIcon color={'var(--dark-grey)'} />}
                             action={goBack}
                         ></RoundedButton>
-                        <span className={css.header_title}>Выберите место для мероприятия</span>
+                        <span className={css.header_title}>Подбор опций для банкета</span>
                         <div style={{ width: 20 }} />
                     </div>
                     <ContentContainer>
@@ -72,42 +74,59 @@ export const ChooseBanquetOptionsPage = () => {
                                                 <SwiperSlide className={css.slide} key={index}
                                                              onClick={() => openPopup(banquet, index)}>
                                                     <img src={image} alt={'banquet_img'} />
+                                                    <div className={css.banquetStats}>
+                                                        <div>
+                                                            <GuestsIcon color={'#FFFFFF'} />
+                                                            <span>до {banquet.guests_max} человек</span>
+                                                        </div>
+                                                        <div>
+                                                            <DepositIcon color={'#FFFFFF'} />
+                                                            <span>{banquet.deposit ? `${banquet.deposit} ₽` : 'Без депозита'}</span>
+                                                        </div>
+                                                    </div>
                                                 </SwiperSlide>
                                             ))}
                                         </Swiper>
                                         <div className={css.banquetInfo}>
                                             <span className={css.banquet_title}>{banquet.name}</span>
-                                            <div className={css.banquetInfoRow}>
-                                                <div className={css.banquetInfoCol}>
-                                                    <div>
-                                                        <GuestsIcon />
-                                                        <span
-                                                            className={css.banquet_text}>до {banquet.guests_max} человек</span>
-                                                    </div>
-                                                    <div>
-                                                        <DepositIcon />
-                                                        <span className={css.banquet_text}>
-                                                            {banquet.deposit ? `от ${banquet.deposit} ₽ на гостя` : banquet.deposit_message}
+                                            {banquet.description && (
+                                                <span className={classNames(
+                                                    css.banquet_text,
+                                                    hideAbout ? css.trimLines : null,
+                                                )}>
+                                                    {banquet.description.split(/\n|\r\n/).map((segment, index) => (
+                                                <>
+                                                    {index > 0 && <br />}
+                                                    {segment}
+                                                </>
+                                                    ))}
+                                                </span>
+                                            )}
+                                            {banquet.description && banquet.description.length > 100 &&
+                                                (
+                                                    <div
+                                                        className={css.trimLinesButton}
+                                                        onClick={() => setHideAbout((prev) => !prev)}
+                                                    >
+                                                        <span className={css.text}>
+                                                            {hideAbout ? 'Читать больше' : 'Скрыть'}
                                                         </span>
                                                     </div>
-                                                </div>
-                                                <div className={css.buttonContainer}>
-                                                    <button
-                                                        className={css.infoButton}
-                                                        onClick={() => navigate(`/banquets/${id}/option`, {
-                                                            state: {
-                                                                banquet,
-                                                                additional_options: banquets.additional_options,
-                                                                restaurant_title,
-                                                                workTime,
-                                                                banquets,
-                                                            },
-                                                        })}
-                                                    >
-                                                        Выбрать
-                                                    </button>
-                                                </div>
-                                            </div>
+                                                )
+                                            }
+                                            <UniversalButton
+                                                width={'full'}
+                                                title={'Выбрать'}
+                                                theme={'red'}
+                                                action={() => navigate(`/banquets/${id}/option`, {
+                                                state: {
+                                                    banquet,
+                                                    additional_options: banquets.additional_options,
+                                                    restaurant_title,
+                                                    workTime,
+                                                    banquets,
+                                                },
+                                            })} />
                                         </div>
                                     </div>
                                 ))
