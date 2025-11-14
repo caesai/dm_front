@@ -22,6 +22,7 @@ import {
 } from '@/atoms/userAtom.ts';
 import { DEV_MODE } from '@/api/base.ts';
 import { GiftIcon } from '@/components/Icons/GiftIcon.tsx';
+import { PlainGiftIcon } from '@/components/Icons/PlaingGiftIcon.tsx';
 // import {DEV_MODE} from "@/api/base.ts";
 
 export const ProfilePage = () => {
@@ -93,7 +94,7 @@ export const ProfilePage = () => {
                         </Link>
                         {DEV_MODE && (
                             <Link to={'/certificates/my'} className={css.navLink}>
-                                <GiftIcon size={24} color={'black'} />
+                                <PlainGiftIcon size={20} color={'black'} />
                                 <span className={css.navLinkTitle}>
                                     Подарочные сертификаты
                                 </span>
