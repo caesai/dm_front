@@ -70,7 +70,7 @@ const CertificateLandingPage: React.FC = () => {
                 navigate('/onboarding/1');
             }
         }
-    }, [certificate, user, navigate, toggle]);
+    }, [certificate]);
 
     const acceptCertificate = () => {
         if (auth?.access_token && certificate && id) {
