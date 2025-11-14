@@ -93,7 +93,16 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
     useEffect(() => {
         if (isOpened && selectedCertificateId) {
             setSelectedType(CERTIFICATION_TYPES.ONLINE);
-            setCertificateId(selectedCertificateId);
+            let certificateId = null;
+            let certificateIndex = null;
+            if (selectedCertificateId) {
+                certificateId = certificates.find((item) => item.id === selectedCertificateId)?.id || null;
+                certificateIndex = certificates.findIndex((item) => item.id === selectedCertificateId);
+            }
+            if (certificateIndex) {
+                setSelectedOnlineOptionIndex(certificateIndex);
+                setCertificateId(certificateId);
+            }
         }
     }, [isOpened, selectedCertificateId, setCertificateId]);
 

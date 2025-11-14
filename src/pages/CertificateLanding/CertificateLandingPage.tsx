@@ -40,6 +40,7 @@ const CertificateLandingPage: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        if (!user || !certificate) return;
         if (user?.complete_onboarding) {
             if (!certificate?.shared_at) {
                 if (certificate?.customer_id === user.id) {
@@ -69,7 +70,7 @@ const CertificateLandingPage: React.FC = () => {
                 navigate('/onboarding/1');
             }
         }
-    }, [certificate]);
+    }, [certificate, user, navigate, toggle]);
 
     const acceptCertificate = () => {
         if (auth?.access_token && certificate && id) {
@@ -112,9 +113,7 @@ const CertificateLandingPage: React.FC = () => {
 
     if (loading) {
         return (
-            <Page back={true}>
                 <div className={css.loader}><Loader /></div>
-            </Page>
         );
     }
 
@@ -147,7 +146,7 @@ const CertificateLandingPage: React.FC = () => {
                         <div className={css.row}>
                             <span>Номинал:</span>
                             <span>
-                                <b>{certificate?.value}</b>
+                                <b>{Number(certificate?.value).toFixed()}</b>
                             </span>
                         </div>
                         <div className={css.row}>

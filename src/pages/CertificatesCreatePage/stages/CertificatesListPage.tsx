@@ -9,10 +9,9 @@ import { APIGetCertificates } from '@/api/certificates.api.ts';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
-import certificateImage from '/img/certificate_2.png';
+// import certificateImage from '/img/certificate_2.png';
 
 export const shareCertificate = async (certificate: ICertificate) => {
-    console.log(certificate)
     const url = encodeURI(
         `https://t.me/${BASE_BOT}?startapp=certificateId_${certificate.id}`
     );
@@ -20,13 +19,13 @@ export const shareCertificate = async (certificate: ICertificate) => {
     const message = `${certificate.recipient_name}, вы получили подарочный сертификат. Перейдите по ссылке ${decodeURI(url)}, чтобы посмотреть его и воспользоваться`;
 
     try {
-        const response = await fetch(certificateImage);
-        const blob = await response.blob();
-        const sharedFile = new File([blob], 'shared_image.png', { type: 'image/png' });
+        // const response = await fetch(certificateImage);
+        // const blob = await response.blob();
+        // const sharedFile = new File([blob], 'shared_image.png', { type: 'image/png' });
 
         const shareDataWithFiles: ShareData = {
             title: message, // Some platforms might use this as a caption
-            files: [sharedFile],
+            // files: [sharedFile],
             // url: decodeURI(url) // Use the URL field for better handling by share targets
         };
 
