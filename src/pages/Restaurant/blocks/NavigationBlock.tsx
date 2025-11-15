@@ -77,7 +77,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> =
     useEffect(() => {
         // TODO: Refactor two Navigation Blocks on Restaurant Page
         const handleScroll = () => {
-            setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 50px – меняем состояние
+            setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 190px – меняем состояние
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
