@@ -145,3 +145,9 @@
     gap: 16px;
     height: calc(100% - 300px);
 }
+
+.empty_list {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+}

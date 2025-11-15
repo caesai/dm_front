@@ -67,9 +67,11 @@ export const CertificatesListPage: React.FC = () => {
     }, [auth?.access_token, user?.id, setCertificates]);
     return (
         <div className={css.content}>
-            {certificates.map((certificate) => (
-                <CertificateOption certificate={certificate} key={certificate.id} />
-            ))}
+            {certificates.length > 0 ? (
+                certificates.map((certificate) => (
+                    <CertificateOption certificate={certificate} key={certificate.id} />
+                ))
+            ) : (<h2 className={css.empty_list}>Список пуст</h2>)}
         </div>
     );
 };
