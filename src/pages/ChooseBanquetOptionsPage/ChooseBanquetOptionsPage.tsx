@@ -114,19 +114,21 @@ export const ChooseBanquetOptionsPage = () => {
                                                     </div>
                                                 )
                                             }
-                                            <UniversalButton
-                                                width={'full'}
-                                                title={'Выбрать'}
-                                                theme={'red'}
-                                                action={() => navigate(`/banquets/${id}/option`, {
-                                                state: {
-                                                    banquet,
-                                                    additional_options: banquets.additional_options,
-                                                    restaurant_title,
-                                                    workTime,
-                                                    banquets,
-                                                },
-                                            })} />
+                                            <div className={css.banquet_button}>
+                                                <UniversalButton
+                                                    width={'full'}
+                                                    title={'Выбрать'}
+                                                    theme={'red'}
+                                                    action={() => navigate(`/banquets/${id}/option`, {
+                                                        state: {
+                                                            banquet,
+                                                            additional_options: banquets.additional_options,
+                                                            restaurant_title,
+                                                            workTime,
+                                                            banquets,
+                                                        },
+                                                    })} />
+                                            </div>
                                         </div>
                                     </div>
                                 ))

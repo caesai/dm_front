@@ -165,3 +165,8 @@
         color: var(--red);
     }
 }
+
+
+.banquet_button {
+    margin-top: 5px;
+}
