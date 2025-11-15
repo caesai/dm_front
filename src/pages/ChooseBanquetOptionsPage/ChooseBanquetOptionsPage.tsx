@@ -92,7 +92,7 @@ export const ChooseBanquetOptionsPage = () => {
                                             {banquet.description && (
                                                 <span className={classNames(
                                                     css.banquet_text,
-                                                    hideAbout ? css.trimLines : null,
+                                                    (hideAbout && banquet.description.length > 60) ? css.trimLines : null,
                                                 )}>
                                                     {banquet.description.split(/\n|\r\n/).map((segment, index) => (
                                                 <>
@@ -102,7 +102,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                     ))}
                                                 </span>
                                             )}
-                                            {banquet.description && banquet.description.length > 100 &&
+                                            {banquet.description && banquet.description.length > 60 &&
                                                 (
                                                     <div
                                                         className={css.trimLinesButton}
