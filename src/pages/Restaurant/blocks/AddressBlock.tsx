@@ -21,12 +21,12 @@ interface AddressBlockProps {
 }
 
 export const AddressBlock: React.FC<AddressBlockProps> = ({
-                                                       longitude,
-                                                       latitude,
-                                                       logo_url,
-                                                       address_station_color,
-                                                       address,
-                                                   }) => {
+    longitude,
+    latitude,
+    logo_url,
+    address_station_color,
+    address,
+}) => {
     const location = {
         center: [longitude, latitude],
         zoom: 17,
