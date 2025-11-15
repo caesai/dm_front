@@ -34,18 +34,18 @@ interface BookingBlockProps {
 }
 
 export const BookingBlock: React.FC<BookingBlockProps> = ({
-                                                       currentSelectedTime,
-                                                       workTime,
-                                                       bookingDate,
-                                                       setBookingDate,
-                                                       bookingDates,
-                                                       timeslotLoading,
-                                                       availableTimeslots,
-                                                       setCurrentSelectedTime,
-                                                       isShow,
-                                                       isEvents,
-                                                       isNavigationLoading,
-                                                   }) => {
+    currentSelectedTime,
+    workTime,
+    bookingDate,
+    setBookingDate,
+    bookingDates,
+    timeslotLoading,
+    availableTimeslots,
+    setCurrentSelectedTime,
+    isShow,
+    isEvents,
+    isNavigationLoading,
+}) => {
     const [, setGuestCount] = useAtom(guestCountAtom);
     const [bookingDatePopup, setBookingDatePopup] = useState<boolean>(false);
     const restaurantWorkEndTime =
