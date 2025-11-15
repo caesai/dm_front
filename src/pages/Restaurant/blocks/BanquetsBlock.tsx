@@ -21,13 +21,13 @@ interface BanquetsBlockProps {
 }
 
 export const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
-                                                         description,
-                                                         image,
-                                                         restaurant_id,
-                                                         restaurant_title,
-                                                         banquets,
-                                                         workTime,
-                                                     }) => {
+    description,
+    image,
+    restaurant_id,
+    restaurant_title,
+    banquets,
+    workTime,
+}) => {
     const navigate = useNavigate();
     const navigateToBanquet = () => {
         const workTimeSorted = workTime?.sort((a, b) => workdayIndexMap[a.weekday] - workdayIndexMap[b.weekday]);
