@@ -20,13 +20,13 @@ interface AboutBlockProps {
 }
 
 export const AboutBlock: React.FC<AboutBlockProps> = ({
-                                                   about_text,
-                                                   workTime,
-                                                   about_dishes,
-                                                   about_kitchen,
-                                                   about_features,
-                                                   avg_cheque,
-                                               }) => {
+    about_text,
+    workTime,
+    about_dishes,
+    about_kitchen,
+    about_features,
+    avg_cheque,
+}) => {
     const [hideAbout, setHideAbout] = useState(true);
     const [hideWorkHours, setHideWorkHours] = useState(true);
     const toggleAbout = () => {
