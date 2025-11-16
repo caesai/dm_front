@@ -42,6 +42,13 @@ export const ChooseBanquetOptionsPage = () => {
         setCurrentImages(banquet.images);
     };
 
+    const getBanquetDeposit = (banquet: IBanquetOptions) => {
+        if (banquet.deposit) {
+            return `${banquet.deposit} ₽`;
+        }
+        return banquet.deposit_message || "Без депозита";
+    };
+
     return (
         <Page back={true}>
             <BanquetGallery isOpen={isOpenPopup} setOpen={setOpenPopup} images={currentImages} currentIndex={imageIndex!} />
@@ -81,7 +88,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                         </div>
                                                         <div>
                                                             <DepositIcon color={'#FFFFFF'} />
-                                                            <span>{banquet.deposit ? `${banquet.deposit} ₽` : 'Без депозита'}</span>
+                                                            <span>{getBanquetDeposit(banquet)}</span>
                                                         </div>
                                                     </div>
                                                 </SwiperSlide>
