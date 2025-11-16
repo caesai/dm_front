@@ -1,0 +1,42 @@
+.certificate {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 1rem 1.25rem;
+    border: 1px solid #e2e4e7;
+    box-shadow: none;
+    background: #fff;
+    border-radius: 8px;
+    transition: background .4s ease-in-out, opacity .4s ease-in-out;
+}
+
+.certificate_name {
+    font-family: "Mont", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.certificate_info {
+    display: flex;
+    justify-content: space-between;
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: 100%;
+    }
+}
+
+.info_title {
+    font-family: "Mont", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--grey);
+}
+
+.info_text {
+    font-family: "Mont", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+}
