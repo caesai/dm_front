@@ -34,6 +34,7 @@ import { PhoneCallIcon } from '@/components/Icons/PhoneCallIcon.tsx';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
+import BookingCertificate from '@/components/BookingCertificate/BookingCertificate.tsx';
 
 export const BookingInfoPage = () => {
     const { id } = useParams();
@@ -455,6 +456,13 @@ export const BookingInfoPage = () => {
 
                             </div>
                         </div>
+                        {booking && booking.certificate_value
+                            && booking.certificate_expired_at && (
+                                <BookingCertificate
+                                    value={booking.certificate_value}
+                                    expired_at={booking.certificate_expired_at}
+                                />
+                            )}
                         {booking ? (
                             <Taxi
                                 address={booking.restaurant.address}
