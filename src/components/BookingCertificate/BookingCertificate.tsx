@@ -1,4 +1,4 @@
-import css from "./BookingCertificate.module.css"
+import css from "./BookingCertificate.module.css";
 
 interface IBookingCertificate {
     value: number
