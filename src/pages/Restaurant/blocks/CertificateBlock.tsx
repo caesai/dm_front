@@ -18,16 +18,16 @@ export const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, desc
                 <HeaderContainer id={'certificate'}>
                     <HeaderContent title={'Подарочные сертификаты'} />
                 </HeaderContainer>
-                <div className={css.banquetContainer}>
-                    <div className={css.banquetImg}>
+                <div className={css.blockContainer}>
+                    <div className={css.blockImage}>
                         <div
-                            className={classNames(css.banquetImage, css.bgImage)}
+                            className={classNames(css.blockImage, css.bgImage)}
                             style={{
                                 backgroundImage: `url(${image})`,
                             }}
                         ></div>
                     </div>
-                    <span className={css.banquetDescription}>{description}</span>
+                    <span className={css.blockDescription}>{description}</span>
                     <UniversalButton width={'full'} title={'Подробнее'} action={() => navigate('/certificates/1')} />
                 </div>
             </ContentBlock>

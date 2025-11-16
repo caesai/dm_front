@@ -66,7 +66,7 @@ export const ChooseBanquetOptionsPage = () => {
                         <ContentBlock>
                             {banquets?.banquet_options && banquets.banquet_options.length > 0 ? (
                                 banquets?.banquet_options.map((banquet) => (
-                                    <div className={css.banquetContainer} key={banquet.id}>
+                                    <div className={css.blockContainer} key={banquet.id}>
                                         <Swiper
                                             pagination={{
                                                 type: 'bullets',
