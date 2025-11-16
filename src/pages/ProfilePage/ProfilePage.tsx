@@ -93,7 +93,7 @@ export const ProfilePage = () => {
                         </Link>
                         {DEV_MODE && (
                             <Link to={'/certificates/my'} className={css.navLink}>
-                                <PlainGiftIcon size={20} color={'black'} />
+                                <PlainGiftIcon size={24} color={'black'} />
                                 <span className={css.navLinkTitle}>
                                     Подарочные сертификаты
                                 </span>
