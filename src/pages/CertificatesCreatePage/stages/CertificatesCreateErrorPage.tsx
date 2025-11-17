@@ -22,7 +22,6 @@ export const CertificatesCreateErrorPage: React.FC = () => {
     useEffect(() => {
         if (auth?.access_token) {
             if (paramsObject.certificate_id) {
-                console.log(paramsObject)
                 APIGetCertificateById(auth.access_token, paramsObject.certificate_id)
                     .then(response => setCertificate(response.data));
             }
@@ -48,7 +47,7 @@ export const CertificatesCreateErrorPage: React.FC = () => {
                     setLoading(false);
                 });
         }
-    }
+    };
 
     if (loading) {
         return <div className={css.loader}><Loader /></div>;
@@ -73,11 +72,11 @@ export const CertificatesCreateErrorPage: React.FC = () => {
                         )}
                     >
                         <div className={css.bottomWrapper}>
-                            <UniversalButton width={'full'} title={'Оплатить'} theme={'red'} action={repeatPayment}/>
+                            <UniversalButton width={'full'} title={'Оплатить'} theme={'red'} action={repeatPayment} />
                         </div>
                     </div>
                 </>
             )}
         </div>
-    )
-}
+    );
+};

@@ -13,7 +13,7 @@ import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 import classnames from 'classnames';
 import BanquetGallery from '@/components/BanquetGallery/BanquetGallery.tsx';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import classNames from 'classnames';
 
@@ -36,7 +36,7 @@ export const ChooseBanquetOptionsPage = () => {
 
     const openPopup = (banquet: IBanquetOptions, index: number) => {
         setOpenPopup(true);
-        setImageIndex(index)
+        setImageIndex(index);
         setCurrentImages(banquet.images);
     };
 
@@ -44,12 +44,13 @@ export const ChooseBanquetOptionsPage = () => {
         if (banquet.deposit) {
             return `от ${banquet.deposit}₽ на гостя`;
         }
-        return banquet.deposit_message || "Без депозита";
+        return banquet.deposit_message || 'Без депозита';
     };
 
     return (
         <Page back={true}>
-            <BanquetGallery isOpen={isOpenPopup} setOpen={setOpenPopup} images={currentImages} currentIndex={imageIndex!} />
+            <BanquetGallery isOpen={isOpenPopup} setOpen={setOpenPopup} images={currentImages}
+                            currentIndex={imageIndex!} />
             <div className={css.page}>
                 <div className={css.pageWrapper}>
                     <div className={css.header}>
@@ -100,10 +101,10 @@ export const ChooseBanquetOptionsPage = () => {
                                                     (hideAbout && banquet.description.length > 60) ? css.trimLines : null,
                                                 )}>
                                                     {banquet.description.split(/\n|\r\n/).map((segment, index) => (
-                                                        <>
+                                                        <Fragment key={index}>
                                                             {index > 0 && <br />}
                                                             {segment}
-                                                        </>
+                                                        </Fragment>
                                                     ))}
                                                 </span>
                                             )}

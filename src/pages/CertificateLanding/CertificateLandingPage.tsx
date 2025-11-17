@@ -33,7 +33,7 @@ const CertificateLandingPage: React.FC = () => {
     useEffect(() => {
         if (auth?.access_token) {
             if (id) {
-                APIGetCertificateById(auth.access_token,  id)
+                APIGetCertificateById(auth.access_token, id)
                     .then(response => setCertificate(response.data));
             }
         }
@@ -42,7 +42,7 @@ const CertificateLandingPage: React.FC = () => {
     const isCertificateDisabled = useCallback(() => {
         if (!certificate) return true;
         return !((certificate.status === 'paid' || certificate.status === 'shared') && moment() < moment(certificate.expired_at));
-    }, [certificate])
+    }, [certificate]);
 
     useEffect(() => {
         if (!user || !certificate) return;
@@ -122,7 +122,7 @@ const CertificateLandingPage: React.FC = () => {
 
     if (loading) {
         return (
-                <div className={css.loader}><Loader /></div>
+            <div className={css.loader}><Loader /></div>
         );
     }
 
@@ -143,7 +143,7 @@ const CertificateLandingPage: React.FC = () => {
                         <DTHospitalityIcon />
                         {isCertificateDisabled() ? (
                             <h1>Данный подарочный сертификат использован, либо истек срок действия</h1>
-                            ) : (
+                        ) : (
                             <h1>
                                 Подарочный сертификат <br /> в любой ресторан Dreamteam
                             </h1>
