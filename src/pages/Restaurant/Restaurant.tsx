@@ -36,6 +36,9 @@ import { AboutBlock } from '@/pages/Restaurant/blocks/AboutBlock.tsx';
 import { ChefBlock } from '@/pages/Restaurant/blocks/ChefBlock.tsx';
 import { AddressBlock } from '@/pages/Restaurant/blocks/AddressBlock.tsx';
 import { NavigationBlock } from '@/pages/Restaurant/blocks/NavigationBlock.tsx';
+import { NewYearCooking } from '@/pages/Restaurant/blocks/NewYearCooking.tsx';
+import { NewYearCookingData } from '@/__mocks__/new_year_cooking.mock.ts';
+import { DEV_MODE } from '@/api/base.ts';
 
 export const transformGallery = (gallery: IPhotoCard[]): GalleryCollection[] => {
     // Создаем объект для группировки по категориям
@@ -76,6 +79,7 @@ export const Restaurant = () => {
 
     const [events, setEvents] = useState<IEventInRestaurant[] | null>(null);
     const [banquets, setBanquets] = useState<IBanquet | null>(null);
+    const [ny_cookings,] = useState(NewYearCookingData)
 
     const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
@@ -218,6 +222,7 @@ export const Restaurant = () => {
                 )}
                 {Boolean(filteredEvents && filteredEvents?.length > 0) && <EventsBlock events={events} />}
                 <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />
+                {DEV_MODE && (<NewYearCooking description={ny_cookings.description} image={ny_cookings.image} />)}
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}
                     about_dishes={String(restaurant?.about_dishes)}

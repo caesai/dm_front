@@ -16,7 +16,7 @@ interface IRestaurantNavigationProps {
 export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isShow, isEvents, isLoading }) => {
     const [hash, setHash] = useState<string | null>(null);
     const [swiperInstance, setSwiperInstance] = useState<SwiperCore | null>(null);
-    const hashes = ['booking', 'gallery', 'menu', 'banquet', 'events', 'certificates', 'about', 'chef'];
+    const hashes = ['booking', 'gallery', 'menu', 'banquet', 'events', 'certificates', 'ny_cooking', 'about', 'chef'];
 
     useEffect(() => {
         if (hash && swiperInstance) {
@@ -125,6 +125,18 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isS
                                 )}
                             >
                                 Сертификаты
+                            </div>
+                        </AnchorLink>
+                    </SwiperSlide>
+                    <SwiperSlide style={{ width: 'fit-content' }}>
+                        <AnchorLink href="#ny_cooking" offset={160}>
+                            <div
+                                className={classNames(
+                                    css.navigationLink,
+                                    hash === 'ny_cooking' ? css.navigationLinkActive : ''
+                                )}
+                            >
+                                Новогодняя кулинария
                             </div>
                         </AnchorLink>
                     </SwiperSlide>
