@@ -12,7 +12,7 @@ export const PaymentReturnPage = () => {
     const paramsObject = Object.fromEntries(params.entries());
     // const navigate = useNavigate();
     // const [auth] = useAtom(authAtom);
-
+    // TODO: delete this page when refactor
     useEffect(() => {
         console.log('searchParams: ', paramsObject)
     //     const id = searchParams.get('id');
