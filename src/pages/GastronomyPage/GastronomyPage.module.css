@@ -1,0 +1,40 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 15px;
+    min-height: 100vh;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+}
+
+.spacer {
+    width: 44px;
+    height: 44px;
+}
+
+.dish {
+    display: flex;
+    flex-direction: column;
+
+
+}
+
+.dishImage {
+    img {
+        max-width: 100%;
+        aspect-ratio: 3/2;
+    }
+}

@@ -61,6 +61,11 @@ import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/CertificatesPaymentPage.tsx';
 import CertificateLandingPage from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
 import { CertificatesCreateErrorPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateErrorPage.tsx';
+import { GastronomyPage } from '@/pages/GastronomyPage/GastronomyPage.tsx';
+import { GastronomyChooseRestaurantPage } from '@/pages/GastronomyPage/stages/GastronomyChooseRestaurantPage.tsx';
+import { GatronomyChooseDishesPage } from '@/pages/GastronomyPage/stages/GatronomyChooseDishesPage.tsx';
+import { GastonomyDishDetailsPage } from '@/pages/GastronomyPage/stages/GastonomyDishDetailsPage.tsx';
+import { GastronomyBasketPage } from '@/pages/GastronomyPage/stages/GastronomyBasketPage.tsx';
 
 const AppRouter = () => {
     const [user] = useAtom(userAtom);
@@ -195,6 +200,13 @@ const AppRouter = () => {
                         <Route path={'/certificates/error'} element={<CertificatesCreateErrorPage />} />
                     </Route>
                     <Route path={'/certificates/landing/:id'} element={<CertificateLandingPage />} />
+
+                    <Route path={'/gastronomy'} element={<GastronomyPage />} >
+                        <Route path={'/gastronomy/choose'} element={<GastronomyChooseRestaurantPage />} />
+                        <Route path={'/gastronomy/:res_id'} element={<GatronomyChooseDishesPage />} />
+                        <Route path={'/gastronomy/:res_id/dish/:dish_id'} element={<GastonomyDishDetailsPage />} />
+                        <Route path={'/gastronomy/:res_id/basket'} element={<GastronomyBasketPage />} />
+                    </Route>
 
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>

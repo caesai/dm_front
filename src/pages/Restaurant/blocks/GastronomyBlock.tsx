@@ -8,12 +8,12 @@ import { ContentContainer } from '@/components/ContentContainer/ContentContainer
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { useNavigate } from 'react-router-dom';
 
-interface INewYearCooking {
+interface GastronomyBlockProps {
     image: string
     description: string
 }
 
-export const NewYearCooking: React.FC<INewYearCooking> = ({ image, description }) => {
+export const GastronomyBlock: React.FC<GastronomyBlockProps> = ({ image, description }) => {
     const navigate = useNavigate();
 
     return (
@@ -36,7 +36,7 @@ export const NewYearCooking: React.FC<INewYearCooking> = ({ image, description }
                         width={'full'}
                         title={'Сделать предзаказ'}
                         theme={'red'}
-                        action={() => navigate('')}
+                        action={() => navigate('/gastronomy/choose')}
                     />
                 </div>
             </ContentBlock>
