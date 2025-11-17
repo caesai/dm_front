@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import moment from 'moment';
@@ -39,8 +39,17 @@ const CertificateLandingPage: React.FC = () => {
         }
     }, []);
 
+    const isCertificateDisabled = useCallback(() => {
+        if (!certificate) return true;
+        return !((certificate.status === 'paid' || certificate.status === 'shared') && moment() < moment(certificate.expired_at));
+    }, [certificate])
+
     useEffect(() => {
         if (!user || !certificate) return;
+        if (isCertificateDisabled()) {
+            setLoading(false);
+            return;
+        }
         if (user?.complete_onboarding) {
             if (!certificate?.shared_at) {
                 if (certificate?.customer_id === user.id) {
@@ -132,9 +141,13 @@ const CertificateLandingPage: React.FC = () => {
                 <div className={css.content}>
                     <div className={css.header}>
                         <DTHospitalityIcon />
-                        <h1>
-                            Подарочный сертификат <br /> в любой ресторан Dreamteam
-                        </h1>
+                        {isCertificateDisabled() ? (
+                            <h1>Данный подарочный сертификат использован, либо истек срок действия</h1>
+                            ) : (
+                            <h1>
+                                Подарочный сертификат <br /> в любой ресторан Dreamteam
+                            </h1>
+                        )}
                         <div onClick={goHome} className={css.close}>
                             <RoundedButton
                                 icon={<CrossIcon size={44} />}
@@ -198,7 +211,7 @@ const CertificateLandingPage: React.FC = () => {
                             </div>
                         </AccordionComponent>
                     </div>
-                    {certificate?.status !== 'used' && user?.complete_onboarding && (
+                    {user?.complete_onboarding && !isCertificateDisabled() && (
                         <div className={css.button}>
                             <UniversalButton width={'full'} title={'Выбрать ресторан'} action={goToBooking} />
                         </div>
