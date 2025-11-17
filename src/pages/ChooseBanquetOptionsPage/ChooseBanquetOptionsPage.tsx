@@ -6,7 +6,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { IBanquet, IBanquetOptions } from '@/types/banquets.types.ts';
-import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
 import { IWorkTime } from '@/types/restaurant.ts';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -82,7 +81,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                     <img src={image} alt={'banquet_img'} />
                                                     <div className={css.banquetStats}>
                                                         <div>
-                                                            <GuestsIcon color={'#FFFFFF'} />
+                                                            {/*<GuestsIcon color={'#FFFFFF'} />*/}
                                                             <span>до {banquet.guests_max} человек</span>
                                                         </div>
                                                         <div>
