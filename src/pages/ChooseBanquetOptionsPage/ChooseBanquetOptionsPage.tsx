@@ -6,7 +6,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { IBanquet, IBanquetOptions } from '@/types/banquets.types.ts';
-import { DepositIcon } from '@/components/Icons/DepositIcon.tsx';
 import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
 import { IWorkTime } from '@/types/restaurant.ts';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -44,7 +43,7 @@ export const ChooseBanquetOptionsPage = () => {
 
     const getBanquetDeposit = (banquet: IBanquetOptions) => {
         if (banquet.deposit) {
-            return `${banquet.deposit} ₽`;
+            return `от ${banquet.deposit}₽ на гостя`;
         }
         return banquet.deposit_message || "Без депозита";
     };
@@ -87,7 +86,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                             <span>до {banquet.guests_max} человек</span>
                                                         </div>
                                                         <div>
-                                                            <DepositIcon color={'#FFFFFF'} />
+                                                            {/*<DepositIcon color={'#FFFFFF'} />*/}
                                                             <span>{getBanquetDeposit(banquet)}</span>
                                                         </div>
                                                     </div>
@@ -102,10 +101,10 @@ export const ChooseBanquetOptionsPage = () => {
                                                     (hideAbout && banquet.description.length > 60) ? css.trimLines : null,
                                                 )}>
                                                     {banquet.description.split(/\n|\r\n/).map((segment, index) => (
-                                                <>
-                                                    {index > 0 && <br />}
-                                                    {segment}
-                                                </>
+                                                        <>
+                                                            {index > 0 && <br />}
+                                                            {segment}
+                                                        </>
                                                     ))}
                                                 </span>
                                             )}
