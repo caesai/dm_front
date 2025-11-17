@@ -6,18 +6,26 @@ import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { eventsListAtom } from '@/atoms/eventBookingAtom.ts';
 import { IEventInRestaurant } from '@/types/events.ts';
+import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 export const EventListOutlet: React.FC = () => {
     const navigate = useNavigate();
     const [events] = useAtom<IEventInRestaurant[]>(eventsListAtom);
+    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+
     const next = (event: IEventInRestaurant) => {
         // if (event.ticket_price == 0 && event.tickets_left == 0) {
         //     return;
         // }
         navigate(`/events/${event.id}`)
     };
+    
     const filteredEvents = events.filter((event) => {
-        return event.tickets_left > 0;
+        if (tg_id && mockEventsUsersList.includes(tg_id)) {
+            return event.tickets_left > 0;
+        } else {
+            return event.tickets_left > 0 && event.ticket_price === 0;
+        }
     });
     return (
         <div className={css.cards}>

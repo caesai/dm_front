@@ -141,7 +141,11 @@ export const Restaurant = () => {
     }, [bookingDate]);
 
     const filteredEvents = events?.filter((event) => {
-        return event.tickets_left > 0;
+        if (tg_id && mockEventsUsersList.includes(tg_id)) {
+            return event.tickets_left > 0;
+        } else {
+            return event.tickets_left > 0 && event.ticket_price === 0;
+        }
     });
 
     return (
@@ -204,13 +208,13 @@ export const Restaurant = () => {
                     setCurrentSelectedTime={setCurrentSelectedTime}
                     isNavigationLoading={events == null && banquets == null}
                     isShow={
-                        tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0
+                        tg_id && mockEventsUsersList.includes(tg_id)
                     }
                     isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
                 />
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
                 <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
-                {tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0 && (
+                {banquets && banquets?.banquet_options.length > 0 && (
                     <BanquetsBlock
                         image={banquets.image}
                         description={banquets.description}
@@ -221,7 +225,7 @@ export const Restaurant = () => {
                     />
                 )}
                 {Boolean(filteredEvents && filteredEvents?.length > 0) && <EventsBlock events={events} />}
-                <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />
+                {tg_id && mockEventsUsersList.includes(tg_id) && <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />}
                 {DEV_MODE && (<GastronomyBlock description={ny_cookings.description} image={ny_cookings.image} />)}
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}

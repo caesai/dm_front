@@ -6,6 +6,7 @@ import { Swiper as SwiperCore } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import { DEV_MODE } from '@/api/base.ts';
 
 interface IRestaurantNavigationProps {
     isShow: boolean;
@@ -88,20 +89,18 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isS
                             </div>
                         </AnchorLink>
                     </SwiperSlide>
-                    {isShow && (
-                        <SwiperSlide style={{ width: 'fit-content' }}>
-                            <AnchorLink href="#banquet" offset={160}>
-                                <div
-                                    className={classNames(
-                                        css.navigationLink,
-                                        hash === 'banquet' ? css.navigationLinkActive : ''
-                                    )}
-                                >
-                                    Банкеты
-                                </div>
-                            </AnchorLink>
-                        </SwiperSlide>
-                    )}
+                    <SwiperSlide style={{ width: 'fit-content' }}>
+                        <AnchorLink href="#banquet" offset={160}>
+                            <div
+                                className={classNames(
+                                    css.navigationLink,
+                                    hash === 'banquet' ? css.navigationLinkActive : ''
+                                )}
+                            >
+                                Банкеты
+                            </div>
+                        </AnchorLink>
+                    </SwiperSlide>
                     {isEvents && (
                         <SwiperSlide style={{ width: 'fit-content' }}>
                             <AnchorLink href="#events" offset={160}>
@@ -116,30 +115,34 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isS
                             </AnchorLink>
                         </SwiperSlide>
                     )}
-                    <SwiperSlide style={{ width: 'fit-content' }}>
-                        <AnchorLink href="#certificates" offset={160}>
-                            <div
-                                className={classNames(
-                                    css.navigationLink,
-                                    hash === 'certificates' ? css.navigationLinkActive : ''
-                                )}
-                            >
-                                Сертификаты
-                            </div>
-                        </AnchorLink>
-                    </SwiperSlide>
-                    <SwiperSlide style={{ width: 'fit-content' }}>
-                        <AnchorLink href="#ny_cooking" offset={160}>
-                            <div
-                                className={classNames(
-                                    css.navigationLink,
-                                    hash === 'ny_cooking' ? css.navigationLinkActive : ''
-                                )}
-                            >
-                                Новогодняя кулинария
-                            </div>
-                        </AnchorLink>
-                    </SwiperSlide>
+                    {isShow && (
+                        <SwiperSlide style={{ width: 'fit-content' }}>
+                            <AnchorLink href="#certificates" offset={160}>
+                                <div
+                                    className={classNames(
+                                        css.navigationLink,
+                                        hash === 'certificates' ? css.navigationLinkActive : ''
+                                    )}
+                                >
+                                    Сертификаты
+                                </div>
+                            </AnchorLink>
+                        </SwiperSlide>
+                        )}
+                    {DEV_MODE && (
+                        <SwiperSlide style={{ width: 'fit-content' }}>
+                            <AnchorLink href="#ny_cooking" offset={160}>
+                                <div
+                                    className={classNames(
+                                        css.navigationLink,
+                                        hash === 'ny_cooking' ? css.navigationLinkActive : '',
+                                    )}
+                                >
+                                    Новогодняя кулинария
+                                </div>
+                            </AnchorLink>
+                        </SwiperSlide>
+                    )}
                     <SwiperSlide style={{ width: 'fit-content' }}>
                         <AnchorLink href="#about" offset={160}>
                             <div
