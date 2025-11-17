@@ -24,7 +24,7 @@ export const EventPaymentPage: React.FC = () => {
                     console.log('err on validate payment: ', err);
                     navigate('/events/?paymentError=true');
                 });
-    }, []);
+    }, [orderId, auth]);
 
     return (
         <Loader />
