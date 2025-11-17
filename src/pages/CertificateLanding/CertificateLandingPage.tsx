@@ -39,14 +39,14 @@ const CertificateLandingPage: React.FC = () => {
         }
     }, []);
 
-    const isCertificatedDisabled = useCallback(() => {
+    const isCertificateDisabled = useCallback(() => {
         if (!certificate) return true;
         return !((certificate.status === 'paid' || certificate.status === 'shared') && moment() < moment(certificate.expired_at));
     }, [certificate])
 
     useEffect(() => {
         if (!user || !certificate) return;
-        if (isCertificatedDisabled()) {
+        if (isCertificateDisabled()) {
             setLoading(false);
             return;
         }
@@ -141,7 +141,7 @@ const CertificateLandingPage: React.FC = () => {
                 <div className={css.content}>
                     <div className={css.header}>
                         <DTHospitalityIcon />
-                        {isCertificatedDisabled() ? (
+                        {isCertificateDisabled() ? (
                             <h1>Данный подарочный сертификат использован, либо истек срок действия</h1>
                             ) : (
                             <h1>
@@ -211,7 +211,7 @@ const CertificateLandingPage: React.FC = () => {
                             </div>
                         </AccordionComponent>
                     </div>
-                    {certificate?.status !== 'used' && user?.complete_onboarding && !isCertificatedDisabled() && (
+                    {user?.complete_onboarding && !isCertificateDisabled() && (
                         <div className={css.button}>
                             <UniversalButton width={'full'} title={'Выбрать ресторан'} action={goToBooking} />
                         </div>
