@@ -77,7 +77,8 @@ export const useRedirectLogic = () => {
         const hasRedirectedByParam = handleNavigation('eventId', '/events/') ||
             handleNavigation('restaurantId', '/restaurant/') ||
             handleNavigation('bookingId', '/booking/') ||
-            handleNavigation('ticketId', '/tickets/');
+            handleNavigation('ticketId', '/tickets/') ||
+            handleNavigation('certificateId', '/certificates/landing/');
 
         if (hasRedirectedByParam) return;
 
@@ -92,7 +93,8 @@ export const useRedirectLogic = () => {
             const isOnboardingNotExcluded = !ONBOARDING_EXCLUDED.includes(pathname) &&
                 !pathname.includes('events') &&
                 !pathname.includes('restaurant') &&
-                !pathname.includes('booking');
+                !pathname.includes('booking') &&
+                !pathname.includes('certificates');
 
             if (isUserIncomplete && isOnboardingNotExcluded) {
                 navigate('/onboarding', { replace: true });

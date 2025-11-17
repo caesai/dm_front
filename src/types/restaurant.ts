@@ -94,6 +94,8 @@ export interface IBookingInfo {
     booking_type?: string;
     event_title?: string;
     duration: number;
+    certificate_value: number;
+    certificate_expired_at: string;
 }
 
 export interface ICurrentBookings {

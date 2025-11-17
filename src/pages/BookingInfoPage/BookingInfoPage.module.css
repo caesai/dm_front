@@ -1,14 +1,3 @@
-.absolute_footer {
-    position: absolute;
-    bottom: 30px;
-    width: 100%;
-}
-
-.absolute_footer_wrapper {
-    padding: 0 15px;
-    gap: 4px;
-}
-
 .fc {
     display: flex;
     flex-direction: column;
@@ -20,13 +9,18 @@
 }
 
 .page {
-    gap: 4px;
+    display: flex;
+    flex-direction: column;
     height: 100vh;
+    overflow: auto;
 }
 
-.border__top {
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+.main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background-color: var(--primary-background);
+    padding: 20px 15px;
 }
 
 .border__bottom {
@@ -34,14 +28,18 @@
     border-bottom-right-radius: 20px;
 }
 
+.content {
+    gap: 12px;
+    padding-bottom: 20px;
+}
 
-.main {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    width: 100%;
-    background-color: var(--primary-background);
-    padding: 20px 15px;
+.footer {
+    padding: 15px;
+    margin-top: auto;
+}
+
+.footer_wrapper {
+    gap: 4px;
 }
 
 .about__text {
@@ -63,11 +61,6 @@
     text-decoration-thickness: 0%;
     text-decoration-skip-ink: auto;
     color: var(--grey);
-
-}
-
-.about {
-
 }
 
 .wh44 {
@@ -84,7 +77,6 @@
     gap: 4px;
     align-items: center;
     justify-content: center;
-    /*width: 100%;*/
 }
 
 .headerContent__title {
@@ -107,10 +99,6 @@
 .headerButtons {
     display: flex;
     gap: 4px;
-}
-
-.content {
-    gap: 12px;
 }
 
 .calendarContainer {

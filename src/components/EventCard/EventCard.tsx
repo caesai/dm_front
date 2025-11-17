@@ -36,7 +36,7 @@ export const EventCard: FC<IEventCard> = ({
                     sold ? css.notActive : null
                 )}
                 style={{
-                    backgroundImage: `url(${event_img ? event_img : 'https://storage.yandexcloud.net/bottec-dreamteam/event_placeholder.png'})`,
+                    backgroundImage: `url(${event_img ? event_img : 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg'})`,
                 }}
             >
                 <div className={css.footer}>

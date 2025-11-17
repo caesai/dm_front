@@ -3,44 +3,47 @@ import { IBanquet } from '@/types/banquets.types.ts';
 export const banquetData: IBanquet = {
     "banquet_options": [
         {
-            "id": 14,
-            "name": "Банкетная рассадка",
-            "guests_min": 8,
-            "guests_max": 11,
-            "deposit": 5000,
-            "deposit_message": null,
-            "service_fee": 10,
-            "max_duration": null,
-            "images": [
-                "https://storage.yandexcloud.net/dreamteam-storage/3790ff7670bf4f1bb045cf2d37646bfa.jpg"
-            ]
+            'id': 14,
+            'name': 'Банкетная рассадка',
+            'guests_min': 8,
+            'guests_max': 11,
+            'deposit': 5000,
+            'deposit_message': null,
+            'service_fee': 10,
+            'max_duration': null,
+            'images': [
+                'https://storage.yandexcloud.net/dreamteam-storage/3790ff7670bf4f1bb045cf2d37646bfa.jpg',
+            ],
+            description: null,
         },
         {
-            "id": 15,
-            "name": "Банкетная рассадка",
-            "guests_min": 12,
-            "guests_max": 19,
-            "deposit": 10000,
-            "deposit_message": null,
-            "service_fee": 10,
-            "max_duration": null,
-            "images": [
-                "https://storage.yandexcloud.net/dreamteam-storage/14a57e50743c4cde8fe830afcf3ab938.jpg"
-            ]
+            'id': 15,
+            'name': 'Банкетная рассадка',
+            'guests_min': 12,
+            'guests_max': 19,
+            'deposit': 10000,
+            'deposit_message': null,
+            'service_fee': 10,
+            'max_duration': null,
+            'images': [
+                'https://storage.yandexcloud.net/dreamteam-storage/14a57e50743c4cde8fe830afcf3ab938.jpg',
+            ],
+            description: null,
         },
         {
-            "id": 16,
-            "name": "Банкетная рассадка",
-            "guests_min": 20,
-            "guests_max": 40,
-            "deposit": 15000,
-            "deposit_message": null,
-            "service_fee": 10,
-            "max_duration": null,
-            "images": [
-                "https://storage.yandexcloud.net/dreamteam-storage/f187c97f96ab43f8be1c34ff3eefac78.JPG"
-            ]
-        }
+            'id': 16,
+            'name': 'Банкетная рассадка',
+            'guests_min': 20,
+            'guests_max': 40,
+            'deposit': 15000,
+            'deposit_message': null,
+            'service_fee': 10,
+            'max_duration': null,
+            'images': [
+                'https://storage.yandexcloud.net/dreamteam-storage/f187c97f96ab43f8be1c34ff3eefac78.JPG',
+            ],
+            description: null,
+        },
     ],
     "additional_options": [
         {

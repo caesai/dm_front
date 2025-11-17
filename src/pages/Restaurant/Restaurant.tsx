@@ -1,82 +1,46 @@
 import { Page } from '@/components/Page.tsx';
 import css from './Restaurant.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
 import { useNavigate, useParams } from 'react-router-dom';
-import classNames from 'classnames';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { UnmountClosed } from 'react-collapse';
 import 'swiper/css/bundle';
 import 'swiper/css/zoom';
-
-import { FreeMode } from 'swiper/modules';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { DownArrow } from '@/components/Icons/DownArrow.tsx';
+import { useEffect, useState } from 'react';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
-import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
-import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
-import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
-import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
-import {
-    GalleryCollection,
-    GalleryPhoto,
-} from '@/pages/Restaurant/Restaurant.types.ts';
+import { GalleryCollection, GalleryPhoto } from '@/pages/Restaurant/Restaurant.types.ts';
 import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
-import { EventCard } from '@/components/EventCard/EventCard.tsx';
 import { useAtom } from 'jotai';
-import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
-import { IMenuImg, IMenuItem, IPhotoCard, IRestaurant, IWorkTime } from '@/types/restaurant.ts';
-import {
-    YMap,
-    YMapComponentsProvider,
-    YMapDefaultFeaturesLayer,
-    YMapDefaultSchemeLayer,
-    YMapMarker,
-} from 'ymap3-components';
-import { ImageViewerPopup } from '@/components/ImageViewerPopup/ImageViewerPopup.tsx';
+import { IPhotoCard, IRestaurant } from '@/types/restaurant.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import {
     formatDate,
-    formatDateAlt,
-    getCurrentTimeShort,
-    getCurrentWeekdayShort,
-    getRestaurantStatus,
-    getTimeShort, workdayIndexMap,
 } from '@/utils.ts';
-import { Calendar } from 'react-iconly';
-import { FaAngleRight } from 'react-icons/fa';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import {
-    APIGetAvailableDays,
-    APIGetAvailableTimeSlots,
-    APIGetEventsInRestaurant,
-} from '@/api/restaurants.ts';
-import {
-    bookingDateAtom,
-    guestCountAtom,
-    timeslotAtom,
-} from '@/atoms/bookingInfoAtom.ts';
-import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
+import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.ts';
+import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 import { IEventInRestaurant } from '@/types/events.ts';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import { Share } from '@/components/Icons/Share.tsx';
-import { BASE_BOT } from '@/api/base.ts';
-import moment from 'moment';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { IBanquet } from '@/types/banquets.types.ts';
 import { APIGetBanquetOptions } from '@/api/banquet.api.ts';
+import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
+import { BookingBlock } from '@/pages/Restaurant/blocks/BookingsBlock.tsx';
+import { GalleryBlock } from '@/pages/Restaurant/blocks/GalleryBlock.tsx';
+import { MenuBlock } from '@/pages/Restaurant/blocks/MenuBlock.tsx';
+import { BanquetsBlock } from '@/pages/Restaurant/blocks/BanquetsBlock.tsx';
+import { CertificateBlock } from '@/pages/Restaurant/blocks/CertificateBlock.tsx';
+import { EventsBlock } from '@/pages/Restaurant/blocks/EventsBlock.tsx';
+import { AboutBlock } from '@/pages/Restaurant/blocks/AboutBlock.tsx';
+import { ChefBlock } from '@/pages/Restaurant/blocks/ChefBlock.tsx';
+import { AddressBlock } from '@/pages/Restaurant/blocks/AddressBlock.tsx';
+import { NavigationBlock } from '@/pages/Restaurant/blocks/NavigationBlock.tsx';
+import { GastronomyBlock } from '@/pages/Restaurant/blocks/GastronomyBlock.tsx';
+import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
+import { DEV_MODE } from '@/api/base.ts';
 
-export const transformGallery = (
-    gallery: IPhotoCard[],
-): GalleryCollection[] => {
+export const transformGallery = (gallery: IPhotoCard[]): GalleryCollection[] => {
     // Создаем объект для группировки по категориям
     const groupedByCategory: Record<string, GalleryPhoto[]> = {};
 
@@ -102,91 +66,47 @@ export const Restaurant = () => {
     const [user] = useAtom(userAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
-    const [, setBackUrlAtom] = useAtom(backButtonAtom);
-    const [currentSelectedTime, setCurrentSelectedTime] =
-        useAtom<ITimeSlot | null>(timeslotAtom);
+    const [currentSelectedTime, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
 
     const [restaurant, setRestaurant] = useState<IRestaurant>();
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
-    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>(
-        [],
-    );
+    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
 
     const [timeslotLoading, setTimeslotLoading] = useState(true);
 
-    const [headerScrolled, setHeaderScrolled] = useState(false);
 
     const [callPopup, setCallPopup] = useState(false);
 
     const [events, setEvents] = useState<IEventInRestaurant[] | null>(null);
     const [banquets, setBanquets] = useState<IBanquet | null>(null);
+    const [ny_cookings,] = useState(NewYearCookingData)
 
     const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
-    const goToProfile = () => {
-        setBackUrlAtom(`/restaurant/${id}`);
-        navigate('/profile');
-    };
-
-    const shareRestaurant = () => {
-        const url = encodeURI(
-            `https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`,
-        );
-        const title = encodeURI(String(restaurant?.title));
-        const shareData = {
-            title,
-            url,
-        };
-        try {
-            if (navigator && navigator.canShare(shareData)) {
-                navigator.share(shareData).then().catch((err) => {
-                    console.error(JSON.stringify(err));
-                });
-            }
-        } catch (e) {
-            window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
-        }
-    };
-
     const handleNextBtn = () => {
         if (!user?.complete_onboarding) {
-            navigate('/onboarding/3', { state: { id, bookedDate: bookingDate, bookedTime: currentSelectedTime, sharedRestaurant: true } });
+            navigate('/onboarding/3', {
+                state: { id, bookedDate: bookingDate, bookedTime: currentSelectedTime, sharedRestaurant: true },
+            });
         } else {
-            navigate(`/restaurant/${id}/booking`, { state: { bookedDate: bookingDate, bookedTime: currentSelectedTime } });
-        }
-    };
-
-    const goBack = () => {
-        if (!user?.complete_onboarding) {
-            navigate('/onboarding');
-        } else {
-            navigate('/');
+            navigate(`/restaurant/${id}/booking`, {
+                state: { bookedDate: bookingDate, bookedTime: currentSelectedTime },
+            });
         }
     };
 
     useEffect(() => {
-        APIGetBanquetOptions(String(auth?.access_token), Number(id))
-            .then((res) => {
-                setBanquets(res.data);
-            });
+        APIGetBanquetOptions(String(auth?.access_token), Number(id)).then((res) => {
+            setBanquets(res.data);
+        });
     }, [id]);
 
     useEffect(() => {
         setRestaurant(restaurants.find((v) => v.id === Number(id)));
         setCurrentSelectedTime(null);
         setBookingDate({ value: 'unset', title: 'unset' });
-        APIGetEventsInRestaurant(Number(id), String(auth?.access_token))
-            .then((res) => setEvents(res.data));
+        APIGetEventsInRestaurant(Number(id), String(auth?.access_token)).then((res) => setEvents(res.data));
     }, [id]);
-
-    useEffect(() => {
-        // TODO: Refactor two Navigation Blocks on Restaurant Page
-        const handleScroll = () => {
-            setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 50px – меняем состояние
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -198,17 +118,16 @@ export const Restaurant = () => {
                     res.data.map((v) => ({
                         title: formatDate(v),
                         value: v,
-                    })),
+                    }))
                 );
                 return res;
             })
             .then((res) => {
-                    setBookingDate({
-                        title: formatDate(res.data[0]),
-                        value: res.data[0],
-                    });
-                },
-            );
+                setBookingDate({
+                    title: formatDate(res.data[0]),
+                    value: res.data[0],
+                });
+            });
     }, []);
 
     useEffect(() => {
@@ -216,18 +135,17 @@ export const Restaurant = () => {
             return;
         }
         setTimeslotLoading(true);
-        APIGetAvailableTimeSlots(
-            auth.access_token,
-            Number(id),
-            bookingDate.value,
-            1,
-        )
+        APIGetAvailableTimeSlots(auth.access_token, Number(id), bookingDate.value, 1)
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotLoading(false));
     }, [bookingDate]);
 
     const filteredEvents = events?.filter((event) => {
-        return event.tickets_left > 0;
+        if (tg_id && mockEventsUsersList.includes(tg_id)) {
+            return event.tickets_left > 0;
+        } else {
+            return event.tickets_left > 0 && event.ticket_price === 0;
+        }
     });
 
     return (
@@ -237,68 +155,25 @@ export const Restaurant = () => {
                 setOpen={setCallPopup}
                 phone={restaurant?.phone_number ? restaurant?.phone_number : ''}
             />
-            <div
-                className={classNames(
-                    css.header,
-                    headerScrolled ? css.scrolled : null,
-                )}
-            >
-                <div className={css.headerNav}>
-                    <div className={css.headerTop}>
-                        <div className={css.headerNavBlock}>
-                            <RoundedButton
-                                icon={<BackIcon color={'var(--dark-grey)'} />}
-                                action={goBack}
-                            ></RoundedButton>
-                        </div>
-                        {headerScrolled ? (
-                            <span className={css.headerTitle}>
-                                {restaurant?.title}
-                            </span>
-                        ) : null}
-                        <div className={css.headerNavBlock}>
-                            <RoundedButton
-                                icon={
-                                    <Share color={'var(--dark-grey)'} />
-                                }
-                                action={() => shareRestaurant()}
-                            />
-                            {user && user.complete_onboarding && (
-                                <RoundedButton
-                                    icon={
-                                        <IconlyProfile color={'var(--dark-grey)'} />
-                                    }
-                                    action={() => goToProfile()}
-                                />
-                            )}
-                        </div>
-                    </div>
-                    {headerScrolled ?
-                        <RestaurantNavigation isLoading={events == null && banquets == null} isShow={tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0}
-                                              isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}/> : null}
-                </div>
-            </div>
+            {restaurant && events && banquets && filteredEvents !== undefined && (
+                <NavigationBlock restaurant_id={Number(id)} restaurant={restaurant} events={events} banquets={banquets} filteredEvents={filteredEvents} />
+            )}
             <div className={css.floatingFooter}>
                 <BottomButtonWrapper
                     onClick={handleNextBtn}
-                    additionalBtns={(
+                    additionalBtns={
                         <>
                             <RoundedButton
-                                icon={
-                                    <GoToPathIcon
-                                        size={24}
-                                        color={'var(--dark-grey)'}
-                                    />
-                                }
+                                icon={<GoToPathIcon size={24} color={'var(--dark-grey)'} />}
                                 action={() =>
                                     // ,
                                     window.open(
-                                        `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`,
+                                        `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`
                                     )
                                 }
                             />
                         </>
-                    )}
+                    }
                 />
             </div>
             <div className={css.pageContainer}>
@@ -332,12 +207,14 @@ export const Restaurant = () => {
                     availableTimeslots={availableTimeslots}
                     setCurrentSelectedTime={setCurrentSelectedTime}
                     isNavigationLoading={events == null && banquets == null}
-                    isShow={tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0}
+                    isShow={
+                        tg_id && mockEventsUsersList.includes(tg_id)
+                    }
                     isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
                 />
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
                 <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
-                {tg_id && mockEventsUsersList.includes(tg_id) && banquets && banquets?.banquet_options.length > 0 && (
+                {banquets && banquets?.banquet_options.length > 0 && (
                     <BanquetsBlock
                         image={banquets.image}
                         description={banquets.description}
@@ -348,6 +225,8 @@ export const Restaurant = () => {
                     />
                 )}
                 {Boolean(filteredEvents && filteredEvents?.length > 0) && <EventsBlock events={events} />}
+                {tg_id && mockEventsUsersList.includes(tg_id) && <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />}
+                {DEV_MODE && (<GastronomyBlock description={ny_cookings.description} image={ny_cookings.image} />)}
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}
                     about_dishes={String(restaurant?.about_dishes)}
@@ -362,766 +241,13 @@ export const Restaurant = () => {
                     chef_name={String(restaurant?.brand_chef.name)}
                 />
                 <AddressBlock
-                    longitude={Number(
-                        restaurant?.address_lonlng.split(
-                            ',',
-                        )[0],
-                    )}
-                    latitude={Number(
-                        restaurant?.address_lonlng.split(
-                            ',',
-                        )[1],
-                    ) - 0.0003}
+                    longitude={Number(restaurant?.address_lonlng.split(',')[0])}
+                    latitude={Number(restaurant?.address_lonlng.split(',')[1]) - 0.0003}
                     address={String(restaurant?.address)}
                     logo_url={String(restaurant?.logo_url)}
                     address_station_color={String(restaurant?.address_station_color)}
                 />
             </div>
         </Page>
-    );
-};
-
-interface BookingBlockProps {
-    currentSelectedTime: ITimeSlot | null;
-    workTime: IWorkTime[] | undefined;
-    bookingDate: PickerValueObj;
-    bookingDates: PickerValueObj[];
-    setBookingDate: Dispatch<SetStateAction<PickerValueObj>>;
-    timeslotLoading: boolean;
-    availableTimeslots: ITimeSlot[];
-    setCurrentSelectedTime: (currentSelectedTime: ITimeSlot) => void;
-    // TODO: Refactor this booleans
-    isShow: boolean;
-    isEvents: boolean;
-    isNavigationLoading: boolean;
-}
-
-const BookingBlock: React.FC<BookingBlockProps> = (
-    {
-        currentSelectedTime,
-        workTime,
-        bookingDate,
-        setBookingDate,
-        bookingDates,
-        timeslotLoading,
-        availableTimeslots,
-        setCurrentSelectedTime,
-        isShow,
-        isEvents,
-        isNavigationLoading
-    }) => {
-    const [, setGuestCount] = useAtom(guestCountAtom);
-    const [bookingDatePopup, setBookingDatePopup] = useState<boolean>(false);
-    const restaurantWorkEndTime = workTime && workTime
-        .find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
-    let workEndTime = moment(bookingDate.value);
-    if (restaurantWorkEndTime !== undefined) {
-        const endOfDay = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) < 12;
-        if (endOfDay) {
-            workEndTime = moment(workEndTime.clone().add(1, 'days').startOf('days').format('YYYY-MM-DD'));
-        }
-        workEndTime.set({
-            hour: Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
-            minutes: Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0')),
-        });
-    }
-
-    return (
-        <ContentContainer>
-            <DateListSelector
-                isOpen={bookingDatePopup}
-                setOpen={setBookingDatePopup}
-                date={bookingDate}
-                setDate={setBookingDate}
-                values={bookingDates}
-            />
-            <ContentBlock id={'booking'}>
-                <div className={css.navSliderAndBookingContainer}>
-                    <RestaurantNavigation isLoading={isNavigationLoading} isShow={isShow} isEvents={isEvents} />
-                    <div className={css.bookingContaner}>
-                        <Swiper
-                            slidesPerView={'auto'}
-                            spaceBetween={8}
-                            freeMode={true}
-                            modules={[FreeMode]}
-                            style={{
-                                marginLeft: '0',
-                            }}
-                        >
-                            {bookingDate.value == 'unset' ||
-                            !bookingDates.length ? (
-                                <SwiperSlide
-                                    style={{ width: 'min-content' }}
-                                >
-                                    <PlaceholderBlock
-                                        width={'150px'}
-                                        height={'41px'}
-                                        rounded={'20px'}
-                                    />
-                                </SwiperSlide>
-                            ) : (
-                                <SwiperSlide
-                                    style={{ width: 'min-content' }}
-                                    onClick={() =>
-                                        setBookingDatePopup(true)
-                                    }
-                                >
-                                    <div className={css.timeItem}>
-                                        <Calendar size={18} />
-                                        {formatDateAlt(bookingDate.value)}
-                                        <FaAngleRight size={16} />
-                                    </div>
-                                </SwiperSlide>
-                            )}
-                            {timeslotLoading ? (
-                                <>
-                                    <SwiperSlide
-                                        style={{ width: 'min-content' }}
-                                    >
-                                        <PlaceholderBlock
-                                            width={'68px'}
-                                            height={'41px'}
-                                            rounded={'20px'}
-                                        />
-                                    </SwiperSlide>
-                                    <SwiperSlide
-                                        style={{ width: 'min-content' }}
-                                    >
-                                        <PlaceholderBlock
-                                            width={'68px'}
-                                            height={'41px'}
-                                            rounded={'20px'}
-                                        />
-                                    </SwiperSlide>
-                                    <SwiperSlide
-                                        style={{ width: 'min-content' }}
-                                    >
-                                        <PlaceholderBlock
-                                            width={'68px'}
-                                            height={'41px'}
-                                            rounded={'20px'}
-                                        />
-                                    </SwiperSlide>
-                                </>
-                            ) : (
-                                availableTimeslots.map((ts, i) => (
-                                    <SwiperSlide
-                                        key={i}
-                                        style={{ width: 'min-content' }}
-                                        onClick={() => {
-                                            setCurrentSelectedTime(ts);
-                                            setGuestCount({
-                                                title: '1 гость',
-                                                value: '1',
-                                            });
-                                        }}
-                                    >
-                                        <div
-                                            className={classNames(
-                                                css.timeItem,
-                                                currentSelectedTime == ts
-                                                    ? css.timeItemActive
-                                                    : null,
-                                            )}
-                                        >
-                                            {currentSelectedTime == ts ? `${getTimeShort(
-                                                ts.start_datetime,
-                                            )} -  ${moment(ts.end_datetime).isBefore(workEndTime) ? getTimeShort(
-                                                ts.end_datetime,
-                                            ) : restaurantWorkEndTime}` : getTimeShort(
-                                                ts.start_datetime,
-                                            )}
-                                        </div>
-                                    </SwiperSlide>
-                                ))
-                            )}
-                        </Swiper>
-                    </div>
-                </div>
-            </ContentBlock>
-        </ContentContainer>
-    );
-};
-
-interface GalleryBlockProps {
-    restaurant_gallery: IPhotoCard[] | undefined;
-}
-
-const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
-    const [imageViewerOpen, setImageViewerOpen] = useState(false);
-    const [currentImageViewerPhoto, setCurrentImageViewerPhoto] = useState('');
-    const [gallery, setGallery] = useState<GalleryCollection[]>([]);
-    const [currentGalleryCategory, setCurrentGalleryCategory] = useState('Все фото');
-    const [currentGalleryPhotos, setCurrentGalleryPhotos] = useState<
-        (string | string[])[]
-    >([]);
-    const getGalleryPhotos = () => {
-        let photoList: string[] = [];
-
-        if (currentGalleryCategory === 'Все фото') {
-            gallery.forEach((g) => {
-                g.photos.forEach((photo) => photoList.push(photo.link));
-            });
-            photoList = [...new Set(photoList)];
-        } else {
-            const searchedGallery = gallery.find(
-                (item) => item.title === currentGalleryCategory,
-            );
-            searchedGallery?.photos.forEach((photo) =>
-                photoList.push(photo.link),
-            );
-        }
-
-        const groupedPhotos: (string | string[])[] = [];
-        let i = 0;
-
-        while (i < photoList.length) {
-            groupedPhotos.push(photoList[i]);
-            i++;
-
-            if (i < photoList.length - 1) {
-                groupedPhotos.push([photoList[i], photoList[i + 1]]);
-                i += 2;
-            }
-        }
-
-        return groupedPhotos;
-    };
-    useEffect(() => {
-        if (restaurant_gallery) {
-            setGallery(transformGallery(restaurant_gallery));
-        }
-    }, [restaurant_gallery]);
-
-    useEffect(() => {
-        setCurrentGalleryPhotos(getGalleryPhotos());
-    }, [currentGalleryCategory, gallery]);
-    return (
-        <ContentContainer>
-            {restaurant_gallery && (
-                <ImageViewerPopup
-                    isOpen={imageViewerOpen}
-                    setOpen={setImageViewerOpen}
-                    items={restaurant_gallery}
-                    currentItem={currentImageViewerPhoto}
-                    setCurrentItem={setCurrentImageViewerPhoto}
-                />
-            )}
-            <ContentBlock id={'gallery'}>
-                <HeaderContainer>
-                    <HeaderContent title={'Галерея'} />
-                    <div className={css.photoSliderNavigationContainer}>
-                        <Swiper
-                            modules={[FreeMode]}
-                            freeMode={true}
-                            slidesPerView={'auto'}
-                            spaceBetween={4}
-                        >
-                            <SwiperSlide
-                                style={{ width: 'max-content' }}
-                                onClick={() =>
-                                    setCurrentGalleryCategory(
-                                        'Все фото',
-                                    )
-                                }
-                            >
-                                <div
-                                    className={classNames(
-                                        css.photoSliderNavigationItem,
-                                        currentGalleryCategory ==
-                                        'Все фото'
-                                            ? css.photoSliderNavigationActive
-                                            : null,
-                                    )}
-                                >
-                                    Все фото
-                                </div>
-                            </SwiperSlide>
-                            {gallery.map((d, i) => (
-                                <SwiperSlide
-                                    style={{ width: 'max-content' }}
-                                    key={i}
-                                    onClick={() =>
-                                        setCurrentGalleryCategory(
-                                            d.title,
-                                        )
-                                    }
-                                >
-                                    <div
-                                        className={classNames(
-                                            css.photoSliderNavigationItem,
-                                            currentGalleryCategory ==
-                                            d.title
-                                                ? css.photoSliderNavigationActive
-                                                : null,
-                                        )}
-                                    >
-                                        {d.title}
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
-                    </div>
-                </HeaderContainer>
-                <div className={css.photoSliderContainer}>
-                    <Swiper
-                        slidesPerView="auto"
-                        modules={[FreeMode]}
-                        freeMode={true}
-                        spaceBetween={8}
-                    >
-                        {currentGalleryPhotos.map((photo, index) => (
-                            <SwiperSlide
-                                key={`${index}${photo}`}
-                                style={{ width: 'max-content' }}
-                                className={
-                                    Array.isArray(photo)
-                                        ? css.smallPhotoSlideContainer
-                                        : css.photoBig
-                                }
-                            >
-                                {Array.isArray(photo) ? (
-                                    <div
-                                        className={
-                                            css.smallPhotoContainer
-                                        }
-                                    >
-                                        {photo.map((smallPhoto, i) => (
-                                            <div
-                                                key={`${i}${smallPhoto}`}
-                                                className={classNames(
-                                                    css.photo,
-                                                    css.photoSmall,
-                                                )}
-                                                style={{
-                                                    backgroundImage: `url(${smallPhoto})`,
-                                                }}
-                                                onClick={() => {
-                                                    setCurrentImageViewerPhoto(
-                                                        smallPhoto,
-                                                    );
-                                                    setImageViewerOpen(
-                                                        true,
-                                                    );
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div
-                                        className={classNames(
-                                            css.photo,
-                                            css.photoBig,
-                                        )}
-                                        style={{
-                                            backgroundImage: `url(${photo})`,
-                                        }}
-                                        onClick={() => {
-                                            setCurrentImageViewerPhoto(
-                                                photo,
-                                            );
-                                            setImageViewerOpen(true);
-                                        }}
-                                    />
-                                )}
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </div>
-            </ContentBlock>
-        </ContentContainer>
-    );
-};
-
-interface MenuBlockProps {
-    menu: IMenuItem[] | undefined;
-    menu_imgs: IMenuImg[] | undefined;
-}
-
-const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
-    const [menuPopupOpen, setMenuPopupOpen] = useState(false);
-    return (
-        <ContentContainer>
-            {menu_imgs ? (
-                <MenuPopup
-                    isOpen={menuPopupOpen}
-                    setOpen={setMenuPopupOpen}
-                    menuItems={menu_imgs
-                        .sort((a, b) => (a.order > b.order ? 1 : -1))
-                        .map((v) => v.image_url)}
-                />
-            ) : null}
-            <ContentBlock>
-                <HeaderContainer id={'menu'}>
-                    <HeaderContent title={'Меню'} />
-                    {/*<HeaderSubText text={'Рекомендуем'}/>*/}
-                </HeaderContainer>
-                <div className={css.photoSliderContainer}>
-                    <Swiper
-                        slidesPerView="auto"
-                        modules={[FreeMode]}
-                        freeMode={true}
-                        spaceBetween={8}
-                    >
-                        {menu && menu
-                            .sort((a, b) => (a.id > b.id ? 1 : -1))
-                            .map((item, index) => (
-                                <SwiperSlide style={{ width: '162px' }}
-                                             key={`${index}${item.photo_url}`}
-                                >
-                                    <div className={css.menuItem}>
-                                        <div
-                                            className={classNames(
-                                                css.menuItemPhoto,
-                                                css.bgImage,
-                                            )}
-                                            style={{
-                                                backgroundImage: `url(${item.photo_url})`,
-                                            }}
-                                        ></div>
-                                        <div className={css.menuItemInfo}>
-                                            <span className={css.title}>
-                                                {item.title}
-                                            </span>
-                                            <span className={css.subtitle}>
-                                                {item.price} ₽
-                                            </span>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                    </Swiper>
-                </div>
-                <UniversalButton
-                    title={'Посмотреть меню'}
-                    width={'full'}
-                    action={() => setMenuPopupOpen(true)}
-                />
-            </ContentBlock>
-        </ContentContainer>
-    );
-};
-
-interface AboutBlockProps {
-    about_text: string;
-    workTime: IWorkTime[] | undefined;
-    about_kitchen: string;
-    about_dishes: string;
-    about_features: string;
-    avg_cheque: string;
-}
-
-const AboutBlock: React.FC<AboutBlockProps> = (
-    {
-        about_text,
-        workTime,
-        about_dishes,
-        about_kitchen,
-        about_features,
-        avg_cheque,
-    },
-) => {
-    const [hideAbout, setHideAbout] = useState(true);
-    const [hideWorkHours, setHideWorkHours] = useState(true);
-    const toggleAbout = () => {
-        setHideAbout((prev) => !prev);
-    };
-    const toggleWorkHours = () => {
-        setHideWorkHours((prev) => !prev);
-    };
-    return (
-        <ContentContainer>
-            <ContentBlock>
-                <HeaderContainer>
-                    <HeaderContent id={'about'} title={'О месте'} />
-                </HeaderContainer>
-                <div className={css.aboutContainer}>
-                    <span
-                        className={classNames(
-                            css.aboutText,
-                            hideAbout ? css.trimLines : null,
-                        )}
-                    >
-                        {about_text}
-                    </span>
-                    <div className={css.trimLinesButton} onClick={toggleAbout}>
-                        <span className={css.text}>{hideAbout ? 'Читать больше' : 'Скрыть'}</span>
-                    </div>
-                </div>
-            </ContentBlock>
-            <ContentBlock>
-                <div className={css.infoBlock}>
-                    <div className={css.top}>
-                        <span className={css.title}>
-                            {workTime
-                                ? getRestaurantStatus(
-                                    workTime,
-                                    getCurrentWeekdayShort(),
-                                    getCurrentTimeShort(),
-                                )
-                                : ''}
-                        </span>
-                        <div className={css.right} onClick={toggleWorkHours}>
-                            <span className={css.expandButton}>График</span>
-                            <div
-                                className={classNames(
-                                    css.right,
-                                    css.opened,
-                                    {
-                                        [css.closed]: hideWorkHours,
-                                    },
-                                )}
-                            >
-                                <DownArrow size={20} color={'var(--grey)'} />
-                            </div>
-                        </div>
-                    </div>
-                    <UnmountClosed isOpened={!hideWorkHours} className={css.collapse}>
-                        <div className={css.workHours}>
-                            {workTime && workTime.map((r) => (
-                                <span key={`weekday-${r.weekday}`} className={css.text}>
-                                    {r.weekday}: {r.time_start}-{r.time_end}
-                                </span>
-                            ))}
-                        </div>
-                    </UnmountClosed>
-                </div>
-            </ContentBlock>
-            <ContentBlock>
-                <div className={css.infoBlock}>
-                    <div className={css.top}>
-                        <span className={css.title}>Детали</span>
-                    </div>
-                    <div className={css.infoBlock}>
-                        <div className={css.textRow}>
-                            <span className={css.title}>Кухня:</span>
-                            <span className={css.value}>{about_kitchen}, {about_dishes}</span>
-                        </div>
-                        <div className={css.textRow}>
-                            <span className={css.title}>Особенности:</span>
-                            <span className={css.value}>{about_features}</span>
-                        </div>
-                        <div className={css.textRow}>
-                            <span className={css.title}>Средний чек:</span>
-                            <span className={css.value}>{avg_cheque} ₽</span>
-                        </div>
-                    </div>
-                </div>
-            </ContentBlock>
-        </ContentContainer>
-    );
-};
-
-interface ChefBlockProps {
-    about: string;
-    photo_url: string;
-    chef_name: string;
-}
-
-const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_name }) => {
-    const [hideChefAbout, setHideChefAbout] = useState(true);
-    const toggleChefInfo = () => {
-        setHideChefAbout((prev) => !prev);
-    };
-    return (
-        <ContentContainer>
-            <ContentBlock>
-                <HeaderContainer>
-                    <HeaderContent id={'chef'} title={'О шефе'} />
-                </HeaderContainer>
-                <div className={css.aboutContainer}>
-                    <span
-                        className={classNames(
-                            css.aboutText,
-                            hideChefAbout ? css.trimLines : null,
-                        )}
-                    >
-                        {about}
-                    </span>
-                    <div className={css.trimLinesButton} onClick={toggleChefInfo}>
-                        <span className={css.text}>
-                            {hideChefAbout ? 'Читать больше' : 'Скрыть'}
-                        </span>
-                    </div>
-                </div>
-                <div className={css.chefInfoContainer}>
-                    <div
-                        className={classNames(
-                            css.chefImage,
-                            css.bgImage,
-                        )}
-                        style={{ backgroundImage: `url(${photo_url})` }}
-                    />
-                    <div className={css.chefInfo}>
-                        <span className={css.title}>{chef_name}</span>
-                        <span className={css.subTitle}>Бренд-шеф</span>
-                    </div>
-                </div>
-            </ContentBlock>
-        </ContentContainer>
-    );
-};
-
-interface EventsBlockProps {
-    events: IEventInRestaurant[] | null;
-}
-
-const EventsBlock: React.FC<EventsBlockProps> = ({ events }) => {
-    const navigate = useNavigate();
-
-    return (
-        <ContentContainer>
-            <ContentBlock>
-                <HeaderContainer>
-                    <HeaderContent
-                        title={'Мероприятия'}
-                        id={'events'}
-                    />
-                </HeaderContainer>
-                {events?.map((e) => (
-                    <EventCard
-                        key={e.name}
-                        onClick={() => navigate(
-                            `/events/${e.id}`,
-                        )}
-                        event_price={e.ticket_price}
-                        event_name={e.name}
-                        event_img={e.image_url}
-                        event_restaurant={e.restaurant.title}
-                        event_date={e.date_start}
-                        event_address={e.restaurant.address}
-                        sold={e.tickets_left == 0}
-                    />
-                ))}
-            </ContentBlock>
-        </ContentContainer>
-    );
-};
-
-interface BanquetsBlockProps {
-    image: string;
-    description: string;
-    restaurant_id: number;
-    restaurant_title: string;
-    banquets: IBanquet;
-    workTime: IWorkTime[] | undefined;
-}
-
-const BanquetsBlock: React.FC<BanquetsBlockProps> = ({ description, image, restaurant_id, restaurant_title, banquets, workTime }) => {
-    const navigate = useNavigate();
-    const navigateToBanquet = () => {
-        const workTimeSorted = workTime?.sort((a, b) => workdayIndexMap[a.weekday] - workdayIndexMap[b.weekday]);
-        navigate(`/banquets/${restaurant_id}/choose`, { state: { restaurant_title, banquets, workTime: workTimeSorted } });
-    };
-    return (
-        <ContentContainer>
-            <ContentBlock>
-                <HeaderContainer>
-                    <HeaderContent title={'Банкеты'} id={'banquet'} />
-                </HeaderContainer>
-                <div className={css.banquetContainer}>
-                    <div className={css.banquetImg}>
-                        <div
-                            className={classNames(
-                                css.banquetImage,
-                                css.bgImage,
-                            )}
-                            style={{
-                                backgroundImage: `url(${image})`,
-                            }}
-                        ></div>
-                    </div>
-                    <span className={css.banquetDescription}>{description}</span>
-                    <UniversalButton
-                        width={'full'}
-                        title={'Подробнее'}
-                        action={navigateToBanquet}
-                    />
-                </div>
-            </ContentBlock>
-        </ContentContainer>
-    );
-};
-
-interface AddressBlockProps {
-    longitude: number;
-    latitude: number;
-    logo_url: string;
-    address: string;
-    address_station_color?: string;
-}
-
-const AddressBlock: React.FC<AddressBlockProps> = (
-    {
-        longitude,
-        latitude,
-        logo_url,
-        address_station_color,
-        address,
-    },
-) => {
-    const location = {
-        center: [
-            longitude,
-            latitude,
-        ],
-        zoom: 17,
-    };
-    return (
-        <ContentContainer>
-            <ContentBlock>
-                <HeaderContainer>
-                    <HeaderContent title={'Адрес'} />
-                </HeaderContainer>
-                <div className={css.mapContainer}>
-                    <div className={css.map}>
-                        <YMapComponentsProvider
-                            apiKey={'73a95f3b-fa74-4525-99e3-86ee1309f266'}
-                            lang={'ru_RU'}
-                        >
-                            <YMap location={location}>
-                                <YMapDefaultSchemeLayer />
-                                <YMapDefaultFeaturesLayer />
-                                <YMapMarker
-                                    coordinates={[
-                                        longitude,
-                                        latitude,
-                                    ]}
-                                    draggable={false}
-                                >
-                                    <div className={css.mapPoint}>
-                                        <img width={50} src={logo_url} alt={''} />
-                                    </div>
-                                </YMapMarker>
-                            </YMap>
-                            <section className={css.infoContainer}>
-                                <div className={css.RestInfo}>
-                                    <div className={css.mapInfo}>
-                                        <div
-                                            className={css.mapInfoMetro}
-                                        >
-                                            {address_station_color ? (
-                                                <div
-                                                    className={css.mapInfoMetroCircle}
-                                                    style={{
-                                                        backgroundColor: `${address_station_color}`,
-                                                    }}
-                                                ></div>
-                                            ) : null}
-                                            <span className={css.mapInfoMetroText}>
-                                                {address}
-                                            </span>
-                                        </div>
-                                        <div className={css.mapInfoAddress}>
-                                            {address}
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </YMapComponentsProvider>
-                    </div>
-                </div>
-            </ContentBlock>
-        </ContentContainer>
     );
 };

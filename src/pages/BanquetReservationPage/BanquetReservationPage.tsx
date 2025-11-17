@@ -167,32 +167,34 @@ export const BanquetReservationPage = () => {
                             />
                         </div>
                     </ContentBlock>
-                    <ContentBlock>
-                        <span className={css.price_title}>Предварительная стоимость*:</span>
-                        <div className={css.price}>
-                            <div>
-                                <span>Депозит за человека:</span>
-                                <span>{price?.deposit} ₽</span>
+                    {price.deposit !== null && (
+                        <ContentBlock>
+                            <span className={css.price_title}>Предварительная стоимость*:</span>
+                            <div className={css.price}>
+                                <div>
+                                    <span>Депозит за человека:</span>
+                                    <span>{price?.deposit} ₽</span>
+                                </div>
+                                <div>
+                                    <span>Депозит итого:</span>
+                                    <span>{price?.totalDeposit} ₽</span>
+                                </div>
+                                <div>
+                                    <span>Сервисный сбор:</span>
+                                    <span>{price?.serviceFee}%</span>
+                                </div>
+                                <div>
+                                    <span>Итого:</span>
+                                    <span>{price?.total} ₽</span>
+                                </div>
+                                <p>
+                                    *Окончательная стоимость банкета будет
+                                    определена после того, как вы сформируете запрос,
+                                    и мы свяжемся с вами для уточнения всех деталей мероприятия.
+                                </p>
                             </div>
-                            <div>
-                                <span>Депозит итого:</span>
-                                <span>{price?.totalDeposit} ₽</span>
-                            </div>
-                            <div>
-                                <span>Сервисный сбор:</span>
-                                <span>{price?.serviceFee}%</span>
-                            </div>
-                            <div>
-                                <span>Итого:</span>
-                                <span>{price?.total} ₽</span>
-                            </div>
-                            <p>
-                                *Окончательная стоимость банкета будет
-                                определена после того, как вы сформируете запрос,
-                                и мы свяжемся с вами для уточнения всех деталей мероприятия.
-                            </p>
-                        </div>
-                    </ContentBlock>
+                        </ContentBlock>
+                    )}
                     <div className={css.button}>
                         <UniversalButton
                             width={'full'}

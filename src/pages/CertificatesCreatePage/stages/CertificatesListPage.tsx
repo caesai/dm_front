@@ -1,33 +1,95 @@
 import React, { useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
+import { BASE_BOT } from '@/api/base.ts';
+import { ICertificate } from '@/types/certificates.types.ts';
 import { APIGetCertificates } from '@/api/certificates.api.ts';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
+// import certificateImage from '/img/certificate_2.png';
 
+export const shareCertificate = async (certificate: ICertificate) => {
+    const url = encodeURI(
+        `https://t.me/${BASE_BOT}?startapp=certificateId_${certificate.id}`
+    );
+    // The message includes the full context needed
+    const message = `${certificate.recipient_name}, вы получили подарочный сертификат. Перейдите по ссылке ${decodeURI(url)}, чтобы посмотреть его и воспользоваться`;
+
+    try {
+        // const response = await fetch(certificateImage);
+        // const blob = await response.blob();
+        // const sharedFile = new File([blob], 'shared_image.png', { type: 'image/png' });
+
+        const shareDataWithFiles: ShareData = {
+            title: message, // Some platforms might use this as a caption
+            // files: [sharedFile],
+            // url: decodeURI(url) // Use the URL field for better handling by share targets
+        };
+
+        // 1. Check if the platform can share files
+        if (navigator.share) {
+            try {
+                await navigator.share(shareDataWithFiles);
+                console.log('Attempted to share both text/url and image (platform dependent).');
+                // return;
+            } catch (error) {
+                // If sharing with files fails for some reason, maybe permission issues or API issues
+                console.error('Sharing with files failed:', error);
+            }
+        }
+        // 3. Fallback: Use the Telegram specific URL scheme
+        // This is the most reliable way to ensure both message and url are present if the native API fails
+        window.open(`https://t.me/share/url?text=${encodeURI(message)}`, "_blank");
+
+    } catch (error) {
+        console.error('Error handling image fetch or initial share attempt:', error);
+        // If image fetching fails, try sharing text/url as a last resort native share or fallback URL
+        if (navigator.share) {
+            await navigator.share({ text: message });
+            return;
+        }
+        window.open(`https://t.me/share/url?url=${url}&text=${encodeURI(message)}`, "_blank");
+    }
+};
 
 export const CertificatesListPage: React.FC = () => {
+    const [certificates, setCertificates] = useAtom(certificatesListAtom);
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
-
-    // const navigate = useNavigate();
-    const selectOption = () => {
-        // navigate('/certificates/online', { state: { title: 'Онлайн сертификат' }});
-    }
-
     useEffect(() => {
         if (auth?.access_token) {
-            APIGetCertificates(auth?.access_token, Number(user?.id)).then();
+            APIGetCertificates(auth?.access_token, Number(user?.id))
+                .then(response => setCertificates(response.data));
         }
-    }, []);
+    }, [auth?.access_token, user?.id, setCertificates]);
     return (
         <div className={css.content}>
-            <div className={css.certificateOption}>
-                <Certificate placeholder={''} date={''} rating={''} cardholder={''} />
-                <UniversalButton width={'full'} title={'Поделиться'} action={selectOption}/>
-            </div>
+            {certificates.length > 0 ? (
+                certificates.map((certificate) => (
+                    <CertificateOption certificate={certificate} key={certificate.id} />
+                ))
+            ) : (<h2 className={css.empty_list}>Список пуст</h2>)}
+        </div>
+    );
+};
+
+interface CertificateOptionProps {
+    certificate: ICertificate;
+}
+
+const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) => {
+    return (
+        <div className={css.certificateOption}>
+            <Certificate
+                placeholder={certificate.message}
+                date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
+                rating={Number(certificate.value).toFixed().toString()}
+                cardholder={certificate.recipient_name}
+            />
+            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} theme={'red'} action={() => shareCertificate(certificate)} />}
         </div>
     )
 }

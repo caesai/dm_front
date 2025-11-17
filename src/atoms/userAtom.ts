@@ -1,14 +1,9 @@
 import { atom } from 'jotai';
-import { IUser } from '@/types/user.types.ts';
+import { IAuthInfo, IUser } from '@/types/user.types.ts';
 
 interface IReviewAtom {
     available: boolean;
     loading: boolean;
-}
-
-export interface IAuthInfo {
-    access_token: string;
-    expires_in: number;
 }
 
 export const userAtom = atom<IUser>();

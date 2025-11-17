@@ -22,7 +22,8 @@ export const AppLoadingScreen = () => {
                     return res.data.access_token;
                 })
                 .then((token) => {
-                    APIUserInfo(token).then((res) => {
+                    APIUserInfo(token)
+                        .then((res) => {
                         setUser(res.data);
                     });
                 })

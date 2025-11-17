@@ -43,6 +43,8 @@ import { APIGetAvailableEventTimeSlots } from '@/api/events.ts';
 import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
+import { DEV_MODE } from '@/api/base.ts';
+import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -92,6 +94,7 @@ export const BookingFreeEventPage: FC = () => {
     const [botError, setBotError] = useState(false);
     const [errorPopupCount, setErrorPopupCount] = useState(0);
     const [preOrder, setPreOrder] = useState(false);
+    const [certificate_id, setCertificateId] = useState<string | null>(null);
     const bookingBtn = useRef<HTMLDivElement>(null);
 
     // Update bookingDates when guestCount changes
@@ -172,7 +175,8 @@ export const BookingFreeEventPage: FC = () => {
                 comms,
                 confirmation.text,
                 (guestCount + childrenCount) < 8 ? false : preOrder,
-                Number(eventId)
+                Number(eventId),
+                certificate_id
             )
                 .then((res) => {
                     if (res.data?.error) {
@@ -272,6 +276,7 @@ export const BookingFreeEventPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
+                    {DEV_MODE && <CertificatesSelector setCertificateId={setCertificateId} />}
                     <BookingWish
                         guestCount={guestCount}
                         childrenCount={childrenCount}
