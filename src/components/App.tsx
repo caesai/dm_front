@@ -61,6 +61,11 @@ import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/CertificatesPaymentPage.tsx';
 import CertificateLandingPage from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
 import { CertificatesCreateErrorPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateErrorPage.tsx';
+import { GastronomyPage } from '@/pages/GastronomyPage/GastronomyPage.tsx';
+import { GastronomyChooseRestaurantPage } from '@/pages/GastronomyPage/stages/GastronomyChooseRestaurantPage.tsx';
+import { GastronomyChooseDishesPage } from '@/pages/GastronomyPage/stages/GastronomyChooseDishesPage.tsx';
+import { GastonomyDishDetailsPage } from '@/pages/GastronomyPage/stages/GastonomyDishDetailsPage.tsx';
+import { GastronomyBasketPage } from '@/pages/GastronomyPage/stages/GastronomyBasketPage.tsx';
 
 const AppRouter = () => {
     const [user] = useAtom(userAtom);
@@ -96,7 +101,7 @@ const AppRouter = () => {
                     setReview({
                         loading: false,
                         available: res.data.available,
-                    })
+                    }),
                 );
     }, [auth]);
 
@@ -116,89 +121,96 @@ const AppRouter = () => {
             <Redirecter />
             {
                 !loadingComplete ? (
-                <AppLoadingScreen />
-            ) : (
-                <Routes>
-                    <Route path={'/'} element={<IndexPage />} />
-                    <Route path={'/map'} element={<RestaurantMapPage />} />
-                    <Route path={'/profile'} element={<ProfilePage />} />
-                    <Route path={'/me'} element={<UserProfilePage />} />
+                    <AppLoadingScreen />
+                ) : (
+                    <Routes>
+                        <Route path={'/'} element={<IndexPage />} />
+                        <Route path={'/map'} element={<RestaurantMapPage />} />
+                        <Route path={'/profile'} element={<ProfilePage />} />
+                        <Route path={'/me'} element={<UserProfilePage />} />
                         <Route path={'/me/allergies'} element={<AllergiesPage />} />
-                    <Route path={'/events'} element={<EventsPage />}>
-                        <Route path={'/events'} element={<EventListOutlet />} />
+                        <Route path={'/events'} element={<EventsPage />}>
+                            <Route path={'/events'} element={<EventListOutlet />} />
+                            <Route
+                                path={'/events/:eventId'}
+                                element={<EventConfirmationOutlet />}
+                            />
+                            <Route
+                                path={'/events/:eventId/confirm'}
+                                element={<EventBookingOutlet />}
+                            />
+                            <Route
+                                path={'/events/super'}
+                                element={<EventSuperInfoOutlet />}
+                            />
+                            <Route
+                                path={'/events/super/apply'}
+                                element={<EventSuperApplyOutlet />}
+                            />
+                        </Route>
+                        <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
+                        <Route path={'/tickets'} element={<UserTicketsPage />} />
+                        <Route path={'/tickets/:id'} element={<TicketInfoPage />} />
+                        <Route path={'/myBookings'} element={<MyBookingsPage />} />
                         <Route
-                            path={'/events/:eventId'}
-                            element={<EventConfirmationOutlet />}
+                            path={'/myBookings/:id'}
+                            element={<BookingInfoPage />}
+                        />
+                        <Route path={'/restaurant/:id'} element={<Restaurant />} />
+                        <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
+                        <Route path={'/newrestaurant'} element={<NewRestaurant />} />
+                        <Route path={'/booking'} element={<BookingPage />} />
+                        <Route
+                            path={'/bookingConfirmation'}
+                            element={<BookingConfirmationPage />}
+                        />
+                        <Route path={'/unsupported'} element={<EnvUnsupported />} />
+                        <Route
+                            path={'/paymentReturn'}
+                            element={<PaymentReturnPage />}
                         />
                         <Route
-                            path={'/events/:eventId/confirm'}
-                            element={<EventBookingOutlet />}
+                            path={'/phoneConfirmation'}
+                            element={<UserPhoneConfirmationPage />}
                         />
-                        <Route
-                            path={'/events/super'}
-                            element={<EventSuperInfoOutlet />}
-                        />
-                        <Route
-                            path={'/events/super/apply'}
-                            element={<EventSuperApplyOutlet />}
-                        />
-                    </Route>
-                    <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
-                    <Route path={'/tickets'} element={<UserTicketsPage />} />
-                    <Route path={'/tickets/:id'} element={<TicketInfoPage />} />
-                    <Route path={'/myBookings'} element={<MyBookingsPage />} />
-                    <Route
-                        path={'/myBookings/:id'}
-                        element={<BookingInfoPage />}
-                    />
-                    <Route path={'/restaurant/:id'} element={<Restaurant />} />
-                    <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
-                    <Route path={'/newrestaurant'} element={<NewRestaurant />} />
-                    <Route path={'/booking'} element={<BookingPage />} />
-                    <Route
-                        path={'/bookingConfirmation'}
-                        element={<BookingConfirmationPage />}
-                    />
-                    <Route path={'/unsupported'} element={<EnvUnsupported />} />
-                    <Route
-                        path={'/paymentReturn'}
-                        element={<PaymentReturnPage />}
-                    />
-                    <Route
-                        path={'/phoneConfirmation'}
-                        element={<UserPhoneConfirmationPage />}
-                    />
-                    <Route path={'/scanner'} element={<AdminScannerPage />} />
-                    <Route path={'/onboarding'} element={<OnboardingPage />}>
-                        <Route path={'/onboarding/1'} element={<StageOne />} />
-                        <Route path={'/onboarding/2'} element={<StageTwo />} />
-                        <Route path={'/onboarding/3'} element={<StageThree />} />
-                        <Route path={'/onboarding/4'} element={<StageFour />} />
-                    </Route>
-                    <Route path={'/preferences'} element={<PreferencesPage/>}>
-                        <Route path={'/preferences/1'} element={<PreferencesOne />} />
-                        <Route path={'/preferences/2'} element={<PreferencesTwo />} />
-                        <Route path={'/preferences/3'} element={<PreferencesThree />} />
-                    </Route>
-                    <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
-                    <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />
-                    <Route path={'banquets/:id/additional-services'} element={<BanquetAdditionalServicesPage />} />
-                    <Route path={'banquets/:id/reservation'} element={<BanquetReservationPage />} />
+                        <Route path={'/scanner'} element={<AdminScannerPage />} />
+                        <Route path={'/onboarding'} element={<OnboardingPage />}>
+                            <Route path={'/onboarding/1'} element={<StageOne />} />
+                            <Route path={'/onboarding/2'} element={<StageTwo />} />
+                            <Route path={'/onboarding/3'} element={<StageThree />} />
+                            <Route path={'/onboarding/4'} element={<StageFour />} />
+                        </Route>
+                        <Route path={'/preferences'} element={<PreferencesPage />}>
+                            <Route path={'/preferences/1'} element={<PreferencesOne />} />
+                            <Route path={'/preferences/2'} element={<PreferencesTwo />} />
+                            <Route path={'/preferences/3'} element={<PreferencesThree />} />
+                        </Route>
+                        <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
+                        <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />
+                        <Route path={'banquets/:id/additional-services'} element={<BanquetAdditionalServicesPage />} />
+                        <Route path={'banquets/:id/reservation'} element={<BanquetReservationPage />} />
 
-                    <Route path={'/certificates'} element={<CertificatesCreatePage />}>
-                        <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
-                        <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
-                        <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
-                        <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
-                        <Route path={'/certificates/my'} element={<CertificatesListPage />} />
-                        <Route path={'/certificates/payment'} element={<CertificatesPaymentPage />} />
-                        <Route path={'/certificates/error'} element={<CertificatesCreateErrorPage />} />
-                    </Route>
-                    <Route path={'/certificates/landing/:id'} element={<CertificateLandingPage />} />
+                        <Route path={'/certificates'} element={<CertificatesCreatePage />}>
+                            <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
+                            <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
+                            <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
+                            <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
+                            <Route path={'/certificates/my'} element={<CertificatesListPage />} />
+                            <Route path={'/certificates/payment'} element={<CertificatesPaymentPage />} />
+                            <Route path={'/certificates/error'} element={<CertificatesCreateErrorPage />} />
+                        </Route>
+                        <Route path={'/certificates/landing/:id'} element={<CertificateLandingPage />} />
 
-                    <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-            )}
+                        <Route path={'/gastronomy'} element={<GastronomyPage />}>
+                            <Route path={'/gastronomy/choose'} element={<GastronomyChooseRestaurantPage />} />
+                            <Route path={'/gastronomy/:res_id'} element={<GastronomyChooseDishesPage />} />
+                            <Route path={'/gastronomy/:res_id/dish/:dish_id'} element={<GastonomyDishDetailsPage />} />
+                            <Route path={'/gastronomy/:res_id/basket'} element={<GastronomyBasketPage />} />
+                        </Route>
+
+                        <Route path="*" element={<Navigate to="/" />} />
+                    </Routes>
+                )}
         </BrowserRouter>
     );
 };
