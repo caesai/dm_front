@@ -16,7 +16,7 @@ const BookingCertificate: React.FC<IBookingCertificate> = ({ value, expired_at }
                 </div>
                 <div>
                     <span className={css.info_title}>Срок действия:</span>
-                    <span className={css.info_text}>до {expired_at}</span>
+                    <span className={css.info_text}>до {new Date(expired_at).toLocaleDateString()}</span>
                 </div>
             </div>
         </section>
