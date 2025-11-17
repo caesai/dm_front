@@ -4,7 +4,7 @@ import { IDish } from '@/types/gastronomy.types.ts';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
 
-export const GatronomyChooseDishesPage: React.FC = () => {
+export const GastronomyChooseDishesPage: React.FC = () => {
     const navigate = useNavigate();
     const { res_id } = useParams();
     const navigateToDishDetails = (dishId: number) => {
@@ -12,9 +12,9 @@ export const GatronomyChooseDishesPage: React.FC = () => {
     }
     return (
         <div>
-            {mockGastronomyListData.map((item, index) => (
+            {mockGastronomyListData.map((item) => (
                 <Dish
-                    key={index}
+                    key={item.id}
                     id={item.id}
                     title={item.title}
                     price={item.price}
