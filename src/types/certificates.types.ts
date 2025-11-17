@@ -22,7 +22,7 @@ export interface ICertificateBlockProps {
 }
 
 export type TCertificate = 'online' | 'offline';
-export type TCertificateStatus = 'new' | 'paid' | 'not_paid' | 'used';
+export type TCertificateStatus = 'new' | 'paid' | 'not_paid' | 'used' | 'shared';
 
 export const CERTIFICATION_TYPES: Record<string, TCertificate> = {
     ONLINE: 'online',
