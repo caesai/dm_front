@@ -1,31 +1,35 @@
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+    // useNavigate,
+    useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useAtom } from 'jotai';
-import { authAtom } from '@/atoms/userAtom.ts';
-import { APIValidatePayment } from '@/api/events.ts';
-import {AppLoadingScreen} from "@/components/AppLoadingScreen/AppLoadingScreen.tsx";
+// import { useAtom } from 'jotai';
+// import { authAtom } from '@/atoms/userAtom.ts';
+// import { APIValidatePayment } from '@/api/events.ts';
+import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 
 export const PaymentReturnPage = () => {
-    const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
-    const [auth] = useAtom(authAtom);
+    const [params] = useSearchParams();
+    const paramsObject = Object.fromEntries(params.entries());
+    // const navigate = useNavigate();
+    // const [auth] = useAtom(authAtom);
 
     useEffect(() => {
-        const id = searchParams.get('id');
-        const event_id = searchParams.get('event_id');
-        if (!id || !auth?.access_token) {
-            navigate('/');
-            return;
-        }
-        APIValidatePayment(Number(id), auth.access_token).then((res) => {
-            res.data.paid ? navigate(`/tickets/${res.data.event_id}`) : navigate('/events/' + Number(event_id) + '?paymentError=true');
-        }).catch((err) => {
-            console.log('err on validate payment: ', err);
-            navigate('/events/' + Number(event_id) + '?error=true');
-        });
-    }, [searchParams]);
+        console.log('searchParams: ', paramsObject)
+    //     const id = searchParams.get('id');
+    //     const event_id = searchParams.get('event_id');
+    //     if (!id || !auth?.access_token) {
+    //         navigate('/');
+    //         return;
+    //     }
+    //     APIValidatePayment(Number(id), auth.access_token).then((res) => {
+    //         res.data.paid ? navigate(`/tickets/${res.data.event_id}`) : navigate('/events/' + Number(event_id) + '?paymentError=true');
+    //     }).catch((err) => {
+    //         console.log('err on validate payment: ', err);
+    //         navigate('/events/' + Number(event_id) + '?error=true');
+    //     });
+    }, [paramsObject]);
 
     return (
-        <AppLoadingScreen />
+        <Loader />
     );
 };
