@@ -24,6 +24,7 @@ export const EventConfirmationOutlet: React.FC = () => {
     const decCounter = () => {
         setGuestCount((prev: number) => (prev - 1 >= 1 ? prev - 1 : prev));
     };
+
     const next = () => {
         if (guestCount === 0) return;
         let sharedState = {};
@@ -54,6 +55,7 @@ export const EventConfirmationOutlet: React.FC = () => {
             navigate(`/onboarding/3`, { state: { id: bookingInfo.event?.id, sharedEvent: true, ...sharedState }});
         }
     };
+
     return (
         <div className={css.content}>
             {bookingInfo.event?.image_url == undefined ? (

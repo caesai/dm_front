@@ -66,6 +66,7 @@ import { GastronomyChooseRestaurantPage } from '@/pages/GastronomyPage/stages/Ga
 import { GastronomyChooseDishesPage } from '@/pages/GastronomyPage/stages/GastronomyChooseDishesPage.tsx';
 import { GastonomyDishDetailsPage } from '@/pages/GastronomyPage/stages/GastonomyDishDetailsPage.tsx';
 import { GastronomyBasketPage } from '@/pages/GastronomyPage/stages/GastronomyBasketPage.tsx';
+import { EventPaymentPage } from '@/pages/EventsPage/EventPaymentPage.tsx';
 
 const AppRouter = () => {
     const [user] = useAtom(userAtom);
@@ -131,22 +132,11 @@ const AppRouter = () => {
                         <Route path={'/me/allergies'} element={<AllergiesPage />} />
                         <Route path={'/events'} element={<EventsPage />}>
                             <Route path={'/events'} element={<EventListOutlet />} />
-                            <Route
-                                path={'/events/:eventId'}
-                                element={<EventConfirmationOutlet />}
-                            />
-                            <Route
-                                path={'/events/:eventId/confirm'}
-                                element={<EventBookingOutlet />}
-                            />
-                            <Route
-                                path={'/events/super'}
-                                element={<EventSuperInfoOutlet />}
-                            />
-                            <Route
-                                path={'/events/super/apply'}
-                                element={<EventSuperApplyOutlet />}
-                            />
+                            <Route path={'/events/:eventId'} element={<EventConfirmationOutlet />} />
+                            <Route path={'/events/:eventId/confirm'} element={<EventBookingOutlet />} />
+                            <Route path={'/events/payment/:orderId'} element={<EventPaymentPage />} />
+                            <Route path={'/events/super'} element={<EventSuperInfoOutlet />} />
+                            <Route path={'/events/super/apply'} element={<EventSuperApplyOutlet />} />
                         </Route>
                         <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
                         <Route path={'/tickets'} element={<UserTicketsPage />} />
