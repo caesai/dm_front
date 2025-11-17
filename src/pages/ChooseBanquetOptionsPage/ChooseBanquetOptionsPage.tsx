@@ -44,7 +44,7 @@ export const ChooseBanquetOptionsPage = () => {
 
     const getBanquetDeposit = (banquet: IBanquetOptions) => {
         if (banquet.deposit) {
-            return `${banquet.deposit} ₽`;
+            return `от ${banquet.deposit} ₽ на гостя`;
         }
         return banquet.deposit_message || "Без депозита";
     };
