@@ -6,7 +6,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { IBanquet, IBanquetOptions } from '@/types/banquets.types.ts';
-import { DepositIcon } from '@/components/Icons/DepositIcon.tsx';
 import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
 import { IWorkTime } from '@/types/restaurant.ts';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -87,7 +86,7 @@ export const ChooseBanquetOptionsPage = () => {
                                                             <span>до {banquet.guests_max} человек</span>
                                                         </div>
                                                         <div>
-                                                            <DepositIcon color={'#FFFFFF'} />
+                                                            {/*<DepositIcon color={'#FFFFFF'} />*/}
                                                             <span>{getBanquetDeposit(banquet)}</span>
                                                         </div>
                                                     </div>
