@@ -1,4 +1,5 @@
 import css from "./BookingCertificate.module.css";
+import moment from 'moment';
 
 interface IBookingCertificate {
     value: number
@@ -16,7 +17,7 @@ const BookingCertificate: React.FC<IBookingCertificate> = ({ value, expired_at }
                 </div>
                 <div>
                     <span className={css.info_title}>Срок действия:</span>
-                    <span className={css.info_text}>до {new Date(expired_at).toLocaleDateString()}</span>
+                    <span className={css.info_text}>до {moment(expired_at).format('DD.MM.YYYY')}</span>
                 </div>
             </div>
         </section>
