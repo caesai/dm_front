@@ -239,7 +239,7 @@ export const BookingInfoPage = () => {
                         <div className={classNames(css.fc, css.footer_wrapper)}>
                             <div className={classNames(css.fr, css.bookingInfoDetails_item)}>
                                 {booking ? (
-                                    ['new', 'waiting', 'confirmed'].some((v) => v == booking.booking_status) ? (
+                                    ['new', 'waiting', 'confirmed'].some((v) => v === booking.booking_status) ? (
                                         <>
                                             <UniversalButton width={'full'} title={'Изменить'} action={hideApp} />
                                             <UniversalButton width={'full'} title={'Отменить'} action={() => setCancelPopup(true)} />
