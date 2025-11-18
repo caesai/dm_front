@@ -210,6 +210,7 @@ export const Restaurant = () => {
                     isShow={
                         tg_id && mockEventsUsersList.includes(tg_id)
                     }
+                    isBanquets={Boolean(banquets && banquets?.banquet_options?.length > 0)}
                     isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
                 />
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
