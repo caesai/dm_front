@@ -12,9 +12,7 @@ import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestau
 import { useAtom } from 'jotai';
 import { IPhotoCard, IRestaurant } from '@/types/restaurant.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import {
-    formatDate,
-} from '@/utils.ts';
+import { formatDate } from '@/utils.ts';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
@@ -40,11 +38,14 @@ import { GastronomyBlock } from '@/pages/Restaurant/blocks/GastronomyBlock.tsx';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
 import { DEV_MODE } from '@/api/base.ts';
 
+/**
+ * Преобразует массив фотографий в структурированную галерею с группировкой по категориям
+ * @param {IPhotoCard[]} gallery - Массив фотографий ресторана
+ * @returns {GalleryCollection[]} Структурированная галерея с категориями
+ */
 export const transformGallery = (gallery: IPhotoCard[]): GalleryCollection[] => {
-    // Создаем объект для группировки по категориям
     const groupedByCategory: Record<string, GalleryPhoto[]> = {};
 
-    // Группируем фотографии по категориям
     gallery.forEach((photo) => {
         if (!groupedByCategory[photo.category]) {
             groupedByCategory[photo.category] = [];
@@ -52,7 +53,6 @@ export const transformGallery = (gallery: IPhotoCard[]): GalleryCollection[] => 
         groupedByCategory[photo.category].push({ link: photo.url });
     });
 
-    // Преобразуем объект в массив GalleryCollection
     return Object.entries(groupedByCategory).map(([title, photos]) => ({
         title,
         photos,
@@ -71,116 +71,172 @@ export const Restaurant = () => {
     const [restaurant, setRestaurant] = useState<IRestaurant>();
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
-
     const [timeslotLoading, setTimeslotLoading] = useState(true);
-
-
-    const [callPopup, setCallPopup] = useState(false);
-
+    const [isCallPopupOpen, setIsCallPopupOpen] = useState(false);
     const [events, setEvents] = useState<IEventInRestaurant[] | null>(null);
     const [banquets, setBanquets] = useState<IBanquet | null>(null);
-    const [ny_cookings,] = useState(NewYearCookingData)
+    const [nyCookings] = useState(NewYearCookingData);
 
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+    const tgId = window.Telegram.WebApp.initDataUnsafe.user?.id;
 
-    const handleNextBtn = () => {
+    /**
+     * Обрабатывает переход к бронированию столика
+     */
+    const handleNextButtonClick = () => {
         if (!user?.complete_onboarding) {
             navigate('/onboarding/3', {
-                state: { id, bookedDate: bookingDate, bookedTime: currentSelectedTime, sharedRestaurant: true },
+                state: {
+                    id,
+                    bookedDate: bookingDate,
+                    bookedTime: currentSelectedTime,
+                    sharedRestaurant: true
+                },
             });
         } else {
             navigate(`/restaurant/${id}/booking`, {
-                state: { bookedDate: bookingDate, bookedTime: currentSelectedTime },
+                state: {
+                    bookedDate: bookingDate,
+                    bookedTime: currentSelectedTime
+                },
             });
         }
     };
 
+    /**
+     * Открывает Яндекс Карты с местоположением ресторана
+     */
+    const handleOpenYandexMaps = () => {
+        window.open(
+            `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`
+        );
+    };
+
+    /**
+     * Проверяет, есть ли у пользователя доступ к платным событиям
+     * @returns {boolean} true если пользователь имеет доступ к платным событиям
+     */
+    const hasPaidEventsAccess = (): boolean => {
+        return Boolean(tgId && mockEventsUsersList.includes(tgId));
+    };
+
+    /**
+     * Фильтрует события в зависимости от доступа пользователя
+     * @returns {IEventInRestaurant[] | undefined} Отфильтрованный список событий
+     */
+    const getFilteredEvents = (): IEventInRestaurant[] | undefined => {
+        if (!events) return undefined;
+
+        return events.filter((event) => {
+            if (hasPaidEventsAccess()) {
+                return event.tickets_left > 0;
+            } else {
+                return event.tickets_left > 0 && event.ticket_price === 0;
+            }
+        });
+    };
+
+    /**
+     * Извлекает координаты из строки адреса
+     * @returns {{longitude: number, latitude: number}} Объект с координатами
+     */
+    const getRestaurantCoordinates = () => {
+        if (!restaurant?.address_lonlng) {
+            return { longitude: 0, latitude: 0 };
+        }
+
+        const [longitude, latitude] = restaurant.address_lonlng.split(',').map(Number);
+        return {
+            longitude,
+            latitude: latitude - 0.0003 // Корректировка для смещения маркера
+        };
+    };
+
+    // Загрузка данных о банкетах
     useEffect(() => {
         APIGetBanquetOptions(String(auth?.access_token), Number(id)).then((res) => {
             setBanquets(res.data);
         });
-    }, [id]);
+    }, [id, auth?.access_token]);
 
+    // Инициализация ресторана и событий
     useEffect(() => {
-        setRestaurant(restaurants.find((v) => v.id === Number(id)));
+        setRestaurant(restaurants.find((rest) => rest.id === Number(id)));
         setCurrentSelectedTime(null);
         setBookingDate({ value: 'unset', title: 'unset' });
         APIGetEventsInRestaurant(Number(id), String(auth?.access_token)).then((res) => setEvents(res.data));
-    }, [id]);
+    }, [id, restaurants, auth?.access_token]);
 
+    // Загрузка доступных дней для бронирования
     useEffect(() => {
-        if (!auth?.access_token) {
-            return;
-        }
-        APIGetAvailableDays(auth?.access_token, Number(id), 1)
+        if (!auth?.access_token) return;
+
+        APIGetAvailableDays(auth.access_token, Number(id), 1)
             .then((res) => {
-                setBookingDates(
-                    res.data.map((v) => ({
-                        title: formatDate(v),
-                        value: v,
-                    }))
-                );
-                return res;
-            })
-            .then((res) => {
-                setBookingDate({
-                    title: formatDate(res.data[0]),
-                    value: res.data[0],
-                });
+                const formattedDates = res.data.map((date) => ({
+                    title: formatDate(date),
+                    value: date,
+                }));
+                setBookingDates(formattedDates);
+
+                if (formattedDates.length > 0) {
+                    setBookingDate(formattedDates[0]);
+                }
             });
-    }, []);
+    }, [auth?.access_token, id]);
 
+    // Загрузка доступных таймслотов для выбранной даты
     useEffect(() => {
-        if (!auth?.access_token || bookingDate.value == 'unset') {
-            return;
-        }
+        if (!auth?.access_token || bookingDate.value === 'unset') return;
+
         setTimeslotLoading(true);
         APIGetAvailableTimeSlots(auth.access_token, Number(id), bookingDate.value, 1)
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotLoading(false));
-    }, [bookingDate]);
+    }, [auth?.access_token, bookingDate, id]);
 
-    const filteredEvents = events?.filter((event) => {
-        if (tg_id && mockEventsUsersList.includes(tg_id)) {
-            return event.tickets_left > 0;
-        } else {
-            return event.tickets_left > 0 && event.ticket_price === 0;
-        }
-    });
+    const filteredEvents = getFilteredEvents();
+    const coordinates = getRestaurantCoordinates();
+    const hasBanquets = banquets && banquets.banquet_options.length > 0;
+    const hasEvents = Boolean(filteredEvents && filteredEvents.length > 0);
+    const shouldShowCertificate = hasPaidEventsAccess();
 
     return (
         <Page back={true}>
             <CallRestaurantPopup
-                isOpen={callPopup}
-                setOpen={setCallPopup}
-                phone={restaurant?.phone_number ? restaurant?.phone_number : ''}
+                isOpen={isCallPopupOpen}
+                setOpen={setIsCallPopupOpen}
+                phone={restaurant?.phone_number || ''}
             />
+
             {restaurant && events && banquets && filteredEvents !== undefined && (
-                <NavigationBlock restaurant_id={Number(id)} restaurant={restaurant} events={events} banquets={banquets} filteredEvents={filteredEvents} />
+                <NavigationBlock
+                    restaurant_id={Number(id)}
+                    restaurant={restaurant}
+                    events={events}
+                    banquets={banquets}
+                    filteredEvents={filteredEvents}
+                />
             )}
+
             <div className={css.floatingFooter}>
                 <BottomButtonWrapper
-                    onClick={handleNextBtn}
+                    onClick={handleNextButtonClick}
                     additionalBtns={
-                        <>
-                            <RoundedButton
-                                icon={<GoToPathIcon size={24} color={'var(--dark-grey)'} />}
-                                action={() =>
-                                    // ,
-                                    window.open(
-                                        `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`
-                                    )
-                                }
-                            />
-                        </>
+                        <RoundedButton
+                            icon={<GoToPathIcon size={24} color="var(--dark-grey)" />}
+                            action={handleOpenYandexMaps}
+                        />
                     }
                 />
             </div>
+
             <div className={css.pageContainer}>
                 <RestaurantTopPreview rest={restaurant} />
+
+                {/* Яндекс Такси виджет */}
                 <div className={css.yaTaxi}>
                     <div
-                        key={'taxi1'}
+                        key="taxi1"
                         className="ya-taxi-widget"
                         data-ref="https%3A%2F%2Fdemo.efinskiy.ru%2F"
                         data-proxy-url="https://{app}.redirect.appmetrica.yandex.com/route?end-lat={end-lat}&amp;end-lon={end-lon}&amp;tariffClass={tariff}&amp;ref={ref}&amp;appmetrica_tracking_id={redirect}&amp;lang={lang}&amp;erid={erid}"
@@ -195,8 +251,9 @@ export const Restaurant = () => {
                         data-use-location="false"
                         data-point-a=""
                         data-point-b={restaurant?.address_lonlng}
-                    ></div>
+                    />
                 </div>
+
                 <BookingBlock
                     currentSelectedTime={currentSelectedTime}
                     workTime={restaurant?.worktime}
@@ -207,14 +264,14 @@ export const Restaurant = () => {
                     availableTimeslots={availableTimeslots}
                     setCurrentSelectedTime={setCurrentSelectedTime}
                     isNavigationLoading={events == null && banquets == null}
-                    isShow={
-                        tg_id && mockEventsUsersList.includes(tg_id)
-                    }
-                    isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
+                    isShow={hasPaidEventsAccess()}
+                    isEvents={hasEvents}
                 />
+
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
                 <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
-                {banquets && banquets?.banquet_options.length > 0 && (
+
+                {hasBanquets && (
                     <BanquetsBlock
                         image={banquets.image}
                         description={banquets.description}
@@ -224,9 +281,23 @@ export const Restaurant = () => {
                         banquets={banquets}
                     />
                 )}
-                {Boolean(filteredEvents && filteredEvents?.length > 0) && <EventsBlock events={events} />}
-                {tg_id && mockEventsUsersList.includes(tg_id) && <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />}
-                {DEV_MODE && (<GastronomyBlock description={ny_cookings.description} image={ny_cookings.image} />)}
+
+                {hasEvents && <EventsBlock events={events} />}
+
+                {shouldShowCertificate && (
+                    <CertificateBlock
+                        image={certificateBlock.image}
+                        description={certificateBlock.description}
+                    />
+                )}
+
+                {DEV_MODE && (
+                    <GastronomyBlock
+                        description={nyCookings.description}
+                        image={nyCookings.image}
+                    />
+                )}
+
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}
                     about_dishes={String(restaurant?.about_dishes)}
@@ -235,14 +306,16 @@ export const Restaurant = () => {
                     avg_cheque={String(restaurant?.avg_cheque)}
                     workTime={restaurant?.worktime}
                 />
+
                 <ChefBlock
                     about={String(restaurant?.brand_chef.about)}
                     photo_url={String(restaurant?.brand_chef.photo_url)}
                     chef_name={String(restaurant?.brand_chef.name)}
                 />
+
                 <AddressBlock
-                    longitude={Number(restaurant?.address_lonlng.split(',')[0])}
-                    latitude={Number(restaurant?.address_lonlng.split(',')[1]) - 0.0003}
+                    longitude={coordinates.longitude}
+                    latitude={coordinates.latitude}
                     address={String(restaurant?.address)}
                     logo_url={String(restaurant?.logo_url)}
                     address_station_color={String(restaurant?.address_station_color)}

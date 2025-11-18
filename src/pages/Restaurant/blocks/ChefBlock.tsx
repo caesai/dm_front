@@ -13,22 +13,46 @@ interface ChefBlockProps {
 }
 
 export const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_name }) => {
-    const [hideChefAbout, setHideChefAbout] = useState(true);
+    const [isChefAboutCollapsed, setIsChefAboutCollapsed] = useState(true);
+
+    /**
+     * Переключает состояние свертывания/развертывания текста о шефе
+     */
     const toggleChefInfo = () => {
-        setHideChefAbout((prev) => !prev);
+        setIsChefAboutCollapsed(prev => !prev);
     };
+
     return (
         <ContentContainer>
             <ContentBlock>
                 <HeaderContainer>
-                    <HeaderContent id={'chef'} title={'О шефе'} />
+                    <HeaderContent id="chef" title="О шефе" />
                 </HeaderContainer>
+
+                {/* Блок с текстом о шефе */}
                 <div className={css.aboutContainer}>
-                    <span className={classNames(css.aboutText, hideChefAbout ? css.trimLines : null)}>{about}</span>
-                    <div className={css.trimLinesButton} onClick={toggleChefInfo}>
-                        <span className={css.text}>{hideChefAbout ? 'Читать больше' : 'Скрыть'}</span>
+                    <span
+                        className={classNames(
+                            css.aboutText,
+                            isChefAboutCollapsed && css.trimLines
+                        )}
+                    >
+                        {about}
+                    </span>
+                    <div
+                        className={css.trimLinesButton}
+                        onClick={toggleChefInfo}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && toggleChefInfo()}
+                    >
+                        <span className={css.text}>
+                            {isChefAboutCollapsed ? 'Читать больше' : 'Скрыть'}
+                        </span>
                     </div>
                 </div>
+
+                {/* Информация о шефе */}
                 <div className={css.chefInfoContainer}>
                     <div
                         className={classNames(css.chefImage, css.bgImage)}

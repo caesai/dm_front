@@ -12,23 +12,32 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 export const CertificateBlock: React.FC<ICertificateBlockProps> = ({ image, description }) => {
     const navigate = useNavigate();
 
+    /**
+     * Обрабатывает навигацию на страницу сертификатов
+     */
+    const handleNavigateToCertificates = () => {
+        navigate('/certificates/1');
+    };
+
     return (
         <ContentContainer>
-            <ContentBlock id={'certificates'}>
-                <HeaderContainer id={'certificate'}>
-                    <HeaderContent title={'Подарочные сертификаты'} />
+            <ContentBlock id="certificates">
+                <HeaderContainer id="certificate">
+                    <HeaderContent title="Подарочные сертификаты" />
                 </HeaderContainer>
                 <div className={css.blockContainer}>
                     <div className={css.blockImage}>
                         <div
                             className={classNames(css.blockImage, css.bgImage)}
-                            style={{
-                                backgroundImage: `url(${image})`,
-                            }}
-                        ></div>
+                            style={{ backgroundImage: `url(${image})` }}
+                        />
                     </div>
                     <span className={css.blockDescription}>{description}</span>
-                    <UniversalButton width={'full'} title={'Подробнее'} action={() => navigate('/certificates/1')} />
+                    <UniversalButton
+                        width="full"
+                        title="Подробнее"
+                        action={handleNavigateToCertificates}
+                    />
                 </div>
             </ContentBlock>
         </ContentContainer>
