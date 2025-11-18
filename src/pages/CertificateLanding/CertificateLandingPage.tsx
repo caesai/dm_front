@@ -103,7 +103,7 @@ const CertificateLandingPage: React.FC = () => {
                     setTimeout(() => {
                         setToastShow(false);
                         setToastMessage(null);
-                    }, 3000);
+                    }, 6000);
                 });
         }
     };

@@ -103,13 +103,13 @@ export const UserProfilePage: React.FC = () => {
                 setMainButtonLoader(false);
                 setToastMessage('Изменения сохранены');
                 setToastShow(true);
-                setTimeout(function(){ setToastShow(false); setToastMessage(null);}, 3000);
+                setTimeout(function(){ setToastShow(false); setToastMessage(null);}, 6000);
             })
             .catch((err) => {
                 if (err.response) {
                     setToastMessage('Возникла ошибка: ' + err.response.data)
                     setToastShow(true);
-                    setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
+                    setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 6000);
                 }
             });
     };
