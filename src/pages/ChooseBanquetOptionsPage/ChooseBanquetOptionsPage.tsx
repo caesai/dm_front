@@ -28,7 +28,7 @@ export const ChooseBanquetOptionsPage = () => {
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
     const [currentImages, setCurrentImages] = useState<string[]>([]);
     const [imageIndex, setImageIndex] = useState<number | null>(null);
-    const [hideAbout, setHideAbout] = useState<boolean>(true);
+    const [hideAboutId, setHideAboutId] = useState<number | null>(null);
 
     const goBack = () => {
         navigate(`/restaurant/${id}`);
@@ -46,6 +46,10 @@ export const ChooseBanquetOptionsPage = () => {
         }
         return banquet.deposit_message || 'Без депозита';
     };
+
+    const toggleDescription = (id: number) => {
+        setHideAboutId(prevId => prevId === id ? null : id);
+    }
 
     return (
         <Page back={true}>
@@ -98,7 +102,7 @@ export const ChooseBanquetOptionsPage = () => {
                                             {banquet.description && (
                                                 <span className={classNames(
                                                     css.banquet_text,
-                                                    (hideAbout && banquet.description.length > 60) ? css.trimLines : null,
+                                                    (hideAboutId !== banquet.id && banquet.description.length > 60) ? css.trimLines : null,
                                                 )}>
                                                     {banquet.description.split(/\n|\r\n/).map((segment, index) => (
                                                         <Fragment key={index}>
@@ -112,10 +116,10 @@ export const ChooseBanquetOptionsPage = () => {
                                                 (
                                                     <div
                                                         className={css.trimLinesButton}
-                                                        onClick={() => setHideAbout((prev) => !prev)}
+                                                        onClick={() => toggleDescription(banquet.id)}
                                                     >
                                                         <span className={css.text}>
-                                                            {hideAbout ? 'Читать больше' : 'Скрыть'}
+                                                            {hideAboutId !== banquet.id ? 'Читать больше' : 'Скрыть'}
                                                         </span>
                                                     </div>
                                                 )
