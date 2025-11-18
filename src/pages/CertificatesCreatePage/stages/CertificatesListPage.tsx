@@ -24,9 +24,9 @@ export const shareCertificate = async (certificate: ICertificate) => {
         // const sharedFile = new File([blob], 'shared_image.png', { type: 'image/png' });
 
         const shareDataWithFiles: ShareData = {
-            title: message, // Some platforms might use this as a caption
+            // title: message, // Some platforms might use this as a caption
             // files: [sharedFile],
-            // url: decodeURI(url) // Use the URL field for better handling by share targets
+            url: decodeURI(url) // Use the URL field for better handling by share targets
         };
 
         // 1. Check if the platform can share files
