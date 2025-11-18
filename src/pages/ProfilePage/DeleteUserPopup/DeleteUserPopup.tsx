@@ -116,7 +116,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
                 // alert(err.response.data);
                 setToastMessage('Возникла ошибка: ' + err.response.data.message);
                 setToastShow(true);
-                setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
+                setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 6000);
             }
         });
     }

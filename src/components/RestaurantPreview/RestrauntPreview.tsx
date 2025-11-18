@@ -63,7 +63,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                 setTimeout(() => {
                     setToastShow(false);
                     setToastMessage(null);
-                }, 3000);
+                }, 6000);
             });
     }
 
