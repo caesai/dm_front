@@ -110,7 +110,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> =
                 {headerScrolled ? (
                     <RestaurantNavigation
                         isLoading={events == null && banquets == null}
-                        isBanquets={banquets.banquet_options.length > 0}
+                        isBanquets={banquets?.banquet_options?.length > 0}
                         isShow={
                             tg_id &&
                             mockEventsUsersList.includes(tg_id)
