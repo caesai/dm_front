@@ -31,6 +31,7 @@ interface BookingBlockProps {
     isShow: boolean;
     isEvents: boolean;
     isNavigationLoading: boolean;
+    isBanquets: boolean;
 }
 
 export const BookingBlock: React.FC<BookingBlockProps> = ({
@@ -43,6 +44,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
     availableTimeslots,
     setCurrentSelectedTime,
     isShow,
+    isBanquets,
     isEvents,
     isNavigationLoading,
 }) => {
@@ -73,7 +75,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
             />
             <ContentBlock id={'booking'}>
                 <div className={css.navSliderAndBookingContainer}>
-                    <RestaurantNavigation isLoading={isNavigationLoading} isShow={isShow} isEvents={isEvents} />
+                    <RestaurantNavigation isLoading={isNavigationLoading} isShow={isShow} isEvents={isEvents} isBanquets={isBanquets} />
                     <div className={css.bookingContaner}>
                         <Swiper
                             slidesPerView={'auto'}
