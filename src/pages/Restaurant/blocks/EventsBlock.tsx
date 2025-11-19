@@ -14,23 +14,35 @@ interface EventsBlockProps {
 export const EventsBlock: React.FC<EventsBlockProps> = ({ events }) => {
     const navigate = useNavigate();
 
+    /**
+     * Обрабатывает клик по карточке события для навигации на страницу события
+     * @param {number} eventId - ID события для навигации
+     */
+    const handleEventClick = (eventId: number) => {
+        navigate(`/events/${eventId}`);
+    };
+
+    if (!events || events.length === 0) {
+        return null;
+    }
+
     return (
         <ContentContainer>
             <ContentBlock>
                 <HeaderContainer>
-                    <HeaderContent title={'Мероприятия'} id={'events'} />
+                    <HeaderContent title="Мероприятия" id="events" />
                 </HeaderContainer>
-                {events?.map((e) => (
+                {events.map((event) => (
                     <EventCard
-                        key={e.name}
-                        onClick={() => navigate(`/events/${e.id}`)}
-                        event_price={e.ticket_price}
-                        event_name={e.name}
-                        event_img={e.image_url}
-                        event_restaurant={e.restaurant.title}
-                        event_date={e.date_start}
-                        event_address={e.restaurant.address}
-                        sold={e.tickets_left == 0}
+                        key={event.id}
+                        onClick={() => handleEventClick(event.id)}
+                        event_price={event.ticket_price}
+                        event_name={event.name}
+                        event_img={event.image_url}
+                        event_restaurant={event.restaurant.title}
+                        event_date={event.date_start}
+                        event_address={event.restaurant.address}
+                        sold={event.tickets_left === 0}
                     />
                 ))}
             </ContentBlock>

@@ -17,64 +17,90 @@ interface GalleryBlockProps {
 }
 
 export const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
-    const [imageViewerOpen, setImageViewerOpen] = useState(false);
+    const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
     const [currentImageViewerPhoto, setCurrentImageViewerPhoto] = useState('');
     const [gallery, setGallery] = useState<GalleryCollection[]>([]);
     const [currentGalleryCategory, setCurrentGalleryCategory] = useState('Все фото');
     const [currentGalleryPhotos, setCurrentGalleryPhotos] = useState<(string | string[])[]>([]);
-    const getGalleryPhotos = () => {
+
+    /**
+     * Группирует фотографии для отображения в галерее
+     * Чередует одиночные фото и пары маленьких фото для визуального разнообразия
+     * @returns {Array<string | string[]>} Массив сгруппированных фотографий
+     */
+    const getGalleryPhotos = (): (string | string[])[] => {
         let photoList: string[] = [];
 
         if (currentGalleryCategory === 'Все фото') {
-            gallery.forEach((g) => {
-                g.photos.forEach((photo) => photoList.push(photo.link));
+            // Собираем все уникальные фото из всех категорий
+            gallery.forEach((category) => {
+                category.photos.forEach((photo) => photoList.push(photo.link));
             });
             photoList = [...new Set(photoList)];
         } else {
-            const searchedGallery = gallery.find((item) => item.title === currentGalleryCategory);
-            searchedGallery?.photos.forEach((photo) => photoList.push(photo.link));
+            // Собираем фото только из выбранной категории
+            const selectedCategory = gallery.find((item) => item.title === currentGalleryCategory);
+            selectedCategory?.photos.forEach((photo) => photoList.push(photo.link));
         }
 
         const groupedPhotos: (string | string[])[] = [];
-        let i = 0;
+        let index = 0;
 
-        while (i < photoList.length) {
-            groupedPhotos.push(photoList[i]);
-            i++;
+        while (index < photoList.length) {
+            // Добавляем одно большое фото
+            groupedPhotos.push(photoList[index]);
+            index++;
 
-            if (i < photoList.length - 1) {
-                groupedPhotos.push([photoList[i], photoList[i + 1]]);
-                i += 2;
+            // Добавляем пару маленьких фото, если есть достаточно элементов
+            if (index < photoList.length - 1) {
+                groupedPhotos.push([photoList[index], photoList[index + 1]]);
+                index += 2;
             }
         }
 
         return groupedPhotos;
     };
+
+    /**
+     * Обрабатывает клик по фотографии для открытия в просмотрщике
+     * @param {string} photoUrl - URL фотографии для отображения
+     */
+    const handlePhotoClick = (photoUrl: string) => {
+        setCurrentImageViewerPhoto(photoUrl);
+        setIsImageViewerOpen(true);
+    };
+
+    // Инициализация галереи при получении данных
     useEffect(() => {
         if (restaurant_gallery) {
             setGallery(transformGallery(restaurant_gallery));
         }
     }, [restaurant_gallery]);
 
+    // Обновление отображаемых фото при изменении категории или галереи
     useEffect(() => {
         setCurrentGalleryPhotos(getGalleryPhotos());
     }, [currentGalleryCategory, gallery]);
+
+    if (!restaurant_gallery) return null;
+
     return (
         <ContentContainer>
-            {restaurant_gallery && (
-                <ImageViewerPopup
-                    isOpen={imageViewerOpen}
-                    setOpen={setImageViewerOpen}
-                    items={restaurant_gallery}
-                    currentItem={currentImageViewerPhoto}
-                    setCurrentItem={setCurrentImageViewerPhoto}
-                />
-            )}
-            <ContentBlock id={'gallery'}>
+            <ImageViewerPopup
+                isOpen={isImageViewerOpen}
+                setOpen={setIsImageViewerOpen}
+                items={restaurant_gallery}
+                currentItem={currentImageViewerPhoto}
+                setCurrentItem={setCurrentImageViewerPhoto}
+            />
+
+            <ContentBlock id="gallery">
                 <HeaderContainer>
-                    <HeaderContent title={'Галерея'} />
+                    <HeaderContent title="Галерея" />
+
+                    {/* Навигация по категориям фото */}
                     <div className={css.photoSliderNavigationContainer}>
-                        <Swiper modules={[FreeMode]} freeMode={true} slidesPerView={'auto'} spaceBetween={4}>
+                        <Swiper modules={[FreeMode]} freeMode={true} slidesPerView="auto" spaceBetween={4}>
                             <SwiperSlide
                                 style={{ width: 'max-content' }}
                                 onClick={() => setCurrentGalleryCategory('Все фото')}
@@ -82,65 +108,59 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }
                                 <div
                                     className={classNames(
                                         css.photoSliderNavigationItem,
-                                        currentGalleryCategory == 'Все фото' ? css.photoSliderNavigationActive : null
+                                        currentGalleryCategory === 'Все фото' && css.photoSliderNavigationActive
                                     )}
                                 >
                                     Все фото
                                 </div>
                             </SwiperSlide>
-                            {gallery.map((d, i) => (
+                            {gallery.map((category, index) => (
                                 <SwiperSlide
                                     style={{ width: 'max-content' }}
-                                    key={i}
-                                    onClick={() => setCurrentGalleryCategory(d.title)}
+                                    key={index}
+                                    onClick={() => setCurrentGalleryCategory(category.title)}
                                 >
                                     <div
                                         className={classNames(
                                             css.photoSliderNavigationItem,
-                                            currentGalleryCategory == d.title ? css.photoSliderNavigationActive : null
+                                            currentGalleryCategory === category.title && css.photoSliderNavigationActive
                                         )}
                                     >
-                                        {d.title}
+                                        {category.title}
                                     </div>
                                 </SwiperSlide>
                             ))}
                         </Swiper>
                     </div>
                 </HeaderContainer>
+
+                {/* Галерея фотографий */}
                 <div className={css.photoSliderContainer}>
                     <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
                         {currentGalleryPhotos.map((photo, index) => (
                             <SwiperSlide
-                                key={`${index}${photo}`}
+                                key={`${index}-${Array.isArray(photo) ? photo.join('-') : photo}`}
                                 style={{ width: 'max-content' }}
                                 className={Array.isArray(photo) ? css.smallPhotoSlideContainer : css.photoBig}
                             >
                                 {Array.isArray(photo) ? (
+                                    // Контейнер для пары маленьких фото
                                     <div className={css.smallPhotoContainer}>
-                                        {photo.map((smallPhoto, i) => (
+                                        {photo.map((smallPhoto, smallIndex) => (
                                             <div
-                                                key={`${i}${smallPhoto}`}
+                                                key={`${smallIndex}-${smallPhoto}`}
                                                 className={classNames(css.photo, css.photoSmall)}
-                                                style={{
-                                                    backgroundImage: `url(${smallPhoto})`,
-                                                }}
-                                                onClick={() => {
-                                                    setCurrentImageViewerPhoto(smallPhoto);
-                                                    setImageViewerOpen(true);
-                                                }}
+                                                style={{ backgroundImage: `url(${smallPhoto})` }}
+                                                onClick={() => handlePhotoClick(smallPhoto)}
                                             />
                                         ))}
                                     </div>
                                 ) : (
+                                    // Большое одиночное фото
                                     <div
                                         className={classNames(css.photo, css.photoBig)}
-                                        style={{
-                                            backgroundImage: `url(${photo})`,
-                                        }}
-                                        onClick={() => {
-                                            setCurrentImageViewerPhoto(photo);
-                                            setImageViewerOpen(true);
-                                        }}
+                                        style={{ backgroundImage: `url(${photo})` }}
+                                        onClick={() => handlePhotoClick(photo)}
                                     />
                                 )}
                             </SwiperSlide>
