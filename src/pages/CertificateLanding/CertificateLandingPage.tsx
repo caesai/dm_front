@@ -34,7 +34,16 @@ const CertificateLandingPage: React.FC = () => {
         if (auth?.access_token) {
             if (id) {
                 APIGetCertificateById(auth.access_token, id)
-                    .then(response => setCertificate(response.data));
+                    .then(response => setCertificate(response.data))
+                    .catch(() => {
+                        setToastShow(true);
+                        setToastMessage('Не удалось загрузить сертификат. Попробуйте еще раз.');
+                        setTimeout(() => {
+                            setToastShow(false);
+                            setToastMessage(null);
+                            navigate('/certificates/1');
+                        }, 6000);
+                    });
             }
         }
     }, []);
@@ -122,7 +131,10 @@ const CertificateLandingPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className={css.loader}><Loader /></div>
+            <div className={css.loader}>
+                <Toast message={toastMessage} showClose={toastShow} />
+                <Loader />
+            </div>
         );
     }
 
