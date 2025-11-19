@@ -265,6 +265,7 @@ export const Restaurant = () => {
                     setCurrentSelectedTime={setCurrentSelectedTime}
                     isNavigationLoading={events == null && banquets == null}
                     isShow={hasPaidEventsAccess()}
+                    isBanquets={hasBanquets}
                     isEvents={hasEvents}
                 />
 

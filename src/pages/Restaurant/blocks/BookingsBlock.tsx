@@ -30,24 +30,26 @@ interface BookingBlockProps {
     isShow: boolean;
     isEvents: boolean;
     isNavigationLoading: boolean;
+    isBanquets: boolean;
 }
 
 /**
  * Компонент блока бронирования столика в ресторане
  */
 export const BookingBlock: React.FC<BookingBlockProps> = ({
-                                                              currentSelectedTime,
-                                                              workTime,
-                                                              bookingDate,
-                                                              setBookingDate,
-                                                              bookingDates,
-                                                              timeslotLoading,
-                                                              availableTimeslots,
-                                                              setCurrentSelectedTime,
-                                                              isShow,
-                                                              isEvents,
-                                                              isNavigationLoading,
-                                                          }) => {
+    currentSelectedTime,
+    workTime,
+    bookingDate,
+    setBookingDate,
+    bookingDates,
+    timeslotLoading,
+    availableTimeslots,
+    setCurrentSelectedTime,
+    isShow,
+    isBanquets,
+    isEvents,
+    isNavigationLoading,
+}) => {
     const [, setGuestCount] = useAtom(guestCountAtom);
     const [isBookingDatePopupOpen, setIsBookingDatePopupOpen] = useState(false);
 
@@ -115,8 +117,8 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
                         isLoading={isNavigationLoading}
                         isShow={isShow}
                         isEvents={isEvents}
+                        isBanquets={isBanquets}
                     />
-
                     <div className={css.bookingContaner}>
                         <Swiper
                             slidesPerView="auto"
