@@ -27,13 +27,15 @@ interface BookingBlockProps {
     timeslotLoading: boolean;
     availableTimeslots: ITimeSlot[];
     setCurrentSelectedTime: (currentSelectedTime: ITimeSlot) => void;
-    // TODO: Refactor this booleans
     isShow: boolean;
     isEvents: boolean;
     isNavigationLoading: boolean;
     isBanquets: boolean;
 }
 
+/**
+ * Компонент блока бронирования столика в ресторане
+ */
 export const BookingBlock: React.FC<BookingBlockProps> = ({
     currentSelectedTime,
     workTime,
@@ -49,49 +51,92 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
     isNavigationLoading,
 }) => {
     const [, setGuestCount] = useAtom(guestCountAtom);
-    const [bookingDatePopup, setBookingDatePopup] = useState<boolean>(false);
-    const restaurantWorkEndTime =
-        workTime && workTime.find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
-    let workEndTime = moment(bookingDate.value);
-    if (restaurantWorkEndTime !== undefined) {
-        const endOfDay = Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')) < 12;
-        if (endOfDay) {
+    const [isBookingDatePopupOpen, setIsBookingDatePopupOpen] = useState(false);
+
+    /**
+     * Вычисляет время закрытия ресторана для выбранной даты
+     * @returns {moment.Moment | null} Время закрытия или null если данные недоступны
+     */
+    const getWorkEndTime = (): moment.Moment | null => {
+        if (!workTime) return null;
+
+        const restaurantWorkEndTime = workTime.find(
+            (item) => String(item.weekday) === String(bookingDate.title).slice(-2)
+        )?.time_end;
+
+        if (!restaurantWorkEndTime) return null;
+
+        let workEndTime = moment(bookingDate.value);
+        const [hours, minutes] = restaurantWorkEndTime.split(':').map(Number);
+        const isNextDay = hours < 12;
+
+        if (isNextDay) {
             workEndTime = moment(workEndTime.clone().add(1, 'days').startOf('days').format('YYYY-MM-DD'));
         }
-        workEndTime.set({
-            hour: Number(String(restaurantWorkEndTime).split(':')[0].replace(new RegExp('00', 'g'), '0')),
-            minutes: Number(String(restaurantWorkEndTime).split(':')[1].replace(new RegExp('00', 'g'), '0')),
-        });
-    }
+
+        workEndTime.set({ hour: hours, minutes });
+        return workEndTime;
+    };
+
+    const handleTimeSlotClick = (ts: ITimeSlot) => {
+        setCurrentSelectedTime(ts);
+        setGuestCount({ title: '1 гость', value: '1' });
+    };
+
+    /**
+     * Форматирует отображение времени для таймслота
+     * @param {ITimeSlot} ts - Таймслот для форматирования
+     * @returns {string} Отформатированная строка времени
+     */
+    const formatTimeDisplay = (ts: ITimeSlot): string => {
+        if (currentSelectedTime !== ts) {
+            return getTimeShort(ts.start_datetime);
+        }
+
+        const workEndTime = getWorkEndTime();
+        const endTime = workEndTime && moment(ts.end_datetime).isBefore(workEndTime)
+            ? getTimeShort(ts.end_datetime)
+            : workTime?.find(item => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+
+        return `${getTimeShort(ts.start_datetime)} - ${endTime}`;
+    };
 
     return (
         <ContentContainer>
             <DateListSelector
-                isOpen={bookingDatePopup}
-                setOpen={setBookingDatePopup}
+                isOpen={isBookingDatePopupOpen}
+                setOpen={setIsBookingDatePopupOpen}
                 date={bookingDate}
                 setDate={setBookingDate}
                 values={bookingDates}
             />
-            <ContentBlock id={'booking'}>
+
+            <ContentBlock id="booking">
                 <div className={css.navSliderAndBookingContainer}>
-                    <RestaurantNavigation isLoading={isNavigationLoading} isShow={isShow} isEvents={isEvents} isBanquets={isBanquets} />
+                    <RestaurantNavigation
+                        isLoading={isNavigationLoading}
+                        isShow={isShow}
+                        isEvents={isEvents}
+                        isBanquets={isBanquets}
+                    />
                     <div className={css.bookingContaner}>
                         <Swiper
-                            slidesPerView={'auto'}
+                            slidesPerView="auto"
                             spaceBetween={8}
                             freeMode={true}
                             modules={[FreeMode]}
-                            style={{
-                                marginLeft: '0',
-                            }}
+                            style={{ marginLeft: '0' }}
                         >
-                            {bookingDate.value == 'unset' || !bookingDates.length ? (
+                            {/* Дата бронирования */}
+                            {bookingDate.value === 'unset' || !bookingDates.length ? (
                                 <SwiperSlide style={{ width: 'min-content' }}>
-                                    <PlaceholderBlock width={'150px'} height={'41px'} rounded={'20px'} />
+                                    <PlaceholderBlock width="150px" height="41px" rounded="20px" />
                                 </SwiperSlide>
                             ) : (
-                                <SwiperSlide style={{ width: 'min-content' }} onClick={() => setBookingDatePopup(true)}>
+                                <SwiperSlide
+                                    style={{ width: 'min-content' }}
+                                    onClick={() => setIsBookingDatePopupOpen(true)}
+                                >
                                     <div className={css.timeItem}>
                                         <Calendar size={18} />
                                         {formatDateAlt(bookingDate.value)}
@@ -99,44 +144,30 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
                                     </div>
                                 </SwiperSlide>
                             )}
+
+                            {/* Таймслоты */}
                             {timeslotLoading ? (
                                 <>
-                                    <SwiperSlide style={{ width: 'min-content' }}>
-                                        <PlaceholderBlock width={'68px'} height={'41px'} rounded={'20px'} />
-                                    </SwiperSlide>
-                                    <SwiperSlide style={{ width: 'min-content' }}>
-                                        <PlaceholderBlock width={'68px'} height={'41px'} rounded={'20px'} />
-                                    </SwiperSlide>
-                                    <SwiperSlide style={{ width: 'min-content' }}>
-                                        <PlaceholderBlock width={'68px'} height={'41px'} rounded={'20px'} />
-                                    </SwiperSlide>
+                                    {[...Array(3)].map((_, i) => (
+                                        <SwiperSlide key={i} style={{ width: 'min-content' }}>
+                                            <PlaceholderBlock width="68px" height="41px" rounded="20px" />
+                                        </SwiperSlide>
+                                    ))}
                                 </>
                             ) : (
                                 availableTimeslots.map((ts, i) => (
                                     <SwiperSlide
                                         key={i}
                                         style={{ width: 'min-content' }}
-                                        onClick={() => {
-                                            setCurrentSelectedTime(ts);
-                                            setGuestCount({
-                                                title: '1 гость',
-                                                value: '1',
-                                            });
-                                        }}
+                                        onClick={() => handleTimeSlotClick(ts)}
                                     >
                                         <div
                                             className={classNames(
                                                 css.timeItem,
-                                                currentSelectedTime == ts ? css.timeItemActive : null
+                                                currentSelectedTime === ts && css.timeItemActive
                                             )}
                                         >
-                                            {currentSelectedTime == ts
-                                                ? `${getTimeShort(ts.start_datetime)} -  ${
-                                                    moment(ts.end_datetime).isBefore(workEndTime)
-                                                        ? getTimeShort(ts.end_datetime)
-                                                        : restaurantWorkEndTime
-                                                }`
-                                                : getTimeShort(ts.start_datetime)}
+                                            {formatTimeDisplay(ts)}
                                         </div>
                                     </SwiperSlide>
                                 ))

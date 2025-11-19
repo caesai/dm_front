@@ -20,49 +20,78 @@ interface AddressBlockProps {
     address_station_color?: string;
 }
 
+/**
+ * Константа с настройками API Яндекс Карт
+ */
+const YANDEX_MAPS_CONFIG = {
+    apiKey: '73a95f3b-fa74-4525-99e3-86ee1309f266',
+    lang: 'ru_RU' as const,
+} as const;
+
 export const AddressBlock: React.FC<AddressBlockProps> = ({
-    longitude,
-    latitude,
-    logo_url,
-    address_station_color,
-    address,
-}) => {
-    const location = {
-        center: [longitude, latitude],
+                                                              longitude,
+                                                              latitude,
+                                                              logo_url,
+                                                              address_station_color,
+                                                              address,
+                                                          }) => {
+    /**
+     * Конфигурация местоположения для карты
+     */
+    const mapLocation = {
+        center: [longitude, latitude] as [number, number],
         zoom: 17,
     };
+
+    /**
+     * Рендерит элемент метро с цветным индикатором, если указан цвет станции
+     * @returns {JSX.Element | null} Элемент метро или null
+     */
+    const renderMetroInfo = (): JSX.Element | null => {
+        if (!address_station_color) return null;
+
+        return (
+            <div className={css.mapInfoMetro}>
+                <div
+                    className={css.mapInfoMetroCircle}
+                    style={{ backgroundColor: address_station_color }}
+                />
+                <span className={css.mapInfoMetroText}>{address}</span>
+            </div>
+        );
+    };
+
     return (
         <ContentContainer>
             <ContentBlock>
                 <HeaderContainer>
-                    <HeaderContent title={'Адрес'} />
+                    <HeaderContent title="Адрес" />
                 </HeaderContainer>
+
                 <div className={css.mapContainer}>
                     <div className={css.map}>
-                        <YMapComponentsProvider apiKey={'73a95f3b-fa74-4525-99e3-86ee1309f266'} lang={'ru_RU'}>
-                            <YMap location={location}>
+                        <YMapComponentsProvider
+                            apiKey={YANDEX_MAPS_CONFIG.apiKey}
+                            lang={YANDEX_MAPS_CONFIG.lang}
+                        >
+                            <YMap location={mapLocation}>
                                 <YMapDefaultSchemeLayer />
                                 <YMapDefaultFeaturesLayer />
                                 <YMapMarker coordinates={[longitude, latitude]} draggable={false}>
                                     <div className={css.mapPoint}>
-                                        <img width={50} src={logo_url} alt={''} />
+                                        <img
+                                            width={50}
+                                            src={logo_url}
+                                            alt="Логотип ресторана"
+                                        />
                                     </div>
                                 </YMapMarker>
                             </YMap>
+
                             <section className={css.infoContainer}>
                                 <div className={css.RestInfo}>
                                     <div className={css.mapInfo}>
-                                        <div className={css.mapInfoMetro}>
-                                            {address_station_color ? (
-                                                <div
-                                                    className={css.mapInfoMetroCircle}
-                                                    style={{
-                                                        backgroundColor: `${address_station_color}`,
-                                                    }}
-                                                ></div>
-                                            ) : null}
-                                            <span className={css.mapInfoMetroText}>{address}</span>
-                                        </div>
+                                        {renderMetroInfo()}
                                         <div className={css.mapInfoAddress}>{address}</div>
                                     </div>
                                 </div>

@@ -21,37 +21,58 @@ interface BanquetsBlockProps {
 }
 
 export const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
-    description,
-    image,
-    restaurant_id,
-    restaurant_title,
-    banquets,
-    workTime,
-}) => {
+                                                                description,
+                                                                image,
+                                                                restaurant_id,
+                                                                restaurant_title,
+                                                                banquets,
+                                                                workTime,
+                                                            }) => {
     const navigate = useNavigate();
-    const navigateToBanquet = () => {
-        const workTimeSorted = workTime?.sort((a, b) => workdayIndexMap[a.weekday] - workdayIndexMap[b.weekday]);
+
+    /**
+     * Сортирует время работы ресторана по дням недели
+     * @returns {IWorkTime[] | undefined} Отсортированный массив времени работы
+     */
+    const getSortedWorkTime = (): IWorkTime[] | undefined => {
+        if (!workTime) return undefined;
+        return workTime.sort((a, b) => workdayIndexMap[a.weekday] - workdayIndexMap[b.weekday]);
+    };
+
+    /**
+     * Обрабатывает навигацию на страницу выбора банкета
+     * Передает необходимые данные в состояние навигации
+     */
+    const handleNavigateToBanquet = () => {
+        const sortedWorkTime = getSortedWorkTime();
         navigate(`/banquets/${restaurant_id}/choose`, {
-            state: { restaurant_title, banquets, workTime: workTimeSorted },
+            state: {
+                restaurant_title,
+                banquets,
+                workTime: sortedWorkTime
+            },
         });
     };
+
     return (
         <ContentContainer>
             <ContentBlock>
                 <HeaderContainer>
-                    <HeaderContent title={'Банкеты'} id={'banquet'} />
+                    <HeaderContent title="Банкеты" id="banquet" />
                 </HeaderContainer>
                 <div className={css.blockContainer}>
                     <div className={css.blockImage}>
                         <div
                             className={classNames(css.blockImage, css.bgImage)}
-                            style={{
-                                backgroundImage: `url(${image})`,
-                            }}
-                        ></div>
+                            style={{ backgroundImage: `url(${image})` }}
+                        />
                     </div>
                     <span className={css.blockDescription}>{description}</span>
-                    <UniversalButton width={'full'} title={'Подробнее'} action={navigateToBanquet} />
+                    <UniversalButton
+                        width="full"
+                        title="Подробнее"
+                        action={handleNavigateToBanquet}
+                    />
                 </div>
             </ContentBlock>
         </ContentContainer>
