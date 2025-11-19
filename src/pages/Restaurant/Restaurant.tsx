@@ -5,7 +5,7 @@ import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/Restaura
 import { useNavigate, useParams } from 'react-router-dom';
 import 'swiper/css/bundle';
 import 'swiper/css/zoom';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { GalleryCollection, GalleryPhoto } from '@/pages/Restaurant/Restaurant.types.ts';
 import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
@@ -77,7 +77,7 @@ export const Restaurant = () => {
     const [banquets, setBanquets] = useState<IBanquet | null>(null);
     const [nyCookings] = useState(NewYearCookingData);
 
-    const tgId = window.Telegram.WebApp.initDataUnsafe.user?.id;
+    const tg_id = window.Telegram.WebApp.initDataUnsafe.user?.id;
 
     /**
      * Обрабатывает переход к бронированию столика
@@ -116,7 +116,7 @@ export const Restaurant = () => {
      * @returns {boolean} true если пользователь имеет доступ к платным событиям
      */
     const hasPaidEventsAccess = (): boolean => {
-        return Boolean(tgId && mockEventsUsersList.includes(tgId));
+        return Boolean(tg_id && mockEventsUsersList.includes(tg_id));
     };
 
     /**
@@ -194,11 +194,11 @@ export const Restaurant = () => {
             .finally(() => setTimeslotLoading(false));
     }, [auth?.access_token, bookingDate, id]);
 
-    const filteredEvents = getFilteredEvents();
-    const coordinates = getRestaurantCoordinates();
+    const filteredEvents = useMemo(() => getFilteredEvents(), [events, tg_id]);
+    const coordinates = useMemo(() => getRestaurantCoordinates(), [restaurant?.address_lonlng]);
     const hasBanquets = banquets && banquets.banquet_options.length > 0;
-    const hasEvents = Boolean(filteredEvents && filteredEvents.length > 0);
-    const shouldShowCertificate = hasPaidEventsAccess();
+    const hasEvents = useMemo(() => Boolean(filteredEvents && filteredEvents.length > 0), [filteredEvents]);
+    const shouldShowCertificate = useMemo(() => hasPaidEventsAccess(), [tg_id]);
 
     return (
         <Page back={true}>
@@ -265,7 +265,7 @@ export const Restaurant = () => {
                     setCurrentSelectedTime={setCurrentSelectedTime}
                     isNavigationLoading={events == null && banquets == null}
                     isShow={hasPaidEventsAccess()}
-                    isBanquets={hasBanquets}
+                    isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
                 />
 
