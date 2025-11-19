@@ -33,7 +33,7 @@ import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import classNames from 'classnames';
 import css from './BookingPage.module.css';
-import { DEV_MODE } from '@/api/base.ts';
+import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -86,6 +86,7 @@ export const BookingPage: FC = () => {
     const [preOrder, setPreOrder] = useState(false);
     const [certificate_id, setCertificateId] = useState<string | null>(null);
     const bookingBtn = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
         auth?.access_token && restaurant.value !== 'unset'
             ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1).then(
@@ -99,6 +100,7 @@ export const BookingPage: FC = () => {
               )
             : null;
     }, [guestCount, restaurant]);
+
     useEffect(() => {
         if (restaurant.value === 'unset' || !auth?.access_token || date.value === 'unset' || !guestCount) return;
         setTimeslotsLoading(true);
@@ -158,6 +160,9 @@ export const BookingPage: FC = () => {
                 .finally(() => setRequestLoading(false));
         }
     };
+
+    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+
     return (
         <Page back={true}>
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(restaurant.value)} count={errorPopupCount} botError={botError}/>
@@ -238,7 +243,7 @@ export const BookingPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    {DEV_MODE && <CertificatesSelector setCertificateId={setCertificateId} isOpened={state?.certificate} selectedCertificateId={state?.certificateId}/>}
+                    {tg_id && mockEventsUsersList.includes(tg_id) && <CertificatesSelector setCertificateId={setCertificateId} isOpened={state?.certificate} selectedCertificateId={state?.certificateId}/>}
                     <BookingWish guestCount={guestCount} childrenCount={childrenCount} preOrder={preOrder} setPreOrder={setPreOrder} restaurant={restaurant.value} commentary={commentary} setCommentary={setCommentary} />
                     <ContentContainer>
                         <HeaderContainer>
