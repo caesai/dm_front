@@ -34,7 +34,8 @@ const CertificateLandingPage: React.FC = () => {
         if (auth?.access_token) {
             if (id) {
                 APIGetCertificateById(auth.access_token, id)
-                    .then(response => setCertificate(response.data));
+                    .then(response => setCertificate(response.data))
+                    .catch(() => navigate('/certificates/1'));
             }
         }
     }, []);
