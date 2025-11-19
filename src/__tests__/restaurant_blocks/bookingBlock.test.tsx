@@ -77,6 +77,7 @@ const mockProps = {
     setCurrentSelectedTime: jest.fn(),
     isShow: true,
     isEvents: true,
+    isBanquets: true,
     isNavigationLoading: false
 };
 
