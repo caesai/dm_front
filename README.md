@@ -7,6 +7,11 @@
 - [Telegram UI](https://github.com/Telegram-Mini-Apps/TelegramUI)
 - [Vite](https://vitejs.dev/)
 
+### Фичи
+
+- Сертификаты
+- - [CertificatesSelector](./src/components/CertificatesSelector/README.md) - селектор сертификатов на странице бронирований
+
 ## Install Dependencies
 
 If you have just cloned this template, you should install the project
