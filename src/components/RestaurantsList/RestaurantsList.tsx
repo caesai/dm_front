@@ -131,6 +131,6 @@ export const RestaurantsList: FC = () => {
                 ))}
             </div>
         </div>
-    )
+    );
 }
 
