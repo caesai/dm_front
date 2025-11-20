@@ -301,7 +301,7 @@ export const BookingRestaurantPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    {tg_id && mockEventsUsersList.includes(tg_id) && <CertificatesSelector setCertificateId={setCertificateId} />}
+                    {tg_id && mockEventsUsersList.includes(tg_id) && <CertificatesSelector setCertificateId={setCertificateId} isOpened={false} selectedCertificateId={null} />}
                     <BookingWish
                         guestCount={guestCount}
                         childrenCount={childrenCount}
