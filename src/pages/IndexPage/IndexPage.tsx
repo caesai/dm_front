@@ -31,7 +31,7 @@ import { IStoryBlock } from '@/types/stories.types.ts';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
 import { getDataFromLocalStorage } from '@/utils.ts';
 
-const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
+export const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
         id: v.name_english,
         text: v.name,
@@ -297,12 +297,12 @@ export const IndexPage: FC = () => {
                 <OptionsNavigation/>
 
                 <div className={css.restaurants}>
-
                     {restaurantListed.map((rest) => (
                         <RestaurantPreview
                             // @ts-ignore
                             restaurant={rest}
                             key={`rest-${rest.id}`}
+                            clickable
                         />
                     ))}
                 </div>

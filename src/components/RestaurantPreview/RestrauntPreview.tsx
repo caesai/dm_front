@@ -28,9 +28,10 @@ import { APIPostNewRestaurant } from '@/api/restaurants.ts';
 
 interface IProps {
     restaurant: IRestaurant;
+    clickable?: boolean;
 }
 
-export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
+export const RestaurantPreview: FC<IProps> = ({restaurant, clickable}) => {
     const [user] = useAtom(userAtom);
     const navigate = useNavigate();
     const { isShowing, toggle } = useModal();
@@ -81,42 +82,44 @@ export const RestaurantPreview: FC<IProps> = ({restaurant}) => {
                   }
               }}
         >
-            <ModalPopup
-                isOpen={isShowing}
-                setOpen={() => {
-                    if (!changeRes) {
-                        toggle();
-                    } else {
-                        setChangeRes(false);
-                    }
-                }}
-                title={!changeRes ? undefined : 'Выберите ресторан'}
-                subtitle={!changeRes ? `Вас интересует ресторан ${restaurant.title} по адресу ${restaurant.address}?` : undefined}
-                list={changeRes ? (
-                    <ul className={css.list}>
-                        {restaurants.filter((item) =>{
-                            return item.title === restaurant.title
-                        }).map((item, index) => (
-                            <li key={index} className={classNames(selectedCity === item.id ? css.active : null)} onClick={() => setSelectedCity(item.id)}>{item.address}</li>
-                        ))}
-                    </ul>
-                ) : undefined}
-                button={true}
-                btnDisabled={!Boolean(selectedCity) && changeRes}
-                btnText={!changeRes ? 'Да' : 'Продолжить'}
-                btnAction={() => {
-                    if (!changeRes) {
-                        navigate(`/restaurant/${restaurant.id}`);
-                    } else {
-                        navigate(`/restaurant/${selectedCity}`);
-                    }
-                }}
-                btnScndrText={!changeRes ? 'Изменить' : undefined}
-                reverseButton={!changeRes}
-                btnScndrAction={() => {
-                    setChangeRes(true);
-                }}
-            />
+            {clickable && (
+                <ModalPopup
+                    isOpen={isShowing}
+                    setOpen={() => {
+                        if (!changeRes) {
+                            toggle();
+                        } else {
+                            setChangeRes(false);
+                        }
+                    }}
+                    title={!changeRes ? undefined : 'Выберите ресторан'}
+                    subtitle={!changeRes ? `Вас интересует ресторан ${restaurant.title} по адресу ${restaurant.address}?` : undefined}
+                    list={changeRes ? (
+                        <ul className={css.list}>
+                            {restaurants.filter((item) =>{
+                                return item.title === restaurant.title
+                            }).map((item, index) => (
+                                <li key={index} className={classNames(selectedCity === item.id ? css.active : null)} onClick={() => setSelectedCity(item.id)}>{item.address}</li>
+                            ))}
+                        </ul>
+                    ) : undefined}
+                    button={true}
+                    btnDisabled={!Boolean(selectedCity) && changeRes}
+                    btnText={!changeRes ? 'Да' : 'Продолжить'}
+                    btnAction={() => {
+                        if (!changeRes) {
+                            navigate(`/restaurant/${restaurant.id}`);
+                        } else {
+                            navigate(`/restaurant/${selectedCity}`);
+                        }
+                    }}
+                    btnScndrText={!changeRes ? 'Изменить' : undefined}
+                    reverseButton={!changeRes}
+                    btnScndrAction={() => {
+                        setChangeRes(true);
+                    }}
+                />
+            )}
             <div
                 className={classNames(css.bgImage,
                     restaurant.id === 12 ? css.bgNoImaged : css.imaged)}

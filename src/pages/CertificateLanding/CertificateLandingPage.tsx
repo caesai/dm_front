@@ -9,7 +9,6 @@ import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim } fr
 import { Page } from '@/components/Page.tsx';
 import { DTHospitalityIcon } from '@/components/Icons/DTHospitalityIcon.tsx';
 import AccordionComponent from '@/components/Accordion/AccordionComponent.tsx';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { Toast } from '@/components/Toast/Toast.tsx';
@@ -17,6 +16,8 @@ import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
+import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.tsx';
 
 const CertificateLandingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -30,6 +31,27 @@ const CertificateLandingPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const { isShowing, toggle, setIsShowing } = useModal();
 
+    /**
+     * Хук эффекта React для загрузки данных сертификата при монтировании компонента.
+     *
+     * Отправляет запрос на получение данных сертификата по его ID при наличии токена доступа.
+     * В случае успеха обновляет состояние `certificate`.
+     * В случае ошибки показывает тост-уведомление и через 6 секунд перенаправляет пользователя на страницу списка сертификатов.
+     *
+     * @fires APIGetCertificateById - Выполняет асинхронный запрос к API.
+     * @modifies setCertificate - Обновляет локальное состояние сертификата.
+     * @modifies setToastShow - Управляет видимостью уведомления (тоста).
+     * @modifies setToastMessage - Устанавливает текст уведомления.
+     * @fires navigate - Перенаправляет пользователя при ошибке загрузки.
+     *
+     * @param {object} auth Объект аутентификации, содержащий access_token.
+     * @param {string|number} id Идентификатор (ID) запрашиваемого сертификата.
+     * @param {function} APIGetCertificateById Функция API для получения данных сертификата.
+     * @param {function} setCertificate Функция обновления состояния React для данных сертификата.
+     * @param {function} setToastShow Функция обновления состояния React для показа тоста.
+     * @param {function} setToastMessage Функция обновления состояния React для сообщения тоста.
+     * @param {function} navigate Функция перенаправления из роутера (например, react-router-dom).
+     */
     useEffect(() => {
         if (auth?.access_token) {
             if (id) {
@@ -47,50 +69,25 @@ const CertificateLandingPage: React.FC = () => {
             }
         }
     }, []);
-
-    const isCertificateDisabled = useCallback(() => {
-        if (!certificate) return true;
-        return !((certificate.status === 'paid' || certificate.status === 'shared') && moment() < moment(certificate.expired_at));
-    }, [certificate]);
-
-    useEffect(() => {
-        if (!user || !certificate) return;
-        if (isCertificateDisabled()) {
-            setLoading(false);
-            return;
-        }
-        if (user?.complete_onboarding) {
-            if (!certificate?.shared_at) {
-                if (certificate?.customer_id === user.id) {
-                    // Nothing to do
-                    setLoading(false);
-                    return;
-                } else {
-                    acceptCertificate();
-                    setLoading(false);
-                    return;
-                }
-            } else {
-                if (certificate.recipient_id === user.id) {
-                    setLoading(false);
-                    return;
-                } else {
-                    navigate('/certificates/1');
-                }
-            }
-        } else {
-            if (!certificate?.shared_at) {
-                // Toggle Modal Popup With Need to Register Info
-                setLoading(false);
-                // setIsShowing(true);
-                return;
-            } else {
-                navigate('/onboarding/1');
-            }
-        }
-    }, [certificate]);
-
-    const acceptCertificate = () => {
+    /**
+     * Функция для подтверждения (клейма) владения сертификатом через API.
+     * Отправляет запрос на сервер для регистрации текущего пользователя как получателя сертификата.
+     * После успешного выполнения обновляет локальный список сертификатов и управляет уведомлениями (тостами) об ошибках.
+     *
+     * @function
+     * @param {object} auth - Объект аутентификации, содержащий access_token.
+     * @param {object} certificate - Текущий объект сертификата, содержащий recipient_name.
+     * @param {string|number} id - ID сертификата.
+     * @param {object} user - Объект пользователя, содержащий user.id.
+     * @param {function} APIPostCertificateClaim - Функция API для клейма сертификата.
+     * @param {function} APIGetCertificates - Функция API для получения списка сертификатов.
+     * @param {function} setCertificates - Функция React state для обновления списка сертификатов.
+     * @param {function} setToastShow - Функция React state для управления видимостью тоста.
+     * @param {function} setToastMessage - Функция React state для установки сообщения тоста.
+     *
+     * @returns {void}
+     */
+    const acceptCertificate = useCallback(() => {
         if (auth?.access_token && certificate && id) {
             APIPostCertificateClaim(
                 String(auth?.access_token),
@@ -115,7 +112,93 @@ const CertificateLandingPage: React.FC = () => {
                     }, 6000);
                 });
         }
-    };
+    }, [
+        auth,
+        certificate,
+        id,
+        user,
+        APIPostCertificateClaim,
+        APIGetCertificates,
+        setCertificates,
+        setToastShow,
+        setToastMessage
+    ]);
+
+    const isCertificateUsed = useCallback(() => {
+        if (!certificate) return true;
+        return certificate.status === 'used';
+    }, [certificate]);
+
+    const isCertificateExpired = useCallback(() => {
+        if (!certificate) return true;
+        return moment().isAfter(moment(certificate.expired_at));
+    }, [certificate]);
+    /**
+     * Проверяет, отключен ли (неактивен) сертификат.
+     * Сертификат считается активным, если его статус — 'paid' (оплачен) или 'shared' (подарен), И текущая дата раньше даты его истечения.
+     *
+     * @returns {boolean} True, если сертификат неактивен/отключен, false в противном случае (если активен).
+     */
+    const isCertificateDisabled = useCallback(() => {
+        if (!certificate) return true;
+        return !((certificate.status === 'paid' || certificate.status === 'shared') && !isCertificateExpired());
+    }, [certificate, isCertificateExpired]);
+    /**
+     * Хук эффекта, который управляет различной логикой, связанной с сертификатом,
+     * в зависимости от статуса пользователя и состояния сертификата.
+     * Управляет состоянием загрузки, навигацией и автоматическим принятием сертификата.
+     *
+     * @fires acceptCertificate - Вызывается, если соблюдены условия для автоматического принятия сертификата.
+     * @fires navigate - Используется для перенаправления пользователя на другие страницы.
+     * @modifies setLoading - Устанавливает состояние загрузки в false при различных условиях.
+     * @modifies setIsShowing - (Закомментировано) Предназначалось для отображения модального окна с информацией о необходимости регистрации.
+     */
+    useEffect(() => {
+        // 1. Предварительные проверки и выход
+        if (!user || !certificate) return;
+
+        if (isCertificateDisabled()) {
+            setLoading(false);
+            return;
+        }
+
+        // 2. Логика для зарегистрированного и прошедшего онбординг пользователя (user.complete_onboarding === true)
+        if (user?.complete_onboarding) {
+            if (!certificate?.shared_at) {
+                // Сертификат куплен пользователем (не подарен/не принят ранее)
+                if (certificate?.customer_id === user.id) {
+                    // Пользователь — владелец. Ничего не делаем.
+                    setLoading(false);
+                    return;
+                } else {
+                    // Сертификат куплен другим пользователем, но еще не принят этим
+                    acceptCertificate();
+                    setLoading(false);
+                    return;
+                }
+            } else {
+                // Сертификат уже был передан (shared_at существует)
+                if (certificate.recipient_id === user.id) {
+                    // Пользователь — получатель. Ничего не делаем.
+                    setLoading(false);
+                    return;
+                } else {
+                    // Пользователь не имеет отношения к этому сертификату после передачи. Перенаправляем.
+                    navigate('/certificates/1');
+                }
+            }
+        } else {
+            // 3. Логика для пользователя, НЕ прошедшего онбординг (user.complete_onboarding === false)
+            if (!certificate?.shared_at) {
+                // Сертификат не подарен. Нужна регистрация (онбординг).
+                setLoading(false);
+                return;
+            } else {
+                // Сертификат подарен. Нужно пройти онбординг.
+                navigate('/onboarding/1');
+            }
+        }
+    }, [certificate, user, isCertificateDisabled, acceptCertificate, navigate, setLoading]);
 
     const goHome = () => {
         navigate('/');
@@ -158,7 +241,11 @@ const CertificateLandingPage: React.FC = () => {
                     <div className={css.header}>
                         <DTHospitalityIcon />
                         {isCertificateDisabled() ? (
-                            <h1>Данный подарочный сертификат использован, либо истек срок действия</h1>
+                            isCertificateExpired() ? (
+                                <h1>У данного сертификата истек срок действия</h1>
+                                ) : (
+                                    <h1>Данный подарочный сертификат {isCertificateUsed() ? 'использован' : 'используется'}</h1>
+                                )
                         ) : (
                             <h1>
                                 Подарочный сертификат <br /> в любой ресторан Dreamteam
@@ -200,36 +287,43 @@ const CertificateLandingPage: React.FC = () => {
                                     <span>
                                         <b>{moment(certificate?.created_at).add(1, 'year').format('DD.MM.YYYY')}</b>
                                     </span>
+
                                 </>
                             )}
 
                         </div>
+                        <div className={css.row}>
+                            <span>Код:</span>
+                            <span>
+                                <b>{certificate?.dreamteam_id}</b>
+                            </span>
+                        </div>
                     </div>
-                    <div>
-                        <AccordionComponent title={'Условия'} style={{ marginTop: '24px' }}>
-                            <div className={css.conditions}>
-                                <p>Подарочный сертификат действует во всех ...</p>
-                                <b>Подробнее об условиях</b>
-                                <div className={css.conditionsList}>
-                                    <span>Как воспользоваться сертификатом</span>
-                                    <ul>
-                                        <li>
-                                            Забронируйте стол через приложение и укажите сертификат на экране
-                                            бронирования — мы всё учтём заранее.
-                                        </li>
-                                        <li>
-                                            Если бронировали по телефону или пришли без брони — просто покажите
-                                            сертификат официанту.
-                                        </li>
-                                    </ul>
-                                </div>
+                    <AccordionComponent title={'Условия'} style={{ marginTop: '24px' }}>
+                        <div className={css.conditions}>
+                            <p>Подарочный сертификат действует во всех ...</p>
+                            <b>Подробнее об условиях</b>
+                            <div className={css.conditionsList}>
+                                <span>Как воспользоваться сертификатом</span>
+                                <ul>
+                                    <li>
+                                        Забронируйте стол через приложение и укажите сертификат на экране
+                                        бронирования — мы всё учтём заранее.
+                                    </li>
+                                    <li>
+                                        Если бронировали по телефону или пришли без брони — просто покажите
+                                        сертификат официанту.
+                                    </li>
+                                </ul>
                             </div>
-                        </AccordionComponent>
+                        </div>
+                    </AccordionComponent>
+                    <div className={css.restaurantsList}>
+                        <span className={css.pageTitle}>Доступно в ресторанах</span>
+                        <RestaurantsList />
                     </div>
                     {!isCertificateDisabled() && (
-                        <div className={css.button}>
-                            <UniversalButton width={'full'} title={'Выбрать ресторан'} action={goToBooking} />
-                        </div>
+                        <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />
                     )}
                 </div>
             </section>

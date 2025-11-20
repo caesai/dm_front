@@ -1,7 +1,8 @@
 .container {
-    background-color: var(--certificate-background);
+    background-color: var(--primary-background);
     min-height: 100vh;
     height: 100%;
+    padding-bottom: 85px;
 }
 
 .loader {
@@ -88,8 +89,15 @@
     }
 }
 
-.button {
-    position: relative;
-    bottom: 0;
-    margin-top: 60px;
+.restaurantsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.pageTitle {
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
 }

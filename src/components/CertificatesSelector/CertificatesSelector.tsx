@@ -1,12 +1,14 @@
+/**
+ * @fileoverview React-компонент для выбора сертификатов.
+ */
+
 import React, { useState, useMemo, useEffect } from 'react';
 import classnames from 'classnames';
 import moment from 'moment/moment';
 import { useAtom } from 'jotai/index';
-
 import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
-// import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
-import { TCertificate, CERTIFICATION_TYPES } from '@/types/certificates.types.ts';
+import { TCertificate, CERTIFICATION_TYPES, ICertificate } from '@/types/certificates.types.ts';
 import css from '@/components/CertificatesSelector/CertificatesSelector.module.css';
 
 
@@ -39,7 +41,7 @@ interface CertificateTypeSelectorProps {
 }
 
 const CertificateTypeSelector: React.FC<CertificateTypeSelectorProps> = ({ type, currentType, toggleType, label, children }) => (
-    <div className={css.certificateOption}>
+    <div className={css.certificateOption} data-testid="certificates-selector">
         <CheckBoxInput
             checked={currentType === type}
             toggle={() => toggleType(type)}
@@ -50,36 +52,62 @@ const CertificateTypeSelector: React.FC<CertificateTypeSelectorProps> = ({ type,
     </div>
 );
 
-interface CertificatesSelectorProps {
+/**
+ * Свойства (Props) компонента CertificatesSelector.
+ * @interface
+ */
+export interface CertificatesSelectorProps {
+    /** Функция для установки ID выбранного сертификата в родительском компоненте. */
     setCertificateId: (id: string | null) => void;
-    isOpened?: boolean;
-    selectedCertificateId?: string;
+    /** Булево значение, указывающее, открыт ли (виден) в данный момент селектор. */
+    isOpened: boolean;
+    /** ID текущего выбранного сертификата, переданный из родительского компонента. */
+    selectedCertificateId: string | null;
 }
 
+/**
+ * Компонент селектора, который позволяет пользователям выбирать между онлайн и оффлайн сертификатами.
+ * Он управляет локальным состоянием для выбранного типа и индекса онлайн-сертификата, а также синхронизирует итоговый ID выбранного сертификата с родительским компонентом.
+ *
+ * Использует Jotai для глобального управления состоянием списка сертификатов и хуки useState/useEffect React для локальной логики пользовательского интерфейса и побочных эффектов.
+ *
+ * @param {CertificatesSelectorProps} { setCertificateId, isOpened, selectedCertificateId }
+ * @returns {React.FC | null} Функциональный компонент React или null, если сертификаты отсутствуют.
+ */
 export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setCertificateId, isOpened, selectedCertificateId }) => {
     const [certificates] = useAtom(certificatesListAtom);
-    // Renamed state variable for clarity
     const [selectedType, setSelectedType] = useState<TCertificate | null>(null);
     // const [offlineCertificateId, setOfflineCertificateId] = useState<string>('');
-    // Renamed state variable for clarity
     const [selectedOnlineOptionIndex, setSelectedOnlineOptionIndex] = useState<number | null>(null);
-
-    const onlineCertificates = useMemo(() => {
+    /**
+     * Мемоизированный список сертификатов, которые относятся конкретно к типу 'ONLINE'.
+     * @type {ICertificate[]}
+     */
+    const onlineCertificates: ICertificate[] = useMemo(() => {
         return certificates.filter(certificate => certificate.certificate_type === CERTIFICATION_TYPES.ONLINE);
     }, [certificates]);
-
+    /**
+     * Переключает выбор опции онлайн-сертификата по индексу.
+     * Если нажатый индекс уже был выбран, он снимает выбор (устанавливает null); в противном случае выбирает новый индекс.
+     * @param {number} index Индекс опции онлайн-сертификата в списке `onlineCertificates`.
+     */
     const toggleSelectedOnlineOption = (index: number) => {
         setSelectedOnlineOptionIndex(prevIndex => prevIndex === index ? null : index);
     };
 
+    /**
+     * Переключает основной тип выбираемого сертификата (онлайн/оффлайн).
+     * Обновляет состояние `selectedType` и обрабатывает логику для списков с единственным вариантом или сброса других состояний выбора.
+     * @param {TCertificate} type Тип сертификата для выбора (например, 'ONLINE', 'OFFLINE').
+     */
     const toggleCertificateType = (type: TCertificate) => {
         setSelectedType(prevType => prevType === type ? null : type);
         const filteredCertificates = certificates.filter(certificate => certificate.certificate_type === type);
         if (filteredCertificates.length === 1) {
-            setCertificateId(certificates[0].id);
+            setCertificateId(filteredCertificates[0].id);
             setSelectedOnlineOptionIndex(0);
         }
-        // Optionally, reset other selections when changing type
+        // Опционально, сброс других выборов при смене типа
         if (type === CERTIFICATION_TYPES.OFFLINE) {
             setSelectedOnlineOptionIndex(null);
         } else {
@@ -87,6 +115,10 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
         }
     };
 
+    /**
+     * Хук эффекта для синхронизации локального состояния `selectedOnlineOptionIndex` с функцией `setCertificateId` родительского компонента.
+     * Выполняется при каждом изменении `selectedOnlineOptionIndex`.
+     */
     useEffect(() => {
         let certificateId = null;
         if (selectedOnlineOptionIndex !== null) {
@@ -95,6 +127,10 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
         setCertificateId(certificateId);
     }, [selectedOnlineOptionIndex]);
 
+    /**
+     * Хук эффекта для восстановления локального состояния компонента при его открытии на основе существующего `selectedCertificateId` из родителя.
+     * Выполняется при изменении `isOpened`, `selectedCertificateId` или `setCertificateId`.
+     */
     useEffect(() => {
         if (isOpened && selectedCertificateId) {
             setSelectedType(CERTIFICATION_TYPES.ONLINE);
