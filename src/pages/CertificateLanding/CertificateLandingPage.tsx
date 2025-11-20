@@ -17,6 +17,7 @@ import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.tsx';
 
 const CertificateLandingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -205,29 +206,32 @@ const CertificateLandingPage: React.FC = () => {
 
                         </div>
                     </div>
-                    <div>
-                        <AccordionComponent title={'Условия'} style={{ marginTop: '24px' }}>
-                            <div className={css.conditions}>
-                                <p>Подарочный сертификат действует во всех ...</p>
-                                <b>Подробнее об условиях</b>
-                                <div className={css.conditionsList}>
-                                    <span>Как воспользоваться сертификатом</span>
-                                    <ul>
-                                        <li>
-                                            Забронируйте стол через приложение и укажите сертификат на экране
-                                            бронирования — мы всё учтём заранее.
-                                        </li>
-                                        <li>
-                                            Если бронировали по телефону или пришли без брони — просто покажите
-                                            сертификат официанту.
-                                        </li>
-                                    </ul>
-                                </div>
+                    <AccordionComponent title={'Условия'} style={{ marginTop: '24px' }}>
+                        <div className={css.conditions}>
+                            <p>Подарочный сертификат действует во всех ...</p>
+                            <b>Подробнее об условиях</b>
+                            <div className={css.conditionsList}>
+                                <span>Как воспользоваться сертификатом</span>
+                                <ul>
+                                    <li>
+                                        Забронируйте стол через приложение и укажите сертификат на экране
+                                        бронирования — мы всё учтём заранее.
+                                    </li>
+                                    <li>
+                                        Если бронировали по телефону или пришли без брони — просто покажите
+                                        сертификат официанту.
+                                    </li>
+                                </ul>
                             </div>
-                        </AccordionComponent>
-                    </div>
+                        </div>
+                    </AccordionComponent>
+                    <AccordionComponent title={'Доступно в ресторанах'} style={{ marginTop: '24px' }}>
+                        <div className={css.restaurantsList}>
+                            <RestaurantsList />
+                        </div>
+                    </AccordionComponent>
                     {!isCertificateDisabled() && (
-                        <BottomButtonWrapper onClick={goToBooking} />
+                        <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />
                     )}
                 </div>
             </section>

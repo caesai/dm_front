@@ -75,6 +75,7 @@ export const NewRestaurant = () => {
                         "photo_cards": []
                     }}
                     key={`rest-12`}
+                    clickable
                 />
             </div>
         </Page>
