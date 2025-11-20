@@ -1,0 +1,25 @@
+.floatingButton {
+    position: fixed;
+    bottom: 40px;
+    right: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    background-color: var(--red);
+    border-radius: 48px;
+    box-shadow: 0px 1px 8px 0px rgba(23, 23, 23, 0.5);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.priceText {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 1.3em;
+    color: var(--primary-background);
+}
+

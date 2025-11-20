@@ -1,0 +1,111 @@
+.menuItem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 0 1 calc(50% - 4.5px);
+    max-width: calc(50% - 4.5px);
+}
+
+.image {
+    width: 100%;
+    aspect-ratio: 1;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.subtitle {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 2px;
+    width: 100%;
+}
+
+.title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 1.4em;
+    color: var(--dark-grey);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.weight {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 1.4em;
+    color: var(--grey);
+    white-space: nowrap;
+}
+
+.button {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+    gap: 8px;
+    padding: 11px 16px 10px;
+    background-color: var(--third-background);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.buttonActive {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+    gap: 8px;
+    padding: 11px 16px 10px;
+    background-color: var(--primary-background);
+    border: 0.5px solid var(--black);
+    border-radius: 8px;
+}
+
+.iconSummary {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.priceText {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1.2857142857142858em;
+    color: var(--black);
+    flex: 1;
+    text-align: center;
+}
+
+.iconButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 14px;
+    min-height: 14px;
+    width: 14px;
+    height: 14px;
+    background: var(--primary-background);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 0;
+}
+
