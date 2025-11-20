@@ -34,7 +34,6 @@ export const UserPhoneConfirmationPage = () => {
     };
 
     useEffect(() => {
-        console.log('state: ', state);
         if (user?.phone_number) {
             if (state) {
                 if (state.sharedEvent) {

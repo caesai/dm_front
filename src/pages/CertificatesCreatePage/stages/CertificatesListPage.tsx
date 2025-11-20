@@ -21,7 +21,7 @@ export const shareCertificate = async (certificate: ICertificate, certificateRef
 
     try {
         // const response = await fetch(certificateImage);
-        var element = certificateRef;
+        const element = certificateRef;
         const canvas = await html2canvas(element as unknown as HTMLElement);
         const imageDataURL = canvas.toDataURL("image/png");
         const byteString = atob(imageDataURL.split(',')[1]);
@@ -38,7 +38,6 @@ export const shareCertificate = async (certificate: ICertificate, certificateRef
         const imageFile = new File([imageBlob], fileName, { type: mimeString });
         // const blob = await response.blob();
         // const sharedFile = new File([blob], 'shared_image.png', { type: 'image/png' });
-
 
         const shareDataWithFiles: ShareData = {
             title: message, // Some platforms might use this as a caption
