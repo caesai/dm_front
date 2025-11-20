@@ -73,6 +73,7 @@ export const CertificatesPaymentPage: React.FC = () => {
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
                         rating={Number(certificate.value).toFixed().toString()}
                         cardholder={certificate.recipient_name}
+                        dreamteam_id={certificate.dreamteam_id}
                         forwardRef={certificateRef}
                     />
                     {!isPaid && (

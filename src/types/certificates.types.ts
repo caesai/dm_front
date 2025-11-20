@@ -7,6 +7,7 @@ export interface ICertificate {
     status: TCertificateStatus;
     value: string;
     recipient_name: string;
+    dreamteam_id: string;
     receipt_point: number | null;
     receipt_date: string | null;
     created_at: string;

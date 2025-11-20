@@ -8,11 +8,12 @@ interface CertificateProps {
     date: string;
     rating: string;
     cardholder: string;
+    dreamteam_id?: string;
     big?: boolean;
     forwardRef?: React.Ref<HTMLDivElement>;
 }
 
-export const Certificate: React.FC<CertificateProps> = ({ placeholder, date, rating, cardholder, big, forwardRef }) => {
+export const Certificate: React.FC<CertificateProps> = ({ placeholder, date, rating, cardholder, big, forwardRef, dreamteam_id }) => {
     return (
         <div className={css.certificate} ref={forwardRef}>
             <div className={css.certificateLogo}>
@@ -22,7 +23,7 @@ export const Certificate: React.FC<CertificateProps> = ({ placeholder, date, rat
             <div className={css.certificateData}>
                 <div>
                     <span>{cardholder}</span>
-                    <span>*********</span>
+                    <span>{dreamteam_id ? dreamteam_id : '*********'}</span>
                 </div>
                 <div>
                     <span>Действителен:</span>
