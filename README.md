@@ -7,9 +7,10 @@
 - [Telegram UI](https://github.com/Telegram-Mini-Apps/TelegramUI)
 - [Vite](https://vitejs.dev/)
 
-### Фичи
+## Фичи
 
 - Сертификаты
+- - [CertificateLandingPage](./src/pages/CertificateLanding/CertificateLandingPage.tsx) - Страница сертификата, которой делятся между собой пользователи
 - - [CertificatesSelector](./src/components/CertificatesSelector/README.md) - селектор сертификатов на странице бронирований
 
 ## Install Dependencies
