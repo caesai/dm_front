@@ -12,7 +12,7 @@ import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.cs
 import html2canvas from 'html2canvas';
 // import certificateImage from '/img/certificate_2.png';
 
-export const shareCertificate = async (certificate: ICertificate, certificateRef: React.Ref<HTMLDivElement>) => {
+export const shareCertificate = async (certificate: ICertificate, certificateRef: React.Ref<HTMLDivElement | null>) => {
     const url = encodeURI(
         `https://t.me/${BASE_BOT}?startapp=certificateId_${certificate.id}`
     );
