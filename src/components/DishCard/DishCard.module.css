@@ -3,7 +3,7 @@
     flex-direction: column;
     gap: 8px;
     flex: 0 1 calc(50% - 4.5px);
-    min-width: 168px;
+    max-width: calc(50% - 4.5px);
 }
 
 .image {
@@ -12,12 +12,14 @@
     background-size: cover;
     background-position: center;
     border-radius: 12px;
+    cursor: pointer;
 }
 
 .content {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    cursor: pointer;
 }
 
 .subtitle {

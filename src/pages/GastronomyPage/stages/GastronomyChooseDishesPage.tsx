@@ -26,6 +26,12 @@ export const GastronomyChooseDishesPage: React.FC = () => {
         });
     }
 
+    const handleDishClick = (dish: typeof expandedData[0]) => {
+        navigate(`/gastronomy/${res_id}/dish/${dish.id}`, { 
+            state: { dish } 
+        });
+    };
+
     return (
         <>
             <div className={css.items}>
@@ -36,6 +42,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
                         quantity={getItemQuantity(dish.id)}
                         onAdd={() => addToCart(dish)}
                         onRemove={() => removeFromCart(dish.id)}
+                        onClick={() => handleDishClick(dish)}
                     />
                 ))}
             </div>

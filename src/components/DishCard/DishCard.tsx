@@ -8,6 +8,7 @@ interface DishCardProps extends IDish {
     quantity: number;
     onAdd: (id: number) => void;
     onRemove: (id: number) => void;
+    onClick?: () => void;
 }
 
 export const DishCard: React.FC<DishCardProps> = ({
@@ -19,14 +20,16 @@ export const DishCard: React.FC<DishCardProps> = ({
     quantity,
     onAdd,
     onRemove,
+    onClick,
 }) => {
     return (
         <div className={css.menuItem}>
             <div
                 className={css.image}
                 style={{ backgroundImage: `url(${image})` }}
+                onClick={onClick}
             />
-            <div className={css.content}>
+            <div className={css.content} onClick={onClick}>
                 <div className={css.subtitle}>
                     <span className={css.title}>{title}</span>
                     <span className={css.weight}>{defaultWeight}</span>
