@@ -1,7 +1,7 @@
 import { render, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Provider, WritableAtom } from 'jotai';
-import { useHydrateAtoms } from 'jotai/utils'
+import { useHydrateAtoms } from 'jotai/utils';
 import { CertificatesSelector, CertificatesSelectorProps } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { certificatesListMock } from '@/__mocks__/certificates.mock.ts';

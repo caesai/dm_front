@@ -1,7 +1,7 @@
 ## CertificatesSelector
 Компонент селектора, который позволяет пользователям выбирать между онлайн и оффлайн сертификатами.
 
-Компонент предназначен для использования на странице бронирований(BookingPage, BookingFreeEventPage, BookingRestaurantPage), который предоставляет необходимые пропсы (setCertificateId, isOpened, selectedCertificateId).
+Компонент предназначен для использования на странице бронирований (BookingPage, BookingFreeEventPage, BookingRestaurantPage), который предоставляет необходимые пропсы (setCertificateId, isOpened, selectedCertificateId).
 
 ### API (Props)
 Компонент принимает следующие свойства:
