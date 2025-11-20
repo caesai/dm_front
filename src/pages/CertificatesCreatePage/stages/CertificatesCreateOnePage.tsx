@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import CertificateImage from '/img/certificate_1.png';
+import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.tsx';
 
 export const CertificatesCreateOnePage: React.FC = () => {
     const navigate = useNavigate();
@@ -29,6 +30,9 @@ export const CertificatesCreateOnePage: React.FC = () => {
                     <li>В рамках одного визита в ресторан можно использовать не более одного подарочного сертификата.
                     </li>
                 </ul>
+            </div>
+            <div className={css.restaurantList}>
+                <RestaurantsList titleStyle={{ fontSize: '1rem', fontWeight: '600' }} />
             </div>
             <BottomButtonWrapper
                 isFixed={true}

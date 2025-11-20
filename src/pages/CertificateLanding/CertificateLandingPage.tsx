@@ -320,7 +320,7 @@ const CertificateLandingPage: React.FC = () => {
                     </AccordionComponent>
                     <div className={css.restaurantsList}>
                         <span className={css.pageTitle}>Доступно в ресторанах</span>
-                        <RestaurantsList />
+                        <RestaurantsList titleStyle={{ fontSize: '14px', fontWeight: '600' }} />
                     </div>
                     {!isCertificateDisabled() && (
                         <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />

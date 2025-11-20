@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import css from './RestaurantsList.module.css';
 import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
 import newres from '/img/chinois_app.png';
@@ -12,7 +12,11 @@ import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
 
-export const RestaurantsList: FC = () => {
+interface IRestaurantsListProps {
+    titleStyle?: CSSProperties;
+}
+
+export const RestaurantsList: FC<IRestaurantsListProps> = ({ titleStyle }) => {
     const [cityListA] = useAtom(cityListAtom);
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
@@ -118,7 +122,7 @@ export const RestaurantsList: FC = () => {
                     options={cityOptions}
                     currentValue={currentCityS}
                     onChange={updateCurrentCity}
-                    titleStyle={{ fontSize: '14px', fontWeight: '600' }}
+                    titleStyle={titleStyle}
                 />
             </div>
             <div className={css.restaurants}>
