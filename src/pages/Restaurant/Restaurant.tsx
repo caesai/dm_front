@@ -77,7 +77,7 @@ export const Restaurant = () => {
     const [banquets, setBanquets] = useState<IBanquet | null>(null);
     const [nyCookings] = useState(NewYearCookingData);
 
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user?.id;
+    const tg_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
 
     /**
      * Обрабатывает переход к бронированию столика
