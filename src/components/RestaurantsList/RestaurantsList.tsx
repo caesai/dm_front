@@ -75,7 +75,7 @@ export const RestaurantsList: FC = () => {
         'id': 12,
         'title': 'Self Edge Chinois',
         'slogan': 'Современная Азия с акцентом на Китай и культовый raw bar',
-        'address': 'Санкт-Перербург, ул. Добролюбова, 11',
+        'address': 'Санкт-Петербург, ул. Добролюбова, 11',
         'logo_url': '',
         'thumbnail_photo': newres,
         'avg_cheque': 3000,
