@@ -23,8 +23,6 @@ jest.mock('@telegram-apps/sdk-react', () => ({
     },
 }));
 
-jest
-
 describe('Events API Test', () => {
     beforeEach(() => {
         // Ensure the window.Telegram object and its properties exist

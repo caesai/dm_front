@@ -82,7 +82,7 @@ const CertificateLandingPage: React.FC = () => {
             if (!certificate?.shared_at) {
                 // Toggle Modal Popup With Need to Register Info
                 setLoading(false);
-                setIsShowing(true);
+                // setIsShowing(true);
                 return;
             } else {
                 navigate('/onboarding/1');
@@ -122,11 +122,15 @@ const CertificateLandingPage: React.FC = () => {
     };
 
     const goToOnboarding = () => {
-        navigate('/onboarding/3', { state: { id } });
+        navigate('/onboarding/3', { state: { id, sharedCertificate: true } });
     };
 
     const goToBooking = () => {
-        navigate('/booking', { state: { certificate: true, certificateId: certificate?.id } });
+        if (!user?.complete_onboarding) {
+            setIsShowing(true);
+            return;
+        }
+        navigate('/booking', { state: { certificate: true, certificateId: id } });
     };
 
     if (loading) {
@@ -163,7 +167,6 @@ const CertificateLandingPage: React.FC = () => {
                         <div onClick={goHome} className={css.close}>
                             <RoundedButton
                                 icon={<CrossIcon size={44} />}
-                                action={() => navigate(-1)}
                             />
                         </div>
                     </div>
@@ -223,7 +226,7 @@ const CertificateLandingPage: React.FC = () => {
                             </div>
                         </AccordionComponent>
                     </div>
-                    {user?.complete_onboarding && !isCertificateDisabled() && (
+                    {!isCertificateDisabled() && (
                         <div className={css.button}>
                             <UniversalButton width={'full'} title={'Выбрать ресторан'} action={goToBooking} />
                         </div>

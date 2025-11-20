@@ -74,6 +74,11 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
 
     const toggleCertificateType = (type: TCertificate) => {
         setSelectedType(prevType => prevType === type ? null : type);
+        const filteredCertificates = certificates.filter(certificate => certificate.certificate_type === type);
+        if (filteredCertificates.length === 1) {
+            setCertificateId(certificates[0].id);
+            setSelectedOnlineOptionIndex(0);
+        }
         // Optionally, reset other selections when changing type
         if (type === CERTIFICATION_TYPES.OFFLINE) {
             setSelectedOnlineOptionIndex(null);

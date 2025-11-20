@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import moment from 'moment/moment';
@@ -23,6 +23,7 @@ export const CertificatesPaymentPage: React.FC = () => {
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [isPaid, setIsPaid] = useState<boolean>(false);
+    const certificateRef = useRef(null);
 
     const backToHome = () => {
         navigate('/');
@@ -72,6 +73,8 @@ export const CertificatesPaymentPage: React.FC = () => {
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
                         rating={Number(certificate.value).toFixed().toString()}
                         cardholder={certificate.recipient_name}
+                        dreamteam_id={certificate.dreamteam_id}
+                        forwardRef={certificateRef}
                     />
                     {!isPaid && (
                         <h3 className={css.page_title}>Сертификат появится в личном кабинете после подтверждения
@@ -86,7 +89,7 @@ export const CertificatesPaymentPage: React.FC = () => {
                         {isPaid && (
                             <div className={css.bottomWrapper}>
                                 <UniversalButton width={'full'} title={'Поделиться'} theme={'red'}
-                                                 action={() => shareCertificate(certificate)} />
+                                                 action={() => shareCertificate(certificate, certificateRef.current)} />
                                 <UniversalButton width={'full'} title={'Позже'} action={backToHome} />
                             </div>
                         )}

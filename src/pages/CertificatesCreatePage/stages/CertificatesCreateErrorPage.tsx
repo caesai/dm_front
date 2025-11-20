@@ -62,6 +62,7 @@ export const CertificatesCreateErrorPage: React.FC = () => {
                         placeholder={certificate.message}
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
                         rating={Number(certificate.value).toFixed().toString()}
+                        dreamteam_id={certificate.dreamteam_id}
                         cardholder={certificate.recipient_name}
                     />
                     <h3 className={css.page_title}>Попробуйте ещё раз или выберите другой способ оплаты.</h3>
