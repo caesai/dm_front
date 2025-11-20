@@ -1,5 +1,5 @@
 import {IConfirmationType} from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-import {FC, useEffect, useState} from 'react';
+import { CSSProperties, FC, useEffect, useState } from 'react';
 import css from './CitySelect.module.css';
 import {DownArrow} from '@/components/Icons/DownArrow.tsx';
 import {Collapse} from 'react-collapse';
@@ -11,12 +11,14 @@ interface IConfirmationSelect {
     options: IConfirmationType[];
     currentValue: IConfirmationType;
     onChange: (city: IConfirmationType) => void;
+    titleStyle?: CSSProperties;
 }
 
 export const CitySelect: FC<IConfirmationSelect> = ({
                                                         options,
                                                         currentValue,
                                                         onChange,
+                                                        titleStyle,
                                                     }) => {
     const [collapse, setCollapse] = useState(false);
     const selectOnChange = (id: string, text: string) => {
@@ -53,7 +55,7 @@ export const CitySelect: FC<IConfirmationSelect> = ({
                 onClick={() => setCollapse((prev) => !prev)}
             >
                 <div className={css.textWrap}>
-                    <span className={css.currentValue}>
+                    <span className={css.currentValue} style={titleStyle}>
                         {currentValue.text}
                     </span>
                 </div>
@@ -67,7 +69,7 @@ export const CitySelect: FC<IConfirmationSelect> = ({
                 </div>
             </div>
             <Collapse isOpened={collapse}>
-                <div className={classNames(css.optionWrapper)}>
+                <div className={classNames(css.optionWrapper)} >
                     {options.map((v) => (
                         <div
                             key={v.id}
