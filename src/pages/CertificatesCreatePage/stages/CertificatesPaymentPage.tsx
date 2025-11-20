@@ -67,7 +67,7 @@ export const CertificatesPaymentPage: React.FC = () => {
         <div className={css.paymentContent}>
             {certificate && (
                 <>
-                    <h3 className={css.page_title}>{isPaid ? 'Ваш сертификат оплачен!' : 'Ваш платёж обрабатывается.'}</h3>
+                    <h3 className={css.page_title}>{isPaid ? 'Ваш сертификат оплачен!' : 'Ваш платёж обрабатывается'}</h3>
                     <Certificate
                         placeholder={certificate.message}
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
@@ -77,8 +77,8 @@ export const CertificatesPaymentPage: React.FC = () => {
                         forwardRef={certificateRef}
                     />
                     {!isPaid && (
-                        <h3 className={css.page_title}>Сертификат появится в личном кабинете после подтверждения
-                            оплаты.</h3>
+                        <h3 className={css.success_payment}>Сертификат появится в личном кабинете после подтверждения
+                            оплаты</h3>
                     )}
                     <div
                         data-testid="button-container"
