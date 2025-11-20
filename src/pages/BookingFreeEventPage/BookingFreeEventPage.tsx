@@ -278,7 +278,7 @@ export const BookingFreeEventPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    {tg_id && mockEventsUsersList.includes(tg_id) && <CertificatesSelector setCertificateId={setCertificateId} />}
+                    {tg_id && mockEventsUsersList.includes(tg_id) && <CertificatesSelector isOpened={state?.certificate} setCertificateId={setCertificateId} selectedCertificateId={null} />}
                     <BookingWish
                         guestCount={guestCount}
                         childrenCount={childrenCount}
