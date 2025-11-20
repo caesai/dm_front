@@ -226,7 +226,7 @@ const CertificateLandingPage: React.FC = () => {
                         </div>
                     </AccordionComponent>
                     <div className={css.restaurantsList}>
-                        <span>Доступно в ресторанах</span>
+                        <span className={css.pageTitle}>Доступно в ресторанах</span>
                         <RestaurantsList />
                     </div>
                     {!isCertificateDisabled() && (

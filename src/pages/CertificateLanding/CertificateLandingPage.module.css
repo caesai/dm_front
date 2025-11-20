@@ -94,10 +94,10 @@
     flex-direction: column;
     gap: 10px;
     margin-top: 24px;
+}
 
-    > span {
-        font-family: "Mont", sans-serif;
-        font-weight: 700;
-        font-size: 1rem;
-    }
+.pageTitle {
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
 }
