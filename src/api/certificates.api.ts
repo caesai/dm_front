@@ -40,8 +40,8 @@ export const APIPostCreateWithPayment = async (
         value,
         recipient_name,
         message,
-        return_url: `${CLIENT_URL}/certificates/payment`,
-        // return_url: `https://dt-mini-app.local/dm_front/certificates/payment`,
+        // return_url: `${CLIENT_URL}/certificates/payment`,
+        return_url: `https://dt-mini-app.local/dm_front/certificates/payment`,
         fail_url: `${CLIENT_URL}/certificates/error`,
         // fail_url: `https://dt-mini-app.local/dm_front/certificates/error`,
 

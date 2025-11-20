@@ -34,6 +34,7 @@ export const UserPhoneConfirmationPage = () => {
     };
 
     useEffect(() => {
+        console.log('state: ', state);
         if (user?.phone_number) {
             if (state) {
                 if (state.sharedEvent) {
@@ -46,7 +47,7 @@ export const UserPhoneConfirmationPage = () => {
                     navigate('/restaurant/' + state.id + '/booking', { state });
                 }
                 if (state.sharedCertificate) {
-                    navigate('/certificates/landing/' + state.id);
+                    navigate('/certificates/landing/' + state.id, { state });
                 }
             } else {
                 navigate('/');

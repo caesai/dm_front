@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import moment from 'moment';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
@@ -9,9 +9,10 @@ import { APIGetCertificates } from '@/api/certificates.api.ts';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
+import html2canvas from 'html2canvas';
 // import certificateImage from '/img/certificate_2.png';
 
-export const shareCertificate = async (certificate: ICertificate) => {
+export const shareCertificate = async (certificate: ICertificate, certificateRef: React.Ref<HTMLDivElement>) => {
     const url = encodeURI(
         `https://t.me/${BASE_BOT}?startapp=certificateId_${certificate.id}`
     );
@@ -20,13 +21,29 @@ export const shareCertificate = async (certificate: ICertificate) => {
 
     try {
         // const response = await fetch(certificateImage);
+        var element = certificateRef;
+        const canvas = await html2canvas(element as unknown as HTMLElement);
+        const imageDataURL = canvas.toDataURL("image/png");
+        const byteString = atob(imageDataURL.split(',')[1]);
+        const mimeString = imageDataURL.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        const imageBlob = new Blob([ab], { type: mimeString });
+
+        // *** The solution: Convert the Blob to a File ***
+        const fileName = 'certificate_screenshot.png';
+        const imageFile = new File([imageBlob], fileName, { type: mimeString });
         // const blob = await response.blob();
         // const sharedFile = new File([blob], 'shared_image.png', { type: 'image/png' });
 
+
         const shareDataWithFiles: ShareData = {
-            // title: message, // Some platforms might use this as a caption
-            // files: [sharedFile],
-            url: decodeURI(url) // Use the URL field for better handling by share targets
+            title: message, // Some platforms might use this as a caption
+            files: [imageFile],
+            // url: decodeURI(url) // Use the URL field for better handling by share targets
         };
 
         // 1. Check if the platform can share files
@@ -81,6 +98,7 @@ interface CertificateOptionProps {
 }
 
 const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) => {
+    const certificateRef = useRef(null);
     return (
         <div className={css.certificateOption}>
             <Certificate
@@ -88,8 +106,9 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) =>
                 date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
                 rating={Number(certificate.value).toFixed().toString()}
                 cardholder={certificate.recipient_name}
+                forwardRef={certificateRef}
             />
-            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} theme={'red'} action={() => shareCertificate(certificate)} />}
+            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} theme={'red'} action={() => shareCertificate(certificate, certificateRef.current)} />}
         </div>
     )
 }
