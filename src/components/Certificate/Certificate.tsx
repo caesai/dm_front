@@ -23,7 +23,7 @@ export const Certificate: React.FC<CertificateProps> = ({ placeholder, date, rat
             <div className={css.certificateData}>
                 <div>
                     <span>{cardholder}</span>
-                    <span>{dreamteam_id ? dreamteam_id : '*********'}</span>
+                    <span>{dreamteam_id ?? '*********'}</span>
                 </div>
                 <div>
                     <span>Действителен:</span>
