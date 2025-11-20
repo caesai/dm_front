@@ -58,7 +58,7 @@ export const EventSuperApplyOutlet = () => {
         } else {
             setToastMessage('Необходимо заполнить все поля');
             setToastShow(true);
-            setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 3000);
+            setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 6000);
         }
     };
 

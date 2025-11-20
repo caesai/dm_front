@@ -6,8 +6,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { IBanquet, IBanquetOptions } from '@/types/banquets.types.ts';
-import { DepositIcon } from '@/components/Icons/DepositIcon.tsx';
-import { GuestsIcon } from '@/components/Icons/GuestsIcon.tsx';
 import { IWorkTime } from '@/types/restaurant.ts';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -15,7 +13,7 @@ import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 import classnames from 'classnames';
 import BanquetGallery from '@/components/BanquetGallery/BanquetGallery.tsx';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import classNames from 'classnames';
 
@@ -30,7 +28,7 @@ export const ChooseBanquetOptionsPage = () => {
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
     const [currentImages, setCurrentImages] = useState<string[]>([]);
     const [imageIndex, setImageIndex] = useState<number | null>(null);
-    const [hideAbout, setHideAbout] = useState<boolean>(true);
+    const [hideAboutId, setHideAboutId] = useState<number | null>(null);
 
     const goBack = () => {
         navigate(`/restaurant/${id}`);
@@ -38,20 +36,25 @@ export const ChooseBanquetOptionsPage = () => {
 
     const openPopup = (banquet: IBanquetOptions, index: number) => {
         setOpenPopup(true);
-        setImageIndex(index)
+        setImageIndex(index);
         setCurrentImages(banquet.images);
     };
 
     const getBanquetDeposit = (banquet: IBanquetOptions) => {
         if (banquet.deposit) {
-            return `${banquet.deposit} ₽`;
+            return `от ${banquet.deposit}₽ на гостя`;
         }
-        return banquet.deposit_message || "Без депозита";
+        return banquet.deposit_message || 'Без депозита';
     };
+
+    const toggleDescription = (id: number) => {
+        setHideAboutId(prevId => prevId === id ? null : id);
+    }
 
     return (
         <Page back={true}>
-            <BanquetGallery isOpen={isOpenPopup} setOpen={setOpenPopup} images={currentImages} currentIndex={imageIndex!} />
+            <BanquetGallery isOpen={isOpenPopup} setOpen={setOpenPopup} images={currentImages}
+                            currentIndex={imageIndex!} />
             <div className={css.page}>
                 <div className={css.pageWrapper}>
                     <div className={css.header}>
@@ -83,11 +86,11 @@ export const ChooseBanquetOptionsPage = () => {
                                                     <img src={image} alt={'banquet_img'} />
                                                     <div className={css.banquetStats}>
                                                         <div>
-                                                            <GuestsIcon color={'#FFFFFF'} />
+                                                            {/*<GuestsIcon color={'#FFFFFF'} />*/}
                                                             <span>до {banquet.guests_max} человек</span>
                                                         </div>
                                                         <div>
-                                                            <DepositIcon color={'#FFFFFF'} />
+                                                            {/*<DepositIcon color={'#FFFFFF'} />*/}
                                                             <span>{getBanquetDeposit(banquet)}</span>
                                                         </div>
                                                     </div>
@@ -99,13 +102,13 @@ export const ChooseBanquetOptionsPage = () => {
                                             {banquet.description && (
                                                 <span className={classNames(
                                                     css.banquet_text,
-                                                    (hideAbout && banquet.description.length > 60) ? css.trimLines : null,
+                                                    (hideAboutId !== banquet.id && banquet.description.length > 60) ? css.trimLines : null,
                                                 )}>
                                                     {banquet.description.split(/\n|\r\n/).map((segment, index) => (
-                                                <>
-                                                    {index > 0 && <br />}
-                                                    {segment}
-                                                </>
+                                                        <Fragment key={index}>
+                                                            {index > 0 && <br />}
+                                                            {segment}
+                                                        </Fragment>
                                                     ))}
                                                 </span>
                                             )}
@@ -113,10 +116,10 @@ export const ChooseBanquetOptionsPage = () => {
                                                 (
                                                     <div
                                                         className={css.trimLinesButton}
-                                                        onClick={() => setHideAbout((prev) => !prev)}
+                                                        onClick={() => toggleDescription(banquet.id)}
                                                     >
                                                         <span className={css.text}>
-                                                            {hideAbout ? 'Читать больше' : 'Скрыть'}
+                                                            {hideAboutId !== banquet.id ? 'Читать больше' : 'Скрыть'}
                                                         </span>
                                                     </div>
                                                 )

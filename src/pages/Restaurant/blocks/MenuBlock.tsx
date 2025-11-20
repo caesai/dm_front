@@ -17,45 +17,73 @@ interface MenuBlockProps {
 }
 
 export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
-    const [menuPopupOpen, setMenuPopupOpen] = useState(false);
+    const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
+
+    /**
+     * Получает отсортированные URL изображений меню для попапа
+     * @returns {string[]} Массив URL изображений меню, отсортированных по порядку
+     */
+    const getSortedMenuImageUrls = (): string[] => {
+        if (!menu_imgs) return [];
+        return menu_imgs
+            .sort((a, b) => a.order - b.order)
+            .map(item => item.image_url);
+    };
+
+    /**
+     * Обрабатывает открытие попапа с меню
+     */
+    const handleOpenMenuPopup = () => {
+        setIsMenuPopupOpen(true);
+    };
+
+    const sortedMenuItems = menu?.sort((a, b) => a.id - b.id) || [];
+    const menuImageUrls = getSortedMenuImageUrls();
+
     return (
         <ContentContainer>
-            {menu_imgs ? (
+            {menu_imgs && (
                 <MenuPopup
-                    isOpen={menuPopupOpen}
-                    setOpen={setMenuPopupOpen}
-                    menuItems={menu_imgs.sort((a, b) => (a.order > b.order ? 1 : -1)).map((v) => v.image_url)}
+                    isOpen={isMenuPopupOpen}
+                    setOpen={setIsMenuPopupOpen}
+                    menuItems={menuImageUrls}
                 />
-            ) : null}
+            )}
+
             <ContentBlock>
-                <HeaderContainer id={'menu'}>
-                    <HeaderContent title={'Меню'} />
-                    {/*<HeaderSubText text={'Рекомендуем'}/>*/}
+                <HeaderContainer id="menu">
+                    <HeaderContent title="Меню" />
                 </HeaderContainer>
+
+                {/* Слайдер блюд меню */}
                 <div className={css.photoSliderContainer}>
                     <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
-                        {menu &&
-                            menu
-                                .sort((a, b) => (a.id > b.id ? 1 : -1))
-                                .map((item, index) => (
-                                    <SwiperSlide style={{ width: '162px' }} key={`${index}${item.photo_url}`}>
-                                        <div className={css.menuItem}>
-                                            <div
-                                                className={classNames(css.menuItemPhoto, css.bgImage)}
-                                                style={{
-                                                    backgroundImage: `url(${item.photo_url})`,
-                                                }}
-                                            ></div>
-                                            <div className={css.menuItemInfo}>
-                                                <span className={css.title}>{item.title}</span>
-                                                <span className={css.subtitle}>{item.price} ₽</span>
-                                            </div>
-                                        </div>
-                                    </SwiperSlide>
-                                ))}
+                        {sortedMenuItems.map((item, index) => (
+                            <SwiperSlide
+                                style={{ width: '162px' }}
+                                key={`${item.id}-${index}`}
+                            >
+                                <div className={css.menuItem}>
+                                    <div
+                                        className={classNames(css.menuItemPhoto, css.bgImage)}
+                                        style={{ backgroundImage: `url(${item.photo_url})` }}
+                                    />
+                                    <div className={css.menuItemInfo}>
+                                        <span className={css.title}>{item.title}</span>
+                                        <span className={css.subtitle}>{item.price} ₽</span>
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                        ))}
                     </Swiper>
                 </div>
-                <UniversalButton title={'Посмотреть меню'} width={'full'} action={() => setMenuPopupOpen(true)} />
+
+                {/* Кнопка открытия полного меню */}
+                <UniversalButton
+                    title="Посмотреть меню"
+                    width="full"
+                    action={handleOpenMenuPopup}
+                />
             </ContentBlock>
         </ContentContainer>
     );

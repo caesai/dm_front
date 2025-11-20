@@ -20,8 +20,9 @@ import {
     // reviewAtom,
     userAtom,
 } from '@/atoms/userAtom.ts';
-import { DEV_MODE } from '@/api/base.ts';
+// import { DEV_MODE } from '@/api/base.ts';
 import { PlainGiftIcon } from '@/components/Icons/PlaingGiftIcon.tsx';
+import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 // import {DEV_MODE} from "@/api/base.ts";
 
 export const ProfilePage = () => {
@@ -91,7 +92,7 @@ export const ProfilePage = () => {
                                 Личные данные
                             </span>
                         </Link>
-                        {DEV_MODE && (
+                        {tg_id && mockEventsUsersList.includes(tg_id) && (
                             <Link to={'/certificates/my'} className={css.navLink}>
                                 <PlainGiftIcon size={24} color={'black'} />
                                 <span className={css.navLinkTitle}>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_URL } from '@/api/base.ts';
+import { BASE_URL, CLIENT_URL } from '@/api/base.ts';
 // import { IEvent } from '@/pages/EventsPage/EventsPage.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { EventTicket, IEventInRestaurant, ISuperEventHasApplicationResponse } from '@/types/events.ts';
@@ -58,6 +58,8 @@ export const APICreateInvoice = async (
             commentary,
             confirmation,
             guest_count,
+            // success_url: `https://dt-mini-app.local/dm_front/events/payment`,
+            success_url: `${CLIENT_URL}/events/payment`,
         },
         {
             headers: {
@@ -74,7 +76,7 @@ interface IValidatePayment {
     paid: boolean;
 }
 
-export const APIValidatePayment = async (id: number, token: string) => {
+export const APIValidatePayment = async (id: string, token: string) => {
     return await axios.get<IValidatePayment>(
         `${BASE_URL}/events/validate_payment`,
         {

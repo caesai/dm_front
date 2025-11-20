@@ -99,7 +99,8 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
                 certificateId = certificates.find((item) => item.id === selectedCertificateId)?.id || null;
                 certificateIndex = certificates.findIndex((item) => item.id === selectedCertificateId);
             }
-            if (certificateIndex) {
+
+            if (typeof certificateIndex === 'number' && certificateIndex >= 0) {
                 setSelectedOnlineOptionIndex(certificateIndex);
                 setCertificateId(certificateId);
             }

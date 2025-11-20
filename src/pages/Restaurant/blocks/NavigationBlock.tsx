@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import css from '@/pages/Restaurant/Restaurant.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
@@ -6,7 +7,6 @@ import { Share } from '@/components/Icons/Share.tsx';
 import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
-import { useEffect, useState } from 'react';
 import { BASE_BOT } from '@/api/base.ts';
 import { useAtom } from 'jotai/index';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
@@ -110,11 +110,10 @@ export const NavigationBlock: React.FC<INavigationBlockProps> =
                 {headerScrolled ? (
                     <RestaurantNavigation
                         isLoading={events == null && banquets == null}
+                        isBanquets={banquets?.banquet_options?.length > 0}
                         isShow={
                             tg_id &&
-                            mockEventsUsersList.includes(tg_id) &&
-                            banquets &&
-                            banquets?.banquet_options.length > 0
+                            mockEventsUsersList.includes(tg_id)
                         }
                         isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
                     />

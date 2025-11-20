@@ -43,8 +43,8 @@ import { APIGetAvailableEventTimeSlots } from '@/api/events.ts';
 import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
-import { DEV_MODE } from '@/api/base.ts';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
+import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -195,6 +195,8 @@ export const BookingFreeEventPage: FC = () => {
         }
     };
 
+    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+
     return (
         <Page back={true}>
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount} botError={botError}/>
@@ -276,7 +278,7 @@ export const BookingFreeEventPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    {DEV_MODE && <CertificatesSelector setCertificateId={setCertificateId} />}
+                    {tg_id && mockEventsUsersList.includes(tg_id) && <CertificatesSelector setCertificateId={setCertificateId} />}
                     <BookingWish
                         guestCount={guestCount}
                         childrenCount={childrenCount}

@@ -24,6 +24,26 @@ jest.mock('@telegram-apps/sdk-react', () => ({
 }));
 
 describe('Events API Test', () => {
+    beforeEach(() => {
+        // Ensure the window.Telegram object and its properties exist
+        Object.defineProperty(window, 'Telegram', {
+            configurable: true,
+            value: {
+                WebApp: {
+                    initDataUnsafe: {
+                        user: {
+                            id: 'random-id',
+                            first_name: 'Test',
+                            last_name: 'User',
+                            username: 'testuser',
+                        },
+                    },
+                },
+            },
+            writable: true,
+        });
+    });
+
     //TODO: test APIGetEvents.
     test('APIGetEvents', async () => {
         //TODO:

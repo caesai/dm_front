@@ -19,66 +19,107 @@ interface AboutBlockProps {
     avg_cheque: string;
 }
 
+/**
+ * Компонент блока информации о ресторане
+ */
 export const AboutBlock: React.FC<AboutBlockProps> = ({
-    about_text,
-    workTime,
-    about_dishes,
-    about_kitchen,
-    about_features,
-    avg_cheque,
-}) => {
-    const [hideAbout, setHideAbout] = useState(true);
-    const [hideWorkHours, setHideWorkHours] = useState(true);
-    const toggleAbout = () => {
-        setHideAbout((prev) => !prev);
+                                                          about_text,
+                                                          workTime,
+                                                          about_dishes,
+                                                          about_kitchen,
+                                                          about_features,
+                                                          avg_cheque,
+                                                      }) => {
+    const [isAboutCollapsed, setIsAboutCollapsed] = useState(true);
+    const [isWorkHoursCollapsed, setIsWorkHoursCollapsed] = useState(true);
+
+    const toggleAbout = () => setIsAboutCollapsed(prev => !prev);
+    const toggleWorkHours = () => setIsWorkHoursCollapsed(prev => !prev);
+
+    const getKitchenInfo = () => [about_kitchen, about_dishes].filter(Boolean).join(', ');
+
+    const renderWorkHours = () => {
+        if (!workTime?.length) return null;
+
+        return (
+            <UnmountClosed isOpened={!isWorkHoursCollapsed} className={css.collapse}>
+                <div className={css.workHours}>
+                    {workTime.map((schedule) => (
+                        <span key={`weekday-${schedule.weekday}`} className={css.text}>
+                            {schedule.weekday}: {schedule.time_start}-{schedule.time_end}
+                        </span>
+                    ))}
+                </div>
+            </UnmountClosed>
+        );
     };
-    const toggleWorkHours = () => {
-        setHideWorkHours((prev) => !prev);
+
+    const getRestaurantStatusText = () => {
+        if (!workTime) return '';
+        return getRestaurantStatus(workTime, getCurrentWeekdayShort(), getCurrentTimeShort());
     };
+
     return (
         <ContentContainer>
+            {/* Блок "О месте" */}
             <ContentBlock>
                 <HeaderContainer>
-                    <HeaderContent id={'about'} title={'О месте'} />
+                    <HeaderContent id="about" title="О месте" />
                 </HeaderContainer>
                 <div className={css.aboutContainer}>
-                    <span className={classNames(css.aboutText, hideAbout ? css.trimLines : null)}>{about_text}</span>
-                    <div className={css.trimLinesButton} onClick={toggleAbout}>
-                        <span className={css.text}>{hideAbout ? 'Читать больше' : 'Скрыть'}</span>
+                    <span
+                        className={classNames(
+                            css.aboutText,
+                            isAboutCollapsed && css.trimLines
+                        )}
+                    >
+                        {about_text}
+                    </span>
+                    <div
+                        className={css.trimLinesButton}
+                        onClick={toggleAbout}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && toggleAbout()}
+                    >
+                        <span className={css.text}>
+                            {isAboutCollapsed ? 'Читать больше' : 'Скрыть'}
+                        </span>
                     </div>
                 </div>
             </ContentBlock>
+
+            {/* Блок графика работы */}
             <ContentBlock>
                 <div className={css.infoBlock}>
                     <div className={css.top}>
                         <span className={css.title}>
-                            {workTime
-                                ? getRestaurantStatus(workTime, getCurrentWeekdayShort(), getCurrentTimeShort())
-                                : ''}
+                            {getRestaurantStatusText()}
                         </span>
-                        <div className={css.right} onClick={toggleWorkHours}>
+                        <div
+                            className={css.right}
+                            onClick={toggleWorkHours}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => e.key === 'Enter' && toggleWorkHours()}
+                        >
                             <span className={css.expandButton}>График</span>
                             <div
-                                className={classNames(css.right, css.opened, {
-                                    [css.closed]: hideWorkHours,
-                                })}
+                                className={classNames(
+                                    css.right,
+                                    css.opened,
+                                    { [css.closed]: isWorkHoursCollapsed }
+                                )}
                             >
-                                <DownArrow size={20} color={'var(--grey)'} />
+                                <DownArrow size={20} color="var(--grey)" />
                             </div>
                         </div>
                     </div>
-                    <UnmountClosed isOpened={!hideWorkHours} className={css.collapse}>
-                        <div className={css.workHours}>
-                            {workTime &&
-                                workTime.map((r) => (
-                                    <span key={`weekday-${r.weekday}`} className={css.text}>
-                                        {r.weekday}: {r.time_start}-{r.time_end}
-                                    </span>
-                                ))}
-                        </div>
-                    </UnmountClosed>
+                    {renderWorkHours()}
                 </div>
             </ContentBlock>
+
+            {/* Блок деталей */}
             <ContentBlock>
                 <div className={css.infoBlock}>
                     <div className={css.top}>
@@ -87,9 +128,7 @@ export const AboutBlock: React.FC<AboutBlockProps> = ({
                     <div className={css.infoBlock}>
                         <div className={css.textRow}>
                             <span className={css.title}>Кухня:</span>
-                            <span className={css.value}>
-                                {about_kitchen}, {about_dishes}
-                            </span>
+                            <span className={css.value}>{getKitchenInfo()}</span>
                         </div>
                         <div className={css.textRow}>
                             <span className={css.title}>Особенности:</span>

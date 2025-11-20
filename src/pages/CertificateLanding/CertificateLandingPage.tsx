@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import moment from 'moment';
@@ -33,14 +33,32 @@ const CertificateLandingPage: React.FC = () => {
     useEffect(() => {
         if (auth?.access_token) {
             if (id) {
-                APIGetCertificateById(auth.access_token,  id)
-                    .then(response => setCertificate(response.data));
+                APIGetCertificateById(auth.access_token, id)
+                    .then(response => setCertificate(response.data))
+                    .catch(() => {
+                        setToastShow(true);
+                        setToastMessage('Не удалось загрузить сертификат. Попробуйте еще раз.');
+                        setTimeout(() => {
+                            setToastShow(false);
+                            setToastMessage(null);
+                            navigate('/certificates/1');
+                        }, 6000);
+                    });
             }
         }
     }, []);
 
+    const isCertificateDisabled = useCallback(() => {
+        if (!certificate) return true;
+        return !((certificate.status === 'paid' || certificate.status === 'shared') && moment() < moment(certificate.expired_at));
+    }, [certificate]);
+
     useEffect(() => {
         if (!user || !certificate) return;
+        if (isCertificateDisabled()) {
+            setLoading(false);
+            return;
+        }
         if (user?.complete_onboarding) {
             if (!certificate?.shared_at) {
                 if (certificate?.customer_id === user.id) {
@@ -94,7 +112,7 @@ const CertificateLandingPage: React.FC = () => {
                     setTimeout(() => {
                         setToastShow(false);
                         setToastMessage(null);
-                    }, 3000);
+                    }, 6000);
                 });
         }
     };
@@ -113,7 +131,10 @@ const CertificateLandingPage: React.FC = () => {
 
     if (loading) {
         return (
-                <div className={css.loader}><Loader /></div>
+            <div className={css.loader}>
+                <Toast message={toastMessage} showClose={toastShow} />
+                <Loader />
+            </div>
         );
     }
 
@@ -132,9 +153,13 @@ const CertificateLandingPage: React.FC = () => {
                 <div className={css.content}>
                     <div className={css.header}>
                         <DTHospitalityIcon />
-                        <h1>
-                            Подарочный сертификат <br /> в любой ресторан Dreamteam
-                        </h1>
+                        {isCertificateDisabled() ? (
+                            <h1>Данный подарочный сертификат использован, либо истек срок действия</h1>
+                        ) : (
+                            <h1>
+                                Подарочный сертификат <br /> в любой ресторан Dreamteam
+                            </h1>
+                        )}
                         <div onClick={goHome} className={css.close}>
                             <RoundedButton
                                 icon={<CrossIcon size={44} />}
@@ -198,7 +223,7 @@ const CertificateLandingPage: React.FC = () => {
                             </div>
                         </AccordionComponent>
                     </div>
-                    {certificate?.status !== 'used' && user?.complete_onboarding && (
+                    {user?.complete_onboarding && !isCertificateDisabled() && (
                         <div className={css.button}>
                             <UniversalButton width={'full'} title={'Выбрать ресторан'} action={goToBooking} />
                         </div>
