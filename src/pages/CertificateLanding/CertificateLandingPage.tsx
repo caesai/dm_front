@@ -86,7 +86,7 @@ const CertificateLandingPage: React.FC = () => {
      *
      * @returns {void}
      */
-    const acceptCertificate = useCallback(() => () => {
+    const acceptCertificate = useCallback(() => {
         if (auth?.access_token && certificate && id) {
             APIPostCertificateClaim(
                 String(auth?.access_token),
@@ -141,7 +141,7 @@ const CertificateLandingPage: React.FC = () => {
     const isCertificateDisabled = useCallback(() => {
         if (!certificate) return true;
         return !((certificate.status === 'paid' || certificate.status === 'shared') && !isCertificateExpired());
-    }, [certificate]);
+    }, [certificate, isCertificateExpired]);
     /**
      * Хук эффекта, который управляет различной логикой, связанной с сертификатом,
      * в зависимости от статуса пользователя и состояния сертификата.
