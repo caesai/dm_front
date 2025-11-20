@@ -77,7 +77,7 @@ export const CertificatesPaymentPage: React.FC = () => {
                         forwardRef={certificateRef}
                     />
                     {!isPaid && (
-                        <h3 className={css.page_title}>Сертификат появится в личном кабинете после подтверждения
+                        <h3 className={css.success_payment}>Сертификат появится в личном кабинете после подтверждения
                             оплаты.</h3>
                     )}
                     <div
