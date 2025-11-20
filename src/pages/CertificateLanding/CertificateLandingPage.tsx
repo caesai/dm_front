@@ -318,11 +318,10 @@ const CertificateLandingPage: React.FC = () => {
                             </div>
                         </div>
                     </AccordionComponent>
-                    <AccordionComponent title={'Доступно в ресторанах'} style={{ marginTop: '24px' }}>
-                        <div className={css.restaurantsList}>
-                            <RestaurantsList />
-                        </div>
-                    </AccordionComponent>
+                    <div className={css.restaurantsList}>
+                        <span>Доступно в ресторанах</span>
+                        <RestaurantsList />
+                    </div>
                     {!isCertificateDisabled() && (
                         <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />
                     )}
