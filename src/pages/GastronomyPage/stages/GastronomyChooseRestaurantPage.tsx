@@ -93,10 +93,11 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
     }, [currentRestaurant]);
 
     useEffect(() => {
-        if (location.state.restaurant) {
+        const restaurant = location.state.restaurant;
+        if (restaurant) {
             setCurrentRestaurant(() => ({
-                value: String(location.state.restaurant.id),
-                ...location.state.restaurant
+                value: String(restaurant.id),
+                ...restaurant
             }))
         }
     }, [location.state]);
