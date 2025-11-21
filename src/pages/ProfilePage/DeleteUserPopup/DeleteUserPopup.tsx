@@ -3,12 +3,11 @@ import styled from 'styled-components';
 import { FC, useEffect, useState } from 'react';
 import css from './DeleteUserPopup.module.css';
 import classNames from 'classnames';
-// import './FeedbackPopup.css';
 import { useAtom } from 'jotai';
 import {authAtom, userAtom} from '@/atoms/userAtom.ts';
-import {Toast} from "@/components/Toast/Toast.tsx";
 import {APIDeleteUser} from "@/api/user.api.ts";
 import {useNavigate} from "react-router-dom";
+import useToastState from '@/hooks/useToastState.ts';
 
 
 const StyledPopup = styled(Popup)`
@@ -47,8 +46,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
     const [isClosing, setIsClosing] = useState(false);
     const [authInfo, setAuth] = useAtom(authAtom);
     const [, setUser] = useAtom(userAtom);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastShow, setToastShow] = useState<boolean>(false);
+    const { showToast } = useToastState();
 
     useEffect(() => {
         if (isClosing) {
@@ -113,10 +111,7 @@ export const DeleteUserPopup: FC<Props> = (props) => {
             }
         }).catch((err) => {
             if (err.response) {
-                // alert(err.response.data);
-                setToastMessage('Возникла ошибка: ' + err.response.data.message);
-                setToastShow(true);
-                setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 6000);
+                showToast('Возникла ошибка: ' + err.response.data.message);
             }
         });
     }
@@ -154,7 +149,6 @@ export const DeleteUserPopup: FC<Props> = (props) => {
                     Отмена
                 </button>
             </div>
-            <Toast message={toastMessage} showClose={toastShow} />
         </StyledPopup>
     );
 };

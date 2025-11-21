@@ -13,8 +13,6 @@ import { BASE_BOT } from '@/api/base.ts';
 import { IEventBooking, IEventInRestaurant } from '@/types/events.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
-// import {Toast} from "@/components/Toast/Toast.tsx";
-//
 // export interface IEventBooking {
 //     event?: IEvent;
 //     restaurant?: IEventRestaurant;
