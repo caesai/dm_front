@@ -14,7 +14,7 @@ import { FC, useState } from 'react';
 import {IRestaurant} from '@/types/restaurant.ts';
 import {
     getCurrentTimeShort,
-    getCurrentWeekdayShort,
+    getCurrentWeekdayShort, getDataFromLocalStorage,
     getRestaurantStatus,
     setDataToLocalStorage,
 } from '@/utils.ts';
@@ -23,8 +23,8 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import {Toast} from "@/components/Toast/Toast.tsx";
 import { APIPostNewRestaurant } from '@/api/restaurants.ts';
+import useToastState from '@/hooks/useToastState.ts';
 
 interface IProps {
     restaurant: IRestaurant;
@@ -38,10 +38,9 @@ export const RestaurantPreview: FC<IProps> = ({restaurant, clickable}) => {
     const [changeRes, setChangeRes] = useState(false)
     const [restaurants] = useAtom(restaurantsListAtom);
     const [selectedCity, setSelectedCity] = useState<number | null>(null);
-    // const [auth] = useAtom(authAtom);
     const [auth] = useAtom(authAtom);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastShow, setToastShow] = useState<boolean>(false);
+    const { showToast } = useToastState();
+    const want_first = getDataFromLocalStorage('want_first');
 
     const wantToBeFirst = () => {
         if (!auth?.access_token) {
@@ -51,20 +50,13 @@ export const RestaurantPreview: FC<IProps> = ({restaurant, clickable}) => {
 
         APIPostNewRestaurant(auth?.access_token)
             .then(() => {
-                setToastShow(true);
-                setToastMessage('Спасибо. Мы сообщим вам, когда ресторан откроется');
+                showToast('Спасибо. Мы сообщим вам, когда ресторан откроется');
                 setDataToLocalStorage('want_first', { done: true });
             })
             .catch((err) => {
                 if (err.response) {
-                    setToastMessage('Возникла ошибка: ' + err.response.data.message);
+                    showToast('Возникла ошибка: ' + err.response.data.message);
                 }
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    setToastShow(false);
-                    setToastMessage(null);
-                }, 6000);
             });
     }
 
@@ -194,7 +186,7 @@ export const RestaurantPreview: FC<IProps> = ({restaurant, clickable}) => {
                     </div>
                 ) : (
                     <div style={{ display: 'flex'}}>
-                        {toastShow ? (
+                        {want_first ? (
                             <div className={css.success_animation}>
                                 <svg className={css.checkmark} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                                     <circle className={css.checkmark__circle} cx="26" cy="26" r="25" fill="none" />
@@ -206,7 +198,6 @@ export const RestaurantPreview: FC<IProps> = ({restaurant, clickable}) => {
                     </div>
                 )}
             </div>
-            <Toast message={toastMessage} showClose={toastShow} />
         </Link>
     );
 };

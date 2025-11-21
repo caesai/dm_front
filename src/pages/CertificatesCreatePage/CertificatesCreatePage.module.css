@@ -151,3 +151,15 @@
     font-weight: 800;
     font-size: 14px;
 }
+
+.restaurantList {
+    margin-top: 14px;
+}
+
+.success_payment {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    color: var(--black);
+    text-align: center;
+}

@@ -11,13 +11,13 @@ import { DTHospitalityIcon } from '@/components/Icons/DTHospitalityIcon.tsx';
 import AccordionComponent from '@/components/Accordion/AccordionComponent.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
-import { Toast } from '@/components/Toast/Toast.tsx';
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.tsx';
+import useToastState from '@/hooks/useToastState.ts';
 
 const CertificateLandingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -26,8 +26,7 @@ const CertificateLandingPage: React.FC = () => {
     const [user] = useAtom(userAtom);
     const [, setCertificates] = useAtom(certificatesListAtom);
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
-    const [toastShow, setToastShow] = useState<boolean>(false);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const { showToast } = useToastState();
     const [loading, setLoading] = useState<boolean>(true);
     const { isShowing, toggle, setIsShowing } = useModal();
 
@@ -58,13 +57,10 @@ const CertificateLandingPage: React.FC = () => {
                 APIGetCertificateById(auth.access_token, id)
                     .then(response => setCertificate(response.data))
                     .catch(() => {
-                        setToastShow(true);
-                        setToastMessage('Не удалось загрузить сертификат. Попробуйте еще раз.');
+                        showToast('Не удалось загрузить сертификат. Попробуйте еще раз.');
                         setTimeout(() => {
-                            setToastShow(false);
-                            setToastMessage(null);
                             navigate('/certificates/1');
-                        }, 6000);
+                        }, 7000);
                     });
             }
         }
@@ -96,20 +92,13 @@ const CertificateLandingPage: React.FC = () => {
                 certificate.recipient_name,
             )
                 .then(() => {
-                    // Updating Certificates List After Accepting New Certificate
+                    // Обновляем список сертификатов в приложении
                     APIGetCertificates(auth?.access_token, Number(user?.id))
                         .then(response => setCertificates(response.data));
                 })
                 .catch(err => {
                     console.log(err);
-                    setToastShow(true);
-                    setToastMessage('Произошла ошибка. Попробуйте перезагрузить страницу');
-                })
-                .finally(() => {
-                    setTimeout(() => {
-                        setToastShow(false);
-                        setToastMessage(null);
-                    }, 6000);
+                    showToast('Произошла ошибка. Попробуйте перезагрузить страницу');
                 });
         }
     }, [
@@ -120,8 +109,7 @@ const CertificateLandingPage: React.FC = () => {
         APIPostCertificateClaim,
         APIGetCertificates,
         setCertificates,
-        setToastShow,
-        setToastMessage
+        showToast,
     ]);
 
     const isCertificateUsed = useCallback(() => {
@@ -219,7 +207,6 @@ const CertificateLandingPage: React.FC = () => {
     if (loading) {
         return (
             <div className={css.loader}>
-                <Toast message={toastMessage} showClose={toastShow} />
                 <Loader />
             </div>
         );
@@ -320,14 +307,13 @@ const CertificateLandingPage: React.FC = () => {
                     </AccordionComponent>
                     <div className={css.restaurantsList}>
                         <span className={css.pageTitle}>Доступно в ресторанах</span>
-                        <RestaurantsList />
+                        <RestaurantsList titleStyle={{ fontSize: '14px', fontWeight: '600' }} />
                     </div>
                     {!isCertificateDisabled() && (
                         <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />
                     )}
                 </div>
             </section>
-            <Toast message={toastMessage} showClose={toastShow} />
         </Page>
     );
 };

@@ -11,12 +11,12 @@ import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { APIUpdateUserInfo} from '@/api/user.api.ts';
 import { mainButton } from '@telegram-apps/sdk-react';
-import { Toast } from "@/components/Toast/Toast.tsx";
 import { DeleteUserPopup } from "@/pages/ProfilePage/DeleteUserPopup/DeleteUserPopup.tsx";
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
 import { findOtherAllergies } from '@/utils.ts';
 import { IUserUpdate } from '@/types/user.types.ts';
+import useToastState from '@/hooks/useToastState.ts';
 
 export const UserProfilePage: React.FC = () => {
     const navigate = useNavigate();
@@ -24,8 +24,7 @@ export const UserProfilePage: React.FC = () => {
 
     const [user, setUser] = useAtom(userAtom);
     const [authInfo] = useAtom(authAtom);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastShow, setToastShow] = useState<boolean>(false);
+    const { showToast } = useToastState();
     const [deletePopup, setDeletePopup] = useState(false);
 
     const [userInfo, setUserInfo] = useState<IUserUpdate>({
@@ -101,15 +100,11 @@ export const UserProfilePage: React.FC = () => {
             .then((res) => {
                 setUser(res.data);
                 setMainButtonLoader(false);
-                setToastMessage('Изменения сохранены');
-                setToastShow(true);
-                setTimeout(function(){ setToastShow(false); setToastMessage(null);}, 6000);
+                showToast('Изменения сохранены');
             })
             .catch((err) => {
                 if (err.response) {
-                    setToastMessage('Возникла ошибка: ' + err.response.data)
-                    setToastShow(true);
-                    setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 6000);
+                    showToast('Возникла ошибка: ' + err.response.data)
                 }
             });
     };
@@ -240,7 +235,6 @@ export const UserProfilePage: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <Toast message={toastMessage} showClose={toastShow} />
         </Page>
     );
 };

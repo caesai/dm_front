@@ -1,24 +1,17 @@
 import React from 'react';
-import css from './Toast.module.css';
 import classNames from "classnames";
+import { useAtom } from 'jotai';
+import { toastAtom } from '@/atoms/toastAtom.ts';
+import css from '@/components/Toast/Toast.module.css';
 
-interface IToastProps {
-    message: string | null;
-    showClose: boolean;
-}
-
-export const Toast: React.FC<IToastProps> = (p ) => {
-    if (!p.message) {
-        return <></>;
+export const Toast: React.FC = ( ) => {
+    const [toastState] = useAtom(toastAtom);
+    if (!toastState.isVisible) {
+        return null;
     }
     return (
-        <div
-            id="snackbar"
-             className={classNames(
-                css.snackbar,
-                p.showClose ? css.show : null
-            )}
-            data-testid={'toast-message'}
-        >{p.message}</div>
+        <div id="snackbar" className={classNames(css.snackbar, css.show )} data-testid={'toast-message'}>
+            {toastState.message}
+        </div>
     )
 }
