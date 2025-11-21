@@ -6,13 +6,12 @@ import { useMemo, useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
-import { Toast } from '@/components/Toast/Toast.tsx';
 import { APIPostSuperEventCreateApplication } from '@/api/events.ts';
+import useToastState from '@/hooks/useToastState.ts';
 
 export const EventSuperApplyOutlet = () => {
     const navigate = useNavigate();
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastShow, setToastShow] = useState<boolean>(false);
+    const { showToast } = useToastState();
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [userInfo, setUserInfo] = useState({
@@ -56,9 +55,7 @@ export const EventSuperApplyOutlet = () => {
                     setLoading(false);
                 })
         } else {
-            setToastMessage('Необходимо заполнить все поля');
-            setToastShow(true);
-            setTimeout(function(){ setToastShow(false); setToastMessage(null); }, 6000);
+            showToast('Необходимо заполнить все поля');
         }
     };
 
@@ -161,7 +158,6 @@ export const EventSuperApplyOutlet = () => {
                     />
                 </div>
             </div>
-            <Toast message={toastMessage} showClose={toastShow} />
         </div>
     );
 };
