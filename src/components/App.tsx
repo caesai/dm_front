@@ -67,6 +67,7 @@ import { GastronomyChooseDishesPage } from '@/pages/GastronomyPage/stages/Gastro
 import { GastonomyDishDetailsPage } from '@/pages/GastronomyPage/stages/GastonomyDishDetailsPage.tsx';
 import { GastronomyBasketPage } from '@/pages/GastronomyPage/stages/GastronomyBasketPage.tsx';
 import { EventPaymentPage } from '@/pages/EventsPage/EventPaymentPage.tsx';
+import { Toast } from '@/components/Toast/Toast.tsx';
 
 const AppRouter = () => {
     const [user] = useAtom(userAtom);
@@ -120,6 +121,7 @@ const AppRouter = () => {
             <ScrollToTop />
             <BannerPopup />
             <Redirecter />
+            <Toast />
             {
                 !loadingComplete ? (
                     <AppLoadingScreen />

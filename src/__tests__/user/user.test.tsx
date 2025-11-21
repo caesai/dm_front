@@ -2,8 +2,13 @@ import { act, screen, render } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { UserProfilePage } from '@/pages/UserProfilePage/UserProfilePage.tsx';
 import { APIUpdateUserInfo } from '@/api/user.api.ts';
-import { useAtom } from 'jotai';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
+import { Toast } from '@/components/Toast/Toast.tsx';
+import { Provider, WritableAtom } from 'jotai/index';
+import React, { PropsWithChildren } from 'react';
+import { useHydrateAtoms } from 'jotai/utils';
+// import { toastAtom } from '@/atoms/toastAtom.ts';
+import { authAtom } from '@/atoms/userAtom.ts';
 
 // Mocking ENV Variables
 jest.mock('@/api/base.ts', () => ({
@@ -20,11 +25,20 @@ jest.mock('react-router-dom', () => ({
     useLocation: jest.fn(),
 }));
 
-// Mock the entire Jotai module
-jest.mock('jotai', () => ({
-    useAtom: jest.fn(),
-    atom: jest.fn(),
-}));
+export type AnyWritableAtom = WritableAtom<unknown, never[], unknown>
+interface InitialProps extends PropsWithChildren {
+    initialValues: Array<readonly [AnyWritableAtom, unknown]>
+}
+const HydrateAtoms: React.FC<InitialProps> = ({ initialValues, children }) => {
+    useHydrateAtoms(initialValues as Array<readonly [AnyWritableAtom, never]>)
+    return children
+}
+
+const TestProvider: React.FC<InitialProps> = ({ initialValues, children }) => (
+    <Provider>
+        <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </Provider>
+)
 
 let mainButtonClickHandler: () => void;
 const removeListenerMock = jest.fn();
@@ -61,21 +75,18 @@ describe('User', () => {
         (useLocation as jest.Mock).mockClear();
     });
 
-    test('should show an successful toast on API error', async () => {
+    test('должен показать тост что изменения сохранены', async () => {
         // Arrange
         const mockAuthInfo = {
             access_token: 'fake-access-token',
             // ... other properties
         };
-        const mockSetAuthInfo = jest.fn();
         (useLocation as jest.Mock).mockReturnValue({
             state: {
                 allergies: null
             },
         });
 
-        // Configure the `useAtom` mock to return a tuple with your mock data
-        (useAtom as jest.Mock).mockReturnValue([mockAuthInfo, mockSetAuthInfo]);
         (APIUpdateUserInfo as jest.Mock).mockResolvedValue({ data: mockUserData });
 
         render(
@@ -83,7 +94,10 @@ describe('User', () => {
                 v7_startTransition: true,
                 v7_relativeSplatPath: true,
             }}>
-                <UserProfilePage />
+                <TestProvider initialValues={[[authAtom, mockAuthInfo]]}>
+                    <Toast />
+                    <UserProfilePage />
+                </TestProvider>
             </MemoryRouter>,
         );
 

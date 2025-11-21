@@ -20,9 +20,7 @@ export const shareCertificate = async (certificate: ICertificate, certificateRef
     const message = `${certificate.recipient_name}, вы получили подарочный сертификат. Перейдите по ссылке ${decodeURI(url)}, чтобы посмотреть его и воспользоваться`;
 
     try {
-        // const response = await fetch(certificateImage);
-        const element = certificateRef;
-        const canvas = await html2canvas(element as unknown as HTMLElement);
+        const canvas = await html2canvas(certificateRef as unknown as HTMLElement);
         const imageDataURL = canvas.toDataURL("image/png");
         const byteString = atob(imageDataURL.split(',')[1]);
         const mimeString = imageDataURL.split(',')[0].split(':')[1].split(';')[0];
@@ -32,12 +30,8 @@ export const shareCertificate = async (certificate: ICertificate, certificateRef
             ia[i] = byteString.charCodeAt(i);
         }
         const imageBlob = new Blob([ab], { type: mimeString });
-
-        // *** The solution: Convert the Blob to a File ***
         const fileName = 'certificate_screenshot.png';
         const imageFile = new File([imageBlob], fileName, { type: mimeString });
-        // const blob = await response.blob();
-        // const sharedFile = new File([blob], 'shared_image.png', { type: 'image/png' });
 
         const shareDataWithFiles: ShareData = {
             title: message, // Some platforms might use this as a caption
@@ -75,12 +69,14 @@ export const CertificatesListPage: React.FC = () => {
     const [certificates, setCertificates] = useAtom(certificatesListAtom);
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
+
     useEffect(() => {
         if (auth?.access_token) {
             APIGetCertificates(auth?.access_token, Number(user?.id))
                 .then(response => setCertificates(response.data));
         }
     }, [auth?.access_token, user?.id, setCertificates]);
+
     return (
         <div className={css.content}>
             {certificates.length > 0 ? (
