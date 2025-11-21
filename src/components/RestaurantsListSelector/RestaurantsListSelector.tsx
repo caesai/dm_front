@@ -60,7 +60,7 @@ export const RestaurantsListSelector: FC<RestaurantsListSelectorProps> = (
 
     const restaurants = useMemo(() => {
         return filteredRestaurants ? filteredRestaurants : allRestaurants
-    }, [filteredRestaurants])
+    }, [filteredRestaurants, allRestaurants])
 
     // Memoize the mapping process to create the Picker-compatible list
     const restaurantList: PickerValueObj[] = useMemo(() =>

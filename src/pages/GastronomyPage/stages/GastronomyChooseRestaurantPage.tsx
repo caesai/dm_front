@@ -93,7 +93,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
     }, [currentRestaurant]);
 
     useEffect(() => {
-        const restaurant = location.state.restaurant;
+        const restaurant = location.state?.restaurant;
         if (restaurant) {
             setCurrentRestaurant(() => ({
                 value: String(restaurant.id),
@@ -143,7 +143,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                 <BottomButtonWrapper
                     content={'Перейти к списку блюд'}
                     onClick={isDisabledButton ? undefined : () => navigate('/gastronomy/4')}
-                    isDisabled={true}
+                    isDisabled={isDisabledButton}
                     theme={isDisabledButton ? 'primary' : 'red'}
                 />
             </div>
