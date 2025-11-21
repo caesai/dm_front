@@ -18,12 +18,16 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 
+interface IGastronomyChooseRestaurantPageProps {
+    restaurant?: IRestaurant;
+}
+
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
     value: 'unset',
 }
 
-export const GastronomyChooseRestaurantPage: React.FC = () => {
+export const GastronomyChooseRestaurantPage: React.FC<IGastronomyChooseRestaurantPageProps> = ({ restaurant}) => {
     const [cityListA] = useAtom(cityListAtom);
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
@@ -31,6 +35,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
 
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
+    const [isDisabledButton, setDisabledButton] = useState(true);
 
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v)),
@@ -43,7 +48,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         },
     );
 
-    const [restaurant, setRestaurant] = useState<PickerValueObj>(initialRestaurant);
+    const [currentRestaurant, setRestaurant] = useState<PickerValueObj>(initialRestaurant);
 
     const navigate = useNavigate();
 
@@ -86,12 +91,25 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         );
     }, [cityListA]);
 
+    useEffect(() => {
+        currentRestaurant.value === 'unset' ? setDisabledButton(true) : setDisabledButton(false);
+    }, [currentRestaurant]);
+
+    useEffect(() => {
+        if (restaurant) {
+            setRestaurant(() => ({
+                value: 'unset',
+                ...restaurant
+            }))
+        }
+    }, [currentRestaurant]);
+
     return (
         <>
             <RestaurantsListSelector
                 isOpen={restaurantListSelectorIsOpen}
                 setOpen={setRestaurantListSelectorIsOpen}
-                restaurant={restaurant}
+                restaurant={currentRestaurant}
                 selectRestaurant={setRestaurant}
                 filteredRestaurants={restaurantsList}
             />
@@ -117,7 +135,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                             titleStyle={{ fontWeight: '600' }}
                         />
                         <DropDownSelect
-                            title={restaurant.value !== 'unset' ? `${restaurant.title}, ${restaurant.address}` : 'Выберите ресторан'}
+                            title={currentRestaurant.value !== 'unset' ? `${currentRestaurant.title}, ${currentRestaurant.address}` : 'Выберите ресторан'}
                             isValid={true}
                             icon={<KitchenIcon size={24}/>}
                             onClick={() => setRestaurantListSelectorIsOpen(true)}
@@ -126,7 +144,9 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                 </ContentBlock>
                 <BottomButtonWrapper
                     content={'Перейти к списку блюд'}
-                    onClick={() => navigate('/gastronomy/4')}
+                    onClick={isDisabledButton ? undefined : () => navigate('/gastronomy/4')}
+                    isDisabled={true}
+                    theme={isDisabledButton ? 'primary' : 'red'}
                 />
             </div>
         </>

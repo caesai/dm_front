@@ -59,7 +59,6 @@ export const RestaurantsListSelector: FC<RestaurantsListSelectorProps> = (
     const [allRestaurants] = useAtom(restaurantsListAtom);
 
     const restaurants = useMemo(() => {
-        console.log(filteredRestaurants, filteredRestaurants.length)
         return filteredRestaurants ? filteredRestaurants : allRestaurants
     }, [filteredRestaurants])
 
