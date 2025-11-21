@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css'
 import GastronomyImg from '/img/gastronomy-choose.png'
@@ -18,16 +18,12 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 
-interface IGastronomyChooseRestaurantPageProps {
-    restaurant?: IRestaurant;
-}
-
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
     value: 'unset',
 }
 
-export const GastronomyChooseRestaurantPage: React.FC<IGastronomyChooseRestaurantPageProps> = ({ restaurant}) => {
+export const GastronomyChooseRestaurantPage: React.FC = () => {
     const [cityListA] = useAtom(cityListAtom);
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
@@ -48,9 +44,10 @@ export const GastronomyChooseRestaurantPage: React.FC<IGastronomyChooseRestauran
         },
     );
 
-    const [currentRestaurant, setRestaurant] = useState<PickerValueObj>(initialRestaurant);
+    const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         let result: IRestaurant[] = [];
@@ -74,7 +71,7 @@ export const GastronomyChooseRestaurantPage: React.FC<IGastronomyChooseRestauran
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
         setCurrentCityA(city.id);
-        setRestaurant(initialRestaurant)
+        setCurrentRestaurant(initialRestaurant)
     };
 
     const cityOptions = useMemo(
@@ -96,13 +93,13 @@ export const GastronomyChooseRestaurantPage: React.FC<IGastronomyChooseRestauran
     }, [currentRestaurant]);
 
     useEffect(() => {
-        if (restaurant) {
-            setRestaurant(() => ({
-                value: 'unset',
-                ...restaurant
+        if (location.state.restaurant) {
+            setCurrentRestaurant(() => ({
+                value: String(location.state.restaurant.id),
+                ...location.state.restaurant
             }))
         }
-    }, [currentRestaurant]);
+    }, [location.state]);
 
     return (
         <>
@@ -110,7 +107,7 @@ export const GastronomyChooseRestaurantPage: React.FC<IGastronomyChooseRestauran
                 isOpen={restaurantListSelectorIsOpen}
                 setOpen={setRestaurantListSelectorIsOpen}
                 restaurant={currentRestaurant}
-                selectRestaurant={setRestaurant}
+                selectRestaurant={setCurrentRestaurant}
                 filteredRestaurants={restaurantsList}
             />
             <div className={css.container}>

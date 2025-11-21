@@ -292,10 +292,11 @@ export const Restaurant = () => {
                     />
                 )}
 
-                {DEV_MODE && (
+                {DEV_MODE && restaurant && (
                     <GastronomyBlock
                         description={nyCookings.description}
                         image={nyCookings.image}
+                        currentRestaurant={restaurant}
                     />
                 )}
 
