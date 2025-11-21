@@ -26,12 +26,16 @@
     display: flex;
     gap: 8px;
     align-items: center;
+    min-width: 0;
 }
 
 .select_text {
     font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .select__arrow {

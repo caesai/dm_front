@@ -9,6 +9,7 @@ import css from '@/components/RestaurantsListSelector/RestaurantsListSelector.mo
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { useAtom } from 'jotai/index';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { IRestaurant } from '@/types/restaurant.ts';
 
 type SetAtom<Args extends unknown[], Result> = <A extends Args>(...args: A) => Result;
 
@@ -17,6 +18,7 @@ interface RestaurantsListSelectorProps {
     setOpen: (x: boolean) => void;
     restaurant: PickerValueObj;
     selectRestaurant: SetAtom<[SetStateAction<PickerValueObj>], void>; // Use the specific type here
+    filteredRestaurants?: IRestaurant[]
 }
 
 const StyledPopup = styled(Popup)`
@@ -49,10 +51,17 @@ export const RestaurantsListSelector: FC<RestaurantsListSelectorProps> = (
         setOpen,
         restaurant,
         selectRestaurant,
+        filteredRestaurants= []
     },
 ) => {
     const onClose = useCallback(() => setOpen(false), [setOpen]);
-    const [restaurants] = useAtom(restaurantsListAtom);
+
+    const [allRestaurants] = useAtom(restaurantsListAtom);
+
+    const restaurants = useMemo(() => {
+        return filteredRestaurants ? filteredRestaurants : allRestaurants
+    }, [filteredRestaurants, allRestaurants])
+
     // Memoize the mapping process to create the Picker-compatible list
     const restaurantList: PickerValueObj[] = useMemo(() =>
         restaurants.map(({ title, address, id }) => ({
