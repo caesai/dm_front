@@ -74,16 +74,6 @@
     font-family: "Mont", sans-serif;
     font-size: 0.75rem;
 
-    > b {
-        text-decoration: underline;
-    }
-}
-
-.conditionsList {
-    display: flex;
-    flex-direction: column;
-    margin-top: 24px;
-
     > ul {
         padding-left: 1rem;
     }
