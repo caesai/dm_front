@@ -48,6 +48,8 @@ export const RestaurantPreview: FC<IProps> = ({restaurant, clickable}) => {
             return;
         }
 
+        if (!clickable) return;
+
         APIPostNewRestaurant(auth?.access_token)
             .then(() => {
                 showToast('Спасибо. Мы сообщим вам, когда ресторан откроется');
@@ -65,7 +67,11 @@ export const RestaurantPreview: FC<IProps> = ({restaurant, clickable}) => {
               to={`/restaurant/${restaurant.id}`}
               onClick={(event) => {
                   event.preventDefault();
-                  if (restaurant.id !== 12 && restaurant.id !== 11 && restaurant.id !== 10 && restaurant.id !== 4 && restaurant.id !== 6 && restaurant.id !== 7 && restaurant.id !== 9) {
+                  if (
+                      restaurant.id !== 12 && restaurant.id !== 11 &&
+                      restaurant.id !== 10 && restaurant.id !== 4 &&
+                      restaurant.id !== 6 && restaurant.id !== 7 &&
+                      restaurant.id !== 9 && clickable) {
                       navigate(`/restaurant/${restaurant.id}`);
                   } else if (restaurant.id == 12) {
                     // nothing
