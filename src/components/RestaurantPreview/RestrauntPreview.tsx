@@ -31,6 +31,8 @@ interface IProps {
     clickable?: boolean;
 }
 
+const RESTRICTED_RESTAURANT_IDS: number[] = [4, 6, 7, 9, 10, 11, 12]
+
 export const RestaurantPreview: FC<IProps> = ({restaurant, clickable}) => {
     const [user] = useAtom(userAtom);
     const navigate = useNavigate();
@@ -47,6 +49,8 @@ export const RestaurantPreview: FC<IProps> = ({restaurant, clickable}) => {
             navigate('/onboarding/5');
             return;
         }
+
+        if (!clickable) return;
 
         APIPostNewRestaurant(auth?.access_token)
             .then(() => {
@@ -65,9 +69,9 @@ export const RestaurantPreview: FC<IProps> = ({restaurant, clickable}) => {
               to={`/restaurant/${restaurant.id}`}
               onClick={(event) => {
                   event.preventDefault();
-                  if (restaurant.id !== 12 && restaurant.id !== 11 && restaurant.id !== 10 && restaurant.id !== 4 && restaurant.id !== 6 && restaurant.id !== 7 && restaurant.id !== 9) {
+                  if (!RESTRICTED_RESTAURANT_IDS.includes(restaurant.id) && clickable) {
                       navigate(`/restaurant/${restaurant.id}`);
-                  } else if (restaurant.id == 12) {
+                  } else if (restaurant.id === 12) {
                     // nothing
                   } else {
                       toggle();
