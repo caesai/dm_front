@@ -73,10 +73,6 @@
     flex-direction: column;
     font-family: "Mont", sans-serif;
     font-size: 0.75rem;
-
-    > b {
-        text-decoration: underline;
-    }
 }
 
 .conditionsList {

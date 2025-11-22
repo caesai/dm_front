@@ -289,7 +289,6 @@ const CertificateLandingPage: React.FC = () => {
                     <AccordionComponent title={'Условия'} style={{ marginTop: '24px' }}>
                         <div className={css.conditions}>
                             <p>Подарочный сертификат действует во всех ...</p>
-                            <b>Подробнее об условиях</b>
                             <div className={css.conditionsList}>
                                 <span>Как воспользоваться сертификатом</span>
                                 <ul>
