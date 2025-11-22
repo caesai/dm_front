@@ -73,12 +73,6 @@
     flex-direction: column;
     font-family: "Mont", sans-serif;
     font-size: 0.75rem;
-}
-
-.conditionsList {
-    display: flex;
-    flex-direction: column;
-    margin-top: 6px;
 
     > ul {
         padding-left: 1rem;
