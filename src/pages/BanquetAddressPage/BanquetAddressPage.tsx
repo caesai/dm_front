@@ -84,7 +84,7 @@ export const BanquetAddressPage: React.FC = () => {
                         <div className={css.address_content}>
                             <h3 className={css.content_title}>Адрес ресторана</h3>
                             <DropDownSelect
-                                title={currentRestaurant.value !== 'unset'? `${currentRestaurant?.title}, ${currentRestaurant.address}` : 'Выберите ресторан'}
+                                title={currentRestaurant.value !== 'unset' ? `${currentRestaurant?.title}, ${currentRestaurant.address}` : 'Выберите ресторан'}
                                 isValid={true}
                                 onClick={() => setRestaurantPopup(true)}
                             />
