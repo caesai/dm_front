@@ -2,24 +2,60 @@ import { Page } from '@/components/Page.tsx';
 import css from './BanquetAddressPage.module.css'
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import BanquetImg from '/img/banquet_img.png';
+import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
+import React, { useEffect, useState } from 'react';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 
-export const BanquetAddressPage = () => {
+const initialRestaurant: PickerValueObj = {
+    title: 'unset',
+    value: 'unset',
+}
+
+export const BanquetAddressPage: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation()
     const { id } = useParams();
+
+    const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
+    const [restaurantPopup, setRestaurantPopup] = useState<boolean>(false);
+
+    const restaurant = location.state?.restaurant;
 
     const goBack = () => {
         navigate(`/restaurant/${id}`);
     };
 
     const goNextPage = () => {
-        navigate(`/banquets/${id}/choose`);
+        navigate(`/banquets/${id}/choose`, {state: {...location.state, currentRestaurant}});
     }
+
+    useEffect(() => {
+        if (location.state.currentRestaurant) {
+            setCurrentRestaurant(() => ({
+                value: String(location.state.currentRestaurant.id),
+                ...location.state.currentRestaurant
+            }))
+        }
+        else if (restaurant) {
+            setCurrentRestaurant(() => ({
+                value: String(restaurant.id),
+                ...restaurant
+            }))
+        }
+    }, [location.state]);
 
     return (
         <Page back={true}>
+            <RestaurantsListSelector
+                isOpen={restaurantPopup}
+                setOpen={setRestaurantPopup}
+                restaurant={currentRestaurant}
+                selectRestaurant={setCurrentRestaurant}
+            />
             <div className={css.page}>
                 <div className={css.pageWrapper}>
                     <div className={css.header}>
@@ -40,6 +76,11 @@ export const BanquetAddressPage = () => {
                         </div>
                         <div className={css.address_content}>
                             <h3 className={css.content_title}>Адрес ресторана</h3>
+                            <DropDownSelect
+                                title={currentRestaurant.value !== 'unset'? `${currentRestaurant?.title}, ${currentRestaurant.address}` : 'Выберите ресторан'}
+                                isValid={true}
+                                onClick={() => setRestaurantPopup(true)}
+                            />
                         </div>
                     </div>
                 </div>
