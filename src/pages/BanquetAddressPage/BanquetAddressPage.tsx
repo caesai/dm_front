@@ -41,7 +41,7 @@ export const BanquetAddressPage: React.FC = () => {
     }, [currentRestaurant]);
 
     useEffect(() => {
-        if (location.state.currentRestaurant) {
+        if (location.state && location.state.currentRestaurant) {
             setCurrentRestaurant(() => ({
                 value: String(location.state.currentRestaurant.id),
                 ...location.state.currentRestaurant
