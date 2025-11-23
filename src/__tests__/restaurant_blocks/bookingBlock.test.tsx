@@ -8,11 +8,15 @@ jest.mock('jotai', () => ({
 }));
 
 jest.mock('swiper/react', () => ({
-    Swiper: ({ children, ...props }: any) => (
-        <div data-testid="swiper" {...props}>
-            {children}
-        </div>
-    ),
+    Swiper: ({ children, ...props }: any) => {
+        const { slidesPerView, spaceBetween, freeMode, modules, ...domProps } = props;
+
+        return (
+            <div data-testid="swiper" {...domProps}>
+                {children}
+            </div>
+        );
+    },
     SwiperSlide: ({ children, ...props }: any) => (
         <div data-testid="swiper-slide" {...props}>
             {children}
