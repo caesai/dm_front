@@ -22,6 +22,7 @@ export const BanquetAddressPage: React.FC = () => {
 
     const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
     const [restaurantPopup, setRestaurantPopup] = useState<boolean>(false);
+    const [isDisabledButton, setDisabledButton] = useState(true);
 
     const restaurant = location.state?.restaurant;
 
@@ -30,8 +31,14 @@ export const BanquetAddressPage: React.FC = () => {
     };
 
     const goNextPage = () => {
-        navigate(`/banquets/${id}/choose`, {state: {...location.state, currentRestaurant}});
+        if (!isDisabledButton) {
+            navigate(`/banquets/${id}/choose`, {state: {...location.state, currentRestaurant}});
+        }
     }
+
+    useEffect(() => {
+        currentRestaurant.value === 'unset' ? setDisabledButton(true) : setDisabledButton(false);
+    }, [currentRestaurant]);
 
     useEffect(() => {
         if (location.state.currentRestaurant) {
@@ -84,7 +91,11 @@ export const BanquetAddressPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <BottomButtonWrapper content={'Продолжить'} onClick={goNextPage} />
+                <BottomButtonWrapper
+                    content={'Продолжить'}
+                    onClick={goNextPage}
+                    theme={isDisabledButton ? 'primary' : 'red'}
+                />
             </div>
         </Page>
     )
