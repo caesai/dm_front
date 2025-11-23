@@ -45,7 +45,7 @@ export const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
      */
     const handleNavigateToBanquet = () => {
         const sortedWorkTime = getSortedWorkTime();
-        navigate(`/banquets/${restaurant_id}/choose`, {
+        navigate(`/banquets/${restaurant_id}/address`, {
             state: {
                 restaurant_title,
                 banquets,
