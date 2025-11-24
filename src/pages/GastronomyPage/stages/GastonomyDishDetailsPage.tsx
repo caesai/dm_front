@@ -10,8 +10,8 @@ export const GastonomyDishDetailsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { res_id } = useParams();
-    const { addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
-
+    const { cart, addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
+    
     const dishFromState = location.state?.dish as IDish;
     const [selectedWeight, setSelectedWeight] = useState(dishFromState?.defaultWeight || '');
 
@@ -30,7 +30,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
     };
 
     const handleDishClick = (dish: IDish) => {
-        navigate(`/gastronomy/${res_id}/dish/${dish.id}`, {
+        navigate(`/gastronomy/${res_id}/dish/${dish.id}`, { 
             state: { dish },
             replace: true
         });
@@ -38,7 +38,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
     };
 
     // Размножаем данные для списка внизу
-    const expandedData: IDish[] = [];
+    const expandedData = [];
     for (let i = 0; i < 10; i++) {
         mockGastronomyListData.forEach((dish) => {
             expandedData.push({

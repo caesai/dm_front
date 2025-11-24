@@ -2,19 +2,29 @@ import React from 'react';
 import classnames from 'classnames';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Page } from '@/components/Page.tsx';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
 
 export const GastronomyPage: React.FC = () => {
     const navigate = useNavigate();
-    // const location = useLocation();
+    const location = useLocation();
     const goBack = () => {
             navigate(-1);
     };
+
+    const getTitle = () => {
+        if (location.pathname.includes('/basket')) {
+            return 'Оформление';
+        }
+        return 'Новогодняя кулинария';
+    };
+
+    const isBasketPage = location.pathname.includes('/basket');
+
     return (
         <Page back={true}>
-            <div className={classnames(css.page)}>
+            <div className={classnames(css.page, { [css.pageNoPadding]: isBasketPage })}>
                 <div className={css.header}>
                     <RoundedButton
                         bgColor={'var(--primary-background)'}
@@ -22,7 +32,7 @@ export const GastronomyPage: React.FC = () => {
                         action={goBack}
                     />
                     <span className={css.header_title}>
-                        {'Новогодняя кулинария'}
+                        {getTitle()}
                     </span>
                     <div className={css.spacer} />
                 </div>
