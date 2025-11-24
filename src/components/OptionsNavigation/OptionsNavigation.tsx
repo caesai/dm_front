@@ -1,78 +1,75 @@
-import css from './OptionsNavigation.module.css';
 import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
-// import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
-// import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import {PrivelegiesPopup} from "@/components/PrivelegiesPopup/PrivelegiesPopup.tsx";
 import {useState} from "react";
-import { useAtom } from 'jotai/index';
-import {userAtom} from "@/atoms/userAtom.ts";
-import {StarPrivelegyIcon} from "@/components/Icons/StarPrivelegy.tsx";
-// import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+// import { useAtom } from 'jotai/index';
+// import {userAtom} from "@/atoms/userAtom.ts";
+// import {StarPrivelegyIcon} from "@/components/Icons/StarPrivelegy.tsx";
 import { Link } from 'react-router-dom';
-// import eventBg from '/img/gastro-events.png';
 import eventBg from '/img/events.jpg';
-// import {DEV_MODE} from "@/api/base.ts";
-// import { reviewAtom } from '@/atoms/userAtom.ts';
-// import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import neweventBg from '/img/gastro_btn.png';
+import gastroBtn from '/img/gastro_btn1.png';
+import gastroBtn2 from '/img/gastro_btn2.png';
+import gastroBtn3 from '/img/gastro_btn3.png';
+import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+import {DEV_MODE} from "@/api/base.ts";
+import css from '@/components/OptionsNavigation/OptionsNavigation.module.css';
 
 export const OptionsNavigation = () => {
-    // const [review] = useAtom(reviewAtom);
     const [isOpen, setIsOpen] = useState(false);
-    const [user] = useAtom(userAtom);
-    // const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
-    // console.log('tg_id: ', tg_id);
-    // useEffect(() => {
-    //     if (!auth?.access_token) {
-    //         return;
-    //     }
-    //     APIIsReviewAvailable(auth.access_token)
-    //         .then((res) => setIsReviewAvailable(res.data.available))
-    //         .finally(() => setIsReviewLoading(false));
-    // }, []);
+    // const [user] = useAtom(userAtom);
+    const tg_id = window?.Telegram?.WebApp?.initDataUnsafe?.user?.id;
 
     return (
         <div className={css.optionsNavigation}>
             <PrivelegiesPopup isOpen={isOpen} setOpen={setIsOpen} />
-            {/*{tg_id && mockEventsUsersList.includes(tg_id) && (*/}
-            {/*    <OptionsNavigationElement*/}
-            {/*        icon={<CalendarIcon size={20} color={'var(--light-grey)'}/>}*/}
-            {/*        title={'Мероприятия'}*/}
-            {/*        link={'/events'}*/}
-            {/*    />*/}
-            {/*)}*/}
-            {/*{tg_id && mockEventsUsersList.includes(tg_id) && (*/}
+            {DEV_MODE && (
+                <OptionsNavigationElement
+                    title={'Новогодняя кулинария'}
+                    subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
+                    img={gastroBtn}
+                    link={'/gastronomy/choose'}
+                />
+            )}
+            {tg_id && mockEventsUsersList.includes(tg_id) && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 5 }}>
+                    <OptionsNavigationElement
+                        title={'Подарочные сертификаты'}
+                        img={gastroBtn2}
+                        className={css.smallFont}
+                        link={'/certificates/1'}
+                    />
+                    <OptionsNavigationElement
+                        title={'Организовать праздник'}
+                        img={gastroBtn3}
+                        className={css.smallFont}
+                        link={'/banquets/:id/address'}
+                    />
+                </div>
+            )}
+            {tg_id && mockEventsUsersList.includes(tg_id) && (
+                <OptionsNavigationElement
+                    title={'Гастро-события'}
+                    subtitle={'От уютных ужинов до шумных вечеринок'}
+                    img={neweventBg}
+                    link={'/events'}
+                />
+            )}
+            {tg_id && !mockEventsUsersList.includes(tg_id) && (
                 <div style={{ height: 85}}>
                     <Link to={'/events'}>
                         <img src={eventBg} style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }} alt={''} />
                     </Link>
                 </div>
-            {/*)}*/}
-
-            {user?.username && ['w0esofwit','egormk', 'iliathoughts', 'Sushkazzlo'].includes(user?.username) && (
-                <div style={{ display: 'flex', width: '50%'}}>
-                    <OptionsNavigationElement
-                        icon={<StarPrivelegyIcon size={23} color={'var(--light-grey)'}  />}
-                        title={'Привилегии'}
-                        onClick={() => setIsOpen(!isOpen)}
-                        // link={'/events'}
-                    />
-                </div>
             )}
 
-            {/*{review.loading ? (*/}
-            {/*    <PlaceholderBlock*/}
-            {/*        width={'100%'}*/}
-            {/*        height={'44px'}*/}
-            {/*        rounded={'16px'}*/}
-            {/*    />*/}
-            {/*) : review.available ? (*/}
-            {/*    <OptionsNavigationElement*/}
-            {/*        icon={<ChatIcon size={20} color={'var(--light-grey)'} />}*/}
-            {/*        title={'Оставить отзыв'}*/}
-            {/*        link={'/profile?feedback=1'}*/}
-            {/*    />*/}
-            {/*) : (*/}
-            {/*    <div style={{ width: '100%' }} />*/}
+            {/*{user?.username && ['w0esofwit','egormk', 'iliathoughts', 'Sushkazzlo'].includes(user?.username) && (*/}
+            {/*    <div style={{ display: 'flex', width: '50%'}}>*/}
+            {/*        <OptionsNavigationElement*/}
+            {/*            icon={<StarPrivelegyIcon size={23} color={'var(--light-grey)'}  />}*/}
+            {/*            title={'Привилегии'}*/}
+            {/*            onClick={() => setIsOpen(!isOpen)}*/}
+            {/*        />*/}
+            {/*    </div>*/}
             {/*)}*/}
         </div>
     );

@@ -7,13 +7,15 @@ import classNames from 'classnames';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { useNavigate } from 'react-router-dom';
+import { IRestaurant } from '@/types/restaurant.ts';
 
 interface GastronomyBlockProps {
     image: string
     description: string
+    currentRestaurant: IRestaurant;
 }
 
-export const GastronomyBlock: React.FC<GastronomyBlockProps> = ({ image, description }) => {
+export const GastronomyBlock: React.FC<GastronomyBlockProps> = ({ image, description, currentRestaurant }) => {
     const navigate = useNavigate();
 
     return (
@@ -36,7 +38,7 @@ export const GastronomyBlock: React.FC<GastronomyBlockProps> = ({ image, descrip
                         width={'full'}
                         title={'Сделать предзаказ'}
                         theme={'red'}
-                        action={() => navigate('/gastronomy/choose')}
+                        action={() => navigate('/gastronomy/choose', { state: { restaurant: currentRestaurant }})}
                     />
                 </div>
             </ContentBlock>

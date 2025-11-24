@@ -21,7 +21,7 @@ import classNames from 'classnames';
 import { IBanquetAdditionalOptions, IBanquetOptions } from '@/types/banquets.types.ts';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { TimeSelectorPopup } from '@/components/TimeSelectorPopup/TimeSelectorPopup.tsx';
-import { IWorkTime } from '@/types/restaurant.ts';
+import { IRestaurant, IWorkTime } from '@/types/restaurant.ts';
 import moment from 'moment';
 
 const timeToHours = (timeStr: string): number => {
@@ -47,7 +47,7 @@ export const BanquetOptionPage = () => {
     const selectedServices = location.state.selectedServices;
     const workTime: IWorkTime[] = location.state?.workTime;
     const banquet: IBanquetOptions = location.state?.banquet;
-    const restaurant_title: string = location.state?.restaurant_title;
+    const currentRestaurant: IRestaurant = location.state?.currentRestaurant;
     const additional_options: IBanquetAdditionalOptions[] = location.state?.additional_options;
     const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
     const [date, setDate] = useState<Date | null>(null);
@@ -76,11 +76,7 @@ export const BanquetOptionPage = () => {
     const closeTimeFromPopup = () => setTimeFromPopup(false);
     const closeTimeToPopup = () => setTimeToPopup(false);
     const goBack = () => {
-        navigate(`/banquets/${id}/choose`, { state: {
-                restaurant_title,
-                workTime,
-                banquets,
-            }});
+        navigate(`/banquets/${id}/choose`, { state: {...location.state}});
     };
 
     const handleReasonSelect = (reason: string) => {
@@ -117,7 +113,7 @@ export const BanquetOptionPage = () => {
             timeTo: timeTo.value,
             guestCount,
             additionalOptions: additional_options,
-            restaurant_title,
+            currentRestaurant,
             reason: finalReason,
             withAdditionalPage: false,
             price: guestCount.value !== 'unset' ? {
@@ -129,11 +125,11 @@ export const BanquetOptionPage = () => {
         };
         if (banquetData.additionalOptions && banquetData.additionalOptions.length > 0) {
             navigate(`/banquets/${id}/additional-services`, {
-                state: { banquetData, banquet, workTime, banquets, restaurant_title, additional_options, selectedServices },
+                state: { banquetData, banquet, workTime, banquets, currentRestaurant, additional_options, selectedServices },
             });
         } else {
             navigate(`/banquets/${id}/reservation`, {
-                state: { banquetData, banquet, workTime, banquets, restaurant_title, reservationData: { ...banquetData } },
+                state: { banquetData, banquet, workTime, banquets, currentRestaurant, reservationData: { ...banquetData } },
             });
         }
     };

@@ -27,7 +27,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
         });
     }
 
-    const handleDishClick = (dish: typeof expandedData[0]) => {
+    const handleDishClick = (dish: IDish) => {
         navigate(`/gastronomy/${res_id}/dish/${dish.id}`, {
             state: { dish }
         });

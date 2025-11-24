@@ -39,7 +39,7 @@ export const BanquetReservationPage = () => {
         timeFrom,
         timeTo,
         guestCount,
-        restaurant_title,
+        currentRestaurant,
         reason,
         selectedServices = [],
         price,
@@ -90,6 +90,7 @@ export const BanquetReservationPage = () => {
             }
         })
     }
+
     return (
         <Page back={true}>
             <div className={css.page}>
@@ -98,7 +99,7 @@ export const BanquetReservationPage = () => {
                         icon={<BackIcon color={'var(--dark-grey)'} />}
                         action={goBack}
                     ></RoundedButton>
-                    <span className={css.header_title}>{restaurant_title}</span>
+                    <span className={css.header_title}>{currentRestaurant.title}</span>
                     <div />
                 </div>
                 <ContentContainer>

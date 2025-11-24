@@ -6,3 +6,9 @@
     padding-right: 15px;
     box-sizing: border-box;
 }
+
+.smallFont {
+    span {
+        font-size: 14px;
+    }
+}

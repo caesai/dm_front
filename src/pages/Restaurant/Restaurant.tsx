@@ -272,12 +272,11 @@ export const Restaurant = () => {
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
                 <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
 
-                {hasBanquets && (
+                {restaurant && hasBanquets && (
                     <BanquetsBlock
                         image={banquets.image}
                         description={banquets.description}
-                        restaurant_id={Number(id)}
-                        restaurant_title={String(restaurant?.title)}
+                        restaurant={restaurant}
                         workTime={restaurant?.worktime}
                         banquets={banquets}
                     />
@@ -292,10 +291,11 @@ export const Restaurant = () => {
                     />
                 )}
 
-                {DEV_MODE && (
+                {DEV_MODE && restaurant && (
                     <GastronomyBlock
                         description={nyCookings.description}
                         image={nyCookings.image}
+                        currentRestaurant={restaurant}
                     />
                 )}
 
