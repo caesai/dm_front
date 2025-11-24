@@ -5,7 +5,7 @@
     padding: 20px 15px;
     min-height: 100vh;
     padding-bottom: 100px;
-    background-color: var(--primary-background);
+    background-color: var(--secondary-background);
 }
 
 .pageNoPadding {
@@ -31,6 +31,21 @@
     text-align: center;
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0.75rem;
+    border-radius: 20px;
+    background-color: var(--primary-background);
+}
+
 .spacer {
     width: 44px;
     height: 44px;
@@ -43,4 +58,43 @@
     gap: 9px;
     width: 100%;
     justify-content: space-between;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-family: "Mont", sans-serif;
+
+
+    > h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    > img {
+        aspect-ratio: 321 / 184;
+        width: 100%;
+    }
+
+    > ul {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 0 24px;
+
+        > li {
+            font-size: 0.875rem;
+        }
+    }
+}
+
+.restaurantChoose {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 15px;
+    border-radius: 20px;
+    background-color: var(--primary-background);
 }

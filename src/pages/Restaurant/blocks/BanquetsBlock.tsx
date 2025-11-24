@@ -1,5 +1,5 @@
 import { IBanquet } from '@/types/banquets.types.ts';
-import { IWorkTime } from '@/types/restaurant.ts';
+import { IRestaurant, IWorkTime } from '@/types/restaurant.ts';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { workdayIndexMap } from '@/utils.ts';
@@ -14,8 +14,7 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 interface BanquetsBlockProps {
     image: string;
     description: string;
-    restaurant_id: number;
-    restaurant_title: string;
+    restaurant: IRestaurant
     banquets: IBanquet;
     workTime: IWorkTime[] | undefined;
 }
@@ -23,8 +22,7 @@ interface BanquetsBlockProps {
 export const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
                                                                 description,
                                                                 image,
-                                                                restaurant_id,
-                                                                restaurant_title,
+                                                                restaurant,
                                                                 banquets,
                                                                 workTime,
                                                             }) => {
@@ -45,9 +43,9 @@ export const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
      */
     const handleNavigateToBanquet = () => {
         const sortedWorkTime = getSortedWorkTime();
-        navigate(`/banquets/${restaurant_id}/choose`, {
+        navigate(`/banquets/${restaurant.id}/address`, {
             state: {
-                restaurant_title,
+                restaurant,
                 banquets,
                 workTime: sortedWorkTime
             },

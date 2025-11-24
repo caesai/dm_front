@@ -40,7 +40,7 @@ describe('MenuBlock', () => {
         render(<MenuBlock menu={mockMenu} menu_imgs={mockMenuImgs} />);
 
         expect(screen.getByText('Меню')).toBeInTheDocument();
-        expect(screen.getByText('Посмотреть меню')).toBeInTheDocument();
+        expect(screen.getByText('Всё меню')).toBeInTheDocument();
     });
 
     it('displays menu items with titles and prices', () => {
@@ -57,7 +57,7 @@ describe('MenuBlock', () => {
     it('opens menu popup when button is clicked', () => {
         render(<MenuBlock menu={mockMenu} menu_imgs={mockMenuImgs} />);
 
-        fireEvent.click(screen.getByText('Посмотреть меню'));
+        fireEvent.click(screen.getByText('Всё меню'));
 
         expect(screen.getByTestId('menu-popup')).toBeInTheDocument();
     });
@@ -66,14 +66,14 @@ describe('MenuBlock', () => {
         render(<MenuBlock menu={mockMenu} menu_imgs={undefined} />);
 
         expect(screen.getByText('Меню')).toBeInTheDocument();
-        expect(screen.getByText('Посмотреть меню')).toBeInTheDocument();
+        expect(screen.getByText('Всё меню')).toBeInTheDocument();
     });
 
     it('renders without menu items', () => {
         render(<MenuBlock menu={undefined} menu_imgs={mockMenuImgs} />);
 
         expect(screen.getByText('Меню')).toBeInTheDocument();
-        expect(screen.getByText('Посмотреть меню')).toBeInTheDocument();
+        expect(screen.getByText('Всё меню')).toBeInTheDocument();
     });
 
     it('displays menu item photos', () => {

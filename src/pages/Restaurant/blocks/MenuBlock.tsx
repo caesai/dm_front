@@ -80,7 +80,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
 
                 {/* Кнопка открытия полного меню */}
                 <UniversalButton
-                    title="Посмотреть меню"
+                    title="Всё меню"
                     width="full"
                     action={handleOpenMenuPopup}
                 />

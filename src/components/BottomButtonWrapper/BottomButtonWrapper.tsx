@@ -10,6 +10,7 @@ interface BottomButtonWrapperProps {
     additionalBtns?: ReactNode;
     content?: ReactNode;
     isFixed?: boolean;
+    theme?: 'red' | 'primary';
 }
 
 export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> =
@@ -21,6 +22,7 @@ export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> =
          additionalBtns,
          content = 'Забронировать',
          isFixed = true,
+         theme = 'red',
     }) => {
     return (
         <div className={classnames(css.absoluteBottom, { [css.relativeBottom]: !isFixed})} ref={forwardedRef}>
@@ -29,7 +31,8 @@ export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> =
                     className={classnames(
                         css.redButton,
                         isDisabled ? null : css.disabledButton,
-                        isLoading && css.loadingButton
+                        isLoading && css.loadingButton,
+                        theme === 'red' ? css.red : css.primary,
                     )}
                     onClick={onClick}
                 >

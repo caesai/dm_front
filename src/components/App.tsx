@@ -68,6 +68,7 @@ import { GastonomyDishDetailsPage } from '@/pages/GastronomyPage/stages/Gastonom
 import { GastronomyBasketPage } from '@/pages/GastronomyPage/stages/GastronomyBasketPage.tsx';
 import { EventPaymentPage } from '@/pages/EventsPage/EventPaymentPage.tsx';
 import { Toast } from '@/components/Toast/Toast.tsx';
+import { BanquetAddressPage } from '@/pages/BanquetAddressPage/BanquetAddressPage.tsx';
 
 const AppRouter = () => {
     const [user] = useAtom(userAtom);
@@ -177,6 +178,8 @@ const AppRouter = () => {
                             <Route path={'/preferences/2'} element={<PreferencesTwo />} />
                             <Route path={'/preferences/3'} element={<PreferencesThree />} />
                         </Route>
+
+                        <Route path={'banquets/:id/address'} element={<BanquetAddressPage />} />
                         <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
                         <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />
                         <Route path={'banquets/:id/additional-services'} element={<BanquetAdditionalServicesPage />} />
