@@ -5,7 +5,6 @@ import { DishCard } from '@/components/DishCard/DishCard.tsx';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
 import { FloatingCartButton } from '@/components/FloatingCartButton/FloatingCartButton.tsx';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IDish } from '@/types/gastronomy.types.ts';
 
 export const GastronomyChooseDishesPage: React.FC = () => {
     const navigate = useNavigate();
@@ -17,9 +16,9 @@ export const GastronomyChooseDishesPage: React.FC = () => {
     };
 
     // Размножаем данные до 30 элементов
-    const expandedData: IDish[] = [];
+    const expandedData = [];
     for (let i = 0; i < 10; i++) {
-        mockGastronomyListData.forEach((dish) => {
+        mockGastronomyListData.forEach((dish, index) => {
             expandedData.push({
                 ...dish,
                 id: i * mockGastronomyListData.length + dish.id,
@@ -28,8 +27,8 @@ export const GastronomyChooseDishesPage: React.FC = () => {
     }
 
     const handleDishClick = (dish: typeof expandedData[0]) => {
-        navigate(`/gastronomy/${res_id}/dish/${dish.id}`, {
-            state: { dish }
+        navigate(`/gastronomy/${res_id}/dish/${dish.id}`, { 
+            state: { dish } 
         });
     };
 

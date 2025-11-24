@@ -8,6 +8,15 @@
     background-color: var(--primary-background);
 }
 
+.pageNoPadding {
+    padding: 0;
+    gap: 0;
+}
+
+.pageNoPadding .header {
+    padding: 20px 15px;
+}
+
 .header {
     display: flex;
     flex-direction: row;
