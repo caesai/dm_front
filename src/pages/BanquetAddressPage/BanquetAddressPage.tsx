@@ -42,7 +42,7 @@ export const BanquetAddressPage: React.FC = () => {
             if (user?.complete_onboarding) {
                 navigate(`/banquets/${id}/choose`, { state: { ...location.state, currentRestaurant } });
             } else {
-                navigate('/onboarding/4', { state: { ...location.state, id: currentRestaurant, currentRestaurant, sharedBanquet: true } });
+                navigate('/onboarding/4', { state: { ...location.state, id: currentRestaurant.value, currentRestaurant, sharedBanquet: true } });
             }
         }
     }
