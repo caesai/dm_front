@@ -1,9 +1,9 @@
 import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
 import {PrivelegiesPopup} from "@/components/PrivelegiesPopup/PrivelegiesPopup.tsx";
 import {useState} from "react";
-import { useAtom } from 'jotai/index';
-import {userAtom} from "@/atoms/userAtom.ts";
-import {StarPrivelegyIcon} from "@/components/Icons/StarPrivelegy.tsx";
+// import { useAtom } from 'jotai/index';
+// import {userAtom} from "@/atoms/userAtom.ts";
+// import {StarPrivelegyIcon} from "@/components/Icons/StarPrivelegy.tsx";
 import { Link } from 'react-router-dom';
 import eventBg from '/img/events.jpg';
 import neweventBg from '/img/gastro_btn.png';
@@ -16,7 +16,7 @@ import css from '@/components/OptionsNavigation/OptionsNavigation.module.css';
 
 export const OptionsNavigation = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [user] = useAtom(userAtom);
+    // const [user] = useAtom(userAtom);
     const tg_id = window?.Telegram?.WebApp?.initDataUnsafe?.user?.id;
 
     return (
@@ -62,15 +62,15 @@ export const OptionsNavigation = () => {
                 </div>
             )}
 
-            {user?.username && ['w0esofwit','egormk', 'iliathoughts', 'Sushkazzlo'].includes(user?.username) && (
-                <div style={{ display: 'flex', width: '50%'}}>
-                    <OptionsNavigationElement
-                        icon={<StarPrivelegyIcon size={23} color={'var(--light-grey)'}  />}
-                        title={'Привилегии'}
-                        onClick={() => setIsOpen(!isOpen)}
-                    />
-                </div>
-            )}
+            {/*{user?.username && ['w0esofwit','egormk', 'iliathoughts', 'Sushkazzlo'].includes(user?.username) && (*/}
+            {/*    <div style={{ display: 'flex', width: '50%'}}>*/}
+            {/*        <OptionsNavigationElement*/}
+            {/*            icon={<StarPrivelegyIcon size={23} color={'var(--light-grey)'}  />}*/}
+            {/*            title={'Привилегии'}*/}
+            {/*            onClick={() => setIsOpen(!isOpen)}*/}
+            {/*        />*/}
+            {/*    </div>*/}
+            {/*)}*/}
         </div>
     );
 };
