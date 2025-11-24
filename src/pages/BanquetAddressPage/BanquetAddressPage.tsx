@@ -9,6 +9,8 @@ import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import React, { useEffect, useState } from 'react';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
+import { useAtom } from 'jotai/index';
+import { userAtom } from '@/atoms/userAtom.ts';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
@@ -19,6 +21,7 @@ export const BanquetAddressPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation()
     const { id } = useParams();
+    const [user] = useAtom(userAtom);
 
     const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
     const [restaurantPopup, setRestaurantPopup] = useState<boolean>(false);
@@ -36,7 +39,11 @@ export const BanquetAddressPage: React.FC = () => {
 
     const goNextPage = () => {
         if (!isDisabledButton) {
-            navigate(`/banquets/${id}/choose`, {state: {...location.state, currentRestaurant}});
+            if (user?.complete_onboarding) {
+                navigate(`/banquets/${id}/choose`, { state: { ...location.state, currentRestaurant } });
+            } else {
+                navigate('/onboarding/4', { state: { ...location.state, id: currentRestaurant.value, currentRestaurant, sharedBanquet: true } });
+            }
         }
     }
 
