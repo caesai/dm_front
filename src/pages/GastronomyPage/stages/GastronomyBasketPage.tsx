@@ -10,14 +10,16 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import css from './GastronomyBasketPage.module.css';
 
 type DeliveryMethod = 'delivery' | 'pickup';
+type Range<T> = [T, T];
 type CalendarValue = Date | null;
+type TValue = CalendarValue | Range<CalendarValue>;
 
 export const GastronomyBasketPage: React.FC = () => {
     const navigate = useNavigate();
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart } = useGastronomyCart();
     const [restaurants] = useAtom(restaurantsListAtom);
-    
+
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('delivery');
     const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(false);
     const [address, setAddress] = useState('');
@@ -32,13 +34,13 @@ export const GastronomyBasketPage: React.FC = () => {
     const [showAddressError, setShowAddressError] = useState(false);
 
     const deliveryFee = 1000;
-    
+
     // Получаем информацию о ресторане
     const restaurant = useMemo(() => {
         if (!res_id) return null;
         return restaurants.find(r => r.id === Number(res_id));
     }, [res_id, restaurants]);
-    
+
     const restaurantAddress = restaurant?.address || 'Адрес не указан';
 
     // Временные слоты с 9:00 до 21:00 с шагом 3 часа
@@ -65,21 +67,21 @@ export const GastronomyBasketPage: React.FC = () => {
     const handleToggleDropdown = () => {
         setIsDeliveryExpanded(!isDeliveryExpanded);
     };
-    
+
     const handleSelectMethod = (method: DeliveryMethod) => {
         setDeliveryMethod(method);
         setIsDeliveryExpanded(false);
     };
 
-    const handleCalendarChange = (value: CalendarValue) => {
-        setCalendarDate(value);
+    const handleCalendarChange = (value: TValue) => {
+        setCalendarDate(value as CalendarValue);
         setShowCalendar(false);
     };
 
     const formatDate = (date: Date | null): string => {
         if (!date) return '';
         const weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
-        const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 
+        const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
                         'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
         const weekday = weekdays[date.getDay()];
         const day = date.getDate();
@@ -94,9 +96,9 @@ export const GastronomyBasketPage: React.FC = () => {
         return calendarDate !== null && selectedTime.length > 0;
     };
 
-    const totalWithDelivery = deliveryMethod === 'delivery' 
-        ? cart.totalAmount + deliveryFee 
-        : cart.totalAmount;
+    // const totalWithDelivery = deliveryMethod === 'delivery'
+    //     ? cart.totalAmount + deliveryFee
+    //     : cart.totalAmount;
 
     // Пустая корзина
     if (cart.totalItems === 0) {
@@ -104,10 +106,10 @@ export const GastronomyBasketPage: React.FC = () => {
             <div className={css.pageEmpty}>
                 <div className={css.emptyState}>
                     <div className={css.emptyIcon}>
-                        <img 
-                            src={emptyBasketIcon} 
-                            alt="Пустая корзина" 
-                            width="116" 
+                        <img
+                            src={emptyBasketIcon}
+                            alt="Пустая корзина"
+                            width="116"
                             height="124"
                         />
                     </div>
@@ -139,15 +141,15 @@ export const GastronomyBasketPage: React.FC = () => {
                             <CartItem
                                 key={item.id}
                                 {...item}
-                                onAdd={() => addToCart({ 
-                                    id: item.id, 
-                                    title: item.title, 
-                                    price: item.price, 
+                                onAdd={() => addToCart({
+                                    id: item.id,
+                                    title: item.title,
+                                    price: item.price,
                                     defaultWeight: item.weight,
                                     image: item.image,
                                     weights: [item.weight],
                                     composition: [],
-                                    nutritionPer100g: { calories: 0, proteins: 0, fats: 0, carbs: 0 },
+                                    nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
                                     allergens: []
                                 })}
                                 onRemove={() => removeFromCart(item.id)}
@@ -164,20 +166,20 @@ export const GastronomyBasketPage: React.FC = () => {
                 <div className={css.section}>
                     <h2 className={css.sectionTitle}>Способ получения</h2>
                     <div className={css.deliveryDropdown}>
-                        <div 
-                            className={css.deliveryRow} 
+                        <div
+                            className={css.deliveryRow}
                             onClick={handleToggleDropdown}
                         >
                             <span className={css.deliveryText}>
                                 {deliveryMethod === 'delivery' ? 'Доставка' : 'Заберу сам'}
                             </span>
-                            <svg 
-                                width="24" 
-                                height="24" 
-                                viewBox="0 0 24 24" 
+                            <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
                                 fill="none"
                                 className={css.dropdownArrow}
-                                style={{ 
+                                style={{
                                     transform: isDeliveryExpanded ? 'rotate(180deg)' : 'rotate(0)',
                                     transition: 'transform 0.3s'
                                 }}
@@ -186,7 +188,7 @@ export const GastronomyBasketPage: React.FC = () => {
                             </svg>
                         </div>
                         {isDeliveryExpanded && (
-                            <div 
+                            <div
                                 className={css.deliveryOption}
                                 onClick={() => handleSelectMethod(deliveryMethod === 'delivery' ? 'pickup' : 'delivery')}
                             >
@@ -223,7 +225,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
                             />
-                            {address && addressSuggestions.filter(s => 
+                            {address && addressSuggestions.filter(s =>
                                 s.toLowerCase().includes(address.toLowerCase())
                             ).length > 0 && (
                                 <div className={css.suggestions}>
@@ -249,7 +251,7 @@ export const GastronomyBasketPage: React.FC = () => {
                 <div className={css.section}>
                     <h2 className={css.sectionTitle}>Выбор даты и времени</h2>
                     <div className={css.datePickerWrapper}>
-                        <div 
+                        <div
                             className={css.datePicker}
                             onClick={() => setShowCalendar(!showCalendar)}
                         >
@@ -264,10 +266,10 @@ export const GastronomyBasketPage: React.FC = () => {
                                     {calendarDate ? formatDate(calendarDate) : 'Выберите дату с 25 по 30 декабря'}
                                 </span>
                             </div>
-                            <svg 
-                                width="20" 
-                                height="20" 
-                                viewBox="0 0 20 20" 
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
                                 fill="none"
                                 style={{
                                     transform: showCalendar ? 'rotate(180deg)' : 'rotate(0)',
@@ -281,12 +283,12 @@ export const GastronomyBasketPage: React.FC = () => {
                             <div className={css.calendarWrapper}>
                                 <Calendar
                                     value={calendarDate}
-                                    onChange={handleCalendarChange}
+                                    onChange={(value) => handleCalendarChange(value)}
                                     minDate={new Date(2025, 11, 25)} // 25 декабря 2025
                                     maxDate={new Date(2025, 11, 30)} // 30 декабря 2025
                                     defaultActiveStartDate={new Date(2025, 11, 25)} // Открывается на декабрь 2025
                                     locale="ru-RU"
-                                    formatShortWeekday={(locale, date) => 
+                                    formatShortWeekday={(_locale, date) =>
                                         ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][date.getDay()]
                                     }
                                     nextLabel="›"
@@ -343,7 +345,7 @@ export const GastronomyBasketPage: React.FC = () => {
                         </div>
                         <div className={css.popupContent}>
                             <p className={css.popupText}>
-                                К сожалению, ваш адрес не входит в зону доставки. 
+                                К сожалению, ваш адрес не входит в зону доставки.
                                 Вы можете оформить самовывоз.
                             </p>
                             <button className={css.secondaryButton} onClick={() => {
