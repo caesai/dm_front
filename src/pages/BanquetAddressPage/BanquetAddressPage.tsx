@@ -90,7 +90,7 @@ export const BanquetAddressPage: React.FC = () => {
                         <div className={css.banquet_content}>
                             <span className={css.banquet_title}>Подарите приятный вечер в <br /> ресторанах Dreamteam</span>
                             <img src={BanquetImg} alt={'Банкет'} className={css.banquet_img} />
-                            <span className={css.banquet_text}>Текст про банкеты</span>
+                            <span className={css.banquet_text}>Для тех, кто планирует важное событие. Здесь можно собрать частный ужин, семейный праздник или деловую встречу — мы предложим пространство, меню и сопровождение под ваш формат.</span>
                         </div>
                         <div className={css.address_content}>
                             <h3 className={css.content_title}>Адрес ресторана</h3>
