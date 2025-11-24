@@ -25,9 +25,13 @@ export const BanquetAddressPage: React.FC = () => {
     const [isDisabledButton, setDisabledButton] = useState(true);
 
     const restaurant = location.state?.restaurant;
-
     const goBack = () => {
-        navigate(`/restaurant/${id}`);
+        // TODO: Проверить навигацию на первую страницу банкетов
+        if (id === ':id') {
+            navigate('/');
+        } else {
+            navigate(`/restaurant/${id}`);
+        }
     };
 
     const goNextPage = () => {
