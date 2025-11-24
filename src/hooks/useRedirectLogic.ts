@@ -71,6 +71,10 @@ export const useRedirectLogic = () => {
                 navigate('/newrestaurant', { replace: true });
                 return;
             }
+            if (paramsObject.tgWebAppStartParam === 'banquet') {
+                navigate('/banquets/:id/address', { replace: true });
+                return;
+            }
         }
 
         // Redirect based on query parameters (highest priority)
@@ -94,7 +98,8 @@ export const useRedirectLogic = () => {
                 !pathname.includes('events') &&
                 !pathname.includes('restaurant') &&
                 !pathname.includes('booking') &&
-                !pathname.includes('certificates');
+                !pathname.includes('certificates') &&
+                !pathname.includes('banquets');
 
             if (isUserIncomplete && isOnboardingNotExcluded) {
                 navigate('/onboarding', { replace: true });

@@ -48,6 +48,9 @@ export const UserPhoneConfirmationPage = () => {
                 if (state.sharedCertificate) {
                     navigate('/certificates/landing/' + state.id, { state });
                 }
+                if (state.sharedBanquet) {
+                    navigate(`/banquets/${state.id}/choose`, { state });
+                }
             } else {
                 navigate('/');
             }

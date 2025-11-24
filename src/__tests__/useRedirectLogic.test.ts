@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { useRedirectLogic } from '@/components/Redirecter/useRedirectLogic.ts';
+import { useRedirectLogic } from '@/hooks/useRedirectLogic.ts';
 import { mockUserData as defaultMockUser } from '@/__mocks__/user.mock.ts';
 import type { IUser } from '@/types/user.types.ts';
 

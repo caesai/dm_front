@@ -1,4 +1,4 @@
-import { useRedirectLogic } from '@/components/Redirecter/useRedirectLogic.ts';
+import { useRedirectLogic } from '@/hooks/useRedirectLogic.ts';
 
 export const Redirecter = () => {
     useRedirectLogic();
