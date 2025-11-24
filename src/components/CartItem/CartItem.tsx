@@ -1,5 +1,7 @@
 import React from 'react';
 import css from './CartItem.module.css';
+import { PlusIcon } from '@/components/Icons/PlusIcon.tsx';
+import { MinusIcon } from '@/components/Icons/MinusIcon.tsx';
 
 export interface CartItemProps {
     id: number;
@@ -35,15 +37,11 @@ export const CartItem: React.FC<CartItemProps> = ({
                     </div>
                     <div className={css.controls}>
                         <button className={css.controlButton} onClick={onRemove}>
-                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                                <path d="M1 5H9" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round"/>
-                            </svg>
+                            <MinusIcon size={10} color="#000000" />
                         </button>
                         <span className={css.quantity}>{quantity}</span>
                         <button className={css.controlButton} onClick={onAdd}>
-                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                                <path d="M5 1V9M1 5H9" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round"/>
-                            </svg>
+                            <PlusIcon size={10} color="#000000" />
                         </button>
                     </div>
                 </div>
