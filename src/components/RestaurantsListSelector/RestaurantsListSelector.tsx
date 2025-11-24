@@ -51,7 +51,7 @@ export const RestaurantsListSelector: FC<RestaurantsListSelectorProps> = (
         setOpen,
         restaurant,
         selectRestaurant,
-        filteredRestaurants= []
+        filteredRestaurants,
     },
 ) => {
     const onClose = useCallback(() => setOpen(false), [setOpen]);

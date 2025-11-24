@@ -6,7 +6,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { IBanquet, IBanquetOptions } from '@/types/banquets.types.ts';
-import { IWorkTime } from '@/types/restaurant.ts';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -21,8 +20,6 @@ export const ChooseBanquetOptionsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const banquets: IBanquet = location.state?.banquets;
-    const workTime: IWorkTime[] = location.state?.workTime;
-    const restaurant_title = location.state?.restaurant_title;
     const { id } = useParams();
 
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
@@ -31,7 +28,7 @@ export const ChooseBanquetOptionsPage = () => {
     const [hideAboutId, setHideAboutId] = useState<number | null>(null);
 
     const goBack = () => {
-        navigate(`/restaurant/${id}`);
+        navigate(`/banquets/${id}/address`, {state: {...location.state}});
     };
 
     const openPopup = (banquet: IBanquetOptions, index: number) => {
@@ -133,9 +130,8 @@ export const ChooseBanquetOptionsPage = () => {
                                                         state: {
                                                             banquet,
                                                             additional_options: banquets.additional_options,
-                                                            restaurant_title,
-                                                            workTime,
                                                             banquets,
+                                                            ...location.state
                                                         },
                                                     })} />
                                             </div>

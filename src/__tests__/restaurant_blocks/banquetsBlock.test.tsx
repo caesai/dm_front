@@ -30,7 +30,78 @@ const mockProps = {
     image: 'banquet-image.jpg',
     description: 'banquet description',
     restaurant_id: 1,
-    restaurant_title: 'Test Restaurant',
+    restaurant: {
+        id: 1,
+        title: "Smoke BBQ",
+        slogan: "Бар · гриль · коптильня",
+        address: "Москва, Трубная ул., 18",
+        logo_url: "https://storage.yandexcloud.net/dreamteam-storage/959edf8c8af64e93a19c587371a4090d.png",
+        thumbnail_photo: "https://storage.yandexcloud.net/dreamteam-storage/b76b600f30cb4fb6bb5fc796b713ecfa.jpg",
+        openTime: "",
+        avg_cheque: 1500,
+        photo_cards: [
+            {
+                id: 117,
+                category: "Блюда",
+                url: "https://storage.yandexcloud.net/dreamteam-storage/e7edc89403ac4da2ba4542683eae345a.jpg"
+            }
+        ],
+        brand_chef: {
+            name: "lorem",
+            photo_url: "https://storage.yandexcloud.net/dreamteam-storage/212d0f1e30014e6cbbf2513bbc1d387d.jpg",
+            about: "about text"
+        },
+        city: {
+            id: 1,
+            name: "Москва",
+            name_dative: "Москве",
+            name_english: "moscow",
+        },
+        about_text: "text",
+        about_dishes: "Мясо, Рыба и морепродукты",
+        about_kitchen: "Американская, Европейская",
+        about_features: "Обеды, Бранчи, Веранда",
+        address_lonlng: "123123",
+        address_station: "м. Трубная",
+        address_station_color: "#99CC00",
+        phone_number: "+7 (926) 041-53-72",
+        gallery: [
+            {
+                id: 1,
+                category: "Ресторан",
+                url: "https://example.com/gallery1.jpg"
+            }
+        ],
+        menu: [
+            {
+                id: 1,
+                title: "Крем - суп из пастернака",
+                photo_url: "https://storage.yandexcloud.net/bottec-dreamteam/SmokeBBQ/MSK/main.jpg",
+                price: 1300
+            }
+        ],
+        menu_imgs: [
+            {
+                id: 36,
+                image_url: "https://storage.yandexcloud.net/bottec-dreamteam/menu1.png",
+                order: 1
+            }
+        ],
+        worktime: [
+            {
+                weekday: "вс",
+                time_start: "09:00",
+                time_end: "23:00"
+            }
+        ],
+        socials: [
+            {
+                type: "instagram",
+                url: "https://www.instagram.com/smokebbqmoscow",
+                name: "smokebbqmoscow"
+            }
+        ]
+    },
     banquets: {
         additional_options: [],
         banquet_options: [],
@@ -40,7 +111,8 @@ const mockProps = {
     workTime: [
         { weekday: '1', time_start: '10:00', time_end: '22:00' },
         { weekday: '2', time_start: '10:00', time_end: '22:00' }
-    ]
+    ],
+    openTime: ''
 };
 
 describe('BanquetsBlock', () => {
@@ -67,9 +139,9 @@ describe('BanquetsBlock', () => {
 
         fireEvent.click(screen.getByText('Подробнее'));
 
-        expect(mockNavigate).toHaveBeenCalledWith('/banquets/1/choose', {
+        expect(mockNavigate).toHaveBeenCalledWith('/banquets/1/address', {
             state: {
-                restaurant_title: 'Test Restaurant',
+                restaurant: mockProps.restaurant,
                 banquets: mockProps.banquets,
                 workTime: mockProps.workTime
             }
