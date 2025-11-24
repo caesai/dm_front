@@ -38,7 +38,7 @@ export const GastronomyBlock: React.FC<GastronomyBlockProps> = ({ image, descrip
                         width={'full'}
                         title={'Сделать предзаказ'}
                         theme={'red'}
-                        action={() => navigate('/gastronomy/choose', {state: { restaurant: currentRestaurant }})}
+                        action={() => navigate('/gastronomy/choose', { state: { restaurant: currentRestaurant }})}
                     />
                 </div>
             </ContentBlock>

@@ -315,7 +315,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                 </div>
                             </div>
                             <p className={css.hint}>
-                                * обязательно предупредим вас если будем опаздывать,
+                                * обязательно предупредим вас, если будем опаздывать.
                             </p>
                         </>
                     )}

@@ -71,7 +71,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
         setCurrentCityA(city.id);
-        setCurrentRestaurant(initialRestaurant)
+        setCurrentRestaurant(initialRestaurant);
     };
 
     const cityOptions = useMemo(

@@ -23,7 +23,6 @@ export const OptionsNavigationElement = (
                     <span className={css.title}>{props.title}</span>
                     <span className={css.subtitle}>{props.subtitle}</span>
                 </div>
-                {/*<img src={props.img} alt={props.title} style={{ visibility: 'hidden' }} />*/}
                 <div className={css.separator} />
             </div>
         </Link>
