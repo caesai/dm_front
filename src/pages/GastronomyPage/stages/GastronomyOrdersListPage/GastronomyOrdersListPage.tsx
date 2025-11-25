@@ -15,8 +15,8 @@ export const GastronomyOrdersListPage: React.FC = () => {
 
     const [ordersList, setOrdersList] = useState<IOrder[]>([]);
 
-    const showOrderPage = (order: IOrder) => {
-        navigate(`/gastronomy/order/${order.orderId}`, { state: { order } });
+    const showOrderPage = (order: IOrder, skip_page?: boolean) => {
+        navigate(`/gastronomy/order/${order.orderId}`, { state: { order, skip_page } });
     }
 
     useEffect(() => {
@@ -32,6 +32,12 @@ export const GastronomyOrdersListPage: React.FC = () => {
                 });
         }
     }, [user, auth?.access_token]);
+
+    useEffect(() => {
+        if (ordersList.length === 1) {
+            showOrderPage(ordersList[0], true);
+        }
+    }, [ordersList]);
     return (
         <div className={css.order_page}>
             <div className={css.container}>

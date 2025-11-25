@@ -18,7 +18,12 @@ export const GastronomyOrderPage: React.FC = () => {
     }, [location.state, order]);
 
     const goBack = () => {
-        navigate(-1);
+        if (location.state?.skip_page) {
+            navigate(-2);
+        }
+        else {
+            navigate(-1);
+        }
     }
 
     const getDateWithMonth = (date: string) => {
