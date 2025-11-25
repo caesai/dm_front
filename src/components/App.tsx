@@ -64,11 +64,15 @@ import { CertificatesCreateErrorPage } from '@/pages/CertificatesCreatePage/stag
 import { GastronomyPage } from '@/pages/GastronomyPage/GastronomyPage.tsx';
 import { GastronomyChooseRestaurantPage } from '@/pages/GastronomyPage/stages/GastronomyChooseRestaurantPage.tsx';
 import { GastronomyChooseDishesPage } from '@/pages/GastronomyPage/stages/GastronomyChooseDishesPage.tsx';
-import { GastonomyDishDetailsPage } from '@/pages/GastronomyPage/stages/GastonomyDishDetailsPage.tsx';
-import { GastronomyBasketPage } from '@/pages/GastronomyPage/stages/GastronomyBasketPage.tsx';
+import { GastonomyDishDetailsPage } from '@/pages/GastronomyPage/stages/GastronomyDishDetailsPage/GastonomyDishDetailsPage.tsx';
+import { GastronomyBasketPage } from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.tsx';
 import { EventPaymentPage } from '@/pages/EventsPage/EventPaymentPage.tsx';
 import { Toast } from '@/components/Toast/Toast.tsx';
 import { BanquetAddressPage } from '@/pages/BanquetAddressPage/BanquetAddressPage.tsx';
+import { GastronomyOrderPage } from '@/pages/GastronomyPage/stages/GastronomyOrderPage/GastronomyOrderPage.tsx';
+import {
+    GastronomyOrdersListPage
+} from '@/pages/GastronomyPage/stages/GastronomyOrdersListPage/GastronomyOrdersListPage.tsx';
 
 const AppRouter = () => {
     const [user] = useAtom(userAtom);
@@ -201,7 +205,9 @@ const AppRouter = () => {
                             <Route path={'/gastronomy/:res_id'} element={<GastronomyChooseDishesPage />} />
                             <Route path={'/gastronomy/:res_id/dish/:dish_id'} element={<GastonomyDishDetailsPage />} />
                             <Route path={'/gastronomy/:res_id/basket'} element={<GastronomyBasketPage />} />
+                            <Route path={'/gastronomy/my'} element={<GastronomyOrdersListPage />} />
                         </Route>
+                        <Route path={'/gastronomy/order/:order_id'} element={<GastronomyOrderPage />} />
 
                         <Route path="*" element={<Navigate to="/" />} />
                     </Routes>
