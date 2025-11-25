@@ -82,7 +82,7 @@ const MONTHS_LONG = [
     'ноябрь',
     'декабрь',
 ];
-const MONTHS_LONG2 = [
+export const MONTHS_LONG2 = [
     'января',
     'февраля',
     'марта',

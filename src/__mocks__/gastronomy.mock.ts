@@ -106,7 +106,7 @@ export const mockOrdersListData: IOrder[] = [
         deliveryMethod: 'pickup',
         deliveryCost: 0,
         pickupTime: {
-            date: '25 декабря',
+            date: '2025-12-25',
             time: '12:00-15:00',
         },
         createdAt: '2025-12-24T18:00:00Z',
@@ -124,7 +124,7 @@ export const mockOrdersListData: IOrder[] = [
         deliveryCost: 800,
         deliveryAddress: 'Санкт-Петербург, Московский проспект, 150, кв. 12',
         deliveryTime: {
-            date: '25 декабря',
+            date: '2025-12-25',
             time: '15:00-18:00',
         },
         createdAt: '2025-12-24T19:30:00Z',
