@@ -203,7 +203,6 @@ export const Restaurant = () => {
                     restaurant_id={Number(id)}
                     restaurant={restaurant}
                     events={events}
-                    banquets={restaurant?.banquets}
                     filteredEvents={filteredEvents}
                 />
             )}
