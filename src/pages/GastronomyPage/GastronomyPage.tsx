@@ -18,7 +18,7 @@ export const GastronomyPage: React.FC = () => {
             return 'Оформление';
         }
         else if (location.pathname.includes('/my')) {
-            return 'Профиль';
+            return 'Мои заказы';
         }
         return 'Новогодняя кулинария';
     };
