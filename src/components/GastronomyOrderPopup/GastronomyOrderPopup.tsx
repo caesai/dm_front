@@ -26,12 +26,13 @@ const StyledPopup = styled(Popup)`
 `;
 
 const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen, order_id }) => {
-    const [auth] = useAtom(authAtom)
+    const [auth] = useAtom(authAtom);
+    const { showToast } = useToastState();
 
     const { showToast } = useToastState();
 
     const onClose = () => {
-        setOpen(false)
+        setOpen(false);
     };
 
     const cancelOrder = () => {
@@ -44,7 +45,7 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
                     showToast('Произошла ошибка. Попробуйте еще раз.');
                 });
         }
-    }
+    };
 
     return (
         <StyledPopup
@@ -72,6 +73,6 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
             </div>
         </StyledPopup>
     );
-}
+};
 
 export default GastronomyOrderPopup;
