@@ -13,7 +13,7 @@ import {
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
-import { IBookingInfo, IRestaurant } from '@/types/restaurant.ts';
+import { IBookingInfo, IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { APIGetCurrentBookings } from '@/api/restaurants.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';

@@ -1,4 +1,4 @@
-import { IRestaurantShortBooking } from '@/types/restaurant.ts';
+import { IRestaurantShortBooking } from '@/types/restaurant.types.ts';
 import { IUser } from '@/types/user.types.ts';
 
 interface EventRestaurant {

@@ -1,4 +1,4 @@
-import { IPhotoCard } from '@/types/restaurant.ts';
+import { IPhotoCard } from '@/types/restaurant.types.ts';
 import React, { useEffect, useState } from 'react';
 import { GalleryCollection } from '@/pages/Restaurant/Restaurant.types.ts';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';

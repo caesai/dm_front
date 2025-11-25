@@ -11,7 +11,7 @@ import {RestaurantBadgePhoto} from '@/components/RestaurantPreview/RestaurantBad
 import {InfoTag} from '@/components/InfoTag/InfoTag.tsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { FC, useState } from 'react';
-import {IRestaurant} from '@/types/restaurant.ts';
+import {IRestaurant} from '@/types/restaurant.types.ts';
 import {
     getCurrentTimeShort,
     getCurrentWeekdayShort, getDataFromLocalStorage,

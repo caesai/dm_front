@@ -10,7 +10,7 @@ import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { GalleryCollection, GalleryPhoto } from '@/pages/Restaurant/Restaurant.types.ts';
 import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
 import { useAtom } from 'jotai';
-import { IPhotoCard, IRestaurant } from '@/types/restaurant.ts';
+import { IPhotoCard, IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { formatDate } from '@/utils.ts';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
@@ -21,8 +21,6 @@ import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 import { IEventInRestaurant } from '@/types/events.ts';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
-import { IBanquet } from '@/types/banquets.types.ts';
-import { APIGetBanquetOptions } from '@/api/banquet.api.ts';
 import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 import { BookingBlock } from '@/pages/Restaurant/blocks/BookingsBlock.tsx';
 import { GalleryBlock } from '@/pages/Restaurant/blocks/GalleryBlock.tsx';
@@ -74,7 +72,6 @@ export const Restaurant = () => {
     const [timeslotLoading, setTimeslotLoading] = useState(true);
     const [isCallPopupOpen, setIsCallPopupOpen] = useState(false);
     const [events, setEvents] = useState<IEventInRestaurant[] | null>(null);
-    const [banquets, setBanquets] = useState<IBanquet | null>(null);
     const [nyCookings] = useState(NewYearCookingData);
 
     const tg_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
@@ -151,13 +148,6 @@ export const Restaurant = () => {
         };
     };
 
-    // Загрузка данных о банкетах
-    useEffect(() => {
-        APIGetBanquetOptions(String(auth?.access_token), Number(id)).then((res) => {
-            setBanquets(res.data);
-        });
-    }, [id, auth?.access_token]);
-
     // Инициализация ресторана и событий
     useEffect(() => {
         setRestaurant(restaurants.find((rest) => rest.id === Number(id)));
@@ -196,7 +186,7 @@ export const Restaurant = () => {
 
     const filteredEvents = useMemo(() => getFilteredEvents(), [events, tg_id]);
     const coordinates = useMemo(() => getRestaurantCoordinates(), [restaurant?.address_lonlng]);
-    const hasBanquets = banquets && banquets.banquet_options.length > 0;
+    const hasBanquets = restaurant?.banquets && restaurant?.banquets.banquet_options.length > 0;
     const hasEvents = useMemo(() => Boolean(filteredEvents && filteredEvents.length > 0), [filteredEvents]);
     const shouldShowCertificate = useMemo(() => hasPaidEventsAccess(), [tg_id]);
 
@@ -208,12 +198,12 @@ export const Restaurant = () => {
                 phone={restaurant?.phone_number || ''}
             />
 
-            {restaurant && events && banquets && filteredEvents !== undefined && (
+            {restaurant && events && restaurant?.banquets && filteredEvents !== undefined && (
                 <NavigationBlock
                     restaurant_id={Number(id)}
                     restaurant={restaurant}
                     events={events}
-                    banquets={banquets}
+                    banquets={restaurant?.banquets}
                     filteredEvents={filteredEvents}
                 />
             )}
@@ -263,7 +253,7 @@ export const Restaurant = () => {
                     timeslotLoading={timeslotLoading}
                     availableTimeslots={availableTimeslots}
                     setCurrentSelectedTime={setCurrentSelectedTime}
-                    isNavigationLoading={events == null && banquets == null}
+                    isNavigationLoading={events == null && Boolean(restaurant?.banquets)}
                     isShow={hasPaidEventsAccess()}
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
@@ -274,11 +264,10 @@ export const Restaurant = () => {
 
                 {restaurant && hasBanquets && (
                     <BanquetsBlock
-                        image={banquets.image}
-                        description={banquets.description}
+                        image={restaurant?.banquets.image}
+                        description={restaurant?.banquets.description}
                         restaurant={restaurant}
                         workTime={restaurant?.worktime}
-                        banquets={banquets}
                     />
                 )}
 

@@ -1,7 +1,7 @@
 import { IMenuItem } from '@/pages/Restaurant/Restaurant.types.ts';
 // import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-// import { IRestaurant } from '@/types/restaurant.ts';
+// import { IRestaurant } from '@/types/restaurant.types.ts';
 // import { ICity } from '@/atoms/cityListAtom.ts';
 
 export const BOOKING_DURATION = 120; // in minutes

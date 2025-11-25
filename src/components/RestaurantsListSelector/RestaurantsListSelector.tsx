@@ -9,7 +9,7 @@ import css from '@/components/RestaurantsListSelector/RestaurantsListSelector.mo
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { useAtom } from 'jotai/index';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { IRestaurant } from '@/types/restaurant.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
 
 type SetAtom<Args extends unknown[], Result> = <A extends Args>(...args: A) => Result;
 
