@@ -1,17 +1,19 @@
 import styled from 'styled-components';
 import React from 'react';
 import Popup from 'reactjs-popup';
-import css from './ModalPopup.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import classNames from 'classnames';
+import css from '@/components/ModalPopup/ModalPopup.module.css';
 
 const StyledPopup = styled(Popup)`
     &-overlay {
         background: #58585869;
         padding: 0 15px;
     }
+
     // use your custom style for ".popup-content"
+
     &-content {
         //background-color: transparent;
         margin: 0;
@@ -34,34 +36,38 @@ interface ModalProps {
     btnText?: string;
     btnScndrText?: string;
     btnScndrAction?: () => void;
+    btnsColumn?: boolean;
     list?: React.ReactNode;
     reverseButton?: boolean;
 }
 
-export const ModalPopup: React.FC<ModalProps> = ({
-    isOpen,
-    title,
-    subtitle,
-    text,
-    setOpen,
-    button = false,
-    btnAction,
-    btnDisabled,
-    btnText,
-    btnScndrText,
-    btnScndrAction,
-    list,
-    reverseButton,
-}) => {
+export const ModalPopup: React.FC<ModalProps> = (
+    {
+        isOpen,
+        title,
+        subtitle,
+        text,
+        setOpen,
+        button = false,
+        btnAction,
+        btnDisabled,
+        btnText,
+        btnScndrText,
+        btnScndrAction,
+        list,
+        reverseButton,
+        btnsColumn,
+    },
+) => {
     const handleSecondButton = () => {
         if (btnScndrAction) {
             btnScndrAction();
             return;
         }
         setOpen();
-    }
+    };
     return (
-        <StyledPopup open={isOpen} >
+        <StyledPopup open={isOpen}>
             <div className={css.popup}>
                 <div className={css.end}>
                     <RoundedButton
@@ -69,7 +75,7 @@ export const ModalPopup: React.FC<ModalProps> = ({
                         action={setOpen}
                     />
                 </div>
-                <div />
+                <div style={{ paddingTop: 5 }} />
                 {title && <span className={css.title}>{title}</span>}
                 {subtitle && <span className={css.sub_title}>{subtitle}</span>}
                 {text && (
@@ -79,12 +85,19 @@ export const ModalPopup: React.FC<ModalProps> = ({
                 )}
                 {list && list}
                 {button && (
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexDirection: reverseButton ? 'row-reverse' : 'row' }}>
-                        <button className={classNames(css.button, btnDisabled ? css.button__disabled : '')} onClick={btnAction} disabled={btnDisabled}>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        flexDirection: reverseButton ? 'row-reverse' : btnsColumn ? 'column' : 'row',
+                    }}>
+                        <button className={classNames(css.button, btnDisabled ? css.button__disabled : '')}
+                                onClick={btnAction} disabled={btnDisabled}>
                             {btnText}
                         </button>
                         {btnScndrText !== undefined && (
-                            <button className={classNames(css.button, css.button__disabled)} onClick={handleSecondButton}>
+                            <button className={classNames(css.button, css.button__disabled)}
+                                    onClick={handleSecondButton}>
                                 {btnScndrText}
                             </button>
                         )}
