@@ -43,7 +43,7 @@ export const BanquetAddressPage: React.FC = () => {
                 navigate(`/restaurant/${id}`);
             }
         } else {
-            navigate('/onboarding/4');
+            navigate('/onboarding/3');
         }
     };
 
@@ -57,7 +57,7 @@ export const BanquetAddressPage: React.FC = () => {
                     },
                 });
             } else {
-                navigate('/onboarding/4', {
+                navigate('/onboarding/3', {
                     state: {
                         ...location.state,
                         id: currentRestaurant.value,

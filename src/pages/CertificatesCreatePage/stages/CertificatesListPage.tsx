@@ -10,6 +10,7 @@ import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import html2canvas from 'html2canvas';
+import { useNavigate } from 'react-router-dom';
 // import certificateImage from '/img/certificate_2.png';
 
 export const shareCertificate = async (certificate: ICertificate, certificateRef: React.Ref<HTMLDivElement | null>) => {
@@ -93,7 +94,11 @@ interface CertificateOptionProps {
 }
 
 const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) => {
+    const navigate = useNavigate();
     const certificateRef = useRef(null);
+    const useCertificate = () => {
+        navigate('/booking', { state: { certificate: true, certificateId: certificate.id } })
+    }
     return (
         <div className={css.certificateOption}>
             <Certificate
@@ -105,6 +110,7 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) =>
                 forwardRef={certificateRef}
             />
             {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} theme={'red'} action={() => shareCertificate(certificate, certificateRef.current)} />}
+            {certificate.status === 'shared' && <UniversalButton width={'full'} title={'Воспользоваться'} theme={'red'} action={useCertificate} />}
         </div>
     )
 }
