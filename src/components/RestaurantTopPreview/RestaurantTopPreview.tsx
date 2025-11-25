@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import css from './RestaurantTopPreview.module.css';
 import { MoneyIcon } from '@/components/Icons/MoneyIcon.tsx';
 import { TimeCircleIcon } from '@/components/Icons/TimeCircleIcon.tsx';
-import {IRestaurant} from '@/types/restaurant.ts';
+import {IRestaurant} from '@/types/restaurant.types.ts';
 import {
     getCurrentTimeShort,
     getCurrentWeekdayShort,

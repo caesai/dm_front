@@ -1,5 +1,5 @@
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { IWorkTime } from '@/types/restaurant.ts';
+import { IWorkTime } from '@/types/restaurant.types.ts';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useAtom } from 'jotai/index';

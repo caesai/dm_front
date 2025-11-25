@@ -1,4 +1,5 @@
 import { ICity } from '@/atoms/cityListAtom.ts';
+import { IBanquet } from '@/types/banquets.types.ts';
 
 export interface IRestaurantChef {
     name: string;
@@ -49,6 +50,7 @@ export interface IRestaurantShort {
     photo_cards: IPhotoCard[];
     brand_chef: IRestaurantChef;
     city: ICity;
+    banquets: IBanquet;
 }
 
 export interface IRestaurantShortBooking {

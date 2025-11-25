@@ -9,7 +9,7 @@ import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Zoom } from 'swiper/modules';
 import styled from 'styled-components';
-import { IPhotoCard } from '@/types/restaurant.ts';
+import { IPhotoCard } from '@/types/restaurant.types.ts';
 
 interface IFullScreenPopup {
     isOpen: boolean;

@@ -193,7 +193,7 @@ const CertificateLandingPage: React.FC = () => {
     };
 
     const goToOnboarding = () => {
-        navigate('/onboarding/3', { state: { id, sharedCertificate: true } });
+        navigate('/onboarding/3', { state: { certificateId: id, sharedCertificate: true, certificate: true } });
     };
 
     const goToBooking = () => {
@@ -218,10 +218,13 @@ const CertificateLandingPage: React.FC = () => {
                 isOpen={isShowing}
                 setOpen={toggle}
                 button
-                title={'Вы не зарегистрированы'}
-                text={'Необходимо зарегистрироваться для того, чтобы воспользоваться сертификатом'}
+                title={''}
+                text={'Чтобы воспользоваться сертификатом и забронировать стол онлайн, необходимо зарегистрироваться в приложении Dreamteam Concierge. Или просто покажите код сертификата официанту'}
                 btnText={'Зарегистрироваться'}
                 btnAction={goToOnboarding}
+                btnScndrText={'Покажу официанту'}
+                btnScndrAction={toggle}
+                btnsColumn={true}
             />
             <section className={css.container}>
                 <div className={css.content}>

@@ -11,17 +11,15 @@ import { BASE_BOT } from '@/api/base.ts';
 import { useAtom } from 'jotai/index';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
 import { useNavigate } from 'react-router-dom';
-import { IRestaurant } from '@/types/restaurant.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
 import { IEventInRestaurant } from '@/types/events.ts';
-import { IBanquet } from '@/types/banquets.types.ts';
 import { userAtom } from '@/atoms/userAtom.ts';
 
 interface INavigationBlockProps {
-    restaurant_id: number
-    restaurant: IRestaurant
-    events: IEventInRestaurant[]
-    banquets: IBanquet
-    filteredEvents: IEventInRestaurant[]
+    restaurant_id: number;
+    restaurant: IRestaurant;
+    events: IEventInRestaurant[];
+    filteredEvents: IEventInRestaurant[];
 }
 
 export const NavigationBlock: React.FC<INavigationBlockProps> =
@@ -29,96 +27,95 @@ export const NavigationBlock: React.FC<INavigationBlockProps> =
          restaurant_id,
          restaurant,
          events,
-         banquets,
          filteredEvents,
-    }) => {
-    const [headerScrolled, setHeaderScrolled] = useState(false);
+     }) => {
+        const [headerScrolled, setHeaderScrolled] = useState(false);
 
-    const [, setBackUrlAtom] = useAtom(backButtonAtom);
-    const [user] = useAtom(userAtom);
-    const navigate = useNavigate();
+        const [, setBackUrlAtom] = useAtom(backButtonAtom);
+        const [user] = useAtom(userAtom);
+        const navigate = useNavigate();
 
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+        const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
-    const goBack = () => {
-        if (!user?.complete_onboarding) {
-            navigate('/onboarding');
-        } else {
-            navigate('/');
-        }
-    };
-
-    const goToProfile = () => {
-        setBackUrlAtom(`/restaurant/${restaurant_id}`);
-        navigate('/profile');
-    };
-
-    const shareRestaurant = () => {
-        const url = encodeURI(`https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`);
-        const title = encodeURI(String(restaurant?.title));
-        const shareData = {
-            title,
-            url,
-        };
-        try {
-            if (navigator && navigator.canShare(shareData)) {
-                navigator
-                    .share(shareData)
-                    .then()
-                    .catch((err) => {
-                        console.error(JSON.stringify(err));
-                    });
+        const goBack = () => {
+            if (!user?.complete_onboarding) {
+                navigate('/onboarding');
+            } else {
+                navigate('/');
             }
-        } catch (e) {
-            window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
-        }
-    };
-
-    useEffect(() => {
-        // TODO: Refactor two Navigation Blocks on Restaurant Page
-        const handleScroll = () => {
-            setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 190px – меняем состояние
         };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
-    return (
-        <div className={classNames(css.header, headerScrolled ? css.scrolled : null)}>
-            <div className={css.headerNav}>
-                <div className={css.headerTop}>
-                    <div className={css.headerNavBlock}>
-                        <RoundedButton
-                            icon={<BackIcon color={'var(--dark-grey)'} />}
-                            action={goBack}
-                        ></RoundedButton>
-                    </div>
-                    {headerScrolled ? <span className={css.headerTitle}>{restaurant?.title}</span> : null}
-                    <div className={css.headerNavBlock}>
-                        <RoundedButton
-                            icon={<Share color={'var(--dark-grey)'} />}
-                            action={() => shareRestaurant()}
-                        />
-                        {user && user.complete_onboarding && (
+        const goToProfile = () => {
+            setBackUrlAtom(`/restaurant/${restaurant_id}`);
+            navigate('/profile');
+        };
+
+        const shareRestaurant = () => {
+            const url = encodeURI(`https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`);
+            const title = encodeURI(String(restaurant?.title));
+            const shareData = {
+                title,
+                url,
+            };
+            try {
+                if (navigator && navigator.canShare(shareData)) {
+                    navigator
+                        .share(shareData)
+                        .then()
+                        .catch((err) => {
+                            console.error(JSON.stringify(err));
+                        });
+                }
+            } catch (e) {
+                window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
+            }
+        };
+
+        useEffect(() => {
+            // TODO: Refactor two Navigation Blocks on Restaurant Page
+            const handleScroll = () => {
+                setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 190px – меняем состояние
+            };
+            window.addEventListener('scroll', handleScroll);
+            return () => window.removeEventListener('scroll', handleScroll);
+        }, []);
+
+        return (
+            <div className={classNames(css.header, headerScrolled ? css.scrolled : null)}>
+                <div className={css.headerNav}>
+                    <div className={css.headerTop}>
+                        <div className={css.headerNavBlock}>
                             <RoundedButton
-                                icon={<IconlyProfile color={'var(--dark-grey)'} />}
-                                action={() => goToProfile()}
+                                icon={<BackIcon color={'var(--dark-grey)'} />}
+                                action={goBack}
+                            ></RoundedButton>
+                        </div>
+                        {headerScrolled ? <span className={css.headerTitle}>{restaurant?.title}</span> : null}
+                        <div className={css.headerNavBlock}>
+                            <RoundedButton
+                                icon={<Share color={'var(--dark-grey)'} />}
+                                action={() => shareRestaurant()}
                             />
-                        )}
+                            {user && user.complete_onboarding && (
+                                <RoundedButton
+                                    icon={<IconlyProfile color={'var(--dark-grey)'} />}
+                                    action={() => goToProfile()}
+                                />
+                            )}
+                        </div>
                     </div>
+                    {headerScrolled ? (
+                        <RestaurantNavigation
+                            isLoading={events == null && restaurant?.banquets == null}
+                            isBanquets={restaurant?.banquets?.banquet_options?.length > 0}
+                            isShow={
+                                tg_id &&
+                                mockEventsUsersList.includes(tg_id)
+                            }
+                            isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
+                        />
+                    ) : null}
                 </div>
-                {headerScrolled ? (
-                    <RestaurantNavigation
-                        isLoading={events == null && banquets == null}
-                        isBanquets={banquets?.banquet_options?.length > 0}
-                        isShow={
-                            tg_id &&
-                            mockEventsUsersList.includes(tg_id)
-                        }
-                        isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
-                    />
-                ) : null}
             </div>
-        </div>
-    )
-}
+        );
+    };

@@ -1,4 +1,4 @@
-import { IRestaurantShortBooking } from '@/types/restaurant.ts';
+import { IRestaurantShortBooking } from '@/types/restaurant.types.ts';
 import { IUser } from '@/types/user.types.ts';
 
 interface EventRestaurant {
@@ -19,6 +19,7 @@ export interface EventTicket {
     guest_count: number;
     total: number;
     phone?: string;
+    ticket_identifier: number;
     restaurant: EventRestaurant;
 }
 

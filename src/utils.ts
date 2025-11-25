@@ -1,4 +1,4 @@
-import { IWorkTime } from '@/types/restaurant.ts';
+import { IWorkTime } from '@/types/restaurant.types.ts';
 // import { IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
 import { Dispatch, SetStateAction } from 'react';
 // import moment from 'moment';
@@ -82,7 +82,7 @@ const MONTHS_LONG = [
     'ноябрь',
     'декабрь',
 ];
-const MONTHS_LONG2 = [
+export const MONTHS_LONG2 = [
     'января',
     'февраля',
     'марта',

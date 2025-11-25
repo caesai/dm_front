@@ -1,0 +1,58 @@
+.order_page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 100vh;
+    background-color: var(--primary-background);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.order {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.order_content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 1rem;
+    border-radius: 20px;
+    background-color: var(--secondary-background);
+}
+
+.order_title {
+    font-family: "Mont", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.order_text {
+    font-family: "Mont", sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.order_button {
+    width: 100%;
+    padding: 9px 0;
+    background-color: var(--light-grey);
+    outline: none;
+    border: none;
+    border-radius: 8px;
+    font-family: "Mont", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.no_orders {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+}

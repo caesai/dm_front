@@ -12,7 +12,7 @@ import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { useCallback, useEffect, useState } from 'react';
 import { CancelBookingPopup } from '@/pages/BookingInfoPage/CancelBookingPopup/CancelBookingPopup.tsx';
-import { IBookingInfo } from '@/types/restaurant.ts';
+import { IBookingInfo } from '@/types/restaurant.types.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { useScript } from 'usehooks-ts';
 import { APICancelBooking, APIGetBooking, APIPOSTCancelReason } from '@/api/restaurants.ts';

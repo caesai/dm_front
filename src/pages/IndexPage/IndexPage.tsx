@@ -13,14 +13,14 @@ import {
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
-import { IBookingInfo, IRestaurant } from '@/types/restaurant.ts';
+import { IBookingInfo, IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { APIGetCurrentBookings } from '@/api/restaurants.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
 import superevent from '/img/hh2.jpg';
@@ -28,7 +28,6 @@ import newres from '/img/chinois_app.png';
 import { IStoryBlock } from '@/types/stories.types.ts';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
 import { getDataFromLocalStorage } from '@/utils.ts';
-import useToastState from '@/hooks/useToastState.ts';
 
 export const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -61,11 +60,8 @@ export const IndexPage: FC = () => {
     const navigate = useNavigate();
     // const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
-    const { showToast } = useToastState();
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
 
-    const location = useLocation();
-    const isBanquet = location.state?.banquet;
     const want_first = getDataFromLocalStorage('want_first');
 
     useEffect(() => {
@@ -107,6 +103,7 @@ export const IndexPage: FC = () => {
     }, []);
 
     const cityId = cityListA.find(item => item.name_english === currentCityS.id)?.id;
+
     useEffect(() => {
         if (auth?.access_token !== undefined && cityId !== undefined) {
             ApiGetStoriesBlocks(auth?.access_token, cityId)
@@ -148,12 +145,6 @@ export const IndexPage: FC = () => {
             result.filter((v) => v.city.name_english == currentCityA),
         );
     }, [currentCityA, cityListA]);
-
-    useEffect(() => {
-        if (isBanquet) {
-            showToast('Ваш запрос на бронирование банкета принят. Наш менеджер скоро свяжется с вами.');
-        }
-    }, [isBanquet]);
 
     useEffect(() => {
         const preferencesStatus = JSON.parse(localStorage.getItem('PREFERENCES_STATUS') as string);

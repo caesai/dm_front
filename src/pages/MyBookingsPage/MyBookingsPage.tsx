@@ -6,7 +6,7 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useNavigate } from 'react-router-dom';
 import { BookingCard } from '@/components/BookingCard/BookingCard.tsx';
 import { useEffect, useState } from 'react';
-import { IBookingInfo } from '@/types/restaurant.ts';
+import { IBookingInfo } from '@/types/restaurant.types.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';

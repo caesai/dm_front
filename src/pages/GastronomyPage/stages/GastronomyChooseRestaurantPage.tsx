@@ -13,7 +13,7 @@ import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
 import { useAtom } from 'jotai/index';
 import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
-import { IRestaurant } from '@/types/restaurant.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';

@@ -1,4 +1,4 @@
-import { IMenuImg, IMenuItem } from '@/types/restaurant.ts';
+import { IMenuImg, IMenuItem } from '@/types/restaurant.types.ts';
 import React, { useState } from 'react';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';

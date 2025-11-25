@@ -1,5 +1,4 @@
-import { IBanquet } from '@/types/banquets.types.ts';
-import { IRestaurant, IWorkTime } from '@/types/restaurant.ts';
+import { IRestaurant, IWorkTime } from '@/types/restaurant.types.ts';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { workdayIndexMap } from '@/utils.ts';
@@ -15,7 +14,6 @@ interface BanquetsBlockProps {
     image: string;
     description: string;
     restaurant: IRestaurant
-    banquets: IBanquet;
     workTime: IWorkTime[] | undefined;
 }
 
@@ -23,7 +21,6 @@ export const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
                                                                 description,
                                                                 image,
                                                                 restaurant,
-                                                                banquets,
                                                                 workTime,
                                                             }) => {
     const navigate = useNavigate();
@@ -46,7 +43,6 @@ export const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
         navigate(`/banquets/${restaurant.id}/address`, {
             state: {
                 restaurant,
-                banquets,
                 workTime: sortedWorkTime
             },
         });
