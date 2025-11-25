@@ -234,7 +234,7 @@ export const TicketInfoPage = () => {
                                         css.ticket_details_row_obj_cont,
                                     )}
                                 >
-                                    {ticket?.ticket_identifier || (
+                                    {ticket?.ticket_identifier !== undefined ? ticket.ticket_identifier : (
                                         <PlaceholderBlock
                                             width={'170px'}
                                             height={'19px'}
