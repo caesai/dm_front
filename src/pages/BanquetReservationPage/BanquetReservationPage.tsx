@@ -14,6 +14,7 @@ import moment from 'moment';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+import useToastState from '@/hooks/useToastState.ts';
 
 export const BanquetReservationPage = () => {
     const navigate = useNavigate();
@@ -21,6 +22,7 @@ export const BanquetReservationPage = () => {
     const {id} = useParams();
     const [user] = useAtom(userAtom)
     const [auth] = useAtom(authAtom);
+    const { showToast } = useToastState();
     const reservationData = location.state?.reservationData || location.state;
 
     const confirmationList = [
@@ -86,7 +88,8 @@ export const BanquetReservationPage = () => {
         }).then(res => {
             //
             if (res.data.status === 'success') {
-                navigate('/', { state: { banquet: true } });
+                showToast('Ваш запрос на бронирование банкета принят. Наш менеджер скоро свяжется с вами.');
+                navigate('/');
             }
         })
     }

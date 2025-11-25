@@ -36,11 +36,14 @@ export const BanquetAddressPage: React.FC = () => {
     const restaurant = location.state?.restaurant;
 
     const goBack = () => {
-        // TODO: Проверить навигацию на первую страницу банкетов
-        if (id === ':id') {
-            navigate('/');
+        if (user?.complete_onboarding) {
+            if (id === ':id') {
+                navigate('/');
+            } else {
+                navigate(`/restaurant/${id}`);
+            }
         } else {
-            navigate(`/restaurant/${id}`);
+            navigate('/onboarding/4');
         }
     };
 
@@ -58,6 +61,7 @@ export const BanquetAddressPage: React.FC = () => {
                     state: {
                         ...location.state,
                         id: currentRestaurant.value,
+                        banquets,
                         sharedBanquet: true,
                     },
                 });
@@ -84,7 +88,6 @@ export const BanquetAddressPage: React.FC = () => {
     }, [location.state]);
 
     // Загрузка данных о банкетах в конкретном ресторане
-    // TODO: возможно в api/v1/restaurant/list надо передавать целиком объект banquets какой он используется в дальнейшем на страницах Банкетов
     useEffect(() => {
         if (currentRestaurant.value !== 'unset') {
             const currentBanquets = restaurantsList.find((item) => item.id === Number(currentRestaurant.value))?.banquets;
