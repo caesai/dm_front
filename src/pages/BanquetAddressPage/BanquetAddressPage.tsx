@@ -10,7 +10,11 @@ import React, { useEffect, useState } from 'react';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { useAtom } from 'jotai/index';
-import { userAtom } from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { IRestaurant } from '@/types/restaurant.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { APIGetBanquetOptions } from '@/api/banquet.api.ts';
+import { IBanquet } from '@/types/banquets.types.ts';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
@@ -22,12 +26,17 @@ export const BanquetAddressPage: React.FC = () => {
     const location = useLocation()
     const { id } = useParams();
     const [user] = useAtom(userAtom);
+    const [auth] = useAtom(authAtom);
+    const [restaurants] = useAtom(restaurantsListAtom);
 
     const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
     const [restaurantPopup, setRestaurantPopup] = useState<boolean>(false);
     const [isDisabledButton, setDisabledButton] = useState(true);
+    const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
+    const [banquets, setBanquets] = useState<IBanquet | null>(null);
 
     const restaurant = location.state?.restaurant;
+
     const goBack = () => {
         // TODO: Проверить навигацию на первую страницу банкетов
         if (id === ':id') {
@@ -40,7 +49,8 @@ export const BanquetAddressPage: React.FC = () => {
     const goNextPage = () => {
         if (!isDisabledButton) {
             if (user?.complete_onboarding) {
-                navigate(`/banquets/${id}/choose`, { state: { ...location.state, currentRestaurant } });
+                console.log('currentRestaurant.value: ', currentRestaurant.value)
+                navigate(`/banquets/${currentRestaurant.value}/choose`, { state: { ...location.state, currentRestaurant, banquets } });
             } else {
                 navigate('/onboarding/4', { state: { ...location.state, id: currentRestaurant.value, currentRestaurant, sharedBanquet: true } });
             }
@@ -66,6 +76,22 @@ export const BanquetAddressPage: React.FC = () => {
         }
     }, [location.state]);
 
+    // Загрузка данных о банкетах в конкретном ресторане
+    // TODO: возможно в api/v1/restaurant/list надо передавать целиком объект banquets какой он используется в дальнейшем на страницах Банкетов
+    useEffect(() => {
+        if (currentRestaurant.value !== 'unset') {
+            APIGetBanquetOptions(String(auth?.access_token), Number(id))
+                .then((res) => {
+                    setBanquets(res.data);
+                });
+        }
+    }, [currentRestaurant.value, auth?.access_token]);
+
+    useEffect(() => {
+        const filteredRestaurantsWithBanquetOptions = restaurants.filter((item) => item.banquet_options.length > 0);
+        setRestaurantsList(filteredRestaurantsWithBanquetOptions);
+    }, []);
+
     return (
         <Page back={true}>
             <RestaurantsListSelector
@@ -73,6 +99,7 @@ export const BanquetAddressPage: React.FC = () => {
                 setOpen={setRestaurantPopup}
                 restaurant={currentRestaurant}
                 selectRestaurant={setCurrentRestaurant}
+                filteredRestaurants={restaurantsList}
             />
             <div className={css.page}>
                 <div className={css.pageWrapper}>

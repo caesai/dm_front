@@ -26,7 +26,7 @@ export const ChooseBanquetOptionsPage = () => {
     const [currentImages, setCurrentImages] = useState<string[]>([]);
     const [imageIndex, setImageIndex] = useState<number | null>(null);
     const [hideAboutId, setHideAboutId] = useState<number | null>(null);
-
+    console.log('banquets: ', banquets)
     const goBack = () => {
         navigate(`/banquets/${id}/address`, {state: {...location.state}});
     };
