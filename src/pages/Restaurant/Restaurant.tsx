@@ -252,7 +252,7 @@ export const Restaurant = () => {
                     timeslotLoading={timeslotLoading}
                     availableTimeslots={availableTimeslots}
                     setCurrentSelectedTime={setCurrentSelectedTime}
-                    isNavigationLoading={events == null && Boolean(restaurant?.banquets)}
+                    isNavigationLoading={events == null && restaurant?.banquets == null}
                     isShow={hasPaidEventsAccess()}
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}

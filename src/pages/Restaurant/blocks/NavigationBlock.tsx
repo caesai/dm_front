@@ -106,7 +106,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> =
                     </div>
                     {headerScrolled ? (
                         <RestaurantNavigation
-                            isLoading={events == null && Boolean(restaurant?.banquets)}
+                            isLoading={events == null && restaurant?.banquets == null}
                             isBanquets={restaurant?.banquets?.banquet_options?.length > 0}
                             isShow={
                                 tg_id &&
