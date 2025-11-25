@@ -50,3 +50,9 @@
     font-size: 1rem;
     font-weight: 700;
 }
+
+.no_orders {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+}

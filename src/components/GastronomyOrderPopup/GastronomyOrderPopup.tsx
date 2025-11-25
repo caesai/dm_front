@@ -17,7 +17,6 @@ interface IGastronomyOrderProps {
 }
 
 const StyledPopup = styled(Popup)`
-
     &-content {
         background-color: transparent;
         border: 0;
@@ -30,6 +29,8 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
     const [auth] = useAtom(authAtom);
     const { showToast } = useToastState();
 
+    const { showToast } = useToastState();
+
     const onClose = () => {
         setOpen(false);
     };
@@ -38,11 +39,10 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
         if (auth) {
             APIPostCancelOrder(order_id, auth?.access_token)
                 .then(() => {
-                    // TODO: Возможно нужен тост или какое то сообщение об успехе
+                    setOpen(false);
                 })
-                .catch(err => {
-                    console.error(err);
-                    showToast('Возникла ошибка. Повторите снова.');
+                .catch(() => {
+                    showToast('Произошла ошибка. Попробуйте еще раз.');
                 });
         }
     };
