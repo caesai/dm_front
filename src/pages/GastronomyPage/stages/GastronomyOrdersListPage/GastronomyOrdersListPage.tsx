@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import css from "./GastronomyOrdersList.module.css"
+import css from './GastronomyOrdersList.module.css';
 import { useNavigate } from 'react-router-dom';
 import { IOrder } from '@/types/gastronomy.types.ts';
 import { useAtom } from 'jotai';
@@ -9,7 +9,7 @@ import { APIGetUserOrders } from '@/api/gastronomy.api.ts';
 
 export const GastronomyOrdersListPage: React.FC = () => {
     const [user] = useAtom(userAtom);
-    const [auth] = useAtom(authAtom)
+    const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
     const { showToast } = useToastState();
 
@@ -17,13 +17,13 @@ export const GastronomyOrdersListPage: React.FC = () => {
 
     const showOrderPage = (order: IOrder, skip_page?: boolean) => {
         navigate(`/gastronomy/order/${order.orderId}`, { state: { order, skip_page } });
-    }
+    };
 
     useEffect(() => {
         if (user && user.phone_number && auth) {
             APIGetUserOrders(user.phone_number, auth?.access_token)
                 .then((res) => {
-                    setOrdersList(res.data)
+                    setOrdersList(res.data);
                 })
                 .catch((err) => {
                     if (err.response) {
@@ -42,24 +42,23 @@ export const GastronomyOrdersListPage: React.FC = () => {
         <div className={css.order_page}>
             <div className={css.container}>
                 {ordersList.length > 0 ?
-                    (
-                        ordersList.map((order) => (
-                            <div className={css.order_content} key={order.orderId}>
-                                <div className={css.order}>
-                                    <span className={css.order_title}>Заказ {order.orderId}</span>
-                                    <span className={css.order_text}>{order.deliveryAddress}</span>
-                                </div>
-                                <button
-                                    className={css.order_button}
-                                    onClick={() => showOrderPage(order)}
-                                >
-                                    Подробнее
-                                </button>
+                    ordersList.map((order) => (
+                        <div className={css.order_content} key={order.orderId}>
+                            <div className={css.order}>
+                                <span className={css.order_title}>Заказ {order.orderId}</span>
+                                <span className={css.order_text}>{order.deliveryAddress}</span>
                             </div>
-                        ))
-                    ) : <span className={css.no_orders}>У вас нет заказов</span>
+                            <button
+                                className={css.order_button}
+                                onClick={() => showOrderPage(order)}
+                            >
+                                Подробнее
+                            </button>
+                        </div>
+                    ))
+                    : <span className={css.no_orders}>У вас нет заказов</span>
                 }
             </div>
         </div>
-    )
-}
+    );
+};

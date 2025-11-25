@@ -29,8 +29,6 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
     const [auth] = useAtom(authAtom);
     const { showToast } = useToastState();
 
-    const { showToast } = useToastState();
-
     const onClose = () => {
         setOpen(false);
     };
