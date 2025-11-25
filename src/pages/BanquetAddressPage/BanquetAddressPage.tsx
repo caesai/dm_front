@@ -97,7 +97,7 @@ export const BanquetAddressPage: React.FC = () => {
     useEffect(() => {
         const filteredRestaurantsWithBanquetOptions = restaurants.filter((item) => item.banquets.banquet_options.length > 0);
         setRestaurantsList(filteredRestaurantsWithBanquetOptions);
-    }, []);
+    }, [restaurants]);
 
     return (
         <Page back={true}>
