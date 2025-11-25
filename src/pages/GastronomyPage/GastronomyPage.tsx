@@ -17,14 +17,28 @@ export const GastronomyPage: React.FC = () => {
         if (location.pathname.includes('/basket')) {
             return 'Оформление';
         }
+        else if (location.pathname.includes('/my')) {
+            return 'Профиль';
+        }
         return 'Новогодняя кулинария';
     };
+
+    const getBackgroundColor = () => {
+        if (location.pathname.includes('/my')) {
+            return {backgroundColor: 'white'}
+        }
+
+        return undefined
+    }
 
     const isBasketPage = location.pathname.includes('/basket');
 
     return (
         <Page back={true}>
-            <div className={classnames(css.page, { [css.pageNoPadding]: isBasketPage })}>
+            <div
+                className={classnames(css.page, { [css.pageNoPadding]: isBasketPage })}
+                style={getBackgroundColor()}
+            >
                 <div className={css.header}>
                     <RoundedButton
                         bgColor={'var(--primary-background)'}

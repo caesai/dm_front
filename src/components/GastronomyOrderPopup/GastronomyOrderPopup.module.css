@@ -1,0 +1,25 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+    border-radius: 10px;
+    background-color: var(--primary-background);
+}
+
+.closeButton {
+    margin-bottom: 16px;
+    margin-left: auto;
+}
+
+.text {
+    font-family: "Mont", sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.buttons {
+    margin-top: 32px;
+    display: flex;
+    gap: 4px;
+}
