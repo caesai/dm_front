@@ -15,3 +15,14 @@ export const APIGetUserOrders = async (phone: string, token: string) => {
         }
     );
 };
+
+
+export const APIPostCancelOrder = (order_id: string, token: string) => {
+    return axios.post(`${BASE_URL}/culinary/orders/${order_id}/cancel`, {},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+};
