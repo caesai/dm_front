@@ -1,4 +1,4 @@
-import css from './GastronomyOrderPage.module.css'
+import css from './GastronomyOrderPage.module.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IOrder } from '@/types/gastronomy.types.ts';
@@ -10,39 +10,38 @@ import moment from 'moment';
 import GastronomyOrderPopup from '@/components/GastronomyOrderPopup/GastronomyOrderPopup.tsx';
 
 export const GastronomyOrderPage: React.FC = () => {
-    const location = useLocation()
+    const location = useLocation();
     const navigate = useNavigate();
-    const order: IOrder = location.state?.order
+    const order: IOrder = location.state?.order;
 
     const [openPopup, setPopup] = useState(false);
 
     const time = useMemo(() => {
-        return order.deliveryTime ? order.deliveryTime : order.pickupTime
+        return order.deliveryTime ? order.deliveryTime : order.pickupTime;
     }, [location.state, order]);
 
     const goBack = () => {
         if (location.state?.skip_page) {
             navigate(-2);
-        }
-        else {
+        } else {
             navigate(-1);
         }
-    }
+    };
 
     const getDateWithMonth = (date: string) => {
-        const currentDate = moment(date).format('DD')
-        const currentMonth = MONTHS_LONG2[Number(moment(date).format('MM'))-1]
-        return `${currentDate} ${currentMonth}`
-    }
+        const currentDate = moment(date).format('DD');
+        const currentMonth = MONTHS_LONG2[moment(date).month()];
+        return `${currentDate} ${currentMonth}`;
+    };
 
     const getDayOfWeek = (date: string) => {
         const dayIndex = new Date(date).getDay();
         return weekdaysMap[dayIndex];
-    }
+    };
 
     useEffect(() => {
         if (!order) {
-            goBack()
+            goBack();
         }
     }, [location.state, order]);
     return (
@@ -95,5 +94,5 @@ export const GastronomyOrderPage: React.FC = () => {
                 </div>
             </section>
         </>
-    )
-}
+    );
+};

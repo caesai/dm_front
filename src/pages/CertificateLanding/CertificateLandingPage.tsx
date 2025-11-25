@@ -193,7 +193,7 @@ const CertificateLandingPage: React.FC = () => {
     };
 
     const goToOnboarding = () => {
-        navigate('/onboarding/3', { state: { certificateId: id, sharedCertificate: true } });
+        navigate('/onboarding/3', { state: { certificateId: id, sharedCertificate: true, certificate: true } });
     };
 
     const goToBooking = () => {

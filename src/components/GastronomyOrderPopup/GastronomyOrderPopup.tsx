@@ -8,6 +8,7 @@ import { MiniCrossIcon } from '@/components/Icons/MiniCrossIcon.tsx';
 import { APIPostCancelOrder } from '@/api/gastronomy.api.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
+import useToastState from '@/hooks/useToastState.ts';
 
 interface IGastronomyOrderProps {
     isOpen: boolean;
@@ -26,17 +27,25 @@ const StyledPopup = styled(Popup)`
 `;
 
 const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen, order_id }) => {
-    const [auth] = useAtom(authAtom)
+    const [auth] = useAtom(authAtom);
+    const { showToast } = useToastState();
 
     const onClose = () => {
-        setOpen(false)
+        setOpen(false);
     };
 
     const cancelOrder = () => {
         if (auth) {
-            APIPostCancelOrder(order_id, auth?.access_token).then()
+            APIPostCancelOrder(order_id, auth?.access_token)
+                .then(() => {
+                    // TODO: Возможно нужен тост или какое то сообщение об успехе
+                })
+                .catch(err => {
+                    console.error(err);
+                    showToast('Возникла ошибка. Повторите снова.');
+                });
         }
-    }
+    };
 
     return (
         <StyledPopup
@@ -64,6 +73,6 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
             </div>
         </StyledPopup>
     );
-}
+};
 
 export default GastronomyOrderPopup;
