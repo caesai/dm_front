@@ -226,6 +226,31 @@ export const TicketInfoPage = () => {
                                         css.ticket_details_row_obj__title,
                                     )}
                                 >
+                                    Код билета
+                                </span>
+                                <span
+                                    className={classNames(
+                                        css.mont,
+                                        css.ticket_details_row_obj_cont,
+                                    )}
+                                >
+                                    {ticket?.ticket_identifier || (
+                                        <PlaceholderBlock
+                                            width={'170px'}
+                                            height={'19px'}
+                                        />
+                                    )}
+                                </span>
+                            </div>
+                        </div>
+                        <div className={css.ticket_details_row}>
+                            <div className={css.ticket_details_row_obj}>
+                                <span
+                                    className={classNames(
+                                        css.mont,
+                                        css.ticket_details_row_obj__title,
+                                    )}
+                                >
                                     Дата
                                 </span>
                                 <span
@@ -260,7 +285,7 @@ export const TicketInfoPage = () => {
                                     )}
                                 >
                                     {ticket ? (
-                                        `${moment(ticket?.date_start).format('HH:mm',)} - ${moment(ticket?.date_end).format('HH:mm',)}`
+                                        `${moment(ticket?.date_start).format('HH:mm')} - ${moment(ticket?.date_end).format('HH:mm')}`
                                     ) : (
                                         <PlaceholderBlock
                                             width={'50px'}
