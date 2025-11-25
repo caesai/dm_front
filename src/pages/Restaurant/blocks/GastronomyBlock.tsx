@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { useNavigate } from 'react-router-dom';
-import { IRestaurant } from '@/types/restaurant.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
 
 interface GastronomyBlockProps {
     image: string

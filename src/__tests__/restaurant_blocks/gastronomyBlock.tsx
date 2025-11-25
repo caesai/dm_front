@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { GastronomyBlock } from '@/pages/Restaurant/blocks/GastronomyBlock.tsx';
 import { useNavigate } from 'react-router-dom';
-import { IRestaurant } from '@/types/restaurant.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
 
 jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn(),
@@ -48,7 +48,13 @@ const mockRestaurant: IRestaurant = {
     menu_imgs: [],
     socials: [],
     photo_cards: [],
-    openTime: '10:00-22:00'
+    openTime: '10:00-22:00',
+    banquets: {
+        banquet_options: [],
+        additional_options: [],
+        description: '',
+        image: '',
+    },
 };
 
 const mockProps = {

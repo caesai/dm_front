@@ -100,7 +100,13 @@ const mockProps = {
                 url: "https://www.instagram.com/smokebbqmoscow",
                 name: "smokebbqmoscow"
             }
-        ]
+        ],
+        banquets: {
+            banquet_options: [],
+            additional_options: [],
+            description: '',
+            image: '',
+        },
     },
     banquets: {
         additional_options: [],

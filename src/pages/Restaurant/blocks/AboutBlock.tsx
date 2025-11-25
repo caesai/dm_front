@@ -1,4 +1,4 @@
-import { IWorkTime } from '@/types/restaurant.ts';
+import { IWorkTime } from '@/types/restaurant.types.ts';
 import React, { useState } from 'react';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';

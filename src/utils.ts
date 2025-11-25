@@ -1,4 +1,4 @@
-import { IWorkTime } from '@/types/restaurant.ts';
+import { IWorkTime } from '@/types/restaurant.types.ts';
 // import { IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
 import { Dispatch, SetStateAction } from 'react';
 // import moment from 'moment';

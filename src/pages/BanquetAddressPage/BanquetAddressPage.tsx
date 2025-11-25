@@ -1,5 +1,5 @@
 import { Page } from '@/components/Page.tsx';
-import css from './BanquetAddressPage.module.css'
+import css from './BanquetAddressPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -10,23 +10,21 @@ import React, { useEffect, useState } from 'react';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { useAtom } from 'jotai/index';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { IRestaurant } from '@/types/restaurant.ts';
+import { userAtom } from '@/atoms/userAtom.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { APIGetBanquetOptions } from '@/api/banquet.api.ts';
 import { IBanquet } from '@/types/banquets.types.ts';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
     value: 'unset',
-}
+};
 
 export const BanquetAddressPage: React.FC = () => {
     const navigate = useNavigate();
-    const location = useLocation()
+    const location = useLocation();
     const { id } = useParams();
     const [user] = useAtom(userAtom);
-    const [auth] = useAtom(authAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
 
     const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
@@ -49,13 +47,23 @@ export const BanquetAddressPage: React.FC = () => {
     const goNextPage = () => {
         if (!isDisabledButton) {
             if (user?.complete_onboarding) {
-                console.log('currentRestaurant.value: ', currentRestaurant.value)
-                navigate(`/banquets/${currentRestaurant.value}/choose`, { state: { ...location.state, currentRestaurant, banquets } });
+                navigate(`/banquets/${currentRestaurant.value}/choose`, {
+                    state: {
+                        ...location.state,
+                        banquets,
+                    },
+                });
             } else {
-                navigate('/onboarding/4', { state: { ...location.state, id: currentRestaurant.value, currentRestaurant, sharedBanquet: true } });
+                navigate('/onboarding/4', {
+                    state: {
+                        ...location.state,
+                        id: currentRestaurant.value,
+                        sharedBanquet: true,
+                    },
+                });
             }
         }
-    }
+    };
 
     useEffect(() => {
         currentRestaurant.value === 'unset' ? setDisabledButton(true) : setDisabledButton(false);
@@ -65,14 +73,13 @@ export const BanquetAddressPage: React.FC = () => {
         if (location.state && location.state.currentRestaurant) {
             setCurrentRestaurant(() => ({
                 value: String(location.state.currentRestaurant.id),
-                ...location.state.currentRestaurant
-            }))
-        }
-        else if (restaurant) {
+                ...location.state.currentRestaurant,
+            }));
+        } else if (restaurant) {
             setCurrentRestaurant(() => ({
                 value: String(restaurant.id),
-                ...restaurant
-            }))
+                ...restaurant,
+            }));
         }
     }, [location.state]);
 
@@ -80,15 +87,15 @@ export const BanquetAddressPage: React.FC = () => {
     // TODO: возможно в api/v1/restaurant/list надо передавать целиком объект banquets какой он используется в дальнейшем на страницах Банкетов
     useEffect(() => {
         if (currentRestaurant.value !== 'unset') {
-            APIGetBanquetOptions(String(auth?.access_token), Number(id))
-                .then((res) => {
-                    setBanquets(res.data);
-                });
+            const currentBanquets = restaurantsList.find((item) => item.id === Number(currentRestaurant.value))?.banquets;
+            if (currentBanquets) {
+                setBanquets(currentBanquets);
+            }
         }
-    }, [currentRestaurant.value, auth?.access_token]);
+    }, [currentRestaurant.value]);
 
     useEffect(() => {
-        const filteredRestaurantsWithBanquetOptions = restaurants.filter((item) => item.banquet_options.length > 0);
+        const filteredRestaurantsWithBanquetOptions = restaurants.filter((item) => item.banquets.banquet_options.length > 0);
         setRestaurantsList(filteredRestaurantsWithBanquetOptions);
     }, []);
 
@@ -115,7 +122,8 @@ export const BanquetAddressPage: React.FC = () => {
                     </div>
                     <div className={css.container}>
                         <div className={css.banquet_content}>
-                            <span className={css.banquet_title}>Подарите приятный вечер в <br /> ресторанах Dreamteam</span>
+                            <span
+                                className={css.banquet_title}>Подарите приятный вечер в <br /> ресторанах Dreamteam</span>
                             <img src={BanquetImg} alt={'Банкет'} className={css.banquet_img} />
                             <span className={css.banquet_text}>Для тех, кто планирует важное событие. Здесь можно собрать частный ужин, семейный праздник или деловую встречу — мы предложим пространство, меню и сопровождение под ваш формат.</span>
                         </div>
@@ -136,5 +144,5 @@ export const BanquetAddressPage: React.FC = () => {
                 />
             </div>
         </Page>
-    )
-}
+    );
+};

@@ -20,7 +20,7 @@ import * as YMaps from '@yandex/ymaps3-types';
 import { Feature } from '@yandex/ymaps3-types/packages/clusterer';
 import { useAtom } from 'jotai';
 import { cityListAtom, getCurrentCity, ICity } from '@/atoms/cityListAtom.ts';
-import { IRestaurant } from '@/types/restaurant.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
 import { IconlyLocation } from '@/components/Icons/Location.tsx';
 import { TimeCircle } from '@/components/Icons/TimeCircle.tsx';
 import {

@@ -6,7 +6,7 @@ import {
     ICurrentBookings,
     IIsReviewAvailable,
     IRestaurant,
-} from '@/types/restaurant.ts';
+} from '@/types/restaurant.types.ts';
 import { IEventInRestaurant } from '@/types/events.ts';
 
 export const APIGetRestaurants = (token: string) => {

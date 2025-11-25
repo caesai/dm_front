@@ -4,7 +4,7 @@ import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPrevi
 import newres from '/img/chinois_app.png';
 import { useAtom } from 'jotai/index';
 import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
-import { IRestaurant } from '@/types/restaurant.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
 import { getDataFromLocalStorage } from '@/utils.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';

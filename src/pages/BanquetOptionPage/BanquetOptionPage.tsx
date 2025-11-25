@@ -21,7 +21,7 @@ import classNames from 'classnames';
 import { IBanquetAdditionalOptions, IBanquetOptions } from '@/types/banquets.types.ts';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { TimeSelectorPopup } from '@/components/TimeSelectorPopup/TimeSelectorPopup.tsx';
-import { IRestaurant, IWorkTime } from '@/types/restaurant.ts';
+import { IRestaurant, IWorkTime } from '@/types/restaurant.types.ts';
 import moment from 'moment';
 
 const timeToHours = (timeStr: string): number => {

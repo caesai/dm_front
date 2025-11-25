@@ -11,7 +11,7 @@ import { BASE_BOT } from '@/api/base.ts';
 import { useAtom } from 'jotai/index';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
 import { useNavigate } from 'react-router-dom';
-import { IRestaurant } from '@/types/restaurant.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
 import { IEventInRestaurant } from '@/types/events.ts';
 import { IBanquet } from '@/types/banquets.types.ts';
 import { userAtom } from '@/atoms/userAtom.ts';
