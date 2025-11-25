@@ -36,7 +36,6 @@ export const BanquetAddressPage: React.FC = () => {
     const restaurant = location.state?.restaurant;
 
     const goBack = () => {
-        // TODO: Проверить навигацию на первую страницу банкетов
         if (user?.complete_onboarding) {
             if (id === ':id') {
                 navigate('/');

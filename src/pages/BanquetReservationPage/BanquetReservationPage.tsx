@@ -89,7 +89,7 @@ export const BanquetReservationPage = () => {
             //
             if (res.data.status === 'success') {
                 showToast('Ваш запрос на бронирование банкета принят. Наш менеджер скоро свяжется с вами.');
-                navigate('/', { state: { banquet: true } });
+                navigate('/');
             }
         })
     }
