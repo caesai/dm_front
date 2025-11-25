@@ -108,12 +108,6 @@ const mockProps = {
             image: '',
         },
     },
-    banquets: {
-        additional_options: [],
-        banquet_options: [],
-        description: '',
-        image: ''
-    },
     workTime: [
         { weekday: '1', time_start: '10:00', time_end: '22:00' },
         { weekday: '2', time_start: '10:00', time_end: '22:00' }
@@ -148,7 +142,6 @@ describe('BanquetsBlock', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/banquets/1/address', {
             state: {
                 restaurant: mockProps.restaurant,
-                banquets: mockProps.banquets,
                 workTime: mockProps.workTime
             }
         });
