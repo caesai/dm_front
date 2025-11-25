@@ -104,7 +104,6 @@ export const ProfilePage = () => {
                         {tg_id && mockEventsUsersList.includes(tg_id) && (
                             <Link
                                 to={'/gastronomy/my'}
-                                state={{ title: 'Профиль', primary_background: true }}
                                 className={css.navLink}>
                                 <KitchenIcon size={24} color={'black'} />
                                 <span className={css.navLinkTitle}>
