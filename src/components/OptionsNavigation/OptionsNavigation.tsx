@@ -13,7 +13,6 @@ import gastroBtn3 from '/img/gastro_btn3.png';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import {DEV_MODE} from "@/api/base.ts";
 import css from '@/components/OptionsNavigation/OptionsNavigation.module.css';
-import classNames from 'classnames';
 
 export const OptionsNavigation = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -28,7 +27,7 @@ export const OptionsNavigation = () => {
                     title={'Новогодняя кулинария'}
                     subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
                     img={gastroBtn}
-                    className={classNames(css.smallFont, css.gastroBtn)}
+                    className={css.gastronomyCTAbtn}
                     link={'/gastronomy/choose'}
                 />
             )}
@@ -37,13 +36,13 @@ export const OptionsNavigation = () => {
                     <OptionsNavigationElement
                         title={'Подарочные сертификаты'}
                         img={gastroBtn2}
-                        className={classNames(css.smallFont, css.gastroBtn2)}
+                        className={css.certificateCTAbtn}
                         link={'/certificates/1'}
                     />
                     <OptionsNavigationElement
                         title={'Организовать праздник'}
                         img={gastroBtn3}
-                        className={classNames(css.smallFont, css.gastroBtn3)}
+                        className={css.banquetsCTAbtn}
                         link={'/banquets/:id/address'}
                     />
                 </div>
@@ -53,7 +52,7 @@ export const OptionsNavigation = () => {
                     title={'Гастро-события'}
                     subtitle={'От уютных ужинов до шумных вечеринок'}
                     img={neweventBg}
-                    className={classNames(css.smallFont, css.gastroBtn4)}
+                    className={css.eventsCTAbtn}
                     link={'/events'}
                 />
             )}
