@@ -12,3 +12,19 @@
         font-size: 14px;
     }
 }
+
+.gastronomyCTAbtn {
+    background-size: 100px;
+}
+
+.certificateCTAbtn {
+    background-size: 70px;
+}
+
+.banquetsCTAbtn {
+    background-size: 75px;
+}
+
+.eventsCTAbtn {
+    background-size: 85px;
+}

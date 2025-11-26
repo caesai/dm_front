@@ -27,6 +27,7 @@ export const OptionsNavigation = () => {
                     title={'Новогодняя кулинария'}
                     subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
                     img={gastroBtn}
+                    className={css.gastronomyCTAbtn}
                     link={'/gastronomy/choose'}
                 />
             )}
@@ -35,13 +36,13 @@ export const OptionsNavigation = () => {
                     <OptionsNavigationElement
                         title={'Подарочные сертификаты'}
                         img={gastroBtn2}
-                        className={css.smallFont}
+                        className={css.certificateCTAbtn}
                         link={'/certificates/1'}
                     />
                     <OptionsNavigationElement
                         title={'Организовать праздник'}
                         img={gastroBtn3}
-                        className={css.smallFont}
+                        className={css.banquetsCTAbtn}
                         link={'/banquets/:id/address'}
                     />
                 </div>
@@ -51,6 +52,7 @@ export const OptionsNavigation = () => {
                     title={'Гастро-события'}
                     subtitle={'От уютных ужинов до шумных вечеринок'}
                     img={neweventBg}
+                    className={css.eventsCTAbtn}
                     link={'/events'}
                 />
             )}
