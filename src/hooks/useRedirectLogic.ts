@@ -104,7 +104,6 @@ export const useRedirectLogic = () => {
                 !pathname.startsWith('/tickets/');
 
             if (isUserIncomplete && isOnboardingNotExcluded) {
-                console.log('Redirecting to onboarding from:', pathname);
                 navigate('/onboarding', { replace: true });
                 return;
             }
