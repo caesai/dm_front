@@ -94,12 +94,14 @@ export const useRedirectLogic = () => {
             }
 
             const isUserIncomplete = !user?.license_agreement || !user.complete_onboarding;
+
             const isOnboardingNotExcluded = !ONBOARDING_EXCLUDED.includes(pathname) &&
                 !pathname.includes('events') &&
                 !pathname.includes('restaurant') &&
                 !pathname.includes('booking') &&
                 !pathname.includes('certificates') &&
-                !pathname.includes('banquets');
+                !pathname.includes('banquets') &&
+                !pathname.startsWith('/tickets/');
 
             if (isUserIncomplete && isOnboardingNotExcluded) {
                 navigate('/onboarding', { replace: true });
