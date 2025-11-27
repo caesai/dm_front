@@ -45,6 +45,7 @@ import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -65,6 +66,7 @@ export const BookingRestaurantPage: FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
+    const { goBack } = useNavigationHistory();
     const state = location?.state;
     // Global state atoms
     const [auth] = useAtom(authAtom);
@@ -258,7 +260,7 @@ export const BookingRestaurantPage: FC = () => {
                                             if (state.sharedRestaurant) {
                                                 navigate('/');
                                             } else {
-                                                navigate(-1)
+                                                goBack();
                                             }
                                         }}
                                     />

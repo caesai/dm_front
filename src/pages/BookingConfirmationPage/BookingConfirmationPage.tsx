@@ -13,6 +13,7 @@ import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
 // import { BookingCreatedPopup } from '@/pages/BookingConfirmationPage/BookingCreatedPopup/BookingCreatedPopup.tsx';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 
 export const BookingConfirmationPage = () => {
     const [bookingInfo] = useAtom(bookingAtom);
@@ -21,6 +22,7 @@ export const BookingConfirmationPage = () => {
     // const [bookingCreatedPopup, setBookingCreatedPopup] = useState(false);
 
     const navigate = useNavigate();
+    const { goBack } = useNavigationHistory();
 
     return (
         <Page back={true}>
@@ -40,7 +42,7 @@ export const BookingConfirmationPage = () => {
                         </div>
                         <div
                             className={css.headerButtons}
-                            onClick={() => navigate(-1)}
+                            onClick={goBack}
                         >
                             <RoundedButton
                                 icon={<CrossIcon size={44} color={'black'} />}

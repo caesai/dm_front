@@ -2,16 +2,14 @@ import React from 'react';
 import classnames from 'classnames';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Page } from '@/components/Page.tsx';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 
 export const GastronomyPage: React.FC = () => {
-    const navigate = useNavigate();
+    const { goBack } = useNavigationHistory();
     const location = useLocation();
-    const goBack = () => {
-            navigate(-1);
-    };
 
     const getTitle = () => {
         if (location.pathname.includes('/basket')) {

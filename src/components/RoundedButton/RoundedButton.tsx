@@ -1,6 +1,7 @@
 import css from './roundedButton.module.css';
 import { CSSProperties, FC, ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 
 type Props = {
     icon: ReactNode;
@@ -15,7 +16,7 @@ type Props = {
 };
 
 export const RoundedButton: FC<Props> = (props) => {
-    const navigate = useNavigate();
+    const { goBack } = useNavigationHistory();
 
     const button = (
         <div
@@ -38,7 +39,7 @@ export const RoundedButton: FC<Props> = (props) => {
                 <Link to={props.to}>{button}</Link>
             ) : props.isBack ? (
                 <div
-                    onClick={() => navigate(-1)}
+                    onClick={goBack}
                     className={css.rounded_button}
                     style={{
                         backgroundColor: `${props.bgColor}`,

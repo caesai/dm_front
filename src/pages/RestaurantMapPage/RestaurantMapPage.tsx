@@ -40,6 +40,7 @@ import { Discovery } from 'react-iconly';
 import { openLink } from '@telegram-apps/sdk-react';
 import { setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 // import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 
 interface IRestaurantDetails {
@@ -214,17 +215,20 @@ export const RestaurantMapPage = () => {
         zoom: 12,
     });
     const [features, setFeatures] = useState<Feature[]>([]);
-    const navigate = useNavigate();
     const [, setYmap] = useState<YMaps.YMap>();
     const [selectedPoint, setSelectedPoint] = useState<string | null>(null);
-    const [city] = useAtom(getCurrentCity);
-    const [searchParams, setSearchParams] = useSearchParams();
     const [switchCurrent, setSwitchCurrent] = useState('map');
+    const [isCityListOpen, setIsCityListOpen] = useState(false);
+    const [selectedRest, setSelectedRest] = useState<IRestaurant>();
+
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const { goBack } = useNavigationHistory();
+
+    const [city] = useAtom(getCurrentCity);
     const [, setBackButton] = useAtom(backButtonAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
-    const [selectedRest, setSelectedRest] = useState<IRestaurant>();
     const [cityListA] = useAtom(cityListAtom);
-    const [isCityListOpen, setIsCityListOpen] = useState(false);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
 
     useEffect(() => {
@@ -396,7 +400,7 @@ export const RestaurantMapPage = () => {
                                     color={'var(--dark-grey)'}
                                 />
                             }
-                            action={() => navigate(-1)}
+                            action={goBack}
                             bgColor={'var(--primary-background)'}
                         />
                         <span className={css.header_title}>

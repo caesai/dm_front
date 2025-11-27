@@ -12,6 +12,7 @@ import { Share } from '@/components/Icons/Share.tsx';
 import { BASE_BOT } from '@/api/base.ts';
 import { IEventBooking, IEventInRestaurant } from '@/types/events.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 
 // export interface IEventBooking {
 //     event?: IEvent;
@@ -54,6 +55,8 @@ export const EventsPage: React.FC = () => {
     const [events, setEvents] = useAtom<IEventInRestaurant[]>(eventsListAtom);
     const [bookingInfo, setBookingInfo] = useState<IEventBooking>({});
     const [, setGuestCount] = useAtom(guestCountAtom);
+
+    const { goBack } = useNavigationHistory();
 
     useEffect(() => {
         APIGetEvents().then((res) => {
@@ -114,7 +117,7 @@ export const EventsPage: React.FC = () => {
         }
     }, [params]);
 
-    const goBack = () => {
+    const goPreviousPage = () => {
         if (eventURL) {
             setGuestCount(0);
         }
@@ -123,7 +126,7 @@ export const EventsPage: React.FC = () => {
         } else if (location.pathname.includes('super') && !location.pathname.includes('apply')) {
             navigate('/', { replace: true });
         } else {
-            navigate(-1);
+            goBack();
         }
     };
 
@@ -134,7 +137,7 @@ export const EventsPage: React.FC = () => {
                     <RoundedButton
                         bgColor={'var(--primary-background)'}
                         icon={<BackIcon color={'var(--dark-grey)'} />}
-                        action={goBack}
+                        action={goPreviousPage}
                     />
                     <span className={css.header_title}>
                         {isRestaurantsPage ? 'Выберите ресторан' : 'Мероприятия'}
