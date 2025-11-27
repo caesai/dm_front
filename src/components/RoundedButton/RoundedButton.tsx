@@ -16,7 +16,7 @@ type Props = {
 };
 
 export const RoundedButton: FC<Props> = (props) => {
-    const { goBack } = useNavigationHistory()
+    const { goBack } = useNavigationHistory();
 
     const button = (
         <div

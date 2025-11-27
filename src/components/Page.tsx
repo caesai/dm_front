@@ -11,7 +11,7 @@ export function Page({
      */
     back?: boolean;
 }>) {
-    const { goBack } = useNavigationHistory()
+    const { goBack } = useNavigationHistory();
 
     useEffect(() => {
         if (back) {

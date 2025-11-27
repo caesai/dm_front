@@ -13,7 +13,7 @@ import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 export const GastronomyOrderPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { goBack } = useNavigationHistory()
+    const { goBack } = useNavigationHistory();
 
     const order: IOrder = location.state?.order;
 

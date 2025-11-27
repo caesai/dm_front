@@ -17,7 +17,7 @@ import { authAtom } from '@/atoms/userAtom.ts';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 
 export const AdminScannerPage = () => {
-    const { goBack } = useNavigationHistory()
+    const { goBack } = useNavigationHistory();
 
     const [auth] = useAtom(authAtom);
     const [ticket, setTicket] = useState<IEventTicketScanner>();

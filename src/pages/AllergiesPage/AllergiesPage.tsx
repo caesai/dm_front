@@ -14,7 +14,7 @@ import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 const AllergiesPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { goBack } = useNavigationHistory()
+    const { goBack } = useNavigationHistory();
 
     const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
     const [isOtherOption, setIsOtherOption] = useState<boolean>(false);

@@ -56,7 +56,7 @@ export const EventsPage: React.FC = () => {
     const [bookingInfo, setBookingInfo] = useState<IEventBooking>({});
     const [, setGuestCount] = useAtom(guestCountAtom);
 
-    const { goBack } = useNavigationHistory()
+    const { goBack } = useNavigationHistory();
 
     useEffect(() => {
         APIGetEvents().then((res) => {

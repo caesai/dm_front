@@ -22,7 +22,7 @@ export const BookingConfirmationPage = () => {
     // const [bookingCreatedPopup, setBookingCreatedPopup] = useState(false);
 
     const navigate = useNavigate();
-    const { goBack } = useNavigationHistory()
+    const { goBack } = useNavigationHistory();
 
     return (
         <Page back={true}>

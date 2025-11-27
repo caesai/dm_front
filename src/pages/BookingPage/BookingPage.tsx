@@ -55,7 +55,7 @@ export const BookingPage: FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { goBack } = useNavigationHistory()
+    const { goBack } = useNavigationHistory();
 
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);

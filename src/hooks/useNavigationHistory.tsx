@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import { navigationHistoryAtom } from '@/atoms/navigationHistroyAtom.ts';
+import { navigationHistoryAtom } from '@/atoms/navigationHistoryAtom.ts';
 
 export const useNavigationHistory = () => {
     const location = useLocation();

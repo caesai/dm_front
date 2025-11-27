@@ -11,7 +11,7 @@ export const CertificatesCreatePage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [params] = useSearchParams();
-    const { goBack } = useNavigationHistory()
+    const { goBack } = useNavigationHistory();
 
     const state = location?.state;
 

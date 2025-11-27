@@ -8,7 +8,7 @@ import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 
 export const GastronomyPage: React.FC = () => {
-    const { goBack } = useNavigationHistory()
+    const { goBack } = useNavigationHistory();
     const location = useLocation();
 
     const getTitle = () => {
