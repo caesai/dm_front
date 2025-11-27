@@ -4,14 +4,15 @@ import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 
 const EXCLUDED_URLS = ['/phoneConfirmation', '/onboarding', '/gdpr'];
-const ONBOARDING_EXCLUDED_PATTERNS = [
+const ONBOARDING_EXCLUDED = [
     '/onboarding',
-    '/tickets/',
+    '/onboarding/1',
+    '/onboarding/2',
+    '/onboarding/3',
+    '/onboarding/4',
+    '/onboarding/5',
+    '/onboarding/6',
 ];
-
-const isPathExcluded = (pathname: string, patterns: string[]): boolean => {
-    return patterns.some(pattern => pathname.startsWith(pattern));
-};
 
 const getEventIdFromParams = (paramsObject: Record<string, string>, searchString: string): string | undefined => {
     for (const key in paramsObject) {
@@ -93,9 +94,17 @@ export const useRedirectLogic = () => {
             }
 
             const isUserIncomplete = !user?.license_agreement || !user.complete_onboarding;
-            const isOnboardingNotExcluded = !isPathExcluded(pathname, ONBOARDING_EXCLUDED_PATTERNS);
+
+            const isOnboardingNotExcluded = !ONBOARDING_EXCLUDED.includes(pathname) &&
+                !pathname.includes('events') &&
+                !pathname.includes('restaurant') &&
+                !pathname.includes('booking') &&
+                !pathname.includes('certificates') &&
+                !pathname.includes('banquets') &&
+                !pathname.startsWith('/tickets/');
 
             if (isUserIncomplete && isOnboardingNotExcluded) {
+                console.log('Redirecting to onboarding from:', pathname);
                 navigate('/onboarding', { replace: true });
                 return;
             }
