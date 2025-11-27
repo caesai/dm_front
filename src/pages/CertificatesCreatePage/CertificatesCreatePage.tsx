@@ -5,21 +5,25 @@ import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 
 export const CertificatesCreatePage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [params] = useSearchParams();
+    const { goBack } = useNavigationHistory()
+
     const state = location?.state;
+
     const paramsObject = Object.fromEntries(params.entries());
     const isWhiteBackground = !location.pathname.match(/[12]/);
     const isPaymentLocation = location.pathname.includes('payment');
 
-    const goBack = () => {
+    const goPreviousPage = () => {
         if (isPaymentLocation || paramsObject.shared) {
             navigate('/');
         } else {
-            navigate(-1);
+            goBack();
         }
     };
 
@@ -30,7 +34,7 @@ export const CertificatesCreatePage: React.FC = () => {
                     <RoundedButton
                         bgColor={'var(--primary-background)'}
                         icon={<BackIcon color={'var(--dark-grey)'} />}
-                        action={goBack}
+                        action={goPreviousPage}
                     />
                     <span className={css.header_title}>
                         {state?.title ? state?.title : 'Сертификат'}

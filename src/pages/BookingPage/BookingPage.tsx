@@ -34,6 +34,7 @@ import { CertificatesSelector } from '@/components/CertificatesSelector/Certific
 import classNames from 'classnames';
 import css from './BookingPage.module.css';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -53,21 +54,26 @@ const confirmationList: IConfirmationType[] = [
 export const BookingPage: FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const state = location.state;
+
+    const { goBack } = useNavigationHistory()
+
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [comms] = useAtom(commAtom);
+
     const [guestCount, setGuestCount] = useState(0);
     const [childrenCount, setChildrenCount] = useState(0);
     const [date, setDate] = useState<PickerValueObj>({
         title: 'unset',
         value: 'unset',
     });
+
     const [currentSelectedTime, setCurrentSelectedTime] = useState<ITimeSlot | null>(null);
     const [restaurant, setRestaurant] = useState<PickerValueObj>({
         title: 'unset',
         value: 'unset',
     });
+
     const [userName, setUserName] = useState<string>(user?.first_name ? user.first_name : '');
     const [userPhone, setUserPhone] = useState<string>(user?.phone_number ? user.phone_number : '');
     const [userEmail] = useState<string>(user?.email ? user.email : '');
@@ -87,6 +93,9 @@ export const BookingPage: FC = () => {
     const [certificate_id, setCertificateId] = useState<string | null>(null);
     const bookingBtn = useRef<HTMLDivElement>(null);
 
+    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+    const state = location.state;
+
     useEffect(() => {
         auth?.access_token && restaurant.value !== 'unset'
             ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1).then(
@@ -101,18 +110,6 @@ export const BookingPage: FC = () => {
             : null;
     }, [guestCount, restaurant]);
 
-    useEffect(() => {
-        if (restaurant.value === 'unset' || !auth?.access_token || date.value === 'unset' || !guestCount) return;
-        setTimeslotsLoading(true);
-        APIGetAvailableTimeSlots(
-            auth.access_token,
-            parseInt(String(restaurant.value)),
-            date.value,
-            guestCount,
-        )
-            .then((res) => setAvailableTimeslots(res.data))
-            .finally(() => setTimeslotsLoading(false));
-    }, [date, guestCount, restaurant]);
     // 2. States specifically for controlling the temporary *error display* in the UI (start as true/validated)
     const [nameValidatedDisplay, setNameValidated] = useState(true);
     const [phoneValidatedDisplay, setPhoneValidated] = useState(true);
@@ -125,6 +122,7 @@ export const BookingPage: FC = () => {
         // Pass the setters for the *display* states
         { setNameValidated, setPhoneValidated, setDateValidated, setGuestsValidated, setSelectedTimeValidated }
     );
+
     const createBooking = () => {
         if (!user?.complete_onboarding) {
             navigate('/onboarding/3', { state: { id: Number(restaurant.value), date, time: currentSelectedTime, sharedRestaurant: true } });
@@ -161,7 +159,18 @@ export const BookingPage: FC = () => {
         }
     };
 
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+    useEffect(() => {
+        if (restaurant.value === 'unset' || !auth?.access_token || date.value === 'unset' || !guestCount) return;
+        setTimeslotsLoading(true);
+        APIGetAvailableTimeSlots(
+            auth.access_token,
+            parseInt(String(restaurant.value)),
+            date.value,
+            guestCount,
+        )
+            .then((res) => setAvailableTimeslots(res.data))
+            .finally(() => setTimeslotsLoading(false));
+    }, [date, guestCount, restaurant]);
 
     return (
         <Page back={true}>
@@ -203,7 +212,7 @@ export const BookingPage: FC = () => {
                                 <div>
                                     <RoundedButton
                                         icon={<CrossIcon size={44} />}
-                                        action={() => navigate(-1)}
+                                        action={goBack}
                                     />
                                 </div>
                             </div>

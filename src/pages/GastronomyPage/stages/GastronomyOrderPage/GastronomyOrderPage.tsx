@@ -8,10 +8,13 @@ import { MONTHS_LONG2, weekdaysMap } from '@/utils.ts';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import moment from 'moment';
 import GastronomyOrderPopup from '@/components/GastronomyOrderPopup/GastronomyOrderPopup.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
 
 export const GastronomyOrderPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { goBack } = useNavigationHistory()
+
     const order: IOrder = location.state?.order;
 
     const [openPopup, setPopup] = useState(false);
@@ -20,11 +23,11 @@ export const GastronomyOrderPage: React.FC = () => {
         return order.deliveryTime ? order.deliveryTime : order.pickupTime;
     }, [location.state, order]);
 
-    const goBack = () => {
+    const goPreviousPage = () => {
         if (location.state?.skip_page) {
             navigate(-2);
         } else {
-            navigate(-1);
+            goBack();
         }
     };
 
@@ -41,7 +44,7 @@ export const GastronomyOrderPage: React.FC = () => {
 
     useEffect(() => {
         if (!order) {
-            goBack();
+            goPreviousPage();
         }
     }, [location.state, order]);
     return (
@@ -58,7 +61,7 @@ export const GastronomyOrderPage: React.FC = () => {
                     <RoundedButton
                         bgColor={'var(--secondary-background)'}
                         icon={<MiniCrossIcon color={'var(--dark-grey)'} />}
-                        action={goBack}
+                        action={goPreviousPage}
                     />
                 </div>
                 <div className={css.content}>
