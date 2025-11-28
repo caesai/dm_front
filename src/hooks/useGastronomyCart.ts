@@ -5,9 +5,11 @@ import { IDish } from '@/types/gastronomy.types.ts';
 export const useGastronomyCart = () => {
     const [cart, setCart] = useAtom(gastronomyCartAtom);
 
-    const addToCart = (dish: IDish) => {
+    const addToCart = (dish: IDish, selectedWeightIndex: number = 0) => {
         setCart((prevCart) => {
             const existingItem = prevCart.items.find((item) => item.id === dish.id);
+            const selectedPrice = dish.prices[selectedWeightIndex] || dish.prices[0];
+            const selectedWeight = dish.weights[selectedWeightIndex] || dish.weights[0];
             
             let newItems: ICartItem[];
             if (existingItem) {
@@ -22,9 +24,9 @@ export const useGastronomyCart = () => {
                     {
                         id: dish.id,
                         title: dish.title,
-                        price: dish.price,
+                        price: selectedPrice,
                         quantity: 1,
-                        weight: dish.defaultWeight,
+                        weight: selectedWeight,
                         image: dish.image,
                     },
                 ];
