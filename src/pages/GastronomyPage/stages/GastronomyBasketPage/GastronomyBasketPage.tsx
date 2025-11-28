@@ -202,7 +202,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.emptyText}>
                         <span className={css.emptyTitle}>Корзина пуста</span>
                         <span className={css.emptySubtitle}>
-                            В корзине пока пусто. Самое время выбрать что нибудь вкусное
+                            В корзине пока пусто. Самое время выбрать что-нибудь вкусное
                         </span>
                     </div>
                 </div>
