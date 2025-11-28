@@ -32,7 +32,7 @@ export const OptionsNavigation = () => {
                 />
             )}
             {tg_id && mockEventsUsersList.includes(tg_id) && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 5 }}>
+                <div style={{ display: 'flex', gap: 8 }}>
                     <OptionsNavigationElement
                         title={'Подарочные сертификаты'}
                         img={gastroBtn2}

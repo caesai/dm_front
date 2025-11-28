@@ -21,7 +21,9 @@ export const OptionsNavigationElement = (
             <div className={css.wrapper}>
                 <div className={css.textWrapper}>
                     <span className={css.title}>{props.title}</span>
-                    <span className={css.subtitle}>{props.subtitle}</span>
+                    {props.subtitle && (
+                        <span className={css.subtitle}>{props.subtitle}</span>
+                    )}
                 </div>
                 <div className={css.separator} />
             </div>
