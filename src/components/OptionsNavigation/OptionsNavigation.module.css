@@ -32,7 +32,3 @@
     background-size: 75px;
     height: 65px;
 }
-
-:global(.textWrapper) {
-    display: none !important;
-}
