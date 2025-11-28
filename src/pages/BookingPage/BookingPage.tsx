@@ -35,6 +35,8 @@ import classNames from 'classnames';
 import css from './BookingPage.module.css';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { APIGetCertificates } from '@/api/certificates.api.ts';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -60,6 +62,7 @@ export const BookingPage: FC = () => {
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [comms] = useAtom(commAtom);
+    const [, setCertificates] = useAtom(certificatesListAtom)
 
     const [guestCount, setGuestCount] = useState(0);
     const [childrenCount, setChildrenCount] = useState(0);
@@ -171,6 +174,13 @@ export const BookingPage: FC = () => {
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount, restaurant]);
+
+    useEffect(() => {
+        if (!auth || !user) return
+
+        APIGetCertificates(auth.access_token, user.id)
+            .then((res) => setCertificates(res.data))
+    }, [auth, user]);
 
     return (
         <Page back={true}>

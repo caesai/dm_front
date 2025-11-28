@@ -1,12 +1,14 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import phone from "/img/onboarding/phone.png";
 import { FC } from 'react';
 
 export const StageTwo: FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
 
+    const state = location?.state;
     return (
         <div className={css.stage_page}>
             <div className={css.stage_page_wrapper}>
@@ -62,7 +64,7 @@ export const StageTwo: FC = () => {
                     <div className={css.button_container}>
                         <div
                             className={css.redButton}
-                            onClick={() => navigate('/onboarding/3')}
+                            onClick={() => navigate('/onboarding/3', { state })}
                         >
                             <span>Продолжить</span>
                         </div>

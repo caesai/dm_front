@@ -62,7 +62,7 @@ export const APIPutCertificateUpdate = async (token: string, certificate_id: str
     });
 }
 
-export const APIPostCertificateClaim = async (token: string, user_id: number, certificate_id: string, recipient_name: string) => {
+export const APIPostCertificateClaim = async (token: string, user_id: number, certificate_id: string, recipient_name?: string) => {
     return axios.post(`${BASE_URL}/certificates/${certificate_id}/claim`, {
         certificate_id,
         user_id,

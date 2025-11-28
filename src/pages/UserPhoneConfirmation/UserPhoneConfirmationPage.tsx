@@ -7,6 +7,7 @@ import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { APIUserInfo } from '@/api/auth.ts';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { APIPostCertificateClaim } from '@/api/certificates.api.ts';
 // import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
 
 export const UserPhoneConfirmationPage = () => {
@@ -45,8 +46,10 @@ export const UserPhoneConfirmationPage = () => {
                 if (state.sharedRestaurant) {
                     navigate('/restaurant/' + state.id + '/booking', { state });
                 }
-                if (state.sharedCertificate) {
-                    navigate('/booking', { state });
+                if (state.sharedCertificate && auth) {
+                    APIPostCertificateClaim(auth.access_token, user.id, state.certificateId)
+                        .then(() => navigate(`/booking`, { state }))
+                        .catch(() => navigate(`/certificates/landing/${state.certificateId}`));
                 }
                 if (state.sharedBanquet) {
                     navigate(`/banquets/${state.id}/choose`, { state });
