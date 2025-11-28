@@ -62,7 +62,7 @@ export const BookingPage: FC = () => {
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [comms] = useAtom(commAtom);
-    const [, setCertificates] = useAtom(certificatesListAtom)
+    const [, setCertificates] = useAtom(certificatesListAtom);
 
     const [guestCount, setGuestCount] = useState(0);
     const [childrenCount, setChildrenCount] = useState(0);
@@ -176,10 +176,13 @@ export const BookingPage: FC = () => {
     }, [date, guestCount, restaurant]);
 
     useEffect(() => {
-        if (!auth || !user) return
+        if (!auth || !user) return;
 
         APIGetCertificates(auth.access_token, user.id)
             .then((res) => setCertificates(res.data))
+            .catch((err) => {
+                console.error(err);
+            });
     }, [auth, user]);
 
     return (
