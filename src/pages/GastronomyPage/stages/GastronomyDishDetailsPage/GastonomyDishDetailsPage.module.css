@@ -1,22 +1,25 @@
 .page {
     display: flex;
     flex-direction: column;
-    padding-bottom: 100px;
-    background-color: var(--primary-background);
+    padding: 0 0 100px 0;
+    background-color: #F4F4F4;
     min-height: 100vh;
-    margin: -20px -15px 0 -15px;
-    padding-top: 20px;
+    margin: 0 -15px;
+    width: calc(100% + 30px);
+    box-sizing: border-box;
 }
 
 .mainCard {
-    padding: 0 0 15px 0;
+    background-color: var(--primary-background);
+    border-radius: 10px;
+    margin: 0 15px 4px 15px;
 }
 
 .content {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 0 15px;
+    padding: 0 15px 15px 15px;
 }
 
 .mainImage {
@@ -25,7 +28,7 @@
     background-size: cover;
     background-position: center;
     border-radius: 24px;
-    margin: 0 15px;
+    margin: 0 15px 15px 15px;
 }
 
 .titleSection {
@@ -33,6 +36,7 @@
     flex-direction: column;
     gap: 2px;
     padding-bottom: 12px;
+    border-bottom: 1px solid #F4F4F4;
 }
 
 .titleRow {
@@ -74,6 +78,11 @@
     flex-direction: column;
     gap: 6px;
     padding-bottom: 12px;
+    border-bottom: 1px solid #F4F4F4;
+}
+
+.section:last-child {
+    border-bottom: none;
 }
 
 .sectionTitle {
@@ -154,7 +163,10 @@
 }
 
 .moreSection {
-    padding: 15px 0 0 0;
+    background-color: var(--primary-background);
+    border-radius: 10px;
+    padding: 15px 0;
+    margin: 4px 15px 0 15px;
 }
 
 .moreSectionTitle {
@@ -179,7 +191,7 @@
 
 .floatingCounter {
     position: fixed;
-    bottom: 40px;
+    bottom: 12px;
     right: 15px;
     display: flex;
     flex-direction: row;
@@ -212,9 +224,9 @@
     border: none;
     border-radius: 15px;
     font-family: 'Mont', sans-serif;
-    font-weight: 800;
-    font-size: 20px;
-    line-height: 1.3em;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.375em;
     color: var(--primary-background);
     cursor: pointer;
     display: flex;
@@ -226,8 +238,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     background: none;
     border: none;
     padding: 0;
@@ -243,4 +255,3 @@
     min-width: 30px;
     text-align: center;
 }
-

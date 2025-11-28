@@ -14,14 +14,17 @@ interface DishCardProps extends IDish {
 export const DishCard: React.FC<DishCardProps> = ({
     id,
     title,
-    price,
-    defaultWeight,
+    prices,
+    weights,
     image,
     quantity,
     onAdd,
     onRemove,
     onClick,
 }) => {
+    const defaultPrice = prices[0];
+    const defaultWeight = weights[0];
+
     return (
         <div className={css.menuItem}>
             <div
@@ -40,30 +43,39 @@ export const DishCard: React.FC<DishCardProps> = ({
                 onClick={() => quantity === 0 && onAdd(id)}
             >
                 <div className={css.iconSummary}>
-                    {quantity > 0 && (
-                        <button
-                            className={css.iconButton}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onRemove(id);
-                            }}
-                        >
-                            <MinusIcon size={14} color="#000000" />
-                        </button>
-                    )}
-                    <span className={css.priceText}>
-                        {quantity > 0 ? quantity : `${price} ₽`}
-                    </span>
-                    {quantity > 0 && (
-                        <button
-                            className={css.iconButton}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onAdd(id);
-                            }}
-                        >
-                            <PlusIcon size={14} color="#000000" />
-                        </button>
+                    {quantity > 0 ? (
+                        <>
+                            <button
+                                className={css.iconButton}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onRemove(id);
+                                }}
+                            >
+                                <MinusIcon size={14} color="#000000" />
+                            </button>
+                            <span className={css.priceText}>
+                                {quantity}
+                            </span>
+                            <button
+                                className={css.iconButton}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAdd(id);
+                                }}
+                            >
+                                <PlusIcon size={14} color="#000000" />
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <span className={css.priceText}>
+                                {defaultPrice} ₽
+                            </span>
+                            <div className={css.plusIconRight}>
+                                <PlusIcon size={14} color="#000000" />
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

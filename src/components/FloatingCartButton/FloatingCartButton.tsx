@@ -1,6 +1,6 @@
 import React from 'react';
 import css from './FloatingCartButton.module.css';
-import { BasketIcon } from '@/components/Icons/BasketIcon.tsx';
+import basketIcon from '/img/basket-icon.svg';
 
 interface FloatingCartButtonProps {
     totalAmount: number;
@@ -13,7 +13,7 @@ export const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({
 }) => {
     return (
         <div className={css.floatingButton} onClick={onClick}>
-            <BasketIcon size={28} color="#FFFFFF" />
+            <img src={basketIcon} alt="Корзина" width={28} height={28} />
             <span className={css.priceText}>{totalAmount} ₽</span>
         </div>
     );

@@ -13,7 +13,7 @@ export const GastronomyPage: React.FC = () => {
 
     const getTitle = () => {
         if (location.pathname.includes('/basket')) {
-            return 'Оформление';
+            return 'Корзина';
         }
         else if (location.pathname.includes('/my')) {
             return 'Мои заказы';
@@ -25,22 +25,32 @@ export const GastronomyPage: React.FC = () => {
         if (location.pathname.includes('/my')) {
             return {backgroundColor: 'white'}
         }
+        if (location.pathname.includes('/dish/')) {
+            return {backgroundColor: '#F4F4F4'}
+        }
 
         return undefined
     }
 
     const isBasketPage = location.pathname.includes('/basket');
+    const isDishDetailsPage = location.pathname.includes('/dish/');
 
     return (
         <Page back={true}>
             <div
-                className={classnames(css.page, { [css.pageNoPadding]: isBasketPage })}
+                className={classnames(css.page, { 
+                    [css.pageNoPadding]: isBasketPage,
+                    [css.pageNoGap]: isDishDetailsPage
+                })}
                 style={getBackgroundColor()}
             >
-                <div className={css.header}>
+                <div className={classnames(css.header, { 
+                    [css.headerWhite]: isDishDetailsPage,
+                    [css.headerFullWidth]: isDishDetailsPage
+                })}>
                     <RoundedButton
-                        bgColor={'var(--primary-background)'}
-                        icon={<BackIcon color={'var(--dark-grey)'} />}
+                        bgColor={'#F4F4F4'}
+                        icon={<BackIcon color={'#545454'} />}
                         action={goBack}
                     />
                     <span className={css.header_title}>

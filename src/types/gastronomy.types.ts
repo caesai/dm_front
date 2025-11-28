@@ -13,11 +13,10 @@ export interface IAllergen {
 export interface IDish {
     id: number;
     title: string;
-    price: number;
-    defaultWeight: string;
+    prices: number[];
     weights: string[];
     image: string;
-    composition: string[];
+    description: string;
     nutritionPer100g: INutritionInfo;
     allergens: IAllergen[];
 }

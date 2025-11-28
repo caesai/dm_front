@@ -1,18 +1,17 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
 import { CartItem } from '@/components/CartItem/CartItem.tsx';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import emptyBasketIcon from '/img/empty-basket.png';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { mockGastronomyListData } from '@/__mocks__/gastronomy.mock.ts';
+import { formatDate } from '@/utils.ts';
 import css from './GastronomyBasketPage.module.css';
 
 type DeliveryMethod = 'delivery' | 'pickup';
-type Range<T> = [T, T];
-type CalendarValue = Date | null;
-type TValue = CalendarValue | Range<CalendarValue>;
 
 export const GastronomyBasketPage: React.FC = () => {
     const navigate = useNavigate();
@@ -28,12 +27,15 @@ export const GastronomyBasketPage: React.FC = () => {
         'Москва, Большая Грузинская ул., 76',
         'Москва, Большая Грузинская ул., 75',
     ]);
-    const [calendarDate, setCalendarDate] = useState<CalendarValue>(null);
+    const [selectedDate, setSelectedDate] = useState<PickerValueObj>({
+        title: 'unset',
+        value: 'unset',
+    });
     const [selectedTime, setSelectedTime] = useState('');
-    const [showCalendar, setShowCalendar] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const [showAddressError, setShowAddressError] = useState(false);
 
-    const deliveryFee = 1000;
+    const deliveryFee = 1500;
 
     // Получаем информацию о ресторане
     const restaurant = useMemo(() => {
@@ -43,17 +45,113 @@ export const GastronomyBasketPage: React.FC = () => {
 
     const restaurantAddress = restaurant?.address || 'Адрес не указан';
 
-    // Временные слоты с 9:00 до 21:00 с шагом 3 часа
-    const generateTimeSlots = () => {
-        const slots = [];
-        for (let hour = 9; hour <= 18; hour += 3) {
-            const endHour = hour + 3;
-            slots.push(`${String(hour).padStart(2, '0')}:00–${String(endHour).padStart(2, '0')}:00`);
+    // Генерируем доступные даты
+    const availableDates = useMemo(() => {
+        const dates: PickerValueObj[] = [];
+        const startDate = new Date(2025, 11, 25); // 25 декабря 2025
+        const endDate = deliveryMethod === 'delivery' 
+            ? new Date(2025, 11, 30) // 30 декабря для доставки
+            : new Date(2025, 11, 31); // 31 декабря для самовывоза
+        
+        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+            const dateStr = d.toISOString().split('T')[0];
+            dates.push({
+                title: formatDate(dateStr),
+                value: dateStr,
+            });
         }
-        return slots;
-    };
+        return dates;
+    }, [deliveryMethod]);
 
-    const timeSlots = generateTimeSlots();
+    // Генерируем временные слоты в зависимости от выбранной даты
+    const timeSlots = useMemo(() => {
+        if (!selectedDate || selectedDate.value === 'unset') {
+            return [];
+        }
+
+        const selectedDateObj = new Date(selectedDate.value);
+        const day = selectedDateObj.getDate();
+        const month = selectedDateObj.getMonth();
+
+        // 31 декабря - специальные слоты
+        if (day === 31 && month === 11) {
+            return ['12:00–14:00', '14:00–17:00'];
+        }
+
+        // Для дат 25-30 декабря: слоты от открытия до закрытия ресторана по 3 часа
+        // Получаем часы работы ресторана (по умолчанию 20:00-01:00)
+        let openHour = 20;
+        let closeHour = 1; // 01:00 следующего дня
+
+        // Пытаемся получить часы работы из данных ресторана
+        if (restaurant?.worktime && restaurant.worktime.length > 0) {
+            // Берем первый рабочий день для примера
+            const workTime = restaurant.worktime[0];
+            const [openH] = workTime.time_start.split(':').map(Number);
+            const [closeH] = workTime.time_end.split(':').map(Number);
+            openHour = openH;
+            closeHour = closeH;
+        }
+
+        const slots: string[] = [];
+        let currentHour = openHour;
+
+        // Генерируем слоты по 3 часа от открытия до закрытия
+        while (true) {
+            const nextHour = currentHour + 3;
+            
+            // Если следующий час >= 24, значит переходим на следующий день
+            // В этом случае последний слот идет до времени закрытия
+            if (nextHour >= 24) {
+                // Последний слот до закрытия (например, 23:00-01:00)
+                slots.push(
+                    `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
+                );
+                break;
+            }
+            
+            // Если закрытие на следующий день (closeHour < openHour) и мы еще не достигли перехода через полночь
+            // Продолжаем добавлять слоты по 3 часа
+            if (closeHour < openHour) {
+                // Если следующий час >= 24, значит это последний слот
+                if (nextHour >= 24) {
+                    slots.push(
+                        `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
+                    );
+                    break;
+                }
+            } else {
+                // Если закрытие в тот же день
+                if (nextHour > closeHour) {
+                    // Последний слот до закрытия
+                    slots.push(
+                        `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
+                    );
+                    break;
+                }
+            }
+
+            // Добавляем слот на 3 часа
+            slots.push(
+                `${String(currentHour).padStart(2, '0')}:00–${String(nextHour).padStart(2, '0')}:00`
+            );
+
+            currentHour = nextHour;
+        }
+
+        return slots;
+    }, [selectedDate, restaurant]);
+
+    // Сбрасываем выбранное время при смене даты
+    useEffect(() => {
+        setSelectedTime('');
+    }, [selectedDate]);
+
+    // Сбрасываем выбранную дату и время при смене способа доставки
+    useEffect(() => {
+        setSelectedDate({ title: 'unset', value: 'unset' });
+        setSelectedTime('');
+    }, [deliveryMethod]);
 
     const handleGoToMenu = () => {
         navigate(`/gastronomy/${res_id}`);
@@ -73,27 +171,15 @@ export const GastronomyBasketPage: React.FC = () => {
         setIsDeliveryExpanded(false);
     };
 
-    const handleCalendarChange = (value: TValue) => {
-        setCalendarDate(value as CalendarValue);
-        setShowCalendar(false);
-    };
-
-    const formatDate = (date: Date | null): string => {
-        if (!date) return '';
-        const weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
-        const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-                        'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-        const weekday = weekdays[date.getDay()];
-        const day = date.getDate();
-        const month = months[date.getMonth()];
-        return `${weekday}, ${day} ${month}`;
-    };
-
     const isFormValid = () => {
+        const isDateSelected = selectedDate && selectedDate.value !== 'unset';
+        const isTimeSelected = selectedTime.length > 0;
+        const isMinAmount = cart.totalAmount >= 3000;
+        
         if (deliveryMethod === 'delivery') {
-            return address.length > 0 && calendarDate !== null && selectedTime.length > 0;
+            return address.length > 0 && isDateSelected && isTimeSelected && isMinAmount;
         }
-        return calendarDate !== null && selectedTime.length > 0;
+        return isDateSelected && isTimeSelected && isMinAmount;
     };
 
     // const totalWithDelivery = deliveryMethod === 'delivery'
@@ -116,7 +202,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.emptyText}>
                         <span className={css.emptyTitle}>Корзина пуста</span>
                         <span className={css.emptySubtitle}>
-                            Выберите блюда из меню, чтобы оформить заказ.
+                            В корзине пока пусто. Самое время выбрать что-нибудь вкусное
                         </span>
                     </div>
                 </div>
@@ -141,17 +227,26 @@ export const GastronomyBasketPage: React.FC = () => {
                             <CartItem
                                 key={item.id}
                                 {...item}
-                                onAdd={() => addToCart({
-                                    id: item.id,
-                                    title: item.title,
-                                    price: item.price,
-                                    defaultWeight: item.weight,
-                                    image: item.image,
-                                    weights: [item.weight],
-                                    composition: [],
-                                    nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
-                                    allergens: []
-                                })}
+                                onAdd={() => {
+                                    // Находим оригинальное блюдо из моков для получения полной информации
+                                    const originalDish = mockGastronomyListData.find(d => d.id === item.id);
+                                    if (originalDish) {
+                                        const weightIndex = originalDish.weights.findIndex(w => w === item.weight);
+                                        addToCart(originalDish, weightIndex >= 0 ? weightIndex : 0);
+                                    } else {
+                                        // Fallback если блюдо не найдено
+                                        addToCart({
+                                            id: item.id,
+                                            title: item.title,
+                                            prices: [item.price],
+                                            weights: [item.weight],
+                                            image: item.image,
+                                            description: '',
+                                            nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
+                                            allergens: []
+                                        }, 0);
+                                    }
+                                }}
                                 onRemove={() => removeFromCart(item.id)}
                             />
                         ))}
@@ -250,10 +345,17 @@ export const GastronomyBasketPage: React.FC = () => {
                 {/* Выбор даты и времени */}
                 <div className={css.section}>
                     <h2 className={css.sectionTitle}>Выбор даты и времени</h2>
+                    <DateListSelector
+                        isOpen={showDatePicker}
+                        setOpen={setShowDatePicker}
+                        date={selectedDate}
+                        setDate={setSelectedDate}
+                        values={availableDates}
+                    />
                     <div className={css.datePickerWrapper}>
                         <div
                             className={css.datePicker}
-                            onClick={() => setShowCalendar(!showCalendar)}
+                            onClick={() => setShowDatePicker(true)}
                         >
                             <div className={css.datePickerContent}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -262,8 +364,12 @@ export const GastronomyBasketPage: React.FC = () => {
                                     <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round"/>
                                     <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round"/>
                                 </svg>
-                                <span className={calendarDate ? css.datePickerTextSelected : css.datePickerTextPlaceholder}>
-                                    {calendarDate ? formatDate(calendarDate) : 'Выберите дату с 25 по 30 декабря'}
+                                <span className={selectedDate.value !== 'unset' ? css.datePickerTextSelected : css.datePickerTextPlaceholder}>
+                                    {selectedDate.value !== 'unset' 
+                                        ? selectedDate.title 
+                                        : deliveryMethod === 'delivery' 
+                                            ? 'Выберите дату с 25 по 30 декабря'
+                                            : 'Выберите дату с 25 по 31 декабря'}
                                 </span>
                             </div>
                             <svg
@@ -271,35 +377,12 @@ export const GastronomyBasketPage: React.FC = () => {
                                 height="20"
                                 viewBox="0 0 20 20"
                                 fill="none"
-                                style={{
-                                    transform: showCalendar ? 'rotate(180deg)' : 'rotate(0)',
-                                    transition: 'transform 0.3s'
-                                }}
                             >
                                 <path d="M16 7L10 13L4 7" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                         </div>
-                        {showCalendar && (
-                            <div className={css.calendarWrapper}>
-                                <Calendar
-                                    value={calendarDate}
-                                    onChange={(value) => handleCalendarChange(value)}
-                                    minDate={new Date(2025, 11, 25)} // 25 декабря 2025
-                                    maxDate={new Date(2025, 11, 30)} // 30 декабря 2025
-                                    defaultActiveStartDate={new Date(2025, 11, 25)} // Открывается на декабрь 2025
-                                    locale="ru-RU"
-                                    formatShortWeekday={(_locale, date) =>
-                                        ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][date.getDay()]
-                                    }
-                                    nextLabel="›"
-                                    prevLabel="‹"
-                                    next2Label="»"
-                                    prev2Label="«"
-                                />
-                            </div>
-                        )}
                     </div>
-                    {calendarDate && (
+                    {selectedDate.value !== 'unset' && (
                         <>
                             <div className={css.timeSlotsWrapper}>
                                 <div className={css.timeSlots}>
@@ -329,7 +412,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     onClick={handlePayment}
                     disabled={!isFormValid()}
                 >
-                    Оплатить предзаказ
+                    К оплате
                 </button>
             </div>
 
