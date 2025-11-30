@@ -1,7 +1,7 @@
 import css from './roundedButton.module.css';
 import { CSSProperties, FC, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 type Props = {
     icon: ReactNode;

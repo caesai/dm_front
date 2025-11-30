@@ -13,7 +13,7 @@ import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
 // import { BookingCreatedPopup } from '@/pages/BookingConfirmationPage/BookingCreatedPopup/BookingCreatedPopup.tsx';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export const BookingConfirmationPage = () => {
     const [bookingInfo] = useAtom(bookingAtom);

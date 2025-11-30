@@ -40,7 +40,7 @@ import { Discovery } from 'react-iconly';
 import { openLink } from '@telegram-apps/sdk-react';
 import { setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 // import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 
 interface IRestaurantDetails {

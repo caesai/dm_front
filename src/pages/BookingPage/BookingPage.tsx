@@ -34,7 +34,10 @@ import { CertificatesSelector } from '@/components/CertificatesSelector/Certific
 import classNames from 'classnames';
 import css from './BookingPage.module.css';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
+import { APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
+import useToastState from '@/hooks/useToastState.ts';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -54,6 +57,7 @@ const confirmationList: IConfirmationType[] = [
 export const BookingPage: FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { showToast } = useToastState();
 
     const { goBack } = useNavigationHistory();
 
@@ -73,6 +77,7 @@ export const BookingPage: FC = () => {
         title: 'unset',
         value: 'unset',
     });
+    const [certificates, setCertificates] = useAtom(certificatesListAtom);
 
     const [userName, setUserName] = useState<string>(user?.first_name ? user.first_name : '');
     const [userPhone, setUserPhone] = useState<string>(user?.phone_number ? user.phone_number : '');
@@ -171,6 +176,38 @@ export const BookingPage: FC = () => {
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount, restaurant]);
+
+
+    useEffect(() => {
+        // Если certificates.length === 0, но у нас есть state?.certificate && state?.certificateId
+        // предполагаем, что юзер прошел онбординг и попал сразу на страницу бронирования
+        // нужно сделать клейм сертификата и обновить список
+        if (auth?.access_token && state?.certificate && state?.certificateId && certificates.length === 0) {
+            APIPostCertificateClaim(
+                String(auth?.access_token),
+                Number(user?.id),
+                state?.certificateId,
+                state?.certificate.recipient_name,
+            )
+                .then(() => {
+                    // Обновляем список сертификатов в приложении
+                    APIGetCertificates(auth?.access_token, Number(user?.id))
+                        .then(response => setCertificates(response.data));
+                })
+                .catch(err => {
+                    console.log(err);
+                    showToast('Произошла ошибка. Не удалось получить сертификат.');
+                });
+        }
+    }, [
+        state?.certificate,
+        state?.certificateId,
+        auth?.access_token,
+        certificates.length,
+        user?.id,
+        showToast,
+        setCertificates
+    ]);
 
     return (
         <Page back={true}>

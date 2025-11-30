@@ -12,7 +12,7 @@ import { Share } from '@/components/Icons/Share.tsx';
 import { BASE_BOT } from '@/api/base.ts';
 import { IEventBooking, IEventInRestaurant } from '@/types/events.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 // export interface IEventBooking {
 //     event?: IEvent;

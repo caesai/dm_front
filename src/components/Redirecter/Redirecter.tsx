@@ -1,5 +1,5 @@
 import { useRedirectLogic } from '@/hooks/useRedirectLogic.ts';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export const Redirecter = () => {
     useRedirectLogic();

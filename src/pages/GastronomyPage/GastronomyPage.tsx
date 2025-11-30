@@ -5,7 +5,7 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Page } from '@/components/Page.tsx';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export const GastronomyPage: React.FC = () => {
     const { goBack } = useNavigationHistory();
@@ -38,13 +38,13 @@ export const GastronomyPage: React.FC = () => {
     return (
         <Page back={true}>
             <div
-                className={classnames(css.page, { 
+                className={classnames(css.page, {
                     [css.pageNoPadding]: isBasketPage,
                     [css.pageNoGap]: isDishDetailsPage
                 })}
                 style={getBackgroundColor()}
             >
-                <div className={classnames(css.header, { 
+                <div className={classnames(css.header, {
                     [css.headerWhite]: isDishDetailsPage,
                     [css.headerFullWidth]: isDishDetailsPage
                 })}>

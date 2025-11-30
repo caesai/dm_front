@@ -9,7 +9,7 @@ import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { findOtherAllergies } from '@/utils.ts';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 const AllergiesPage: React.FC = () => {
     const navigate = useNavigate();
