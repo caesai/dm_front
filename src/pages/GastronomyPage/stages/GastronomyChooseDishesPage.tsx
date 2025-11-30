@@ -10,7 +10,7 @@ import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 
 export const GastronomyChooseDishesPage: React.FC = () => {
-    const [auth] = useAtom(authAtom)
+    const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
