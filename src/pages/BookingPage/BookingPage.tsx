@@ -199,7 +199,15 @@ export const BookingPage: FC = () => {
                     showToast('Произошла ошибка. Не удалось получить сертификат.');
                 });
         }
-    }, [state?.certificate, state?.certificateId]);
+    }, [
+        state?.certificate,
+        state?.certificateId,
+        auth?.access_token,
+        certificates.length,
+        user?.id,
+        showToast,
+        setCertificates
+    ]);
 
     return (
         <Page back={true}>

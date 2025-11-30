@@ -177,7 +177,6 @@ const CertificateLandingPage: React.FC = () => {
             }
         } else {
             // 3. Логика для пользователя, НЕ прошедшего онбординг (user.complete_onboarding === false)
-            console.log('certificate: ', certificate)
             if (!certificate?.shared_at) {
                 // Сертификат не подарен. Нужна регистрация (онбординг).
                 setLoading(false);
