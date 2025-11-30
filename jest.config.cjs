@@ -3,17 +3,31 @@ const { createDefaultPreset } = require("ts-jest");
 const tsJestTransformCfg = createDefaultPreset().transform;
 
 module.exports = {
-  // testEnvironment: "node",
   testEnvironment: "jsdom",
   transform: {
     ...tsJestTransformCfg,
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        diagnostics: {
+          ignoreCodes: [1343]
+        },
+        astTransformers: {
+          before: [
+            {
+              path: 'node_modules/ts-jest-mock-import-meta',  // or, alternatively, 'ts-jest-mock-import-meta' directly, without node_modules.
+              options: { metaObjectReplacement: { env: { MODE: 'development' } } },
+            }
+          ]
+        }
+      }
+    ]
   },
   preset: "ts-jest",
   globals: {
     'ts-jest': {
-      // tsconfig: '<rootDir>/tsconfig.jest.json'
       tsconfig: './tsconfig.json',
-      useESM: true
+      useESM: true,
     }
   },
   moduleNameMapper: {
@@ -22,14 +36,11 @@ module.exports = {
     "^.+\\.svg$": "jest-transformer-svg",
     "^@/(.*)$": "<rootDir>/src/$1",
     '^swiper/react$': '<rootDir>/src/__mocks__/swiper/react.js',
-    'swiper/css': '<rootDir>/src/__mocks__/styleMock.js',
-    'swiper/css/pagination': '<rootDir>/src/__mocks__/styleMock.js',
+    'swiper/css': '<rootDir>/src/__mocks__/styleMock.сjs',
+    'swiper/css/pagination': '<rootDir>/src/__mocks__/styleMock.сjs',
     'swiper/react': '<rootDir>/src/__mocks__/swiper/react.js',
   },
   setupFilesAfterEnv: [
     "<rootDir>/setupTests.ts"
   ],
-  // transformIgnorePatterns: [
-  //   '/node_modules/(?!swiper|ssr-window|dom7)/',
-  // ],
 };

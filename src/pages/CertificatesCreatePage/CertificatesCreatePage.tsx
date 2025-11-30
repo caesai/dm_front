@@ -5,7 +5,7 @@ import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export const CertificatesCreatePage: React.FC = () => {
     const navigate = useNavigate();

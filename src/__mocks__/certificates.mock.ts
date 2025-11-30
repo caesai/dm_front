@@ -1,5 +1,4 @@
 import { ICertificate, ICertificateBlockProps } from '@/types/certificates.types.ts';
-import CertificateImage from '/img/certificate_2.png';
 
 export const certificatesListMock: ICertificate[] = [{
     'certificate_type': 'online',
@@ -55,6 +54,6 @@ export const certificatesListMock: ICertificate[] = [{
 }];
 
 export const certificateBlock: ICertificateBlockProps = {
-    image: CertificateImage,
+    image: '/img/certificate_2.png',
     description: 'Приятный подарок на любые праздники',
 };

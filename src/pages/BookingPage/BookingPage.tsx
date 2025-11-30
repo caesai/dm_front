@@ -34,7 +34,7 @@ import { CertificatesSelector } from '@/components/CertificatesSelector/Certific
 import classNames from 'classnames';
 import css from './BookingPage.module.css';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 const confirmationList: IConfirmationType[] = [
     {

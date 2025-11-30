@@ -14,7 +14,7 @@ import axios from 'axios';
 import { BASE_URL } from '@/api/base.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export const AdminScannerPage = () => {
     const { goBack } = useNavigationHistory();
