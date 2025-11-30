@@ -36,8 +36,8 @@ module.exports = {
     "^.+\\.svg$": "jest-transformer-svg",
     "^@/(.*)$": "<rootDir>/src/$1",
     '^swiper/react$': '<rootDir>/src/__mocks__/swiper/react.js',
-    'swiper/css': '<rootDir>/src/__mocks__/styleMock.сjs',
-    'swiper/css/pagination': '<rootDir>/src/__mocks__/styleMock.сjs',
+    'swiper/css': '<rootDir>/src/__mocks__/styleMock.cjs',
+    'swiper/css/pagination': '<rootDir>/src/__mocks__/styleMock.cjs',
     'swiper/react': '<rootDir>/src/__mocks__/swiper/react.js',
   },
   setupFilesAfterEnv: [

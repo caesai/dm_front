@@ -74,7 +74,7 @@ export interface CertificatesSelectorProps {
  * @param {CertificatesSelectorProps} { setCertificateId, isOpened, selectedCertificateId }
  * @returns {React.FC | null} Функциональный компонент React или null, если сертификаты отсутствуют.
  */
-export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setCertificateId, isOpened, selectedCertificateId }: CertificatesSelectorProps): React.ReactElement | null => {
+export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setCertificateId, isOpened, selectedCertificateId }) => {
     const [certificates] = useAtom(certificatesListAtom);
     const [selectedType, setSelectedType] = useState<TCertificate | null>(null);
     // const [offlineCertificateId, setOfflineCertificateId] = useState<string>('');
