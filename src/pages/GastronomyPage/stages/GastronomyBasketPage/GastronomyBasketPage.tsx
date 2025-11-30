@@ -59,10 +59,10 @@ export const GastronomyBasketPage: React.FC = () => {
     const availableDates = useMemo(() => {
         const dates: PickerValueObj[] = [];
         const startDate = new Date(2025, 11, 25); // 25 декабря 2025
-        const endDate = deliveryMethod === 'delivery' 
+        const endDate = deliveryMethod === 'delivery'
             ? new Date(2025, 11, 30) // 30 декабря для доставки
             : new Date(2025, 11, 31); // 31 декабря для самовывоза
-        
+
         for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
             const dateStr = d.toISOString().split('T')[0];
             dates.push({
@@ -109,7 +109,7 @@ export const GastronomyBasketPage: React.FC = () => {
         // Генерируем слоты по 3 часа от открытия до закрытия
         while (true) {
             const nextHour = currentHour + 3;
-            
+
             // Если следующий час >= 24, значит переходим на следующий день
             // В этом случае последний слот идет до времени закрытия
             if (nextHour >= 24) {
@@ -119,7 +119,7 @@ export const GastronomyBasketPage: React.FC = () => {
                 );
                 break;
             }
-            
+
             // Если закрытие на следующий день (closeHour < openHour) и мы еще не достигли перехода через полночь
             // Продолжаем добавлять слоты по 3 часа
             if (closeHour < openHour) {
@@ -356,7 +356,7 @@ export const GastronomyBasketPage: React.FC = () => {
         const isDateSelected = selectedDate && selectedDate.value !== 'unset';
         const isTimeSelected = selectedTime.length > 0;
         const isMinAmount = cart.totalAmount >= 3000;
-        
+
         if (deliveryMethod === 'delivery') {
             return address.length > 0 && isDateSelected && isTimeSelected && isMinAmount;
         }
@@ -417,11 +417,12 @@ export const GastronomyBasketPage: React.FC = () => {
                                     } else {
                                         // Fallback если блюдо не найдено
                                         addToCart({
-                                    id: item.id,
-                                    title: item.title,
+                                            price_msw: [],
+                                            id: item.id,
+                                            title: item.title,
                                             prices: [item.price],
                                             weights: [item.weight],
-                                    image: item.image,
+                                            image_url: item.image,
                                             description: '',
                                     nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
                                     allergens: []
@@ -553,9 +554,9 @@ export const GastronomyBasketPage: React.FC = () => {
                                     <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round"/>
                                 </svg>
                                 <span className={selectedDate.value !== 'unset' ? css.datePickerTextSelected : css.datePickerTextPlaceholder}>
-                                    {selectedDate.value !== 'unset' 
-                                        ? selectedDate.title 
-                                        : deliveryMethod === 'delivery' 
+                                    {selectedDate.value !== 'unset'
+                                        ? selectedDate.title
+                                        : deliveryMethod === 'delivery'
                                             ? 'Выберите дату с 25 по 30 декабря'
                                             : 'Выберите дату с 25 по 31 декабря'}
                                 </span>

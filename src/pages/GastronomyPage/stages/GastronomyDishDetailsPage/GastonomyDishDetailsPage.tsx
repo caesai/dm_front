@@ -59,7 +59,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                 <div className={css.content}>
                     <div
                         className={css.mainImage}
-                        style={{ backgroundImage: `url(${dishFromState.image})` }}
+                        style={{ backgroundImage: `url(${dishFromState.image_url})` }}
                     />
 
                     <div className={css.titleSection}>
