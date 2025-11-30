@@ -4,11 +4,8 @@ import { UserProfilePage } from '@/pages/UserProfilePage/UserProfilePage.tsx';
 import { APIUpdateUserInfo } from '@/api/user.api.ts';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
 import { Toast } from '@/components/Toast/Toast.tsx';
-import { Provider, WritableAtom } from 'jotai/index';
-import React, { PropsWithChildren } from 'react';
-import { useHydrateAtoms } from 'jotai/utils';
-// import { toastAtom } from '@/atoms/toastAtom.ts';
 import { authAtom } from '@/atoms/userAtom.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 
 // Mocking ENV Variables
 jest.mock('@/api/base.ts', () => ({
@@ -24,21 +21,6 @@ jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useLocation: jest.fn(),
 }));
-
-export type AnyWritableAtom = WritableAtom<unknown, never[], unknown>
-interface InitialProps extends PropsWithChildren {
-    initialValues: Array<readonly [AnyWritableAtom, unknown]>
-}
-const HydrateAtoms: React.FC<InitialProps> = ({ initialValues, children }) => {
-    useHydrateAtoms(initialValues as Array<readonly [AnyWritableAtom, never]>)
-    return children
-}
-
-const TestProvider: React.FC<InitialProps> = ({ initialValues, children }) => (
-    <Provider>
-        <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
-    </Provider>
-)
 
 let mainButtonClickHandler: () => void;
 const removeListenerMock = jest.fn();

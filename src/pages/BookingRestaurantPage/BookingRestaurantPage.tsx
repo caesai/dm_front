@@ -45,7 +45,7 @@ import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.tsx';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 const confirmationList: IConfirmationType[] = [
     {

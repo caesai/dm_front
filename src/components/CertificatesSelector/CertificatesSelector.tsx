@@ -146,7 +146,7 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
                 setCertificateId(certificateId);
             }
         }
-    }, [isOpened, selectedCertificateId, setCertificateId]);
+    }, [isOpened, selectedCertificateId, setCertificateId, certificates]);
 
     if (certificates.length === 0) {
         return null;

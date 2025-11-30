@@ -14,22 +14,23 @@ interface DishCardProps extends IDish {
 export const DishCard: React.FC<DishCardProps> = ({
     id,
     title,
-    prices,
+    price_msw, // заменить на prices после того, как переделают апи
     weights,
-    image,
+    image_url,
     quantity,
     onAdd,
     onRemove,
     onClick,
 }) => {
-    const defaultPrice = prices[0];
+    // const defaultPrice = prices[0];
+    const defaultPrice = price_msw[0] || 1000;
     const defaultWeight = weights[0];
 
     return (
         <div className={css.menuItem}>
             <div
                 className={css.image}
-                style={{ backgroundImage: `url(${image})` }}
+                style={{ backgroundImage: `url(${image_url})` }}
                 onClick={onClick}
             />
             <div className={css.content} onClick={onClick}>

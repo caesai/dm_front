@@ -1,7 +1,7 @@
 import css from './OptionsNavigationElement.module.css';
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import classnames from 'classnames';
+import classNames from 'classnames';
 
 interface OptionsNavigationElementProps {
     icon?: ReactNode;
@@ -11,15 +11,16 @@ interface OptionsNavigationElementProps {
     link?: string;
     onClick?: () => void;
     className?: string;
+    textWrapperClassName?: string;
 }
 
 export const OptionsNavigationElement = (
     props: OptionsNavigationElementProps
 ) => {
     return props.link ? (
-        <Link to={props.link} className={classnames(css.element, props.className)} style={{ backgroundImage: `url(${props.img})` }}>
+        <Link to={props.link} className={classNames(css.element, props.className)} style={{ backgroundImage: `url(${props.img})` }}>
             <div className={css.wrapper}>
-                <div className={css.textWrapper}>
+                <div className={classNames(css.textWrapper, props.textWrapperClassName)}>
                     <span className={css.title}>{props.title}</span>
                     {props.subtitle && (
                         <span className={css.subtitle}>{props.subtitle}</span>
