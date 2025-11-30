@@ -31,7 +31,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
         if (!auth) return;
         APIGetGastronomyDishes(auth.access_token, res_id)
             .then((res) => setDishesList(res.data))
-            .catch((err) => console.error(err))
+            .catch((err) => console.error(err));
     }, [auth, res_id]);
 
     return (
