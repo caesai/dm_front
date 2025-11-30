@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from '@/api/base.ts';
-import { IOrder } from '@/types/gastronomy.types.ts';
+import { IDish, IOrder } from '@/types/gastronomy.types.ts';
 
 export const APIGetUserOrders = async (phone: string, token: string) => {
     return await axios.get<IOrder[]>(
@@ -8,6 +8,20 @@ export const APIGetUserOrders = async (phone: string, token: string) => {
         {
             params: {
                 phone: phone
+            },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+};
+
+export const APIGetGastronomyDishes = async (token: string, res_id?: string) => {
+    return await axios.get<IDish[]>(
+        `${BASE_URL}/culinary/dishes`,
+        {
+            params: {
+                restaurant_id: res_id,
             },
             headers: {
                 Authorization: `Bearer ${token}`,

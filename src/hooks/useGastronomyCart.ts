@@ -8,7 +8,7 @@ export const useGastronomyCart = () => {
     const addToCart = (dish: IDish, selectedWeightIndex: number = 0) => {
         setCart((prevCart) => {
             const existingItem = prevCart.items.find((item) => item.id === dish.id);
-            const selectedPrice = dish.prices[selectedWeightIndex] || dish.prices[0];
+            const selectedPrice = dish.price_msw[selectedWeightIndex] || dish.price_msw[0]; // поменять
             const selectedWeight = dish.weights[selectedWeightIndex] || dish.weights[0];
             
             let newItems: ICartItem[];
@@ -27,7 +27,7 @@ export const useGastronomyCart = () => {
                         price: selectedPrice,
                         quantity: 1,
                         weight: selectedWeight,
-                        image: dish.image,
+                        image: dish.image_url,
                     },
                 ];
             }
