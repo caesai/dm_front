@@ -53,6 +53,7 @@ export const OptionsNavigation = () => {
                     subtitle={'От уютных ужинов до шумных вечеринок'}
                     img={neweventBg}
                     className={css.eventsCTAbtn}
+                    textWrapperClassName={css.eventsTextWrapper}
                     link={'/events'}
                 />
             )}
