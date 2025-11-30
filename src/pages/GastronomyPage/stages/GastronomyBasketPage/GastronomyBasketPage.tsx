@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
@@ -9,9 +9,18 @@ import emptyBasketIcon from '/img/empty-basket.png';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { mockGastronomyListData } from '@/__mocks__/gastronomy.mock.ts';
 import { formatDate } from '@/utils.ts';
+import useToast from '@/hooks/useToastState.ts';
 import css from './GastronomyBasketPage.module.css';
 
 type DeliveryMethod = 'delivery' | 'pickup';
+
+const YANDEX_API_KEY = '8297b306-311a-44c1-88cf-ffe4ee910493';
+
+interface AddressSuggestion {
+    value: string;
+    displayName: string;
+    coordinates?: [number, number];
+}
 
 export const GastronomyBasketPage: React.FC = () => {
     const navigate = useNavigate();
@@ -22,18 +31,19 @@ export const GastronomyBasketPage: React.FC = () => {
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('delivery');
     const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(false);
     const [address, setAddress] = useState('');
-    const [addressSuggestions] = useState([
-        'Москва, Большая Грузинская ул., 76, стр. 2',
-        'Москва, Большая Грузинская ул., 76',
-        'Москва, Большая Грузинская ул., 75',
-    ]);
+    const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
+    const [selectedAddressCoordinates, setSelectedAddressCoordinates] = useState<[number, number] | null>(null);
     const [selectedDate, setSelectedDate] = useState<PickerValueObj>({
         title: 'unset',
         value: 'unset',
     });
     const [selectedTime, setSelectedTime] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [showAddressError, setShowAddressError] = useState(false);
+    const addressInputRef = useRef<HTMLInputElement>(null);
+    const suggestionsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const { showToast } = useToast();
+
+    console.log('GastronomyBasketPage rendered, deliveryMethod:', deliveryMethod, 'address:', address);
 
     const deliveryFee = 1500;
 
@@ -153,11 +163,182 @@ export const GastronomyBasketPage: React.FC = () => {
         setSelectedTime('');
     }, [deliveryMethod]);
 
+    // Очистка таймаута при размонтировании
+    useEffect(() => {
+        return () => {
+            if (suggestionsTimeoutRef.current) {
+                clearTimeout(suggestionsTimeoutRef.current);
+            }
+        };
+    }, []);
+
     const handleGoToMenu = () => {
         navigate(`/gastronomy/${res_id}`);
     };
 
-    const handlePayment = () => {
+    // Загрузка подсказок адресов через Яндекс Geocoder API
+    const loadAddressSuggestions = useCallback(async (query: string) => {
+        if (!query || query.trim().length < 3) {
+            setAddressSuggestions([]);
+            return;
+        }
+        
+        const trimmedQuery = query.trim();
+        
+        try {
+            // Используем Geocoder API для поиска адресов
+            // Добавляем "Москва" для ограничения поиска по городу
+            const searchQuery = `Москва, ${trimmedQuery}`;
+            const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${YANDEX_API_KEY}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5&bbox=37.319,55.489~37.967,55.958`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+            
+            if (!response.ok) {
+                setAddressSuggestions([]);
+                return;
+            }
+            
+            const data = await response.json();
+            
+            // Обрабатываем ответ от Geocoder API
+            const featureMembers = data.response?.GeoObjectCollection?.featureMember || [];
+            
+            if (featureMembers.length > 0) {
+                const suggestions: AddressSuggestion[] = featureMembers.map((item: any) => {
+                    const geoObject = item.GeoObject;
+                    const name = geoObject.name || '';
+                    const description = geoObject.description || '';
+                    const fullAddress = description ? `${name}, ${description}` : name;
+                    
+                    return {
+                        value: fullAddress,
+                        displayName: fullAddress,
+                        coordinates: undefined,
+                    };
+                }).filter((s: AddressSuggestion) => s.displayName && s.displayName.length > 0);
+                
+                setAddressSuggestions(suggestions);
+            } else {
+                setAddressSuggestions([]);
+            }
+        } catch (error) {
+            setAddressSuggestions([]);
+        }
+    }, []);
+
+    // Получение координат адреса через Яндекс Geocoder API
+    const geocodeAddress = async (address: string): Promise<[number, number] | null> => {
+        try {
+            const response = await fetch(
+                `https://geocode-maps.yandex.ru/1.x/?apikey=${YANDEX_API_KEY}&geocode=${encodeURIComponent(address)}&format=json`
+            );
+            const data = await response.json();
+            
+            if (data.response?.GeoObjectCollection?.featureMember?.length > 0) {
+                const geoObject = data.response.GeoObjectCollection.featureMember[0].GeoObject;
+                const pos = geoObject.Point.pos.split(' ').map(Number);
+                return [pos[0], pos[1]]; // [долгота, широта]
+            }
+            return null;
+        } catch (error) {
+            console.error('Error geocoding address:', error);
+            return null;
+        }
+    };
+
+    // Проверка, входит ли адрес в зону доставки (в пределах МКАД)
+    // Используем упрощенную проверку: координаты должны быть в пределах границ Москвы
+    const checkDeliveryZone = async (coordinates: [number, number]): Promise<boolean> => {
+        try {
+            // Границы МКАД (приблизительно):
+            // Север: ~55.958
+            // Юг: ~55.489
+            // Запад: ~37.319
+            // Восток: ~37.967
+            const [longitude, latitude] = coordinates;
+            
+            // Проверяем, что координаты находятся в пределах границ МКАД
+            const isWithinBounds = 
+                latitude >= 55.489 && latitude <= 55.958 &&
+                longitude >= 37.319 && longitude <= 37.967;
+            
+            return isWithinBounds;
+        } catch (error) {
+            console.error('Error checking delivery zone:', error);
+            return false;
+        }
+    };
+
+    // Обработка изменения адреса с debounce
+    const handleAddressChange = useCallback((value: string) => {
+        setAddress(value);
+        setSelectedAddressCoordinates(null);
+        
+        // Очищаем предыдущий таймаут
+        if (suggestionsTimeoutRef.current) {
+            clearTimeout(suggestionsTimeoutRef.current);
+        }
+        
+        // Если текст слишком короткий, очищаем подсказки
+        if (!value || value.trim().length < 3) {
+            setAddressSuggestions([]);
+            return;
+        }
+        
+        // Устанавливаем новый таймаут для загрузки подсказок
+        suggestionsTimeoutRef.current = setTimeout(() => {
+            loadAddressSuggestions(value);
+        }, 300);
+    }, [loadAddressSuggestions]);
+
+    // Обработка выбора адреса из подсказок
+    const handleSelectAddress = async (suggestion: AddressSuggestion) => {
+        setAddress(suggestion.displayName);
+        setAddressSuggestions([]);
+        
+        // Получаем координаты выбранного адреса
+        const coords = await geocodeAddress(suggestion.displayName);
+        if (coords) {
+            setSelectedAddressCoordinates(coords);
+        }
+    };
+
+    const handlePayment = async () => {
+        if (deliveryMethod === 'delivery' && address) {
+            // Проверяем зону доставки
+            let coordinates = selectedAddressCoordinates;
+            
+            // Если координаты не были получены ранее, получаем их сейчас
+            if (!coordinates) {
+                coordinates = await geocodeAddress(address);
+                if (coordinates) {
+                    setSelectedAddressCoordinates(coordinates);
+                }
+            }
+            
+            if (coordinates) {
+                const isInZone = await checkDeliveryZone(coordinates);
+                if (!isInZone) {
+                    showToast(
+                        'К сожалению, ваш адрес не входит в зону доставки. Вы можете оформить самовывоз.',
+                        'error'
+                    );
+                    return;
+                }
+            } else {
+                showToast(
+                    'Не удалось определить адрес. Пожалуйста, выберите адрес из списка.',
+                    'error'
+                );
+                return;
+            }
+        }
+        
         // Логика оплаты
         console.log('Payment processing...');
     };
@@ -236,14 +417,14 @@ export const GastronomyBasketPage: React.FC = () => {
                                     } else {
                                         // Fallback если блюдо не найдено
                                         addToCart({
-                                            id: item.id,
-                                            title: item.title,
+                                    id: item.id,
+                                    title: item.title,
                                             prices: [item.price],
                                             weights: [item.weight],
-                                            image: item.image,
+                                    image: item.image,
                                             description: '',
-                                            nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
-                                            allergens: []
+                                    nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
+                                    allergens: []
                                         }, 0);
                                     }
                                 }}
@@ -314,28 +495,35 @@ export const GastronomyBasketPage: React.FC = () => {
                         </div>
                         <div className={css.inputWrapper}>
                             <input
+                                ref={addressInputRef}
                                 type="text"
                                 className={address ? css.inputFilled : css.input}
                                 placeholder="Адрес"
                                 value={address}
-                                onChange={(e) => setAddress(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    handleAddressChange(value);
+                                }}
+                                onInput={(e) => {
+                                    const value = (e.target as HTMLInputElement).value;
+                                    handleAddressChange(value);
+                                }}
+                                onBlur={() => {
+                                    // Закрываем подсказки с небольшой задержкой, чтобы клик по подсказке успел сработать
+                                    setTimeout(() => setAddressSuggestions([]), 200);
+                                }}
                             />
-                            {address && addressSuggestions.filter(s =>
-                                s.toLowerCase().includes(address.toLowerCase())
-                            ).length > 0 && (
+                            {addressSuggestions.length > 0 && (
                                 <div className={css.suggestions}>
-                                    {addressSuggestions
-                                        .filter(s => s.toLowerCase().includes(address.toLowerCase()))
-                                        .map((suggestion, idx) => (
+                                    {addressSuggestions.map((suggestion, idx) => (
                                             <div
                                                 key={idx}
                                                 className={css.suggestion}
-                                                onClick={() => setAddress(suggestion)}
+                                            onClick={() => handleSelectAddress(suggestion)}
                                             >
-                                                {suggestion}
+                                            {suggestion.displayName}
                                             </div>
-                                        ))
-                                    }
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -416,31 +604,6 @@ export const GastronomyBasketPage: React.FC = () => {
                 </button>
             </div>
 
-            {/* Попап ошибки адреса */}
-            {showAddressError && (
-                <div className={css.overlay} onClick={() => setShowAddressError(false)}>
-                    <div className={css.popup} onClick={(e) => e.stopPropagation()}>
-                        <div className={css.popupIcon}>
-                            <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-                                <circle cx="22" cy="22" r="22" fill="#F4F4F4"/>
-                                <path d="M26.59 17.59L22 13L17.41 17.59" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                        </div>
-                        <div className={css.popupContent}>
-                            <p className={css.popupText}>
-                                К сожалению, ваш адрес не входит в зону доставки.
-                                Вы можете оформить самовывоз.
-                            </p>
-                            <button className={css.secondaryButton} onClick={() => {
-                                setShowAddressError(false);
-                                setDeliveryMethod('pickup');
-                            }}>
-                                Ok
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
