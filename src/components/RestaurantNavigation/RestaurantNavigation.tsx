@@ -6,7 +6,6 @@ import { Swiper as SwiperCore } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { DEV_MODE } from '@/api/base.ts';
 
 interface IRestaurantNavigationProps {
     isShow: boolean;
@@ -132,7 +131,7 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isS
                             </AnchorLink>
                         </SwiperSlide>
                         )}
-                    {DEV_MODE && (
+                    {isShow && (
                         <SwiperSlide style={{ width: 'fit-content' }}>
                             <AnchorLink href="#ny_cooking" offset={160}>
                                 <div
