@@ -19,7 +19,6 @@ export interface IDish {
     description: string;
     nutritionPer100g: INutritionInfo;
     allergens: IAllergen[];
-    price_msw: number[]; // заменить на prices после того, как переделают апи
 }
 
 export type TDeliveryMethod = "pickup" | "delivery";

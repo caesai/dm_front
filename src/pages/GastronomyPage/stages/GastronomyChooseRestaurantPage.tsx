@@ -142,7 +142,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                 </ContentBlock>
                 <BottomButtonWrapper
                     content={'Перейти к списку блюд'}
-                    onClick={isDisabledButton ? undefined : () => navigate('/gastronomy/4')}
+                    onClick={isDisabledButton ? undefined : () => navigate('/gastronomy/' + currentRestaurant.value)}
                     isDisabled={isDisabledButton}
                     theme={isDisabledButton ? 'primary' : 'red'}
                 />

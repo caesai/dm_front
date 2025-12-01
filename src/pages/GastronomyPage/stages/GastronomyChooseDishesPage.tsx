@@ -14,7 +14,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
     const navigate = useNavigate();
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
-    
+
     const [dishesList, setDishesList] = useState<IDish[]>([]);
 
     const handleCartClick = () => {
