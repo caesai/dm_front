@@ -29,7 +29,6 @@ export const GastronomyChooseDishesPage: React.FC = () => {
 
     useEffect(() => {
         if (!auth) return;
-        console.log('res_id: ', res_id)
         APIGetGastronomyDishes(auth.access_token, res_id)
             .then((res) => setDishesList(res.data))
             .catch((err) => console.error(err));
