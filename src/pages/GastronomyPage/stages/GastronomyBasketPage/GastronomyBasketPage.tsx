@@ -199,7 +199,7 @@ export const GastronomyBasketPage: React.FC = () => {
         try {
             // Используем Geocoder API для поиска адресов
             // Определяем город
-            const cityName = cityList.find((city) => city.name_english === currentCity)?.name;
+            const cityName = cityList.find((city) => city.name_english === currentCity)?.name || 'Москва';
             const searchQuery = `${cityName}, ${trimmedQuery}`;
             const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5&bbox=37.319,55.489~37.967,55.958`;
 
@@ -254,7 +254,7 @@ export const GastronomyBasketPage: React.FC = () => {
             if (data.response?.GeoObjectCollection?.featureMember?.length > 0) {
                 const geoObject = data.response.GeoObjectCollection.featureMember[0].GeoObject;
                 const pos = geoObject.Point.pos.split(' ').map(Number);
-                return [pos[1], pos[0]]; // [долгота, широта]
+                return [pos[1], pos[0]]; // [широта, долгота]
             }
             return null;
         } catch (error) {
@@ -369,7 +369,12 @@ export const GastronomyBasketPage: React.FC = () => {
         }, auth.access_token)
             .then((response) => {
                 APIPostCreatePayment(response.data.order_id, auth.access_token)
-                    .catch((err) => console.error(err))
+                    .catch((err) => {
+                        showToast(
+                            'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.'
+                        );
+                        console.error(err);
+                    })
             })
             .catch((err) => console.error(err));
     };
