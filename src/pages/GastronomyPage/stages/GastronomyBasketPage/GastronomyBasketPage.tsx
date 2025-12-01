@@ -12,6 +12,8 @@ import { formatDate } from '@/utils.ts';
 import useToast from '@/hooks/useToastState.ts';
 import css from './GastronomyBasketPage.module.css';
 import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { APIPostUserOrder } from '@/api/gastronomy.api.ts';
+import { authAtom } from '@/atoms/userAtom.ts';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -27,6 +29,7 @@ export const GastronomyBasketPage: React.FC = () => {
     const { cart, addToCart, removeFromCart } = useGastronomyCart();
     const [restaurants] = useAtom(restaurantsListAtom);
     const [currentCity] = useAtom(currentCityAtom);
+    const [auth] = useAtom(authAtom)
 
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('delivery');
     const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(false);
@@ -345,8 +348,17 @@ export const GastronomyBasketPage: React.FC = () => {
             }
         }
 
-        // Логика оплаты
-        console.log('Payment processing...');
+        if (!auth || !res_id) return;
+        APIPostUserOrder({
+            items: cart.items,
+            restaurant_id: Number(res_id),
+            deliveryCost: deliveryFee,
+            delivery_method: deliveryMethod,
+            totalAmount: cart.totalAmount,
+            deliveryAddress: address
+        }, auth.access_token)
+            .then(() => navigate('/'))
+            .catch((err) => console.error(err));
     };
 
     const handleToggleDropdown = () => {
