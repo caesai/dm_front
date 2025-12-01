@@ -31,6 +31,7 @@ interface AddressSuggestion {
 }
 
 const MIN_ADDRESS_QUERY_LENGTH = 3;
+const ADDRESS_SUGGESTIONS_BLUR_DELAY = 200;
 
 export const GastronomyBasketPage: React.FC = () => {
     const navigate = useNavigate();
@@ -548,7 +549,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                 }}
                                 onBlur={() => {
                                     // Закрываем подсказки с небольшой задержкой, чтобы клик по подсказке успел сработать
-                                    setTimeout(() => setAddressSuggestions([]), 200);
+                                    setTimeout(() => setAddressSuggestions([]), ADDRESS_SUGGESTIONS_BLUR_DELAY);
                                 }}
                             />
                             {addressSuggestions.length > 0 && (
