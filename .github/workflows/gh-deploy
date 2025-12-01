@@ -42,6 +42,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+            MY_SECRET_1: ${{ secrets.MY_SECRET_1 }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

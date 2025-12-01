@@ -20,21 +20,15 @@ interface AddressBlockProps {
     address_station_color?: string;
 }
 
-/**
- * Константа с настройками API Яндекс Карт
- */
-const YANDEX_MAPS_CONFIG = {
-    apiKey: '73a95f3b-fa74-4525-99e3-86ee1309f266',
-    lang: 'ru_RU' as const,
-} as const;
-
-export const AddressBlock: React.FC<AddressBlockProps> = ({
-                                                              longitude,
-                                                              latitude,
-                                                              logo_url,
-                                                              address_station_color,
-                                                              address,
-                                                          }) => {
+export const AddressBlock: React.FC<AddressBlockProps> = (
+    {
+        longitude,
+        latitude,
+        logo_url,
+        address_station_color,
+        address,
+    },
+) => {
     /**
      * Конфигурация местоположения для карты
      */
@@ -71,8 +65,8 @@ export const AddressBlock: React.FC<AddressBlockProps> = ({
                 <div className={css.mapContainer}>
                     <div className={css.map}>
                         <YMapComponentsProvider
-                            apiKey={YANDEX_MAPS_CONFIG.apiKey}
-                            lang={YANDEX_MAPS_CONFIG.lang}
+                            apiKey={String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}
+                            lang={String(import.meta.env.VITE_YANDEX_MAPS_API_LANG)}
                         >
                             <YMap location={mapLocation}>
                                 <YMapDefaultSchemeLayer />

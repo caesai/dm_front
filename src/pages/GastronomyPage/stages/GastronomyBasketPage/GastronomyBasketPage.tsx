@@ -182,46 +182,46 @@ export const GastronomyBasketPage: React.FC = () => {
             setAddressSuggestions([]);
             return;
         }
-        
+
         const trimmedQuery = query.trim();
-        
+
         try {
             // Используем Geocoder API для поиска адресов
             // Добавляем "Москва" для ограничения поиска по городу
             const searchQuery = `Москва, ${trimmedQuery}`;
             const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${YANDEX_API_KEY}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5&bbox=37.319,55.489~37.967,55.958`;
-            
+
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
                 },
             });
-            
+
             if (!response.ok) {
                 setAddressSuggestions([]);
                 return;
             }
-            
+
             const data = await response.json();
-            
+
             // Обрабатываем ответ от Geocoder API
             const featureMembers = data.response?.GeoObjectCollection?.featureMember || [];
-            
+
             if (featureMembers.length > 0) {
                 const suggestions: AddressSuggestion[] = featureMembers.map((item: any) => {
                     const geoObject = item.GeoObject;
                     const name = geoObject.name || '';
                     const description = geoObject.description || '';
                     const fullAddress = description ? `${name}, ${description}` : name;
-                    
+
                     return {
                         value: fullAddress,
                         displayName: fullAddress,
                         coordinates: undefined,
                     };
                 }).filter((s: AddressSuggestion) => s.displayName && s.displayName.length > 0);
-                
+
                 setAddressSuggestions(suggestions);
             } else {
                 setAddressSuggestions([]);
@@ -238,7 +238,7 @@ export const GastronomyBasketPage: React.FC = () => {
                 `https://geocode-maps.yandex.ru/1.x/?apikey=${YANDEX_API_KEY}&geocode=${encodeURIComponent(address)}&format=json`
             );
             const data = await response.json();
-            
+
             if (data.response?.GeoObjectCollection?.featureMember?.length > 0) {
                 const geoObject = data.response.GeoObjectCollection.featureMember[0].GeoObject;
                 const pos = geoObject.Point.pos.split(' ').map(Number);
@@ -261,12 +261,12 @@ export const GastronomyBasketPage: React.FC = () => {
             // Запад: ~37.319
             // Восток: ~37.967
             const [longitude, latitude] = coordinates;
-            
+
             // Проверяем, что координаты находятся в пределах границ МКАД
-            const isWithinBounds = 
+            const isWithinBounds =
                 latitude >= 55.489 && latitude <= 55.958 &&
                 longitude >= 37.319 && longitude <= 37.967;
-            
+
             return isWithinBounds;
         } catch (error) {
             console.error('Error checking delivery zone:', error);
@@ -278,18 +278,18 @@ export const GastronomyBasketPage: React.FC = () => {
     const handleAddressChange = useCallback((value: string) => {
         setAddress(value);
         setSelectedAddressCoordinates(null);
-        
+
         // Очищаем предыдущий таймаут
         if (suggestionsTimeoutRef.current) {
             clearTimeout(suggestionsTimeoutRef.current);
         }
-        
+
         // Если текст слишком короткий, очищаем подсказки
         if (!value || value.trim().length < 3) {
             setAddressSuggestions([]);
             return;
         }
-        
+
         // Устанавливаем новый таймаут для загрузки подсказок
         suggestionsTimeoutRef.current = setTimeout(() => {
             loadAddressSuggestions(value);
@@ -300,7 +300,7 @@ export const GastronomyBasketPage: React.FC = () => {
     const handleSelectAddress = async (suggestion: AddressSuggestion) => {
         setAddress(suggestion.displayName);
         setAddressSuggestions([]);
-        
+
         // Получаем координаты выбранного адреса
         const coords = await geocodeAddress(suggestion.displayName);
         if (coords) {
@@ -312,7 +312,7 @@ export const GastronomyBasketPage: React.FC = () => {
         if (deliveryMethod === 'delivery' && address) {
             // Проверяем зону доставки
             let coordinates = selectedAddressCoordinates;
-            
+
             // Если координаты не были получены ранее, получаем их сейчас
             if (!coordinates) {
                 coordinates = await geocodeAddress(address);
@@ -320,7 +320,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     setSelectedAddressCoordinates(coordinates);
                 }
             }
-            
+
             if (coordinates) {
                 const isInZone = await checkDeliveryZone(coordinates);
                 if (!isInZone) {
@@ -338,7 +338,7 @@ export const GastronomyBasketPage: React.FC = () => {
                 return;
             }
         }
-        
+
         // Логика оплаты
         console.log('Payment processing...');
     };
@@ -417,7 +417,6 @@ export const GastronomyBasketPage: React.FC = () => {
                                     } else {
                                         // Fallback если блюдо не найдено
                                         addToCart({
-                                            price_msw: [],
                                             id: item.id,
                                             title: item.title,
                                             prices: [item.price],

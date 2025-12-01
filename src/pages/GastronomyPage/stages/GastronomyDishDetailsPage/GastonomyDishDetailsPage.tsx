@@ -98,19 +98,19 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                         <span className={css.sectionTitle}>На 100 граммов</span>
                         <div className={css.nutritionGrid}>
                             <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.calories}</span>
+                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.calories}</span>
                                 <span className={css.nutritionLabel}>ккал</span>
                             </div>
                             <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.proteins}</span>
+                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.proteins}</span>
                                 <span className={css.nutritionLabel}>белки</span>
                             </div>
                             <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.fats}</span>
+                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.fats}</span>
                                 <span className={css.nutritionLabel}>жиры</span>
                             </div>
                             <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.carbs}</span>
+                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.carbs}</span>
                                 <span className={css.nutritionLabel}>углеводы</span>
                             </div>
                         </div>

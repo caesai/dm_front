@@ -8,9 +8,9 @@ export const useGastronomyCart = () => {
     const addToCart = (dish: IDish, selectedWeightIndex: number = 0) => {
         setCart((prevCart) => {
             const existingItem = prevCart.items.find((item) => item.id === dish.id);
-            const selectedPrice = dish.price_msw[selectedWeightIndex] || dish.price_msw[0]; // поменять
+            const selectedPrice = dish.prices[selectedWeightIndex] || dish.prices[0]; // поменять
             const selectedWeight = dish.weights[selectedWeightIndex] || dish.weights[0];
-            
+
             let newItems: ICartItem[];
             if (existingItem) {
                 newItems = prevCart.items.map((item) =>
@@ -49,7 +49,7 @@ export const useGastronomyCart = () => {
     const removeFromCart = (dishId: number) => {
         setCart((prevCart) => {
             const existingItem = prevCart.items.find((item) => item.id === dishId);
-            
+
             if (!existingItem) return prevCart;
 
             let newItems: ICartItem[];
