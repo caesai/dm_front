@@ -50,7 +50,7 @@ export const GastronomyOrderPage: React.FC = () => {
     };
 
     const sendQuestion = () => {
-        if (!auth || !order.order_id) return;
+        if (!auth) return;
         APIPostSendQuestion(order.order_id, auth.access_token)
             .then(() => showToast('Ваш вопрос отправлен администратору'))
             .catch(() => showToast('Произошла ошибка. Попробуйте еще раз.'))
