@@ -254,7 +254,7 @@ export const GastronomyBasketPage: React.FC = () => {
             if (data.response?.GeoObjectCollection?.featureMember?.length > 0) {
                 const geoObject = data.response.GeoObjectCollection.featureMember[0].GeoObject;
                 const pos = geoObject.Point.pos.split(' ').map(Number);
-                return [pos[0], pos[1]]; // [долгота, широта]
+                return [pos[1], pos[0]]; // [долгота, широта]
             }
             return null;
         } catch (error) {
@@ -265,9 +265,9 @@ export const GastronomyBasketPage: React.FC = () => {
 
     // Проверка, входит ли адрес в зону доставки
     const isPointInPolygon = (point: [number, number], polygon: [number, number][]): boolean => {
-        const [lon, lat] = point;
+        const [lat, lon] = point;
         let inside = false;
-        console.log('lat, lon: ', lat, lon)
+
         for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
             const [lati, loni] = polygon[i];
             const [latj, lonj] = polygon[j];
