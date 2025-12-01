@@ -7,10 +7,17 @@ import { DateListSelector } from '@/components/DateListSelector/DateListSelector
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import emptyBasketIcon from '/img/empty-basket.png';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { mockGastronomyListData } from '@/__mocks__/gastronomy.mock.ts';
+import {
+    KAD_COORDS,
+    MKAD_COORDS,
+    mockGastronomyListData,
+    PETROGRADKA_RESTAURANT_ID,
+    PETROGRADKA_ZONE,
+} from '@/__mocks__/gastronomy.mock.ts';
 import { formatDate } from '@/utils.ts';
 import useToast from '@/hooks/useToastState.ts';
 import css from './GastronomyBasketPage.module.css';
+import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
 import { APIPostUserOrder } from '@/api/gastronomy.api.ts';
 import { authAtom } from '@/atoms/userAtom.ts';
 
@@ -27,7 +34,8 @@ export const GastronomyBasketPage: React.FC = () => {
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart } = useGastronomyCart();
     const [restaurants] = useAtom(restaurantsListAtom);
-    const [auth] = useAtom(authAtom)
+    const [currentCity] = useAtom(currentCityAtom);
+    const [auth] = useAtom(authAtom);
 
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('delivery');
     const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(false);
@@ -116,7 +124,7 @@ export const GastronomyBasketPage: React.FC = () => {
             if (nextHour >= 24) {
                 // Последний слот до закрытия (например, 23:00-01:00)
                 slots.push(
-                    `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
+                    `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`,
                 );
                 break;
             }
@@ -127,7 +135,7 @@ export const GastronomyBasketPage: React.FC = () => {
                 // Если следующий час >= 24, значит это последний слот
                 if (nextHour >= 24) {
                     slots.push(
-                        `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
+                        `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`,
                     );
                     break;
                 }
@@ -136,7 +144,7 @@ export const GastronomyBasketPage: React.FC = () => {
                 if (nextHour > closeHour) {
                     // Последний слот до закрытия
                     slots.push(
-                        `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
+                        `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`,
                     );
                     break;
                 }
@@ -144,7 +152,7 @@ export const GastronomyBasketPage: React.FC = () => {
 
             // Добавляем слот на 3 часа
             slots.push(
-                `${String(currentHour).padStart(2, '0')}:00–${String(nextHour).padStart(2, '0')}:00`
+                `${String(currentHour).padStart(2, '0')}:00–${String(nextHour).padStart(2, '0')}:00`,
             );
 
             currentHour = nextHour;
@@ -236,7 +244,7 @@ export const GastronomyBasketPage: React.FC = () => {
     const geocodeAddress = async (address: string): Promise<[number, number] | null> => {
         try {
             const response = await fetch(
-                `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(address)}&format=json`
+                `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(address)}&format=json`,
             );
             const data = await response.json();
 
@@ -252,27 +260,34 @@ export const GastronomyBasketPage: React.FC = () => {
         }
     };
 
-    // Проверка, входит ли адрес в зону доставки (в пределах МКАД)
-    // Используем упрощенную проверку: координаты должны быть в пределах границ Москвы
-    const checkDeliveryZone = async (coordinates: [number, number]): Promise<boolean> => {
-        try {
-            // Границы МКАД (приблизительно):
-            // Север: ~55.958
-            // Юг: ~55.489
-            // Запад: ~37.319
-            // Восток: ~37.967
-            const [longitude, latitude] = coordinates;
+    // Проверка, входит ли адрес в зону доставки
+    const isPointInPolygon = (point: [number, number], polygon: [number, number][]): boolean => {
+        const [lat, lon] = point;
+        let inside = false;
 
-            // Проверяем, что координаты находятся в пределах границ МКАД
-            const isWithinBounds =
-                latitude >= 55.489 && latitude <= 55.958 &&
-                longitude >= 37.319 && longitude <= 37.967;
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            const [lati, loni] = polygon[i];
+            const [latj, lonj] = polygon[j];
 
-            return isWithinBounds;
-        } catch (error) {
-            console.error('Error checking delivery zone:', error);
-            return false;
+            const intersect = loni > lon !== lonj > lon && lat < ((latj - lati) * (lon - loni)) / (lonj - loni) + lati;
+            if (intersect) inside = !inside;
         }
+
+        return inside;
+    };
+
+    const checkDeliveryZone = (coords: [number, number]): boolean => {
+        if (currentCity === 'moscow') {
+            return isPointInPolygon(coords, MKAD_COORDS);
+        } else if (currentCity === 'spb') {
+            // Для ресторана Smoke BBQ Санкт-Петербург (Лодейнопольская улица, ID 11) требуется особая зона доставки,
+            // так как он находится вне стандартной зоны КАД. Используем PETROGRADKA_ZONE для проверки доставки.
+            if (res_id === PETROGRADKA_RESTAURANT_ID) {
+                return isPointInPolygon(coords, PETROGRADKA_ZONE);
+            }
+            return isPointInPolygon(coords, KAD_COORDS);
+        }
+        return false;
     };
 
     // Обработка изменения адреса с debounce
@@ -323,18 +338,18 @@ export const GastronomyBasketPage: React.FC = () => {
             }
 
             if (coordinates) {
-                const isInZone = await checkDeliveryZone(coordinates);
+                const isInZone = checkDeliveryZone(coordinates);
                 if (!isInZone) {
                     showToast(
                         'К сожалению, ваш адрес не входит в зону доставки. Вы можете оформить самовывоз.',
-                        'error'
+                        'error',
                     );
                     return;
                 }
             } else {
                 showToast(
                     'Не удалось определить адрес. Пожалуйста, выберите адрес из списка.',
-                    'error'
+                    'error',
                 );
                 return;
             }
@@ -347,7 +362,7 @@ export const GastronomyBasketPage: React.FC = () => {
             deliveryCost: deliveryFee,
             delivery_method: deliveryMethod,
             totalAmount: cart.totalAmount,
-            deliveryAddress: address
+            deliveryAddress: address,
         }, auth.access_token)
             .then(() => navigate('/'))
             .catch((err) => console.error(err));
@@ -433,8 +448,8 @@ export const GastronomyBasketPage: React.FC = () => {
                                             weights: [item.weight],
                                             image_url: item.image,
                                             description: '',
-                                    nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
-                                    allergens: []
+                                            nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
+                                            allergens: [],
                                         }, 0);
                                     }
                                 }}
@@ -467,10 +482,11 @@ export const GastronomyBasketPage: React.FC = () => {
                                 className={css.dropdownArrow}
                                 style={{
                                     transform: isDeliveryExpanded ? 'rotate(180deg)' : 'rotate(0)',
-                                    transition: 'transform 0.3s'
+                                    transition: 'transform 0.3s',
                                 }}
                             >
-                                <path d="M5 8.5L12 15.5L19 8.5" stroke="#989898" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M5 8.5L12 15.5L19 8.5" stroke="#989898" strokeWidth="1.5" strokeLinecap="round"
+                                      strokeLinejoin="round" />
                             </svg>
                         </div>
                         {isDeliveryExpanded && (
@@ -526,13 +542,13 @@ export const GastronomyBasketPage: React.FC = () => {
                             {addressSuggestions.length > 0 && (
                                 <div className={css.suggestions}>
                                     {addressSuggestions.map((suggestion, idx) => (
-                                            <div
-                                                key={idx}
-                                                className={css.suggestion}
+                                        <div
+                                            key={idx}
+                                            className={css.suggestion}
                                             onClick={() => handleSelectAddress(suggestion)}
-                                            >
+                                        >
                                             {suggestion.displayName}
-                                            </div>
+                                        </div>
                                     ))}
                                 </div>
                             )}
@@ -557,12 +573,14 @@ export const GastronomyBasketPage: React.FC = () => {
                         >
                             <div className={css.datePickerContent}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                    <rect x="3" y="6" width="18" height="15" rx="2" stroke="#545454" strokeWidth="1.5"/>
-                                    <path d="M3 10H21" stroke="#545454" strokeWidth="1.5"/>
-                                    <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round"/>
-                                    <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round"/>
+                                    <rect x="3" y="6" width="18" height="15" rx="2" stroke="#545454"
+                                          strokeWidth="1.5" />
+                                    <path d="M3 10H21" stroke="#545454" strokeWidth="1.5" />
+                                    <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
+                                    <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
-                                <span className={selectedDate.value !== 'unset' ? css.datePickerTextSelected : css.datePickerTextPlaceholder}>
+                                <span
+                                    className={selectedDate.value !== 'unset' ? css.datePickerTextSelected : css.datePickerTextPlaceholder}>
                                     {selectedDate.value !== 'unset'
                                         ? selectedDate.title
                                         : deliveryMethod === 'delivery'
@@ -576,7 +594,8 @@ export const GastronomyBasketPage: React.FC = () => {
                                 viewBox="0 0 20 20"
                                 fill="none"
                             >
-                                <path d="M16 7L10 13L4 7" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M16 7L10 13L4 7" stroke="#545454" strokeWidth="1.5" strokeLinecap="round"
+                                      strokeLinejoin="round" />
                             </svg>
                         </div>
                     </div>
