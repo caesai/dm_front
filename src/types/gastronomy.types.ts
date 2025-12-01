@@ -35,16 +35,19 @@ export interface IOrderItem {
     price: number; // цена за единицу
 }
 
-export interface IOrder {
-    orderId: string;
-    restaurant_id: number;
-    status: "paid" | "pending" | "canceled";
+export interface ISendOrder {
     items: IOrderItem[];
+    restaurant_id: number;
     totalAmount: number;
-    deliveryMethod: TDeliveryMethod;
+    delivery_method: TDeliveryMethod;
+    deliveryAddress?: string;
     deliveryCost: number;
+}
+
+export interface IOrder extends ISendOrder {
+    order_id: string;
+    status: "paid" | "pending" | "canceled";
     pickupTime?: ITimeWindow;
     deliveryTime?: ITimeWindow;
-    deliveryAddress?: string;
     createdAt: string;
 }

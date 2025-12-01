@@ -37,11 +37,12 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
         if (auth) {
             APIPostCancelOrder(order_id, auth?.access_token)
                 .then(() => {
-                    setOpen(false);
+                    showToast('Запрос на отмену заказа отправлен');
                 })
                 .catch(() => {
                     showToast('Произошла ошибка. Попробуйте еще раз.');
-                });
+                })
+                .finally(() => setOpen(false));
         }
     };
 

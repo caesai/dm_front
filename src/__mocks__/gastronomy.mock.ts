@@ -64,7 +64,7 @@ export const mockGastronomyListData: IDish[] = [
 
 export const mockOrdersListData: IOrder[] = [
     {
-        orderId: '1239233320',
+        order_id: '1239233320',
         restaurant_id: 10,
         status: 'paid',
         items: [
@@ -72,7 +72,7 @@ export const mockOrdersListData: IOrder[] = [
             { id: 2, title: 'Крем - суп', quantity: 2, price: 1300 },
         ],
         totalAmount: 10000,
-        deliveryMethod: 'pickup',
+        delivery_method: 'pickup',
         deliveryCost: 0,
         pickupTime: {
             date: '2025-12-25',
@@ -81,7 +81,7 @@ export const mockOrdersListData: IOrder[] = [
         createdAt: '2025-12-24T18:00:00Z',
     },
     {
-        orderId: '1239233321',
+        order_id: '1239233321',
         restaurant_id: 10,
         status: 'paid',
         items: [
@@ -89,7 +89,7 @@ export const mockOrdersListData: IOrder[] = [
             { id: 3, title: 'Ризотто с грибами', quantity: 1, price: 1800 },
         ],
         totalAmount: 5200, // 2600 + 1800 + 800 (доставка)
-        deliveryMethod: 'delivery',
+        delivery_method: 'delivery',
         deliveryCost: 800,
         deliveryAddress: 'Санкт-Петербург, Московский проспект, 150, кв. 12',
         deliveryTime: {
