@@ -45,6 +45,7 @@ import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -65,6 +66,7 @@ export const BookingFreeEventPage: FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
+    const { goBack } = useNavigationHistory();
     const state = location?.state;
     const { eventId, eventName } = state;
     // Global state atoms
@@ -236,7 +238,7 @@ export const BookingFreeEventPage: FC = () => {
                                             if (state.sharedEvent) {
                                                 navigate('/');
                                             } else {
-                                                navigate(-1);
+                                                goBack();
                                             }
                                         }}
                                     />

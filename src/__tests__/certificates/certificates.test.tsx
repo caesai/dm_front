@@ -1,26 +1,10 @@
 import { render, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Provider, WritableAtom } from 'jotai';
-import { useHydrateAtoms } from 'jotai/utils';
 import { CertificatesSelector, CertificatesSelectorProps } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { certificatesListMock } from '@/__mocks__/certificates.mock.ts';
-import React, { PropsWithChildren } from 'react';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 
-export type AnyWritableAtom = WritableAtom<unknown, never[], unknown>
-interface InitialProps extends PropsWithChildren {
-    initialValues: Array<readonly [AnyWritableAtom, unknown]>
-}
-const HydrateAtoms: React.FC<InitialProps> = ({ initialValues, children }) => {
-    useHydrateAtoms(initialValues as Array<readonly [AnyWritableAtom, never]>)
-    return children
-}
-
-const TestProvider: React.FC<InitialProps> = ({ initialValues, children }) => (
-    <Provider>
-        <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
-    </Provider>
-)
 // Mock the react-router-dom module to control navigation
 const mockedUsedNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({

@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 import { backButton } from '@telegram-apps/sdk-react';
 import { PropsWithChildren, useEffect } from 'react';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export function Page({
     children,
@@ -11,13 +11,13 @@ export function Page({
      */
     back?: boolean;
 }>) {
-    const navigate = useNavigate();
+    const { goBack } = useNavigationHistory();
 
     useEffect(() => {
         if (back) {
             backButton.show();
             return backButton.onClick(() => {
-                navigate(-1);
+                goBack();
             });
         }
         backButton.hide();

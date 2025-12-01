@@ -9,10 +9,12 @@ import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { findOtherAllergies } from '@/utils.ts';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 const AllergiesPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { goBack } = useNavigationHistory();
 
     const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
     const [isOtherOption, setIsOtherOption] = useState<boolean>(false);
@@ -89,7 +91,7 @@ const AllergiesPage: React.FC = () => {
                 <div className={css.header}>
                     <RoundedButton
                         icon={<BackIcon size={24} color={'var(--dark-grey)'} />}
-                        action={() => navigate(-1)}
+                        action={goBack}
                     />
                     <span className={css.header_title}>Аллергены</span>
                     <div className={css.header_spacer} />

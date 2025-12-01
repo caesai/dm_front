@@ -19,6 +19,9 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
+        env:
+          VITE_YANDEX_MAPS_API_KEY: ${{ secrets.VITE_YANDEX_MAPS_API_KEY }}
+          VITE_YANDEX_MAPS_API_LANG: ${{ secrets.VITE_YANDEX_MAPS_API_LANG }}
       - name: Copy folder content recursively to remote
         uses: garygrossgarten/github-action-scp@release
         with:

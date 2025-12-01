@@ -6,7 +6,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useState } from 'react';
 import { InputSlider } from '@/pages/RestaurantMapPage/InputSlider/InputSlider.tsx';
-// import { RestaurantOnMapIcon } from '@/components/Icons/RestaurantOnMapIcon.tsx';
 import { RestaurantOnMapSelectedIcon } from '@/components/Icons/RestaurantOnMapIconSelected.tsx';
 import {
     YMap,
@@ -40,7 +39,7 @@ import { Discovery } from 'react-iconly';
 import { openLink } from '@telegram-apps/sdk-react';
 import { setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
-// import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 interface IRestaurantDetails {
     selectedRest: IRestaurant;
@@ -214,17 +213,20 @@ export const RestaurantMapPage = () => {
         zoom: 12,
     });
     const [features, setFeatures] = useState<Feature[]>([]);
-    const navigate = useNavigate();
     const [, setYmap] = useState<YMaps.YMap>();
     const [selectedPoint, setSelectedPoint] = useState<string | null>(null);
-    const [city] = useAtom(getCurrentCity);
-    const [searchParams, setSearchParams] = useSearchParams();
     const [switchCurrent, setSwitchCurrent] = useState('map');
+    const [isCityListOpen, setIsCityListOpen] = useState(false);
+    const [selectedRest, setSelectedRest] = useState<IRestaurant>();
+
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const { goBack } = useNavigationHistory();
+
+    const [city] = useAtom(getCurrentCity);
     const [, setBackButton] = useAtom(backButtonAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
-    const [selectedRest, setSelectedRest] = useState<IRestaurant>();
     const [cityListA] = useAtom(cityListAtom);
-    const [isCityListOpen, setIsCityListOpen] = useState(false);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
 
     useEffect(() => {
@@ -396,7 +398,7 @@ export const RestaurantMapPage = () => {
                                     color={'var(--dark-grey)'}
                                 />
                             }
-                            action={() => navigate(-1)}
+                            action={goBack}
                             bgColor={'var(--primary-background)'}
                         />
                         <span className={css.header_title}>
@@ -422,8 +424,8 @@ export const RestaurantMapPage = () => {
                 {switchCurrent === 'map' ? (
                     <div className={css.bottomEl}>
                         <YMapComponentsProvider
-                            apiKey={'73a95f3b-fa74-4525-99e3-86ee1309f266'}
-                            lang={'ru_RU'}
+                            apiKey={String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}
+                            lang={String(import.meta.env.VITE_YANDEX_MAPS_API_LANG)}
                         >
                             <YMap
                                 location={location}

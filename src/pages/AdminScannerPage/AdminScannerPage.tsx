@@ -4,7 +4,6 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useEffect, useState } from 'react';
 import { mainButton } from '@telegram-apps/sdk-react';
-import { useNavigate } from 'react-router-dom';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { formatDateDT } from '@/utils.ts';
 import moment from 'moment/moment';
@@ -15,9 +14,11 @@ import axios from 'axios';
 import { BASE_URL } from '@/api/base.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export const AdminScannerPage = () => {
-    const navigate = useNavigate();
+    const { goBack } = useNavigationHistory();
+
     const [auth] = useAtom(authAtom);
     const [ticket, setTicket] = useState<IEventTicketScanner>();
 
@@ -119,7 +120,7 @@ export const AdminScannerPage = () => {
                                     color={'var(--dark-grey)'}
                                 />
                             }
-                            action={() => navigate(-1)}
+                            action={goBack}
                         />
                         <span className={css.headerTitle}>Сканер билетов</span>
                         <div className={css.spacer}></div>

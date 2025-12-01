@@ -2,20 +2,18 @@ import React from 'react';
 import classnames from 'classnames';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Page } from '@/components/Page.tsx';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export const GastronomyPage: React.FC = () => {
-    const navigate = useNavigate();
+    const { goBack } = useNavigationHistory();
     const location = useLocation();
-    const goBack = () => {
-            navigate(-1);
-    };
 
     const getTitle = () => {
         if (location.pathname.includes('/basket')) {
-            return 'Оформление';
+            return 'Корзина';
         }
         else if (location.pathname.includes('/my')) {
             return 'Мои заказы';
@@ -27,22 +25,32 @@ export const GastronomyPage: React.FC = () => {
         if (location.pathname.includes('/my')) {
             return {backgroundColor: 'white'}
         }
+        if (location.pathname.includes('/dish/')) {
+            return {backgroundColor: '#F4F4F4'}
+        }
 
         return undefined
     }
 
     const isBasketPage = location.pathname.includes('/basket');
+    const isDishDetailsPage = location.pathname.includes('/dish/');
 
     return (
         <Page back={true}>
             <div
-                className={classnames(css.page, { [css.pageNoPadding]: isBasketPage })}
+                className={classnames(css.page, {
+                    [css.pageNoPadding]: isBasketPage,
+                    [css.pageNoGap]: isDishDetailsPage
+                })}
                 style={getBackgroundColor()}
             >
-                <div className={css.header}>
+                <div className={classnames(css.header, {
+                    [css.headerWhite]: isDishDetailsPage,
+                    [css.headerFullWidth]: isDishDetailsPage
+                })}>
                     <RoundedButton
-                        bgColor={'var(--primary-background)'}
-                        icon={<BackIcon color={'var(--dark-grey)'} />}
+                        bgColor={'#F4F4F4'}
+                        icon={<BackIcon color={'#545454'} />}
                         action={goBack}
                     />
                     <span className={css.header_title}>

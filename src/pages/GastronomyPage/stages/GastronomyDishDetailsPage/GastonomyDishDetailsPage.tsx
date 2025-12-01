@@ -4,6 +4,8 @@ import { IDish } from '@/types/gastronomy.types.ts';
 import { mockGastronomyListData } from '@/__mocks__/gastronomy.mock.ts';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
 import { DishCard } from '@/components/DishCard/DishCard.tsx';
+import { PlusIcon } from '@/components/Icons/PlusIcon.tsx';
+import { MinusIcon } from '@/components/Icons/MinusIcon.tsx';
 import css from './GastonomyDishDetailsPage.module.css';
 
 export const GastonomyDishDetailsPage: React.FC = () => {
@@ -13,16 +15,19 @@ export const GastonomyDishDetailsPage: React.FC = () => {
     const { addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
 
     const dishFromState = location.state?.dish as IDish;
-    const [selectedWeight, setSelectedWeight] = useState(dishFromState?.defaultWeight || '');
+    const [selectedWeightIndex, setSelectedWeightIndex] = useState(0);
 
     if (!dishFromState) {
         return <div>Блюдо не найдено</div>;
     }
 
     const quantity = getItemQuantity(dishFromState.id);
+    const selectedWeight = dishFromState.weights[selectedWeightIndex] || dishFromState.weights[0];
+    const selectedPrice = dishFromState.prices[selectedWeightIndex] || dishFromState.prices[0];
+    const hasMultipleWeights = dishFromState.weights.length > 1;
 
     const handleAddToCart = () => {
-        addToCart(dishFromState);
+        addToCart(dishFromState, selectedWeightIndex);
     };
 
     const handleRemoveFromCart = () => {
@@ -34,10 +39,10 @@ export const GastonomyDishDetailsPage: React.FC = () => {
             state: { dish },
             replace: true
         });
-        setSelectedWeight(dish.defaultWeight);
+        setSelectedWeightIndex(0);
     };
 
-    // Размножаем данные для списка внизу
+    // Размножаем данные до 30 элементов, как на странице списка блюд
     const expandedData: IDish[] = [];
     for (let i = 0; i < 10; i++) {
         mockGastronomyListData.forEach((dish) => {
@@ -54,36 +59,38 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                 <div className={css.content}>
                     <div
                         className={css.mainImage}
-                        style={{ backgroundImage: `url(${dishFromState.image})` }}
+                        style={{ backgroundImage: `url(${dishFromState.image_url})` }}
                     />
 
                     <div className={css.titleSection}>
                         <div className={css.titleRow}>
                             <h2 className={css.dishTitle}>{dishFromState.title}</h2>
-                            <span className={css.dishPrice}>{dishFromState.price} ₽</span>
+                            <span className={css.dishPrice}>{selectedPrice} ₽</span>
                         </div>
                         <span className={css.selectedWeight}>{selectedWeight}</span>
                     </div>
 
-                    <div className={css.section}>
-                        <span className={css.sectionTitle}>Вес</span>
-                        <div className={css.weightTags}>
-                            {dishFromState.weights.map((weight) => (
-                                <button
-                                    key={weight}
-                                    className={weight === selectedWeight ? css.weightTagActive : css.weightTag}
-                                    onClick={() => setSelectedWeight(weight)}
-                                >
-                                    {weight}
-                                </button>
-                            ))}
+                    {hasMultipleWeights && (
+                        <div className={css.section}>
+                            <span className={css.sectionTitle}>Вес</span>
+                            <div className={css.weightTags}>
+                                {dishFromState.weights.map((weight, index) => (
+                                    <button
+                                        key={weight}
+                                        className={index === selectedWeightIndex ? css.weightTagActive : css.weightTag}
+                                        onClick={() => setSelectedWeightIndex(index)}
+                                    >
+                                        {weight}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className={css.section}>
-                        <span className={css.sectionTitle}>Состав</span>
+                        <span className={css.sectionTitle}>Описание</span>
                         <p className={css.sectionText}>
-                            {dishFromState.composition.join(', ')}.
+                            {dishFromState.description}
                         </p>
                     </div>
 
@@ -91,19 +98,19 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                         <span className={css.sectionTitle}>На 100 граммов</span>
                         <div className={css.nutritionGrid}>
                             <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.calories}</span>
+                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.calories}</span>
                                 <span className={css.nutritionLabel}>ккал</span>
                             </div>
                             <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.proteins}</span>
+                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.proteins}</span>
                                 <span className={css.nutritionLabel}>белки</span>
                             </div>
                             <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.fats}</span>
+                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.fats}</span>
                                 <span className={css.nutritionLabel}>жиры</span>
                             </div>
                             <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.carbs}</span>
+                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.carbs}</span>
                                 <span className={css.nutritionLabel}>углеводы</span>
                             </div>
                         </div>
@@ -142,15 +149,11 @@ export const GastonomyDishDetailsPage: React.FC = () => {
             {quantity > 0 ? (
                 <div className={css.floatingCounter}>
                     <button className={css.counterIcon} onClick={handleRemoveFromCart}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M4 12H20" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
+                        <MinusIcon size={28} color="#FFFFFF" />
                     </button>
                     <span className={css.counterText}>{quantity}</span>
                     <button className={css.counterIcon} onClick={handleAddToCart}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 4V20M4 12H20" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
+                        <PlusIcon size={28} color="#FFFFFF" />
                     </button>
                 </div>
             ) : (

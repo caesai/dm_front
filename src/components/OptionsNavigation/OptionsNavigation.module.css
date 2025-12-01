@@ -1,7 +1,7 @@
 .optionsNavigation {
     display: flex;
-    width: 100%;
     flex-direction: column;
+    width: 100%;
     gap: 8px;
     padding-right: 15px;
     box-sizing: border-box;
@@ -11,4 +11,28 @@
     span {
         font-size: 14px;
     }
+}
+
+.gastronomyCTAbtn {
+    background-size: 115px;
+    height: 85px;
+}
+
+.certificateCTAbtn {
+    background-size: 60px;
+    height: 60px;
+}
+
+.banquetsCTAbtn {
+    background-size: 65px;
+    height: 60px;
+}
+
+.eventsCTAbtn {
+    background-size: 75px;
+    height: 65px;
+}
+
+.eventsTextWrapper {
+    gap: 2px;
 }

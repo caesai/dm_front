@@ -18,7 +18,8 @@ export const shareCertificate = async (certificate: ICertificate, certificateRef
         `https://t.me/${BASE_BOT}?startapp=certificateId_${certificate.id}`
     );
     // The message includes the full context needed
-    const message = `${certificate.recipient_name}, вы получили подарочный сертификат. Перейдите по ссылке ${decodeURI(url)}, чтобы посмотреть его и воспользоваться`;
+    // const message = `${certificate.recipient_name}, вы получили подарочный сертификат. Перейдите по ссылке ${decodeURI(url)}, чтобы посмотреть его и воспользоваться`;
+    const message = decodeURI(url);
 
     try {
         const canvas = await html2canvas(certificateRef as unknown as HTMLElement);
