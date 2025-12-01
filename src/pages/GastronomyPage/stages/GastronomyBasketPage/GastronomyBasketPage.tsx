@@ -30,6 +30,8 @@ interface AddressSuggestion {
     coordinates?: [number, number];
 }
 
+const MIN_ADDRESS_QUERY_LENGTH = 3;
+
 export const GastronomyBasketPage: React.FC = () => {
     const navigate = useNavigate();
     const { res_id } = useParams();
@@ -53,8 +55,6 @@ export const GastronomyBasketPage: React.FC = () => {
     const addressInputRef = useRef<HTMLInputElement>(null);
     const suggestionsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { showToast } = useToast();
-
-    console.log('GastronomyBasketPage rendered, deliveryMethod:', deliveryMethod, 'address:', address);
 
     const deliveryFee = 1500;
 
@@ -189,7 +189,7 @@ export const GastronomyBasketPage: React.FC = () => {
 
     // Загрузка подсказок адресов через Яндекс Geocoder API
     const loadAddressSuggestions = useCallback(async (query: string) => {
-        if (!query || query.trim().length < 3) {
+        if (!query || query.trim().length < MIN_ADDRESS_QUERY_LENGTH) {
             setAddressSuggestions([]);
             return;
         }
@@ -201,6 +201,7 @@ export const GastronomyBasketPage: React.FC = () => {
             // Определяем город
             const cityName = cityList.find((city) => city.name_english === currentCity)?.name || 'Москва';
             const searchQuery = `${cityName}, ${trimmedQuery}`;
+            // TODO:  разобраться с координатами в bbox внутри этого url
             const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5&bbox=37.319,55.489~37.967,55.958`;
 
             const response = await fetch(url, {

@@ -15,7 +15,7 @@ import { authAtom } from '@/atoms/userAtom.ts';
 import useToastState from '@/hooks/useToastState.ts';
 
 export const GastronomyOrderPage: React.FC = () => {
-    const [auth] = useAtom(authAtom)
+    const [auth] = useAtom(authAtom);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -53,8 +53,8 @@ export const GastronomyOrderPage: React.FC = () => {
         if (!auth) return;
         APIPostSendQuestion(order.order_id, auth.access_token)
             .then(() => showToast('Ваш вопрос отправлен администратору'))
-            .catch(() => showToast('Произошла ошибка. Попробуйте еще раз.'))
-    }
+            .catch(() => showToast('Произошла ошибка. Попробуйте еще раз.'));
+    };
 
     useEffect(() => {
         if (!order) {
