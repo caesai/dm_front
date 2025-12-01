@@ -7,10 +7,11 @@ import { DateListSelector } from '@/components/DateListSelector/DateListSelector
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import emptyBasketIcon from '/img/empty-basket.png';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { mockGastronomyListData } from '@/__mocks__/gastronomy.mock.ts';
+import { KAD_COORDS, MKAD_COORDS, mockGastronomyListData, PETROGRADKA_ZONE } from '@/__mocks__/gastronomy.mock.ts';
 import { formatDate } from '@/utils.ts';
 import useToast from '@/hooks/useToastState.ts';
 import css from './GastronomyBasketPage.module.css';
+import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -25,6 +26,7 @@ export const GastronomyBasketPage: React.FC = () => {
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart } = useGastronomyCart();
     const [restaurants] = useAtom(restaurantsListAtom);
+    const [currentCity] = useAtom(currentCityAtom);
 
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('delivery');
     const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(false);
@@ -249,28 +251,34 @@ export const GastronomyBasketPage: React.FC = () => {
         }
     };
 
-    // Проверка, входит ли адрес в зону доставки (в пределах МКАД)
-    // Используем упрощенную проверку: координаты должны быть в пределах границ Москвы
-    const checkDeliveryZone = async (coordinates: [number, number]): Promise<boolean> => {
-        try {
-            // Границы МКАД (приблизительно):
-            // Север: ~55.958
-            // Юг: ~55.489
-            // Запад: ~37.319
-            // Восток: ~37.967
-            const [longitude, latitude] = coordinates;
+    // Проверка, входит ли адрес в зону доставки
+    const isPointInPolygon = (point: [number, number], polygon: [number, number][]): boolean => {
+        const [lat, lon] = point
+        let inside = false
 
-            // Проверяем, что координаты находятся в пределах границ МКАД
-            const isWithinBounds =
-                latitude >= 55.489 && latitude <= 55.958 &&
-                longitude >= 37.319 && longitude <= 37.967;
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            const [lati, loni] = polygon[i]
+            const [latj, lonj] = polygon[j]
 
-            return isWithinBounds;
-        } catch (error) {
-            console.error('Error checking delivery zone:', error);
-            return false;
+            const intersect = loni > lon !== lonj > lon && lat < ((latj - lati) * (lon - loni)) / (lonj - loni) + lati
+            if (intersect) inside = !inside
         }
-    };
+
+        return inside
+    }
+
+    const checkDeliveryZone = (coords: [number, number]): boolean => {
+        if (currentCity === "moscow") {
+            return isPointInPolygon(coords, MKAD_COORDS)
+        } else if (currentCity === 'spb') {
+            // Если Smoke BBQ Санкт-Петербург, Лодейнопольская улица
+            if (res_id === '11') {
+                return isPointInPolygon(coords, PETROGRADKA_ZONE)
+            }
+            return isPointInPolygon(coords, KAD_COORDS)
+        }
+        return false;
+    }
 
     // Обработка изменения адреса с debounce
     const handleAddressChange = useCallback((value: string) => {
@@ -320,7 +328,7 @@ export const GastronomyBasketPage: React.FC = () => {
             }
 
             if (coordinates) {
-                const isInZone = await checkDeliveryZone(coordinates);
+                const isInZone = checkDeliveryZone(coordinates);
                 if (!isInZone) {
                     showToast(
                         'К сожалению, ваш адрес не входит в зону доставки. Вы можете оформить самовывоз.',
