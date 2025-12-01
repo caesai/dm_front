@@ -324,3 +324,5 @@ export const PETROGRADKA_ZONE: [number, number][] = [
     [59.9523038, 30.3259449],  // Точка 50
     [59.9486687, 30.3182202],   // Замыкание контура (Точка 1)
 ];
+
+export const PETROGRADKA_RESTAURANT_ID = '11';
