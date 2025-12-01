@@ -22,8 +22,7 @@ export const DishCard: React.FC<DishCardProps> = ({
     onRemove,
     onClick,
 }) => {
-    // const defaultPrice = prices[0];
-    const defaultPrice = prices[0] || 1000;
+    const defaultPrice = prices[0];
     const defaultWeight = weights[0];
 
     return (
