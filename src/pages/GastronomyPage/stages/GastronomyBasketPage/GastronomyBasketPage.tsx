@@ -14,8 +14,6 @@ import css from './GastronomyBasketPage.module.css';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
-const YANDEX_API_KEY = '8297b306-311a-44c1-88cf-ffe4ee910493';
-
 interface AddressSuggestion {
     value: string;
     displayName: string;
@@ -189,7 +187,7 @@ export const GastronomyBasketPage: React.FC = () => {
             // Используем Geocoder API для поиска адресов
             // Добавляем "Москва" для ограничения поиска по городу
             const searchQuery = `Москва, ${trimmedQuery}`;
-            const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${YANDEX_API_KEY}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5&bbox=37.319,55.489~37.967,55.958`;
+            const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5&bbox=37.319,55.489~37.967,55.958`;
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -235,7 +233,7 @@ export const GastronomyBasketPage: React.FC = () => {
     const geocodeAddress = async (address: string): Promise<[number, number] | null> => {
         try {
             const response = await fetch(
-                `https://geocode-maps.yandex.ru/1.x/?apikey=${YANDEX_API_KEY}&geocode=${encodeURIComponent(address)}&format=json`
+                `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(address)}&format=json`
             );
             const data = await response.json();
 
