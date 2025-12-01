@@ -18,8 +18,9 @@ import { formatDate } from '@/utils.ts';
 import useToast from '@/hooks/useToastState.ts';
 import css from './GastronomyBasketPage.module.css';
 import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
-import { APIPostUserOrder } from '@/api/gastronomy.api.ts';
+import { APIPostCreatePayment, APIPostUserOrder } from '@/api/gastronomy.api.ts';
 import { authAtom } from '@/atoms/userAtom.ts';
+import { cityListAtom } from '@/atoms/cityListAtom.ts';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -35,6 +36,7 @@ export const GastronomyBasketPage: React.FC = () => {
     const { cart, addToCart, removeFromCart } = useGastronomyCart();
     const [restaurants] = useAtom(restaurantsListAtom);
     const [currentCity] = useAtom(currentCityAtom);
+    const [cityList] = useAtom(cityListAtom);
     const [auth] = useAtom(authAtom);
 
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('delivery');
@@ -196,8 +198,9 @@ export const GastronomyBasketPage: React.FC = () => {
 
         try {
             // Используем Geocoder API для поиска адресов
-            // Добавляем "Москва" для ограничения поиска по городу
-            const searchQuery = `Москва, ${trimmedQuery}`;
+            // Определяем город
+            const cityName = cityList.find((city) => city.name_english === currentCity)?.name;
+            const searchQuery = `${cityName}, ${trimmedQuery}`;
             const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5&bbox=37.319,55.489~37.967,55.958`;
 
             const response = await fetch(url, {
@@ -262,9 +265,9 @@ export const GastronomyBasketPage: React.FC = () => {
 
     // Проверка, входит ли адрес в зону доставки
     const isPointInPolygon = (point: [number, number], polygon: [number, number][]): boolean => {
-        const [lat, lon] = point;
+        const [lon, lat] = point;
         let inside = false;
-
+        console.log('lat, lon: ', lat, lon)
         for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
             const [lati, loni] = polygon[i];
             const [latj, lonj] = polygon[j];
@@ -364,7 +367,10 @@ export const GastronomyBasketPage: React.FC = () => {
             totalAmount: cart.totalAmount,
             deliveryAddress: address,
         }, auth.access_token)
-            .then(() => navigate('/'))
+            .then((response) => {
+                APIPostCreatePayment(response.data.order_id, auth.access_token)
+                    .catch((err) => console.error(err))
+            })
             .catch((err) => console.error(err));
     };
 
@@ -516,7 +522,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.section}>
                         <h2 className={css.sectionTitle}>Адрес доставки</h2>
                         <div className={css.deliveryInfo}>
-                            <span className={css.deliveryLabel}>в пределах МКАД</span>
+                            <span className={css.deliveryLabel}>{(currentCity === 'moscow' || currentCity === 'spb') && `в пределах ${currentCity === 'moscow' ? 'МКАД' : 'КАД'}`}</span>
                             <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
                         </div>
                         <div className={css.inputWrapper}>
