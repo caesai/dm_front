@@ -49,7 +49,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
     // Убираем текущее блюдо из списка всех блюд
     useEffect(() => {
         setDishesList(initialDishesList.filter((dish) => dish.id !== dishFromState.id));
-    }, [initialDishesList]);
+    }, [initialDishesList, dishFromState.id]);
 
     return (
         <div className={css.page}>
