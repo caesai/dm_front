@@ -81,6 +81,10 @@
     border-radius: 10px;
 }
 
+.sectionFirst {
+    border-radius: 0 0 10px 10px;
+}
+
 .sectionTitle {
     font-family: 'Heading Pro Ultracompressed', sans-serif;
     font-weight: 400;
@@ -482,6 +486,16 @@
 }
 
 /* Buttons */
+.minAmountError {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--red);
+    text-align: center;
+    margin-bottom: 8px;
+}
+
 .buttonContainer {
     display: flex;
     flex-direction: column;

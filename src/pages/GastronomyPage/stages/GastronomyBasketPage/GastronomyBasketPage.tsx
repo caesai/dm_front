@@ -58,13 +58,12 @@ export const GastronomyBasketPage: React.FC = () => {
     const [selectedTime, setSelectedTime] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showDeliveryZoneError, setShowDeliveryZoneError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const addressInputRef = useRef<HTMLInputElement>(null);
     const suggestionsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { showToast } = useToast();
 
     console.log('GastronomyBasketPage rendered, deliveryMethod:', deliveryMethod, 'address:', address);
-
-    const deliveryFee = 1500;
 
     // Получаем информацию о ресторане
     const restaurant = useMemo(() => {
@@ -73,16 +72,69 @@ export const GastronomyBasketPage: React.FC = () => {
     }, [res_id, restaurants]);
 
     const restaurantAddress = restaurant?.address || 'Адрес не указан';
+    
+    // Стоимость доставки: 0 для restaurant_id 11, 1500 для остальных
+    const deliveryFee = useMemo(() => {
+        if (restaurant?.id === 11) {
+            return 0;
+        }
+        return 1500;
+    }, [restaurant?.id]);
+    
+    // Текст для доставки
+    const deliveryText = useMemo(() => {
+        if (restaurant?.id === 11) {
+            return 'Доставляем заказы только на Петроградской стороне';
+        }
+        // Проверяем, находится ли ресторан в Питере (по city)
+        const cityName = restaurant?.city?.name || '';
+        const isPetersburg = cityName.toLowerCase().includes('петербург') || 
+                            cityName.toLowerCase().includes('санкт');
+        if (isPetersburg) {
+            return 'В пределах КАД';
+        }
+        return 'в пределах МКАД';
+    }, [restaurant]);
+    
+    // Минимальная сумма заказа
+    const minOrderAmount = useMemo(() => {
+        if (deliveryMethod === 'pickup') {
+            return 0;
+        }
+        // Для доставки
+        if (restaurant?.id === 11) {
+            return 10000; // Smoke BBQ Лодейнопольская
+        }
+        // Проверяем, является ли ресторан Smoke BBQ Рубинштейна (нужно проверить по названию или id)
+        // Пока предположу, что это можно определить по названию или другому полю
+        // Для простоты, если это не id 11, проверяем название
+        const isRubinstein = restaurant?.title?.toLowerCase().includes('рубинштейн');
+        if (isRubinstein) {
+            return 5000;
+        }
+        return 3000; // Для остальных ресторанов
+    }, [deliveryMethod, restaurant]);
 
-    // Генерируем доступные даты
+    // Генерируем доступные даты (не день в день)
     const availableDates = useMemo(() => {
         const dates: PickerValueObj[] = [];
-        const startDate = new Date(2025, 11, 25); // 25 декабря 2025
-        const endDate = deliveryMethod === 'delivery'
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // Минимальная дата - завтра (не день в день)
+        const minDate = new Date(today);
+        minDate.setDate(today.getDate() + 1);
+        
+        // Максимальная дата в зависимости от способа доставки
+        const maxDate = deliveryMethod === 'delivery' 
             ? new Date(2025, 11, 30) // 30 декабря для доставки
             : new Date(2025, 11, 31); // 31 декабря для самовывоза
-
-        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        
+        // Начальная дата - максимум из минимальной даты и 25 декабря
+        const startDate = new Date(2025, 11, 25);
+        const actualStartDate = minDate > startDate ? minDate : startDate;
+        
+        for (let d = new Date(actualStartDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
             const dateStr = d.toISOString().split('T')[0];
             dates.push({
                 title: formatDate(dateStr),
@@ -102,7 +154,7 @@ export const GastronomyBasketPage: React.FC = () => {
         const day = selectedDateObj.getDate();
         const month = selectedDateObj.getMonth();
 
-        // 31 декабря - специальные слоты
+        // 31 декабря - специальные слоты (только для самовывоза)
         if (day === 31 && month === 11) {
             return ['12:00–14:00', '14:00–17:00'];
         }
@@ -114,7 +166,7 @@ export const GastronomyBasketPage: React.FC = () => {
 
         // Пытаемся получить часы работы из данных ресторана
         if (restaurant?.worktime && restaurant.worktime.length > 0) {
-            // Берем первый рабочий день для примера
+            // Берем первый рабочий день
             const workTime = restaurant.worktime[0];
             const [openH] = workTime.time_start.split(':').map(Number);
             const [closeH] = workTime.time_end.split(':').map(Number);
@@ -124,48 +176,43 @@ export const GastronomyBasketPage: React.FC = () => {
 
         const slots: string[] = [];
         let currentHour = openHour;
+        const isNextDay = closeHour < openHour; // Закрытие на следующий день
 
         // Генерируем слоты по 3 часа от открытия до закрытия
         while (true) {
             const nextHour = currentHour + 3;
-
-            // Если следующий час >= 24, значит переходим на следующий день
-            // В этом случае последний слот идет до времени закрытия
-            if (nextHour >= 24) {
-                // Последний слот до закрытия (например, 23:00-01:00)
-                slots.push(
-                    `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
-                );
-                break;
-            }
-
-            // Если закрытие на следующий день (closeHour < openHour) и мы еще не достигли перехода через полночь
-            // Продолжаем добавлять слоты по 3 часа
-            if (closeHour < openHour) {
-                // Если следующий час >= 24, значит это последний слот
+            
+            if (isNextDay) {
+                // Закрытие на следующий день (например, 20:00-01:00)
                 if (nextHour >= 24) {
+                    // Последний слот до закрытия (например, 23:00-01:00)
                     slots.push(
                         `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
                     );
                     break;
                 }
+                // Добавляем обычный слот
+                slots.push(
+                    `${String(currentHour).padStart(2, '0')}:00–${String(nextHour).padStart(2, '0')}:00`
+                );
+                currentHour = nextHour;
             } else {
-                // Если закрытие в тот же день
+                // Закрытие в тот же день
                 if (nextHour > closeHour) {
                     // Последний слот до закрытия
-                    slots.push(
-                        `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
-                    );
+                    if (currentHour < closeHour) {
+                        slots.push(
+                            `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
+                        );
+                    }
                     break;
                 }
+                // Добавляем обычный слот
+                slots.push(
+                    `${String(currentHour).padStart(2, '0')}:00–${String(nextHour).padStart(2, '0')}:00`
+                );
+                currentHour = nextHour;
             }
-
-            // Добавляем слот на 3 часа
-            slots.push(
-                `${String(currentHour).padStart(2, '0')}:00–${String(nextHour).padStart(2, '0')}:00`
-            );
-
-            currentHour = nextHour;
         }
 
         return slots;
@@ -328,36 +375,81 @@ export const GastronomyBasketPage: React.FC = () => {
     };
 
     const handlePayment = async () => {
-        if (deliveryMethod === 'delivery' && address) {
-            // Проверяем зону доставки
-            let coordinates = selectedAddressCoordinates;
-            
-            // Если координаты не были получены ранее, получаем их сейчас
-            if (!coordinates) {
-                coordinates = await geocodeAddress(address);
-                if (coordinates) {
-                    setSelectedAddressCoordinates(coordinates);
-                }
-            }
-            
-            if (coordinates) {
-                const isInZone = await checkDeliveryZone(coordinates);
-                if (!isInZone) {
-                    // Показываем попап с ошибкой зоны доставки
-                    setShowDeliveryZoneError(true);
-                    return;
-                }
-            } else {
-                showToast(
-                    'Не удалось определить адрес. Пожалуйста, выберите адрес из списка.',
-                    'error'
-                );
-                return;
-            }
+        if (!isFormValid()) {
+            return;
         }
         
-        // Логика оплаты
-        console.log('Payment processing...');
+        setIsLoading(true);
+        
+        try {
+            if (deliveryMethod === 'delivery' && address) {
+                // Проверяем зону доставки
+                let coordinates = selectedAddressCoordinates;
+                
+                // Если координаты не были получены ранее, получаем их сейчас
+                if (!coordinates) {
+                    coordinates = await geocodeAddress(address);
+                    if (coordinates) {
+                        setSelectedAddressCoordinates(coordinates);
+                    }
+                }
+                
+                if (coordinates) {
+                    const isInZone = await checkDeliveryZone(coordinates);
+                    if (!isInZone) {
+                        // Показываем попап с ошибкой зоны доставки
+                        setShowDeliveryZoneError(true);
+                        setIsLoading(false);
+                        return;
+                    }
+                } else {
+                    showToast(
+                        'Не удалось определить адрес. Пожалуйста, выберите адрес из списка.',
+                        'error'
+                    );
+                    setIsLoading(false);
+                    return;
+                }
+            }
+            
+            // Создание заказа
+            const orderData = {
+                restaurant_id: Number(res_id),
+                items: cart.items.map(item => ({
+                    id: item.id,
+                    title: item.title,
+                    quantity: item.quantity,
+                    price: item.price,
+                })),
+                totalAmount: cart.totalAmount,
+                deliveryMethod: deliveryMethod,
+                deliveryCost: deliveryMethod === 'pickup' ? 0 : deliveryFee,
+                ...(deliveryMethod === 'delivery' ? {
+                    deliveryAddress: address,
+                    deliveryTime: {
+                        date: selectedDate.value,
+                        time: selectedTime,
+                    }
+                } : {
+                    pickupTime: {
+                        date: selectedDate.value,
+                        time: selectedTime,
+                    }
+                }),
+            };
+            
+            // TODO: Отправить заказ на сервер
+            console.log('Order data:', orderData);
+            
+            // Логика оплаты
+            // await APICreateOrder(orderData);
+            
+        } catch (error) {
+            console.error('Error creating order:', error);
+            showToast('Произошла ошибка при создании заказа', 'error');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleToggleDropdown = () => {
@@ -372,13 +464,15 @@ export const GastronomyBasketPage: React.FC = () => {
     const isFormValid = () => {
         const isDateSelected = selectedDate && selectedDate.value !== 'unset';
         const isTimeSelected = selectedTime.length > 0;
-        const isMinAmount = cart.totalAmount >= 3000;
-
+        const isMinAmount = cart.totalAmount >= minOrderAmount;
+        
         if (deliveryMethod === 'delivery') {
             return address.length > 0 && isDateSelected && isTimeSelected && isMinAmount;
         }
         return isDateSelected && isTimeSelected && isMinAmount;
     };
+    
+    const showMinAmountError = cart.totalAmount < minOrderAmount && minOrderAmount > 0;
 
     // const totalWithDelivery = deliveryMethod === 'delivery'
     //     ? cart.totalAmount + deliveryFee
@@ -418,7 +512,7 @@ export const GastronomyBasketPage: React.FC = () => {
         <div className={css.page}>
             <div className={css.content}>
                 {/* Сумма заказа */}
-                <div className={css.section}>
+                <div className={`${css.section} ${css.sectionFirst}`}>
                     <h2 className={css.sectionTitle}>Сумма заказа</h2>
                     <div className={css.itemsList}>
                         {cart.items.map((item) => (
@@ -508,8 +602,10 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.section}>
                         <h2 className={css.sectionTitle}>Адрес доставки</h2>
                         <div className={css.deliveryInfo}>
-                            <span className={css.deliveryLabel}>в пределах МКАД</span>
-                            <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
+                            <span className={css.deliveryLabel}>{deliveryText}</span>
+                            {deliveryFee > 0 && (
+                                <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
+                            )}
                         </div>
                         <div className={css.inputWrapper}>
                             <input
@@ -613,12 +709,17 @@ export const GastronomyBasketPage: React.FC = () => {
 
             {/* Кнопка оплаты */}
             <div className={css.buttonContainer}>
+                {showMinAmountError && (
+                    <div className={css.minAmountError}>
+                        Минимальная сумма заказа {minOrderAmount} ₽
+                    </div>
+                )}
                 <button
                     className={isFormValid() ? css.primaryButton : css.secondaryButton}
                     onClick={handlePayment}
-                    disabled={!isFormValid()}
+                    disabled={!isFormValid() || isLoading}
                 >
-                    К оплате
+                    {isLoading ? 'Обработка...' : 'К оплате'}
                 </button>
             </div>
 

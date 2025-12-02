@@ -17,7 +17,7 @@ export interface CartItemProps {
 export const CartItem: React.FC<CartItemProps> = ({
     title,
     price,
-    // weight,
+    weight,
     image,
     quantity,
     onAdd,
@@ -33,7 +33,12 @@ export const CartItem: React.FC<CartItemProps> = ({
                 <div className={css.info}>
                     <div className={css.details}>
                         <span className={css.title}>{title}</span>
-                        <span className={css.price}>{price} ₽</span>
+                        <div className={css.priceRow}>
+                            <span className={css.price}>{price} ₽</span>
+                            {weight && (
+                                <span className={css.weight}>{weight}</span>
+                            )}
+                        </div>
                     </div>
                     <div className={css.controls}>
                         <button className={css.controlButton} onClick={onRemove}>

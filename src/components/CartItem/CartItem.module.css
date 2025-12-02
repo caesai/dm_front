@@ -48,6 +48,16 @@
     font-size: 12px;
     line-height: 16px;
     color: #000000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.priceRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
 }
 
 .price {
@@ -56,6 +66,15 @@
     font-size: 14px;
     line-height: 18px;
     color: #000000;
+}
+
+.weight {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 10px;
+    line-height: 1.6em;
+    color: #989898;
+    white-space: nowrap;
 }
 
 .controls {
