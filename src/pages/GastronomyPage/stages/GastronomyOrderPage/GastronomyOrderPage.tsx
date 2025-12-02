@@ -1,5 +1,5 @@
 import css from './GastronomyOrderPage.module.css';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { IOrder } from '@/types/gastronomy.types.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
@@ -29,7 +29,7 @@ export const GastronomyOrderPage: React.FC = () => {
 
     const [openPopup, setPopup] = useState(false);
     const [order, setOrder] = useState<IOrder>();
-    const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending'>('pending');
+    const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending' | 'error'>('pending');
 
     const time = useMemo(() => {
         return order?.delivery_time ? order.delivery_time : order?.pickup_time;
@@ -53,28 +53,50 @@ export const GastronomyOrderPage: React.FC = () => {
             .catch(() => showToast('Произошла ошибка. Попробуйте еще раз.'));
     };
 
-    useEffect(() => {
-        // Перешли на страницу после оплаты, проверяем статус оплаты и получаем данные о заказе
-        if (auth?.access_token) {
-            if (paramsObject.orderId) {
-                APIPostCheckGastronomyPayment(paramsObject.orderId, auth?.access_token)
-                    .then((response) => {
-                        setPaymentStatus(response.data.status);
-                        APIGetGastronomyOrderById(paramsObject.orderId, auth?.access_token)
-                            .then((res) => {
-                                setOrder(res.data);
-                            })
-                            .catch(() => {
-                                showToast('Не удалось получить детали заказа. Попробуйте еще раз.');
-                            });
-                    })
-                    .catch(() => {
-                        setPaymentStatus('pending');
-                        showToast('Ошибка проверки оплаты заказа. Попробуйте еще раз.');
-                    });
+    /**
+     * Проверяет статус платежа за заказ в гастрономии и получает детали заказа.
+     *
+     * Данная функция выполняет два последовательных асинхронных запроса:
+     * 1. Проверяет статус платежа через APIPostCheckGastronomyPayment.
+     * 2. Если первый запрос успешен, получает полные детали заказа через APIGetGastronomyOrderById.
+     *
+     * В случае успеха первого запроса обновляет статус платежа, а в случае успеха второго - данные заказа.
+     * В случае возникновения ошибок на любом из этапов, отображает соответствующие уведомления.
+     * Функция мемоизирована с помощью useCallback и будет пересоздаваться только при изменении
+     * auth.access_token или paramsObject.orderId.
+     *
+     * @param {object} auth Объект авторизации, содержащий токен доступа.
+     * @param {string} paramsObject.orderId Идентификатор заказа для проверки.
+     * @param {(status: string) => void} setPaymentStatus Функция для обновления статуса платежа.
+     * @param {(order: object) => void} setOrder Функция для обновления данных заказа.
+     * @param {(message: string) => void} showToast Функция для отображения уведомлений.
+     * @returns {void}
+     */
+    const checkGastronomyPayment = useCallback(async () => {
+        if (auth?.access_token && paramsObject.orderId) {
+            try {
+                const response = await APIPostCheckGastronomyPayment(paramsObject.orderId, auth.access_token);
+                setPaymentStatus(response.data.status);
+
+                try {
+                    const res = await APIGetGastronomyOrderById(paramsObject.orderId, auth.access_token);
+                    setOrder(res.data);
+                } catch (error) {
+                    showToast('Не удалось получить детали заказа. Попробуйте еще раз.');
+                }
+
+            } catch (error) {
+                setPaymentStatus('pending');
+                showToast('Платёж в обработке. Проверьте позже.');
             }
         }
-    }, [auth?.access_token, paramsObject.orderId]);
+    }, [auth?.access_token, paramsObject.orderId, setPaymentStatus, setOrder, showToast]);
+
+    useEffect(() => {
+        // Перешли на страницу после оплаты, проверяем статус оплаты и получаем данные о заказе
+        checkGastronomyPayment().then();
+    }, []);
+
 
     useEffect(() => {
         // Если перешли на данную страницу со страницы профиля
@@ -82,6 +104,13 @@ export const GastronomyOrderPage: React.FC = () => {
             setOrder(location?.state?.order);
         }
     }, [location.state]);
+
+    useEffect(() => {
+        if (paramsObject.error) {
+            setPaymentStatus('error');
+            showToast('Платёж не был успешно завершён. Проверьте данные и попробуйте снова');
+        }
+    }, [paramsObject]);
 
     const goToPreviousPage = () => {
         navigate('/profile');
@@ -102,7 +131,7 @@ export const GastronomyOrderPage: React.FC = () => {
                     });
             }
         }
-    }
+    };
 
     return (
         <>
@@ -149,8 +178,12 @@ export const GastronomyOrderPage: React.FC = () => {
                     </div>
                 </div>
                 <div className={css.bottom_buttons}>
-                    {paymentStatus === 'paid' && <UniversalButton width={'full'} title={'Отменить заказ'} action={() => setPopup(true)} />}
-                    {paymentStatus === 'pending' && <UniversalButton width={'full'} title={'Повторить оплату'} action={repeatPayment} />}
+                    {paymentStatus === 'paid' &&
+                        <UniversalButton width={'full'} title={'Отменить заказ'} action={() => setPopup(true)} />}
+                    {paymentStatus === 'pending' &&
+                        <UniversalButton width={'full'} title={'Оплатить заказ'} action={checkGastronomyPayment} />}
+                    {paymentStatus === 'error' &&
+                        <UniversalButton width={'full'} title={'Оплатить заказ'} action={repeatPayment} />}
                     <UniversalButton
                         width={'full'}
                         title={'Задать вопрос по заказу'}

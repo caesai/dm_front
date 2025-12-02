@@ -64,7 +64,7 @@ export const APIPostCreateGastronomyPayment = async (order_id: string, token: st
             order_id,
             return_url: `${CLIENT_URL}/gastronomy/order/${order_id}`,
             // return_url: `https://dt-mini-app.local/dm_front/gastronomy/order/${order_id}`,
-            fail_url: `${CLIENT_URL}/gastronomy/order/${order_id}`,
+            fail_url: `${CLIENT_URL}/gastronomy/order/${order_id}?error=true`,
             // fail_url: `https://dt-mini-app.local/dm_front/gastronomy/order/${order_id}`,
         },
         {
