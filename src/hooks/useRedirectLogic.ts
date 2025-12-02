@@ -101,7 +101,7 @@ export const useRedirectLogic = () => {
                 !pathname.includes('booking') &&
                 !pathname.includes('certificates') &&
                 !pathname.includes('banquets') &&
-                !pathname.startsWith('tickets');
+                !pathname.includes('tickets');
 
             if (isUserIncomplete && isOnboardingNotExcluded) {
                 navigate('/onboarding', { replace: true });

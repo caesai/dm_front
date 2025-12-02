@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { EventTicket } from '@/types/events.ts';
 import { APIDeleteTicket, APIGetSharedTicket, APIGetTicket } from '@/api/events.ts';
 import { useAtom } from 'jotai';
-import { authAtom } from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import moment from 'moment';
 // @ts-ignore
@@ -25,6 +25,7 @@ export const TicketInfoPage = () => {
     const { id } = useParams();
     const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
+    const [user] = useAtom(userAtom);
     const [ticket, setTicket] = useState<EventTicket>();
     const [cancelPopup, setCancelPopup] = useState(false);
 
@@ -87,8 +88,8 @@ export const TicketInfoPage = () => {
     };
 
     const goBack = () => {
-        if (!auth?.access_token) {
-            navigate('/onboarding/5');
+        if (!user?.complete_onboarding) {
+            navigate('/onboarding/3');
         } else {
             navigate('/tickets');
         }
