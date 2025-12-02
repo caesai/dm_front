@@ -369,7 +369,15 @@ export const GastronomyBasketPage: React.FC = () => {
             delivery_cost: deliveryFee,
             delivery_method: deliveryMethod,
             total_amount: cart.totalAmount,
-            delivery_address: address,
+            delivery_address: deliveryMethod === 'delivery' ? address : undefined,
+            pickup_time: deliveryMethod === 'pickup' ? {
+                date: selectedDate.value,
+                time: selectedTime
+            } : undefined,
+            delivery_time: deliveryMethod === 'delivery' ? {
+                date: selectedDate.value,
+                time: selectedTime
+            } : undefined
         }, auth.access_token)
             .then((response) => {
                 APIPostCreateGastronomyPayment(response.data.order_id, auth.access_token)
