@@ -278,7 +278,7 @@ export const Restaurant = () => {
                     />
                 )}
 
-                {tg_id && mockEventsUsersList.includes(tg_id) && restaurant && (
+                {restaurant && (
                     <GastronomyBlock
                         description={nyCookings.description}
                         image={nyCookings.image}
