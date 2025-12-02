@@ -181,7 +181,7 @@ export const BookingPage: FC = () => {
     useEffect(() => {
         // Если certificates.length === 0, но у нас есть state?.certificate && state?.certificateId
         // предполагаем, что юзер прошел онбординг и попал сразу на страницу бронирования
-        // нужно сделать клейм сертификата и обновить список
+        // нужно сделать claim сертификата и обновить список
         if (auth?.access_token && state?.certificate && state?.certificateId && certificates.length === 0) {
             APIPostCertificateClaim(
                 String(auth?.access_token),

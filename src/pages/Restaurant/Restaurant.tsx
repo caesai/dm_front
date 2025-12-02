@@ -34,7 +34,6 @@ import { AddressBlock } from '@/pages/Restaurant/blocks/AddressBlock.tsx';
 import { NavigationBlock } from '@/pages/Restaurant/blocks/NavigationBlock.tsx';
 import { GastronomyBlock } from '@/pages/Restaurant/blocks/GastronomyBlock.tsx';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
-import { DEV_MODE } from '@/api/base.ts';
 
 /**
  * Преобразует массив фотографий в структурированную галерею с группировкой по категориям
@@ -279,7 +278,7 @@ export const Restaurant = () => {
                     />
                 )}
 
-                {DEV_MODE && restaurant && (
+                {tg_id && mockEventsUsersList.includes(tg_id) && restaurant && (
                     <GastronomyBlock
                         description={nyCookings.description}
                         image={nyCookings.image}

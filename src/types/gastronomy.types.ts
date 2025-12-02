@@ -20,7 +20,6 @@ export interface IDish {
     description: string;
     nutritionPer100g?: INutritionInfo;
     allergens: IAllergen[];
-    price_msw: number[]; // заменить на prices после того, как переделают апи
 }
 
 export type TDeliveryMethod = "pickup" | "delivery";
@@ -37,16 +36,19 @@ export interface IOrderItem {
     price: number; // цена за единицу
 }
 
-export interface IOrder {
-    orderId: string;
-    restaurant_id: number;
-    status: "paid" | "pending" | "canceled";
+export interface ISendOrder {
     items: IOrderItem[];
-    totalAmount: number;
-    deliveryMethod: TDeliveryMethod;
-    deliveryCost: number;
-    pickupTime?: ITimeWindow;
-    deliveryTime?: ITimeWindow;
-    deliveryAddress?: string;
+    restaurant_id: number;
+    total_amount: number;
+    delivery_method: TDeliveryMethod;
+    delivery_address?: string;
+    delivery_cost: number;
+}
+
+export interface IOrder extends ISendOrder {
+    order_id: string;
+    status: "paid" | "pending" | "canceled";
+    pickup_time?: ITimeWindow;
+    delivery_time?: ITimeWindow;
     createdAt: string;
 }

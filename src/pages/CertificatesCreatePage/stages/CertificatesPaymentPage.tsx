@@ -6,7 +6,11 @@ import classnames from 'classnames';
 import { ICertificate } from '@/types/certificates.types.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APIGetCertificateById, APIGetCertificates, APIPostCheckAlfaPayment } from '@/api/certificates.api.ts';
+import {
+    APIGetCertificateById,
+    APIGetCertificates,
+    APIPostCertificateCheckPayment,
+} from '@/api/certificates.api.ts';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { shareCertificate } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
@@ -41,7 +45,7 @@ export const CertificatesPaymentPage: React.FC = () => {
     useEffect(() => {
         if (auth?.access_token && certificate && user?.id) {
             if (paramsObject.order_number) {
-                APIPostCheckAlfaPayment(auth?.access_token, user?.id, paramsObject.order_number, certificate.id)
+                APIPostCertificateCheckPayment(auth?.access_token, user?.id, paramsObject.order_number, certificate.id)
                     .then((response) => {
                         setIsPaid(response.data.is_paid);
                         // Updating Certificates List In App

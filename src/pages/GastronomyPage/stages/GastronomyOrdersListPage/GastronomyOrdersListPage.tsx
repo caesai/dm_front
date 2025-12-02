@@ -16,7 +16,7 @@ export const GastronomyOrdersListPage: React.FC = () => {
     const [ordersList, setOrdersList] = useState<IOrder[]>([]);
 
     const showOrderPage = (order: IOrder, skip_page?: boolean) => {
-        navigate(`/gastronomy/order/${order.orderId}`, { state: { order, skip_page } });
+        navigate(`/gastronomy/order/${order.order_id}`, { state: { order, skip_page } });
     };
 
     useEffect(() => {
@@ -38,15 +38,16 @@ export const GastronomyOrdersListPage: React.FC = () => {
             showOrderPage(ordersList[0], true);
         }
     }, [ordersList]);
+
     return (
         <div className={css.order_page}>
             <div className={css.container}>
                 {ordersList.length > 0 ?
                     ordersList.map((order) => (
-                        <div className={css.order_content} key={order.orderId}>
+                        <div className={css.order_content} key={order.order_id}>
                             <div className={css.order}>
-                                <span className={css.order_title}>Заказ {order.orderId}</span>
-                                <span className={css.order_text}>{order.deliveryAddress}</span>
+                                <span className={css.order_title}>Заказ {order.order_id}</span>
+                                <span className={css.order_text}>{order.delivery_address}</span>
                             </div>
                             <button
                                 className={css.order_button}

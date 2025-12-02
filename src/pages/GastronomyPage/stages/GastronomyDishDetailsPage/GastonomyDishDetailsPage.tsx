@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { IDish } from '@/types/gastronomy.types.ts';
-import { mockGastronomyListData } from '@/__mocks__/gastronomy.mock.ts';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
 import { DishCard } from '@/components/DishCard/DishCard.tsx';
 import { PlusIcon } from '@/components/Icons/PlusIcon.tsx';
 import { MinusIcon } from '@/components/Icons/MinusIcon.tsx';
 import css from './GastonomyDishDetailsPage.module.css';
+import { useAtom } from 'jotai';
+import { dishesListAtom } from '@/atoms/dishesListAtom.ts';
 
 export const GastonomyDishDetailsPage: React.FC = () => {
     const location = useLocation();
@@ -14,8 +15,11 @@ export const GastonomyDishDetailsPage: React.FC = () => {
     const { res_id } = useParams();
     const { addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
 
+    const [initialDishesList] = useAtom(dishesListAtom);
+
     const dishFromState = location.state?.dish as IDish;
     const [selectedWeightIndex, setSelectedWeightIndex] = useState(0);
+    const [dishesList, setDishesList] = useState<IDish[]>([]);
 
     if (!dishFromState) {
         return <div>Блюдо не найдено</div>;
@@ -42,16 +46,10 @@ export const GastonomyDishDetailsPage: React.FC = () => {
         setSelectedWeightIndex(0);
     };
 
-    // Размножаем данные до 30 элементов, как на странице списка блюд
-    const expandedData: IDish[] = [];
-    for (let i = 0; i < 10; i++) {
-        mockGastronomyListData.forEach((dish) => {
-            expandedData.push({
-                ...dish,
-                id: i * mockGastronomyListData.length + dish.id,
-            });
-        });
-    }
+    // Убираем текущее блюдо из списка всех блюд
+    useEffect(() => {
+        setDishesList(initialDishesList.filter((dish) => dish.id !== dishFromState.id));
+    }, [initialDishesList, dishFromState.id]);
 
     return (
         <div className={css.page}>
@@ -134,7 +132,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
             <div className={css.moreSection}>
                 <h3 className={css.moreSectionTitle}>Что-нибудь еще?</h3>
                 <div className={css.items}>
-                    {expandedData.map((dish) => (
+                    {dishesList.map((dish) => (
                         <DishCard
                             key={dish.id}
                             {...dish}

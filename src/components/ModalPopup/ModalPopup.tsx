@@ -67,7 +67,7 @@ export const ModalPopup: React.FC<ModalProps> = (
         setOpen();
     };
     return (
-        <StyledPopup open={isOpen} onClose={setOpen}>
+        <StyledPopup open={isOpen} closeOnDocumentClick={false}>
             <div className={css.popup}>
                 <div className={css.end}>
                     <RoundedButton

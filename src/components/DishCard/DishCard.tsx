@@ -11,19 +11,20 @@ interface DishCardProps extends IDish {
     onClick?: () => void;
 }
 
-export const DishCard: React.FC<DishCardProps> = ({
-    id,
-    title,
-    price_msw, // заменить на prices после того, как переделают апи
-    weights,
-    image_url,
-    quantity,
-    onAdd,
-    onRemove,
-    onClick,
-}) => {
-    // const defaultPrice = prices[0];
-    const defaultPrice = price_msw[0] || 1000;
+export const DishCard: React.FC<DishCardProps> = (
+    {
+        id,
+        title,
+        prices,
+        weights,
+        image_url,
+        quantity,
+        onAdd,
+        onRemove,
+        onClick,
+    },
+) => {
+    const defaultPrice = prices[0];
     const defaultWeight = weights[0];
 
     return (
@@ -41,7 +42,7 @@ export const DishCard: React.FC<DishCardProps> = ({
                     )}
                 </div>
             </div>
-            <div 
+            <div
                 className={quantity > 0 ? css.buttonActive : css.button}
                 onClick={() => quantity === 0 && onAdd(id)}
             >

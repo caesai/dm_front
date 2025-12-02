@@ -7,13 +7,22 @@ import { DateListSelector } from '@/components/DateListSelector/DateListSelector
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import emptyBasketIcon from '/img/empty-basket.png';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { mockGastronomyListData } from '@/__mocks__/gastronomy.mock.ts';
+import {
+    KAD_COORDS,
+    MKAD_COORDS,
+    PETROGRADKA_RESTAURANT_ID,
+    PETROGRADKA_ZONE,
+} from '@/__mocks__/gastronomy.mock.ts';
 import { formatDate } from '@/utils.ts';
 import useToast from '@/hooks/useToastState.ts';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import css from './GastronomyBasketPage.module.css';
+import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { APIPostCreateGastronomyPayment, APIPostUserOrder } from '@/api/gastronomy.api.ts';
+import { authAtom } from '@/atoms/userAtom.ts';
+import { cityListAtom } from '@/atoms/cityListAtom.ts';
 
 const StyledPopup = styled(Popup)`
     &-overlay {
@@ -32,19 +41,23 @@ const StyledPopup = styled(Popup)`
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
-const YANDEX_API_KEY = '8297b306-311a-44c1-88cf-ffe4ee910493';
-
 interface AddressSuggestion {
     value: string;
     displayName: string;
     coordinates?: [number, number];
 }
 
+const MIN_ADDRESS_QUERY_LENGTH = 3;
+const ADDRESS_SUGGESTIONS_BLUR_DELAY = 200;
+
 export const GastronomyBasketPage: React.FC = () => {
     const navigate = useNavigate();
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart } = useGastronomyCart();
     const [restaurants] = useAtom(restaurantsListAtom);
+    const [currentCity] = useAtom(currentCityAtom);
+    const [cityList] = useAtom(cityListAtom);
+    const [auth] = useAtom(authAtom);
 
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('delivery');
     const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(false);
@@ -64,6 +77,7 @@ export const GastronomyBasketPage: React.FC = () => {
     const { showToast } = useToast();
 
     console.log('GastronomyBasketPage rendered, deliveryMethod:', deliveryMethod, 'address:', address);
+    const deliveryFee = 1500;
 
     // Получаем информацию о ресторане
     const restaurant = useMemo(() => {
@@ -187,7 +201,7 @@ export const GastronomyBasketPage: React.FC = () => {
                 if (nextHour >= 24) {
                     // Последний слот до закрытия (например, 23:00-01:00)
                     slots.push(
-                        `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`
+                        `${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`,
                     );
                     break;
                 }
@@ -244,50 +258,52 @@ export const GastronomyBasketPage: React.FC = () => {
 
     // Загрузка подсказок адресов через Яндекс Geocoder API
     const loadAddressSuggestions = useCallback(async (query: string) => {
-        if (!query || query.trim().length < 3) {
+        if (!query || query.trim().length < MIN_ADDRESS_QUERY_LENGTH) {
             setAddressSuggestions([]);
             return;
         }
-        
+
         const trimmedQuery = query.trim();
-        
+
         try {
             // Используем Geocoder API для поиска адресов
-            // Добавляем "Москва" для ограничения поиска по городу
-            const searchQuery = `Москва, ${trimmedQuery}`;
-            const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${YANDEX_API_KEY}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5&bbox=37.319,55.489~37.967,55.958`;
-            
+            // Определяем город
+            const cityName = cityList.find((city) => city.name_english === currentCity)?.name || 'Москва';
+            const searchQuery = `${cityName}, ${trimmedQuery}`;
+            // TODO:  разобраться с координатами в bbox внутри этого url
+            const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5&bbox=37.319,55.489~37.967,55.958`;
+
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
                 },
             });
-            
+
             if (!response.ok) {
                 setAddressSuggestions([]);
                 return;
             }
-            
+
             const data = await response.json();
-            
+
             // Обрабатываем ответ от Geocoder API
             const featureMembers = data.response?.GeoObjectCollection?.featureMember || [];
-            
+
             if (featureMembers.length > 0) {
                 const suggestions: AddressSuggestion[] = featureMembers.map((item: any) => {
                     const geoObject = item.GeoObject;
                     const name = geoObject.name || '';
                     const description = geoObject.description || '';
                     const fullAddress = description ? `${name}, ${description}` : name;
-                    
+
                     return {
                         value: fullAddress,
                         displayName: fullAddress,
                         coordinates: undefined,
                     };
                 }).filter((s: AddressSuggestion) => s.displayName && s.displayName.length > 0);
-                
+
                 setAddressSuggestions(suggestions);
             } else {
                 setAddressSuggestions([]);
@@ -301,14 +317,14 @@ export const GastronomyBasketPage: React.FC = () => {
     const geocodeAddress = async (address: string): Promise<[number, number] | null> => {
         try {
             const response = await fetch(
-                `https://geocode-maps.yandex.ru/1.x/?apikey=${YANDEX_API_KEY}&geocode=${encodeURIComponent(address)}&format=json`
+                `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(address)}&format=json`,
             );
             const data = await response.json();
-            
+
             if (data.response?.GeoObjectCollection?.featureMember?.length > 0) {
                 const geoObject = data.response.GeoObjectCollection.featureMember[0].GeoObject;
                 const pos = geoObject.Point.pos.split(' ').map(Number);
-                return [pos[0], pos[1]]; // [долгота, широта]
+                return [pos[1], pos[0]]; // [широта, долгота]
             }
             return null;
         } catch (error) {
@@ -317,45 +333,52 @@ export const GastronomyBasketPage: React.FC = () => {
         }
     };
 
-    // Проверка, входит ли адрес в зону доставки (в пределах МКАД)
-    // Используем упрощенную проверку: координаты должны быть в пределах границ Москвы
-    const checkDeliveryZone = async (coordinates: [number, number]): Promise<boolean> => {
-        try {
-            // Границы МКАД (приблизительно):
-            // Север: ~55.958
-            // Юг: ~55.489
-            // Запад: ~37.319
-            // Восток: ~37.967
-            const [longitude, latitude] = coordinates;
-            
-            // Проверяем, что координаты находятся в пределах границ МКАД
-            const isWithinBounds = 
-                latitude >= 55.489 && latitude <= 55.958 &&
-                longitude >= 37.319 && longitude <= 37.967;
-            
-            return isWithinBounds;
-        } catch (error) {
-            console.error('Error checking delivery zone:', error);
-            return false;
+    // Проверка, входит ли адрес в зону доставки
+    const isPointInPolygon = (point: [number, number], polygon: [number, number][]): boolean => {
+        const [lat, lon] = point;
+        let inside = false;
+
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            const [lati, loni] = polygon[i];
+            const [latj, lonj] = polygon[j];
+
+            const intersect = loni > lon !== lonj > lon && lat < ((latj - lati) * (lon - loni)) / (lonj - loni) + lati;
+            if (intersect) inside = !inside;
         }
+
+        return inside;
+    };
+
+    const checkDeliveryZone = (coords: [number, number]): boolean => {
+        if (currentCity === 'moscow') {
+            return isPointInPolygon(coords, MKAD_COORDS);
+        } else if (currentCity === 'spb') {
+            // Для ресторана Smoke BBQ Санкт-Петербург (Лодейнопольская улица, ID 11) требуется особая зона доставки,
+            // так как он находится вне стандартной зоны КАД. Используем PETROGRADKA_ZONE для проверки доставки.
+            if (res_id === PETROGRADKA_RESTAURANT_ID) {
+                return isPointInPolygon(coords, PETROGRADKA_ZONE);
+            }
+            return isPointInPolygon(coords, KAD_COORDS);
+        }
+        return false;
     };
 
     // Обработка изменения адреса с debounce
     const handleAddressChange = useCallback((value: string) => {
         setAddress(value);
         setSelectedAddressCoordinates(null);
-        
+
         // Очищаем предыдущий таймаут
         if (suggestionsTimeoutRef.current) {
             clearTimeout(suggestionsTimeoutRef.current);
         }
-        
+
         // Если текст слишком короткий, очищаем подсказки
         if (!value || value.trim().length < 3) {
             setAddressSuggestions([]);
             return;
         }
-        
+
         // Устанавливаем новый таймаут для загрузки подсказок
         suggestionsTimeoutRef.current = setTimeout(() => {
             loadAddressSuggestions(value);
@@ -366,7 +389,7 @@ export const GastronomyBasketPage: React.FC = () => {
     const handleSelectAddress = async (suggestion: AddressSuggestion) => {
         setAddress(suggestion.displayName);
         setAddressSuggestions([]);
-        
+
         // Получаем координаты выбранного адреса
         const coords = await geocodeAddress(suggestion.displayName);
         if (coords) {
@@ -450,6 +473,29 @@ export const GastronomyBasketPage: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
+
+        if (!auth || !res_id) return;
+        APIPostUserOrder({
+            items: cart.items,
+            restaurant_id: Number(res_id),
+            delivery_cost: deliveryFee,
+            delivery_method: deliveryMethod,
+            total_amount: cart.totalAmount,
+            delivery_address: address,
+        }, auth.access_token)
+            .then((response) => {
+                APIPostCreateGastronomyPayment(response.data.order_id, auth.access_token)
+                    .then((res) => {
+                        window.location.href = res.data.payment_url;
+                    })
+                    .catch((err) => {
+                        showToast(
+                            'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.',
+                        );
+                        console.error(err);
+                    });
+            })
+            .catch((err) => console.error(err));
     };
 
     const handleToggleDropdown = () => {
@@ -520,25 +566,17 @@ export const GastronomyBasketPage: React.FC = () => {
                                 key={item.id}
                                 {...item}
                                 onAdd={() => {
-                                    // Находим оригинальное блюдо из моков для получения полной информации
-                                    const originalDish = mockGastronomyListData.find(d => d.id === item.id);
-                                    if (originalDish) {
-                                        const weightIndex = originalDish.weights.findIndex(w => w === item.weight);
-                                        addToCart(originalDish, weightIndex >= 0 ? weightIndex : 0);
-                                    } else {
-                                        // Fallback если блюдо не найдено
-                                        addToCart({
-                                            price_msw: [],
-                                            id: item.id,
-                                            title: item.title,
-                                            prices: [item.price],
-                                            weights: [item.weight],
-                                            image_url: item.image,
-                                            description: '',
-                                    nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
-                                    allergens: []
-                                        }, 0);
-                                    }
+                                    // TODO: Проверить типы IDish ICartItem
+                                    addToCart({
+                                        id: item.id,
+                                        title: item.title,
+                                        prices: [item.price],
+                                        weights: [item.weight],
+                                        image_url: item.image,
+                                        description: '',
+                                        nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
+                                        allergens: [],
+                                    }, 0);
                                 }}
                                 onRemove={() => removeFromCart(item.id)}
                             />
@@ -569,10 +607,11 @@ export const GastronomyBasketPage: React.FC = () => {
                                 className={css.dropdownArrow}
                                 style={{
                                     transform: isDeliveryExpanded ? 'rotate(180deg)' : 'rotate(0)',
-                                    transition: 'transform 0.3s'
+                                    transition: 'transform 0.3s',
                                 }}
                             >
-                                <path d="M5 8.5L12 15.5L19 8.5" stroke="#989898" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M5 8.5L12 15.5L19 8.5" stroke="#989898" strokeWidth="1.5" strokeLinecap="round"
+                                      strokeLinejoin="round" />
                             </svg>
                         </div>
                         {isDeliveryExpanded && (
@@ -606,6 +645,9 @@ export const GastronomyBasketPage: React.FC = () => {
                             {deliveryFee > 0 && (
                                 <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
                             )}
+                            <span
+                                className={css.deliveryLabel}>{(currentCity === 'moscow' || currentCity === 'spb') && `в пределах ${currentCity === 'moscow' ? 'МКАД' : 'КАД'}`}</span>
+                            <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
                         </div>
                         <div className={css.inputWrapper}>
                             <input
@@ -624,19 +666,19 @@ export const GastronomyBasketPage: React.FC = () => {
                                 }}
                                 onBlur={() => {
                                     // Закрываем подсказки с небольшой задержкой, чтобы клик по подсказке успел сработать
-                                    setTimeout(() => setAddressSuggestions([]), 200);
+                                    setTimeout(() => setAddressSuggestions([]), ADDRESS_SUGGESTIONS_BLUR_DELAY);
                                 }}
                             />
                             {addressSuggestions.length > 0 && (
                                 <div className={css.suggestions}>
                                     {addressSuggestions.map((suggestion, idx) => (
-                                            <div
-                                                key={idx}
-                                                className={css.suggestion}
+                                        <div
+                                            key={idx}
+                                            className={css.suggestion}
                                             onClick={() => handleSelectAddress(suggestion)}
-                                            >
+                                        >
                                             {suggestion.displayName}
-                                            </div>
+                                        </div>
                                     ))}
                                 </div>
                             )}
@@ -661,12 +703,14 @@ export const GastronomyBasketPage: React.FC = () => {
                         >
                             <div className={css.datePickerContent}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                    <rect x="3" y="6" width="18" height="15" rx="2" stroke="#545454" strokeWidth="1.5"/>
-                                    <path d="M3 10H21" stroke="#545454" strokeWidth="1.5"/>
-                                    <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round"/>
-                                    <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round"/>
+                                    <rect x="3" y="6" width="18" height="15" rx="2" stroke="#545454"
+                                          strokeWidth="1.5" />
+                                    <path d="M3 10H21" stroke="#545454" strokeWidth="1.5" />
+                                    <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
+                                    <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
-                                <span className={selectedDate.value !== 'unset' ? css.datePickerTextSelected : css.datePickerTextPlaceholder}>
+                                <span
+                                    className={selectedDate.value !== 'unset' ? css.datePickerTextSelected : css.datePickerTextPlaceholder}>
                                     {selectedDate.value !== 'unset'
                                         ? selectedDate.title
                                         : deliveryMethod === 'delivery'
@@ -680,7 +724,8 @@ export const GastronomyBasketPage: React.FC = () => {
                                 viewBox="0 0 20 20"
                                 fill="none"
                             >
-                                <path d="M16 7L10 13L4 7" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M16 7L10 13L4 7" stroke="#545454" strokeWidth="1.5" strokeLinecap="round"
+                                      strokeLinejoin="round" />
                             </svg>
                         </div>
                     </div>
