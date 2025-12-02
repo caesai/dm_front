@@ -18,7 +18,7 @@ import { formatDate } from '@/utils.ts';
 import useToast from '@/hooks/useToastState.ts';
 import css from './GastronomyBasketPage.module.css';
 import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
-import { APIPostCreatePayment, APIPostUserOrder } from '@/api/gastronomy.api.ts';
+import { APIPostCreateGastronomyPayment, APIPostUserOrder } from '@/api/gastronomy.api.ts';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
 
@@ -370,7 +370,10 @@ export const GastronomyBasketPage: React.FC = () => {
             deliveryAddress: address,
         }, auth.access_token)
             .then((response) => {
-                APIPostCreatePayment(response.data.order_id, auth.access_token)
+                APIPostCreateGastronomyPayment(response.data.order_id, auth.access_token)
+                    .then((res) => {
+                        window.location.href = res.data.payment_url;
+                    })
                     .catch((err) => {
                         showToast(
                             'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.'

@@ -62,8 +62,8 @@ export const APIPostCancelOrder = (order_id: string, token: string) => {
     );
 };
 
-export const APIPostCreatePayment = async (order_id: string, token: string) => {
-    return axios.post(`${BASE_URL}/culinary/orders/${order_id}/payment`, {
+export const APIPostCreateGastronomyPayment = async (order_id: string, token: string) => {
+    return axios.post(`${BASE_URL}/culinary/orders/payment`, {
             order_id,
             return_url: `${CLIENT_URL}/gastronomy/order/${order_id}`,
             // return_url: `https://dt-mini-app.local/dm_front/gastronomy/order/${order_id}`,
