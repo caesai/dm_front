@@ -60,8 +60,14 @@ export const GastronomyOrderPage: React.FC = () => {
                             APIGetGastronomyOrderById(paramsObject.orderId, auth?.access_token)
                                 .then((res) => {
                                     setOrder(res.data);
+                                })
+                                .catch(() => {
+                                    showToast('Не удалось получить детали заказа. Попробуйте еще раз.');
                                 });
                         }
+                    })
+                    .catch(() => {
+                        showToast('Ошибка проверки оплаты заказа. Попробуйте еще раз.');
                     });
             }
         }

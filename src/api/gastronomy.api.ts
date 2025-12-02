@@ -98,5 +98,5 @@ export const APIGetGastronomyOrderById = async (order_id: string, token: string)
         headers: {
             Authorization: `Bearer ${token}`,
         },
-    })
-}
+    });
+};

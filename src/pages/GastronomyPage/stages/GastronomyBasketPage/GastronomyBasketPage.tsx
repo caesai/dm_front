@@ -10,7 +10,6 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import {
     KAD_COORDS,
     MKAD_COORDS,
-    mockGastronomyListData,
     PETROGRADKA_RESTAURANT_ID,
     PETROGRADKA_ZONE,
 } from '@/__mocks__/gastronomy.mock.ts';
@@ -376,10 +375,10 @@ export const GastronomyBasketPage: React.FC = () => {
                     })
                     .catch((err) => {
                         showToast(
-                            'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.'
+                            'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.',
                         );
                         console.error(err);
-                    })
+                    });
             })
             .catch((err) => console.error(err));
     };
@@ -450,24 +449,17 @@ export const GastronomyBasketPage: React.FC = () => {
                                 key={item.id}
                                 {...item}
                                 onAdd={() => {
-                                    // Находим оригинальное блюдо из моков для получения полной информации
-                                    const originalDish = mockGastronomyListData.find(d => d.id === item.id);
-                                    if (originalDish) {
-                                        const weightIndex = originalDish.weights.findIndex(w => w === item.weight);
-                                        addToCart(originalDish, weightIndex >= 0 ? weightIndex : 0);
-                                    } else {
-                                        // Fallback если блюдо не найдено
-                                        addToCart({
-                                            id: item.id,
-                                            title: item.title,
-                                            prices: [item.price],
-                                            weights: [item.weight],
-                                            image_url: item.image,
-                                            description: '',
-                                            nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
-                                            allergens: [],
-                                        }, 0);
-                                    }
+                                    // TODO: Проверить типы IDish ICartItem
+                                    addToCart({
+                                        id: item.id,
+                                        title: item.title,
+                                        prices: [item.price],
+                                        weights: [item.weight],
+                                        image_url: item.image,
+                                        description: '',
+                                        nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
+                                        allergens: [],
+                                    }, 0);
                                 }}
                                 onRemove={() => removeFromCart(item.id)}
                             />
@@ -532,7 +524,8 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.section}>
                         <h2 className={css.sectionTitle}>Адрес доставки</h2>
                         <div className={css.deliveryInfo}>
-                            <span className={css.deliveryLabel}>{(currentCity === 'moscow' || currentCity === 'spb') && `в пределах ${currentCity === 'moscow' ? 'МКАД' : 'КАД'}`}</span>
+                            <span
+                                className={css.deliveryLabel}>{(currentCity === 'moscow' || currentCity === 'spb') && `в пределах ${currentCity === 'moscow' ? 'МКАД' : 'КАД'}`}</span>
                             <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
                         </div>
                         <div className={css.inputWrapper}>
