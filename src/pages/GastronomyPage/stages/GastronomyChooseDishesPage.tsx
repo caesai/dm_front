@@ -31,19 +31,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
     useEffect(() => {
         if (!auth) return;
         APIGetGastronomyDishes(auth.access_token, res_id)
-            .then((res) => {
-                // TODO: Remove this logic once prices are set in the database
-                const processedDishes = res.data.map((dish) => {
-                    if (dish.prices.length === 0) {
-                        return {
-                            ...dish,
-                            prices: [1000],
-                        };
-                    }
-                    return dish;
-                });
-                setDishesList(processedDishes);
-            })
+            .then((res) => setDishesList(res.data))
             .catch((err) => console.error(err));
     }, [auth, res_id]);
 
