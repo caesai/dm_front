@@ -1,6 +1,6 @@
 import css from './GastronomyOrderPage.module.css';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { IOrder } from '@/types/gastronomy.types.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { MiniCrossIcon } from '@/components/Icons/MiniCrossIcon.tsx';
@@ -8,10 +8,9 @@ import { MONTHS_LONG2, weekdaysMap } from '@/utils.ts';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import moment from 'moment';
 import GastronomyOrderPopup from '@/components/GastronomyOrderPopup/GastronomyOrderPopup.tsx';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 import {
     APIGetGastronomyOrderById,
-    APIPostCheckGastronomyPayment,
+    APIPostCheckGastronomyPayment, APIPostCreateGastronomyPayment,
     APIPostSendQuestion,
 } from '@/api/gastronomy.api.ts';
 import { useAtom } from 'jotai';
@@ -20,14 +19,17 @@ import useToastState from '@/hooks/useToastState.ts';
 
 export const GastronomyOrderPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
+    // params - используем когда перешли на страницу после платежа
     const [params] = useSearchParams();
     const paramsObject = Object.fromEntries(params.entries());
-
-    const { goBack } = useNavigationHistory();
     const { showToast } = useToastState();
+    // location используем для перехода со страницы профиля
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const [openPopup, setPopup] = useState(false);
     const [order, setOrder] = useState<IOrder>();
+    const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending'>('pending');
 
     const time = useMemo(() => {
         return order?.delivery_time ? order.delivery_time : order?.pickup_time;
@@ -52,26 +54,55 @@ export const GastronomyOrderPage: React.FC = () => {
     };
 
     useEffect(() => {
+        // Перешли на страницу после оплаты, проверяем статус оплаты и получаем данные о заказе
         if (auth?.access_token) {
             if (paramsObject.orderId) {
                 APIPostCheckGastronomyPayment(paramsObject.orderId, auth?.access_token)
                     .then((response) => {
-                        if (response.data.status === 'paid') {
-                            APIGetGastronomyOrderById(paramsObject.orderId, auth?.access_token)
-                                .then((res) => {
-                                    setOrder(res.data);
-                                })
-                                .catch(() => {
-                                    showToast('Не удалось получить детали заказа. Попробуйте еще раз.');
-                                });
-                        }
+                        setPaymentStatus(response.data.status);
+                        APIGetGastronomyOrderById(paramsObject.orderId, auth?.access_token)
+                            .then((res) => {
+                                setOrder(res.data);
+                            })
+                            .catch(() => {
+                                showToast('Не удалось получить детали заказа. Попробуйте еще раз.');
+                            });
                     })
                     .catch(() => {
+                        setPaymentStatus('pending');
                         showToast('Ошибка проверки оплаты заказа. Попробуйте еще раз.');
                     });
             }
         }
     }, [auth?.access_token, paramsObject.orderId]);
+
+    useEffect(() => {
+        // Если перешли на данную страницу со страницы профиля
+        if (location?.state?.order) {
+            setOrder(location?.state?.order);
+        }
+    }, [location.state]);
+
+    const goToPreviousPage = () => {
+        navigate('/profile');
+    };
+
+    const repeatPayment = () => {
+        if (auth?.access_token) {
+            if (paramsObject.orderId) {
+                APIPostCreateGastronomyPayment(paramsObject.orderId, auth?.access_token)
+                    .then((res) => {
+                        window.location.href = res.data.payment_url;
+                    })
+                    .catch((err) => {
+                        showToast(
+                            'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.',
+                        );
+                        console.error(err);
+                    });
+            }
+        }
+    }
 
     return (
         <>
@@ -87,7 +118,7 @@ export const GastronomyOrderPage: React.FC = () => {
                     <RoundedButton
                         bgColor={'var(--secondary-background)'}
                         icon={<MiniCrossIcon color={'var(--dark-grey)'} />}
-                        action={goBack}
+                        action={goToPreviousPage}
                     />
                 </div>
                 <div className={css.content}>
@@ -118,7 +149,8 @@ export const GastronomyOrderPage: React.FC = () => {
                     </div>
                 </div>
                 <div className={css.bottom_buttons}>
-                    <UniversalButton width={'full'} title={'Отменить заказ'} action={() => setPopup(true)} />
+                    {paymentStatus === 'paid' && <UniversalButton width={'full'} title={'Отменить заказ'} action={() => setPopup(true)} />}
+                    {paymentStatus === 'pending' && <UniversalButton width={'full'} title={'Повторить оплату'} action={repeatPayment} />}
                     <UniversalButton
                         width={'full'}
                         title={'Задать вопрос по заказу'}

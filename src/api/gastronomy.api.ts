@@ -2,13 +2,10 @@ import axios from 'axios';
 import { BASE_URL, CLIENT_URL } from '@/api/base.ts';
 import { IDish, IOrder, ISendOrder } from '@/types/gastronomy.types.ts';
 
-export const APIGetUserOrders = async (phone: string, token: string) => {
+export const APIGetUserOrders = async (token: string) => {
     return await axios.get<IOrder[]>(
         `${BASE_URL}/culinary/orders`,
         {
-            params: {
-                phone: phone,
-            },
             headers: {
                 Authorization: `Bearer ${token}`,
             },

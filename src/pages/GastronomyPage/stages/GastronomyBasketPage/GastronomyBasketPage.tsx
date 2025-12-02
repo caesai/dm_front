@@ -20,6 +20,7 @@ import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
 import { APIPostCreateGastronomyPayment, APIPostUserOrder } from '@/api/gastronomy.api.ts';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
+import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -52,6 +53,7 @@ export const GastronomyBasketPage: React.FC = () => {
     });
     const [selectedTime, setSelectedTime] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const addressInputRef = useRef<HTMLInputElement>(null);
     const suggestionsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { showToast } = useToast();
@@ -360,6 +362,7 @@ export const GastronomyBasketPage: React.FC = () => {
         }
 
         if (!auth || !res_id) return;
+        setLoading(true);
         APIPostUserOrder({
             items: cart.items,
             restaurant_id: Number(res_id),
@@ -380,7 +383,8 @@ export const GastronomyBasketPage: React.FC = () => {
                         console.error(err);
                     });
             })
-            .catch((err) => console.error(err));
+            .catch((err) => console.error(err))
+            .finally(() => setLoading(false));
     };
 
     const handleToggleDropdown = () => {
@@ -402,6 +406,10 @@ export const GastronomyBasketPage: React.FC = () => {
         }
         return isDateSelected && isTimeSelected && isMinAmount;
     };
+
+    if (loading) {
+        return <div className={css.loader}><Loader /></div>;
+    }
 
     // const totalWithDelivery = deliveryMethod === 'delivery'
     //     ? cart.totalAmount + deliveryFee
