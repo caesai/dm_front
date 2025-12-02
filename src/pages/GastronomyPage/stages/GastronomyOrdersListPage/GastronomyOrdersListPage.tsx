@@ -47,7 +47,7 @@ export const GastronomyOrdersListPage: React.FC = () => {
                         <div className={css.order_content} key={order.order_id}>
                             <div className={css.order}>
                                 <span className={css.order_title}>Заказ {order.order_id}</span>
-                                <span className={css.order_text}>{order.deliveryAddress}</span>
+                                <span className={css.order_text}>{order.delivery_address}</span>
                             </div>
                             <button
                                 className={css.order_button}

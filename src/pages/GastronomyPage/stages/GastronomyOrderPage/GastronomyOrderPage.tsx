@@ -1,6 +1,6 @@
 import css from './GastronomyOrderPage.module.css';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { IOrder } from '@/types/gastronomy.types.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { MiniCrossIcon } from '@/components/Icons/MiniCrossIcon.tsx';
@@ -10,6 +10,7 @@ import moment from 'moment';
 import GastronomyOrderPopup from '@/components/GastronomyOrderPopup/GastronomyOrderPopup.tsx';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 import {
+    APIGetGastronomyOrderById,
     APIPostCheckGastronomyPayment,
     APIPostSendQuestion,
 } from '@/api/gastronomy.api.ts';
@@ -22,39 +23,15 @@ export const GastronomyOrderPage: React.FC = () => {
     const [params] = useSearchParams();
     const paramsObject = Object.fromEntries(params.entries());
 
-    // const location = useLocation();
-    const navigate = useNavigate();
     const { goBack } = useNavigationHistory();
     const { showToast } = useToastState();
 
-    // const order: IOrder = location.state?.order;
-
     const [openPopup, setPopup] = useState(false);
-    const [order, setOrder] = useState<IOrder>({
-        createdAt: '',
-        deliveryAddress: '',
-        deliveryCost: 0,
-        deliveryTime: undefined,
-        delivery_method: undefined,
-        items: [],
-        order_id: '',
-        pickupTime: undefined,
-        restaurant_id: 0,
-        status: undefined,
-        totalAmount: 0
-    });
-    console.log('order: ', order, paramsObject);
-    // const time = useMemo(() => {
-    //     return order.deliveryTime ? order.deliveryTime : order.pickupTime;
-    // }, [location.state, order]);
+    const [order, setOrder] = useState<IOrder>();
 
-    const goPreviousPage = () => {
-        // if (location.state?.skip_page) {
-        //     navigate(-2);
-        // } else {
-        goBack();
-        // }
-    };
+    const time = useMemo(() => {
+        return order?.delivery_time ? order.delivery_time : order?.pickup_time;
+    }, [order]);
 
     const getDateWithMonth = (date: string) => {
         const currentDate = moment(date).format('DD');
@@ -68,46 +45,49 @@ export const GastronomyOrderPage: React.FC = () => {
     };
 
     const sendQuestion = () => {
-        if (!auth && !order) return;
-        APIPostSendQuestion(order.order_id, auth?.access_token)
+        if (!auth) return;
+        APIPostSendQuestion(String(order?.order_id), auth?.access_token)
             .then(() => showToast('Ваш вопрос отправлен администратору'))
             .catch(() => showToast('Произошла ошибка. Попробуйте еще раз.'));
     };
 
-    // useEffect(() => {
-    //     if (!order) {
-    //         goPreviousPage();
-    //     }
-    // }, [location.state, order]);
     useEffect(() => {
         if (auth?.access_token) {
             if (paramsObject.orderId) {
                 APIPostCheckGastronomyPayment(paramsObject.orderId, auth?.access_token)
-                    .then();
+                    .then((response) => {
+                        if (response.data.status === 'paid') {
+                            APIGetGastronomyOrderById(paramsObject.orderId, auth?.access_token)
+                                .then((res) => {
+                                    setOrder(res.data);
+                                });
+                        }
+                    });
             }
         }
-    }, []);
+    }, [auth?.access_token, paramsObject.orderId]);
+
     return (
         <>
             <GastronomyOrderPopup
                 isOpen={openPopup}
                 setOpen={setPopup}
-                order_id={order.order_id}
+                order_id={String(order?.order_id)}
             />
             <section className={css.page}>
                 <div className={css.header}>
                     <span className={css.spacer}></span>
-                    <span className={css.header_title}>Заказ {order.order_id}</span>
+                    <span className={css.header_title}>Заказ {order?.order_id}</span>
                     <RoundedButton
                         bgColor={'var(--secondary-background)'}
                         icon={<MiniCrossIcon color={'var(--dark-grey)'} />}
-                        action={goPreviousPage}
+                        action={goBack}
                     />
                 </div>
                 <div className={css.content}>
                     <span className={css.content_title}>Ваш заказ успешно оплачен!</span>
                     <div className={css.items}>
-                        {order.items.map(item => (
+                        {order?.items.map(item => (
                             <div className={css.item} key={item.id}>
                                 <span>{item.title}</span>
                                 <span>{item.quantity} × {item.price} ₽</span>
@@ -116,19 +96,19 @@ export const GastronomyOrderPage: React.FC = () => {
                     </div>
                     <div className={css.item}>
                         <span>Итого</span>
-                        <span>{order.totalAmount} ₽</span>
+                        <span>{order?.total_amount} ₽</span>
                     </div>
                     <div className={css.info}>
                         <div className={css.info_content}>
                             <span>Способ получения</span>
-                            <span>{order.delivery_method === 'delivery' ? 'Доставка' : 'Самовывоз'}, {order.deliveryAddress}</span>
+                            <span>{order?.delivery_method === 'delivery' ? 'Доставка' : 'Самовывоз'}, {order?.delivery_address}</span>
                         </div>
-                        {/*{time && (*/}
-                        {/*    <div className={css.info_content}>*/}
-                        {/*        <span>Дата и время</span>*/}
-                        {/*        <span>{getDayOfWeek(time.date)}, {getDateWithMonth(time.date)}, {time.time}</span>*/}
-                        {/*    </div>*/}
-                        {/*)}*/}
+                        {time && (
+                            <div className={css.info_content}>
+                                <span>Дата и время</span>
+                                <span>{getDayOfWeek(time.date)}, {getDateWithMonth(time.date)}, {time.time}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className={css.bottom_buttons}>

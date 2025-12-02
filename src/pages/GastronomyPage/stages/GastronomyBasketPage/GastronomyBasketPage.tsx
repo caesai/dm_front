@@ -364,10 +364,10 @@ export const GastronomyBasketPage: React.FC = () => {
         APIPostUserOrder({
             items: cart.items,
             restaurant_id: Number(res_id),
-            deliveryCost: deliveryFee,
+            delivery_cost: deliveryFee,
             delivery_method: deliveryMethod,
-            totalAmount: cart.totalAmount,
-            deliveryAddress: address,
+            total_amount: cart.totalAmount,
+            delivery_address: address,
         }, auth.access_token)
             .then((response) => {
                 APIPostCreateGastronomyPayment(response.data.order_id, auth.access_token)

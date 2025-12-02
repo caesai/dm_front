@@ -38,16 +38,16 @@ export interface IOrderItem {
 export interface ISendOrder {
     items: IOrderItem[];
     restaurant_id: number;
-    totalAmount: number;
+    total_amount: number;
     delivery_method: TDeliveryMethod;
-    deliveryAddress?: string;
-    deliveryCost: number;
+    delivery_address?: string;
+    delivery_cost: number;
 }
 
 export interface IOrder extends ISendOrder {
     order_id: string;
     status: "paid" | "pending" | "canceled";
-    pickupTime?: ITimeWindow;
-    deliveryTime?: ITimeWindow;
+    pickup_time?: ITimeWindow;
+    delivery_time?: ITimeWindow;
     createdAt: string;
 }

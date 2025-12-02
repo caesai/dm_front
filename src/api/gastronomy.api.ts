@@ -65,10 +65,10 @@ export const APIPostCancelOrder = (order_id: string, token: string) => {
 export const APIPostCreateGastronomyPayment = async (order_id: string, token: string) => {
     return axios.post(`${BASE_URL}/culinary/orders/payment`, {
             order_id,
-            // return_url: `${CLIENT_URL}/gastronomy/order/${order_id}`,
-            return_url: `https://dt-mini-app.local/dm_front/gastronomy/order/${order_id}`,
-            // fail_url: `${CLIENT_URL}/gastronomy/order/${order_id}`,
-            fail_url: `https://dt-mini-app.local/dm_front/gastronomy/order/${order_id}`,
+            return_url: `${CLIENT_URL}/gastronomy/order/${order_id}`,
+            // return_url: `https://dt-mini-app.local/dm_front/gastronomy/order/${order_id}`,
+            fail_url: `${CLIENT_URL}/gastronomy/order/${order_id}`,
+            // fail_url: `https://dt-mini-app.local/dm_front/gastronomy/order/${order_id}`,
         },
         {
             headers: {
@@ -89,3 +89,14 @@ export const APIPostCheckGastronomyPayment = async (order_id: string, token: str
         },
     );
 };
+
+export const APIGetGastronomyOrderById = async (order_id: string, token: string) => {
+    return axios.get(`${BASE_URL}/culinary/orders/get`, {
+        params: {
+            order_id,
+        },
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+}

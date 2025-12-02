@@ -71,10 +71,10 @@ export const mockOrdersListData: IOrder[] = [
             { id: 1, title: 'Крем - суп из пастернака', quantity: 1, price: 1300 },
             { id: 2, title: 'Крем - суп', quantity: 2, price: 1300 },
         ],
-        totalAmount: 10000,
+        total_amount: 10000,
         delivery_method: 'pickup',
-        deliveryCost: 0,
-        pickupTime: {
+        delivery_cost: 0,
+        pickup_time: {
             date: '2025-12-25',
             time: '12:00-15:00',
         },
@@ -88,17 +88,38 @@ export const mockOrdersListData: IOrder[] = [
             { id: 1, title: 'Крем - суп из пастернака', quantity: 2, price: 1300 },
             { id: 3, title: 'Ризотто с грибами', quantity: 1, price: 1800 },
         ],
-        totalAmount: 5200, // 2600 + 1800 + 800 (доставка)
+        total_amount: 5200, // 2600 + 1800 + 800 (доставка)
         delivery_method: 'delivery',
-        deliveryCost: 800,
-        deliveryAddress: 'Санкт-Петербург, Московский проспект, 150, кв. 12',
-        deliveryTime: {
+        delivery_cost: 800,
+        delivery_address: 'Санкт-Петербург, Московский проспект, 150, кв. 12',
+        delivery_time: {
             date: '2025-12-25',
             time: '15:00-18:00',
         },
         createdAt: '2025-12-24T19:30:00Z',
     },
 ];
+
+export const mockDish: IDish = {
+    id: 1,
+    title: 'Крем-суп из пастернака',
+    prices: [1300, 2600],
+    weights: ['200 г', '600 г'],
+    image_url: 'https://shuba.life/static/content/thumbs/1824x912/6/85/rtajoy---c2x1x50px50p-up--2ed4310a341a5cc5f36dfd79e5ed0856.jpg',
+    description: 'Крем-суп из пастернака с нежной, слегка сладковатой нотой корнеплодов. Бархатная текстура, деликатный аромат и мягкий сливочный вкус. Отлично согревает и подойдёт как лёгкое, утончённое блюдо.',
+    nutritionPer100g: {
+        calories: '80-100 ккал',
+        proteins: '2-3 г',
+        fats: '5-7 г',
+        carbs: '8-10 г',
+    },
+    allergens: [
+        { code: 'A1', name: 'молоко' },
+        { code: 'B3', name: 'глютен' },
+        { code: 'D', name: 'сельдерей' },
+        { code: 'E', name: 'чеснок' },
+    ],
+};
 
 // МКАД coordinates for Moscow delivery zone
 export const MKAD_COORDS: [number, number][] = [
