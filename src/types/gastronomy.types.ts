@@ -13,11 +13,12 @@ export interface IAllergen {
 export interface IDish {
     id: number;
     title: string;
+    guest_title?: string;
     prices: number[];
     weights: string[];
     image_url: string;
     description: string;
-    nutritionPer100g: INutritionInfo;
+    nutritionPer100g?: INutritionInfo;
     allergens: IAllergen[];
     price_msw: number[]; // заменить на prices после того, как переделают апи
 }

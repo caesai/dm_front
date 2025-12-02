@@ -10,7 +10,25 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { mockGastronomyListData } from '@/__mocks__/gastronomy.mock.ts';
 import { formatDate } from '@/utils.ts';
 import useToast from '@/hooks/useToastState.ts';
+import Popup from 'reactjs-popup';
+import styled from 'styled-components';
+import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import css from './GastronomyBasketPage.module.css';
+
+const StyledPopup = styled(Popup)`
+    &-overlay {
+        background: #58585869;
+        padding: 0 15px;
+    }
+
+    &-content {
+        margin: 0;
+        padding: 0;
+        border-radius: 10px;
+        width: calc(100vw - 30px);
+        max-width: 345px;
+    }
+`;
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -39,6 +57,7 @@ export const GastronomyBasketPage: React.FC = () => {
     });
     const [selectedTime, setSelectedTime] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showDeliveryZoneError, setShowDeliveryZoneError] = useState(false);
     const addressInputRef = useRef<HTMLInputElement>(null);
     const suggestionsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { showToast } = useToast();
@@ -324,10 +343,8 @@ export const GastronomyBasketPage: React.FC = () => {
             if (coordinates) {
                 const isInZone = await checkDeliveryZone(coordinates);
                 if (!isInZone) {
-                    showToast(
-                        'К сожалению, ваш адрес не входит в зону доставки. Вы можете оформить самовывоз.',
-                        'error'
-                    );
+                    // Показываем попап с ошибкой зоны доставки
+                    setShowDeliveryZoneError(true);
                     return;
                 }
             } else {
@@ -605,6 +622,46 @@ export const GastronomyBasketPage: React.FC = () => {
                 </button>
             </div>
 
+            {/* Попап ошибки зоны доставки */}
+            <StyledPopup 
+                open={showDeliveryZoneError} 
+                onClose={() => setShowDeliveryZoneError(false)}
+            >
+                <div className={css.deliveryZoneErrorPopup}>
+                    <div className={css.popupCloseButton}>
+                        <RoundedButton
+                            bgColor="#F4F4F4"
+                            radius="44px"
+                            icon={
+                                <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="44" height="44" rx="22" fill="#F4F4F4"/>
+                                    <path d="M26.3908 17.5918L17.6055 26.3771" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                    <path d="M26.3942 26.3824L17.6016 17.5879" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                            }
+                            action={() => setShowDeliveryZoneError(false)}
+                        />
+                    </div>
+                    <div className={css.popupContent}>
+                        <p className={css.popupErrorText}>
+                            К сожалению, ваш адрес не входит в зону доставки.
+                            <br />
+                            Вы можете оформить самовывоз.
+                        </p>
+                        <div className={css.popupButtons}>
+                            <button 
+                                className={css.popupOkButton}
+                                onClick={() => {
+                                    setShowDeliveryZoneError(false);
+                                    setDeliveryMethod('pickup');
+                                }}
+                            >
+                                Ok
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </StyledPopup>
         </div>
     );
 };

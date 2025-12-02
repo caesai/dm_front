@@ -67,7 +67,9 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                             <h2 className={css.dishTitle}>{dishFromState.title}</h2>
                             <span className={css.dishPrice}>{selectedPrice} ₽</span>
                         </div>
-                        <span className={css.selectedWeight}>{selectedWeight}</span>
+                        {hasMultipleWeights && (
+                            <span className={css.selectedWeight}>{selectedWeight}</span>
+                        )}
                     </div>
 
                     {hasMultipleWeights && (
@@ -90,41 +92,40 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                     <div className={css.section}>
                         <span className={css.sectionTitle}>Описание</span>
                         <p className={css.sectionText}>
-                            {dishFromState.description}
+                            {dishFromState.guest_title || dishFromState.description}
                         </p>
                     </div>
 
-                    <div className={css.section}>
-                        <span className={css.sectionTitle}>На 100 граммов</span>
-                        <div className={css.nutritionGrid}>
-                            <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.calories}</span>
-                                <span className={css.nutritionLabel}>ккал</span>
-                            </div>
-                            <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.proteins}</span>
-                                <span className={css.nutritionLabel}>белки</span>
-                            </div>
-                            <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.fats}</span>
-                                <span className={css.nutritionLabel}>жиры</span>
-                            </div>
-                            <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.carbs}</span>
-                                <span className={css.nutritionLabel}>углеводы</span>
+                    {dishFromState.nutritionPer100g?.calories && (
+                        <div className={css.section}>
+                            <span className={css.sectionTitle}>На 100 граммов</span>
+                            <div className={css.nutritionGrid}>
+                                <div className={css.nutritionItem}>
+                                    <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.calories}</span>
+                                    <span className={css.nutritionLabel}>ккал</span>
+                                </div>
+                                <div className={css.nutritionItem}>
+                                    <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.proteins}</span>
+                                    <span className={css.nutritionLabel}>белки</span>
+                                </div>
+                                <div className={css.nutritionItem}>
+                                    <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.fats}</span>
+                                    <span className={css.nutritionLabel}>жиры</span>
+                                </div>
+                                <div className={css.nutritionItem}>
+                                    <span className={css.nutritionValue}>{dishFromState.nutritionPer100g.carbs}</span>
+                                    <span className={css.nutritionLabel}>углеводы</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className={css.section}>
                         <span className={css.sectionTitle}>Аллергены</span>
                         <p className={css.sectionText}>
-                            {dishFromState.allergens.map((allergen, index) => (
-                                <span key={allergen.code}>
-                                    {allergen.code} – {allergen.name}
-                                    {index < dishFromState.allergens.length - 1 ? ', ' : ''}
-                                </span>
-                            ))}
+                            {dishFromState.allergens && dishFromState.allergens.length > 0
+                                ? dishFromState.allergens.map((allergen) => allergen.name).join(', ')
+                                : 'Нет'}
                         </p>
                     </div>
                 </div>

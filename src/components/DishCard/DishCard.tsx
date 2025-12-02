@@ -36,7 +36,9 @@ export const DishCard: React.FC<DishCardProps> = ({
             <div className={css.content} onClick={onClick}>
                 <div className={css.subtitle}>
                     <span className={css.title}>{title}</span>
-                    <span className={css.weight}>{defaultWeight}</span>
+                    {defaultWeight && (
+                        <span className={css.weight}>{defaultWeight}</span>
+                    )}
                 </div>
             </div>
             <div 

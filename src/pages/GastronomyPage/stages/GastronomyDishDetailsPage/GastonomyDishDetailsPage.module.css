@@ -47,6 +47,16 @@
     gap: 2px;
 }
 
+.titleWithWeight {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
 .dishTitle {
     font-family: 'Mont', sans-serif;
     font-weight: 800;
@@ -54,7 +64,22 @@
     line-height: 1.375em;
     color: var(--black);
     margin: 0;
-    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.weightLabel {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 1.4em;
+    color: var(--grey);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .dishPrice {
