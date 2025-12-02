@@ -90,12 +90,12 @@ export const GastronomyOrderPage: React.FC = () => {
                 showToast('Платёж в обработке. Проверьте позже.');
             }
         }
-    }, [auth?.access_token, paramsObject.orderId, setPaymentStatus, setOrder, showToast]);
+    }, [auth?.access_token, paramsObject.orderId]);
 
     useEffect(() => {
         // Перешли на страницу после оплаты, проверяем статус оплаты и получаем данные о заказе
         checkGastronomyPayment().then();
-    }, []);
+    }, [checkGastronomyPayment]);
 
 
     useEffect(() => {
