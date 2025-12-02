@@ -1,6 +1,6 @@
 import css from './GastronomyOrderPage.module.css';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { IOrder } from '@/types/gastronomy.types.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { MiniCrossIcon } from '@/components/Icons/MiniCrossIcon.tsx';
@@ -9,33 +9,51 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 import moment from 'moment';
 import GastronomyOrderPopup from '@/components/GastronomyOrderPopup/GastronomyOrderPopup.tsx';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
-import { APIPostSendQuestion } from '@/api/gastronomy.api.ts';
+import {
+    APIPostCheckGastronomyPayment,
+    APIPostSendQuestion,
+} from '@/api/gastronomy.api.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import useToastState from '@/hooks/useToastState.ts';
 
 export const GastronomyOrderPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
+    const [params] = useSearchParams();
+    const paramsObject = Object.fromEntries(params.entries());
 
-    const location = useLocation();
+    // const location = useLocation();
     const navigate = useNavigate();
     const { goBack } = useNavigationHistory();
     const { showToast } = useToastState();
 
-    const order: IOrder = location.state?.order;
+    // const order: IOrder = location.state?.order;
 
     const [openPopup, setPopup] = useState(false);
-
-    const time = useMemo(() => {
-        return order.deliveryTime ? order.deliveryTime : order.pickupTime;
-    }, [location.state, order]);
+    const [order, setOrder] = useState<IOrder>({
+        createdAt: '',
+        deliveryAddress: '',
+        deliveryCost: 0,
+        deliveryTime: undefined,
+        delivery_method: undefined,
+        items: [],
+        order_id: '',
+        pickupTime: undefined,
+        restaurant_id: 0,
+        status: undefined,
+        totalAmount: 0
+    });
+    console.log('order: ', order, paramsObject);
+    // const time = useMemo(() => {
+    //     return order.deliveryTime ? order.deliveryTime : order.pickupTime;
+    // }, [location.state, order]);
 
     const goPreviousPage = () => {
-        if (location.state?.skip_page) {
-            navigate(-2);
-        } else {
-            goBack();
-        }
+        // if (location.state?.skip_page) {
+        //     navigate(-2);
+        // } else {
+        goBack();
+        // }
     };
 
     const getDateWithMonth = (date: string) => {
@@ -50,17 +68,25 @@ export const GastronomyOrderPage: React.FC = () => {
     };
 
     const sendQuestion = () => {
-        if (!auth) return;
-        APIPostSendQuestion(order.order_id, auth.access_token)
+        if (!auth && !order) return;
+        APIPostSendQuestion(order.order_id, auth?.access_token)
             .then(() => showToast('Ваш вопрос отправлен администратору'))
             .catch(() => showToast('Произошла ошибка. Попробуйте еще раз.'));
     };
 
+    // useEffect(() => {
+    //     if (!order) {
+    //         goPreviousPage();
+    //     }
+    // }, [location.state, order]);
     useEffect(() => {
-        if (!order) {
-            goPreviousPage();
+        if (auth?.access_token) {
+            if (paramsObject.orderId) {
+                APIPostCheckGastronomyPayment(paramsObject.orderId, auth?.access_token)
+                    .then();
+            }
         }
-    }, [location.state, order]);
+    }, []);
     return (
         <>
             <GastronomyOrderPopup
@@ -97,12 +123,12 @@ export const GastronomyOrderPage: React.FC = () => {
                             <span>Способ получения</span>
                             <span>{order.delivery_method === 'delivery' ? 'Доставка' : 'Самовывоз'}, {order.deliveryAddress}</span>
                         </div>
-                        {time && (
-                            <div className={css.info_content}>
-                                <span>Дата и время</span>
-                                <span>{getDayOfWeek(time.date)}, {getDateWithMonth(time.date)}, {time.time}</span>
-                            </div>
-                        )}
+                        {/*{time && (*/}
+                        {/*    <div className={css.info_content}>*/}
+                        {/*        <span>Дата и время</span>*/}
+                        {/*        <span>{getDayOfWeek(time.date)}, {getDateWithMonth(time.date)}, {time.time}</span>*/}
+                        {/*    </div>*/}
+                        {/*)}*/}
                     </div>
                 </div>
                 <div className={css.bottom_buttons}>

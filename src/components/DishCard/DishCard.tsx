@@ -11,17 +11,19 @@ interface DishCardProps extends IDish {
     onClick?: () => void;
 }
 
-export const DishCard: React.FC<DishCardProps> = ({
-    id,
-    title,
-    prices,
-    weights,
-    image_url,
-    quantity,
-    onAdd,
-    onRemove,
-    onClick,
-}) => {
+export const DishCard: React.FC<DishCardProps> = (
+    {
+        id,
+        title,
+        prices,
+        weights,
+        image_url,
+        quantity,
+        onAdd,
+        onRemove,
+        onClick,
+    },
+) => {
     const defaultPrice = prices[0];
     const defaultWeight = weights[0];
 
