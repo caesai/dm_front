@@ -117,7 +117,6 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isS
                             </AnchorLink>
                         </SwiperSlide>
                     )}
-                    {isShow && (
                         <SwiperSlide style={{ width: 'fit-content' }}>
                             <AnchorLink href="#certificates" offset={160}>
                                 <div
@@ -130,7 +129,6 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isS
                                 </div>
                             </AnchorLink>
                         </SwiperSlide>
-                        )}
                     {isShow && (
                         <SwiperSlide style={{ width: 'fit-content' }}>
                             <AnchorLink href="#ny_cooking" offset={160}>
