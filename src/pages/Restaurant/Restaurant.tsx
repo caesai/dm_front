@@ -85,14 +85,14 @@ export const Restaurant = () => {
                     id,
                     bookedDate: bookingDate,
                     bookedTime: currentSelectedTime,
-                    sharedRestaurant: true
+                    sharedRestaurant: true,
                 },
             });
         } else {
             navigate(`/restaurant/${id}/booking`, {
                 state: {
                     bookedDate: bookingDate,
-                    bookedTime: currentSelectedTime
+                    bookedTime: currentSelectedTime,
                 },
             });
         }
@@ -103,31 +103,19 @@ export const Restaurant = () => {
      */
     const handleOpenYandexMaps = () => {
         window.open(
-            `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`
+            `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`,
         );
     };
 
     /**
-     * Проверяет, есть ли у пользователя доступ к платным событиям
-     * @returns {boolean} true если пользователь имеет доступ к платным событиям
-     */
-    const hasPaidEventsAccess = (): boolean => {
-        return Boolean(tg_id && mockEventsUsersList.includes(tg_id));
-    };
-
-    /**
-     * Фильтрует события в зависимости от доступа пользователя
+     * Фильтрует события без билетов
      * @returns {IEventInRestaurant[] | undefined} Отфильтрованный список событий
      */
     const getFilteredEvents = (): IEventInRestaurant[] | undefined => {
         if (!events) return undefined;
 
         return events.filter((event) => {
-            if (hasPaidEventsAccess()) {
-                return event.tickets_left > 0;
-            } else {
-                return event.tickets_left > 0 && event.ticket_price === 0;
-            }
+            return event.tickets_left > 0;
         });
     };
 
@@ -143,7 +131,7 @@ export const Restaurant = () => {
         const [longitude, latitude] = restaurant.address_lonlng.split(',').map(Number);
         return {
             longitude,
-            latitude: latitude - 0.0003 // Корректировка для смещения маркера
+            latitude: latitude - 0.0003, // Корректировка для смещения маркера
         };
     };
 
@@ -187,7 +175,6 @@ export const Restaurant = () => {
     const coordinates = useMemo(() => getRestaurantCoordinates(), [restaurant?.address_lonlng]);
     const hasBanquets = restaurant?.banquets && restaurant?.banquets.banquet_options.length > 0;
     const hasEvents = useMemo(() => Boolean(filteredEvents && filteredEvents.length > 0), [filteredEvents]);
-    const shouldShowCertificate = useMemo(() => hasPaidEventsAccess(), [tg_id]);
 
     return (
         <Page back={true}>
@@ -252,7 +239,7 @@ export const Restaurant = () => {
                     availableTimeslots={availableTimeslots}
                     setCurrentSelectedTime={setCurrentSelectedTime}
                     isNavigationLoading={events == null && restaurant?.banquets == null}
-                    isShow={hasPaidEventsAccess()}
+                    isShow={tg_id && mockEventsUsersList.includes(tg_id)}
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
                 />
@@ -271,12 +258,10 @@ export const Restaurant = () => {
 
                 {hasEvents && <EventsBlock events={events} />}
 
-                {shouldShowCertificate && (
-                    <CertificateBlock
-                        image={certificateBlock.image}
-                        description={certificateBlock.description}
-                    />
-                )}
+                <CertificateBlock
+                    image={certificateBlock.image}
+                    description={certificateBlock.description}
+                />
 
                 {tg_id && mockEventsUsersList.includes(tg_id) && restaurant && (
                     <GastronomyBlock

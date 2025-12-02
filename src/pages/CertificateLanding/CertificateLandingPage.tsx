@@ -68,7 +68,7 @@ const CertificateLandingPage: React.FC = () => {
     /**
      * Функция для подтверждения (клейма) владения сертификатом через API.
      * Отправляет запрос на сервер для регистрации текущего пользователя как получателя сертификата.
-     * После успешного выполнения обновляет локальный список сертификатов и управляет уведомлениями (тостами) об ошибках.
+     * После успешного выполнения обновляет локальный список сертификатов и управляет уведомлениями об ошибках.
      *
      * @function
      * @param {object} auth - Объект аутентификации, содержащий access_token.
@@ -78,28 +78,38 @@ const CertificateLandingPage: React.FC = () => {
      * @param {function} APIPostCertificateClaim - Функция API для клейма сертификата.
      * @param {function} APIGetCertificates - Функция API для получения списка сертификатов.
      * @param {function} setCertificates - Функция React state для обновления списка сертификатов.
-     * @param {function} setToastShow - Функция React state для управления видимостью тоста.
-     * @param {function} setToastMessage - Функция React state для установки сообщения тоста.
-     *
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    const acceptCertificate = useCallback(() => {
-        if (auth?.access_token && certificate && id) {
-            APIPostCertificateClaim(
-                String(auth?.access_token),
-                Number(user?.id),
-                id,
-                certificate.recipient_name,
-            )
-                .then(() => {
-                    // Обновляем список сертификатов в приложении
-                    APIGetCertificates(auth?.access_token, Number(user?.id))
-                        .then(response => setCertificates(response.data));
-                })
-                .catch(err => {
-                    console.log(err);
-                    showToast('Произошла ошибка. Попробуйте перезагрузить страницу');
-                });
+    const acceptCertificate = useCallback(async () => {
+        // Явное приведение типов в параметрах вызова API
+        const accessToken = auth?.access_token;
+        const userId = Number(user?.id);
+        const certId = id;
+
+        if (!accessToken || !certificate || !certId || !userId) {
+            // Ранний выход, если данные неполны
+            console.warn('Недостаточно данных для клейма сертификата.');
+            return;
+        }
+
+        try {
+            // 1. Клейм сертификата (основное действие)
+            await APIPostCertificateClaim(
+                String(accessToken),
+                userId,
+                certId,
+                certificate?.recipient_name,
+            );
+
+            // 2. Если клейм успешен, получаем обновленный список сертификатов
+            const response = await APIGetCertificates(accessToken, userId);
+            setCertificates(response.data);
+            showToast('Сертификат успешно активирован!'); // Можно добавить тост успеха
+
+        } catch (err) {
+            // Обработка ошибок как первого, так и второго запроса
+            console.error('Ошибка при работе с сертификатом:', err);
+            showToast('Произошла ошибка. Попробуйте перезагрузить страницу');
         }
     }, [
         auth,
@@ -111,6 +121,7 @@ const CertificateLandingPage: React.FC = () => {
         setCertificates,
         showToast,
     ]);
+
 
     const isCertificateUsed = useCallback(() => {
         if (!certificate) return true;

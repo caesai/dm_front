@@ -14,15 +14,29 @@ export interface CartItemProps {
     onRemove: () => void;
 }
 
+/**
+ * Форматирует вес, добавляя "г" если единица измерения отсутствует
+ */
+const formatWeight = (weight: string | undefined): string | undefined => {
+    if (!weight) return undefined;
+    // Если вес уже содержит единицы измерения (г, кг, л и т.д.), возвращаем как есть
+    if (/[а-яА-Яa-zA-Z]/.test(weight)) {
+        return weight;
+    }
+    // Иначе добавляем "г"
+    return `${weight} г`;
+};
+
 export const CartItem: React.FC<CartItemProps> = ({
     title,
     price,
-    // weight,
+    weight,
     image,
     quantity,
     onAdd,
     onRemove,
 }) => {
+    const formattedWeight = formatWeight(weight);
     return (
         <div className={css.item}>
             <div className={css.content}>
@@ -33,7 +47,12 @@ export const CartItem: React.FC<CartItemProps> = ({
                 <div className={css.info}>
                     <div className={css.details}>
                         <span className={css.title}>{title}</span>
-                        <span className={css.price}>{price} ₽</span>
+                        <div className={css.priceRow}>
+                            <span className={css.price}>{price} ₽</span>
+                            {formattedWeight && (
+                                <span className={css.weight}>{formattedWeight}</span>
+                            )}
+                        </div>
                     </div>
                     <div className={css.controls}>
                         <button className={css.controlButton} onClick={onRemove}>

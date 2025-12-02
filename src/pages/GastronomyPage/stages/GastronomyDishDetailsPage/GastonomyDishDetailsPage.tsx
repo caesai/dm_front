@@ -9,6 +9,19 @@ import css from './GastonomyDishDetailsPage.module.css';
 import { useAtom } from 'jotai';
 import { dishesListAtom } from '@/atoms/dishesListAtom.ts';
 
+/**
+ * Форматирует вес, добавляя "г" если единица измерения отсутствует
+ */
+const formatWeight = (weight: string | undefined): string | undefined => {
+    if (!weight) return undefined;
+    // Если вес уже содержит единицы измерения (г, кг, л и т.д.), возвращаем как есть
+    if (/[а-яА-Яa-zA-Z]/.test(weight)) {
+        return weight;
+    }
+    // Иначе добавляем "г"
+    return `${weight} г`;
+};
+
 export const GastonomyDishDetailsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -21,12 +34,21 @@ export const GastonomyDishDetailsPage: React.FC = () => {
     const [selectedWeightIndex, setSelectedWeightIndex] = useState(0);
     const [dishesList, setDishesList] = useState<IDish[]>([]);
 
+    // Логирование при рендере компонента
+    console.log('[GastonomyDishDetailsPage] Component rendered', { 
+        dishId: dishFromState?.id,
+        hasDish: !!dishFromState,
+        allergens: dishFromState?.allergens 
+    });
+
     if (!dishFromState) {
+        console.log('[GastonomyDishDetailsPage] No dish found in state');
         return <div>Блюдо не найдено</div>;
     }
 
     const quantity = getItemQuantity(dishFromState.id);
-    const selectedWeight = dishFromState.weights[selectedWeightIndex] || dishFromState.weights[0];
+    const rawSelectedWeight = dishFromState.weights[selectedWeightIndex] || dishFromState.weights[0];
+    const selectedWeight = formatWeight(rawSelectedWeight);
     const selectedPrice = dishFromState.prices[selectedWeightIndex] || dishFromState.prices[0];
     const hasMultipleWeights = dishFromState.weights.length > 1;
 
@@ -51,6 +73,32 @@ export const GastonomyDishDetailsPage: React.FC = () => {
         setDishesList(initialDishesList.filter((dish) => dish.id !== dishFromState.id));
     }, [initialDishesList, dishFromState.id]);
 
+    // Логирование данных блюда для отладки аллергенов
+    useEffect(() => {
+        console.log('[GastonomyDishDetailsPage] Component rendered with dish:', dishFromState?.id);
+        if (dishFromState) {
+            const allergenInfo = {
+                id: dishFromState.id,
+                title: dishFromState.title,
+                allergens: dishFromState.allergens,
+                allergensRaw: JSON.stringify(dishFromState.allergens),
+                allergensLength: dishFromState.allergens?.length,
+                allergensType: typeof dishFromState.allergens,
+                isArray: Array.isArray(dishFromState.allergens),
+                allergensDetails: dishFromState.allergens?.map((a: any, i: number) => ({
+                    index: i,
+                    allergen: a,
+                    name: a?.name,
+                    code: a?.code,
+                    nameType: typeof a?.name,
+                    nameLength: a?.name?.length,
+                    nameValue: String(a?.name),
+                })),
+            };
+            console.log('[GastonomyDishDetailsPage] Dish data from API:', allergenInfo);
+        }
+    }, [dishFromState]);
+
     return (
         <div className={css.page}>
             <div className={css.mainCard}>
@@ -65,7 +113,9 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                             <h2 className={css.dishTitle}>{dishFromState.title}</h2>
                             <span className={css.dishPrice}>{selectedPrice} ₽</span>
                         </div>
-                        <span className={css.selectedWeight}>{selectedWeight}</span>
+                        {selectedWeight && (
+                            <span className={css.selectedWeight}>{selectedWeight}</span>
+                        )}
                     </div>
 
                     {hasMultipleWeights && (
@@ -78,7 +128,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                                         className={index === selectedWeightIndex ? css.weightTagActive : css.weightTag}
                                         onClick={() => setSelectedWeightIndex(index)}
                                     >
-                                        {weight}
+                                        {formatWeight(weight)}
                                     </button>
                                 ))}
                             </div>
@@ -88,41 +138,63 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                     <div className={css.section}>
                         <span className={css.sectionTitle}>Описание</span>
                         <p className={css.sectionText}>
-                            {dishFromState.description}
+                            {(dishFromState as any).guest_title || dishFromState.description}
                         </p>
                     </div>
 
-                    <div className={css.section}>
-                        <span className={css.sectionTitle}>На 100 граммов</span>
-                        <div className={css.nutritionGrid}>
-                            <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.calories}</span>
-                                <span className={css.nutritionLabel}>ккал</span>
-                            </div>
-                            <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.proteins}</span>
-                                <span className={css.nutritionLabel}>белки</span>
-                            </div>
-                            <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.fats}</span>
-                                <span className={css.nutritionLabel}>жиры</span>
-                            </div>
-                            <div className={css.nutritionItem}>
-                                <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.carbs}</span>
-                                <span className={css.nutritionLabel}>углеводы</span>
+                    {dishFromState.nutritionPer100g?.calories && (
+                        <div className={css.section}>
+                            <span className={css.sectionTitle}>На 100 граммов</span>
+                            <div className={css.nutritionGrid}>
+                                <div className={css.nutritionItem}>
+                                    <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.calories}</span>
+                                    <span className={css.nutritionLabel}>ккал</span>
+                                </div>
+                                <div className={css.nutritionItem}>
+                                    <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.proteins}</span>
+                                    <span className={css.nutritionLabel}>белки</span>
+                                </div>
+                                <div className={css.nutritionItem}>
+                                    <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.fats}</span>
+                                    <span className={css.nutritionLabel}>жиры</span>
+                                </div>
+                                <div className={css.nutritionItem}>
+                                    <span className={css.nutritionValue}>{dishFromState.nutritionPer100g?.carbs}</span>
+                                    <span className={css.nutritionLabel}>углеводы</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className={css.section}>
                         <span className={css.sectionTitle}>Аллергены</span>
                         <p className={css.sectionText}>
-                            {dishFromState.allergens.map((allergen, index) => (
-                                <span key={allergen.code}>
-                                    {allergen.code} – {allergen.name}
-                                    {index < dishFromState.allergens.length - 1 ? ', ' : ''}
-                                </span>
-                            ))}
+                            {(() => {
+                                // Проверяем наличие аллергенов (как в замоканных данных: массив объектов с code и name)
+                                if (!dishFromState.allergens || !Array.isArray(dishFromState.allergens) || dishFromState.allergens.length === 0) {
+                                    return 'Нет';
+                                }
+                                
+                                // Обрабатываем аллергены по структуре замоканных данных: { code: string, name: string }
+                                const allergenNames: string[] = [];
+                                
+                                for (const allergen of dishFromState.allergens) {
+                                    // Проверяем, что аллерген - это объект (как в замоканных данных)
+                                    if (allergen && typeof allergen === 'object' && allergen !== null) {
+                                        // Проверяем наличие поля name (как в замоканных данных)
+                                        if (allergen.name && typeof allergen.name === 'string') {
+                                            const trimmedName = allergen.name.trim();
+                                            // Добавляем только непустые имена
+                                            if (trimmedName.length > 0) {
+                                                allergenNames.push(trimmedName);
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // Возвращаем имена через запятую или "Нет", если нет валидных аллергенов
+                                return allergenNames.length > 0 ? allergenNames.join(', ') : 'Нет';
+                            })()}
                         </p>
                     </div>
                 </div>
