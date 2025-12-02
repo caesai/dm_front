@@ -7,12 +7,12 @@ export const APIGetUserOrders = async (phone: string, token: string) => {
         `${BASE_URL}/culinary/orders`,
         {
             params: {
-                phone: phone
+                phone: phone,
             },
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-        }
+        },
     );
 };
 
@@ -26,7 +26,7 @@ export const APIGetGastronomyDishes = async (token: string, res_id?: string) => 
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-        }
+        },
     );
 };
 
@@ -37,7 +37,7 @@ export const APIPostUserOrder = async (data: ISendOrder, token: string) => {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-        }
+        },
     );
 };
 
@@ -48,7 +48,7 @@ export const APIPostSendQuestion = async (order_id: string, token: string) => {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-        }
+        },
     );
 };
 
@@ -58,12 +58,12 @@ export const APIPostCancelOrder = (order_id: string, token: string) => {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-        }
+        },
     );
 };
 
-export const APIPostCreatePayment = async (order_id: string, token: string) => {
-    return axios.post(`${BASE_URL}/culinary/orders/${order_id}/payment`, {
+export const APIPostCreateGastronomyPayment = async (order_id: string, token: string) => {
+    return axios.post(`${BASE_URL}/culinary/orders/payment`, {
             order_id,
             return_url: `${CLIENT_URL}/gastronomy/order/${order_id}`,
             // return_url: `https://dt-mini-app.local/dm_front/gastronomy/order/${order_id}`,
@@ -74,6 +74,29 @@ export const APIPostCreatePayment = async (order_id: string, token: string) => {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-        }
+        },
     );
-}
+};
+
+export const APIPostCheckGastronomyPayment = async (order_id: string, token: string) => {
+    return axios.post(`${BASE_URL}/culinary/orders/check-payment`, {
+            order_id,
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        },
+    );
+};
+
+export const APIGetGastronomyOrderById = async (order_id: string, token: string) => {
+    return axios.get(`${BASE_URL}/culinary/orders/get`, {
+        params: {
+            order_id,
+        },
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};

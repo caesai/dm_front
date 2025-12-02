@@ -86,7 +86,7 @@ export const APIPostCertificateShare = async (token: string, certificate_id: str
     })
 }
 
-export const APIPostCheckAlfaPayment = async (token: string, user_id: number, order_number: string, certificate_id: string) => {
+export const APIPostCertificateCheckPayment = async (token: string, user_id: number, order_number: string, certificate_id: string) => {
     return axios.post(`${BASE_URL}/alfabank/check-payment-status`, {
         order_number,
         user_id,
