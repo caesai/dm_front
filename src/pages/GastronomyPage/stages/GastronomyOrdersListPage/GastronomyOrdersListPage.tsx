@@ -6,9 +6,13 @@ import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import useToastState from '@/hooks/useToastState.ts';
 import { APIGetUserOrders } from '@/api/gastronomy.api.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { getRestaurantAddressById } from '@/utils.ts';
 
 export const GastronomyOrdersListPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
+    const [restaurantsList] = useAtom(restaurantsListAtom)
+
     const navigate = useNavigate();
     const { showToast } = useToastState();
 
@@ -46,7 +50,9 @@ export const GastronomyOrdersListPage: React.FC = () => {
                         <div className={css.order_content} key={order.order_id}>
                             <div className={css.order}>
                                 <span className={css.order_title}>Заказ {order.order_id}</span>
-                                <span className={css.order_text}>{order.delivery_address}</span>
+                                <span className={css.order_text}>
+                                    {order.delivery_address ? order.delivery_address : getRestaurantAddressById(order.restaurant_id, restaurantsList)}
+                                </span>
                             </div>
                             <button
                                 className={css.order_button}
