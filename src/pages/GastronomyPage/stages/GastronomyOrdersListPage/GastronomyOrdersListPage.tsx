@@ -3,12 +3,11 @@ import css from './GastronomyOrdersList.module.css';
 import { useNavigate } from 'react-router-dom';
 import { IOrder } from '@/types/gastronomy.types.ts';
 import { useAtom } from 'jotai';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { authAtom } from '@/atoms/userAtom.ts';
 import useToastState from '@/hooks/useToastState.ts';
 import { APIGetUserOrders } from '@/api/gastronomy.api.ts';
 
 export const GastronomyOrdersListPage: React.FC = () => {
-    const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
     const { showToast } = useToastState();
@@ -20,8 +19,8 @@ export const GastronomyOrdersListPage: React.FC = () => {
     };
 
     useEffect(() => {
-        if (user && user.phone_number && auth) {
-            APIGetUserOrders(user.phone_number, auth?.access_token)
+        if (auth?.access_token) {
+            APIGetUserOrders(auth?.access_token)
                 .then((res) => {
                     setOrdersList(res.data);
                 })
@@ -31,7 +30,7 @@ export const GastronomyOrdersListPage: React.FC = () => {
                     }
                 });
         }
-    }, [user, auth?.access_token]);
+    }, [auth?.access_token]);
 
     useEffect(() => {
         if (ordersList.length === 1) {
