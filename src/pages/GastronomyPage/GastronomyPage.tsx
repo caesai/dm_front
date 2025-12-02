@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classnames from 'classnames';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
@@ -6,8 +6,12 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Page } from '@/components/Page.tsx';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
+import { useAtom } from 'jotai';
+import { dishesListAtom } from '@/atoms/dishesListAtom.ts';
 
 export const GastronomyPage: React.FC = () => {
+    const [, setDishesList] = useAtom(dishesListAtom);
+
     const { goBack } = useNavigationHistory();
     const location = useLocation();
 
@@ -34,6 +38,12 @@ export const GastronomyPage: React.FC = () => {
 
     const isBasketPage = location.pathname.includes('/basket');
     const isDishDetailsPage = location.pathname.includes('/dish/');
+
+    useEffect(() => {
+        return () => {
+            setDishesList([]);
+        };
+    }, [setDishesList]);
 
     return (
         <Page back={true}>

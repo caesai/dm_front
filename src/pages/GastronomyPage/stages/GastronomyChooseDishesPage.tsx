@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
 import { DishCard } from '@/components/DishCard/DishCard.tsx';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
@@ -8,6 +8,7 @@ import { IDish } from '@/types/gastronomy.types.ts';
 import { APIGetGastronomyDishes } from '@/api/gastronomy.api.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
+import { dishesListAtom } from '@/atoms/dishesListAtom.ts';
 
 export const GastronomyChooseDishesPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
@@ -15,7 +16,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
 
-    const [dishesList, setDishesList] = useState<IDish[]>([]);
+    const [dishesList, setDishesList] = useAtom(dishesListAtom);
 
     const handleCartClick = () => {
         navigate(`/gastronomy/${res_id}/basket`);
@@ -30,19 +31,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
     useEffect(() => {
         if (!auth) return;
         APIGetGastronomyDishes(auth.access_token, res_id)
-            .then((res) => {
-                // TODO: Remove this logic once prices are set in the database
-                const processedDishes = res.data.map((dish) => {
-                    if (dish.prices.length === 0) {
-                        return {
-                            ...dish,
-                            prices: [1000],
-                        };
-                    }
-                    return dish;
-                });
-                setDishesList(processedDishes);
-            })
+            .then((res) => setDishesList(res.data))
             .catch((err) => console.error(err));
     }, [auth, res_id]);
 
