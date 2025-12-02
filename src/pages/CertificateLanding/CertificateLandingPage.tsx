@@ -223,7 +223,7 @@ const CertificateLandingPage: React.FC = () => {
                 btnText={'Зарегистрироваться'}
                 btnAction={goToOnboarding}
                 btnScndrText={'Покажу официанту'}
-                btnScndrAction={toggle}
+                // btnScndrAction={toggle}
                 btnsColumn={true}
             />
             <section className={css.container}>
