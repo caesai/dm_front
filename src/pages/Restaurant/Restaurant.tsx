@@ -263,7 +263,7 @@ export const Restaurant = () => {
                     description={certificateBlock.description}
                 />
 
-                {tg_id && mockEventsUsersList.includes(tg_id) && restaurant && (
+                {restaurant && (
                     <GastronomyBlock
                         description={nyCookings.description}
                         image={nyCookings.image}
