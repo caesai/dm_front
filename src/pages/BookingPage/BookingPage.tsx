@@ -33,7 +33,6 @@ import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import classNames from 'classnames';
 import css from './BookingPage.module.css';
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 import { APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
 import useToastState from '@/hooks/useToastState.ts';
@@ -98,7 +97,7 @@ export const BookingPage: FC = () => {
     const [certificate_id, setCertificateId] = useState<string | null>(null);
     const bookingBtn = useRef<HTMLDivElement>(null);
 
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
+    // const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
     const state = location.state;
 
     useEffect(() => {
@@ -289,7 +288,7 @@ export const BookingPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    {tg_id && mockEventsUsersList.includes(tg_id) && <CertificatesSelector setCertificateId={setCertificateId} isOpened={state?.certificate} selectedCertificateId={state?.certificateId}/>}
+                    <CertificatesSelector setCertificateId={setCertificateId} isOpened={state?.certificate} selectedCertificateId={state?.certificateId}/>
                     <BookingWish guestCount={guestCount} childrenCount={childrenCount} preOrder={preOrder} setPreOrder={setPreOrder} restaurant={restaurant.value} commentary={commentary} setCommentary={setCommentary} />
                     <ContentContainer>
                         <HeaderContainer>

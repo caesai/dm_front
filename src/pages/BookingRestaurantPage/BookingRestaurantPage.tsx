@@ -44,7 +44,6 @@ import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
 import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 const confirmationList: IConfirmationType[] = [
@@ -214,8 +213,6 @@ export const BookingRestaurantPage: FC = () => {
         }
     };
 
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
-
     return (
         <Page back={true}>
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount} botError={botError}/>
@@ -303,7 +300,7 @@ export const BookingRestaurantPage: FC = () => {
                     ) : (
                         <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    {tg_id && mockEventsUsersList.includes(tg_id) && <CertificatesSelector setCertificateId={setCertificateId} isOpened={false} selectedCertificateId={null} />}
+                    <CertificatesSelector setCertificateId={setCertificateId} isOpened={false} selectedCertificateId={null} />
                     <BookingWish
                         guestCount={guestCount}
                         childrenCount={childrenCount}

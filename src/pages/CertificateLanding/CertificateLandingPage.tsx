@@ -78,8 +78,6 @@ const CertificateLandingPage: React.FC = () => {
      * @param {function} APIPostCertificateClaim - Функция API для клейма сертификата.
      * @param {function} APIGetCertificates - Функция API для получения списка сертификатов.
      * @param {function} setCertificates - Функция React state для обновления списка сертификатов.
-     * @param {function} showToast - Функция для отображения уведомлений (заменил оригинальные setToastShow/Message на единую showToast для чистоты примера).
-     *
      * @returns {Promise<void>}
      */
     const acceptCertificate = useCallback(async () => {

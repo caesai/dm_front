@@ -1,4 +1,4 @@
-import {FC, useEffect, useRef, useState} from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import css from '@/pages/BookingPage/BookingPage.module.css';
 
 import { Page } from '@/components/Page.tsx';
@@ -16,7 +16,9 @@ import {
     getGuestsString,
     getTimeShort,
 } from '@/utils.ts';
-import { BookingGuestCountSelectorPopup } from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
+import {
+    BookingGuestCountSelectorPopup,
+} from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
@@ -44,7 +46,6 @@ import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 const confirmationList: IConfirmationType[] = [
@@ -72,7 +73,7 @@ export const BookingFreeEventPage: FC = () => {
     // Global state atoms
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
-    const [comms] = useAtom(commAtom)
+    const [comms] = useAtom(commAtom);
     const [guestCount, setGuestCount] = useState(0);
     const [childrenCount, setChildrenCount] = useState(0);
     const [date, setDate] = useState<PickerValueObj>({
@@ -108,8 +109,8 @@ export const BookingFreeEventPage: FC = () => {
                         res.data.map((v) => ({
                             title: formatDate(v),
                             value: v,
-                        }))
-                    )
+                        })),
+                    ),
             )
             : null;
     }, [guestCount, id]);
@@ -124,14 +125,14 @@ export const BookingFreeEventPage: FC = () => {
             return;
         }
         setTimeslotsLoading(true);
-            APIGetAvailableEventTimeSlots(
-                auth.access_token,
-                Number(id),
-                guestCount,
-                Number(eventId)
-            )
-                .then((res) => setAvailableTimeslots(res.data.timeslots))
-                .finally(() => setTimeslotsLoading(false));
+        APIGetAvailableEventTimeSlots(
+            auth.access_token,
+            Number(id),
+            guestCount,
+            Number(eventId),
+        )
+            .then((res) => setAvailableTimeslots(res.data.timeslots))
+            .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount]);
 
 
@@ -141,7 +142,7 @@ export const BookingFreeEventPage: FC = () => {
             setDate(eventDate);
             setCurrentSelectedTime(eventTime);
         }
-    },[state]);
+    }, [state]);
 
     // Validation methods
     const [nameValidatedDisplay, setNameValidated] = useState(true);
@@ -149,11 +150,11 @@ export const BookingFreeEventPage: FC = () => {
     const [dateValidatedDisplay, setDateValidated] = useState(true);
     const [, setSelectedTimeValidated] = useState(true);
     const [guestsValidatedDisplay, setGuestsValidated] = useState(true);
-    const { isFormValid, validateForm  } = useBookingFormValidation(
+    const { isFormValid, validateForm } = useBookingFormValidation(
         // Pass the raw values
         { userName, userPhone, currentSelectedTime, guestCount, date },
         // Pass the setters for the *display* states
-        { setNameValidated, setPhoneValidated, setDateValidated, setGuestsValidated, setSelectedTimeValidated }
+        { setNameValidated, setPhoneValidated, setDateValidated, setGuestsValidated, setSelectedTimeValidated },
     );
 
     const createBooking = () => {
@@ -178,7 +179,7 @@ export const BookingFreeEventPage: FC = () => {
                 confirmation.text,
                 (guestCount + childrenCount) < 8 ? false : preOrder,
                 Number(eventId),
-                certificate_id
+                certificate_id,
             )
                 .then((res) => {
                     if (res.data?.error) {
@@ -197,11 +198,10 @@ export const BookingFreeEventPage: FC = () => {
         }
     };
 
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
-
     return (
         <Page back={true}>
-            <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount} botError={botError}/>
+            <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount}
+                               botError={botError} />
             <BookingGuestCountSelectorPopup
                 guestCount={guestCount}
                 childrenCount={childrenCount}
@@ -248,10 +248,10 @@ export const BookingFreeEventPage: FC = () => {
                                 <div className={classNames(css.header__selector)}>
                                     <DropDownSelect
                                         title={date.value !== 'unset' ? formatDateShort(
-                                            date.value
+                                            date.value,
                                         ) : 'Дата'}
                                         isValid={dateValidatedDisplay}
-                                        icon={<CalendarIcon size={24}/>}
+                                        icon={<CalendarIcon size={24} />}
                                         // onClick={() =>
                                         //     !isFreeEventBooking && setBookingDatePopup(true)
                                         // }
@@ -259,7 +259,7 @@ export const BookingFreeEventPage: FC = () => {
                                     <DropDownSelect
                                         title={guestCount ? getGuestsString(guestCount + childrenCount) : 'Гости'}
                                         isValid={guestsValidatedDisplay}
-                                        icon={<UsersIcon size={24}/>}
+                                        icon={<UsersIcon size={24} />}
                                         onClick={() =>
                                             setGuestCountPopup(!guestCountPopup)
                                         }
@@ -278,9 +278,12 @@ export const BookingFreeEventPage: FC = () => {
                             </div>
                         </ContentContainer>
                     ) : (
-                        <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
+                        <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots}
+                                   currentSelectedTime={currentSelectedTime}
+                                   setCurrentSelectedTime={setCurrentSelectedTime} />
                     )}
-                    {tg_id && mockEventsUsersList.includes(tg_id) && <CertificatesSelector isOpened={state?.certificate} setCertificateId={setCertificateId} selectedCertificateId={null} />}
+                    <CertificatesSelector isOpened={state?.certificate} setCertificateId={setCertificateId}
+                                          selectedCertificateId={null} />
                     <BookingWish
                         guestCount={guestCount}
                         childrenCount={childrenCount}

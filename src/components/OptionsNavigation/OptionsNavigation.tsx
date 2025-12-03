@@ -3,8 +3,6 @@ import {
 } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
 import { PrivelegiesPopup } from '@/components/PrivelegiesPopup/PrivelegiesPopup.tsx';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import eventBg from '/img/events.jpg';
 import neweventBg from '/img/gastro_btn.png';
 import gastroBtn from '/img/gastro_btn1.png';
 import gastroBtn2 from '/img/gastro_btn2.png';
@@ -29,7 +27,6 @@ export const OptionsNavigation = () => {
                     link={'/gastronomy/choose'}
                 />
             )}
-            {tg_id && mockEventsUsersList.includes(tg_id) && (
                 <div style={{ display: 'flex', gap: 8 }}>
                     <OptionsNavigationElement
                         title={'Подарочные сертификаты'}
@@ -44,8 +41,6 @@ export const OptionsNavigation = () => {
                         link={'/banquets/:id/address'}
                     />
                 </div>
-            )}
-            {tg_id && mockEventsUsersList.includes(tg_id) && (
                 <OptionsNavigationElement
                     title={'Гастро-события'}
                     subtitle={'От уютных ужинов до шумных вечеринок'}
@@ -54,14 +49,6 @@ export const OptionsNavigation = () => {
                     textWrapperClassName={css.eventsTextWrapper}
                     link={'/events'}
                 />
-            )}
-            {tg_id && !mockEventsUsersList.includes(tg_id) && (
-                <div style={{ height: 85 }}>
-                    <Link to={'/events'}>
-                        <img src={eventBg} style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }} alt={''} />
-                    </Link>
-                </div>
-            )}
 
             {/*{user?.username && ['w0esofwit','egormk', 'iliathoughts', 'Sushkazzlo'].includes(user?.username) && (*/}
             {/*    <div style={{ display: 'flex', width: '50%'}}>*/}
