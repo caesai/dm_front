@@ -165,10 +165,11 @@ export const BanquetOptionPage = () => {
     }
 
     const getMinTimeForStart = () => {
+        console.log('date: ', workTime)
       if (date) {
         // Start and end of restaurant working day
-        const dayEnd = workTime[date.getDay()].time_end;
-        const dayStart = workTime[date.getDay()].time_start;
+        const dayEnd = workTime[date.getDay()]?.time_end;
+        const dayStart = workTime[date.getDay()]?.time_start;
         const { max_duration } = banquet;
 
         // If max_duration is set, calculate the most earliest start time

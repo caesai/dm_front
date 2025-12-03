@@ -100,12 +100,19 @@ const CertificateLandingPage: React.FC = () => {
                 certId,
                 certificate?.recipient_name,
             );
-
             // 2. Если клейм успешен, получаем обновленный список сертификатов
-            const response = await APIGetCertificates(accessToken, userId);
-            setCertificates(response.data);
+            const results = await Promise.all(
+                [
+                    APIGetCertificates(accessToken, userId),
+                    APIGetCertificateById(auth.access_token, id),
+                ],
+            );
+            // const updatedCertificatesList = await APIGetCertificates(accessToken, userId);
+            setCertificates(results[0].data);
+            // // 3. Обновляем сертификат на странице
+            // const updatedCertificate = await APIGetCertificateById(auth.access_token, id);
+            setCertificate(results[1].data);
             showToast('Сертификат успешно активирован!'); // Можно добавить тост успеха
-
         } catch (err) {
             // Обработка ошибок как первого, так и второго запроса
             console.error('Ошибка при работе с сертификатом:', err);
@@ -160,10 +167,11 @@ const CertificateLandingPage: React.FC = () => {
             setLoading(false);
             return;
         }
-
+        console.log('certificate.status: ', certificate.status);
         // 2. Логика для зарегистрированного и прошедшего онбординг пользователя (user.complete_onboarding === true)
         if (user?.complete_onboarding) {
             if (!certificate?.shared_at) {
+                console.log('certificate?.shared_at: ', certificate?.shared_at);
                 // Сертификат куплен пользователем (не подарен/не принят ранее)
                 if (certificate?.customer_id === user.id) {
                     // Пользователь — владелец. Ничего не делаем.
@@ -171,8 +179,8 @@ const CertificateLandingPage: React.FC = () => {
                     return;
                 } else {
                     // Сертификат куплен другим пользователем, но еще не принят этим
-                    acceptCertificate();
                     setLoading(false);
+                    acceptCertificate();
                     return;
                 }
             } else {
@@ -198,6 +206,43 @@ const CertificateLandingPage: React.FC = () => {
             }
         }
     }, [certificate, user, isCertificateDisabled, acceptCertificate, navigate, setLoading]);
+
+    // useEffect(() => {
+    //     // 1. Предварительные проверки и выход
+    //     if (!user || !certificate || isCertificateDisabled()) {
+    //         setLoading(false);
+    //         return;
+    //     }
+    //
+    //     // Локальная функция, которая выполняет логику принятия,
+    //     // используя колбэк из пропсов/контекста, но не вызывая его напрямую по имени
+    //     const handleAutoAccept = async () => {
+    //         // Используем оригинальную функцию acceptCertificate, но вызываем ее внутри
+    //         // единожды при выполнении условий.
+    //         // Мы полагаемся на то, что после вызова acceptCertificate
+    //         // состояние certificate изменится и useEffect в следующий раз пойдет по другому пути.
+    //         await acceptCertificate();
+    //     }
+    //
+    //     // 2. Логика для зарегистрированного и прошедшего онбординг пользователя (user.complete_onboarding === true)
+    //     if (user?.complete_onboarding) {
+    //         if (!certificate?.shared_at) {
+    //             // Сертификат куплен другим пользователем, но еще не принят этим
+    //             if (certificate?.customer_id !== user.id) {
+    //                 handleAutoAccept(); // <-- Вызываем локальный обработчик
+    //                 // Важно: setLoading(false) должен быть вызван либо внутри handleAutoAccept
+    //                 // (после завершения асинхронной операции), либо в отдельном эффекте/логике,
+    //                 // которая срабатывает, когда статус сертификата изменится на "принятый".
+    //                 return; // Выходим пока ждем обновления данных
+    //             }
+    //         }
+    //     }
+    //
+    //     // В остальных случаях загрузка завершена
+    //     setLoading(false);
+    //
+    // }, [certificate, user, isCertificateDisabled, acceptCertificate, navigate, setLoading]); // Зависимости остаются прежними
+
 
     const goHome = () => {
         navigate('/');
@@ -244,9 +289,10 @@ const CertificateLandingPage: React.FC = () => {
                         {isCertificateDisabled() ? (
                             isCertificateExpired() ? (
                                 <h1>У данного сертификата истек срок действия</h1>
-                                ) : (
-                                    <h1>Данный подарочный сертификат {isCertificateUsed() ? 'использован' : 'используется'}</h1>
-                                )
+                            ) : (
+                                <h1>Данный подарочный
+                                    сертификат {isCertificateUsed() ? 'использован' : 'используется'}</h1>
+                            )
                         ) : (
                             <h1>
                                 Подарочный сертификат <br /> в любой ресторан Dreamteam

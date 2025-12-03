@@ -49,11 +49,13 @@ export const BanquetAddressPage: React.FC = () => {
 
     const goNextPage = () => {
         if (!isDisabledButton) {
+            const workTime = restaurantsList.find(item => item.id === Number(currentRestaurant.value))?.worktime;
             if (user?.complete_onboarding) {
                 navigate(`/banquets/${currentRestaurant.value}/choose`, {
                     state: {
                         ...location.state,
                         banquets,
+                        workTime
                     },
                 });
             } else {
@@ -62,6 +64,7 @@ export const BanquetAddressPage: React.FC = () => {
                         ...location.state,
                         id: currentRestaurant.value,
                         banquets,
+                        workTime,
                         sharedBanquet: true,
                     },
                 });
