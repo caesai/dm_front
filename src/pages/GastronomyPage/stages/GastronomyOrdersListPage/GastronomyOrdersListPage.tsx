@@ -11,7 +11,7 @@ import { getRestaurantAddressById } from '@/utils.ts';
 
 export const GastronomyOrdersListPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
-    const [restaurantsList] = useAtom(restaurantsListAtom)
+    const [restaurantsList] = useAtom(restaurantsListAtom);
 
     const navigate = useNavigate();
     const { showToast } = useToastState();

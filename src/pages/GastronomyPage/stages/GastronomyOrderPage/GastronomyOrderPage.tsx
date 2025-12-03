@@ -20,7 +20,7 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 
 export const GastronomyOrderPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
-    const [restaurantsList] = useAtom(restaurantsListAtom)
+    const [restaurantsList] = useAtom(restaurantsListAtom);
     // params - используем когда перешли на страницу после платежа
     const [params] = useSearchParams();
     const paramsObject = Object.fromEntries(params.entries());
