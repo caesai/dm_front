@@ -25,6 +25,7 @@ export const mockGastronomyListData: IDish[] = [
             { code: 'D', name: 'сельдерей' },
             { code: 'E', name: 'чеснок' },
         ],
+        restaurant_id: 0
     },
     {
         id: 2,
@@ -42,6 +43,7 @@ export const mockGastronomyListData: IDish[] = [
         allergens: [
             { code: 'F1', name: 'ракообразные' },
         ],
+        restaurant_id: 0
     },
     {
         id: 3,
@@ -59,6 +61,7 @@ export const mockGastronomyListData: IDish[] = [
         allergens: [
             { code: 'A1', name: 'молоко' },
         ],
+        restaurant_id: 0
     },
 ];
 
@@ -119,6 +122,7 @@ export const mockDish: IDish = {
         { code: 'D', name: 'сельдерей' },
         { code: 'E', name: 'чеснок' },
     ],
+    restaurant_id: 0
 };
 
 // МКАД coordinates for Moscow delivery zone
