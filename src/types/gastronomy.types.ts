@@ -12,13 +12,23 @@ export interface IAllergen {
 
 export interface IDish {
     id: number;
+    restaurant_id: number;
     title: string;
+    guest_title?: string;
+    description: string;
+    allergens: string[] | IAllergen[]; // Может быть массивом строк или объектов
     prices: number[];
     weights: string[];
+    weight_value?: string;
+    calories?: number; // КБЖУ напрямую в объекте
+    proteins?: number;
+    fats?: number;
+    carbohydrates?: number;
+    priority?: number;
     image_url: string;
-    description: string;
-    nutritionPer100g: INutritionInfo;
-    allergens: IAllergen[];
+    is_active?: boolean;
+    // Старые поля для обратной совместимости
+    nutritionPer100g?: INutritionInfo;
 }
 
 export type TDeliveryMethod = "pickup" | "delivery";

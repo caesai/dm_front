@@ -58,8 +58,6 @@ export const GastronomyBasketPage: React.FC = () => {
     const suggestionsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { showToast } = useToast();
 
-    const deliveryFee = 1500;
-
     // Получаем информацию о ресторане
     const restaurant = useMemo(() => {
         if (!res_id) return null;
@@ -68,15 +66,66 @@ export const GastronomyBasketPage: React.FC = () => {
 
     const restaurantAddress = restaurant?.address || 'Адрес не указан';
 
-    // Генерируем доступные даты
+    // Стоимость доставки: 0 для restaurant_id 11, 1500 для остальных
+    const deliveryFee = useMemo(() => {
+        if (restaurant?.id === 11) {
+            return 0;
+        }
+        return 1500;
+    }, [restaurant?.id]);
+    
+    // Текст для доставки
+    const deliveryText = useMemo(() => {
+        if (restaurant?.id === 11) {
+            return 'Доставляем заказы только на Петроградской стороне';
+        }
+        // Проверяем, находится ли ресторан в Питере (по city)
+        const cityName = restaurant?.city?.name || '';
+        const isPetersburg = cityName.toLowerCase().includes('петербург') || 
+                            cityName.toLowerCase().includes('санкт');
+        if (isPetersburg) {
+            return 'В пределах КАД';
+        }
+        return 'в пределах МКАД';
+    }, [restaurant]);
+    
+    // Минимальная сумма заказа
+    const minOrderAmount = useMemo(() => {
+        if (deliveryMethod === 'pickup') {
+            return 0;
+        }
+        // Для доставки
+        if (restaurant?.id === 11) {
+            return 10000; // Smoke BBQ Лодейнопольская
+        }
+        // Проверяем, является ли ресторан Smoke BBQ Рубинштейна
+        const isRubinstein = restaurant?.title?.toLowerCase().includes('рубинштейн');
+        if (isRubinstein) {
+            return 5000;
+        }
+        return 3000; // Для остальных ресторанов
+    }, [deliveryMethod, restaurant]);
+
+    // Генерируем доступные даты (не день в день)
     const availableDates = useMemo(() => {
         const dates: PickerValueObj[] = [];
-        const startDate = new Date(2025, 11, 25); // 25 декабря 2025
-        const endDate = deliveryMethod === 'delivery'
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // Минимальная дата - завтра (не день в день)
+        const minDate = new Date(today);
+        minDate.setDate(today.getDate() + 1);
+        
+        // Максимальная дата в зависимости от способа доставки
+        const maxDate = deliveryMethod === 'delivery' 
             ? new Date(2025, 11, 30) // 30 декабря для доставки
             : new Date(2025, 11, 31); // 31 декабря для самовывоза
-
-        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        
+        // Начальная дата - максимум из минимальной даты и 25 декабря
+        const startDate = new Date(2025, 11, 25);
+        const actualStartDate = minDate > startDate ? minDate : startDate;
+        
+        for (let d = new Date(actualStartDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
             const dateStr = d.toISOString().split('T')[0];
             dates.push({
                 title: formatDate(dateStr),
@@ -366,7 +415,7 @@ export const GastronomyBasketPage: React.FC = () => {
         APIPostUserOrder({
             items: cart.items,
             restaurant_id: Number(res_id),
-            delivery_cost: deliveryFee,
+            delivery_cost: deliveryMethod === 'pickup' ? 0 : deliveryFee,
             delivery_method: deliveryMethod,
             total_amount: cart.totalAmount,
             delivery_address: deliveryMethod === 'delivery' ? address : undefined,
@@ -407,13 +456,15 @@ export const GastronomyBasketPage: React.FC = () => {
     const isFormValid = () => {
         const isDateSelected = selectedDate && selectedDate.value !== 'unset';
         const isTimeSelected = selectedTime.length > 0;
-        const isMinAmount = cart.totalAmount >= 3000;
+        const isMinAmountValid = cart.totalAmount >= minOrderAmount;
 
         if (deliveryMethod === 'delivery') {
-            return address.length > 0 && isDateSelected && isTimeSelected && isMinAmount;
+            return address.length > 0 && isDateSelected && isTimeSelected && isMinAmountValid;
         }
-        return isDateSelected && isTimeSelected && isMinAmount;
+        return isDateSelected && isTimeSelected && isMinAmountValid;
     };
+    
+    const showMinAmountError = cart.totalAmount < minOrderAmount && minOrderAmount > 0;
 
     if (loading) {
         return <div className={css.loader}><Loader /></div>;
@@ -457,7 +508,7 @@ export const GastronomyBasketPage: React.FC = () => {
         <div className={css.page}>
             <div className={css.content}>
                 {/* Сумма заказа */}
-                <div className={css.section}>
+                <div className={`${css.section} ${css.sectionFirst}`}>
                     <h2 className={css.sectionTitle}>Сумма заказа</h2>
                     <div className={css.itemsList}>
                         {cart.items.map((item) => (
@@ -468,12 +519,12 @@ export const GastronomyBasketPage: React.FC = () => {
                                     // TODO: Проверить типы IDish ICartItem
                                     addToCart({
                                         id: item.id,
+                                        restaurant_id: restaurant?.id || 0,
                                         title: item.title,
                                         prices: [item.price],
                                         weights: [item.weight],
                                         image_url: item.image,
                                         description: '',
-                                        nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
                                         allergens: [],
                                     }, 0);
                                 }}
@@ -540,8 +591,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.section}>
                         <h2 className={css.sectionTitle}>Адрес доставки</h2>
                         <div className={css.deliveryInfo}>
-                            <span
-                                className={css.deliveryLabel}>{(currentCity === 'moscow' || currentCity === 'spb') && `в пределах ${currentCity === 'moscow' ? 'МКАД' : 'КАД'}`}</span>
+                            <span className={css.deliveryLabel}>{deliveryText}</span>
                             <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
                         </div>
                         <div className={css.inputWrapper}>
@@ -567,13 +617,13 @@ export const GastronomyBasketPage: React.FC = () => {
                             {addressSuggestions.length > 0 && (
                                 <div className={css.suggestions}>
                                     {addressSuggestions.map((suggestion, idx) => (
-                                        <div
-                                            key={idx}
-                                            className={css.suggestion}
+                                            <div
+                                                key={idx}
+                                                className={css.suggestion}
                                             onClick={() => handleSelectAddress(suggestion)}
-                                        >
+                                            >
                                             {suggestion.displayName}
-                                        </div>
+                                            </div>
                                     ))}
                                 </div>
                             )}
@@ -649,12 +699,17 @@ export const GastronomyBasketPage: React.FC = () => {
 
             {/* Кнопка оплаты */}
             <div className={css.buttonContainer}>
+                {showMinAmountError && (
+                    <p className={css.minAmountError}>
+                        Минимальная сумма заказа {minOrderAmount} ₽
+                    </p>
+                )}
                 <button
                     className={isFormValid() ? css.primaryButton : css.secondaryButton}
                     onClick={handlePayment}
                     disabled={!isFormValid()}
                 >
-                    К оплате
+                    {loading ? <Loader/> : 'К оплате'}
                 </button>
             </div>
 
