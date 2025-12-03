@@ -5,30 +5,23 @@ export interface INutritionInfo {
     carbs: string;
 }
 
-export interface IAllergen {
-    code: string;
-    name: string;
-}
-
 export interface IDish {
     id: number;
     restaurant_id: number;
     title: string;
     guest_title?: string;
     description: string;
-    allergens: string[] | IAllergen[]; // Может быть массивом строк или объектов
+    allergens: string[];
     prices: number[];
     weights: string[];
     weight_value?: string;
-    calories?: number; // КБЖУ напрямую в объекте
+    calories?: number;
     proteins?: number;
     fats?: number;
     carbohydrates?: number;
     priority?: number;
     image_url: string;
     is_active?: boolean;
-    // Старые поля для обратной совместимости
-    nutritionPer100g?: INutritionInfo;
 }
 
 export type TDeliveryMethod = "pickup" | "delivery";

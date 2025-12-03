@@ -524,7 +524,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                         prices: [item.price],
                                         weights: [item.weight],
                                         image_url: item.image,
-                                        description: '',
+                                        description: '',  // Описание и аллергены не нужны для корзины
                                         allergens: [],
                                     }, 0);
                                 }}
