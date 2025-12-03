@@ -41,13 +41,13 @@ export interface ISendOrder {
     total_amount: number;
     delivery_method: TDeliveryMethod;
     delivery_address?: string;
+    delivery_time?: ITimeWindow;
+    pickup_time?: ITimeWindow;
     delivery_cost: number;
 }
 
 export interface IOrder extends ISendOrder {
     order_id: string;
     status: "paid" | "pending" | "canceled";
-    pickup_time?: ITimeWindow;
-    delivery_time?: ITimeWindow;
     createdAt: string;
 }
