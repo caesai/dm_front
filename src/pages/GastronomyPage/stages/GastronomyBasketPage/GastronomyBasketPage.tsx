@@ -512,13 +512,8 @@ export const GastronomyBasketPage: React.FC = () => {
                                             weights: [item.weight],
                                             image_url: item.image,
                                             description: '',
-                                            nutritionPer100g: {
-                                                calories: '',
-                                                proteins: '',
-                                                fats: '',
-                                                carbs: '',
-                                            },
                                             allergens: [],
+                                            restaurant_id: 0
                                         },
                                         0
                                     );
