@@ -100,12 +100,17 @@ const CertificateLandingPage: React.FC = () => {
                 certId,
                 certificate?.recipient_name,
             );
-
+            const results = await Promise.all(
+                [
+                    APIGetCertificates(accessToken, userId),
+                    APIGetCertificateById(auth.access_token, id),
+                ],
+            );
             // 2. Если клейм успешен, получаем обновленный список сертификатов
-            const response = await APIGetCertificates(accessToken, userId);
-            setCertificates(response.data);
+            setCertificates(results[0].data);
+            // // 3. Обновляем сертификат на странице
+            setCertificate(results[1].data);
             showToast('Сертификат успешно активирован!'); // Можно добавить тост успеха
-
         } catch (err) {
             // Обработка ошибок как первого, так и второго запроса
             console.error('Ошибка при работе с сертификатом:', err);
@@ -121,7 +126,6 @@ const CertificateLandingPage: React.FC = () => {
         setCertificates,
         showToast,
     ]);
-
 
     const isCertificateUsed = useCallback(() => {
         if (!certificate) return true;
@@ -160,7 +164,6 @@ const CertificateLandingPage: React.FC = () => {
             setLoading(false);
             return;
         }
-
         // 2. Логика для зарегистрированного и прошедшего онбординг пользователя (user.complete_onboarding === true)
         if (user?.complete_onboarding) {
             if (!certificate?.shared_at) {
@@ -171,8 +174,8 @@ const CertificateLandingPage: React.FC = () => {
                     return;
                 } else {
                     // Сертификат куплен другим пользователем, но еще не принят этим
-                    acceptCertificate();
                     setLoading(false);
+                    acceptCertificate();
                     return;
                 }
             } else {
@@ -244,9 +247,10 @@ const CertificateLandingPage: React.FC = () => {
                         {isCertificateDisabled() ? (
                             isCertificateExpired() ? (
                                 <h1>У данного сертификата истек срок действия</h1>
-                                ) : (
-                                    <h1>Данный подарочный сертификат {isCertificateUsed() ? 'использован' : 'используется'}</h1>
-                                )
+                            ) : (
+                                <h1>Данный подарочный
+                                    сертификат {isCertificateUsed() ? 'использован' : 'используется'}</h1>
+                            )
                         ) : (
                             <h1>
                                 Подарочный сертификат <br /> в любой ресторан Dreamteam

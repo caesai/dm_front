@@ -21,6 +21,7 @@ import { APIPostCreateGastronomyPayment, APIPostUserOrder } from '@/api/gastrono
 import { authAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+import { IDish } from '@/types/gastronomy.types.ts';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -457,17 +458,13 @@ export const GastronomyBasketPage: React.FC = () => {
                                 key={item.id}
                                 {...item}
                                 onAdd={() => {
-                                    // TODO: Проверить типы IDish ICartItem
                                     addToCart({
                                         id: item.id,
                                         title: item.title,
                                         prices: [item.price],
                                         weights: [item.weight],
                                         image_url: item.image,
-                                        description: '',
-                                        nutritionPer100g: { calories: '0', proteins: '0', fats: '0', carbs: '0' },
-                                        allergens: [],
-                                    }, 0);
+                                    } as IDish, 0);
                                 }}
                                 onRemove={() => removeFromCart(item.id)}
                             />
