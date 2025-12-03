@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { IOrder } from '@/types/gastronomy.types.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { MiniCrossIcon } from '@/components/Icons/MiniCrossIcon.tsx';
-import { MONTHS_LONG2, weekdaysMap } from '@/utils.ts';
+import { getRestaurantAddressById, MONTHS_LONG2, weekdaysMap } from '@/utils.ts';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import moment from 'moment';
 import GastronomyOrderPopup from '@/components/GastronomyOrderPopup/GastronomyOrderPopup.tsx';
@@ -16,9 +16,11 @@ import {
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import useToastState from '@/hooks/useToastState.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 
 export const GastronomyOrderPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
+    const [restaurantsList] = useAtom(restaurantsListAtom);
     // params - используем когда перешли на страницу после платежа
     const [params] = useSearchParams();
     const paramsObject = Object.fromEntries(params.entries());
@@ -167,7 +169,12 @@ export const GastronomyOrderPage: React.FC = () => {
                     <div className={css.info}>
                         <div className={css.info_content}>
                             <span>Способ получения</span>
-                            <span>{order?.delivery_method === 'delivery' ? 'Доставка' : 'Самовывоз'}, {order?.delivery_address}</span>
+                            <span>
+                                {order?.delivery_method === 'delivery' ? 'Доставка' : 'Самовывоз'},
+                                {order && (
+                                    ` ${order?.delivery_method === 'delivery' ? order.delivery_address : getRestaurantAddressById(order.restaurant_id, restaurantsList)}`
+                                )}
+                            </span>
                         </div>
                         {time && (
                             <div className={css.info_content}>
