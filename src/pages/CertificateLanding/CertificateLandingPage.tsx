@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAtom } from 'jotai/index';
+import { useAtom, useSetAtom } from 'jotai/index';
 import moment from 'moment';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
@@ -17,8 +17,23 @@ import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.tsx';
-import useToastState from '@/hooks/useToastState.ts';
+import { showToastAtom } from '@/atoms/toastAtom.ts';
 
+/**
+ * Компонент страницы отображения детальной информации о подарочном сертификате.
+ * 
+ * Отображает информацию о сертификате, позволяет активировать его, перейти к бронированию стола
+ * или пройти онбординг для неавторизованных пользователей.
+ * 
+ * Автоматически обрабатывает различные сценарии:
+ * - Загрузка данных сертификата по ID из URL
+ * - Автоматическая активация сертификата для авторизованных пользователей
+ * - Перенаправление неавторизованных пользователей на онбординг
+ * - Проверка статуса и срока действия сертификата
+ * 
+ * @component
+ * @returns {JSX.Element} Компонент страницы сертификата
+ */
 const CertificateLandingPage: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -26,30 +41,36 @@ const CertificateLandingPage: React.FC = () => {
     const [user] = useAtom(userAtom);
     const [, setCertificates] = useAtom(certificatesListAtom);
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
-    const { showToast } = useToastState();
+    const setShowToast = useSetAtom(showToastAtom);
     const [loading, setLoading] = useState<boolean>(true);
     const { isShowing, toggle, setIsShowing } = useModal();
 
     /**
-     * Хук эффекта React для загрузки данных сертификата при монтировании компонента.
-     *
-     * Отправляет запрос на получение данных сертификата по его ID при наличии токена доступа.
-     * В случае успеха обновляет состояние `certificate`.
-     * В случае ошибки показывает тост-уведомление и через 6 секунд перенаправляет пользователя на страницу списка сертификатов.
-     *
-     * @fires APIGetCertificateById - Выполняет асинхронный запрос к API.
-     * @modifies setCertificate - Обновляет локальное состояние сертификата.
-     * @modifies setToastShow - Управляет видимостью уведомления (тоста).
-     * @modifies setToastMessage - Устанавливает текст уведомления.
-     * @fires navigate - Перенаправляет пользователя при ошибке загрузки.
-     *
-     * @param {object} auth Объект аутентификации, содержащий access_token.
-     * @param {string|number} id Идентификатор (ID) запрашиваемого сертификата.
-     * @param {function} APIGetCertificateById Функция API для получения данных сертификата.
-     * @param {function} setCertificate Функция обновления состояния React для данных сертификата.
-     * @param {function} setToastShow Функция обновления состояния React для показа тоста.
-     * @param {function} setToastMessage Функция обновления состояния React для сообщения тоста.
-     * @param {function} navigate Функция перенаправления из роутера (например, react-router-dom).
+     * Мемоизированная функция для отображения toast-уведомлений.
+     * Используется для стабильности зависимостей в других хуках.
+     * 
+     * @param {string} message - Текст сообщения для отображения
+     * @returns {void}
+     */
+    const showToast = useCallback((message: string) => {
+        setShowToast({ message, type: 'info' });
+    }, [setShowToast]);
+
+    /**
+     * Эффект для загрузки данных сертификата при монтировании компонента или изменении зависимостей.
+     * 
+     * Отправляет запрос на получение данных сертификата по его ID из параметров URL.
+     * В случае успеха обновляет локальное состояние сертификата.
+     * В случае ошибки показывает toast-уведомление и через 7 секунд перенаправляет
+     * пользователя на страницу списка сертификатов.
+     * 
+     * @effect
+     * @dependencies auth?.access_token, id, showToast, navigate
+     * 
+     * @fires APIGetCertificateById - Выполняет асинхронный запрос к API для получения данных сертификата
+     * @modifies certificate - Обновляет локальное состояние сертификата через setCertificate
+     * @fires showToast - Показывает уведомление об ошибке загрузки
+     * @fires navigate - Перенаправляет пользователя на страницу списка сертификатов при ошибке
      */
     useEffect(() => {
         if (auth?.access_token) {
@@ -64,21 +85,27 @@ const CertificateLandingPage: React.FC = () => {
                     });
             }
         }
-    }, []);
+    }, [auth?.access_token, id, showToast, navigate]);
     /**
-     * Функция для подтверждения (клейма) владения сертификатом через API.
-     * Отправляет запрос на сервер для регистрации текущего пользователя как получателя сертификата.
-     * После успешного выполнения обновляет локальный список сертификатов и управляет уведомлениями об ошибках.
-     *
-     * @function
-     * @param {object} auth - Объект аутентификации, содержащий access_token.
-     * @param {object} certificate - Текущий объект сертификата, содержащий recipient_name.
-     * @param {string|number} id - ID сертификата.
-     * @param {object} user - Объект пользователя, содержащий user.id.
-     * @param {function} APIPostCertificateClaim - Функция API для клейма сертификата.
-     * @param {function} APIGetCertificates - Функция API для получения списка сертификатов.
-     * @param {function} setCertificates - Функция React state для обновления списка сертификатов.
+     * Мемоизированная функция для активации (клейма) сертификата текущим пользователем.
+     * 
+     * Выполняет последовательность действий:
+     * 1. Отправляет запрос на активацию сертификата через API
+     * 2. Параллельно получает обновленный список сертификатов и данные текущего сертификата
+     * 3. Обновляет локальное состояние сертификата и глобальный список сертификатов
+     * 4. Показывает уведомление об успехе или ошибке
+     * 
+     * @callback
+     * @async
      * @returns {Promise<void>}
+     * 
+     * @throws {Error} При отсутствии необходимых данных (токен, ID пользователя, ID сертификата)
+     * @fires APIPostCertificateClaim - Активирует сертификат для текущего пользователя
+     * @fires APIGetCertificates - Получает обновленный список сертификатов
+     * @fires APIGetCertificateById - Получает обновленные данные текущего сертификата
+     * @modifies certificatesListAtom - Обновляет глобальный список сертификатов
+     * @modifies certificate - Обновляет локальное состояние сертификата
+     * @fires showToast - Показывает уведомление об успехе или ошибке
      */
     const acceptCertificate = useCallback(async () => {
         // Явное приведение типов в параметрах вызова API
@@ -100,57 +127,96 @@ const CertificateLandingPage: React.FC = () => {
                 certId,
                 certificate?.recipient_name,
             );
-
+            const results = await Promise.all(
+                [
+                    APIGetCertificates(accessToken, userId),
+                    APIGetCertificateById(auth.access_token, id),
+                ],
+            );
             // 2. Если клейм успешен, получаем обновленный список сертификатов
-            const response = await APIGetCertificates(accessToken, userId);
-            setCertificates(response.data);
+            setCertificates(results[0].data);
+            // // 3. Обновляем сертификат на странице
+            setCertificate(results[1].data);
             showToast('Сертификат успешно активирован!'); // Можно добавить тост успеха
-
         } catch (err) {
             // Обработка ошибок как первого, так и второго запроса
             console.error('Ошибка при работе с сертификатом:', err);
             showToast('Произошла ошибка. Попробуйте перезагрузить страницу');
         }
     }, [
-        auth,
+        auth?.access_token,
         certificate,
         id,
-        user,
-        APIPostCertificateClaim,
-        APIGetCertificates,
+        user?.id,
         setCertificates,
         showToast,
     ]);
 
-
+    /**
+     * Проверяет, использован ли сертификат.
+     * 
+     * @callback
+     * @returns {boolean} `true` если сертификат отсутствует или имеет статус 'used', иначе `false`
+     */
     const isCertificateUsed = useCallback(() => {
         if (!certificate) return true;
         return certificate.status === 'used';
     }, [certificate]);
 
+    /**
+     * Проверяет, истек ли срок действия сертификата.
+     * 
+     * @callback
+     * @returns {boolean} `true` если сертификат отсутствует или срок его действия истек, иначе `false`
+     */
     const isCertificateExpired = useCallback(() => {
         if (!certificate) return true;
         return moment().isAfter(moment(certificate.expired_at));
     }, [certificate]);
+
     /**
-     * Проверяет, отключен ли (неактивен) сертификат.
-     * Сертификат считается активным, если его статус — 'paid' (оплачен) или 'shared' (подарен), И текущая дата раньше даты его истечения.
-     *
-     * @returns {boolean} True, если сертификат неактивен/отключен, false в противном случае (если активен).
+     * Мемоизированное значение, указывающее истек ли срок действия сертификата.
+     * Используется для оптимизации производительности и избежания лишних вычислений.
+     * 
+     * @memo
+     * @returns {boolean} Результат проверки истечения срока действия сертификата
+     */
+    const certificateExpired = useMemo(() => isCertificateExpired(), [isCertificateExpired]);
+    /**
+     * Проверяет, активен ли сертификат для использования.
+     * 
+     * Сертификат считается активным, если:
+     * - Его статус равен 'paid' (оплачен) или 'shared' (подарен)
+     * - И срок его действия не истек
+     * 
+     * @callback
+     * @returns {boolean} `true` если сертификат неактивен (отсутствует, использован, истек или имеет неактивный статус), 
+     *                    `false` если сертификат активен и может быть использован
      */
     const isCertificateDisabled = useCallback(() => {
         if (!certificate) return true;
-        return !((certificate.status === 'paid' || certificate.status === 'shared') && !isCertificateExpired());
-    }, [certificate, isCertificateExpired]);
+        return !((certificate.status === 'paid' || certificate.status === 'shared') && !certificateExpired);
+    }, [certificate, certificateExpired]);
     /**
-     * Хук эффекта, который управляет различной логикой, связанной с сертификатом,
-     * в зависимости от статуса пользователя и состояния сертификата.
-     * Управляет состоянием загрузки, навигацией и автоматическим принятием сертификата.
-     *
-     * @fires acceptCertificate - Вызывается, если соблюдены условия для автоматического принятия сертификата.
-     * @fires navigate - Используется для перенаправления пользователя на другие страницы.
-     * @modifies setLoading - Устанавливает состояние загрузки в false при различных условиях.
-     * @modifies setIsShowing - (Закомментировано) Предназначалось для отображения модального окна с информацией о необходимости регистрации.
+     * Эффект для управления логикой работы с сертификатом в зависимости от статуса пользователя и сертификата.
+     * 
+     * Выполняет следующие проверки и действия:
+     * 1. Если сертификат неактивен - завершает загрузку
+     * 2. Для авторизованных пользователей с завершенным онбордингом:
+     *    - Если сертификат не был подарен и пользователь - владелец - завершает загрузку
+     *    - Если сертификат не был подарен и пользователь - не владелец - автоматически активирует сертификат
+     *    - Если сертификат был подарен и пользователь - получатель - завершает загрузку
+     *    - Если сертификат был подарен и пользователь - не получатель - перенаправляет на список сертификатов
+     * 3. Для неавторизованных пользователей или без завершенного онбординга:
+     *    - Если сертификат не был подарен - завершает загрузку (показывает страницу)
+     *    - Если сертификат был подарен - перенаправляет на онбординг
+     * 
+     * @effect
+     * @dependencies certificate, user, isCertificateDisabled, acceptCertificate, navigate
+     * 
+     * @modifies loading - Устанавливает состояние загрузки в `false` при завершении проверок
+     * @fires acceptCertificate - Автоматически активирует сертификат при соответствующих условиях
+     * @fires navigate - Перенаправляет пользователя на другие страницы при необходимости
      */
     useEffect(() => {
         // 1. Предварительные проверки и выход
@@ -160,7 +226,6 @@ const CertificateLandingPage: React.FC = () => {
             setLoading(false);
             return;
         }
-
         // 2. Логика для зарегистрированного и прошедшего онбординг пользователя (user.complete_onboarding === true)
         if (user?.complete_onboarding) {
             if (!certificate?.shared_at) {
@@ -171,8 +236,10 @@ const CertificateLandingPage: React.FC = () => {
                     return;
                 } else {
                     // Сертификат куплен другим пользователем, но еще не принят этим
-                    acceptCertificate();
-                    setLoading(false);
+                    (async () => {
+                        await acceptCertificate();
+                        setLoading(false);
+                    })();
                     return;
                 }
             } else {
@@ -197,16 +264,36 @@ const CertificateLandingPage: React.FC = () => {
                 navigate('/onboarding/1');
             }
         }
-    }, [certificate, user, isCertificateDisabled, acceptCertificate, navigate, setLoading]);
+    }, [certificate, user, isCertificateDisabled, acceptCertificate, navigate]);
 
+    /**
+     * Перенаправляет пользователя на главную страницу.
+     * 
+     * @returns {void}
+     */
     const goHome = () => {
         navigate('/');
     };
 
+    /**
+     * Перенаправляет пользователя на страницу онбординга с параметрами для работы с сертификатом.
+     * 
+     * @returns {void}
+     */
     const goToOnboarding = () => {
         navigate('/onboarding/3', { state: { certificateId: id, sharedCertificate: true, certificate: true } });
     };
 
+    /**
+     * Обрабатывает переход к странице бронирования стола.
+     * 
+     * Если пользователь не прошел онбординг, показывает модальное окно с предложением зарегистрироваться.
+     * Иначе перенаправляет на страницу бронирования с параметрами сертификата.
+     * 
+     * @modifies isShowing - Показывает модальное окно для неавторизованных пользователей
+     * @fires navigate - Перенаправляет на страницу бронирования для авторизованных пользователей
+     * @returns {void}
+     */
     const goToBooking = () => {
         if (!user?.complete_onboarding) {
             setIsShowing(true);
@@ -242,11 +329,12 @@ const CertificateLandingPage: React.FC = () => {
                     <div className={css.header}>
                         <DTHospitalityIcon />
                         {isCertificateDisabled() ? (
-                            isCertificateExpired() ? (
+                            certificateExpired ? (
                                 <h1>У данного сертификата истек срок действия</h1>
-                                ) : (
-                                    <h1>Данный подарочный сертификат {isCertificateUsed() ? 'использован' : 'используется'}</h1>
-                                )
+                            ) : (
+                                <h1>Данный подарочный
+                                    сертификат {isCertificateUsed() ? 'использован' : 'используется'}</h1>
+                            )
                         ) : (
                             <h1>
                                 Подарочный сертификат <br /> в любой ресторан Dreamteam
