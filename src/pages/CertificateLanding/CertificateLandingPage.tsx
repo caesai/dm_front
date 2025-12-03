@@ -236,8 +236,10 @@ const CertificateLandingPage: React.FC = () => {
                     return;
                 } else {
                     // Сертификат куплен другим пользователем, но еще не принят этим
-                    setLoading(false);
-                    acceptCertificate();
+                    (async () => {
+                        await acceptCertificate();
+                        setLoading(false);
+                    })();
                     return;
                 }
             } else {
