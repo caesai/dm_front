@@ -513,7 +513,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                             image_url: item.image,
                                             description: '',
                                             allergens: [],
-                                            restaurant_id: 0
+                                            restaurant_id: restaurant?.id || 0
                                         },
                                         0
                                     );
