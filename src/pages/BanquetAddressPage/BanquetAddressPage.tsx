@@ -55,6 +55,7 @@ export const BanquetAddressPage: React.FC = () => {
                     state: {
                         ...location.state,
                         banquets,
+                        currentRestaurant,
                         workTime
                     },
                 });
@@ -66,6 +67,7 @@ export const BanquetAddressPage: React.FC = () => {
                         banquets,
                         workTime,
                         sharedBanquet: true,
+                        currentRestaurant,
                     },
                 });
             }

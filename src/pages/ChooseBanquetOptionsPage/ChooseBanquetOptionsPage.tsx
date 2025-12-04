@@ -21,7 +21,7 @@ export const ChooseBanquetOptionsPage = () => {
     const location = useLocation();
     const banquets: IBanquet = location.state?.banquets;
     const { id } = useParams();
-
+    
     const [isOpenPopup, setOpenPopup] = useState<boolean>(false);
     const [currentImages, setCurrentImages] = useState<string[]>([]);
     const [imageIndex, setImageIndex] = useState<number | null>(null);
