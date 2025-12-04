@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import css from '@/pages/GastronomyPage/GastronomyPage.module.css'
-import GastronomyImg from '/img/gastronomy-choose.png'
+import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
+import GastronomyImg from '/img/gastronomy-choose.png';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
@@ -17,31 +17,39 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { APIGetGastronomyDishes } from '@/api/gastronomy.api';
+import { authAtom } from '@/atoms/userAtom';
+import { IDish } from '@/types/gastronomy.types';
+import { useGastronomyCart } from '@/hooks/useGastronomyCart';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
     value: 'unset',
-}
+};
 
 export const GastronomyChooseRestaurantPage: React.FC = () => {
+    const [auth] = useAtom(authAtom);
+
     const [cityListA] = useAtom(cityListAtom);
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
 
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
+    const [dishesList, setDishesList] = useState<IDish[]>([]);
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
     const [isDisabledButton, setDisabledButton] = useState(true);
+    const { clearCart } = useGastronomyCart();
 
     const [cityListConfirm] = useState<IConfirmationType[]>(
-        cityListA.map((v: ICity) => transformToConfirmationFormat(v)),
+        cityListA.map((v: ICity) => transformToConfirmationFormat(v))
     );
 
     const [currentCityS, setCurrentCityS] = useState<IConfirmationType>(
         cityListConfirm.find((v) => v.id == currentCityA) ?? {
             id: 'moscow',
             text: 'Москва',
-        },
+        }
     );
 
     const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
@@ -49,6 +57,17 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    /**
+     * Эффект фильтрации и сортировки списка ресторанов.
+     *
+     * @remarks
+     * Логика обработки:
+     * 1. **Сортировка**: Ресторан с `id === 11` перемещается в начало списка.
+     * 2. **Фильтрация по городу**: Отбираются рестораны, соответствующие текущему городу (`currentCityA`).
+     * 3. **Фильтрация по блюдам**: Исключаются рестораны, для которых нет блюд в `dishesList`.
+     *
+     * Результат сохраняется в стейт `restaurantsList`.
+     */
     useEffect(() => {
         let result: IRestaurant[] = [];
         let movableValue = null;
@@ -64,9 +83,12 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         if (movableValue !== null) {
             result.unshift(movableValue);
         }
-
-        setRestaurantsList(result.filter((v) => v.city.name_english == currentCityA));
-    }, [currentCityA, cityListA]);
+        const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
+        const filteredRestaurantsByDishes = filteredRestaurantsByCity.filter((v) =>
+            dishesList.some((dish) => dish.restaurant_id === v.id)
+        );
+        setRestaurantsList(filteredRestaurantsByDishes);
+    }, [currentCityA, cityListA, dishesList]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
@@ -75,8 +97,9 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
     };
 
     const cityOptions = useMemo(
-        () => cityListConfirm.filter(v => v.id !== currentCityS.id),
-        [cityListConfirm, currentCityS.id],
+        () => cityListConfirm.filter((v) => v.id === 'moscow' || v.id === 'spb'),
+        // () => cityListConfirm.filter((v) => v.id !== currentCityS.id), TODO: Вернуть нормальную логику
+        [cityListConfirm, currentCityS.id]
     );
 
     useEffect(() => {
@@ -84,7 +107,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
             cityListConfirm.find((v) => v.id == currentCityA) ?? {
                 id: 'moscow',
                 text: 'Москва',
-            },
+            }
         );
     }, [cityListA]);
 
@@ -97,10 +120,31 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         if (restaurant) {
             setCurrentRestaurant(() => ({
                 value: String(restaurant.id),
-                ...restaurant
-            }))
+                ...restaurant,
+            }));
         }
     }, [location.state]);
+
+    /**
+     * Вызываем API для получения списка всех блюд во всех ресторанах
+     * и по этому списку фильтруем рестораны, которые имеют блюда
+     * и устанавливаем их в restaurantsList
+     */
+    useEffect(() => {
+        if (!auth?.access_token) {
+            return;
+        }
+        APIGetGastronomyDishes(auth?.access_token).then((res) => {
+            setDishesList(res.data);
+        });
+    }, [auth?.access_token]);
+
+    /**
+     * Очищаем корзину при переходе на эту страницу
+     */
+    useEffect(() => {
+        clearCart();
+    }, []);
 
     return (
         <>
@@ -114,12 +158,17 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
             <div className={css.container}>
                 <div className={css.content}>
                     <div className={css.info}>
-                        <h2>Закажите праздничные <br/> блюда заранее и встретьте <br/> Новый год дома без хлопот</h2>
-                        <img src={GastronomyImg} alt={'New Year Gastronomy'}/>
+                        <h2>
+                            Закажите праздничные <br /> блюда заранее и встретьте <br /> Новый год дома без хлопот
+                        </h2>
+                        <img src={GastronomyImg} alt={'New Year Gastronomy'} />
                         <ul>
                             <li>Оформите заказ до 30 декабря. Минимальная сумма — 3000 ₽.</li>
                             <li>Оплатите заказ (100% предоплата).</li>
-                            <li>Заберите блюда из ресторана или оформим для вас доставку в период <br/> с 25 по 31 декабря.</li>
+                            <li>
+                                Заберите блюда из ресторана или оформим для вас доставку в период <br /> с 25 по 31
+                                декабря.
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -133,9 +182,13 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                             titleStyle={{ fontWeight: '600' }}
                         />
                         <DropDownSelect
-                            title={currentRestaurant.value !== 'unset' ? `${currentRestaurant.title}, ${currentRestaurant.address}` : 'Выберите ресторан'}
+                            title={
+                                currentRestaurant.value !== 'unset'
+                                    ? `${currentRestaurant.title}, ${currentRestaurant.address}`
+                                    : 'Выберите ресторан'
+                            }
                             isValid={true}
-                            icon={<KitchenIcon size={24}/>}
+                            icon={<KitchenIcon size={24} />}
                             onClick={() => setRestaurantListSelectorIsOpen(true)}
                         />
                     </div>
@@ -148,5 +201,5 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                 />
             </div>
         </>
-    )
-}
+    );
+};

@@ -39,6 +39,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
             .catch(() => {});
     }, [auth, res_id]);
 
+
     return (
         <>
             <div className={css.items}>
