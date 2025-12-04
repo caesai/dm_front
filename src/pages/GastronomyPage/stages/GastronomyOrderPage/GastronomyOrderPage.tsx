@@ -147,7 +147,7 @@ export const GastronomyOrderPage: React.FC = () => {
             case 'pending':
                 return 'Заказ не оплачен';
             case 'not_paid':
-                return 'Заказ не оплачен';
+                return 'Заказ в обработке';
             case 'error':
                 return 'Ошибка при оплате заказа';
             case 'no_payment':
@@ -219,7 +219,7 @@ export const GastronomyOrderPage: React.FC = () => {
                     {paymentStatus === 'paid' && (
                         <UniversalButton width={'full'} title={'Отменить заказ'} action={() => setPopup(true)} />
                     )}
-                    {(paymentStatus === 'pending' || paymentStatus === 'no_payment' || paymentStatus === 'error') && (
+                    {(paymentStatus === 'pending' || paymentStatus === 'no_payment' || paymentStatus === 'error' || paymentStatus === 'not_paid') && (
                         <UniversalButton width={'full'} title={'Оплатить заказ'} action={repeatPayment} />
                     )}
                     <UniversalButton
