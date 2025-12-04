@@ -1,7 +1,7 @@
 import { IDish, IOrder } from '@/types/gastronomy.types.ts';
 
 export const NewYearCookingData = {
-    description: 'Оформите предзаказ новогодних блюд до 28 декабря и получите готовый стол!',
+    description: 'Оформите предзаказ новогодних блюд до 28 декабря и получите готовый стол! Закажите праздничные блюда заранее и встретьте Новый год без хлопот.',
     image: 'https://storage.yandexcloud.net/bottec-dreamteam/07838462279344c4a775c6e57b74c125.png',
 };
 
@@ -13,18 +13,8 @@ export const mockGastronomyListData: IDish[] = [
         weights: ['200 г', '600 г'],
         image_url: 'https://shuba.life/static/content/thumbs/1824x912/6/85/rtajoy---c2x1x50px50p-up--2ed4310a341a5cc5f36dfd79e5ed0856.jpg',
         description: 'Крем-суп из пастернака с нежной, слегка сладковатой нотой корнеплодов. Бархатная текстура, деликатный аромат и мягкий сливочный вкус. Отлично согревает и подойдёт как лёгкое, утончённое блюдо.',
-        nutritionPer100g: {
-            calories: '80-100 ккал',
-            proteins: '2-3 г',
-            fats: '5-7 г',
-            carbs: '8-10 г',
-        },
-        allergens: [
-            { code: 'A1', name: 'молоко' },
-            { code: 'B3', name: 'глютен' },
-            { code: 'D', name: 'сельдерей' },
-            { code: 'E', name: 'чеснок' },
-        ],
+        allergens: [ 'молоко', 'глютен'],
+        restaurant_id: 0
     },
     {
         id: 2,
@@ -33,15 +23,8 @@ export const mockGastronomyListData: IDish[] = [
         weights: ['250 г'],
         image_url: 'https://recipes.av.ru//media/recipes/102059_picture_5AuIoAB.jpg',
         description: 'Салат с авокадо и креветками: лёгкий, свежий и сочный. Спелое авокадо, хрустящие овощи и нежные креветки отлично сочетаются между собой. Подойдёт как вкусный вариант для лёгкого обеда или ужина.',
-        nutritionPer100g: {
-            calories: '120 ккал',
-            proteins: '10 г',
-            fats: '7 г',
-            carbs: '4 г',
-        },
-        allergens: [
-            { code: 'F1', name: 'ракообразные' },
-        ],
+        allergens: [],
+        restaurant_id: 0
     },
     {
         id: 3,
@@ -50,15 +33,8 @@ export const mockGastronomyListData: IDish[] = [
         weights: ['300 г', '500 г'],
         image_url: 'https://i.ytimg.com/vi/B0ps9wCwkJo/maxresdefault.jpg',
         description: 'Ризотто с грибами: насыщенное, ароматное и очень нежное. Кремовая текстура риса сочетается с вкусом обжаренных грибов и лёгкими нотками сыра. Простое, тёплое и уютное блюдо для любого дня.',
-        nutritionPer100g: {
-            calories: '150 ккал',
-            proteins: '4 г',
-            fats: '6 г',
-            carbs: '20 г',
-        },
-        allergens: [
-            { code: 'A1', name: 'молоко' },
-        ],
+        allergens: [],
+        restaurant_id: 0
     },
 ];
 
@@ -107,18 +83,8 @@ export const mockDish: IDish = {
     weights: ['200 г', '600 г'],
     image_url: 'https://shuba.life/static/content/thumbs/1824x912/6/85/rtajoy---c2x1x50px50p-up--2ed4310a341a5cc5f36dfd79e5ed0856.jpg',
     description: 'Крем-суп из пастернака с нежной, слегка сладковатой нотой корнеплодов. Бархатная текстура, деликатный аромат и мягкий сливочный вкус. Отлично согревает и подойдёт как лёгкое, утончённое блюдо.',
-    nutritionPer100g: {
-        calories: '80-100 ккал',
-        proteins: '2-3 г',
-        fats: '5-7 г',
-        carbs: '8-10 г',
-    },
-    allergens: [
-        { code: 'A1', name: 'молоко' },
-        { code: 'B3', name: 'глютен' },
-        { code: 'D', name: 'сельдерей' },
-        { code: 'E', name: 'чеснок' },
-    ],
+    allergens: [],
+    restaurant_id: 0
 };
 
 // МКАД coordinates for Moscow delivery zone

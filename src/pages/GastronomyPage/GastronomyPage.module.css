@@ -107,15 +107,15 @@
 
         > li {
             font-size: 0.875rem;
-        }
     }
+}
 }
 
 .restaurantChoose {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: 20px 15px;
+    padding: 0 15px 20px 15px;
     border-radius: 20px;
     background-color: var(--primary-background);
 }

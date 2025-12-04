@@ -80,13 +80,13 @@ describe('GastronomyBlock', () => {
 
         expect(screen.getByText('Новогодняя кулинария')).toBeInTheDocument();
         expect(screen.getByText('New Year culinary delights description')).toBeInTheDocument();
-        expect(screen.getByText('Сделать предзаказ')).toBeInTheDocument();
+        expect(screen.getByText('Оформить предзаказ')).toBeInTheDocument();
     });
 
     it('navigates to gastronomy page when button is clicked', () => {
         render(<GastronomyBlock {...mockProps} />);
 
-        fireEvent.click(screen.getByText('Сделать предзаказ'));
+        fireEvent.click(screen.getByText('Оформить предзаказ'));
 
         expect(mockNavigate).toHaveBeenCalledWith('/gastronomy/choose', {
             state: { restaurant: mockRestaurant }

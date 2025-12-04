@@ -2,18 +2,23 @@ import React, { useEffect } from 'react';
 import classnames from 'classnames';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Page } from '@/components/Page.tsx';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 import { useAtom } from 'jotai';
 import { dishesListAtom } from '@/atoms/dishesListAtom.ts';
+import { userAtom } from '@/atoms/userAtom';
 
 export const GastronomyPage: React.FC = () => {
+    const [user] = useAtom(userAtom);
     const [, setDishesList] = useAtom(dishesListAtom);
 
     const { goBack } = useNavigationHistory();
+    const navigate = useNavigate();
     const location = useLocation();
+    const [params] = useSearchParams();
+    const paramsObject = Object.fromEntries(params.entries());
 
     const getTitle = () => {
         if (location.pathname.includes('/basket')) {
@@ -45,6 +50,18 @@ export const GastronomyPage: React.FC = () => {
         };
     }, [setDishesList]);
 
+    const handleGoBack = () => {
+        if (!user?.complete_onboarding) {
+            navigate('/onboarding/3');
+            return;
+        }
+        if (paramsObject.shared) {
+            navigate('/');
+        } else {
+            goBack();
+        }
+    };
+
     return (
         <Page back={true}>
             <div
@@ -61,7 +78,7 @@ export const GastronomyPage: React.FC = () => {
                     <RoundedButton
                         bgColor={'#F4F4F4'}
                         icon={<BackIcon color={'#545454'} />}
-                        action={goBack}
+                        action={handleGoBack}
                     />
                     <span className={css.header_title}>
                         {getTitle()}

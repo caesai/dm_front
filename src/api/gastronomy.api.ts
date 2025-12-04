@@ -40,7 +40,10 @@ export const APIPostUserOrder = async (data: ISendOrder, token: string) => {
 
 export const APIPostSendQuestion = async (order_id: string, token: string) => {
     return await axios.post(
-        `${BASE_URL}/culinary/orders/${order_id}/question`, {},
+        `${BASE_URL}/culinary/orders/question`, {
+            order_id,
+            question: 'Пользователь задал вопрос',
+        },
         {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -50,7 +53,10 @@ export const APIPostSendQuestion = async (order_id: string, token: string) => {
 };
 
 export const APIPostCancelOrder = (order_id: string, token: string) => {
-    return axios.post(`${BASE_URL}/culinary/orders/${order_id}/cancel`, {},
+    return axios.post(`${BASE_URL}/culinary/orders/cancel`, {
+        order_id,
+        reason: 'Пользователь отменил заказ',
+    },
         {
             headers: {
                 Authorization: `Bearer ${token}`,

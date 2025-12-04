@@ -81,6 +81,11 @@
     border-radius: 10px;
 }
 
+.sectionFirst {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
 .sectionTitle {
     font-family: 'Heading Pro Ultracompressed', sans-serif;
     font-weight: 400;
@@ -187,6 +192,15 @@
     font-size: 16px;
     line-height: 20px;
     color: #545454;
+}
+
+.deliveryLabelFull {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+    color: #545454;
+    width: 100%;
 }
 
 .deliveryPrice {
@@ -486,7 +500,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 8px;
+    padding: 8px 8px 20px;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -494,6 +508,16 @@
     background: var(--primary-background);
     box-shadow: 0px 0px 16px 0px rgba(101, 94, 94, 0.5);
     border-radius: 24px 24px 0px 0px;
+}
+
+.minAmountError {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: #FF0000;
+    margin: 0;
+    text-align: center;
 }
 
 .primaryButton {
