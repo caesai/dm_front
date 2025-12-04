@@ -26,7 +26,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { res_id } = useParams();
-    const { addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
+    const { cart, addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
 
     const [initialDishesList] = useAtom(dishesListAtom);
 
@@ -58,6 +58,10 @@ export const GastonomyDishDetailsPage: React.FC = () => {
             replace: true
         });
         setSelectedWeightIndex(0);
+    };
+
+    const handleGoToCart = () => {
+        navigate(`/gastronomy/${res_id}/basket`);
     };
 
     // Убираем текущее блюдо из списка всех блюд
@@ -207,7 +211,9 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                     <button className={css.counterIcon} onClick={handleRemoveFromCart}>
                         <MinusIcon size={28} color="#FFFFFF" />
                     </button>
-                    <span className={css.counterText}>{quantity}</span>
+                    <span className={css.counterText} onClick={handleGoToCart} style={{ cursor: 'pointer' }}>
+                        {cart.totalAmount} ₽
+                    </span>
                     <button className={css.counterIcon} onClick={handleAddToCart}>
                         <PlusIcon size={28} color="#FFFFFF" />
                     </button>
