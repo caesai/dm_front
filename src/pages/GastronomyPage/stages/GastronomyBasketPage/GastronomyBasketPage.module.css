@@ -194,6 +194,15 @@
     color: #545454;
 }
 
+.deliveryLabelFull {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+    color: #545454;
+    width: 100%;
+}
+
 .deliveryPrice {
     font-family: 'Mont', sans-serif;
     font-weight: 700;
