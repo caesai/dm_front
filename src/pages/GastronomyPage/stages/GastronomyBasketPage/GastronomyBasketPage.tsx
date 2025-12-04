@@ -104,29 +104,38 @@ export const GastronomyBasketPage: React.FC = () => {
     // Генерируем доступные даты (не день в день)
     const availableDates = useMemo(() => {
         const dates: PickerValueObj[] = [];
+        
+        // Фиксированные границы: 25-30 декабря для доставки, 25-31 для самовывоза
+        const startDay = 25;
+        const endDay = deliveryMethod === 'delivery' ? 30 : 31;
+        
+        // Проверяем текущую дату
         const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const currentDay = today.getDate();
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
         
-        // Минимальная дата - завтра (не день в день)
-        const minDate = new Date(today);
-        minDate.setDate(today.getDate() + 1);
+        // Если сейчас декабрь 2024 или позже, применяем правило "не день в день"
+        let actualStartDay = startDay;
+        if (currentYear === 2024 && currentMonth === 11) {
+            // Если сегодня 24 декабря или раньше, начинаем с 25-го
+            // Если сегодня 25 декабря, начинаем с 26-го (завтра)
+            // и так далее
+            const tomorrow = currentDay + 1;
+            actualStartDay = Math.max(startDay, tomorrow);
+        }
         
-        // Максимальная дата в зависимости от способа доставки
-        const maxDate = deliveryMethod === 'delivery' 
-            ? new Date(2025, 11, 30) // 30 декабря для доставки
-            : new Date(2025, 11, 31); // 31 декабря для самовывоза
-        
-        // Начальная дата - максимум из минимальной даты и 25 декабря
-        const startDate = new Date(2025, 11, 25);
-        const actualStartDate = minDate > startDate ? minDate : startDate;
-        
-        for (let d = new Date(actualStartDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
-            const dateStr = d.toISOString().split('T')[0];
+        // Генерируем даты от actualStartDay до endDay
+        for (let day = actualStartDay; day <= endDay; day++) {
+            const year = 2025;
+            const month = 11; // декабрь (0-indexed)
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             dates.push({
                 title: formatDate(dateStr),
                 value: dateStr,
             });
         }
+        
         return dates;
     }, [deliveryMethod]);
 
@@ -152,12 +161,29 @@ export const GastronomyBasketPage: React.FC = () => {
 
         // Пытаемся получить часы работы из данных ресторана
         if (restaurant?.worktime && restaurant.worktime.length > 0) {
-            // Берем первый рабочий день для примера
-            const workTime = restaurant.worktime[0];
-            const [openH] = workTime.time_start.split(':').map(Number);
-            const [closeH] = workTime.time_end.split(':').map(Number);
-            openHour = openH;
-            closeHour = closeH;
+            // Получаем день недели выбранной даты (0 - воскресенье, 1 - понедельник, и т.д.)
+            const dayOfWeek = selectedDateObj.getDay();
+            
+            // Маппинг номера дня недели на русское название
+            const weekdayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            const weekdayName = weekdayNames[dayOfWeek];
+            
+            // Ищем расписание для этого дня недели
+            const workTime = restaurant.worktime.find(wt => wt.weekday === weekdayName);
+            
+            if (workTime) {
+                const [openH] = workTime.time_start.split(':').map(Number);
+                const [closeH] = workTime.time_end.split(':').map(Number);
+                openHour = openH;
+                closeHour = closeH;
+            } else {
+                // Если не найден конкретный день, берем первый доступный
+                const workTime = restaurant.worktime[0];
+                const [openH] = workTime.time_start.split(':').map(Number);
+                const [closeH] = workTime.time_end.split(':').map(Number);
+                openHour = openH;
+                closeHour = closeH;
+            }
         }
 
         const slots: string[] = [];
@@ -239,8 +265,16 @@ export const GastronomyBasketPage: React.FC = () => {
             // Определяем город
             const cityName = cityList.find((city) => city.name_english === currentCity)?.name || 'Москва';
             const searchQuery = `${cityName}, ${trimmedQuery}`;
-            // TODO:  разобраться с координатами в bbox внутри этого url
-            const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5&bbox=37.319,55.489~37.967,55.958`;
+            
+            // Разные bbox для разных городов
+            let bbox = '';
+            if (currentCity === 'moscow') {
+                bbox = '&bbox=37.319,55.489~37.967,55.958'; // Москва
+            } else if (currentCity === 'spb') {
+                bbox = '&bbox=30.1,59.8~30.6,60.1'; // Санкт-Петербург
+            }
+            
+            const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(searchQuery)}&format=json&results=5${bbox}`;
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -282,24 +316,26 @@ export const GastronomyBasketPage: React.FC = () => {
         } catch (error) {
             setAddressSuggestions([]);
         }
-    }, []);
+    }, [cityList, currentCity]);
 
     // Получение координат адреса через Яндекс Geocoder API
     const geocodeAddress = async (address: string): Promise<[number, number] | null> => {
         try {
-            const response = await fetch(
-                `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(address)}&format=json`
-            );
+            const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}&geocode=${encodeURIComponent(address)}&format=json`;
+            
+            const response = await fetch(url);
             const data = await response.json();
 
             if (data.response?.GeoObjectCollection?.featureMember?.length > 0) {
                 const geoObject = data.response.GeoObjectCollection.featureMember[0].GeoObject;
                 const pos = geoObject.Point.pos.split(' ').map(Number);
-                return [pos[1], pos[0]]; // [широта, долгота]
+                const coords: [number, number] = [pos[1], pos[0]]; // [широта, долгота]
+                
+                return coords;
             }
+            
             return null;
         } catch (error) {
-            console.error('Error geocoding address:', error);
             return null;
         }
     };
@@ -326,11 +362,12 @@ export const GastronomyBasketPage: React.FC = () => {
         } else if (currentCity === 'spb') {
             // Для ресторана Smoke BBQ Санкт-Петербург (Лодейнопольская улица, ID 11) требуется особая зона доставки,
             // так как он находится вне стандартной зоны КАД. Используем PETROGRADKA_ZONE для проверки доставки.
-            if (res_id === PETROGRADKA_RESTAURANT_ID) {
+            if (String(res_id) === String(PETROGRADKA_RESTAURANT_ID)) {
                 return isPointInPolygon(coords, PETROGRADKA_ZONE);
             }
             return isPointInPolygon(coords, KAD_COORDS);
         }
+        
         return false;
     };
 
@@ -426,10 +463,9 @@ export const GastronomyBasketPage: React.FC = () => {
                         showToast(
                             'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.'
                         );
-                        console.error(err);
                     });
             })
-            .catch((err) => console.error(err))
+            .catch(() => {})
             .finally(() => setLoading(false));
     };
 
@@ -506,10 +542,10 @@ export const GastronomyBasketPage: React.FC = () => {
                                 onAdd={() => {
                                     addToCart(
                                         {
-                                            id: item.id,
-                                            title: item.title,
+                                    id: item.id,
+                                    title: item.title,
                                             prices: [item.price],
-                                            weights: [item.weight],
+                                    weights: [item.weight],
                                             image_url: item.image,
                                             description: '',
                                             allergens: [],
@@ -585,8 +621,14 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.section}>
                         <h2 className={css.sectionTitle}>Адрес доставки</h2>
                         <div className={css.deliveryInfo}>
-                            <span className={css.deliveryLabel}>{deliveryText}</span>
-                            <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
+                            {restaurant?.id === 11 ? (
+                                <span className={css.deliveryLabelFull}>{deliveryText}</span>
+                            ) : (
+                                <>
+                                    <span className={css.deliveryLabel}>{deliveryText}</span>
+                                    <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
+                                </>
+                            )}
                         </div>
                         <div className={css.inputWrapper}>
                             <input

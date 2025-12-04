@@ -34,15 +34,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
     const [selectedWeightIndex, setSelectedWeightIndex] = useState(0);
     const [dishesList, setDishesList] = useState<IDish[]>([]);
 
-    // Логирование при рендере компонента
-    console.log('[GastonomyDishDetailsPage] Component rendered', { 
-        dishId: dishFromState?.id,
-        hasDish: !!dishFromState,
-        allergens: dishFromState?.allergens 
-    });
-
     if (!dishFromState) {
-        console.log('[GastonomyDishDetailsPage] No dish found in state');
         return <div>Блюдо не найдено</div>;
     }
 
@@ -73,22 +65,6 @@ export const GastonomyDishDetailsPage: React.FC = () => {
         setDishesList(initialDishesList.filter((dish) => dish.id !== dishFromState.id));
     }, [initialDishesList, dishFromState.id]);
 
-    // Логирование данных блюда для отладки аллергенов и КБЖУ
-    useEffect(() => {
-        console.log('[GastonomyDishDetailsPage] Full dish data:', dishFromState);
-        console.log('[GastonomyDishDetailsPage] KBJU:', {
-            calories: (dishFromState as any).calories,
-            proteins: (dishFromState as any).proteins,
-            fats: (dishFromState as any).fats,
-            carbohydrates: (dishFromState as any).carbohydrates,
-        });
-        console.log('[GastonomyDishDetailsPage] Allergens:', {
-            allergens: (dishFromState as any).allergens,
-            isArray: Array.isArray((dishFromState as any).allergens),
-            length: (dishFromState as any).allergens?.length,
-        });
-    }, [dishFromState]);
-
     return (
         <div className={css.page}>
             <div className={css.mainCard}>
@@ -104,25 +80,25 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                             <span className={css.dishPrice}>{selectedPrice} ₽</span>
                         </div>
                         {selectedWeight && (
-                            <span className={css.selectedWeight}>{selectedWeight}</span>
+                        <span className={css.selectedWeight}>{selectedWeight}</span>
                         )}
                     </div>
 
                     {hasMultipleWeights && (
-                        <div className={css.section}>
-                            <span className={css.sectionTitle}>Вес</span>
-                            <div className={css.weightTags}>
+                    <div className={css.section}>
+                        <span className={css.sectionTitle}>Вес</span>
+                        <div className={css.weightTags}>
                                 {dishFromState.weights.map((weight, index) => (
-                                    <button
-                                        key={weight}
+                                <button
+                                    key={weight}
                                         className={index === selectedWeightIndex ? css.weightTagActive : css.weightTag}
                                         onClick={() => setSelectedWeightIndex(index)}
-                                    >
+                                >
                                         {formatWeight(weight)}
-                                    </button>
-                                ))}
-                            </div>
+                                </button>
+                            ))}
                         </div>
+                    </div>
                     )}
 
                     <div className={css.section}>
@@ -143,35 +119,35 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                         if (!calories && calories !== 0) return null;
                         
                         return (
-                            <div className={css.section}>
-                                <span className={css.sectionTitle}>На 100 граммов</span>
-                                <div className={css.nutritionGrid}>
-                                    <div className={css.nutritionItem}>
+                    <div className={css.section}>
+                        <span className={css.sectionTitle}>На 100 граммов</span>
+                        <div className={css.nutritionGrid}>
+                            <div className={css.nutritionItem}>
                                         <span className={css.nutritionValue}>
                                             {calories || '0'}
                                         </span>
-                                        <span className={css.nutritionLabel}>ккал</span>
-                                    </div>
-                                    <div className={css.nutritionItem}>
+                                <span className={css.nutritionLabel}>ккал</span>
+                            </div>
+                            <div className={css.nutritionItem}>
                                         <span className={css.nutritionValue}>
                                             {proteins || '0'}
                                         </span>
-                                        <span className={css.nutritionLabel}>белки</span>
-                                    </div>
-                                    <div className={css.nutritionItem}>
+                                <span className={css.nutritionLabel}>белки</span>
+                            </div>
+                            <div className={css.nutritionItem}>
                                         <span className={css.nutritionValue}>
                                             {fats || '0'}
                                         </span>
-                                        <span className={css.nutritionLabel}>жиры</span>
-                                    </div>
-                                    <div className={css.nutritionItem}>
+                                <span className={css.nutritionLabel}>жиры</span>
+                            </div>
+                            <div className={css.nutritionItem}>
                                         <span className={css.nutritionValue}>
                                             {carbohydrates || '0'}
                                         </span>
-                                        <span className={css.nutritionLabel}>углеводы</span>
-                                    </div>
-                                </div>
+                                <span className={css.nutritionLabel}>углеводы</span>
                             </div>
+                        </div>
+                    </div>
                         );
                     })()}
 

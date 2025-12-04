@@ -125,11 +125,10 @@ export const GastronomyOrderPage: React.FC = () => {
                     .then((res) => {
                         window.location.href = res.data.payment_url;
                     })
-                    .catch((err) => {
+                    .catch(() => {
                         showToast(
                             'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.',
                         );
-                        console.error(err);
                     });
             }
         }
