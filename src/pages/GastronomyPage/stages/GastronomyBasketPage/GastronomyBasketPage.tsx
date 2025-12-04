@@ -488,6 +488,8 @@ export const GastronomyBasketPage: React.FC = () => {
         }
         return isDateSelected && isTimeSelected && isMinAmountValid;
     };
+    
+    const showMinAmountError = cart.totalAmount < minOrderAmount && minOrderAmount > 0;
 
     if (loading) {
         return (
@@ -740,6 +742,11 @@ export const GastronomyBasketPage: React.FC = () => {
 
             {/* Кнопка оплаты */}
             <div className={css.buttonContainer}>
+                {showMinAmountError && (
+                    <p className={css.minAmountError}>
+                        Минимальная сумма заказа {minOrderAmount} ₽
+                    </p>
+                )}
                 <button
                     className={isFormValid() ? css.primaryButton : css.secondaryButton}
                     onClick={handlePayment}
