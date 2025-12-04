@@ -18,6 +18,7 @@ import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import useToastState from '@/hooks/useToastState.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen';
 
 export const GastronomyOrderPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
@@ -34,6 +35,7 @@ export const GastronomyOrderPage: React.FC = () => {
     const [openPopup, setPopup] = useState(false);
     const [order, setOrder] = useState<IOrder>();
     const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending' | 'error' | 'no_payment'>('pending');
+    const [isLoading, setIsLoading] = useState(true);
 
     const time = useMemo(() => {
         return order?.delivery_time ? order.delivery_time : order?.pickup_time;
@@ -86,10 +88,12 @@ export const GastronomyOrderPage: React.FC = () => {
                 try {
                     const res = await APIGetGastronomyOrderById(String(orderId), auth.access_token);
                     setOrder(res.data);
+                    setIsLoading(false);
                 } catch (error) {
                     showToast('Не удалось получить детали заказа. Попробуйте еще раз.');
                 }
             } catch (error) {
+                setIsLoading(false);
                 setPaymentStatus('pending');
                 showToast('Платёж в обработке. Проверьте позже.');
             }
@@ -136,6 +140,29 @@ export const GastronomyOrderPage: React.FC = () => {
         }
     };
 
+    const pageTitle = useMemo(() => {
+        switch (paymentStatus) {
+            case 'paid':
+                return 'Заказ успешно оплачен!';
+            case 'pending':
+                return 'Заказ не оплачен';
+            case 'error':
+                return 'Ошибка при оплате заказа';
+            case 'no_payment':
+                return 'Заказ в обработке';
+            default:
+                return '';
+        }
+    }, [paymentStatus]);
+
+    if (isLoading) {
+        return (
+            <div className={css.loader}>
+                <Loader />
+            </div>
+        );
+    }
+
     return (
         <>
             <GastronomyOrderPopup isOpen={openPopup} setOpen={setPopup} order_id={String(order?.order_id)} />
@@ -150,7 +177,7 @@ export const GastronomyOrderPage: React.FC = () => {
                     />
                 </div>
                 <div className={css.content}>
-                    <span className={css.content_title}>Ваш заказ успешно оплачен!</span>
+                    <span className={css.content_title}>{pageTitle}</span>
                     <div className={css.items}>
                         {order?.items.map((item) => (
                             <div className={css.item} key={item.id}>

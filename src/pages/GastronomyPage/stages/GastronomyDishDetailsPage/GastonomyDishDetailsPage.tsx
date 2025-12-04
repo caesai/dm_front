@@ -114,10 +114,10 @@ export const GastonomyDishDetailsPage: React.FC = () => {
 
                     {(() => {
                         // Данные КБЖУ находятся напрямую в объекте блюда
-                        const calories = (dishFromState as any).calories;
-                        const proteins = (dishFromState as any).proteins;
-                        const fats = (dishFromState as any).fats;
-                        const carbohydrates = (dishFromState as any).carbohydrates;
+                        const calories = dishFromState.calories;
+                        const proteins = dishFromState.proteins;
+                        const fats = dishFromState.fats;
+                        const carbohydrates = dishFromState.carbohydrates;
                         
                         // Показываем блок только если есть calories
                         if (!calories && calories !== 0) return null;
@@ -158,6 +158,8 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                     <div className={css.section}>
                         <span className={css.sectionTitle}>Аллергены</span>
                         <p className={css.sectionText}>
+                            // TODO: отрефакторить логику получения аллергенов
+                            // нужно избавиться от any и использовать типы
                             {(() => {
                                 // Аллергены находятся в поле allergens
                                 const allergensArray = (dishFromState as any).allergens;
