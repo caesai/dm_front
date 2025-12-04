@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai';
+import { useCallback } from 'react';
 import { gastronomyCartAtom, ICartItem, IGastronomyCart } from '@/atoms/gastronomyCartAtom.ts';
 import { IDish } from '@/types/gastronomy.types.ts';
 
@@ -110,9 +111,9 @@ export const useGastronomyCart = () => {
      * @param dish - Объект блюда, которое нужно добавить.
      * @param [selectedWeightIndex=0] - Индекс выбранного веса/цены блюда.
      */
-    const addToCart = (dish: IDish, selectedWeightIndex: number = 0) => {
+    const addToCart = useCallback((dish: IDish, selectedWeightIndex: number = 0) => {
         setCart(prevCart => handleAddToCartLogic(prevCart, dish, selectedWeightIndex));
-    };
+    }, [setCart]);
 
     /**
      * Удаляет одну единицу блюда из корзины.
@@ -120,20 +121,20 @@ export const useGastronomyCart = () => {
      *
      * @param dishId - Уникальный идентификатор блюда для удаления.
      */
-    const removeFromCart = (dishId: number) => {
+    const removeFromCart = useCallback((dishId: number) => {
         setCart(prevCart => handleRemoveFromCartLogic(prevCart, dishId));
-    };
+    }, [setCart]);
 
     /**
      * Полностью очищает корзину, сбрасывая все товары, общую сумму и количество в ноль.
      */
-    const clearCart = () => {
+    const clearCart = useCallback(() => {
         setCart({
             items: [],
             totalAmount: 0,
             totalItems: 0,
         });
-    };
+    }, [setCart]);
 
     /**
      * Возвращает текущее количество определенного блюда в корзине.
@@ -141,9 +142,9 @@ export const useGastronomyCart = () => {
      * @param dishId - Уникальный идентификатор блюда.
      * @returns Количество блюда в корзине (0, если блюдо отсутствует).
      */
-    const getItemQuantity = (dishId: number): number => {
+    const getItemQuantity = useCallback((dishId: number): number => {
         return cart.items.find((item) => item.id === dishId)?.quantity ?? 0;
-    };
+    }, [cart.items]);
 
     return {
         cart,

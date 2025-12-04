@@ -1,6 +1,6 @@
 import css from './GastronomyOrderPage.module.css';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { IOrder } from '@/types/gastronomy.types.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { MiniCrossIcon } from '@/components/Icons/MiniCrossIcon.tsx';
@@ -10,7 +10,8 @@ import moment from 'moment';
 import GastronomyOrderPopup from '@/components/GastronomyOrderPopup/GastronomyOrderPopup.tsx';
 import {
     APIGetGastronomyOrderById,
-    APIPostCheckGastronomyPayment, APIPostCreateGastronomyPayment,
+    APIPostCheckGastronomyPayment,
+    APIPostCreateGastronomyPayment,
     APIPostSendQuestion,
 } from '@/api/gastronomy.api.ts';
 import { useAtom } from 'jotai';
@@ -23,6 +24,7 @@ export const GastronomyOrderPage: React.FC = () => {
     const [restaurantsList] = useAtom(restaurantsListAtom);
     // params - используем когда перешли на страницу после платежа
     const [params] = useSearchParams();
+    const { order_id } = useParams();
     const paramsObject = Object.fromEntries(params.entries());
     const { showToast } = useToastState();
     // location используем для перехода со страницы профиля
@@ -31,7 +33,7 @@ export const GastronomyOrderPage: React.FC = () => {
 
     const [openPopup, setPopup] = useState(false);
     const [order, setOrder] = useState<IOrder>();
-    const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending' | 'error'>('pending');
+    const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending' | 'error' | 'no_payment'>('pending');
 
     const time = useMemo(() => {
         return order?.delivery_time ? order.delivery_time : order?.pickup_time;
@@ -75,30 +77,29 @@ export const GastronomyOrderPage: React.FC = () => {
      * @returns {void}
      */
     const checkGastronomyPayment = useCallback(async () => {
-        if (auth?.access_token && paramsObject.orderId) {
+        if (auth?.access_token && (paramsObject.orderId || order_id)) {
             try {
-                const response = await APIPostCheckGastronomyPayment(paramsObject.orderId, auth.access_token);
+                const orderId = paramsObject.orderId || order_id;
+                const response = await APIPostCheckGastronomyPayment(String(orderId), auth.access_token);
                 setPaymentStatus(response.data.status);
 
                 try {
-                    const res = await APIGetGastronomyOrderById(paramsObject.orderId, auth.access_token);
+                    const res = await APIGetGastronomyOrderById(String(orderId), auth.access_token);
                     setOrder(res.data);
                 } catch (error) {
                     showToast('Не удалось получить детали заказа. Попробуйте еще раз.');
                 }
-
             } catch (error) {
                 setPaymentStatus('pending');
                 showToast('Платёж в обработке. Проверьте позже.');
             }
         }
-    }, [auth?.access_token, paramsObject.orderId]);
+    }, [auth?.access_token, paramsObject.orderId, order_id]);
 
     useEffect(() => {
         // Перешли на страницу после оплаты, проверяем статус оплаты и получаем данные о заказе
         checkGastronomyPayment().then();
     }, [checkGastronomyPayment]);
-
 
     useEffect(() => {
         // Если перешли на данную страницу со страницы профиля
@@ -120,14 +121,15 @@ export const GastronomyOrderPage: React.FC = () => {
 
     const repeatPayment = () => {
         if (auth?.access_token) {
-            if (paramsObject.orderId) {
-                APIPostCreateGastronomyPayment(paramsObject.orderId, auth?.access_token)
+            if (paramsObject.orderId || order_id) {
+                const orderId = paramsObject.orderId || order_id;
+                APIPostCreateGastronomyPayment(String(orderId), auth?.access_token)
                     .then((res) => {
                         window.location.href = res.data.payment_url;
                     })
                     .catch(() => {
                         showToast(
-                            'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.',
+                            'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.'
                         );
                     });
             }
@@ -136,11 +138,7 @@ export const GastronomyOrderPage: React.FC = () => {
 
     return (
         <>
-            <GastronomyOrderPopup
-                isOpen={openPopup}
-                setOpen={setPopup}
-                order_id={String(order?.order_id)}
-            />
+            <GastronomyOrderPopup isOpen={openPopup} setOpen={setPopup} order_id={String(order?.order_id)} />
             <section className={css.page}>
                 <div className={css.header}>
                     <span className={css.spacer}></span>
@@ -154,10 +152,12 @@ export const GastronomyOrderPage: React.FC = () => {
                 <div className={css.content}>
                     <span className={css.content_title}>Ваш заказ успешно оплачен!</span>
                     <div className={css.items}>
-                        {order?.items.map(item => (
+                        {order?.items.map((item) => (
                             <div className={css.item} key={item.id}>
                                 <span>{item.title}</span>
-                                <span>{item.quantity} × {item.price} ₽</span>
+                                <span>
+                                    {item.quantity} × {item.price} ₽
+                                </span>
                             </div>
                         ))}
                     </div>
@@ -170,26 +170,27 @@ export const GastronomyOrderPage: React.FC = () => {
                             <span>Способ получения</span>
                             <span>
                                 {order?.delivery_method === 'delivery' ? 'Доставка' : 'Самовывоз'},
-                                {order && (
-                                    ` ${order?.delivery_method === 'delivery' ? order.delivery_address : getRestaurantAddressById(order.restaurant_id, restaurantsList)}`
-                                )}
+                                {order &&
+                                    ` ${order?.delivery_method === 'delivery' ? order.delivery_address : getRestaurantAddressById(order.restaurant_id, restaurantsList)}`}
                             </span>
                         </div>
                         {time && (
                             <div className={css.info_content}>
                                 <span>Дата и время</span>
-                                <span>{getDayOfWeek(time.date)}, {getDateWithMonth(time.date)}, {time.time}</span>
+                                <span>
+                                    {getDayOfWeek(time.date)}, {getDateWithMonth(time.date)}, {time.time}
+                                </span>
                             </div>
                         )}
                     </div>
                 </div>
                 <div className={css.bottom_buttons}>
-                    {paymentStatus === 'paid' &&
-                        <UniversalButton width={'full'} title={'Отменить заказ'} action={() => setPopup(true)} />}
-                    {paymentStatus === 'pending' &&
-                        <UniversalButton width={'full'} title={'Оплатить заказ'} action={checkGastronomyPayment} />}
-                    {paymentStatus === 'error' &&
-                        <UniversalButton width={'full'} title={'Оплатить заказ'} action={repeatPayment} />}
+                    {paymentStatus === 'paid' && (
+                        <UniversalButton width={'full'} title={'Отменить заказ'} action={() => setPopup(true)} />
+                    )}
+                    {(paymentStatus === 'pending' || paymentStatus === 'no_payment' || paymentStatus === 'error') && (
+                        <UniversalButton width={'full'} title={'Оплатить заказ'} action={repeatPayment} />
+                    )}
                     <UniversalButton
                         width={'full'}
                         title={'Задать вопрос по заказу'}
