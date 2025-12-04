@@ -23,12 +23,7 @@ export const ProfilePage = () => {
                 <div className={css.pageWrapper}>
                     <div className={css.header}>
                         <RoundedButton
-                            icon={
-                                <BackIcon
-                                    size={24}
-                                    color={'var(--dark-grey)'}
-                                />
-                            }
+                            icon={<BackIcon size={24} color={'var(--dark-grey)'} />}
                             action={() => navigate(backUrlAtom)}
                         />
                         <span className={css.headerTitle}>Профиль</span>
@@ -37,43 +32,28 @@ export const ProfilePage = () => {
                     <div className={css.navLinks}>
                         <Link to={'/myBookings'} className={css.navLink}>
                             <BookIcon size={24} color={'black'} />
-                            <span className={css.navLinkTitle}>
-                                Мои бронирования
-                            </span>
+                            <span className={css.navLinkTitle}>Мои бронирования</span>
                         </Link>
-                        <span
-                            className={css.navLink}
-                            onClick={() => navigate('/tickets')}
-                        >
-                                    <TicketsIcon size={24} color={'black'} />
-                                    <span className={css.navLinkTitle}>Мои билеты</span>
-                                </span>
+                        <span className={css.navLink} onClick={() => navigate('/tickets')}>
+                            <TicketsIcon size={24} color={'black'} />
+                            <span className={css.navLinkTitle}>Мои билеты</span>
+                        </span>
                         <Link to={'/me'} className={css.navLink}>
                             <UserProfileIcon size={24} color={'black'} />
-                            <span className={css.navLinkTitle}>
-                                Личные данные
-                            </span>
+                            <span className={css.navLinkTitle}>Личные данные</span>
                         </Link>
                         <Link to={'/certificates/my'} className={css.navLink}>
                             <PlainGiftIcon size={24} color={'black'} />
-                            <span className={css.navLinkTitle}>
-                                    Подарочные сертификаты
-                                </span>
+                            <span className={css.navLinkTitle}>Подарочные сертификаты</span>
                         </Link>
-                        <Link
-                            to={'/gastronomy/my'}
-                            className={css.navLink}>
+                        <Link to={'/gastronomy/my'} className={css.navLink}>
                             <KitchenIcon size={24} color={'black'} />
-                            <span className={css.navLinkTitle}>
-                                    Мои заказы
-                                </span>
+                            <span className={css.navLinkTitle}>Мои заказы</span>
                         </Link>
                         {user?.administrator?.is_active ? (
                             <Link to={'/scanner'} className={css.navLink}>
                                 <UserProfileIcon size={24} color={'black'} />
-                                <span className={css.navLinkTitle}>
-                                    Сканер билетов
-                                </span>
+                                <span className={css.navLinkTitle}>Сканер билетов</span>
                             </Link>
                         ) : null}
                         {/*<Link to={'/support'} className={css.navLink}>*/}

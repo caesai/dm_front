@@ -136,7 +136,7 @@ export const RestaurantsListSelector: FC<RestaurantsListSelectorProps> = ({
                 <SaveButton onClose={onClose} />
             </>
         ),
-        [restaurant, handlePickerChange, onClose]
+        [restaurant, restaurantList, handlePickerChange, onClose]
     );
 
     return (
