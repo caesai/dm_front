@@ -34,6 +34,10 @@ import { AddressBlock } from '@/pages/Restaurant/blocks/AddressBlock.tsx';
 import { NavigationBlock } from '@/pages/Restaurant/blocks/NavigationBlock.tsx';
 import { GastronomyBlock } from '@/pages/Restaurant/blocks/GastronomyBlock.tsx';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
+import gastroBtn from '/img/gastro_btn1.png';
+import {
+    OptionsNavigationElement
+} from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
 
 /**
  * Преобразует массив фотографий в структурированную галерею с группировкой по категориям
@@ -226,6 +230,18 @@ export const Restaurant = () => {
                         data-use-location="false"
                         data-point-a=""
                         data-point-b={restaurant?.address_lonlng}
+                    />
+                </div>
+
+                <div className={css.gastronomyBanner}>
+                    <OptionsNavigationElement
+                        title={'Новогодняя кулинария'}
+                        subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
+                        img={gastroBtn}
+                        className={css.gastronomyBannerButton}
+                        textWrapperClassName={css.gastronomyBannerText}
+                        link={'/gastronomy/choose'}
+                        locationState={{restaurant: restaurant}}
                     />
                 </div>
 
