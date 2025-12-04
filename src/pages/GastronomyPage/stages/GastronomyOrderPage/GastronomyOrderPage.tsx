@@ -34,7 +34,7 @@ export const GastronomyOrderPage: React.FC = () => {
 
     const [openPopup, setPopup] = useState(false);
     const [order, setOrder] = useState<IOrder>();
-    const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending' | 'error' | 'no_payment'>('pending');
+    const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending' | 'error' | 'no_payment' | 'not_paid' | 'canceled'>('pending');
     const [isLoading, setIsLoading] = useState(true);
 
     const time = useMemo(() => {
@@ -146,10 +146,14 @@ export const GastronomyOrderPage: React.FC = () => {
                 return 'Заказ успешно оплачен!';
             case 'pending':
                 return 'Заказ не оплачен';
+            case 'not_paid':
+                return 'Заказ не оплачен';
             case 'error':
                 return 'Ошибка при оплате заказа';
             case 'no_payment':
                 return 'Заказ в обработке';
+            case 'canceled':
+                return 'Заказ отменен';
             default:
                 return '';
         }
