@@ -33,14 +33,19 @@ const StyledPopup = styled(Popup)`
     }
 `;
 
-export const DateListSelector: FC<Props> = ({
-    isOpen,
-    setOpen,
-    date,
-    setDate,
-    values,
-}) => {
-    const onClose = () => setOpen(false);
+const handleOpen = () => {
+    document.body.style.overflow = 'hidden';
+};
+
+const handleClose = () => {
+    document.body.style.overflow = 'unset'; // Or '' to remove the style
+};
+
+export const DateListSelector: FC<Props> = ({ isOpen, setOpen, date, setDate, values }) => {
+    const onClose = () => {
+        handleClose();
+        setOpen(false);
+    };
 
     useEffect(() => {
         if (values.length && isOpen && date.value == 'unset') {
@@ -50,9 +55,9 @@ export const DateListSelector: FC<Props> = ({
     const onChange = (val: PickerValueObj) => {
         setDate({
             title: formatDate(val.value),
-            value: val.value
+            value: val.value,
         });
-    }
+    };
     const picker = (
         <>
             <Picker
@@ -67,12 +72,7 @@ export const DateListSelector: FC<Props> = ({
                         <Picker.Item key={option.value} value={option}>
                             {({ selected }) => (
                                 <div className={css.selectorItem}>
-                                    <span
-                                        className={classNames(
-                                            css.item,
-                                            selected ? css.item__selected : null
-                                        )}
-                                    >
+                                    <span className={classNames(css.item, selected ? css.item__selected : null)}>
                                         {formatDate(option.value)}
                                     </span>
                                 </div>
@@ -90,7 +90,7 @@ export const DateListSelector: FC<Props> = ({
     );
 
     return (
-        <StyledPopup open={isOpen} onClose={onClose} modal>
+        <StyledPopup open={isOpen} onClose={onClose} modal onOpen={handleOpen}>
             <ContentContainer>
                 <div className={css.content}>
                     <h3>Выберите дату</h3>

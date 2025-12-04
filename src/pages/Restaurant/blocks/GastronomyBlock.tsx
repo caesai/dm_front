@@ -36,7 +36,7 @@ export const GastronomyBlock: React.FC<GastronomyBlockProps> = ({ image, descrip
                     <span className={css.blockDescription}>{description}</span>
                     <UniversalButton
                         width={'full'}
-                        title={'Сделать предзаказ'}
+                        title={'Оформить предзаказ'}
                         theme={'red'}
                         action={() => navigate('/gastronomy/choose', { state: { restaurant: currentRestaurant }})}
                     />
