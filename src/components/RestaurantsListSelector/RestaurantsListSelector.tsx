@@ -41,7 +41,7 @@ const handleOpen = () => {
 };
 
 const handleClose = () => {
-    document.body.style.overflow = 'unset'; // Or '' to remove the style
+    document.body.style.overflow = ''; // Or '' to remove the style
 };
 
 // Extracted SaveButton for better readability and separation of concerns

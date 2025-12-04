@@ -95,7 +95,7 @@ export const GastronomyBasketPage: React.FC = () => {
         if (restaurant?.id === 11) {
             return 10000;
         }
-        // ПДля доставки Smoke BBQ Рубинштейна
+        // Для доставки Smoke BBQ Рубинштейна
         if (restaurant?.id === 6) {
             return 5000;
         }

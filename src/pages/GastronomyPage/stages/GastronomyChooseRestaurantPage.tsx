@@ -144,7 +144,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
      */
     useEffect(() => {
         clearCart();
-    }, []);
+    }, [clearCart]);
 
     return (
         <>
