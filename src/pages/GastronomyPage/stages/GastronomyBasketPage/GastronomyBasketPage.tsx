@@ -626,7 +626,7 @@ export const GastronomyBasketPage: React.FC = () => {
                             ) : (
                                 <>
                                     <span className={css.deliveryLabel}>{deliveryText}</span>
-                            <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
+                                    <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
                                 </>
                             )}
                         </div>
