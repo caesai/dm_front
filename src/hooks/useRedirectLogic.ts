@@ -75,6 +75,10 @@ export const useRedirectLogic = () => {
                 navigate('/banquets/:id/address', { replace: true });
                 return;
             }
+            if (paramsObject.tgWebAppStartParam === 'gastronomy') {
+                navigate('/gastronomy/choose?shared=true', { replace: true });
+                return;
+            }
         }
 
         // Redirect based on query parameters (highest priority)
@@ -101,7 +105,8 @@ export const useRedirectLogic = () => {
                 !pathname.includes('booking') &&
                 !pathname.includes('certificates') &&
                 !pathname.includes('banquets') &&
-                !pathname.includes('tickets');
+                !pathname.includes('tickets') &&
+                !pathname.includes('gastronomy');
 
             if (isUserIncomplete && isOnboardingNotExcluded) {
                 navigate('/onboarding', { replace: true });

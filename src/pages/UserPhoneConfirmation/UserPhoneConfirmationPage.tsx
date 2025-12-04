@@ -51,6 +51,9 @@ export const UserPhoneConfirmationPage = () => {
                 if (state.sharedBanquet) {
                     navigate(`/banquets/${state.id}/choose`, { state });
                 }
+                if (state.sharedGastronomy) {
+                    navigate(`/gastronomy/${state.id}`, { state });
+                }
             } else {
                 navigate('/');
             }

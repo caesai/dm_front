@@ -29,7 +29,7 @@ const initialRestaurant: PickerValueObj = {
 
 export const GastronomyChooseRestaurantPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
-
+    
     const [cityListA] = useAtom(cityListAtom);
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
@@ -146,6 +146,15 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         clearCart();
     }, [clearCart]);
 
+    const goToDishesPage = () => {
+        if (isDisabledButton) {
+            return;
+        }
+        if (currentRestaurant.value !== 'unset') {
+            navigate('/gastronomy/' + currentRestaurant.value);
+        } 
+    };
+
     return (
         <>
             <RestaurantsListSelector
@@ -195,7 +204,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                 </ContentBlock>
                 <BottomButtonWrapper
                     content={'Перейти к списку блюд'}
-                    onClick={isDisabledButton ? undefined : () => navigate('/gastronomy/' + currentRestaurant.value)}
+                    onClick={goToDishesPage}
                     isDisabled={isDisabledButton}
                     theme={isDisabledButton ? 'primary' : 'red'}
                 />
