@@ -115,7 +115,7 @@ export const Restaurant = () => {
         if (!events) return undefined;
 
         return events.filter((event) => {
-            return event.tickets_left > 0;
+                return event.tickets_left > 0;
         });
     };
 
@@ -258,12 +258,12 @@ export const Restaurant = () => {
 
                 {hasEvents && <EventsBlock events={events} />}
 
-                <CertificateBlock
-                    image={certificateBlock.image}
-                    description={certificateBlock.description}
-                />
+                    <CertificateBlock
+                        image={certificateBlock.image}
+                        description={certificateBlock.description}
+                    />
 
-                {tg_id && mockEventsUsersList.includes(tg_id) && restaurant && (
+                {restaurant && (
                     <GastronomyBlock
                         description={nyCookings.description}
                         image={nyCookings.image}

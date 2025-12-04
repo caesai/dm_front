@@ -1,4 +1,4 @@
-import { IWorkTime } from '@/types/restaurant.types.ts';
+import { IRestaurant, IWorkTime } from '@/types/restaurant.types.ts';
 // import { IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
 import { Dispatch, SetStateAction } from 'react';
 // import moment from 'moment';
@@ -604,3 +604,12 @@ export const findOtherAllergies = (allergies: string[]) => {
     // Фильтруем userAllergies, оставляя только те, которых нет в Set
     return allergies.filter(allergy => !validAllergies.has(allergy));
 }
+
+export const getRestaurantAddressById = (
+    res_id: number,
+    restaurantsList: IRestaurant[]
+): string | undefined => {
+    const restaurant = restaurantsList.find(restaurant => restaurant.id === res_id);
+
+    return restaurant?.address;
+};

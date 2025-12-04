@@ -18,13 +18,6 @@ export const GastronomyChooseDishesPage: React.FC = () => {
 
     const [dishesList, setDishesList] = useAtom(dishesListAtom);
 
-    // Логирование при рендере компонента
-    console.log('[GastronomyChooseDishesPage] Component rendered', { 
-        dishesCount: dishesList.length, 
-        res_id,
-        hasAuth: !!auth 
-    });
-
     const handleCartClick = () => {
         navigate(`/gastronomy/${res_id}/basket`);
     };
@@ -36,41 +29,14 @@ export const GastronomyChooseDishesPage: React.FC = () => {
     };
 
     useEffect(() => {
-        console.log('[GastronomyChooseDishesPage] useEffect triggered', { auth: !!auth, res_id });
         if (!auth) {
-            console.log('[GastronomyChooseDishesPage] No auth, returning');
             return;
         }
-        console.log('[GastronomyChooseDishesPage] Fetching dishes...');
         APIGetGastronomyDishes(auth.access_token, res_id)
             .then((res) => {
-                console.log('[GastronomyChooseDishesPage] Dishes received from API:', res.data);
-                console.log('[GastronomyChooseDishesPage] Total dishes:', res.data.length);
-                
-                // Логирование данных с API для проверки аллергенов
-                res.data.forEach((dish, index) => {
-                    const allergenInfo = {
-                        allergens: dish.allergens,
-                        allergensRaw: JSON.stringify(dish.allergens),
-                        allergensLength: dish.allergens?.length,
-                        allergensType: typeof dish.allergens,
-                        isArray: Array.isArray(dish.allergens),
-                        allergensDetails: dish.allergens?.map((a: any, i: number) => ({
-                            index: i,
-                            allergen: a,
-                            name: a?.name,
-                            code: a?.code,
-                            nameType: typeof a?.name,
-                            nameLength: a?.name?.length,
-                        })),
-                    };
-                    console.log(`[GastronomyChooseDishesPage] Dish ${index + 1} (ID: ${dish.id}, Title: ${dish.title}):`, allergenInfo);
-                });
                 setDishesList(res.data);
             })
-            .catch((err) => {
-                console.error('[GastronomyChooseDishesPage] Error fetching dishes:', err);
-            });
+            .catch(() => {});
     }, [auth, res_id]);
 
     return (

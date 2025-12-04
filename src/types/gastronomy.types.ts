@@ -5,20 +5,23 @@ export interface INutritionInfo {
     carbs: string;
 }
 
-export interface IAllergen {
-    code: string;
-    name: string;
-}
-
 export interface IDish {
     id: number;
+    restaurant_id: number;
     title: string;
+    guest_title?: string;
+    description: string;
+    allergens: string[];
     prices: number[];
     weights: string[];
+    weight_value?: string;
+    calories?: number;
+    proteins?: number;
+    fats?: number;
+    carbohydrates?: number;
+    priority?: number;
     image_url: string;
-    description: string;
-    nutritionPer100g: INutritionInfo;
-    allergens: IAllergen[];
+    is_active?: boolean;
 }
 
 export type TDeliveryMethod = "pickup" | "delivery";
@@ -41,13 +44,13 @@ export interface ISendOrder {
     total_amount: number;
     delivery_method: TDeliveryMethod;
     delivery_address?: string;
+    delivery_time?: ITimeWindow;
+    pickup_time?: ITimeWindow;
     delivery_cost: number;
 }
 
 export interface IOrder extends ISendOrder {
     order_id: string;
     status: "paid" | "pending" | "canceled";
-    pickup_time?: ITimeWindow;
-    delivery_time?: ITimeWindow;
     createdAt: string;
 }
