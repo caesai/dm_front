@@ -47,7 +47,7 @@ export const BanquetReservationPage = () => {
         price,
         withAdditionalPage,
     } = reservationData;
-
+    
     const [commentary, setCommentary] = useState<string>('');
     const [confirmation, setConfirmation] = useState<IConfirmationType>({
         id: 'telegram',
