@@ -460,6 +460,7 @@ export const GastronomyBasketPage: React.FC = () => {
                         window.location.href = res.data.payment_url;
                     })
                     .catch((err) => {
+                        console.log(err);
                         showToast(
                             'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.'
                         );
