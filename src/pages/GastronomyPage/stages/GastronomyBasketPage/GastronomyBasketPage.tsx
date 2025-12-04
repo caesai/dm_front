@@ -12,7 +12,7 @@ import { formatDate } from '@/utils.ts';
 import useToast from '@/hooks/useToastState.ts';
 import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
 import { APIPostCreateGastronomyPayment, APIPostUserOrder } from '@/api/gastronomy.api.ts';
-import { authAtom } from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import css from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.module.css';
@@ -36,6 +36,7 @@ export const GastronomyBasketPage: React.FC = () => {
     const [currentCity] = useAtom(currentCityAtom);
     const [cityList] = useAtom(cityListAtom);
     const [auth] = useAtom(authAtom);
+    const [user] = useAtom(userAtom);
 
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('pickup');
     const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(false);
@@ -414,6 +415,10 @@ export const GastronomyBasketPage: React.FC = () => {
     };
 
     const handlePayment = async () => {
+        if (!user?.complete_onboarding) {
+            navigate('/onboarding/3', { state: { id: res_id, sharedGastronomy: true } });
+            return;
+        }
         if (deliveryMethod === 'delivery' && address) {
             // Проверяем зону доставки
             let coordinates = selectedAddressCoordinates;
