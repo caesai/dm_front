@@ -164,8 +164,8 @@ export const GastronomyBasketPage: React.FC = () => {
             // Получаем день недели выбранной даты (0 - воскресенье, 1 - понедельник, и т.д.)
             const dayOfWeek = selectedDateObj.getDay();
             
-            // Маппинг номера дня недели на русское название
-            const weekdayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            // Маппинг номера дня недели на русское название (в НИЖНЕМ РЕГИСТРЕ, как в API)
+            const weekdayNames = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             const weekdayName = weekdayNames[dayOfWeek];
             
             // Ищем расписание для этого дня недели
@@ -189,38 +189,27 @@ export const GastronomyBasketPage: React.FC = () => {
         const slots: string[] = [];
         let currentHour = openHour;
 
+        // Определяем конечный час работы с учетом перехода через полночь
+        // Если закрытие раньше открытия (например, 20:00-01:00), добавляем 24 часа к времени закрытия
+        const closeHourAdjusted = closeHour < openHour ? closeHour + 24 : closeHour;
+
         // Генерируем слоты по 3 часа от открытия до закрытия
-        while (true) {
-            const nextHour = currentHour + 3;
-
-            // Если следующий час >= 24, значит переходим на следующий день
-            // В этом случае последний слот идет до времени закрытия
-            if (nextHour >= 24) {
-                // Последний слот до закрытия (например, 23:00-01:00)
-                slots.push(`${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`);
-                break;
+        while (currentHour < closeHourAdjusted) {
+            let nextHour = currentHour + 3;
+            
+            // Если следующий час выходит за время закрытия, ограничиваем его временем закрытия
+            if (nextHour > closeHourAdjusted) {
+                nextHour = closeHourAdjusted;
             }
-
-            // Если закрытие на следующий день (closeHour < openHour) и мы еще не достигли перехода через полночь
-            // Продолжаем добавлять слоты по 3 часа
-            if (closeHour < openHour) {
-                // Если следующий час >= 24, значит это последний слот
-                if (nextHour >= 24) {
-                    slots.push(`${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`);
-                    break;
-                }
-            } else {
-                // Если закрытие в тот же день
-                if (nextHour > closeHour) {
-                    // Последний слот до закрытия
-                    slots.push(`${String(currentHour).padStart(2, '0')}:00–${String(closeHour).padStart(2, '0')}:00`);
-                    break;
-                }
-            }
-
-            // Добавляем слот на 3 часа
-            slots.push(`${String(currentHour).padStart(2, '0')}:00–${String(nextHour).padStart(2, '0')}:00`);
-
+            
+            // Форматируем часы для отображения (приводим к диапазону 0-23)
+            const displayCurrentHour = currentHour >= 24 ? currentHour - 24 : currentHour;
+            const displayNextHour = nextHour >= 24 ? nextHour - 24 : nextHour;
+            
+            slots.push(
+                `${String(displayCurrentHour).padStart(2, '0')}:00–${String(displayNextHour).padStart(2, '0')}:00`
+            );
+            
             currentHour = nextHour;
         }
 
@@ -459,8 +448,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     .then((res) => {
                         window.location.href = res.data.payment_url;
                     })
-                    .catch((err) => {
-                        console.log(err);
+                    .catch(() => {
                         showToast(
                             'Не удалось создать платеж. Пожалуйста, попробуйте еще раз или проверьте соединение.'
                         );
@@ -627,7 +615,7 @@ export const GastronomyBasketPage: React.FC = () => {
                             ) : (
                                 <>
                                     <span className={css.deliveryLabel}>{deliveryText}</span>
-                                    <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
+                            <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
                                 </>
                             )}
                         </div>
