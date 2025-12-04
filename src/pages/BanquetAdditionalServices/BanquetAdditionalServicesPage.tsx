@@ -17,6 +17,7 @@ export const BanquetAdditionalServicesPage = () => {
     const banquetData = location.state.banquetData;
     const services = location.state.selectedServices;
     const options: IBanquetAdditionalOptions[] = banquetData.additionalOptions;
+    const currentRestaurant = location.state.currentRestaurant;
 
     const [selectedServices, setSelectedServices] = useState<string[]>(services || []);
 
@@ -39,6 +40,7 @@ export const BanquetAdditionalServicesPage = () => {
             ...banquetData,
             selectedServices,
             withAdditionalPage: true,
+            currentRestaurant,
         };
 
         navigate(`/banquets/${id}/reservation`, {state: { ...location.state, reservationData}});
