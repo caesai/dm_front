@@ -719,7 +719,7 @@ export const GastronomyBasketPage: React.FC = () => {
                         <div
                             className={css.datePicker}
                             onClick={() => {
-                                if (res_id !== '9') setShowDatePicker(true);
+                                if (res_id !== SMOKE_BBQ_MSK_TRUBNAYA_ID) setShowDatePicker(true);
                             }}
                         >
                             <div className={css.datePickerContent}>
