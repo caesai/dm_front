@@ -35,9 +35,8 @@ import { NavigationBlock } from '@/pages/Restaurant/blocks/NavigationBlock.tsx';
 import { GastronomyBlock } from '@/pages/Restaurant/blocks/GastronomyBlock.tsx';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
 import gastroBtn from '/img/gastro_btn1.png';
-import {
-    OptionsNavigationElement
-} from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
+import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
+import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
 
 /**
  * Преобразует массив фотографий в структурированную галерею с группировкой по категориям
@@ -68,6 +67,7 @@ export const Restaurant = () => {
     const [restaurants] = useAtom(restaurantsListAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
     const [currentSelectedTime, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
+    const [allGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
 
     const [restaurant, setRestaurant] = useState<IRestaurant>();
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
@@ -106,9 +106,7 @@ export const Restaurant = () => {
      * Открывает Яндекс Карты с местоположением ресторана
      */
     const handleOpenYandexMaps = () => {
-        window.open(
-            `https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`,
-        );
+        window.open(`https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`);
     };
 
     /**
@@ -119,7 +117,7 @@ export const Restaurant = () => {
         if (!events) return undefined;
 
         return events.filter((event) => {
-                return event.tickets_left > 0;
+            return event.tickets_left > 0;
         });
     };
 
@@ -151,18 +149,17 @@ export const Restaurant = () => {
     useEffect(() => {
         if (!auth?.access_token) return;
 
-        APIGetAvailableDays(auth.access_token, Number(id), 1)
-            .then((res) => {
-                const formattedDates = res.data.map((date) => ({
-                    title: formatDate(date),
-                    value: date,
-                }));
-                setBookingDates(formattedDates);
+        APIGetAvailableDays(auth.access_token, Number(id), 1).then((res) => {
+            const formattedDates = res.data.map((date) => ({
+                title: formatDate(date),
+                value: date,
+            }));
+            setBookingDates(formattedDates);
 
-                if (formattedDates.length > 0) {
-                    setBookingDate(formattedDates[0]);
-                }
-            });
+            if (formattedDates.length > 0) {
+                setBookingDate(formattedDates[0]);
+            }
+        });
     }, [auth?.access_token, id]);
 
     // Загрузка доступных таймслотов для выбранной даты
@@ -179,6 +176,10 @@ export const Restaurant = () => {
     const coordinates = useMemo(() => getRestaurantCoordinates(), [restaurant?.address_lonlng]);
     const hasBanquets = restaurant?.banquets && restaurant?.banquets.banquet_options.length > 0;
     const hasEvents = useMemo(() => Boolean(filteredEvents && filteredEvents.length > 0), [filteredEvents]);
+    const hasGastronomy = useMemo(
+        () => allGastronomyDishesList.some((dish) => dish.restaurant_id === Number(id)),
+        [allGastronomyDishesList, id]
+    );
 
     return (
         <Page back={true}>
@@ -194,6 +195,7 @@ export const Restaurant = () => {
                     restaurant={restaurant}
                     events={events}
                     filteredEvents={filteredEvents}
+                    hasGastronomy={hasGastronomy}
                 />
             )}
 
@@ -234,15 +236,17 @@ export const Restaurant = () => {
                 </div>
 
                 <div className={css.gastronomyBanner}>
-                    <OptionsNavigationElement
-                        title={'Новогодняя кулинария'}
-                        subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
-                        img={gastroBtn}
-                        className={css.gastronomyBannerButton}
-                        textWrapperClassName={css.gastronomyBannerText}
-                        link={'/gastronomy/choose'}
-                        locationState={{restaurant: restaurant}}
-                    />
+                    {hasGastronomy && (
+                        <OptionsNavigationElement
+                            title={'Новогодняя кулинария'}
+                            subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
+                            img={gastroBtn}
+                            className={css.gastronomyBannerButton}
+                            textWrapperClassName={css.gastronomyBannerText}
+                            link={'/gastronomy/choose'}
+                            locationState={{ restaurant: restaurant }}
+                        />
+                    )}
                 </div>
 
                 <BookingBlock
@@ -255,7 +259,7 @@ export const Restaurant = () => {
                     availableTimeslots={availableTimeslots}
                     setCurrentSelectedTime={setCurrentSelectedTime}
                     isNavigationLoading={events == null && restaurant?.banquets == null}
-                    isShow={tg_id && mockEventsUsersList.includes(tg_id)}
+                    isShow={tg_id && mockEventsUsersList.includes(tg_id) && hasGastronomy}
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
                 />
@@ -274,12 +278,9 @@ export const Restaurant = () => {
 
                 {hasEvents && <EventsBlock events={events} />}
 
-                    <CertificateBlock
-                        image={certificateBlock.image}
-                        description={certificateBlock.description}
-                    />
+                <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />
 
-                {restaurant && (
+                {restaurant && hasGastronomy && (
                     <GastronomyBlock
                         description={nyCookings.description}
                         image={nyCookings.image}
