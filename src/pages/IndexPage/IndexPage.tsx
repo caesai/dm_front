@@ -64,6 +64,16 @@ export const IndexPage: FC = () => {
 
     const want_first = getDataFromLocalStorage('want_first');
 
+    // Получаем статус первого запуска приложения и если это первый запуск, то добавляем мок ресторана в Санкт-Петербург
+    // Проверяем нажал ли пользователь на кнопку "Хочу быть первым"
+    let wantFirstParsed: any = {};
+
+    try {
+        wantFirstParsed = JSON.parse(String(want_first));
+    } catch (e) {
+        wantFirstParsed = {};
+    }
+
     useEffect(() => {
         if (!auth?.access_token) {
             return;
@@ -75,7 +85,6 @@ export const IndexPage: FC = () => {
         Promise.all([APIGetCurrentBookings(auth.access_token), APIGetTickets(auth.access_token)])
             .then((responses) => {
                 // TODO: доделать типизацию
-                // @ts-expect-error
                 const events: IBookingInfo[] = responses[1].data.map((event) => {
                     return {
                         id: event.id,
@@ -83,11 +92,15 @@ export const IndexPage: FC = () => {
                         booking_date: moment(event.date_start).format('YYYY-MM-DD'),
                         time: moment(event.date_start).format('HH:mm'),
                         restaurant: event.restaurant,
-                        tags: null,
+                        tags: '',
                         duration: 0,
                         guests_count: event.guest_count,
                         children_count: 0,
                         event_title: event.event_title,
+                        booking_status: 'confirmed',
+                        user_comments: '',
+                        certificate_value: 0,
+                        certificate_expired_at: '',
                     };
                 });
                 const bookings = [...events, ...responses[0].data.currentBookings];
@@ -205,16 +218,6 @@ export const IndexPage: FC = () => {
         () => cityListConfirm.filter((v) => v.id !== currentCityS.id),
         [cityListConfirm, currentCityS.id]
     );
-
-    // Получаем статус первого запуска приложения и если это первый запуск, то добавляем мок ресторана в Санкт-Петербург
-    // Проверяем нажал ли пользователь на кнопку "Хочу быть первым"
-    let wantFirstParsed: any = {};
-
-    try {
-        wantFirstParsed = JSON.parse(String(want_first));
-    } catch (e) {
-        wantFirstParsed = {};
-    }
 
     return (
         <Page back={false}>
