@@ -158,8 +158,10 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                     <div className={css.section}>
                         <span className={css.sectionTitle}>Аллергены</span>
                         <p className={css.sectionText}>
-                            // TODO: отрефакторить логику получения аллергенов
-                            // нужно избавиться от any и использовать типы
+                            {/** 
+                             * TODO: отрефакторить логику получения аллергенов
+                             * нужно избавиться от any и использовать типы
+                             */}
                             {(() => {
                                 // Аллергены находятся в поле allergens
                                 const allergensArray = (dishFromState as any).allergens;
