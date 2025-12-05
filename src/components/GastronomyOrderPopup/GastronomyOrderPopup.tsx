@@ -37,10 +37,11 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
         if (auth) {
             APIPostCancelOrder(order_id, auth?.access_token)
                 .then(() => {
+                    showToast('Запрос на отмену заказа отправлен');
                     if (window.Telegram.WebApp) {
-                        window.Telegram.WebApp.close();
-                    } else {
-                        showToast('Запрос на отмену заказа отправлен');
+                        setTimeout(() => {
+                            window.Telegram.WebApp.close();
+                        }, 1000);
                     }
                 })
                 .catch(() => {

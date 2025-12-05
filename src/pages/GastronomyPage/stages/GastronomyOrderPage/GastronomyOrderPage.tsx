@@ -153,13 +153,11 @@ export const GastronomyOrderPage: React.FC = () => {
         }
     }, [paymentStatus]);
 
-    const hideApp = () => {
+    const redirectToOrderQuestionBot = () => {
         const orderId = paramsObject.orderId || order_id;
+        window.location.href = `https://t.me/${BASE_BOT}?start=orderQuestion_${String(orderId)}`;
         if (window.Telegram.WebApp) {
-            window.location.href = `https://t.me/${BASE_BOT}?start=orderQuestion_${String(orderId)}`;
             window.Telegram.WebApp.close();
-        } else {
-            window.location.href = `https://t.me/${BASE_BOT}?start=orderQuestion_${String(orderId)}`;
         }
     };
 
@@ -235,7 +233,12 @@ export const GastronomyOrderPage: React.FC = () => {
                         paymentStatus === 'not_paid') && (
                         <UniversalButton width={'full'} title={'Оплатить заказ'} action={repeatPayment} />
                     )}
-                    <UniversalButton width={'full'} title={'Задать вопрос по заказу'} theme={'red'} action={hideApp} />
+                    <UniversalButton
+                        width={'full'}
+                        title={'Задать вопрос по заказу'}
+                        theme={'red'}
+                        action={redirectToOrderQuestionBot}
+                    />
                 </div>
             </section>
         </>
