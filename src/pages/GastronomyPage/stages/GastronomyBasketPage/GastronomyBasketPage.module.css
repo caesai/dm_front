@@ -104,12 +104,38 @@
 }
 
 /* Итого */
+.delivery {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #E5E5E5;
+}
+
+.deliveryLabel,
+.deliveryValue {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 18px;
+    color: #545454;
+}
+
 .total {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     gap: 16px;
+    padding-top: 8px;
+}
+
+/* Полоска над "Итого" только если нет блока "Доставка" перед ним */
+.itemsList + .total {
+    padding-top: 16px;
+    border-top: 1px solid #E5E5E5;
 }
 
 .totalLabel,

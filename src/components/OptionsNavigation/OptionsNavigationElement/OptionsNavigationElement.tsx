@@ -10,6 +10,7 @@ interface OptionsNavigationElementProps {
     img?: string;
     link?: string;
     onClick?: () => void;
+    locationState?: object;
     className?: string;
     textWrapperClassName?: string;
 }
@@ -18,7 +19,7 @@ export const OptionsNavigationElement = (
     props: OptionsNavigationElementProps
 ) => {
     return props.link ? (
-        <Link to={props.link} className={classNames(css.element, props.className)} style={{ backgroundImage: `url(${props.img})` }}>
+        <Link to={props.link} className={classNames(css.element, props.className)} style={{ backgroundImage: `url(${props.img})` }} state={props.locationState}>
             <div className={css.wrapper}>
                 <div className={classNames(css.textWrapper, props.textWrapperClassName)}>
                     <span className={css.title}>{props.title}</span>

@@ -12,13 +12,13 @@ import {
     APIGetGastronomyOrderById,
     APIPostCheckGastronomyPayment,
     APIPostCreateGastronomyPayment,
-    APIPostSendQuestion,
 } from '@/api/gastronomy.api.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
 import useToastState from '@/hooks/useToastState.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen';
+import { BASE_BOT } from '@/api/base';
 
 export const GastronomyOrderPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
@@ -34,7 +34,9 @@ export const GastronomyOrderPage: React.FC = () => {
 
     const [openPopup, setPopup] = useState(false);
     const [order, setOrder] = useState<IOrder>();
-    const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending' | 'error' | 'no_payment' | 'not_paid' | 'canceled'>('pending');
+    const [paymentStatus, setPaymentStatus] = useState<
+        'paid' | 'pending' | 'error' | 'no_payment' | 'not_paid' | 'canceled'
+    >('pending');
     const [isLoading, setIsLoading] = useState(true);
 
     const time = useMemo(() => {
@@ -51,14 +53,6 @@ export const GastronomyOrderPage: React.FC = () => {
         const dayIndex = new Date(date).getDay();
         return weekdaysMap[dayIndex];
     };
-
-    const sendQuestion = () => {
-        if (!auth) return;
-        APIPostSendQuestion(String(order?.order_id), auth?.access_token)
-            .then(() => showToast('Ваш вопрос отправлен администратору'))
-            .catch(() => showToast('Произошла ошибка. Попробуйте еще раз.'));
-    };
-
     /**
      * Проверяет статус платежа за заказ в гастрономии и получает детали заказа.
      *
@@ -81,12 +75,16 @@ export const GastronomyOrderPage: React.FC = () => {
     const checkGastronomyPayment = useCallback(async () => {
         if (auth?.access_token && (paramsObject.orderId || order_id)) {
             try {
+                // Если есть paramsObject.orderId, значит на страницу перешли после Альфа платежа
+                // Если есть order_id, значит на страницу перешли после перехода на страницу заказа из профиля
                 const orderId = paramsObject.orderId || order_id;
                 const response = await APIPostCheckGastronomyPayment(String(orderId), auth.access_token);
+                // Может придти статус no_payment, если заказ не оплачен
                 setPaymentStatus(response.data.status);
 
                 try {
                     const res = await APIGetGastronomyOrderById(String(orderId), auth.access_token);
+                    // Может придти статус not_paid, если заказ не оплачен
                     setOrder(res.data);
                     setIsLoading(false);
                 } catch (error) {
@@ -112,6 +110,7 @@ export const GastronomyOrderPage: React.FC = () => {
         }
     }, [location.state]);
 
+    // Оплата Альфа платежей не прошла(failUrl)
     useEffect(() => {
         if (paramsObject.error) {
             setPaymentStatus('error');
@@ -159,6 +158,14 @@ export const GastronomyOrderPage: React.FC = () => {
         }
     }, [paymentStatus]);
 
+    const redirectToOrderQuestionBot = () => {
+        const orderId = paramsObject.orderId || order_id;
+        window.location.href = `https://t.me/${BASE_BOT}?start=orderQuestion_${String(orderId)}`;
+        if (window.Telegram.WebApp) {
+            window.Telegram.WebApp.close();
+        }
+    };
+
     if (isLoading) {
         return (
             <div className={css.loader}>
@@ -192,6 +199,12 @@ export const GastronomyOrderPage: React.FC = () => {
                             </div>
                         ))}
                     </div>
+                    {order?.delivery_method === 'delivery' && (
+                        <div className={css.item}>
+                            <span>Доставка</span>
+                            <span>{order?.delivery_cost === 0 ? 'Бесплатно' : `${order?.delivery_cost} ₽`}</span>
+                        </div>
+                    )}
                     <div className={css.item}>
                         <span>Итого</span>
                         <span>{order?.total_amount} ₽</span>
@@ -219,14 +232,17 @@ export const GastronomyOrderPage: React.FC = () => {
                     {paymentStatus === 'paid' && (
                         <UniversalButton width={'full'} title={'Отменить заказ'} action={() => setPopup(true)} />
                     )}
-                    {(paymentStatus === 'pending' || paymentStatus === 'no_payment' || paymentStatus === 'error' || paymentStatus === 'not_paid') && (
+                    {(paymentStatus === 'pending' ||
+                        paymentStatus === 'no_payment' ||
+                        paymentStatus === 'error' ||
+                        paymentStatus === 'not_paid') && (
                         <UniversalButton width={'full'} title={'Оплатить заказ'} action={repeatPayment} />
                     )}
                     <UniversalButton
                         width={'full'}
                         title={'Задать вопрос по заказу'}
                         theme={'red'}
-                        action={sendQuestion}
+                        action={redirectToOrderQuestionBot}
                     />
                 </div>
             </section>
