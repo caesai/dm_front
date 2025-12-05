@@ -129,7 +129,7 @@ export const IndexPage: FC = () => {
         }
     }, [cityId]);
 
-    // Устанавливаем текущий город в state по умлочанию Москва
+    // Устанавливаем текущий город в state по умолчанию Москва
     useEffect(() => {
         setCurrentCityS(
             cityListConfirm.find((v) => v.id == currentCityA) ?? {
@@ -166,7 +166,7 @@ export const IndexPage: FC = () => {
         setRestaurantsList(restaurantsListWithMock);
     }, [currentCityA, cityListA]);
 
-    // Устанвливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
+    // Устнавливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
     useEffect(() => {
         const preferencesStatus = JSON.parse(localStorage.getItem('PREFERENCES_STATUS') as string);
 
