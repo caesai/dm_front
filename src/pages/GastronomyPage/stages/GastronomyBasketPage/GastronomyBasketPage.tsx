@@ -576,6 +576,14 @@ export const GastronomyBasketPage: React.FC = () => {
                             />
                         ))}
                     </div>
+                    {deliveryMethod === 'delivery' && (
+                        <div className={css.delivery}>
+                            <span className={css.deliveryLabel}>Доставка</span>
+                            <span className={css.deliveryValue}>
+                                {deliveryFee === 0 ? 'Бесплатно' : `${deliveryFee} ₽`}
+                            </span>
+                        </div>
+                    )}
                     <div className={css.total}>
                         <span className={css.totalLabel}>Итого</span>
                         <span className={css.totalValue}>{cart.totalAmount + deliveryFee} ₽</span>
@@ -644,7 +652,7 @@ export const GastronomyBasketPage: React.FC = () => {
                             ) : (
                                 <>
                                     <span className={css.deliveryLabel}>{deliveryText}</span>
-                            <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
+                                    <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
                                 </>
                             )}
                         </div>
