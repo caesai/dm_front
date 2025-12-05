@@ -192,6 +192,12 @@ export const GastronomyOrderPage: React.FC = () => {
                             </div>
                         ))}
                     </div>
+                    {order?.delivery_method === 'delivery' && (
+                        <div className={css.item}>
+                            <span>Доставка</span>
+                            <span>{order?.delivery_cost === 0 ? 'Бесплатно' : `${order?.delivery_cost} ₽`}</span>
+                        </div>
+                    )}
                     <div className={css.item}>
                         <span>Итого</span>
                         <span>{order?.total_amount} ₽</span>
