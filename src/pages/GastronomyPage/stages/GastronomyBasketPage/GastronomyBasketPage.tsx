@@ -17,7 +17,11 @@ import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import css from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.module.css';
 import moment from 'moment';
-import { SMOKE_BBQ_MSK_TRUBNAYA_ID, SMOKE_BBQ_RUBINSHTEINA_ID, SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID } from '@/__mocks__/restaurant.mock';
+import {
+    SMOKE_BBQ_MSK_TRUBNAYA_ID,
+    SMOKE_BBQ_RUBINSHTEINA_ID,
+    SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID,
+} from '@/__mocks__/restaurant.mock';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -259,6 +263,8 @@ export const GastronomyBasketPage: React.FC = () => {
     useEffect(() => {
         if (res_id === SMOKE_BBQ_MSK_TRUBNAYA_ID && deliveryMethod === 'delivery') {
             setSelectedDate({ title: formatDate(moment('2025-12-31').toString()), value: '31 декабря' });
+        } else {
+            setSelectedDate({ title: 'unset', value: 'unset' });
         }
     }, [res_id, deliveryMethod]);
 
@@ -460,6 +466,7 @@ export const GastronomyBasketPage: React.FC = () => {
 
         if (!auth || !res_id) return;
         setLoading(true);
+        
         APIPostUserOrder(
             {
                 items: cart.items,
@@ -719,7 +726,10 @@ export const GastronomyBasketPage: React.FC = () => {
                         <div
                             className={css.datePicker}
                             onClick={() => {
-                                if (res_id !== SMOKE_BBQ_MSK_TRUBNAYA_ID) setShowDatePicker(true);
+                                if (res_id === SMOKE_BBQ_MSK_TRUBNAYA_ID && deliveryMethod === 'delivery') {
+                                    return;
+                                }
+                                setShowDatePicker(true);
                             }}
                         >
                             <div className={css.datePickerContent}>
@@ -737,7 +747,9 @@ export const GastronomyBasketPage: React.FC = () => {
                                     <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                     <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
-                                {res_id !== SMOKE_BBQ_MSK_TRUBNAYA_ID ? (
+                                {res_id === SMOKE_BBQ_MSK_TRUBNAYA_ID && deliveryMethod === 'delivery' ? (
+                                    <span className={css.datePickerTextSelected}>31 декабря</span>
+                                ) : (
                                     <span
                                         className={
                                             selectedDate.value !== 'unset'
@@ -751,8 +763,6 @@ export const GastronomyBasketPage: React.FC = () => {
                                               ? 'Выберите дату с 25 по 30 декабря'
                                               : 'Выберите дату с 25 по 31 декабря'}
                                     </span>
-                                ) : (
-                                    <span className={css.datePickerTextSelected}>31 декабря</span>
                                 )}
                             </div>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
