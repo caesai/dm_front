@@ -37,7 +37,11 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
         if (auth) {
             APIPostCancelOrder(order_id, auth?.access_token)
                 .then(() => {
-                    showToast('Запрос на отмену заказа отправлен');
+                    if (window.Telegram.WebApp) {
+                        window.Telegram.WebApp.close();
+                    } else {
+                        showToast('Запрос на отмену заказа отправлен');
+                    }
                 })
                 .catch(() => {
                     showToast('Произошла ошибка. Попробуйте еще раз.');
@@ -47,10 +51,7 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
     };
 
     return (
-        <StyledPopup
-            open={isOpen}
-            onClose={onClose}
-        >
+        <StyledPopup open={isOpen} onClose={onClose}>
             <div className={css.content}>
                 <div className={css.closeButton}>
                     <RoundedButton
