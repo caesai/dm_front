@@ -17,8 +17,9 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { IDish } from '@/types/gastronomy.types';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart';
+import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
+import { SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID } from '@/__mocks__/restaurant.mock';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
@@ -30,9 +31,9 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
+    const [allGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
 
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
-    const [dishesList] = useState<IDish[]>([]);
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
     const [isDisabledButton, setDisabledButton] = useState(true);
     const { clearCart } = useGastronomyCart();
@@ -69,9 +70,9 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (e.id !== 11) {
+            if (String(e.id) !== SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
                 result.push(e);
-            } else if (e.id === 11) {
+            } else if (String(e.id) === SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
                 movableValue = e;
             }
         });
@@ -81,10 +82,10 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         }
         const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
         const filteredRestaurantsByDishes = filteredRestaurantsByCity.filter((v) =>
-            dishesList.some((dish) => dish.restaurant_id === v.id)
+            allGastronomyDishesList.some((dish) => dish.restaurant_id === v.id)
         );
         setRestaurantsList(filteredRestaurantsByDishes);
-    }, [currentCityA, cityListA, dishesList]);
+    }, [currentCityA, cityListA, allGastronomyDishesList]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);

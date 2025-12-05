@@ -75,12 +75,16 @@ export const GastronomyOrderPage: React.FC = () => {
     const checkGastronomyPayment = useCallback(async () => {
         if (auth?.access_token && (paramsObject.orderId || order_id)) {
             try {
+                // Если есть paramsObject.orderId, значит на страницу перешли после Альфа платежа
+                // Если есть order_id, значит на страницу перешли после перехода на страницу заказа из профиля
                 const orderId = paramsObject.orderId || order_id;
                 const response = await APIPostCheckGastronomyPayment(String(orderId), auth.access_token);
+                // Может придти статус no_payment, если заказ не оплачен
                 setPaymentStatus(response.data.status);
 
                 try {
                     const res = await APIGetGastronomyOrderById(String(orderId), auth.access_token);
+                    // Может придти статус not_paid, если заказ не оплачен
                     setOrder(res.data);
                     setIsLoading(false);
                 } catch (error) {
@@ -106,6 +110,7 @@ export const GastronomyOrderPage: React.FC = () => {
         }
     }, [location.state]);
 
+    // Оплата Альфа платежей не прошла(failUrl)
     useEffect(() => {
         if (paramsObject.error) {
             setPaymentStatus('error');

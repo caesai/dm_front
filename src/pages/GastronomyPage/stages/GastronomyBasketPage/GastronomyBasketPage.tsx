@@ -16,6 +16,8 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import css from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.module.css';
+import moment from 'moment';
+import { SMOKE_BBQ_MSK_TRUBNAYA_ID, SMOKE_BBQ_RUBINSHTEINA_ID, SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID } from '@/__mocks__/restaurant.mock';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -64,18 +66,21 @@ export const GastronomyBasketPage: React.FC = () => {
 
     // Стоимость доставки: 0 для restaurant_id 11, 1500 для остальных
     const deliveryFee = useMemo(() => {
-        if (restaurant?.id === 11) {
-            return 0;
-        }
         if (deliveryMethod === 'pickup') {
             return 0;
+        }
+        if (String(restaurant?.id) === SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+            return 0;
+        }
+        if (res_id === SMOKE_BBQ_MSK_TRUBNAYA_ID) {
+            return 1000;
         }
         return 1500;
     }, [restaurant?.id, deliveryMethod]);
 
     // Текст для доставки
     const deliveryText = useMemo(() => {
-        if (restaurant?.id === 11) {
+        if (String(restaurant?.id) === SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
             return 'Доставляем заказы только на Петроградской стороне';
         }
         // Проверяем, находится ли ресторан в Питере (по city)
@@ -93,11 +98,11 @@ export const GastronomyBasketPage: React.FC = () => {
             return 0;
         }
         // Для доставки Smoke BBQ Лодейнопольская
-        if (restaurant?.id === 11) {
+        if (String(restaurant?.id) === SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
             return 10000;
         }
         // Для доставки Smoke BBQ Рубинштейна
-        if (restaurant?.id === 6) {
+        if (String(restaurant?.id) === SMOKE_BBQ_RUBINSHTEINA_ID) {
             return 5000;
         }
         return 3000; // Для остальных ресторанов
@@ -177,7 +182,7 @@ export const GastronomyBasketPage: React.FC = () => {
         if (restaurant?.worktime && restaurant.worktime.length > 0) {
             // Получаем день недели выбранной даты (0 - воскресенье, 1 - понедельник, и т.д.)
             const dayOfWeek = selectedDateObj.getDay();
-            
+
             // Маппинг номера дня недели на русское название (в НИЖНЕМ РЕГИСТРЕ, как в API)
             const weekdayNames = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             const weekdayName = weekdayNames[dayOfWeek];
@@ -210,20 +215,20 @@ export const GastronomyBasketPage: React.FC = () => {
         // Генерируем слоты по 3 часа от открытия до закрытия
         while (currentHour < closeHourAdjusted) {
             let nextHour = currentHour + 3;
-            
+
             // Если следующий час выходит за время закрытия, ограничиваем его временем закрытия
             if (nextHour > closeHourAdjusted) {
                 nextHour = closeHourAdjusted;
             }
-            
+
             // Форматируем часы для отображения (приводим к диапазону 0-23)
             const displayCurrentHour = currentHour >= 24 ? currentHour - 24 : currentHour;
             const displayNextHour = nextHour >= 24 ? nextHour - 24 : nextHour;
-            
+
             slots.push(
                 `${String(displayCurrentHour).padStart(2, '0')}:00–${String(displayNextHour).padStart(2, '0')}:00`
             );
-            
+
             currentHour = nextHour;
         }
 
@@ -249,6 +254,13 @@ export const GastronomyBasketPage: React.FC = () => {
             }
         };
     }, []);
+
+    // Если ресторан 9, то устанавливаем дату 31 декабря
+    useEffect(() => {
+        if (res_id === SMOKE_BBQ_MSK_TRUBNAYA_ID && deliveryMethod === 'delivery') {
+            setSelectedDate({ title: formatDate(moment('2025-12-31').toString()), value: '31 декабря' });
+        }
+    }, [res_id, deliveryMethod]);
 
     const handleGoToMenu = () => {
         navigate(`/gastronomy/${res_id}`);
@@ -704,7 +716,12 @@ export const GastronomyBasketPage: React.FC = () => {
                         values={availableDates}
                     />
                     <div className={css.datePickerWrapper}>
-                        <div className={css.datePicker} onClick={() => setShowDatePicker(true)}>
+                        <div
+                            className={css.datePicker}
+                            onClick={() => {
+                                if (res_id !== SMOKE_BBQ_MSK_TRUBNAYA_ID) setShowDatePicker(true);
+                            }}
+                        >
                             <div className={css.datePickerContent}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <rect
@@ -720,19 +737,23 @@ export const GastronomyBasketPage: React.FC = () => {
                                     <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                     <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
-                                <span
-                                    className={
-                                        selectedDate.value !== 'unset'
-                                            ? css.datePickerTextSelected
-                                            : css.datePickerTextPlaceholder
-                                    }
-                                >
-                                    {selectedDate.value !== 'unset'
-                                        ? selectedDate.title
-                                        : deliveryMethod === 'delivery'
-                                          ? 'Выберите дату с 25 по 30 декабря'
-                                          : 'Выберите дату с 25 по 31 декабря'}
-                                </span>
+                                {res_id !== SMOKE_BBQ_MSK_TRUBNAYA_ID ? (
+                                    <span
+                                        className={
+                                            selectedDate.value !== 'unset'
+                                                ? css.datePickerTextSelected
+                                                : css.datePickerTextPlaceholder
+                                        }
+                                    >
+                                        {selectedDate.value !== 'unset'
+                                            ? selectedDate.title
+                                            : deliveryMethod === 'delivery'
+                                              ? 'Выберите дату с 25 по 30 декабря'
+                                              : 'Выберите дату с 25 по 31 декабря'}
+                                    </span>
+                                ) : (
+                                    <span className={css.datePickerTextSelected}>31 декабря</span>
+                                )}
                             </div>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                                 <path

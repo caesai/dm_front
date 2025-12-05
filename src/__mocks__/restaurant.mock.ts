@@ -42,3 +42,7 @@ export const mockNewSelfEdgeChinoisRestaurant: IRestaurant = {
         image: '',
     }
 }
+
+export const SMOKE_BBQ_MSK_TRUBNAYA_ID = '9';
+export const SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID = '11';
+export const SMOKE_BBQ_RUBINSHTEINA_ID = '6';
