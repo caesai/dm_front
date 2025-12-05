@@ -7,12 +7,12 @@ import { Page } from '@/components/Page.tsx';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 import { useAtom } from 'jotai';
-import { dishesListAtom } from '@/atoms/dishesListAtom.ts';
+import { gastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 import { userAtom } from '@/atoms/userAtom';
 
 export const GastronomyPage: React.FC = () => {
     const [user] = useAtom(userAtom);
-    const [, setDishesList] = useAtom(dishesListAtom);
+    const [, setDishesList] = useAtom(gastronomyDishesListAtom);
 
     const { goBack } = useNavigationHistory();
     const navigate = useNavigate();

@@ -7,7 +7,7 @@ import { PlusIcon } from '@/components/Icons/PlusIcon.tsx';
 import { MinusIcon } from '@/components/Icons/MinusIcon.tsx';
 import css from './GastonomyDishDetailsPage.module.css';
 import { useAtom } from 'jotai';
-import { dishesListAtom } from '@/atoms/dishesListAtom.ts';
+import { gastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 
 /**
  * Форматирует вес, добавляя "г" если единица измерения отсутствует
@@ -28,7 +28,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
 
-    const [initialDishesList] = useAtom(dishesListAtom);
+    const [initialDishesList] = useAtom(gastronomyDishesListAtom);
 
     const dishFromState = location.state?.dish as IDish;
     const [selectedWeightIndex, setSelectedWeightIndex] = useState(0);

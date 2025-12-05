@@ -17,8 +17,6 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { APIGetGastronomyDishes } from '@/api/gastronomy.api';
-import { authAtom } from '@/atoms/userAtom';
 import { IDish } from '@/types/gastronomy.types';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart';
 
@@ -28,15 +26,13 @@ const initialRestaurant: PickerValueObj = {
 };
 
 export const GastronomyChooseRestaurantPage: React.FC = () => {
-    const [auth] = useAtom(authAtom);
-    
     const [cityListA] = useAtom(cityListAtom);
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
 
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
-    const [dishesList, setDishesList] = useState<IDish[]>([]);
+    const [dishesList] = useState<IDish[]>([]);
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
     const [isDisabledButton, setDisabledButton] = useState(true);
     const { clearCart } = useGastronomyCart();
@@ -124,20 +120,6 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
             }));
         }
     }, [location.state]);
-
-    /**
-     * Вызываем API для получения списка всех блюд во всех ресторанах
-     * и по этому списку фильтруем рестораны, которые имеют блюда
-     * и устанавливаем их в restaurantsList
-     */
-    useEffect(() => {
-        if (!auth?.access_token) {
-            return;
-        }
-        APIGetGastronomyDishes(auth?.access_token).then((res) => {
-            setDishesList(res.data);
-        });
-    }, [auth?.access_token]);
 
     /**
      * Очищаем корзину при переходе на эту страницу
