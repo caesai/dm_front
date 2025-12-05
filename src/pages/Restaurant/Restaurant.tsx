@@ -236,15 +236,17 @@ export const Restaurant = () => {
                 </div>
 
                 <div className={css.gastronomyBanner}>
-                    <OptionsNavigationElement
-                        title={'Новогодняя кулинария'}
-                        subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
-                        img={gastroBtn}
-                        className={css.gastronomyBannerButton}
-                        textWrapperClassName={css.gastronomyBannerText}
-                        link={'/gastronomy/choose'}
-                        locationState={{ restaurant: restaurant }}
-                    />
+                    {hasGastronomy && (
+                        <OptionsNavigationElement
+                            title={'Новогодняя кулинария'}
+                            subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
+                            img={gastroBtn}
+                            className={css.gastronomyBannerButton}
+                            textWrapperClassName={css.gastronomyBannerText}
+                            link={'/gastronomy/choose'}
+                            locationState={{ restaurant: restaurant }}
+                        />
+                    )}
                 </div>
 
                 <BookingBlock
