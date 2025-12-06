@@ -60,6 +60,6 @@ export const certificatesListMock: ICertificate[] = [
 export const mockCertificate: ICertificate = certificatesListMock[0];
 
 export const certificateBlock: ICertificateBlockProps = {
-    image: 'public/img/certificate_new.png',
+    image: '/img/certificate_new.png',
     description: 'Приятный подарок на любые праздники',
 };
