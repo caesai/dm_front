@@ -64,14 +64,17 @@ export const GastronomyBasketPage: React.FC = () => {
 
     const restaurantAddress = restaurant?.address || 'Адрес не указан';
 
-    // Стоимость доставки:
-    // Smoke Лодейнопольская - 0
-    // Smoke Трубная - 1000
-    // Smoke Рубинштейна - 1000
-    // Poly - 1000
-    // Pame - 1000
-    // Trappist - 1000
-    // Для остальных доставка не предусмотренa (null)
+    /**
+     * Стоимость доставки:
+     * 
+     * - Smoke Лодейнопольская — 0 ₽
+     * - Smoke Трубная — 1 000 ₽
+     * - Smoke Рубинштейна — 1 000 ₽
+     * - Poly — 1 000 ₽
+     * - Pame — 1 000 ₽
+     * - Trappist — 1 000 ₽
+     * - Для остальных доставка не предусмотрена (null)
+     */
     const deliveryFee = useMemo(() => {
         if (deliveryMethod === 'pickup') {
             return 0;
@@ -114,15 +117,19 @@ export const GastronomyBasketPage: React.FC = () => {
         return 'в пределах МКАД';
     }, [restaurant]);
 
-    // Минимальная сумма заказа
-    // - Самовывоз:
-    //   - Smoke Rubinsteina - 3000
-    //   - Остальные - 0
-    //
-    // - Доставка:
-    //   - Smoke Lodeynopolskaya - 10000
-    //   - Smoke Rubinsteina - 5000
-    //   - Остальные - 3000
+    
+    /**
+     * Минимальная сумма заказа
+     * 
+     * - Самовывоз:
+     *   - Smoke Rubinsteina — 3000 ₽
+     *   - Остальные — 0 ₽
+     * 
+     * - Доставка:
+     *   - Smoke Lodeynopolskaya — 10 000 ₽
+     *   - Smoke Rubinsteina — 5 000 ₽
+     *   - Остальные — 3 000 ₽
+     */
     const minOrderAmount = useMemo(() => {
         // Если выбран самовывоз
         if (deliveryMethod === 'pickup') {
@@ -149,38 +156,113 @@ export const GastronomyBasketPage: React.FC = () => {
     }, [deliveryMethod, res_id]);
 
     /**
-     * Генерирует список доступных дат для заказа.
+     * Генерирует список доступных дат для получения заказа.
      *
      * @remarks
      * Логика формирования дат:
      * 1. **Целевой период**: Декабрь 2025 года.
-     * 2. **Диапазон дат**:
+     * 2. **Диапазон дат по умолчанию**:
      *    - Для доставки (`delivery`): с 25 по 30 декабря.
      *    - Для самовывоза (`pickup`): с 25 по 31 декабря.
      * 3. **Ограничение "не день в день"**:
-     *    - Если текущая дата попадает в целевой месяц (Декабрь 2025),
-     *      то доступные даты начинаются со следующего дня (`currentDay + 1`).
+     *    - Доступные даты начинаются со следующего дня (`currentDay + 1`).
+     * 4. Особые условия по ресторанам:
+     *    - Smoke Лодейнопольская: доставка и самовывоз - 30, 31 декабря; 
+     *    - Smoke Рубинштейна: доставка - 30, 31 декабря
+     *    - Smoke Трубная: доставка - 31 декабря;
+     *    - BlackChops: самовывоз 30, 31, доставки нет;
+     *    - Poly: самовывоз 25-31, доставка 31;
+     *    - Pame: самовывоз 25-31, доставка 31;
+     *    - Trappist: самовывоз 25-31, доставка 31;
      *
      * @returns {PickerValueObj[]} Массив объектов дат для выбора, где `value` - строка формата YYYY-MM-DD.
      */
     const availableDates = useMemo((): PickerValueObj[] => {
         const dates: PickerValueObj[] = [];
-        const today = new Date();
-        const currentYear = today.getFullYear();
-        const currentMonth = today.getMonth();
-        const currentDay = today.getDate();
 
-        // Целевые параметры: Декабрь 2025
-        const targetYear = 2025;
-        const targetMonth = 11; // Декабрь (0-indexed)
+        // По умолчанию: 25-30 декабря для доставки, 25-31 для самовывоза
+        let baseStartDay = 25;
+        let endDay = deliveryMethod === 'delivery' ? 30 : 31;
 
-        // Фиксированные границы: 25-30 декабря для доставки, 25-31 для самовывоза
-        const baseStartDay = 25;
-        const endDay = deliveryMethod === 'delivery' ? 30 : 31;
+        // Особые условия для некоторых ресторанов
+        switch (String(res_id)) {
+          // Smoke Лодейнопольская доставка и самовывоз только 30 и 31 декабря
+          case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
+            baseStartDay = 30;
+            endDay = 31;
+            break;
+
+          // Smoke Рубинштейна доставка только 30 и 31 декабря
+          case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+            if (deliveryMethod === 'delivery') {
+                baseStartDay = 30;
+                endDay = 31;
+            }
+            break;
+
+          // Smoke Трубная доставка только 31 декабря
+          case R.SMOKE_BBQ_MSC_TRUBNAYA_ID:
+            if (deliveryMethod === 'delivery') {
+                baseStartDay = 31;
+                endDay = 31;
+            }
+            break;
+
+          // BlackChops самовывоз только 30 и 31 декабря, доставки нет
+          case R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID:
+            if (deliveryMethod === 'pickup') {
+                baseStartDay = 30;
+                endDay = 31;
+            } else {
+                // Для доставки нет доступных дат
+                baseStartDay = 32;
+                endDay = 31;
+            }
+            break;
+          
+          // Poly самовывоз 25-31, доставка только 31 декабря
+          case R.POLY_SPB_BELINSKOGO_ID:
+            if (deliveryMethod === 'pickup') {
+                baseStartDay = 25;
+                endDay = 31;
+            } else {
+                baseStartDay = 31;
+                endDay = 31;
+            }
+            break;
+
+          // Pame самовывоз 25-31, доставка только 31 декабря
+          case R.PAME_SPB_MOIKA_RIVER_ID:
+            if (deliveryMethod === 'pickup') {
+                baseStartDay = 25;
+                endDay = 31;
+            } else {
+                baseStartDay = 31;
+                endDay = 31;
+            }
+            break;
+          
+          // Trappist самовывоз 25-31, доставка только 31 декабря
+          case R.TRAPPIST_SPB_RADISHEVA_ID:
+            if (deliveryMethod === 'pickup') {
+                baseStartDay = 25;
+                endDay = 31;
+            } else {
+                baseStartDay = 31;
+                endDay = 31;
+            }
+            break;
+        }
 
         let actualStartDay = baseStartDay;
 
         // Если текущая дата совпадает с целевым периодом (Декабрь 2025)
+        const targetYear = 2025;
+        const targetMonth = 11; // Декабрь (0-indexed)
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth();
+        const currentDay = today.getDate();
         if (currentYear === targetYear && currentMonth === targetMonth) {
             // Начинаем как минимум с завтрашнего дня
             actualStartDay = Math.max(baseStartDay, currentDay + 1);
@@ -196,7 +278,7 @@ export const GastronomyBasketPage: React.FC = () => {
         }
 
         return dates;
-    }, [deliveryMethod]);
+    }, [deliveryMethod, res_id]);
 
     // Генерируем временные слоты в зависимости от выбранной даты
     const timeSlots = useMemo(() => {
@@ -295,9 +377,9 @@ export const GastronomyBasketPage: React.FC = () => {
         };
     }, []);
 
-    // Если ресторан 9, то устанавливаем дату 31 декабря
+    // У ресторанов Smoke Trubnaya, Pame, Trappist, Poly доставка только 31ого
     useEffect(() => {
-        if (res_id === R.SMOKE_BBQ_MSC_TRUBNAYA_ID && deliveryMethod === 'delivery') {
+        if (deliveryMethod === 'delivery' && ([R.SMOKE_BBQ_MSC_TRUBNAYA_ID, R.PAME_SPB_MOIKA_RIVER_ID, R.POLY_SPB_BELINSKOGO_ID, R.TRAPPIST_SPB_RADISHEVA_ID].includes(res_id as string))) {
             setSelectedDate({ title: formatDate(moment('2025-12-31').toString()), value: '31 декабря' });
         } else {
             setSelectedDate({ title: 'unset', value: 'unset' });
@@ -766,7 +848,7 @@ export const GastronomyBasketPage: React.FC = () => {
                         <div
                             className={css.datePicker}
                             onClick={() => {
-                                if (res_id === R.SMOKE_BBQ_MSC_TRUBNAYA_ID && deliveryMethod === 'delivery') {
+                                if (deliveryMethod === 'delivery' && ([R.SMOKE_BBQ_MSC_TRUBNAYA_ID, R.PAME_SPB_MOIKA_RIVER_ID, R.POLY_SPB_BELINSKOGO_ID, R.TRAPPIST_SPB_RADISHEVA_ID].includes(res_id as string))) {
                                     return;
                                 }
                                 setShowDatePicker(true);
@@ -787,7 +869,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                     <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                     <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
-                                {res_id === R.SMOKE_BBQ_MSC_TRUBNAYA_ID && deliveryMethod === 'delivery' ? (
+                                {deliveryMethod === 'delivery' && ([R.SMOKE_BBQ_MSC_TRUBNAYA_ID, R.PAME_SPB_MOIKA_RIVER_ID, R.POLY_SPB_BELINSKOGO_ID, R.TRAPPIST_SPB_RADISHEVA_ID].includes(res_id as string)) ? (
                                     <span className={css.datePickerTextSelected}>31 декабря</span>
                                 ) : (
                                     <span
@@ -799,9 +881,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                     >
                                         {selectedDate.value !== 'unset'
                                             ? selectedDate.title
-                                            : deliveryMethod === 'delivery'
-                                              ? 'Выберите дату с 25 по 30 декабря'
-                                              : 'Выберите дату с 25 по 31 декабря'}
+                                            : 'Выберите дату'}
                                     </span>
                                 )}
                             </div>
