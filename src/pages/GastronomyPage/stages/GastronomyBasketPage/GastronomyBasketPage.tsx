@@ -64,19 +64,41 @@ export const GastronomyBasketPage: React.FC = () => {
 
     const restaurantAddress = restaurant?.address || 'Адрес не указан';
 
-    // Стоимость доставки: 0 для restaurant_id 11, 1500 для остальных
+    // Стоимость доставки:
+    // Smoke Лодейнопольская - 0
+    // Smoke Трубная - 1000
+    // Smoke Рубинштейна - 1000
+    // Poly - 1000
+    // Pame - 1000
+    // Trappist - 1000
+    // Для остальных доставка не предусмотренa (null)
     const deliveryFee = useMemo(() => {
         if (deliveryMethod === 'pickup') {
             return 0;
         }
-        if (String(restaurant?.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+        switch (String(res_id)) {
+          case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
             return 0;
-        }
-        if (res_id === R.SMOKE_BBQ_MSC_TRUBNAYA_ID) {
+
+          case R.SMOKE_BBQ_MSC_TRUBNAYA_ID:
             return 1000;
+
+          case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+            return 1000;
+
+          case R.POLY_SPB_BELINSKOGO_ID:
+            return 1000;
+
+          case R.PAME_SPB_MOIKA_RIVER_ID:
+            return 1000;
+          
+          case R.TRAPPIST_SPB_RADISHEVA_ID:
+            return 1000;
+
+          default:
+            return null;
         }
-        return 1500;
-    }, [restaurant?.id, deliveryMethod]);
+    }, [res_id, deliveryMethod]);
 
     // Текст для доставки
     const deliveryText = useMemo(() => {
@@ -93,20 +115,38 @@ export const GastronomyBasketPage: React.FC = () => {
     }, [restaurant]);
 
     // Минимальная сумма заказа
+    // - Самовывоз:
+    //   - Smoke Rubinsteina - 3000
+    //   - Остальные - 0
+    //
+    // - Доставка:
+    //   - Smoke Lodeynopolskaya - 10000
+    //   - Smoke Rubinsteina - 5000
+    //   - Остальные - 3000
     const minOrderAmount = useMemo(() => {
+        // Если выбран самовывоз
         if (deliveryMethod === 'pickup') {
-            return 0;
+            switch (String(res_id)) {
+              case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+                return 3000;
+
+              default:
+                return 0;
+            }
         }
-        // Для доставки Smoke BBQ Лодейнопольская
-        if (String(restaurant?.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+
+        // Если выбрана доставка
+        switch (String(res_id)) {
+          case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
             return 10000;
-        }
-        // Для доставки Smoke BBQ Рубинштейна
-        if (String(restaurant?.id) === R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID) {
+
+          case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
             return 5000;
+
+          default:
+            return 3000;
         }
-        return 3000; // Для остальных ресторанов
-    }, [deliveryMethod, restaurant]);
+    }, [deliveryMethod, res_id]);
 
     /**
      * Генерирует список доступных дат для заказа.
@@ -605,49 +645,53 @@ export const GastronomyBasketPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Способ получения */}
-                <div className={css.section}>
-                    <h2 className={css.sectionTitle}>Способ получения</h2>
-                    <div className={css.deliveryDropdown}>
-                        <div className={css.deliveryRow} onClick={handleToggleDropdown}>
-                            <span className={css.deliveryText}>
-                                {deliveryMethod === 'delivery' ? 'Доставка' : 'Заберу сам'}
-                            </span>
-                            <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                className={css.dropdownArrow}
-                                style={{
-                                    transform: isDeliveryExpanded ? 'rotate(180deg)' : 'rotate(0)',
-                                    transition: 'transform 0.3s',
-                                }}
-                            >
-                                <path
-                                    d="M5 8.5L12 15.5L19 8.5"
-                                    stroke="#989898"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        </div>
-                        {isDeliveryExpanded && (
-                            <div
-                                className={css.deliveryOption}
-                                onClick={() =>
-                                    handleSelectMethod(deliveryMethod === 'delivery' ? 'pickup' : 'delivery')
-                                }
-                            >
+                {/* Способ получения. Если доставки нет (deliveryFee === null), то не отображаем блок этот блок */}
+                {
+                  deliveryFee !== null && (
+                    <div className={css.section}>
+                        <h2 className={css.sectionTitle}>Способ получения</h2>
+                        <div className={css.deliveryDropdown}>
+                            <div className={css.deliveryRow} onClick={handleToggleDropdown}>
                                 <span className={css.deliveryText}>
-                                    {deliveryMethod === 'delivery' ? 'Заберу сам' : 'Доставка'}
+                                    {deliveryMethod === 'delivery' ? 'Доставка' : 'Заберу сам'}
                                 </span>
-                                <div className={css.radioButton}></div>
+                                <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    className={css.dropdownArrow}
+                                    style={{
+                                        transform: isDeliveryExpanded ? 'rotate(180deg)' : 'rotate(0)',
+                                        transition: 'transform 0.3s',
+                                    }}
+                                >
+                                    <path
+                                        d="M5 8.5L12 15.5L19 8.5"
+                                        stroke="#989898"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
                             </div>
-                        )}
+                            {isDeliveryExpanded && (
+                                <div
+                                    className={css.deliveryOption}
+                                    onClick={() =>
+                                        handleSelectMethod(deliveryMethod === 'delivery' ? 'pickup' : 'delivery')
+                                    }
+                                >
+                                    <span className={css.deliveryText}>
+                                        {deliveryMethod === 'delivery' ? 'Заберу сам' : 'Доставка'}
+                                    </span>
+                                    <div className={css.radioButton}></div>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
+                  )
+                }
 
                 {/* Заказ можно забрать по адресу (только для самовывоза) */}
                 {deliveryMethod === 'pickup' && (
@@ -796,7 +840,7 @@ export const GastronomyBasketPage: React.FC = () => {
             {/* Кнопка оплаты */}
             <div className={css.buttonContainer}>
                 {showMinAmountError && (
-                    <p className={css.minAmountError}>Минимальная сумма заказа {minOrderAmount} ₽</p>
+                    <p className={css.minAmountError}>Заказ от {minOrderAmount}₽ - без учета доставки</p>
                 )}
                 <button
                     className={isFormValid() ? css.primaryButton : css.secondaryButton}
