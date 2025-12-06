@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import css from '@/components/Certificate/Certificate.module.css';
 import logo from '/img/DT_hospitality_logo_1.png';
+import backgroundImg from '/img/certificate_new_background.png';
 
 interface CertificateProps {
     placeholder: string;
@@ -15,7 +16,7 @@ interface CertificateProps {
 
 export const Certificate: React.FC<CertificateProps> = ({ placeholder, date, rating, cardholder, big, forwardRef, dreamteam_id }) => {
     return (
-        <div className={css.certificate} ref={forwardRef}>
+        <div className={css.certificate} ref={forwardRef} style={{ backgroundImage: `url(${backgroundImg})` }}>
             <div className={css.certificateLogo}>
                 <img src={logo} alt={'DreamTeam'} />
             </div>
