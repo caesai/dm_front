@@ -17,11 +17,7 @@ import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import css from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.module.css';
 import moment from 'moment';
-import {
-    SMOKE_BBQ_MSK_TRUBNAYA_ID,
-    SMOKE_BBQ_RUBINSHTEINA_ID,
-    SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID,
-} from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -73,10 +69,10 @@ export const GastronomyBasketPage: React.FC = () => {
         if (deliveryMethod === 'pickup') {
             return 0;
         }
-        if (String(restaurant?.id) === SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+        if (String(restaurant?.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
             return 0;
         }
-        if (res_id === SMOKE_BBQ_MSK_TRUBNAYA_ID) {
+        if (res_id === R.SMOKE_BBQ_MSC_TRUBNAYA_ID) {
             return 1000;
         }
         return 1500;
@@ -84,7 +80,7 @@ export const GastronomyBasketPage: React.FC = () => {
 
     // Текст для доставки
     const deliveryText = useMemo(() => {
-        if (String(restaurant?.id) === SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+        if (String(restaurant?.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
             return 'Доставляем заказы только на Петроградской стороне';
         }
         // Проверяем, находится ли ресторан в Питере (по city)
@@ -102,11 +98,11 @@ export const GastronomyBasketPage: React.FC = () => {
             return 0;
         }
         // Для доставки Smoke BBQ Лодейнопольская
-        if (String(restaurant?.id) === SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+        if (String(restaurant?.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
             return 10000;
         }
         // Для доставки Smoke BBQ Рубинштейна
-        if (String(restaurant?.id) === SMOKE_BBQ_RUBINSHTEINA_ID) {
+        if (String(restaurant?.id) === R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID) {
             return 5000;
         }
         return 3000; // Для остальных ресторанов
@@ -261,7 +257,7 @@ export const GastronomyBasketPage: React.FC = () => {
 
     // Если ресторан 9, то устанавливаем дату 31 декабря
     useEffect(() => {
-        if (res_id === SMOKE_BBQ_MSK_TRUBNAYA_ID && deliveryMethod === 'delivery') {
+        if (res_id === R.SMOKE_BBQ_MSC_TRUBNAYA_ID && deliveryMethod === 'delivery') {
             setSelectedDate({ title: formatDate(moment('2025-12-31').toString()), value: '31 декабря' });
         } else {
             setSelectedDate({ title: 'unset', value: 'unset' });
@@ -726,7 +722,7 @@ export const GastronomyBasketPage: React.FC = () => {
                         <div
                             className={css.datePicker}
                             onClick={() => {
-                                if (res_id === SMOKE_BBQ_MSK_TRUBNAYA_ID && deliveryMethod === 'delivery') {
+                                if (res_id === R.SMOKE_BBQ_MSC_TRUBNAYA_ID && deliveryMethod === 'delivery') {
                                     return;
                                 }
                                 setShowDatePicker(true);
@@ -747,7 +743,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                     <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                     <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
-                                {res_id === SMOKE_BBQ_MSK_TRUBNAYA_ID && deliveryMethod === 'delivery' ? (
+                                {res_id === R.SMOKE_BBQ_MSC_TRUBNAYA_ID && deliveryMethod === 'delivery' ? (
                                     <span className={css.datePickerTextSelected}>31 декабря</span>
                                 ) : (
                                     <span
