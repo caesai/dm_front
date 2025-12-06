@@ -49,6 +49,7 @@ const handleAddToCartLogic = (prevCart: IGastronomyCart, dish: IDish, selectedWe
             price: selectedPrice,
             quantity: 1,
             weight: selectedWeight,
+            weight_value: dish.weight_value,
             image: dish.image_url,
         };
         newItems = [...prevCart.items, newItem];

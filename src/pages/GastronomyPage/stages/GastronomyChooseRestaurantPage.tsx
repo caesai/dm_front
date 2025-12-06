@@ -19,7 +19,7 @@ import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/Re
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart';
 import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
-import { SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
@@ -70,9 +70,9 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (String(e.id) !== SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+            if (String(e.id) !== R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
                 result.push(e);
-            } else if (String(e.id) === SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+            } else if (String(e.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
                 movableValue = e;
             }
         });
@@ -155,7 +155,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                         </h2>
                         <img src={GastronomyImg} alt={'New Year Gastronomy'} />
                         <ul>
-                            <li>Оформите заказ до 30 декабря. Минимальная сумма — 3000 ₽.</li>
+                            <li>Оформите заказ до 30 декабря.</li>
                             <li>Оплатите заказ (100% предоплата).</li>
                             <li>
                                 Заберите блюда из ресторана или оформим для вас доставку в период <br /> с 25 по 31

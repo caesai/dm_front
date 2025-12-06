@@ -6,6 +6,7 @@ export interface ICartItem {
     price: number;
     quantity: number;
     weight: string;
+    weight_value: string | undefined;
     image: string;
 }
 

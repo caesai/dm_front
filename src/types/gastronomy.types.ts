@@ -14,7 +14,7 @@ export interface IDish {
     allergens: string[];
     prices: number[];
     weights: string[];
-    weight_value?: string;
+    weight_value?: string;  // единица измерения: "г", "кг", "л"
     calories?: number;
     proteins?: number;
     fats?: number;
