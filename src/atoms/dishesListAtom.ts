@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
 import { IDish } from '@/types/gastronomy.types.ts';
 
-export const dishesListAtom = atom<IDish[]>([]);
+export const gastronomyDishesListAtom = atom<IDish[]>([]);
+export const allGastronomyDishesListAtom = atom<IDish[]>([]);

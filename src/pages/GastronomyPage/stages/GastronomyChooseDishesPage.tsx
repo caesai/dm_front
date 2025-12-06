@@ -8,7 +8,7 @@ import { IDish } from '@/types/gastronomy.types.ts';
 import { APIGetGastronomyDishes } from '@/api/gastronomy.api.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
-import { dishesListAtom } from '@/atoms/dishesListAtom.ts';
+import { gastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 
 export const GastronomyChooseDishesPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
@@ -16,7 +16,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
 
-    const [dishesList, setDishesList] = useAtom(dishesListAtom);
+    const [dishesList, setDishesList] = useAtom(gastronomyDishesListAtom);
 
     const handleCartClick = () => {
         navigate(`/gastronomy/${res_id}/basket`);

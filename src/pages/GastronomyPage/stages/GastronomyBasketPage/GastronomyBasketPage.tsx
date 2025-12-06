@@ -16,6 +16,8 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import css from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.module.css';
+import moment from 'moment';
+import { R } from '@/__mocks__/restaurant.mock';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -62,20 +64,53 @@ export const GastronomyBasketPage: React.FC = () => {
 
     const restaurantAddress = restaurant?.address || 'Адрес не указан';
 
-    // Стоимость доставки: 0 для restaurant_id 11, 1500 для остальных
+    /**
+     * Стоимость доставки:
+     *
+     * - Smoke Лодейнопольская — 0 ₽
+     * - Smoke Трубная — 1 000 ₽
+     * - Smoke Рубинштейна — 1 000 ₽
+     * - Poly — 1 000 ₽
+     * - Pame — 1 000 ₽
+     * - Trappist — 1 000 ₽
+     * - BlackChops — null
+     * - Для остальных доставка не предусмотрена (null)
+     */
     const deliveryFee = useMemo(() => {
-        if (restaurant?.id === 11) {
+        if (deliveryMethod === 'delivery') {
+            switch (String(res_id)) {
+                case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
+                    return 0;
+
+                case R.SMOKE_BBQ_MSC_TRUBNAYA_ID:
+                    return 1000;
+
+                case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+                    return 1000;
+
+                case R.POLY_SPB_BELINSKOGO_ID:
+                    return 1000;
+
+                case R.PAME_SPB_MOIKA_RIVER_ID:
+                    return 1000;
+
+                case R.TRAPPIST_SPB_RADISHEVA_ID:
+                    return 1000;
+
+                default:
+                    return null;
+            }
+        } else {
+            if (res_id === R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID) {
+                return null;
+            }
             return 0;
         }
-        if (deliveryMethod === 'pickup') {
-            return 0;
-        }
-        return 1500;
-    }, [restaurant?.id, deliveryMethod]);
+    }, [res_id, deliveryMethod]);
 
     // Текст для доставки
     const deliveryText = useMemo(() => {
-        if (restaurant?.id === 11) {
+        if (String(restaurant?.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
             return 'Доставляем заказы только на Петроградской стороне';
         }
         // Проверяем, находится ли ресторан в Питере (по city)
@@ -87,55 +122,150 @@ export const GastronomyBasketPage: React.FC = () => {
         return 'в пределах МКАД';
     }, [restaurant]);
 
-    // Минимальная сумма заказа
+    /**
+     * Минимальная сумма заказа
+     *
+     * - Самовывоз:
+     *   - Smoke Rubinsteina — 3000 ₽
+     *   - Остальные — 0 ₽
+     *
+     * - Доставка:
+     *   - Smoke Lodeynopolskaya — 10 000 ₽
+     *   - Smoke Rubinsteina — 5 000 ₽
+     *   - Остальные — 3 000 ₽
+     */
     const minOrderAmount = useMemo(() => {
+        // Если выбран самовывоз
         if (deliveryMethod === 'pickup') {
-            return 0;
+            switch (String(res_id)) {
+                case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+                    return 3000;
+
+                default:
+                    return 0;
+            }
         }
-        // Для доставки Smoke BBQ Лодейнопольская
-        if (restaurant?.id === 11) {
-            return 10000;
+
+        // Если выбрана доставка
+        switch (String(res_id)) {
+            case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
+                return 10000;
+
+            case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+                return 5000;
+
+            default:
+                return 3000;
         }
-        // Для доставки Smoke BBQ Рубинштейна
-        if (restaurant?.id === 6) {
-            return 5000;
-        }
-        return 3000; // Для остальных ресторанов
-    }, [deliveryMethod, restaurant]);
+    }, [deliveryMethod, res_id]);
 
     /**
-     * Генерирует список доступных дат для заказа.
+     * Генерирует список доступных дат для получения заказа.
      *
      * @remarks
      * Логика формирования дат:
      * 1. **Целевой период**: Декабрь 2025 года.
-     * 2. **Диапазон дат**:
+     * 2. **Диапазон дат по умолчанию**:
      *    - Для доставки (`delivery`): с 25 по 30 декабря.
      *    - Для самовывоза (`pickup`): с 25 по 31 декабря.
      * 3. **Ограничение "не день в день"**:
-     *    - Если текущая дата попадает в целевой месяц (Декабрь 2025),
-     *      то доступные даты начинаются со следующего дня (`currentDay + 1`).
+     *    - Доступные даты начинаются со следующего дня (`currentDay + 1`).
+     * 4. Особые условия по ресторанам:
+     *    - Smoke Лодейнопольская: доставка и самовывоз - 30, 31 декабря;
+     *    - Smoke Рубинштейна: доставка - 30, 31 декабря
+     *    - Smoke Трубная: доставка - 31 декабря;
+     *    - BlackChops: самовывоз 30, 31, доставки нет;
+     *    - Poly: самовывоз 25-31, доставка 31;
+     *    - Pame: самовывоз 25-31, доставка 31;
+     *    - Trappist: самовывоз 25-31, доставка 31;
      *
      * @returns {PickerValueObj[]} Массив объектов дат для выбора, где `value` - строка формата YYYY-MM-DD.
      */
     const availableDates = useMemo((): PickerValueObj[] => {
         const dates: PickerValueObj[] = [];
-        const today = new Date();
-        const currentYear = today.getFullYear();
-        const currentMonth = today.getMonth();
-        const currentDay = today.getDate();
 
-        // Целевые параметры: Декабрь 2025
-        const targetYear = 2025;
-        const targetMonth = 11; // Декабрь (0-indexed)
+        // По умолчанию: 25-30 декабря для доставки, 25-31 для самовывоза
+        let baseStartDay = 25;
+        let endDay = deliveryMethod === 'delivery' ? 30 : 31;
 
-        // Фиксированные границы: 25-30 декабря для доставки, 25-31 для самовывоза
-        const baseStartDay = 25;
-        const endDay = deliveryMethod === 'delivery' ? 30 : 31;
+        // Особые условия для некоторых ресторанов
+        switch (String(res_id)) {
+            // Smoke Лодейнопольская доставка и самовывоз только 30 и 31 декабря
+            case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
+                baseStartDay = 30;
+                endDay = 31;
+                break;
+
+            // Smoke Рубинштейна доставка только 30 и 31 декабря
+            case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+                if (deliveryMethod === 'delivery') {
+                    baseStartDay = 30;
+                    endDay = 31;
+                }
+                break;
+
+            // Smoke Трубная доставка только 31 декабря
+            case R.SMOKE_BBQ_MSC_TRUBNAYA_ID:
+                if (deliveryMethod === 'delivery') {
+                    baseStartDay = 31;
+                    endDay = 31;
+                }
+                break;
+
+            // BlackChops самовывоз только 30 и 31 декабря, доставки нет
+            case R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID:
+                if (deliveryMethod === 'pickup') {
+                    baseStartDay = 30;
+                    endDay = 31;
+                } else {
+                    // Для доставки нет доступных дат
+                    return [];
+                }
+                break;
+
+            // Poly самовывоз 25-31, доставка только 31 декабря
+            case R.POLY_SPB_BELINSKOGO_ID:
+                if (deliveryMethod === 'pickup') {
+                    baseStartDay = 25;
+                    endDay = 31;
+                } else {
+                    baseStartDay = 31;
+                    endDay = 31;
+                }
+                break;
+
+            // Pame самовывоз 25-31, доставка только 31 декабря
+            case R.PAME_SPB_MOIKA_RIVER_ID:
+                if (deliveryMethod === 'pickup') {
+                    baseStartDay = 25;
+                    endDay = 31;
+                } else {
+                    baseStartDay = 31;
+                    endDay = 31;
+                }
+                break;
+
+            // Trappist самовывоз 25-31, доставка только 31 декабря
+            case R.TRAPPIST_SPB_RADISHEVA_ID:
+                if (deliveryMethod === 'pickup') {
+                    baseStartDay = 25;
+                    endDay = 31;
+                } else {
+                    baseStartDay = 31;
+                    endDay = 31;
+                }
+                break;
+        }
 
         let actualStartDay = baseStartDay;
 
         // Если текущая дата совпадает с целевым периодом (Декабрь 2025)
+        const targetYear = 2025;
+        const targetMonth = 11; // Декабрь (0-indexed)
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth();
+        const currentDay = today.getDate();
         if (currentYear === targetYear && currentMonth === targetMonth) {
             // Начинаем как минимум с завтрашнего дня
             actualStartDay = Math.max(baseStartDay, currentDay + 1);
@@ -151,7 +281,7 @@ export const GastronomyBasketPage: React.FC = () => {
         }
 
         return dates;
-    }, [deliveryMethod]);
+    }, [deliveryMethod, res_id]);
 
     // Генерируем временные слоты в зависимости от выбранной даты
     const timeSlots = useMemo(() => {
@@ -177,7 +307,7 @@ export const GastronomyBasketPage: React.FC = () => {
         if (restaurant?.worktime && restaurant.worktime.length > 0) {
             // Получаем день недели выбранной даты (0 - воскресенье, 1 - понедельник, и т.д.)
             const dayOfWeek = selectedDateObj.getDay();
-            
+
             // Маппинг номера дня недели на русское название (в НИЖНЕМ РЕГИСТРЕ, как в API)
             const weekdayNames = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             const weekdayName = weekdayNames[dayOfWeek];
@@ -210,20 +340,20 @@ export const GastronomyBasketPage: React.FC = () => {
         // Генерируем слоты по 3 часа от открытия до закрытия
         while (currentHour < closeHourAdjusted) {
             let nextHour = currentHour + 3;
-            
+
             // Если следующий час выходит за время закрытия, ограничиваем его временем закрытия
             if (nextHour > closeHourAdjusted) {
                 nextHour = closeHourAdjusted;
             }
-            
+
             // Форматируем часы для отображения (приводим к диапазону 0-23)
             const displayCurrentHour = currentHour >= 24 ? currentHour - 24 : currentHour;
             const displayNextHour = nextHour >= 24 ? nextHour - 24 : nextHour;
-            
+
             slots.push(
                 `${String(displayCurrentHour).padStart(2, '0')}:00–${String(displayNextHour).padStart(2, '0')}:00`
             );
-            
+
             currentHour = nextHour;
         }
 
@@ -249,6 +379,23 @@ export const GastronomyBasketPage: React.FC = () => {
             }
         };
     }, []);
+
+    // У ресторанов Smoke Trubnaya, Pame, Trappist, Poly доставка только 31ого
+    useEffect(() => {
+        if (
+            deliveryMethod === 'delivery' &&
+            [
+                R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
+                R.PAME_SPB_MOIKA_RIVER_ID,
+                R.POLY_SPB_BELINSKOGO_ID,
+                R.TRAPPIST_SPB_RADISHEVA_ID,
+            ].includes(res_id as string)
+        ) {
+            setSelectedDate({ title: formatDate(moment('2025-12-31').toString()), value: '31 декабря' });
+        } else {
+            setSelectedDate({ title: 'unset', value: 'unset' });
+        }
+    }, [res_id, deliveryMethod]);
 
     const handleGoToMenu = () => {
         navigate(`/gastronomy/${res_id}`);
@@ -448,11 +595,12 @@ export const GastronomyBasketPage: React.FC = () => {
 
         if (!auth || !res_id) return;
         setLoading(true);
+
         APIPostUserOrder(
             {
                 items: cart.items,
                 restaurant_id: Number(res_id),
-                delivery_cost: deliveryMethod === 'pickup' ? 0 : deliveryFee,
+                delivery_cost: deliveryMethod === 'pickup' ? 0 : Number(deliveryFee),
                 delivery_method: deliveryMethod,
                 total_amount: cart.totalAmount,
                 delivery_address: deliveryMethod === 'delivery' ? address : undefined,
@@ -564,6 +712,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                             title: item.title,
                                             prices: [item.price],
                                             weights: [item.weight],
+                                            weight_value: item.weight_value,
                                             image_url: item.image,
                                             description: '',
                                             allergens: [],
@@ -576,55 +725,67 @@ export const GastronomyBasketPage: React.FC = () => {
                             />
                         ))}
                     </div>
+                    {deliveryMethod === 'delivery' && (
+                        <div className={css.delivery}>
+                            <span className={css.deliveryLabel}>Доставка</span>
+                            <span className={css.deliveryValue}>
+                                {deliveryFee === 0 ? 'Бесплатно' : `${Number(deliveryFee)} ₽`}
+                            </span>
+                        </div>
+                    )}
                     <div className={css.total}>
                         <span className={css.totalLabel}>Итого</span>
-                        <span className={css.totalValue}>{cart.totalAmount + deliveryFee} ₽</span>
+                        <span className={css.totalValue}>
+                            {deliveryFee !== null ? cart.totalAmount + Number(deliveryFee) : cart.totalAmount} ₽
+                        </span>
                     </div>
                 </div>
 
-                {/* Способ получения */}
-                <div className={css.section}>
-                    <h2 className={css.sectionTitle}>Способ получения</h2>
-                    <div className={css.deliveryDropdown}>
-                        <div className={css.deliveryRow} onClick={handleToggleDropdown}>
-                            <span className={css.deliveryText}>
-                                {deliveryMethod === 'delivery' ? 'Доставка' : 'Заберу сам'}
-                            </span>
-                            <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                className={css.dropdownArrow}
-                                style={{
-                                    transform: isDeliveryExpanded ? 'rotate(180deg)' : 'rotate(0)',
-                                    transition: 'transform 0.3s',
-                                }}
-                            >
-                                <path
-                                    d="M5 8.5L12 15.5L19 8.5"
-                                    stroke="#989898"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        </div>
-                        {isDeliveryExpanded && (
-                            <div
-                                className={css.deliveryOption}
-                                onClick={() =>
-                                    handleSelectMethod(deliveryMethod === 'delivery' ? 'pickup' : 'delivery')
-                                }
-                            >
+                {/* Способ получения. Если доставки нет (deliveryFee === null), то не отображаем блок этот блок */}
+                {deliveryFee !== null && (
+                    <div className={css.section}>
+                        <h2 className={css.sectionTitle}>Способ получения</h2>
+                        <div className={css.deliveryDropdown}>
+                            <div className={css.deliveryRow} onClick={handleToggleDropdown}>
                                 <span className={css.deliveryText}>
-                                    {deliveryMethod === 'delivery' ? 'Заберу сам' : 'Доставка'}
+                                    {deliveryMethod === 'delivery' ? 'Доставка' : 'Заберу сам'}
                                 </span>
-                                <div className={css.radioButton}></div>
+                                <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    className={css.dropdownArrow}
+                                    style={{
+                                        transform: isDeliveryExpanded ? 'rotate(180deg)' : 'rotate(0)',
+                                        transition: 'transform 0.3s',
+                                    }}
+                                >
+                                    <path
+                                        d="M5 8.5L12 15.5L19 8.5"
+                                        stroke="#989898"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
                             </div>
-                        )}
+                            {isDeliveryExpanded && (
+                                <div
+                                    className={css.deliveryOption}
+                                    onClick={() =>
+                                        handleSelectMethod(deliveryMethod === 'delivery' ? 'pickup' : 'delivery')
+                                    }
+                                >
+                                    <span className={css.deliveryText}>
+                                        {deliveryMethod === 'delivery' ? 'Заберу сам' : 'Доставка'}
+                                    </span>
+                                    <div className={css.radioButton}></div>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Заказ можно забрать по адресу (только для самовывоза) */}
                 {deliveryMethod === 'pickup' && (
@@ -644,7 +805,7 @@ export const GastronomyBasketPage: React.FC = () => {
                             ) : (
                                 <>
                                     <span className={css.deliveryLabel}>{deliveryText}</span>
-                            <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
+                                    <span className={css.deliveryPrice}>{deliveryFee} ₽</span>
                                 </>
                             )}
                         </div>
@@ -696,7 +857,23 @@ export const GastronomyBasketPage: React.FC = () => {
                         values={availableDates}
                     />
                     <div className={css.datePickerWrapper}>
-                        <div className={css.datePicker} onClick={() => setShowDatePicker(true)}>
+                        <div
+                            className={css.datePicker}
+                            onClick={() => {
+                                if (
+                                    deliveryMethod === 'delivery' &&
+                                    [
+                                        R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
+                                        R.PAME_SPB_MOIKA_RIVER_ID,
+                                        R.POLY_SPB_BELINSKOGO_ID,
+                                        R.TRAPPIST_SPB_RADISHEVA_ID,
+                                    ].includes(res_id as string)
+                                ) {
+                                    return;
+                                }
+                                setShowDatePicker(true);
+                            }}
+                        >
                             <div className={css.datePickerContent}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <rect
@@ -712,19 +889,25 @@ export const GastronomyBasketPage: React.FC = () => {
                                     <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                     <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
-                                <span
-                                    className={
-                                        selectedDate.value !== 'unset'
-                                            ? css.datePickerTextSelected
-                                            : css.datePickerTextPlaceholder
-                                    }
-                                >
-                                    {selectedDate.value !== 'unset'
-                                        ? selectedDate.title
-                                        : deliveryMethod === 'delivery'
-                                          ? 'Выберите дату с 25 по 30 декабря'
-                                          : 'Выберите дату с 25 по 31 декабря'}
-                                </span>
+                                {deliveryMethod === 'delivery' &&
+                                [
+                                    R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
+                                    R.PAME_SPB_MOIKA_RIVER_ID,
+                                    R.POLY_SPB_BELINSKOGO_ID,
+                                    R.TRAPPIST_SPB_RADISHEVA_ID,
+                                ].includes(res_id as string) ? (
+                                    <span className={css.datePickerTextSelected}>31 декабря</span>
+                                ) : (
+                                    <span
+                                        className={
+                                            selectedDate.value !== 'unset'
+                                                ? css.datePickerTextSelected
+                                                : css.datePickerTextPlaceholder
+                                        }
+                                    >
+                                        {selectedDate.value !== 'unset' ? selectedDate.title : 'Выберите дату'}
+                                    </span>
+                                )}
                             </div>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                                 <path
@@ -761,7 +944,7 @@ export const GastronomyBasketPage: React.FC = () => {
             {/* Кнопка оплаты */}
             <div className={css.buttonContainer}>
                 {showMinAmountError && (
-                    <p className={css.minAmountError}>Минимальная сумма заказа {minOrderAmount} ₽</p>
+                    <p className={css.minAmountError}>Заказ от {minOrderAmount}₽ - без учета доставки</p>
                 )}
                 <button
                     className={isFormValid() ? css.primaryButton : css.secondaryButton}

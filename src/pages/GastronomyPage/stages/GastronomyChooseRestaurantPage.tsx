@@ -17,10 +17,9 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { APIGetGastronomyDishes } from '@/api/gastronomy.api';
-import { authAtom } from '@/atoms/userAtom';
-import { IDish } from '@/types/gastronomy.types';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart';
+import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
+import { R } from '@/__mocks__/restaurant.mock';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
@@ -28,15 +27,13 @@ const initialRestaurant: PickerValueObj = {
 };
 
 export const GastronomyChooseRestaurantPage: React.FC = () => {
-    const [auth] = useAtom(authAtom);
-    
     const [cityListA] = useAtom(cityListAtom);
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
+    const [allGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
 
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
-    const [dishesList, setDishesList] = useState<IDish[]>([]);
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
     const [isDisabledButton, setDisabledButton] = useState(true);
     const { clearCart } = useGastronomyCart();
@@ -73,9 +70,9 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (e.id !== 11) {
+            if (String(e.id) !== R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
                 result.push(e);
-            } else if (e.id === 11) {
+            } else if (String(e.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
                 movableValue = e;
             }
         });
@@ -85,10 +82,10 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         }
         const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
         const filteredRestaurantsByDishes = filteredRestaurantsByCity.filter((v) =>
-            dishesList.some((dish) => dish.restaurant_id === v.id)
+            allGastronomyDishesList.some((dish) => dish.restaurant_id === v.id)
         );
         setRestaurantsList(filteredRestaurantsByDishes);
-    }, [currentCityA, cityListA, dishesList]);
+    }, [currentCityA, cityListA, allGastronomyDishesList]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
@@ -126,20 +123,6 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
     }, [location.state]);
 
     /**
-     * Вызываем API для получения списка всех блюд во всех ресторанах
-     * и по этому списку фильтруем рестораны, которые имеют блюда
-     * и устанавливаем их в restaurantsList
-     */
-    useEffect(() => {
-        if (!auth?.access_token) {
-            return;
-        }
-        APIGetGastronomyDishes(auth?.access_token).then((res) => {
-            setDishesList(res.data);
-        });
-    }, [auth?.access_token]);
-
-    /**
      * Очищаем корзину при переходе на эту страницу
      */
     useEffect(() => {
@@ -172,7 +155,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                         </h2>
                         <img src={GastronomyImg} alt={'New Year Gastronomy'} />
                         <ul>
-                            <li>Оформите заказ до 30 декабря. Минимальная сумма — 3000 ₽.</li>
+                            <li>Оформите заказ до 30 декабря.</li>
                             <li>Оплатите заказ (100% предоплата).</li>
                             <li>
                                 Заберите блюда из ресторана или оформим для вас доставку в период <br /> с 25 по 31

@@ -6,10 +6,7 @@ import { OptionsNavigation } from '@/components/OptionsNavigation/OptionsNavigat
 import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
 import { BookingReminder } from '@/components/BookingReminder/BookingReminder.tsx';
 import { useAtom } from 'jotai';
-import {
-    currentCityAtom,
-    setCurrentCityAtom,
-} from '@/atoms/currentCityAtom.ts';
+import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
@@ -24,10 +21,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
 import moment from 'moment';
 import superevent from '/img/hh2.jpg';
-import newres from '/img/chinois_app.png';
 import { IStoryBlock } from '@/types/stories.types.ts';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
 import { getDataFromLocalStorage } from '@/utils.ts';
+import { mockNewSelfEdgeChinoisRestaurant } from '@/__mocks__/restaurant.mock';
+import { APIGetGastronomyDishes } from '@/api/gastronomy.api';
+import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
 
 export const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -42,15 +41,16 @@ export const IndexPage: FC = () => {
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
     const [cityListA] = useAtom(cityListAtom);
     const [cityListConfirm] = useState<IConfirmationType[]>(
-        cityListA.map((v: ICity) => transformToConfirmationFormat(v)),
+        cityListA.map((v: ICity) => transformToConfirmationFormat(v))
     );
+    const [, setAllGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
 
     const [currentCityS, setCurrentCityS] = useState<IConfirmationType>(
         cityListConfirm.find((v) => v.id == currentCityA) ?? {
             id: 'moscow',
             text: 'Москва',
-        },
+        }
     );
     const [restaurants] = useAtom(restaurantsListAtom);
     const [auth] = useAtom(authAtom);
@@ -64,67 +64,83 @@ export const IndexPage: FC = () => {
 
     const want_first = getDataFromLocalStorage('want_first');
 
+    // Получаем статус первого запуска приложения и если это первый запуск, то добавляем мок ресторана в Санкт-Петербург
+    // Проверяем нажал ли пользователь на кнопку "Хочу быть первым"
+    let wantFirstParsed: any = {};
+
+    try {
+        wantFirstParsed = JSON.parse(String(want_first));
+    } catch (e) {
+        wantFirstParsed = {};
+    }
+
     useEffect(() => {
         if (!auth?.access_token) {
             return;
         }
         setCurrentBookingsLoading(true);
 
+        // Запрашиваем текущие бронирования и билеты
+        // объединяем в один массив чтобы отображать их в одном списке
         Promise.all([APIGetCurrentBookings(auth.access_token), APIGetTickets(auth.access_token)])
             .then((responses) => {
-                // console.log('responses: ', responses);
-                // @ts-expect-error
+                // TODO: доделать типизацию
                 const events: IBookingInfo[] = responses[1].data.map((event) => {
-                        return {
-                            id: event.id,
-                            booking_type: 'event',
-                            booking_date: moment(event.date_start).format('YYYY-MM-DD'),
-                            time: moment(event.date_start).format('HH:mm'),
-                            restaurant: event.restaurant,
-                            tags: null,
-                            duration: 0,
-                            guests_count: event.guest_count,
-                            children_count: 0,
-                            event_title: event.event_title,
-                        };
-                    },
-                );
+                    return {
+                        id: event.id,
+                        booking_type: 'event',
+                        booking_date: moment(event.date_start).format('YYYY-MM-DD'),
+                        time: moment(event.date_start).format('HH:mm'),
+                        restaurant: event.restaurant,
+                        tags: '',
+                        duration: 0,
+                        guests_count: event.guest_count,
+                        children_count: 0,
+                        event_title: event.event_title,
+                        booking_status: 'confirmed',
+                        user_comments: '',
+                        certificate_value: 0,
+                        certificate_expired_at: '',
+                    };
+                });
                 const bookings = [...events, ...responses[0].data.currentBookings];
                 setCurrentBookings(bookings);
             })
             .finally(() => {
                 setCurrentBookingsLoading(false);
             });
-
-        APIGetSuperEventHasAccess(auth.access_token)
-            .then((response) => {
-                setHasSuperEventAccess(response.data);
-            });
+        // Запрашиваем доступ к спец-событию
+        APIGetSuperEventHasAccess(auth.access_token).then((response) => {
+            setHasSuperEventAccess(response.data);
+        });
     }, []);
 
-    const cityId = cityListA.find(item => item.name_english === currentCityS.id)?.id;
+    const cityId = cityListA.find((item) => item.name_english === currentCityS.id)?.id ?? 1;
 
+    // Запрашиваем блоки историй для текущего города
     useEffect(() => {
         if (auth?.access_token !== undefined && cityId !== undefined) {
-            ApiGetStoriesBlocks(auth?.access_token, cityId)
-                .then((storiesBlockResponse) => {
-                    const stories = storiesBlockResponse.data.filter((s) => {
-                        return s.stories.length > 0;
-                    });
-                    setStoriesBlocks(stories);
+            ApiGetStoriesBlocks(auth?.access_token, cityId).then((storiesBlockResponse) => {
+                const stories = storiesBlockResponse.data.filter((s) => {
+                    return s.stories.length > 0;
                 });
+                setStoriesBlocks(stories);
+            });
         }
     }, [cityId]);
 
+    // Устанавливаем текущий город в state по умолчанию Москва
     useEffect(() => {
         setCurrentCityS(
             cityListConfirm.find((v) => v.id == currentCityA) ?? {
                 id: 'moscow',
                 text: 'Москва',
-            },
+            }
         );
     }, [cityListA]);
 
+    // Эффект фильтрации и сортировки списка ресторанов по городу
+    // и добавления мока ресторана в Санкт-Петербург если это первый запуск приложения
     useEffect(() => {
         let result: IRestaurant[] = [];
         let movableValue = null;
@@ -140,12 +156,17 @@ export const IndexPage: FC = () => {
         if (movableValue !== null) {
             result.unshift(movableValue);
         }
+        const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
 
-        setRestaurantsList(
-            result.filter((v) => v.city.name_english == currentCityA),
-        );
+        const restaurantsListWithMock =
+            currentCityA === 'spb' && !wantFirstParsed?.done
+                ? [mockNewSelfEdgeChinoisRestaurant, ...filteredRestaurantsByCity]
+                : filteredRestaurantsByCity;
+
+        setRestaurantsList(restaurantsListWithMock);
     }, [currentCityA, cityListA]);
 
+    // Устнавливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
     useEffect(() => {
         const preferencesStatus = JSON.parse(localStorage.getItem('PREFERENCES_STATUS') as string);
 
@@ -168,16 +189,25 @@ export const IndexPage: FC = () => {
             navigate('/preferences/1');
             return;
         }
-
-        // Reset preferences counter for testing purposes (comment this part before RELEASE)
-        // if (visit_number === 3) {
-        //     localStorage.setItem(
-        //         'PREFERENCES_STATUS',
-        //         JSON.stringify({ visit_number: 1 }),
-        //     );
-        //     return;
-        // }
     }, [navigate, user?.license_agreement, user?.complete_onboarding, user?.phone_number]);
+
+    /**
+     * Вызываем API для получения списка всех блюд во всех ресторанах
+     * и по этому списку фильтруем рестораны, которые имеют блюда
+     * и устанавливаем их в restaurantsList
+     */
+    useEffect(() => {
+        if (!auth?.access_token) {
+            return;
+        }
+        APIGetGastronomyDishes(auth?.access_token)
+            .then((res) => {
+                setAllGastronomyDishesList(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, [auth?.access_token]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
@@ -185,74 +215,29 @@ export const IndexPage: FC = () => {
     };
 
     const cityOptions = useMemo(
-        () => cityListConfirm.filter(v => v.id !== currentCityS.id),
-        [cityListConfirm, currentCityS.id],
+        () => cityListConfirm.filter((v) => v.id !== currentCityS.id),
+        [cityListConfirm, currentCityS.id]
     );
 
-    let wantFirstParsed: any = {};
-
-    try {
-        wantFirstParsed = JSON.parse(String(want_first));
-    } catch (e) {
-        wantFirstParsed = {};
-    }
-
-    const restaurantListed = (currentCityA === 'spb' && !wantFirstParsed?.done) ? [{
-        'id': 12,
-        'title': 'Self Edge Chinois',
-        'slogan': 'Современная Азия с акцентом на Китай и культовый raw bar',
-        'address': 'Санкт-Перербург, ул. Добролюбова, 11',
-        'logo_url': '',
-        'thumbnail_photo': newres,
-        'avg_cheque': 3000,
-        'about_text': '',
-        'about_dishes': 'Европейская',
-        'about_kitchen': 'Американская',
-        'about_features': '',
-        'phone_number': '',
-        'address_lonlng': '',
-        'address_station': '',
-        'address_station_color': '',
-        'city': {
-            'id': 2,
-            'name': 'Санкт-Петербург',
-            'name_english': 'spb',
-            'name_dative': 'Санкт-Петербурге',
-        },
-        'gallery': [],
-        'brand_chef': {},
-        'worktime': [],
-        'menu': [],
-        'menu_imgs': [],
-        'socials': [],
-        'photo_cards': [],
-    }, ...restaurantsList] : restaurantsList;
-
-    // @ts-ignore
     return (
         <Page back={false}>
             <div className={css.pageContainer}>
-                <Header/>
+                <Header />
                 <Stories storiesBlocks={storiesBlocks} />
                 <div style={{ marginRight: 15 }}>
-                    <CitySelect
-                        options={cityOptions}
-                        currentValue={currentCityS}
-                        onChange={updateCurrentCity}
-                    />
+                    <CitySelect options={cityOptions} currentValue={currentCityS} onChange={updateCurrentCity} />
                 </div>
                 {currentBookingsLoading ? (
                     <div style={{ marginRight: '15px' }}>
-                        <PlaceholderBlock
-                            width={'100%'}
-                            height={'108px'}
-                            rounded={'16px'}
-                        />
+                        <PlaceholderBlock width={'100%'} height={'108px'} rounded={'16px'} />
                     </div>
                 ) : (
                     currentBookings
                         .filter((book) => {
-                            return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime();
+                            return (
+                                new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <=
+                                new Date(book.booking_date).getTime()
+                            );
                         })
                         .map((book) => (
                             <BookingReminder
@@ -272,22 +257,20 @@ export const IndexPage: FC = () => {
                 {hasSuperEventAccess && (
                     <div style={{ marginRight: 15, height: 85 }}>
                         <Link to={'/events/super'}>
-                            <img src={superevent} style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }}
-                                 alt={''} />
+                            <img
+                                src={superevent}
+                                style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }}
+                                alt={''}
+                            />
                         </Link>
                     </div>
                 )}
 
-                <OptionsNavigation/>
+                <OptionsNavigation cityId={cityId}/>
 
                 <div className={css.restaurants}>
-                    {restaurantListed.map((rest) => (
-                        <RestaurantPreview
-                            // @ts-ignore
-                            restaurant={rest}
-                            key={`rest-${rest.id}`}
-                            clickable
-                        />
+                    {restaurantsList.map((rest) => (
+                        <RestaurantPreview restaurant={rest} key={`rest-${rest.id}`} clickable />
                     ))}
                 </div>
             </div>

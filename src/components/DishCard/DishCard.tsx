@@ -3,6 +3,7 @@ import css from './DishCard.module.css';
 import { IDish } from '@/types/gastronomy.types.ts';
 import { PlusIcon } from '@/components/Icons/PlusIcon.tsx';
 import { MinusIcon } from '@/components/Icons/MinusIcon.tsx';
+import { formatWeight } from '@/pages/GastronomyPage/stages/GastronomyDishDetailsPage/GastonomyDishDetailsPage';
 
 interface DishCardProps extends IDish {
     quantity: number;
@@ -11,23 +12,10 @@ interface DishCardProps extends IDish {
     onClick?: () => void;
 }
 
-/**
- * Форматирует вес, добавляя "г" если единица измерения отсутствует
- */
-const formatWeight = (weight: string | undefined): string | undefined => {
-    if (!weight) return undefined;
-    // Если вес уже содержит единицы измерения (г, кг, л и т.д.), возвращаем как есть
-    if (/[а-яА-Яa-zA-Z]/.test(weight)) {
-        return weight;
-    }
-    // Иначе добавляем "г"
-    return `${weight} г`;
-};
-
 export const DishCard: React.FC<DishCardProps> = (
     {
         id,
-        title,
+        guest_title,
         prices,
         weights,
         image_url,
@@ -35,10 +23,11 @@ export const DishCard: React.FC<DishCardProps> = (
         onAdd,
         onRemove,
         onClick,
+        weight_value,
     },
 ) => {
     const defaultPrice = prices[0];
-    const defaultWeight = formatWeight(weights[0]);
+    const defaultWeight = formatWeight(weights[0], weight_value);
 
     return (
         <div className={css.menuItem}>
@@ -49,7 +38,7 @@ export const DishCard: React.FC<DishCardProps> = (
             />
             <div className={css.content} onClick={onClick}>
                 <div className={css.subtitle}>
-                    <span className={css.title}>{title}</span>
+                    <span className={css.title}>{guest_title}</span>
                     {defaultWeight && (
                         <span className={css.weight}>{defaultWeight}</span>
                     )}

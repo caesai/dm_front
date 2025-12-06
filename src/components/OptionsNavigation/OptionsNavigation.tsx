@@ -10,7 +10,7 @@ import gastroBtn3 from '/img/gastro_btn3.png';
 import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import css from '@/components/OptionsNavigation/OptionsNavigation.module.css';
 
-export const OptionsNavigation = () => {
+export const OptionsNavigation = ({ cityId }: { cityId: number }) => {
     const [isOpen, setIsOpen] = useState(false);
     // const [user] = useAtom(userAtom);
     const tg_id = window?.Telegram?.WebApp?.initDataUnsafe?.user?.id;
@@ -18,7 +18,7 @@ export const OptionsNavigation = () => {
     return (
         <div className={css.optionsNavigation}>
             <PrivelegiesPopup isOpen={isOpen} setOpen={setIsOpen} />
-            {tg_id && mockEventsUsersList.includes(tg_id) && (
+            {tg_id && mockEventsUsersList.includes(tg_id) && cityId !== 3 && (
                 <OptionsNavigationElement
                     title={'Новогодняя кулинария'}
                     subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
