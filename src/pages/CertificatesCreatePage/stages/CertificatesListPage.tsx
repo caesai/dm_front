@@ -11,7 +11,6 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import html2canvas from 'html2canvas';
 import { useNavigate } from 'react-router-dom';
-// import certificateImage from '/img/certificate_2.png';
 
 export const shareCertificate = async (certificate: ICertificate, certificateRef: React.Ref<HTMLDivElement | null>) => {
     const url = encodeURI(
