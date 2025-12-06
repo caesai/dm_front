@@ -2,30 +2,19 @@ import React from 'react';
 import css from './CartItem.module.css';
 import { PlusIcon } from '@/components/Icons/PlusIcon.tsx';
 import { MinusIcon } from '@/components/Icons/MinusIcon.tsx';
+import { formatWeight } from '@/pages/GastronomyPage/stages/GastronomyDishDetailsPage/GastonomyDishDetailsPage';
 
 export interface CartItemProps {
     id: number;
     title: string;
     price: number;
     weight: string;
+    weight_value: string | undefined;
     image: string;
     quantity: number;
     onAdd: () => void;
     onRemove: () => void;
 }
-
-/**
- * Форматирует вес, добавляя "г" если единица измерения отсутствует
- */
-const formatWeight = (weight: string | undefined): string | undefined => {
-    if (!weight) return undefined;
-    // Если вес уже содержит единицы измерения (г, кг, л и т.д.), возвращаем как есть
-    if (/[а-яА-Яa-zA-Z]/.test(weight)) {
-        return weight;
-    }
-    // Иначе добавляем "г"
-    return `${weight} г`;
-};
 
 export const CartItem: React.FC<CartItemProps> = ({
     title,
@@ -35,8 +24,9 @@ export const CartItem: React.FC<CartItemProps> = ({
     quantity,
     onAdd,
     onRemove,
+    weight_value,
 }) => {
-    const formattedWeight = formatWeight(weight);
+    const formattedWeight = formatWeight(weight, weight_value);
     return (
         <div className={css.item}>
             <div className={css.content}>

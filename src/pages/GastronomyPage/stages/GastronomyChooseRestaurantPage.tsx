@@ -19,7 +19,7 @@ import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/Re
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart';
 import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
-import { SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
@@ -70,9 +70,9 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (String(e.id) !== SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+            if (String(e.id) !== R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
                 result.push(e);
-            } else if (String(e.id) === SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+            } else if (String(e.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
                 movableValue = e;
             }
         });

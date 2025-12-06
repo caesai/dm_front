@@ -66,40 +66,45 @@ export const GastronomyBasketPage: React.FC = () => {
 
     /**
      * Стоимость доставки:
-     * 
+     *
      * - Smoke Лодейнопольская — 0 ₽
      * - Smoke Трубная — 1 000 ₽
      * - Smoke Рубинштейна — 1 000 ₽
      * - Poly — 1 000 ₽
      * - Pame — 1 000 ₽
      * - Trappist — 1 000 ₽
+     * - BlackChops — null
      * - Для остальных доставка не предусмотрена (null)
      */
     const deliveryFee = useMemo(() => {
-        if (deliveryMethod === 'pickup') {
+        if (deliveryMethod === 'delivery') {
+            switch (String(res_id)) {
+                case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
+                    return 0;
+
+                case R.SMOKE_BBQ_MSC_TRUBNAYA_ID:
+                    return 1000;
+
+                case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+                    return 1000;
+
+                case R.POLY_SPB_BELINSKOGO_ID:
+                    return 1000;
+
+                case R.PAME_SPB_MOIKA_RIVER_ID:
+                    return 1000;
+
+                case R.TRAPPIST_SPB_RADISHEVA_ID:
+                    return 1000;
+
+                default:
+                    return null;
+            }
+        } else {
+            if (res_id === R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID) {
+                return null;
+            }
             return 0;
-        }
-        switch (String(res_id)) {
-          case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
-            return 0;
-
-          case R.SMOKE_BBQ_MSC_TRUBNAYA_ID:
-            return 1000;
-
-          case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
-            return 1000;
-
-          case R.POLY_SPB_BELINSKOGO_ID:
-            return 1000;
-
-          case R.PAME_SPB_MOIKA_RIVER_ID:
-            return 1000;
-          
-          case R.TRAPPIST_SPB_RADISHEVA_ID:
-            return 1000;
-
-          default:
-            return null;
         }
     }, [res_id, deliveryMethod]);
 
@@ -117,14 +122,13 @@ export const GastronomyBasketPage: React.FC = () => {
         return 'в пределах МКАД';
     }, [restaurant]);
 
-    
     /**
      * Минимальная сумма заказа
-     * 
+     *
      * - Самовывоз:
      *   - Smoke Rubinsteina — 3000 ₽
      *   - Остальные — 0 ₽
-     * 
+     *
      * - Доставка:
      *   - Smoke Lodeynopolskaya — 10 000 ₽
      *   - Smoke Rubinsteina — 5 000 ₽
@@ -134,24 +138,24 @@ export const GastronomyBasketPage: React.FC = () => {
         // Если выбран самовывоз
         if (deliveryMethod === 'pickup') {
             switch (String(res_id)) {
-              case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
-                return 3000;
+                case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+                    return 3000;
 
-              default:
-                return 0;
+                default:
+                    return 0;
             }
         }
 
         // Если выбрана доставка
         switch (String(res_id)) {
-          case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
-            return 10000;
+            case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
+                return 10000;
 
-          case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
-            return 5000;
+            case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+                return 5000;
 
-          default:
-            return 3000;
+            default:
+                return 3000;
         }
     }, [deliveryMethod, res_id]);
 
@@ -167,7 +171,7 @@ export const GastronomyBasketPage: React.FC = () => {
      * 3. **Ограничение "не день в день"**:
      *    - Доступные даты начинаются со следующего дня (`currentDay + 1`).
      * 4. Особые условия по ресторанам:
-     *    - Smoke Лодейнопольская: доставка и самовывоз - 30, 31 декабря; 
+     *    - Smoke Лодейнопольская: доставка и самовывоз - 30, 31 декабря;
      *    - Smoke Рубинштейна: доставка - 30, 31 декабря
      *    - Smoke Трубная: доставка - 31 декабря;
      *    - BlackChops: самовывоз 30, 31, доставки нет;
@@ -186,72 +190,72 @@ export const GastronomyBasketPage: React.FC = () => {
 
         // Особые условия для некоторых ресторанов
         switch (String(res_id)) {
-          // Smoke Лодейнопольская доставка и самовывоз только 30 и 31 декабря
-          case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
-            baseStartDay = 30;
-            endDay = 31;
-            break;
-
-          // Smoke Рубинштейна доставка только 30 и 31 декабря
-          case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
-            if (deliveryMethod === 'delivery') {
+            // Smoke Лодейнопольская доставка и самовывоз только 30 и 31 декабря
+            case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
                 baseStartDay = 30;
                 endDay = 31;
-            }
-            break;
+                break;
 
-          // Smoke Трубная доставка только 31 декабря
-          case R.SMOKE_BBQ_MSC_TRUBNAYA_ID:
-            if (deliveryMethod === 'delivery') {
-                baseStartDay = 31;
-                endDay = 31;
-            }
-            break;
+            // Smoke Рубинштейна доставка только 30 и 31 декабря
+            case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+                if (deliveryMethod === 'delivery') {
+                    baseStartDay = 30;
+                    endDay = 31;
+                }
+                break;
 
-          // BlackChops самовывоз только 30 и 31 декабря, доставки нет
-          case R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID:
-            if (deliveryMethod === 'pickup') {
-                baseStartDay = 30;
-                endDay = 31;
-            } else {
-                // Для доставки нет доступных дат
-                baseStartDay = 32;
-                endDay = 31;
-            }
-            break;
-          
-          // Poly самовывоз 25-31, доставка только 31 декабря
-          case R.POLY_SPB_BELINSKOGO_ID:
-            if (deliveryMethod === 'pickup') {
-                baseStartDay = 25;
-                endDay = 31;
-            } else {
-                baseStartDay = 31;
-                endDay = 31;
-            }
-            break;
+            // Smoke Трубная доставка только 31 декабря
+            case R.SMOKE_BBQ_MSC_TRUBNAYA_ID:
+                if (deliveryMethod === 'delivery') {
+                    baseStartDay = 31;
+                    endDay = 31;
+                }
+                break;
 
-          // Pame самовывоз 25-31, доставка только 31 декабря
-          case R.PAME_SPB_MOIKA_RIVER_ID:
-            if (deliveryMethod === 'pickup') {
-                baseStartDay = 25;
-                endDay = 31;
-            } else {
-                baseStartDay = 31;
-                endDay = 31;
-            }
-            break;
-          
-          // Trappist самовывоз 25-31, доставка только 31 декабря
-          case R.TRAPPIST_SPB_RADISHEVA_ID:
-            if (deliveryMethod === 'pickup') {
-                baseStartDay = 25;
-                endDay = 31;
-            } else {
-                baseStartDay = 31;
-                endDay = 31;
-            }
-            break;
+            // BlackChops самовывоз только 30 и 31 декабря, доставки нет
+            case R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID:
+                if (deliveryMethod === 'pickup') {
+                    baseStartDay = 30;
+                    endDay = 31;
+                } else {
+                    // Для доставки нет доступных дат
+                    baseStartDay = 32;
+                    endDay = 31;
+                }
+                break;
+
+            // Poly самовывоз 25-31, доставка только 31 декабря
+            case R.POLY_SPB_BELINSKOGO_ID:
+                if (deliveryMethod === 'pickup') {
+                    baseStartDay = 25;
+                    endDay = 31;
+                } else {
+                    baseStartDay = 31;
+                    endDay = 31;
+                }
+                break;
+
+            // Pame самовывоз 25-31, доставка только 31 декабря
+            case R.PAME_SPB_MOIKA_RIVER_ID:
+                if (deliveryMethod === 'pickup') {
+                    baseStartDay = 25;
+                    endDay = 31;
+                } else {
+                    baseStartDay = 31;
+                    endDay = 31;
+                }
+                break;
+
+            // Trappist самовывоз 25-31, доставка только 31 декабря
+            case R.TRAPPIST_SPB_RADISHEVA_ID:
+                if (deliveryMethod === 'pickup') {
+                    baseStartDay = 25;
+                    endDay = 31;
+                } else {
+                    baseStartDay = 31;
+                    endDay = 31;
+                }
+                break;
         }
 
         let actualStartDay = baseStartDay;
@@ -379,7 +383,15 @@ export const GastronomyBasketPage: React.FC = () => {
 
     // У ресторанов Smoke Trubnaya, Pame, Trappist, Poly доставка только 31ого
     useEffect(() => {
-        if (deliveryMethod === 'delivery' && ([R.SMOKE_BBQ_MSC_TRUBNAYA_ID, R.PAME_SPB_MOIKA_RIVER_ID, R.POLY_SPB_BELINSKOGO_ID, R.TRAPPIST_SPB_RADISHEVA_ID].includes(res_id as string))) {
+        if (
+            deliveryMethod === 'delivery' &&
+            [
+                R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
+                R.PAME_SPB_MOIKA_RIVER_ID,
+                R.POLY_SPB_BELINSKOGO_ID,
+                R.TRAPPIST_SPB_RADISHEVA_ID,
+            ].includes(res_id as string)
+        ) {
             setSelectedDate({ title: formatDate(moment('2025-12-31').toString()), value: '31 декабря' });
         } else {
             setSelectedDate({ title: 'unset', value: 'unset' });
@@ -584,12 +596,12 @@ export const GastronomyBasketPage: React.FC = () => {
 
         if (!auth || !res_id) return;
         setLoading(true);
-        
+
         APIPostUserOrder(
             {
                 items: cart.items,
                 restaurant_id: Number(res_id),
-                delivery_cost: deliveryMethod === 'pickup' ? 0 : deliveryFee,
+                delivery_cost: deliveryMethod === 'pickup' ? 0 : Number(deliveryFee),
                 delivery_method: deliveryMethod,
                 total_amount: cart.totalAmount,
                 delivery_address: deliveryMethod === 'delivery' ? address : undefined,
@@ -701,6 +713,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                             title: item.title,
                                             prices: [item.price],
                                             weights: [item.weight],
+                                            weight_value: item.weight_value,
                                             image_url: item.image,
                                             description: '',
                                             allergens: [],
@@ -717,19 +730,18 @@ export const GastronomyBasketPage: React.FC = () => {
                         <div className={css.delivery}>
                             <span className={css.deliveryLabel}>Доставка</span>
                             <span className={css.deliveryValue}>
-                                {deliveryFee === 0 ? 'Бесплатно' : `${deliveryFee} ₽`}
+                                {deliveryFee === 0 ? 'Бесплатно' : `${Number(deliveryFee)} ₽`}
                             </span>
                         </div>
                     )}
                     <div className={css.total}>
                         <span className={css.totalLabel}>Итого</span>
-                        <span className={css.totalValue}>{cart.totalAmount + deliveryFee} ₽</span>
+                        <span className={css.totalValue}>{cart.totalAmount + Number(deliveryFee)} ₽</span>
                     </div>
                 </div>
 
                 {/* Способ получения. Если доставки нет (deliveryFee === null), то не отображаем блок этот блок */}
-                {
-                  deliveryFee !== null && (
+                {deliveryFee !== null && (
                     <div className={css.section}>
                         <h2 className={css.sectionTitle}>Способ получения</h2>
                         <div className={css.deliveryDropdown}>
@@ -772,8 +784,7 @@ export const GastronomyBasketPage: React.FC = () => {
                             )}
                         </div>
                     </div>
-                  )
-                }
+                )}
 
                 {/* Заказ можно забрать по адресу (только для самовывоза) */}
                 {deliveryMethod === 'pickup' && (
@@ -848,7 +859,15 @@ export const GastronomyBasketPage: React.FC = () => {
                         <div
                             className={css.datePicker}
                             onClick={() => {
-                                if (deliveryMethod === 'delivery' && ([R.SMOKE_BBQ_MSC_TRUBNAYA_ID, R.PAME_SPB_MOIKA_RIVER_ID, R.POLY_SPB_BELINSKOGO_ID, R.TRAPPIST_SPB_RADISHEVA_ID].includes(res_id as string))) {
+                                if (
+                                    deliveryMethod === 'delivery' &&
+                                    [
+                                        R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
+                                        R.PAME_SPB_MOIKA_RIVER_ID,
+                                        R.POLY_SPB_BELINSKOGO_ID,
+                                        R.TRAPPIST_SPB_RADISHEVA_ID,
+                                    ].includes(res_id as string)
+                                ) {
                                     return;
                                 }
                                 setShowDatePicker(true);
@@ -869,7 +888,13 @@ export const GastronomyBasketPage: React.FC = () => {
                                     <path d="M8 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                     <path d="M16 3V6" stroke="#545454" strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
-                                {deliveryMethod === 'delivery' && ([R.SMOKE_BBQ_MSC_TRUBNAYA_ID, R.PAME_SPB_MOIKA_RIVER_ID, R.POLY_SPB_BELINSKOGO_ID, R.TRAPPIST_SPB_RADISHEVA_ID].includes(res_id as string)) ? (
+                                {deliveryMethod === 'delivery' &&
+                                [
+                                    R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
+                                    R.PAME_SPB_MOIKA_RIVER_ID,
+                                    R.POLY_SPB_BELINSKOGO_ID,
+                                    R.TRAPPIST_SPB_RADISHEVA_ID,
+                                ].includes(res_id as string) ? (
                                     <span className={css.datePickerTextSelected}>31 декабря</span>
                                 ) : (
                                     <span
@@ -879,9 +904,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                                 : css.datePickerTextPlaceholder
                                         }
                                     >
-                                        {selectedDate.value !== 'unset'
-                                            ? selectedDate.title
-                                            : 'Выберите дату'}
+                                        {selectedDate.value !== 'unset' ? selectedDate.title : 'Выберите дату'}
                                     </span>
                                 )}
                             </div>

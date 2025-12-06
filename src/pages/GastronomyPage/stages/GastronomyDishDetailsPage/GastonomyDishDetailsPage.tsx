@@ -12,7 +12,7 @@ import { gastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 /**
  * Форматирует вес, добавляя единицу измерения
  */
-const formatWeight = (weight: string | undefined, weight_unit: string | undefined): string | undefined => {
+export const formatWeight = (weight: string | undefined, weight_unit: string | undefined): string | undefined => {
     if (!weight || !weight_unit) return undefined;
     return `${weight} ${weight_unit}`;
 };
@@ -72,7 +72,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
 
                     <div className={css.titleSection}>
                         <div className={css.titleRow}>
-                            <h2 className={css.dishTitle}>{dishFromState.title}</h2>
+                            <h2 className={css.dishTitle}>{dishFromState.guest_title}</h2>
                             <span className={css.dishPrice}>{selectedPrice} ₽</span>
                         </div>
                         {selectedWeight && <span className={css.selectedWeight}>{selectedWeight}</span>}
