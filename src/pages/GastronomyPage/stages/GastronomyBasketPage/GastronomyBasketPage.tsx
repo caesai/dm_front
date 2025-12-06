@@ -219,8 +219,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     endDay = 31;
                 } else {
                     // Для доставки нет доступных дат
-                    baseStartDay = 32;
-                    endDay = 31;
+                    return [];
                 }
                 break;
 
@@ -736,7 +735,9 @@ export const GastronomyBasketPage: React.FC = () => {
                     )}
                     <div className={css.total}>
                         <span className={css.totalLabel}>Итого</span>
-                        <span className={css.totalValue}>{cart.totalAmount + Number(deliveryFee)} ₽</span>
+                        <span className={css.totalValue}>
+                            {deliveryFee !== null ? cart.totalAmount + Number(deliveryFee) : cart.totalAmount} ₽
+                        </span>
                     </div>
                 </div>
 
