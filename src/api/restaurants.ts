@@ -17,42 +17,27 @@ export const APIGetRestaurants = (token: string) => {
     });
 };
 
-export const APIGetAvailableDays = (
-    token: string,
-    restaurant_id: number,
-    guests: number
-) => {
-    return axios.get<string[]>(
-        `${BASE_URL}/restaurant/${restaurant_id}/availableDays`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            params: {
-                guests: guests,
-            },
-        }
-    );
+export const APIGetAvailableDays = (token: string, restaurant_id: number, guests: number) => {
+    return axios.get<string[]>(`${BASE_URL}/restaurant/${restaurant_id}/availableDays`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params: {
+            guests: guests,
+        },
+    });
 };
 
-export const APIGetAvailableTimeSlots = (
-    token: string,
-    restaurant_id: number,
-    d: string,
-    guests: number
-) => {
-    return axios.get(
-            `${BASE_URL}/restaurant/${restaurant_id}/availableTimeslots`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            params: {
-                guests,
-                d,
-            },
-        }
-    );
+export const APIGetAvailableTimeSlots = (token: string, restaurant_id: number, d: string, guests: number) => {
+    return axios.get(`${BASE_URL}/restaurant/${restaurant_id}/availableTimeslots`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params: {
+            guests,
+            d,
+        },
+    });
 };
 
 export const APICreateBooking = (
@@ -70,7 +55,7 @@ export const APICreateBooking = (
     confirmation: string,
     pre_order_dishes: boolean,
     event_id: number | null,
-    certificate_id: string | null,
+    certificate_id: string | null
 ) => {
     return axios.post<IBookingCreate>(
         `${BASE_URL}/restaurant/${restaurant_id}/booking`,
@@ -82,13 +67,13 @@ export const APICreateBooking = (
             name,
             phone,
             email,
-            comment: import.meta.env.MODE === 'development' ? 'ТЕСТОВОЕ БРОНИРОВАНИЕ! НЕ ОТВЕЧАТЬ!' : comment ,
+            comment: import.meta.env.MODE === 'development' ? 'ТЕСТОВОЕ БРОНИРОВАНИЕ! НЕ ОТВЕЧАТЬ!' : comment,
             prepared_comments,
             confirmation,
             pre_order_dishes,
             tags: prepared_comments.join(','),
             event_id,
-            certificate_id
+            certificate_id,
         },
         {
             headers: {
@@ -126,14 +111,11 @@ export const APICancelBooking = (token: string, booking_id: number) => {
 };
 
 export const APIIsReviewAvailable = (token: string) => {
-    return axios.get<IIsReviewAvailable>(
-        `${BASE_URL}/booking/review/available`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    return axios.get<IIsReviewAvailable>(`${BASE_URL}/booking/review/available`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 };
 
 export const APIGetCurrentBookings = (token: string) => {
@@ -144,12 +126,7 @@ export const APIGetCurrentBookings = (token: string) => {
     });
 };
 
-export const APISendReview = (
-    token: string,
-    rate: number,
-    features: string[],
-    comment: string
-) => {
+export const APISendReview = (token: string, rate: number, features: string[], comment: string) => {
     return axios.post(
         `${BASE_URL}/booking/review/new`,
         {
@@ -166,18 +143,17 @@ export const APISendReview = (
 };
 
 export const APIGetEventsInRestaurant = async (restaurant_id: number, token: string) => {
-    return await axios.get<IEventInRestaurant[]>(
-        `${BASE_URL}/restaurant/${restaurant_id}/events`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    return await axios.get<IEventInRestaurant[]>(`${BASE_URL}/restaurant/${restaurant_id}/events`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 };
 
 export const APIPostNewRestaurant = (token: string) => {
-    return axios.post(`${BASE_URL}/restaurant/new`, {},
+    return axios.post(
+        `${BASE_URL}/restaurant/new`,
+        {},
         {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -187,11 +163,15 @@ export const APIPostNewRestaurant = (token: string) => {
 };
 
 export const APIPOSTCancelReason = (token: string, booking_id: number, cancel_reason: string) => {
-    return axios.post(`${BASE_URL}/booking/cancel/${booking_id}/reason`, {
-        cancel_reason
-    },{
-        headers: {
-            Authorization: `Bearer ${token}`,
+    return axios.post(
+        `${BASE_URL}/booking/cancel/${booking_id}/reason`,
+        {
+            cancel_reason,
         },
-    });
-}
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+};

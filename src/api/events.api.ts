@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { BASE_URL, CLIENT_URL } from '@/api/base.ts';
+import axios from 'axios';
 // import { IEvent } from '@/pages/EventsPage/EventsPage.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { EventTicket, IEventInRestaurant, ISuperEventHasApplicationResponse } from '@/types/events.ts';

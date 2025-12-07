@@ -18,7 +18,7 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { Link, useNavigate } from 'react-router-dom';
-import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.ts';
+import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.api';
 import moment from 'moment';
 import superevent from '/img/hh2.jpg';
 import { IStoryBlock } from '@/types/stories.types.ts';
