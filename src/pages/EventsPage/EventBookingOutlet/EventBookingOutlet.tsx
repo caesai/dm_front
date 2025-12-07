@@ -7,7 +7,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import { getDataFromLocalStorage, IEventBookingContext, removeDataFromLocalStorage } from '@/utils.ts';
 import { useMemo, useRef, useState } from 'react';
 import moment from 'moment';
-import { APICreateInvoice } from '@/api/events.ts';
+import { APICreateInvoice } from '@/api/events.api.ts';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { guestCountAtom } from '@/atoms/eventBookingAtom.ts';

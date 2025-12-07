@@ -15,7 +15,7 @@ import {
     getGuestsString,
     getTimeShort,
 } from '@/utils.ts';
-import { BookingGuestCountSelectorPopup } from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
+import { GuestCountSelector } from '@/components/GuestCountSelector/GuestCountSelector.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
@@ -216,7 +216,7 @@ export const BookingRestaurantPage: FC = () => {
     return (
         <Page back={true}>
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount} botError={botError}/>
-            <BookingGuestCountSelectorPopup
+            <GuestCountSelector
                 guestCount={guestCount}
                 childrenCount={childrenCount}
                 setGuestCount={setGuestCount}

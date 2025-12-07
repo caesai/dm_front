@@ -40,7 +40,8 @@ export const EventConfirmationOutlet: React.FC = () => {
                         start_datetime: String(bookingInfo.event?.date_start),
                         end_datetime: moment(bookingInfo.event?.date_start).add(2, 'hours').toISOString(),
                         is_free: true,
-                    }
+                    },
+                    eventGuestCount: guestCount,
                 };
         }
         if (user?.complete_onboarding) {

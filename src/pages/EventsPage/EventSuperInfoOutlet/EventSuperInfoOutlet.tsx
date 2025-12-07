@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import hh from '/img/hh.jpg';
-import { APIGetSuperEventHasApplication, APIPostSuperEventCheckLink } from '@/api/events.ts';
+import { APIGetSuperEventHasApplication, APIPostSuperEventCheckLink } from '@/api/events.api.ts';
 
 export const EventSuperInfoOutlet: React.FC = () => {
     const navigate = useNavigate();

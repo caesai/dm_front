@@ -7,7 +7,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 // import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { useAtom } from 'jotai/index';
 import { eventsListAtom, guestCountAtom } from '@/atoms/eventBookingAtom.ts';
-import { APIGetEvents } from '@/api/events.ts';
+import { APIGetEvents } from '@/api/events.api.ts';
 import { Share } from '@/components/Icons/Share.tsx';
 import { BASE_BOT } from '@/api/base.ts';
 import { IEventBooking, IEventInRestaurant } from '@/types/events.ts';

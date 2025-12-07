@@ -6,7 +6,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { EventTicket } from '@/types/events.ts';
-import { APIDeleteTicket, APIGetSharedTicket, APIGetTicket } from '@/api/events.ts';
+import { APIDeleteTicket, APIGetSharedTicket, APIGetTicket } from '@/api/events.api';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';

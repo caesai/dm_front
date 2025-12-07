@@ -1,6 +1,5 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import css from '@/pages/BookingPage/BookingPage.module.css';
-
 import { Page } from '@/components/Page.tsx';
 import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
@@ -10,38 +9,25 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-import {
-    formatDate,
-    formatDateShort,
-    getGuestsString,
-    getTimeShort,
-} from '@/utils.ts';
-import {
-    BookingGuestCountSelectorPopup,
-} from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
+import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
+import { GuestCountSelector } from '@/components/GuestCountSelector/GuestCountSelector.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import {
-    getGuestMaxNumber,
-    getServiceFeeData,
-} from '@/mockData.ts';
+import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import {
-    APICreateBooking,
-    APIGetAvailableDays,
-} from '@/api/restaurants.ts';
+import { APICreateBooking, APIGetAvailableDays } from '@/api/restaurants.ts';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { commAtom } from '@/atoms/bookingCommAtom.ts';
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
-import { APIGetAvailableEventTimeSlots } from '@/api/events.ts';
+import { APIGetAvailableEventTimeSlots } from '@/api/events.api';
 import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
@@ -103,44 +89,36 @@ export const BookingFreeEventPage: FC = () => {
     // Update bookingDates when guestCount changes
     useEffect(() => {
         auth?.access_token
-            ? APIGetAvailableDays(auth?.access_token, Number(id), 1).then(
-                (res) =>
-                    setAvailableDates(
-                        res.data.map((v) => ({
-                            title: formatDate(v),
-                            value: v,
-                        })),
-                    ),
-            )
+            ? APIGetAvailableDays(auth?.access_token, Number(id), 1).then((res) =>
+                  setAvailableDates(
+                      res.data.map((v) => ({
+                          title: formatDate(v),
+                          value: v,
+                      }))
+                  )
+              )
             : null;
     }, [guestCount, id]);
 
     // Update availableTimeslots when bookingDate or guestCount changes
     useEffect(() => {
-        if (
-            !auth?.access_token ||
-            date.value === 'unset' ||
-            !guestCount
-        ) {
+        if (!auth?.access_token || date.value === 'unset' || !guestCount) {
             return;
         }
         setTimeslotsLoading(true);
-        APIGetAvailableEventTimeSlots(
-            auth.access_token,
-            Number(id),
-            guestCount,
-            Number(eventId),
-        )
+
+        APIGetAvailableEventTimeSlots(auth.access_token, Number(id), guestCount, Number(eventId))
             .then((res) => setAvailableTimeslots(res.data.timeslots))
             .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount]);
 
-
+    // Обновляем данные из state
     useEffect(() => {
         if (state) {
-            const { eventDate, eventTime } = state;
+            const { eventDate, eventTime, eventGuestCount } = state;
             setDate(eventDate);
             setCurrentSelectedTime(eventTime);
+            setGuestCount(eventGuestCount);
         }
     }, [state]);
 
@@ -154,7 +132,7 @@ export const BookingFreeEventPage: FC = () => {
         // Pass the raw values
         { userName, userPhone, currentSelectedTime, guestCount, date },
         // Pass the setters for the *display* states
-        { setNameValidated, setPhoneValidated, setDateValidated, setGuestsValidated, setSelectedTimeValidated },
+        { setNameValidated, setPhoneValidated, setDateValidated, setGuestsValidated, setSelectedTimeValidated }
     );
 
     const createBooking = () => {
@@ -177,9 +155,9 @@ export const BookingFreeEventPage: FC = () => {
                 commentary,
                 comms,
                 confirmation.text,
-                (guestCount + childrenCount) < 8 ? false : preOrder,
+                guestCount + childrenCount < 8 ? false : preOrder,
                 Number(eventId),
-                certificate_id,
+                certificate_id
             )
                 .then((res) => {
                     if (res.data?.error) {
@@ -200,9 +178,14 @@ export const BookingFreeEventPage: FC = () => {
 
     return (
         <Page back={true}>
-            <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount}
-                               botError={botError} />
-            <BookingGuestCountSelectorPopup
+            <BookingErrorPopup
+                isOpen={errorPopup}
+                setOpen={setErrorPopup}
+                resId={Number(id)}
+                count={errorPopupCount}
+                botError={botError}
+            />
+            <GuestCountSelector
                 guestCount={guestCount}
                 childrenCount={childrenCount}
                 setGuestCount={setGuestCount}
@@ -226,10 +209,7 @@ export const BookingFreeEventPage: FC = () => {
                             <div className={css.headerNav}>
                                 <div style={{ width: '44px' }}></div>
                                 <div className={css.headerInfo}>
-                                    <h3 className={css.headerInfo__title}>
-                                        {eventName}
-                                    </h3>
-
+                                    <h3 className={css.headerInfo__title}>{eventName}</h3>
                                 </div>
                                 <div>
                                     <RoundedButton
@@ -247,9 +227,7 @@ export const BookingFreeEventPage: FC = () => {
                             <div className={css.header_bottom}>
                                 <div className={classNames(css.header__selector)}>
                                     <DropDownSelect
-                                        title={date.value !== 'unset' ? formatDateShort(
-                                            date.value,
-                                        ) : 'Дата'}
+                                        title={date.value !== 'unset' ? formatDateShort(date.value) : 'Дата'}
                                         isValid={dateValidatedDisplay}
                                         icon={<CalendarIcon size={24} />}
                                         // onClick={() =>
@@ -260,30 +238,31 @@ export const BookingFreeEventPage: FC = () => {
                                         title={guestCount ? getGuestsString(guestCount + childrenCount) : 'Гости'}
                                         isValid={guestsValidatedDisplay}
                                         icon={<UsersIcon size={24} />}
-                                        onClick={() =>
-                                            setGuestCountPopup(!guestCountPopup)
-                                        }
+                                        onClick={() => setGuestCountPopup(!guestCountPopup)}
                                     />
                                 </div>
                             </div>
                         </div>
                     </ContentContainer>
-                    {!guestCount ||
-                    date.value === 'unset' ? (
+                    {!guestCount || date.value === 'unset' ? (
                         <ContentContainer>
                             <div className={css.timeOfDayContainer}>
-                                <span className={css.noTimeSlotsText}>
-                                    Выберите дату и количество гостей
-                                </span>
+                                <span className={css.noTimeSlotsText}>Выберите дату и количество гостей</span>
                             </div>
                         </ContentContainer>
                     ) : (
-                        <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots}
-                                   currentSelectedTime={currentSelectedTime}
-                                   setCurrentSelectedTime={setCurrentSelectedTime} />
+                        <TimeSlots
+                            loading={timeslotsLoading}
+                            availableTimeslots={availableTimeslots}
+                            currentSelectedTime={currentSelectedTime}
+                            setCurrentSelectedTime={setCurrentSelectedTime}
+                        />
                     )}
-                    <CertificatesSelector isOpened={state?.certificate} setCertificateId={setCertificateId}
-                                          selectedCertificateId={null} />
+                    <CertificatesSelector
+                        isOpened={state?.certificate}
+                        setCertificateId={setCertificateId}
+                        selectedCertificateId={null}
+                    />
                     <BookingWish
                         guestCount={guestCount}
                         childrenCount={childrenCount}
