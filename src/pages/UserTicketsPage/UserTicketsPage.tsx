@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { EventTicket } from '@/types/events.ts';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/atoms/userAtom.ts';
-import { APIGetTickets } from '@/api/events.api';
+import { APIGetTickets } from '@/api/events.api.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
 export const UserTicketsPage = () => {
