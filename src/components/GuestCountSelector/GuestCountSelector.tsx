@@ -80,7 +80,7 @@ export const GuestCountSelector: FC<GuestCountSelectorProps> = (p) => {
             <ContentContainer>
                 <div className={css.content}>
                     <h3>Количество гостей</h3>
-                    <h5>{p.serviceFeeMessage ?? p.serviceFeeMessage}</h5>
+                    <h5>{p.serviceFeeMessage ?? ''}</h5>
 
                     <div className={css.personsContainer}>
                         <span className={css.personsContainer__title}>Взрослые:</span>
