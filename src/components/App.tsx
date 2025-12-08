@@ -4,7 +4,16 @@ import { swipeBehavior, useLaunchParams } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { useAtom } from 'jotai';
 import { ScrollToTop } from '@/navigation/utills.tsx';
+// API's
+import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.api.ts';
+import { APIGetCityList } from '@/api/city.ts';
+import { APIGetCertificates } from '@/api/certificates.api.ts';
+// Atoms
 import { authAtom, reviewAtom, userAtom } from '@/atoms/userAtom.ts';
+import { cityListAtom } from '@/atoms/cityListAtom.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
+// Components
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import { IndexPage } from '@/pages/IndexPage/IndexPage.tsx';
 import { ProfilePage } from '@/pages/ProfilePage/ProfilePage.tsx';
@@ -16,10 +25,6 @@ import { RestaurantPage } from '@/pages/RestaurantPage/RestaurantPage.tsx';
 import { BookingPage } from '@/pages/BookingPage/BookingPage.tsx';
 import { BookingConfirmationPage } from '@/pages/BookingConfirmationPage/BookingConfirmationPage.tsx';
 import { EnvUnsupported } from '@/components/EnvUnsupported.tsx';
-import { cityListAtom } from '@/atoms/cityListAtom.ts';
-import { APIGetCityList } from '@/api/city.ts';
-import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.tsx';
 import { EventListOutlet } from '@/pages/EventsPage/EventListOutlet/EventListOutlet.tsx';
 import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
@@ -56,8 +61,6 @@ import { CertificatesListPage } from '@/pages/CertificatesCreatePage/stages/Cert
 import { CertificatesCreateOfflinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOfflinePage.tsx';
 import { BookingRestaurantPage } from '@/pages/BookingRestaurantPage/BookingRestaurantPage.tsx';
 import { BookingFreeEventPage } from '@/pages/BookingFreeEventPage/BookingFreeEventPage.tsx';
-import { APIGetCertificates } from '@/api/certificates.api.ts';
-import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/CertificatesPaymentPage.tsx';
 import CertificateLandingPage from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
 import { CertificatesCreateErrorPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateErrorPage.tsx';

@@ -5,10 +5,23 @@ import { Swiper } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import { SwiperSlide } from 'swiper/react';
 import classNames from 'classnames';
+// API's
+import { APIPostNewRestaurant } from '@/api/restaurants.api.ts';
+// Types
+import { IRestaurant } from '@/types/restaurant.types.ts';
+// Atoms
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+// Components
 import { RestaurantBadge } from '@/components/RestaurantPreview/RestaurantBadge/RestaurantBadge.tsx';
 import { RestaurantBadgePhoto } from '@/components/RestaurantPreview/RestaurantBadgePhoto/RestaurantBadgePhoto.tsx';
 import { InfoTag } from '@/components/InfoTag/InfoTag.tsx';
-import { IRestaurant } from '@/types/restaurant.types.ts';
+
+import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
+// Hooks
+import { useModal } from '@/components/ModalPopup/useModal.ts';
+import useToastState from '@/hooks/useToastState.ts';
+// Utils
 import {
     getCurrentTimeShort,
     getCurrentWeekdayShort,
@@ -16,12 +29,7 @@ import {
     getRestaurantStatus,
     setDataToLocalStorage,
 } from '@/utils.ts';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
-import { useModal } from '@/components/ModalPopup/useModal.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { APIPostNewRestaurant } from '@/api/restaurants.ts';
-import useToastState from '@/hooks/useToastState.ts';
+// Styles
 import 'swiper/css/bundle';
 import 'swiper/css/free-mode';
 import css from './RestrauntPreview.module.css';

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { IPhotoCard } from '@/types/restaurant.types.ts';
-import { GalleryCollection } from '@/pages/RestaurantPage/Restaurant.types';
+import { GalleryCollection } from '@/pages/RestaurantPage/RestaurantPage.types';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ImageViewerPopup } from '@/components/ImageViewerPopup/ImageViewerPopup.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';

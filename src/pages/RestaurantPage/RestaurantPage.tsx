@@ -1,41 +1,48 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+// API's
+import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.api.ts';
+// Types
+import { IPhotoCard, IRestaurant } from '@/types/restaurant.types.ts';
+import { IEventInRestaurant } from '@/types/events.ts';
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+import { GalleryCollection, GalleryPhoto } from '@/pages/RestaurantPage/RestaurantPage.types.ts';
+// Atoms
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
+import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
+// Components
 import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
-import { GalleryCollection, GalleryPhoto } from '@/pages/RestaurantPage/Restaurant.types';
 import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
-import { IPhotoCard, IRestaurant } from '@/types/restaurant.types.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { formatDate } from '@/utils.ts';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.ts';
-import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
-import { IEventInRestaurant } from '@/types/events.ts';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
-import { BookingBlock } from '@/pages/RestaurantPage/blocks/BookingsBlock';
-import { GalleryBlock } from '@/pages/RestaurantPage/blocks/GalleryBlock';
-import { MenuBlock } from '@/pages/RestaurantPage/blocks/MenuBlock';
-import { BanquetsBlock } from '@/pages/RestaurantPage/blocks/BanquetsBlock';
-import { CertificateBlock } from '@/pages/RestaurantPage/blocks/CertificateBlock';
-import { EventsBlock } from '@/pages/RestaurantPage/blocks/EventsBlock';
-import { AboutBlock } from '@/pages/RestaurantPage/blocks/AboutBlock';
-import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock';
-import { AddressBlock } from '@/pages/RestaurantPage/blocks/AddressBlock';
-import { NavigationBlock } from '@/pages/RestaurantPage/blocks/NavigationBlock';
-import { GastronomyBlock } from '@/pages/RestaurantPage/blocks/GastronomyBlock';
-import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
+import { BookingBlock } from '@/pages/RestaurantPage/blocks/BookingsBlock.tsx';
+import { GalleryBlock } from '@/pages/RestaurantPage/blocks/GalleryBlock.tsx';
+import { MenuBlock } from '@/pages/RestaurantPage/blocks/MenuBlock.tsx';
+import { BanquetsBlock } from '@/pages/RestaurantPage/blocks/BanquetsBlock.tsx';
+import { CertificateBlock } from '@/pages/RestaurantPage/blocks/CertificateBlock.tsx';
+import { EventsBlock } from '@/pages/RestaurantPage/blocks/EventsBlock.tsx';
+import { AboutBlock } from '@/pages/RestaurantPage/blocks/AboutBlock.tsx';
+import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock.tsx';
+import { AddressBlock } from '@/pages/RestaurantPage/blocks/AddressBlock.tsx';
+import { NavigationBlock } from '@/pages/RestaurantPage/blocks/NavigationBlock.tsx';
+import { GastronomyBlock } from '@/pages/RestaurantPage/blocks/GastronomyBlock.tsx';
 import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
-import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
+// Utils
+import { formatDate } from '@/utils.ts';
+// Styles
 import 'swiper/css/bundle';
 import 'swiper/css/zoom';
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+// Mocks
 import gastroBtn from '/img/gastro_btn1.png';
+import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
+import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
 
 /**
  * Преобразует массив фотографий в структурированную галерею с группировкой по категориям

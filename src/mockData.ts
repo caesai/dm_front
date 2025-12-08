@@ -1,4 +1,4 @@
-import { IMenuItem } from '@/pages/RestaurantPage/Restaurant.types';
+import { IMenuItem } from '@/pages/RestaurantPage/RestaurantPage.types';
 // import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 // import { IRestaurant } from '@/types/restaurant.types.ts';

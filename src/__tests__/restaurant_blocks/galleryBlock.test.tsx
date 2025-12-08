@@ -10,8 +10,8 @@ jest.mock('swiper/modules', () => ({
     FreeMode: jest.fn(),
 }));
 
-jest.mock('@/api/restaurants', () => ({}));
-jest.mock('@/api/base', () => ({
+jest.mock('@/api/restaurants.api.ts', () => ({}));
+jest.mock('@/api/base.ts', () => ({
     DEV_MODE: false,
 }));
 

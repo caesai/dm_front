@@ -1,13 +1,16 @@
+import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
-import { FC, useEffect, useState } from 'react';
-import css from './FeedbackPopup.module.css';
-import { StarIcon } from '@/components/Icons/Star.tsx';
-import classNames from 'classnames';
-import './FeedbackPopup.css';
-import { APIIsReviewAvailable, APISendReview } from '@/api/restaurants.ts';
 import { useAtom } from 'jotai';
+import classNames from 'classnames';
+// API's
+import { APIIsReviewAvailable, APISendReview } from '@/api/restaurants.api';
+// Atoms
 import { authAtom, reviewAtom } from '@/atoms/userAtom.ts';
+// Components
+import { StarIcon } from '@/components/Icons/Star.tsx';
+// Styles
+import css from '@/pages/ProfilePage/FeedbackPopup/FeedbackPopup.module.css';
 
 const StyledPopup = styled(Popup)`
     &-overlay {
@@ -24,13 +27,13 @@ const StyledPopup = styled(Popup)`
     }
 `;
 
-interface Props {
+interface IFeedbackPopupProps {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
     booking_id: number;
 }
 
-export const FeedbackPopup: FC<Props> = (props) => {
+export const FeedbackPopup: React.FC<IFeedbackPopupProps> = (props) => {
     const close = () => props.setOpen(false);
     const [rating, setRating] = useState(0);
     const [ratingString, setRatingString] = useState('Выберите оценку');
@@ -145,23 +148,14 @@ export const FeedbackPopup: FC<Props> = (props) => {
             closeOnDocumentClick={true}
             className={isClosing ? 'popupClose' : 'popup'}
         >
-            <div
-                className={classNames(
-                    css.popup,
-                    isClosing ? css.popup__closing : null
-                )}
-            >
+            <div className={classNames(css.popup, isClosing ? css.popup__closing : null)}>
                 <span className={css.title}>Как прошел ваш визит?</span>
                 <div className={css.rating}>
                     <span className={css.ratingStatus}>{ratingString}</span>
                     <div className={css.stars}>
                         {[1, 2, 3, 4, 5].map((v) => (
                             <span key={v} onClick={() => setRating(v)}>
-                                <StarIcon
-                                    size={25}
-                                    is_filled={true}
-                                    color={rating >= v ? '#CA0E11' : '#D0D0D0'}
-                                />
+                                <StarIcon size={25} is_filled={true} color={rating >= v ? '#CA0E11' : '#D0D0D0'} />
                             </span>
                         ))}
                     </div>
@@ -173,12 +167,7 @@ export const FeedbackPopup: FC<Props> = (props) => {
                             <span
                                 key={tag}
                                 onClick={() => updateTag(tag)}
-                                className={classNames(
-                                    css.tag,
-                                    currentTags.includes(tag)
-                                        ? css.tag__selected
-                                        : null
-                                )}
+                                className={classNames(css.tag, currentTags.includes(tag) ? css.tag__selected : null)}
                             >
                                 {tag}
                             </span>
@@ -193,13 +182,8 @@ export const FeedbackPopup: FC<Props> = (props) => {
                     onChange={(e) => setCommentary(e.target.value)}
                 />
                 <button
-                    className={classNames(
-                        css.button,
-                        !formValidated ? css.button__disabled : null
-                    )}
-                    onClick={
-                        formValidated ? () => handleSendForm() : () => null
-                    }
+                    className={classNames(css.button, !formValidated ? css.button__disabled : null)}
+                    onClick={formValidated ? () => handleSendForm() : () => null}
                 >
                     Отправить
                 </button>
