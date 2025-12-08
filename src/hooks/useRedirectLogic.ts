@@ -79,6 +79,10 @@ export const useRedirectLogic = () => {
                 navigate('/gastronomy/choose?shared=true', { replace: true });
                 return;
             }
+            if (paramsObject.tgWebAppStartParam === 'certificates') {
+                navigate('/certificates/1?shared=true', { replace: true });
+                return;
+            }
         }
 
         // Redirect based on query parameters (highest priority)
