@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction } from 'react';
 // import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { IEventBooking } from '@/types/events.ts';
 import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
+import { mockEventsUsersList } from './__mocks__/events.mock';
 // import axios from 'axios';
 // import { IEventBooking } from '@/pages/EventsPage/EventsPage.tsx';
 // import { Dispatch, SetStateAction } from 'react';
@@ -613,3 +614,11 @@ export const getRestaurantAddressById = (
 
     return restaurant?.address;
 };
+// Telegram Id из объекта window.Telegram.WebApp.initDataUnsafe.user.id
+const tg_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+/** 
+ * Проверяет, принадлежит ли пользователь тестовой группе
+ * @param tg_id - Telegram Id из объекта window.Telegram.WebApp.initDataUnsafe.user.id
+ * @returns true, если пользователь принадлежит тестовой группе, false в противном случае
+ */
+export const isUserInTestGroup = tg_id && mockEventsUsersList.includes(tg_id);

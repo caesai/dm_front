@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { AddressBlock } from '@/pages/Restaurant/blocks/AddressBlock.tsx';
+import { AddressBlock } from '@/pages/RestaurantPage/blocks/AddressBlock.tsx';
 
 jest.mock('ymap3-components', () => ({
     YMapComponentsProvider: ({ children }: any) => <div data-testid="ymap-provider">{children}</div>,

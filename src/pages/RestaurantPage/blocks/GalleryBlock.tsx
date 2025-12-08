@@ -1,16 +1,16 @@
-import { IPhotoCard } from '@/types/restaurant.types.ts';
 import React, { useEffect, useState } from 'react';
-import { GalleryCollection } from '@/pages/Restaurant/Restaurant.types.ts';
+import classNames from 'classnames';
+import { FreeMode } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { IPhotoCard } from '@/types/restaurant.types.ts';
+import { GalleryCollection } from '@/pages/RestaurantPage/RestaurantPage.types';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ImageViewerPopup } from '@/components/ImageViewerPopup/ImageViewerPopup.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import css from '@/pages/Restaurant/Restaurant.module.css';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode } from 'swiper/modules';
-import classNames from 'classnames';
-import { transformGallery } from '@/pages/Restaurant/Restaurant.tsx';
+import { transformGallery } from '@/pages/RestaurantPage/RestaurantPage';
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface GalleryBlockProps {
     restaurant_gallery: IPhotoCard[] | undefined;

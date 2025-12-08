@@ -3,7 +3,8 @@ import { ContentContainer } from '@/components/ContentContainer/ContentContainer
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import css from '@/pages/Restaurant/Restaurant.module.css';
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+
 import {
     YMap,
     YMapComponentsProvider,
@@ -20,15 +21,13 @@ interface AddressBlockProps {
     address_station_color?: string;
 }
 
-export const AddressBlock: React.FC<AddressBlockProps> = (
-    {
-        longitude,
-        latitude,
-        logo_url,
-        address_station_color,
-        address,
-    },
-) => {
+export const AddressBlock: React.FC<AddressBlockProps> = ({
+    longitude,
+    latitude,
+    logo_url,
+    address_station_color,
+    address,
+}) => {
     /**
      * Конфигурация местоположения для карты
      */
@@ -46,10 +45,7 @@ export const AddressBlock: React.FC<AddressBlockProps> = (
 
         return (
             <div className={css.mapInfoMetro}>
-                <div
-                    className={css.mapInfoMetroCircle}
-                    style={{ backgroundColor: address_station_color }}
-                />
+                <div className={css.mapInfoMetroCircle} style={{ backgroundColor: address_station_color }} />
                 <span className={css.mapInfoMetroText}>{address}</span>
             </div>
         );
@@ -73,11 +69,7 @@ export const AddressBlock: React.FC<AddressBlockProps> = (
                                 <YMapDefaultFeaturesLayer />
                                 <YMapMarker coordinates={[longitude, latitude]} draggable={false}>
                                     <div className={css.mapPoint}>
-                                        <img
-                                            width={50}
-                                            src={logo_url}
-                                            alt="Логотип ресторана"
-                                        />
+                                        <img width={50} src={logo_url} alt="Логотип ресторана" />
                                     </div>
                                 </YMapMarker>
                             </YMap>

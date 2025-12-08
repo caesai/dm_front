@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { GalleryBlock } from '@/pages/Restaurant/blocks/GalleryBlock.tsx';
+import { GalleryBlock } from '@/pages/RestaurantPage/blocks/GalleryBlock.tsx';
 
 jest.mock('swiper/react', () => ({
     Swiper: ({ children }: any) => <div data-testid="swiper">{children}</div>,
@@ -10,8 +10,8 @@ jest.mock('swiper/modules', () => ({
     FreeMode: jest.fn(),
 }));
 
-jest.mock('@/api/restaurants', () => ({}));
-jest.mock('@/api/base', () => ({
+jest.mock('@/api/restaurants.api.ts', () => ({}));
+jest.mock('@/api/base.ts', () => ({
     DEV_MODE: false,
 }));
 
@@ -20,7 +20,7 @@ jest.mock('@/components/ImageViewerPopup/ImageViewerPopup', () => ({
         isOpen ? <div data-testid="image-viewer">Image Viewer Open</div> : null
 }));
 
-jest.mock('@/pages/Restaurant/Restaurant', () => ({
+jest.mock('@/pages/RestaurantPage/RestaurantPage', () => ({
     transformGallery: () => [
         {
             title: 'Interior',

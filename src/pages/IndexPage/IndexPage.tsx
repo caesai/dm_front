@@ -1,32 +1,40 @@
-import { FC, useEffect, useMemo, useState } from 'react';
-import css from './IndexPage.module.css';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import moment from 'moment';
+// API's
+import { APIGetCurrentBookings } from '@/api/restaurants.api';
+import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
+import { APIGetGastronomyDishes } from '@/api/gastronomy.api.ts';
+import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.api.ts';
+// Types
+import { IStoryBlock } from '@/types/stories.types.ts';
+import { IBookingInfo, IRestaurant } from '@/types/restaurant.types.ts';
+// Atoms
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
+import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
+// Components
 import { Page } from '@/components/Page.tsx';
 import { Header } from '@/components/Header/Header.tsx';
 import { OptionsNavigation } from '@/components/OptionsNavigation/OptionsNavigation.tsx';
 import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
 import { BookingReminder } from '@/components/BookingReminder/BookingReminder.tsx';
-import { useAtom } from 'jotai';
-import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
-import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
-import { IBookingInfo, IRestaurant } from '@/types/restaurant.types.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { APIGetCurrentBookings } from '@/api/restaurants.ts';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import { Link, useNavigate } from 'react-router-dom';
-import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.api';
-import moment from 'moment';
-import superevent from '/img/hh2.jpg';
-import { IStoryBlock } from '@/types/stories.types.ts';
-import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
+// Utils
 import { getDataFromLocalStorage } from '@/utils.ts';
+// Mocks
 import { mockNewSelfEdgeChinoisRestaurant } from '@/__mocks__/restaurant.mock';
-import { APIGetGastronomyDishes } from '@/api/gastronomy.api';
-import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
+// Styles
+import css from './IndexPage.module.css';
+// Images
+import superevent from '/img/hh2.jpg';
 
 export const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -35,7 +43,7 @@ export const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     };
 };
 
-export const IndexPage: FC = () => {
+export const IndexPage: React.FC = () => {
     const [currentCityA] = useAtom(currentCityAtom);
     const [user] = useAtom(userAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
@@ -58,7 +66,6 @@ export const IndexPage: FC = () => {
     const [currentBookings, setCurrentBookings] = useState<IBookingInfo[]>([]);
     const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
     const navigate = useNavigate();
-    // const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
 

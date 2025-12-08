@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { AboutBlock } from '@/pages/Restaurant/blocks/AboutBlock.tsx';
+import { AboutBlock } from '@/pages/RestaurantPage/blocks/AboutBlock.tsx';
 
 jest.mock('@/utils', () => ({
     getCurrentTimeShort: () => '12:00',

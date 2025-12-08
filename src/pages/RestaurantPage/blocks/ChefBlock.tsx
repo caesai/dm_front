@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import classNames from 'classnames';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import css from '@/pages/Restaurant/Restaurant.module.css';
-import classNames from 'classnames';
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface ChefBlockProps {
     about: string;

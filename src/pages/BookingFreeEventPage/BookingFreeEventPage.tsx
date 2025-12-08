@@ -1,38 +1,47 @@
-import { FC, useEffect, useRef, useState } from 'react';
-import css from '@/pages/BookingPage/BookingPage.module.css';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import classNames from 'classnames';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+// API's
+import { APICreateBooking, APIGetAvailableDays } from '@/api/restaurants.api.ts';
+import { APIGetAvailableEventTimeSlots } from '@/api/events.api.ts';
+// Types
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+// Atoms
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { commAtom } from '@/atoms/bookingCommAtom.ts';
+// Components
 import { Page } from '@/components/Page.tsx';
 import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import classNames from 'classnames';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
 import { GuestCountSelector } from '@/components/GuestCountSelector/GuestCountSelector.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { APICreateBooking, APIGetAvailableDays } from '@/api/restaurants.ts';
-import { useAtom } from 'jotai';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { commAtom } from '@/atoms/bookingCommAtom.ts';
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
-import { APIGetAvailableEventTimeSlots } from '@/api/events.api';
 import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
-import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
+// Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
+import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
+// Utils
+import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
+// Styles
+import css from '@/pages/BookingPage/BookingPage.module.css';
+// Mocks
+import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
+
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -49,7 +58,7 @@ const confirmationList: IConfirmationType[] = [
     },
 ];
 
-export const BookingFreeEventPage: FC = () => {
+export const BookingFreeEventPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();

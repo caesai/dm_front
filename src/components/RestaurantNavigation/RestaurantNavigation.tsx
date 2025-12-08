@@ -8,13 +8,13 @@ import { FreeMode } from 'swiper/modules';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 
 interface IRestaurantNavigationProps {
-    isShow: boolean;
     isEvents: boolean;
     isLoading: boolean;
     isBanquets: boolean;
+    isGastronomy: boolean;
 }
 
-export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isShow, isEvents, isLoading, isBanquets }) => {
+export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isEvents, isLoading, isBanquets, isGastronomy }) => {
     const [hash, setHash] = useState<string | null>(null);
     const [swiperInstance, setSwiperInstance] = useState<SwiperCore | null>(null);
     const hashes = ['booking', 'gallery', 'menu', 'banquet', 'events', 'certificates', 'ny_cooking', 'about', 'chef'];
@@ -129,7 +129,7 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isS
                                 </div>
                             </AnchorLink>
                         </SwiperSlide>
-                    {isShow && (
+                    {isGastronomy && (
                         <SwiperSlide style={{ width: 'fit-content' }}>
                             <AnchorLink href="#ny_cooking" offset={160}>
                                 <div

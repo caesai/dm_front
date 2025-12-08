@@ -58,11 +58,23 @@ jest.mock('@telegram-apps/sdk-react', () => ({
         isAccessGranted: jest.fn(),
     },
 }));
+
 jest.mock('react-router-dom', () => ({
     ...(jest.requireActual('react-router-dom') as any),
     useNavigate: () => mockedNavigate,
     useParams: () => mockUseParams(),
 }));
+
+Object.defineProperty(window, 'Telegram', {
+    writable: true,
+    value: {
+        WebApp: {
+            initDataUnsafe: {
+                user: { id: 1 },
+            },
+        },
+    },
+});
 
 describe('CertificateLandingPage', () => {
     const mockAuth: IAuthInfo = {
@@ -88,7 +100,13 @@ describe('CertificateLandingPage', () => {
 
         return render(
             <TestProvider initialValues={initialValues}>
-                <MemoryRouter initialEntries={[`/certificates/${certificateId}`]}>
+                <MemoryRouter
+                    initialEntries={[`/certificates/${certificateId}`]}
+                    future={{
+                        v7_startTransition: true,
+                        v7_relativeSplatPath: true,
+                    }}
+                >
                     <CertificateLandingPage />
                 </MemoryRouter>
             </TestProvider>
@@ -125,13 +143,25 @@ describe('CertificateLandingPage', () => {
             await waitFor(() => {
                 expect(APIGetCertificateById).toHaveBeenCalledWith(mockAuth.access_token, 'TEST_CERT_ID');
             });
+
+            // Ждем обновления состояния, чтобы избежать предупреждения "not wrapped in act"
+            await waitFor(() => {
+                expect(screen.queryByText('3000')).toBeInTheDocument();
+            });
         });
 
-        test('должен показывать лоадер во время загрузки', () => {
+        test('должен показывать лоадер во время загрузки', async () => {
+            // Мокаем запрос так, чтобы он не завершался, эмулируя состояние загрузки
+            (APIGetCertificateById as jest.Mock).mockReturnValue(new Promise(() => {}));
+
             renderComponent();
+
             // Компонент должен показывать Loader пока loading === true
             // Это проверяется через отсутствие основного контента
             expect(screen.queryByText('Подарочный сертификат')).not.toBeInTheDocument();
+
+            // Оборачиваем в act, чтобы избежать предупреждений
+            await act(async () => {});
         });
 
         test('должен обрабатывать ошибку загрузки сертификата', async () => {

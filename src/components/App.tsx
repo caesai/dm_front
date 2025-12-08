@@ -1,10 +1,19 @@
+import React, { useEffect, useState } from 'react';
+import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom';
 import { swipeBehavior, useLaunchParams } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
-import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom';
-import { ScrollToTop } from '@/navigation/utills.tsx';
-import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
+import { ScrollToTop } from '@/navigation/utills.tsx';
+// API's
+import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.api.ts';
+import { APIGetCityList } from '@/api/city.ts';
+import { APIGetCertificates } from '@/api/certificates.api.ts';
+// Atoms
 import { authAtom, reviewAtom, userAtom } from '@/atoms/userAtom.ts';
+import { cityListAtom } from '@/atoms/cityListAtom.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
+// Components
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import { IndexPage } from '@/pages/IndexPage/IndexPage.tsx';
 import { ProfilePage } from '@/pages/ProfilePage/ProfilePage.tsx';
@@ -12,14 +21,10 @@ import { UserProfilePage } from '@/pages/UserProfilePage/UserProfilePage.tsx';
 import { UserTicketsPage } from '@/pages/UserTicketsPage/UserTicketsPage.tsx';
 import { MyBookingsPage } from '@/pages/MyBookingsPage/MyBookingsPage.tsx';
 import { BookingInfoPage } from '@/pages/BookingInfoPage/BookingInfoPage.tsx';
-import { Restaurant } from '@/pages/Restaurant/Restaurant.tsx';
+import { RestaurantPage } from '@/pages/RestaurantPage/RestaurantPage.tsx';
 import { BookingPage } from '@/pages/BookingPage/BookingPage.tsx';
 import { BookingConfirmationPage } from '@/pages/BookingConfirmationPage/BookingConfirmationPage.tsx';
 import { EnvUnsupported } from '@/components/EnvUnsupported.tsx';
-import { cityListAtom } from '@/atoms/cityListAtom.ts';
-import { APIGetCityList } from '@/api/city.ts';
-import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.tsx';
 import { EventListOutlet } from '@/pages/EventsPage/EventListOutlet/EventListOutlet.tsx';
 import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
@@ -56,8 +61,6 @@ import { CertificatesListPage } from '@/pages/CertificatesCreatePage/stages/Cert
 import { CertificatesCreateOfflinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOfflinePage.tsx';
 import { BookingRestaurantPage } from '@/pages/BookingRestaurantPage/BookingRestaurantPage.tsx';
 import { BookingFreeEventPage } from '@/pages/BookingFreeEventPage/BookingFreeEventPage.tsx';
-import { APIGetCertificates } from '@/api/certificates.api.ts';
-import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/CertificatesPaymentPage.tsx';
 import CertificateLandingPage from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
 import { CertificatesCreateErrorPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateErrorPage.tsx';
@@ -70,11 +73,9 @@ import { EventPaymentPage } from '@/pages/EventsPage/EventPaymentPage.tsx';
 import { Toast } from '@/components/Toast/Toast.tsx';
 import { BanquetAddressPage } from '@/pages/BanquetAddressPage/BanquetAddressPage.tsx';
 import { GastronomyOrderPage } from '@/pages/GastronomyPage/stages/GastronomyOrderPage/GastronomyOrderPage.tsx';
-import {
-    GastronomyOrdersListPage
-} from '@/pages/GastronomyPage/stages/GastronomyOrdersListPage/GastronomyOrdersListPage.tsx';
+import { GastronomyOrdersListPage } from '@/pages/GastronomyPage/stages/GastronomyOrdersListPage/GastronomyOrdersListPage.tsx';
 
-const AppRouter = () => {
+const AppRouter: React.FC = () => {
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const [cities, setCities] = useAtom(cityListAtom);
@@ -87,29 +88,25 @@ const AppRouter = () => {
     // Auth and preloading
     useEffect(() => {
         if (!loadingComplete && auth?.access_token) {
-            APIGetCityList()
-                .then((res) => setCities(res.data));
-            APIGetRestaurants(auth.access_token)
-                .then((res) => setRestaurants(res.data));
+            APIGetCityList().then((res) => setCities(res.data));
+            APIGetRestaurants(auth.access_token).then((res) => setRestaurants(res.data));
         }
     }, [loadingComplete]);
 
     useEffect(() => {
         if (auth?.access_token) {
-            APIGetCertificates(auth?.access_token, Number(user?.id))
-                .then(response => setCertificates(response.data));
+            APIGetCertificates(auth?.access_token, Number(user?.id)).then((response) => setCertificates(response.data));
         }
     }, [auth]);
 
     useEffect(() => {
         if (auth?.access_token)
-            APIIsReviewAvailable(auth.access_token)
-                .then((res) =>
-                    setReview({
-                        loading: false,
-                        available: res.data.available,
-                    }),
-                );
+            APIIsReviewAvailable(auth.access_token).then((res) =>
+                setReview({
+                    loading: false,
+                    available: res.data.available,
+                })
+            );
     }, [auth]);
 
     useEffect(() => {
@@ -127,91 +124,78 @@ const AppRouter = () => {
             <BannerPopup />
             <Redirecter />
             <Toast />
-            {
-                !loadingComplete ? (
-                    <AppLoadingScreen />
-                ) : (
-                    <Routes>
-                        <Route path={'/'} element={<IndexPage />} />
-                        <Route path={'/map'} element={<RestaurantMapPage />} />
-                        <Route path={'/profile'} element={<ProfilePage />} />
-                        <Route path={'/me'} element={<UserProfilePage />} />
-                        <Route path={'/me/allergies'} element={<AllergiesPage />} />
-                        <Route path={'/events'} element={<EventsPage />}>
-                            <Route path={'/events'} element={<EventListOutlet />} />
-                            <Route path={'/events/:eventId'} element={<EventConfirmationOutlet />} />
-                            <Route path={'/events/:eventId/confirm'} element={<EventBookingOutlet />} />
-                            <Route path={'/events/payment/:orderId'} element={<EventPaymentPage />} />
-                            <Route path={'/events/super'} element={<EventSuperInfoOutlet />} />
-                            <Route path={'/events/super/apply'} element={<EventSuperApplyOutlet />} />
-                        </Route>
-                        <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
-                        <Route path={'/tickets'} element={<UserTicketsPage />} />
-                        <Route path={'/tickets/:id'} element={<TicketInfoPage />} />
-                        <Route path={'/myBookings'} element={<MyBookingsPage />} />
-                        <Route
-                            path={'/myBookings/:id'}
-                            element={<BookingInfoPage />}
-                        />
-                        <Route path={'/restaurant/:id'} element={<Restaurant />} />
-                        <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
-                        <Route path={'/newrestaurant'} element={<NewRestaurant />} />
-                        <Route path={'/booking'} element={<BookingPage />} />
-                        <Route
-                            path={'/bookingConfirmation'}
-                            element={<BookingConfirmationPage />}
-                        />
-                        <Route path={'/unsupported'} element={<EnvUnsupported />} />
-                        <Route
-                            path={'/paymentReturn'}
-                            element={<PaymentReturnPage />}
-                        />
-                        <Route
-                            path={'/phoneConfirmation'}
-                            element={<UserPhoneConfirmationPage />}
-                        />
-                        <Route path={'/scanner'} element={<AdminScannerPage />} />
-                        <Route path={'/onboarding'} element={<OnboardingPage />}>
-                            <Route path={'/onboarding/1'} element={<StageOne />} />
-                            <Route path={'/onboarding/2'} element={<StageTwo />} />
-                            <Route path={'/onboarding/3'} element={<StageThree />} />
-                            <Route path={'/onboarding/4'} element={<StageFour />} />
-                        </Route>
-                        <Route path={'/preferences'} element={<PreferencesPage />}>
-                            <Route path={'/preferences/1'} element={<PreferencesOne />} />
-                            <Route path={'/preferences/2'} element={<PreferencesTwo />} />
-                            <Route path={'/preferences/3'} element={<PreferencesThree />} />
-                        </Route>
+            {!loadingComplete ? (
+                <AppLoadingScreen />
+            ) : (
+                <Routes>
+                    <Route path={'/'} element={<IndexPage />} />
+                    <Route path={'/map'} element={<RestaurantMapPage />} />
+                    <Route path={'/profile'} element={<ProfilePage />} />
+                    <Route path={'/me'} element={<UserProfilePage />} />
+                    <Route path={'/me/allergies'} element={<AllergiesPage />} />
+                    <Route path={'/events'} element={<EventsPage />}>
+                        <Route path={'/events'} element={<EventListOutlet />} />
+                        <Route path={'/events/:eventId'} element={<EventConfirmationOutlet />} />
+                        <Route path={'/events/:eventId/confirm'} element={<EventBookingOutlet />} />
+                        <Route path={'/events/payment/:orderId'} element={<EventPaymentPage />} />
+                        <Route path={'/events/super'} element={<EventSuperInfoOutlet />} />
+                        <Route path={'/events/super/apply'} element={<EventSuperApplyOutlet />} />
+                    </Route>
+                    <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
+                    <Route path={'/tickets'} element={<UserTicketsPage />} />
+                    <Route path={'/tickets/:id'} element={<TicketInfoPage />} />
+                    <Route path={'/myBookings'} element={<MyBookingsPage />} />
+                    <Route path={'/myBookings/:id'} element={<BookingInfoPage />} />
+                    <Route path={'/restaurant/:id'} element={<RestaurantPage />} />
+                    <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
+                    <Route path={'/newrestaurant'} element={<NewRestaurant />} />
+                    <Route path={'/booking'} element={<BookingPage />} />
+                    <Route path={'/bookingConfirmation'} element={<BookingConfirmationPage />} />
+                    <Route path={'/unsupported'} element={<EnvUnsupported />} />
+                    <Route path={'/paymentReturn'} element={<PaymentReturnPage />} />
+                    <Route path={'/phoneConfirmation'} element={<UserPhoneConfirmationPage />} />
+                    <Route path={'/scanner'} element={<AdminScannerPage />} />
+                    <Route path={'/onboarding'} element={<OnboardingPage />}>
+                        <Route path={'/onboarding/1'} element={<StageOne />} />
+                        <Route path={'/onboarding/2'} element={<StageTwo />} />
+                        <Route path={'/onboarding/3'} element={<StageThree />} />
+                        <Route path={'/onboarding/4'} element={<StageFour />} />
+                    </Route>
+                    <Route path={'/preferences'} element={<PreferencesPage />}>
+                        <Route path={'/preferences/1'} element={<PreferencesOne />} />
+                        <Route path={'/preferences/2'} element={<PreferencesTwo />} />
+                        <Route path={'/preferences/3'} element={<PreferencesThree />} />
+                    </Route>
 
-                        <Route path={'banquets/:id/address'} element={<BanquetAddressPage />} />
-                        <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
-                        <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />
-                        <Route path={'banquets/:id/additional-services'} element={<BanquetAdditionalServicesPage />} />
-                        <Route path={'banquets/:id/reservation'} element={<BanquetReservationPage />} />
+                    <Route path={'banquets/:id/address'} element={<BanquetAddressPage />} />
+                    <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
+                    <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />
+                    <Route path={'banquets/:id/additional-services'} element={<BanquetAdditionalServicesPage />} />
+                    <Route path={'banquets/:id/reservation'} element={<BanquetReservationPage />} />
 
-                        <Route path={'/certificates'} element={<CertificatesCreatePage />}>
-                            <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
-                            <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
-                            <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
-                            <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
-                            <Route path={'/certificates/my'} element={<CertificatesListPage />} />
-                            <Route path={'/certificates/payment'} element={<CertificatesPaymentPage />} />
-                            <Route path={'/certificates/error'} element={<CertificatesCreateErrorPage />} />
-                        </Route>
-                        <Route path={'/certificates/landing/:id'} element={<CertificateLandingPage />} />
+                    <Route path={'/certificates'} element={<CertificatesCreatePage />}>
+                        <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
+                        <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
+                        <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
+                        <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
+                        <Route path={'/certificates/my'} element={<CertificatesListPage />} />
+                        <Route path={'/certificates/payment'} element={<CertificatesPaymentPage />} />
+                        <Route path={'/certificates/error'} element={<CertificatesCreateErrorPage />} />
+                    </Route>
+                    <Route path={'/certificates/landing/:id'} element={<CertificateLandingPage />} />
 
-                        <Route path={'/gastronomy'} element={<GastronomyPage />}>
-                            <Route path={'/gastronomy/choose'} element={<GastronomyChooseRestaurantPage />} />
-                            <Route path={'/gastronomy/:res_id'} element={<GastronomyChooseDishesPage />} />
-                            <Route path={'/gastronomy/:res_id/dish/:dish_id'} element={<GastonomyDishDetailsPage />} />
-                            <Route path={'/gastronomy/:res_id/basket'} element={<GastronomyBasketPage />} />
-                            <Route path={'/gastronomy/my'} element={<GastronomyOrdersListPage />} />
-                        </Route>
-                        <Route path={'/gastronomy/order/:order_id'} element={<GastronomyOrderPage />} />
+                    <Route path={'/gastronomy'} element={<GastronomyPage />}>
+                        <Route path={'/gastronomy/choose'} element={<GastronomyChooseRestaurantPage />} />
+                        <Route path={'/gastronomy/:res_id'} element={<GastronomyChooseDishesPage />} />
+                        <Route path={'/gastronomy/:res_id/dish/:dish_id'} element={<GastonomyDishDetailsPage />} />
+                        <Route path={'/gastronomy/:res_id/basket'} element={<GastronomyBasketPage />} />
+                        <Route path={'/gastronomy/my'} element={<GastronomyOrdersListPage />} />
+                    </Route>
+                    <Route path={'/gastronomy/order/:order_id'} element={<GastronomyOrderPage />} />
 
-                        <Route path="*" element={<Navigate to="/" />} />
-                    </Routes>
-                )}
+                    <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+            )}
         </BrowserRouter>
     );
 };
@@ -223,12 +207,7 @@ export function App() {
     }, []);
     const [userState] = useAtom(userAtom);
     return (
-        <AppRoot
-            appearance={'light'}
-            platform={
-                ['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'
-            }
-        >
+        <AppRoot appearance={'light'} platform={['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'}>
             {!userState ? <AppLoadingScreen /> : <AppRouter />}
         </AppRoot>
     );
