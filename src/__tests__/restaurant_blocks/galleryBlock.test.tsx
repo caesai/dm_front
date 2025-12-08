@@ -20,7 +20,7 @@ jest.mock('@/components/ImageViewerPopup/ImageViewerPopup', () => ({
         isOpen ? <div data-testid="image-viewer">Image Viewer Open</div> : null
 }));
 
-jest.mock('@/pages/Restaurant/Restaurant', () => ({
+jest.mock('@/pages/RestaurantPage/RestaurantPage', () => ({
     transformGallery: () => [
         {
             title: 'Interior',
