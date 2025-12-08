@@ -1,23 +1,30 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
-import { CartItem } from '@/components/CartItem/CartItem.tsx';
-import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
+import moment from 'moment';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import emptyBasketIcon from '/img/empty-basket.png';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { KAD_COORDS, MKAD_COORDS, PETROGRADKA_RESTAURANT_ID, PETROGRADKA_ZONE } from '@/__mocks__/gastronomy.mock.ts';
-import { formatDate } from '@/utils.ts';
-import useToast from '@/hooks/useToastState.ts';
-import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
+// APIs
 import { APIPostCreateGastronomyPayment, APIPostUserOrder } from '@/api/gastronomy.api.ts';
+// Atoms
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
+// Components
+import { CartItem } from '@/components/CartItem/CartItem.tsx';
+import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+// Hooks
+import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
+import useToast from '@/hooks/useToastState.ts';
+// Utils
+import { formatDate } from '@/utils.ts';
+// Styles
 import css from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.module.css';
-import moment from 'moment';
-import { R } from '@/__mocks__/restaurant.mock';
+// Mocks
+import { R } from '@/__mocks__/restaurant.mock.ts';
+import { KAD_COORDS, MKAD_COORDS, PETROGRADKA_RESTAURANT_ID, PETROGRADKA_ZONE } from '@/__mocks__/gastronomy.mock.ts';
+import emptyBasketIcon from '/img/empty-basket.png';
 
 type DeliveryMethod = 'delivery' | 'pickup';
 
@@ -73,7 +80,7 @@ export const GastronomyBasketPage: React.FC = () => {
      * - Poly — 1 000 ₽
      * - Pame — 1 000 ₽
      * - Trappist — 1 000 ₽
-     * - BlackChops — null
+     * - BlackChops — 1000 ₽
      * - Для остальных доставка не предусмотрена (null)
      */
     const deliveryFee = useMemo(() => {
@@ -97,13 +104,13 @@ export const GastronomyBasketPage: React.FC = () => {
                 case R.TRAPPIST_SPB_RADISHEVA_ID:
                     return 1000;
 
+                case R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID:
+                    return 1000;
+
                 default:
                     return null;
             }
         } else {
-            if (res_id === R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID) {
-                return null;
-            }
             return 0;
         }
     }, [res_id, deliveryMethod]);
@@ -133,6 +140,7 @@ export const GastronomyBasketPage: React.FC = () => {
      *   - Smoke Lodeynopolskaya — 10 000 ₽
      *   - Smoke Rubinsteina — 5 000 ₽
      *   - Остальные — 3 000 ₽
+     *   - BlackChops — 10 000 ₽
      */
     const minOrderAmount = useMemo(() => {
         // Если выбран самовывоз
@@ -154,6 +162,9 @@ export const GastronomyBasketPage: React.FC = () => {
             case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
                 return 5000;
 
+            case R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID:
+                return 10000;
+
             default:
                 return 3000;
         }
@@ -171,10 +182,10 @@ export const GastronomyBasketPage: React.FC = () => {
      * 3. **Ограничение "не день в день"**:
      *    - Доступные даты начинаются со следующего дня (`currentDay + 1`).
      * 4. Особые условия по ресторанам:
-     *    - Smoke Лодейнопольская: доставка и самовывоз - 30, 31 декабря;
+     *    - Smoke Лодейнопольская: доставка 25 - 31 декабря, самовывоз - 30, 31 декабря;
      *    - Smoke Рубинштейна: доставка - 30, 31 декабря
      *    - Smoke Трубная: доставка - 31 декабря;
-     *    - BlackChops: самовывоз 30, 31, доставки нет;
+     *    - BlackChops: самовывоз 25 - 31 декабря, доставки 30 - 31 декабря;
      *    - Poly: самовывоз 25-31, доставка 31;
      *    - Pame: самовывоз 25-31, доставка 31;
      *    - Trappist: самовывоз 25-31, доставка 31;
@@ -190,13 +201,18 @@ export const GastronomyBasketPage: React.FC = () => {
 
         // Особые условия для некоторых ресторанов
         switch (String(res_id)) {
-            // Smoke Лодейнопольская доставка и самовывоз только 30 и 31 декабря
+            // Smoke Лодейнопольская доставка 25 - 31 декабря, самовывоз 30, 31 декабря
             case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
-                baseStartDay = 30;
-                endDay = 31;
+                if (deliveryMethod === 'delivery') {
+                    baseStartDay = 25;
+                    endDay = 31;
+                } else {
+                    baseStartDay = 30;
+                    endDay = 31;
+                }
                 break;
 
-            // Smoke Рубинштейна доставка только 30 и 31 декабря
+            // Smoke Рубинштейна доставка 30, 31 декабря
             case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
                 if (deliveryMethod === 'delivery') {
                     baseStartDay = 30;
@@ -212,14 +228,15 @@ export const GastronomyBasketPage: React.FC = () => {
                 }
                 break;
 
-            // BlackChops самовывоз только 30 и 31 декабря, доставки нет
+            // BlackChops самовывоз только 25 - 31 декабря, доставки 30 - 31 декабря
             case R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID:
                 if (deliveryMethod === 'pickup') {
-                    baseStartDay = 30;
+                    baseStartDay = 25;
                     endDay = 31;
                 } else {
-                    // Для доставки нет доступных дат
-                    return [];
+                    // Доставка 30 - 31 декабря
+                    baseStartDay = 30;
+                    endDay = 31;
                 }
                 break;
 
