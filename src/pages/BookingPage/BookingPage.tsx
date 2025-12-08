@@ -97,7 +97,6 @@ export const BookingPage: FC = () => {
     const [certificate_id, setCertificateId] = useState<string | null>(null);
     const bookingBtn = useRef<HTMLDivElement>(null);
 
-    // const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
     const state = location.state;
 
     useEffect(() => {

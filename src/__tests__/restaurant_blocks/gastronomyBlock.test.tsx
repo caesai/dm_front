@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { GastronomyBlock } from '@/pages/Restaurant/blocks/GastronomyBlock.tsx';
+import { GastronomyBlock } from '@/pages/RestaurantPage/blocks/GastronomyBlock.tsx';
 import { useNavigate } from 'react-router-dom';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 

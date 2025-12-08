@@ -58,7 +58,6 @@ export const IndexPage: FC = () => {
     const [currentBookings, setCurrentBookings] = useState<IBookingInfo[]>([]);
     const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
     const navigate = useNavigate();
-    // const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
 

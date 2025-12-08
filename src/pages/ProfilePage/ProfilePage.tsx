@@ -1,18 +1,19 @@
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import { Page } from '@/components/Page.tsx';
-import css from './ProfilePage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { Link, useNavigate } from 'react-router-dom';
 import { TicketsIcon } from '@/components/Icons/TicketsIcon.tsx';
 import { BookIcon } from '@/components/Icons/BookIcon.tsx';
 import { UserProfileIcon } from '@/components/Icons/UserProfileIcon.tsx';
-import { useAtom } from 'jotai';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
 import { userAtom } from '@/atoms/userAtom.ts';
 import { PlainGiftIcon } from '@/components/Icons/PlaingGiftIcon.tsx';
 import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
+import css from '@/pages/ProfilePage/ProfilePage.module.css';
 
-export const ProfilePage = () => {
+export const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
     const [user] = useAtom(userAtom);
     const [backUrlAtom] = useAtom(backButtonAtom);
