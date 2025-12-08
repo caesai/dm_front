@@ -1,22 +1,23 @@
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { IWorkTime } from '@/types/restaurant.types.ts';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import React, { Dispatch, SetStateAction, useState } from 'react';
+
 import { useAtom } from 'jotai/index';
-import { guestCountAtom } from '@/atoms/bookingInfoAtom.ts';
-import moment from 'moment/moment';
-import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
-import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
-import css from '@/pages/Restaurant/Restaurant.module.css';
-import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
-import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { Calendar } from 'react-iconly';
 import { formatDateAlt, getTimeShort } from '@/utils.ts';
 import { FaAngleRight } from 'react-icons/fa';
 import classNames from 'classnames';
+import moment from 'moment/moment';
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+import { IWorkTime } from '@/types/restaurant.types.ts';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { guestCountAtom } from '@/atoms/bookingInfoAtom.ts';
+import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
+import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
+import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
+import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface BookingBlockProps {
     currentSelectedTime: ITimeSlot | null;
@@ -27,10 +28,10 @@ interface BookingBlockProps {
     timeslotLoading: boolean;
     availableTimeslots: ITimeSlot[];
     setCurrentSelectedTime: (currentSelectedTime: ITimeSlot) => void;
-    isShow: boolean;
     isEvents: boolean;
     isNavigationLoading: boolean;
     isBanquets: boolean;
+    isGastronomy: boolean;
 }
 
 /**
@@ -45,7 +46,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
     timeslotLoading,
     availableTimeslots,
     setCurrentSelectedTime,
-    isShow,
+    isGastronomy,
     isBanquets,
     isEvents,
     isNavigationLoading,
@@ -115,9 +116,9 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
                 <div className={css.navSliderAndBookingContainer}>
                     <RestaurantNavigation
                         isLoading={isNavigationLoading}
-                        isShow={isShow}
                         isEvents={isEvents}
                         isBanquets={isBanquets}
+                        isGastronomy={isGastronomy}
                     />
                     <div className={css.bookingContaner}>
                         <Swiper

@@ -6,7 +6,7 @@ import { useMemo, useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
-import { APIPostSuperEventCreateApplication } from '@/api/events.ts';
+import { APIPostSuperEventCreateApplication } from '@/api/events.api.ts';
 import useToastState from '@/hooks/useToastState.ts';
 
 export const EventSuperApplyOutlet = () => {

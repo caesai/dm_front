@@ -283,7 +283,21 @@ export const GastronomyBasketPage: React.FC = () => {
         return dates;
     }, [deliveryMethod, res_id]);
 
-    // Генерируем временные слоты в зависимости от выбранной даты
+    /**
+     * Генерирует список доступных временных слотов для получения заказа.
+     *
+     * @remarks
+     * Логика формирования слотов:
+     * 1. **Специальный график 31 декабря**:
+     *    - Фиксированные слоты: `12:00–14:00` и `14:00–17:00`.
+     * 2. **Обычные дни (25-30 декабря)**:
+     *    - Слоты формируются на основе времени работы ресторана.
+     *    - Шаг слота: 3 часа.
+     *    - Если время работы не найдено, используются дефолтные часы: `20:00 - 01:00`.
+     *    - Учитывается переход времени работы через полночь (например, до 01:00 следующего дня).
+     *
+     * @returns {string[]} Массив строк с временными интервалами в формате `HH:00–HH:00`
+     */
     const timeSlots = useMemo(() => {
         if (!selectedDate || selectedDate.value === 'unset') {
             return [];
@@ -391,7 +405,8 @@ export const GastronomyBasketPage: React.FC = () => {
                 R.TRAPPIST_SPB_RADISHEVA_ID,
             ].includes(res_id as string)
         ) {
-            setSelectedDate({ title: formatDate(moment('2025-12-31').toString()), value: '31 декабря' });
+            const newYearDateString = moment('2025-12-31').toString();
+            setSelectedDate({ title: formatDate(newYearDateString), value: newYearDateString });
         } else {
             setSelectedDate({ title: 'unset', value: 'unset' });
         }

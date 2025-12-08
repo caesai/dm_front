@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ChefBlock } from '@/pages/Restaurant/blocks/ChefBlock.tsx';
+import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock.tsx';
 
 const mockProps = {
     about: 'Test chef description text that is quite long and needs to be truncated',

@@ -14,7 +14,7 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-import { BookingGuestCountSelectorPopup } from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
+import { GuestCountSelector } from '@/components/GuestCountSelector/GuestCountSelector.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
@@ -97,7 +97,6 @@ export const BookingPage: FC = () => {
     const [certificate_id, setCertificateId] = useState<string | null>(null);
     const bookingBtn = useRef<HTMLDivElement>(null);
 
-    // const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
     const state = location.state;
 
     useEffect(() => {
@@ -211,7 +210,7 @@ export const BookingPage: FC = () => {
     return (
         <Page back={true}>
             <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(restaurant.value)} count={errorPopupCount} botError={botError}/>
-            <BookingGuestCountSelectorPopup
+            <GuestCountSelector
                 guestCount={guestCount}
                 childrenCount={childrenCount}
                 setGuestCount={setGuestCount}

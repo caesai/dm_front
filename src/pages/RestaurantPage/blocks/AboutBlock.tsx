@@ -4,7 +4,7 @@ import { ContentContainer } from '@/components/ContentContainer/ContentContainer
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import css from '@/pages/Restaurant/Restaurant.module.css';
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 import classNames from 'classnames';
 import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatus } from '@/utils.ts';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';

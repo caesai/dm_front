@@ -1,15 +1,12 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import { Page } from '@/components/Page.tsx';
-import css from './Restaurant.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/RestaurantTopPreview.tsx';
-import { useNavigate, useParams } from 'react-router-dom';
-import 'swiper/css/bundle';
-import 'swiper/css/zoom';
-import { useEffect, useMemo, useState } from 'react';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
-import { GalleryCollection, GalleryPhoto } from '@/pages/Restaurant/Restaurant.types.ts';
+import { GalleryCollection, GalleryPhoto } from '@/pages/RestaurantPage/Restaurant.types';
 import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
-import { useAtom } from 'jotai';
 import { IPhotoCard, IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { formatDate } from '@/utils.ts';
@@ -20,23 +17,25 @@ import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant
 import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 import { IEventInRestaurant } from '@/types/events.ts';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
-import { BookingBlock } from '@/pages/Restaurant/blocks/BookingsBlock.tsx';
-import { GalleryBlock } from '@/pages/Restaurant/blocks/GalleryBlock.tsx';
-import { MenuBlock } from '@/pages/Restaurant/blocks/MenuBlock.tsx';
-import { BanquetsBlock } from '@/pages/Restaurant/blocks/BanquetsBlock.tsx';
-import { CertificateBlock } from '@/pages/Restaurant/blocks/CertificateBlock.tsx';
-import { EventsBlock } from '@/pages/Restaurant/blocks/EventsBlock.tsx';
-import { AboutBlock } from '@/pages/Restaurant/blocks/AboutBlock.tsx';
-import { ChefBlock } from '@/pages/Restaurant/blocks/ChefBlock.tsx';
-import { AddressBlock } from '@/pages/Restaurant/blocks/AddressBlock.tsx';
-import { NavigationBlock } from '@/pages/Restaurant/blocks/NavigationBlock.tsx';
-import { GastronomyBlock } from '@/pages/Restaurant/blocks/GastronomyBlock.tsx';
+import { BookingBlock } from '@/pages/RestaurantPage/blocks/BookingsBlock';
+import { GalleryBlock } from '@/pages/RestaurantPage/blocks/GalleryBlock';
+import { MenuBlock } from '@/pages/RestaurantPage/blocks/MenuBlock';
+import { BanquetsBlock } from '@/pages/RestaurantPage/blocks/BanquetsBlock';
+import { CertificateBlock } from '@/pages/RestaurantPage/blocks/CertificateBlock';
+import { EventsBlock } from '@/pages/RestaurantPage/blocks/EventsBlock';
+import { AboutBlock } from '@/pages/RestaurantPage/blocks/AboutBlock';
+import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock';
+import { AddressBlock } from '@/pages/RestaurantPage/blocks/AddressBlock';
+import { NavigationBlock } from '@/pages/RestaurantPage/blocks/NavigationBlock';
+import { GastronomyBlock } from '@/pages/RestaurantPage/blocks/GastronomyBlock';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
-import gastroBtn from '/img/gastro_btn1.png';
 import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
 import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
+import 'swiper/css/bundle';
+import 'swiper/css/zoom';
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+import gastroBtn from '/img/gastro_btn1.png';
 
 /**
  * Преобразует массив фотографий в структурированную галерею с группировкой по категориям
@@ -59,7 +58,7 @@ export const transformGallery = (gallery: IPhotoCard[]): GalleryCollection[] => 
     }));
 };
 
-export const Restaurant = () => {
+export const RestaurantPage: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [auth] = useAtom(authAtom);
@@ -76,8 +75,6 @@ export const Restaurant = () => {
     const [isCallPopupOpen, setIsCallPopupOpen] = useState(false);
     const [events, setEvents] = useState<IEventInRestaurant[] | null>(null);
     const [nyCookings] = useState(NewYearCookingData);
-
-    const tg_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
 
     /**
      * Обрабатывает переход к бронированию столика
@@ -172,7 +169,7 @@ export const Restaurant = () => {
             .finally(() => setTimeslotLoading(false));
     }, [auth?.access_token, bookingDate, id]);
 
-    const filteredEvents = useMemo(() => getFilteredEvents(), [events, tg_id]);
+    const filteredEvents = useMemo(() => getFilteredEvents(), [events]);
     const coordinates = useMemo(() => getRestaurantCoordinates(), [restaurant?.address_lonlng]);
     const hasBanquets = restaurant?.banquets && restaurant?.banquets.banquet_options.length > 0;
     const hasEvents = useMemo(() => Boolean(filteredEvents && filteredEvents.length > 0), [filteredEvents]);
@@ -192,10 +189,11 @@ export const Restaurant = () => {
             {restaurant && events && restaurant?.banquets && filteredEvents !== undefined && (
                 <NavigationBlock
                     restaurant_id={Number(id)}
-                    restaurant={restaurant}
-                    events={events}
-                    filteredEvents={filteredEvents}
-                    hasGastronomy={hasGastronomy}
+                    title={restaurant?.title}
+                    isBanquets={Boolean(hasBanquets)}
+                    isLoading={events == null && restaurant?.banquets == null}
+                    isGastronomy={hasGastronomy}
+                    isEvents={hasEvents}
                 />
             )}
 
@@ -259,7 +257,7 @@ export const Restaurant = () => {
                     availableTimeslots={availableTimeslots}
                     setCurrentSelectedTime={setCurrentSelectedTime}
                     isNavigationLoading={events == null && restaurant?.banquets == null}
-                    isShow={tg_id && mockEventsUsersList.includes(tg_id) && hasGastronomy}
+                    isGastronomy={hasGastronomy}
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
                 />

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { EventsBlock } from '@/pages/Restaurant/blocks/EventsBlock.tsx';
 import { useNavigate } from 'react-router-dom';
+import { EventsBlock } from '@/pages/RestaurantPage/blocks/EventsBlock.tsx';
 
 jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn(),

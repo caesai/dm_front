@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MenuBlock } from '@/pages/Restaurant/blocks/MenuBlock.tsx';
+import { MenuBlock } from '@/pages/RestaurantPage/blocks/MenuBlock.tsx';
 
 jest.mock('swiper/react', () => ({
     Swiper: ({ children }: any) => <div data-testid="swiper">{children}</div>,

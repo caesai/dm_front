@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { BanquetsBlock } from '@/pages/Restaurant/blocks/BanquetsBlock.tsx';
+import { BanquetsBlock } from '@/pages/RestaurantPage/blocks/BanquetsBlock.tsx';
 import { useNavigate } from 'react-router-dom';
 
 jest.mock('react-router-dom', () => ({
