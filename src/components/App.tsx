@@ -8,7 +8,7 @@ import { ScrollToTop } from '@/navigation/utills.tsx';
 import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.api.ts';
 import { APIGetCityList } from '@/api/city.ts';
 import { APIGetCertificates } from '@/api/certificates.api.ts';
-import { APIGetGastronomyDishes } from '@/api/gastronomy.api';
+import { APIGetGastronomyDishes } from '@/api/gastronomy.api.ts';
 // Atoms
 import { authAtom, reviewAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
