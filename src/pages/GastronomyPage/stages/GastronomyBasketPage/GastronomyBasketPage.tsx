@@ -597,20 +597,6 @@ export const GastronomyBasketPage: React.FC = () => {
     };
 
     const handlePayment = async () => {
-        console.log('handlePayment');
-        console.log('user', user);
-        console.log('res_id', res_id);
-        console.log('deliveryMethod', deliveryMethod);
-        console.log('address', address);
-        console.log('selectedDate', selectedDate);
-        console.log('selectedTime', selectedTime);
-        console.log('selectedAddressCoordinates', selectedAddressCoordinates);
-        console.log('cart', cart);
-        console.log('auth', auth);
-        console.log('deliveryFee', deliveryFee);
-        console.log('minOrderAmount', minOrderAmount);
-        console.log('isFormValid', isFormValid());
-        console.log('showMinAmountError', showMinAmountError);
         if (!user?.complete_onboarding) {
             navigate('/onboarding/3', { state: { id: res_id, sharedGastronomy: true } });
             return;
