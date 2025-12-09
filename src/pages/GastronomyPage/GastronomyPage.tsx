@@ -23,8 +23,7 @@ export const GastronomyPage: React.FC = () => {
     const getTitle = () => {
         if (location.pathname.includes('/basket')) {
             return 'Корзина';
-        }
-        else if (location.pathname.includes('/my')) {
+        } else if (location.pathname.includes('/my')) {
             return 'Мои заказы';
         }
         return 'Новогодняя кулинария';
@@ -32,22 +31,24 @@ export const GastronomyPage: React.FC = () => {
 
     const getBackgroundColor = () => {
         if (location.pathname.includes('/my')) {
-            return {backgroundColor: 'white'}
+            return { backgroundColor: 'white' };
         }
         if (location.pathname.includes('/dish/')) {
-            return {backgroundColor: '#F4F4F4'}
+            return { backgroundColor: '#F4F4F4' };
         }
 
-        return undefined
-    }
+        return undefined;
+    };
 
     const isBasketPage = location.pathname.includes('/basket');
     const isDishDetailsPage = location.pathname.includes('/dish/');
 
     useEffect(() => {
-        return () => {
-            setDishesList([]);
-        };
+        if (user?.complete_onboarding) {
+            return () => {
+                setDishesList([]);
+            };
+        }
     }, [setDishesList]);
 
     const handleGoBack = () => {
@@ -67,26 +68,22 @@ export const GastronomyPage: React.FC = () => {
             <div
                 className={classnames(css.page, {
                     [css.pageNoPadding]: isBasketPage,
-                    [css.pageNoGap]: isDishDetailsPage
+                    [css.pageNoGap]: isDishDetailsPage,
                 })}
                 style={getBackgroundColor()}
             >
-                <div className={classnames(css.header, {
-                    [css.headerWhite]: isDishDetailsPage,
-                    [css.headerFullWidth]: isDishDetailsPage
-                })}>
-                    <RoundedButton
-                        bgColor={'#F4F4F4'}
-                        icon={<BackIcon color={'#545454'} />}
-                        action={handleGoBack}
-                    />
-                    <span className={css.header_title}>
-                        {getTitle()}
-                    </span>
+                <div
+                    className={classnames(css.header, {
+                        [css.headerWhite]: isDishDetailsPage,
+                        [css.headerFullWidth]: isDishDetailsPage,
+                    })}
+                >
+                    <RoundedButton bgColor={'#F4F4F4'} icon={<BackIcon color={'#545454'} />} action={handleGoBack} />
+                    <span className={css.header_title}>{getTitle()}</span>
                     <div className={css.spacer} />
                 </div>
                 <Outlet />
             </div>
         </Page>
-    )
-}
+    );
+};
