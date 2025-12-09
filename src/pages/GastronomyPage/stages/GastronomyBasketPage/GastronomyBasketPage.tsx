@@ -597,6 +597,20 @@ export const GastronomyBasketPage: React.FC = () => {
     };
 
     const handlePayment = async () => {
+        console.log('handlePayment');
+        console.log('user', user);
+        console.log('res_id', res_id);
+        console.log('deliveryMethod', deliveryMethod);
+        console.log('address', address);
+        console.log('selectedDate', selectedDate);
+        console.log('selectedTime', selectedTime);
+        console.log('selectedAddressCoordinates', selectedAddressCoordinates);
+        console.log('cart', cart);
+        console.log('auth', auth);
+        console.log('deliveryFee', deliveryFee);
+        console.log('minOrderAmount', minOrderAmount);
+        console.log('isFormValid', isFormValid());
+        console.log('showMinAmountError', showMinAmountError);
         if (!user?.complete_onboarding) {
             navigate('/onboarding/3', { state: { id: res_id, sharedGastronomy: true } });
             return;
@@ -696,6 +710,21 @@ export const GastronomyBasketPage: React.FC = () => {
 
     const showMinAmountError = cart.totalAmount < minOrderAmount && minOrderAmount > 0;
 
+    const handleDatePickerClick = () => {
+        setShowDatePicker(true);
+        if (
+            deliveryMethod === 'delivery' &&
+            [
+                R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
+                R.PAME_SPB_MOIKA_RIVER_ID,
+                R.POLY_SPB_BELINSKOGO_ID,
+                R.TRAPPIST_SPB_RADISHEVA_ID,
+            ].includes(res_id as string)
+        ) {
+            return;
+        }
+    };
+
     if (loading) {
         return (
             <div className={css.loader}>
@@ -763,14 +792,14 @@ export const GastronomyBasketPage: React.FC = () => {
                     {deliveryMethod === 'delivery' && (
                         <div className={css.delivery}>
                             <span className={css.deliveryLabel}>Доставка</span>
-                            <span className={css.deliveryValue}>
+                            <span className={css.deliveryValue} data-testid="delivery-fee">
                                 {deliveryFee === 0 ? 'Бесплатно' : `${Number(deliveryFee)} ₽`}
                             </span>
                         </div>
                     )}
                     <div className={css.total}>
                         <span className={css.totalLabel}>Итого</span>
-                        <span className={css.totalValue}>
+                        <span className={css.totalValue} data-testid="total-amount">
                             {deliveryFee !== null ? cart.totalAmount + Number(deliveryFee) : cart.totalAmount} ₽
                         </span>
                     </div>
@@ -781,7 +810,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.section}>
                         <h2 className={css.sectionTitle}>Способ получения</h2>
                         <div className={css.deliveryDropdown}>
-                            <div className={css.deliveryRow} onClick={handleToggleDropdown}>
+                            <div className={css.deliveryRow} onClick={handleToggleDropdown} data-testid="delivery-method-toggle">
                                 <span className={css.deliveryText}>
                                     {deliveryMethod === 'delivery' ? 'Доставка' : 'Заберу сам'}
                                 </span>
@@ -893,21 +922,9 @@ export const GastronomyBasketPage: React.FC = () => {
                     />
                     <div className={css.datePickerWrapper}>
                         <div
+                            data-testid="date-picker"
                             className={css.datePicker}
-                            onClick={() => {
-                                if (
-                                    deliveryMethod === 'delivery' &&
-                                    [
-                                        R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
-                                        R.PAME_SPB_MOIKA_RIVER_ID,
-                                        R.POLY_SPB_BELINSKOGO_ID,
-                                        R.TRAPPIST_SPB_RADISHEVA_ID,
-                                    ].includes(res_id as string)
-                                ) {
-                                    return;
-                                }
-                                setShowDatePicker(true);
-                            }}
+                            onClick={handleDatePickerClick}
                         >
                             <div className={css.datePickerContent}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -962,6 +979,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                     {timeSlots.map((slot) => (
                                         <button
                                             key={slot}
+                                            data-testid="time-slot"
                                             className={selectedTime === slot ? css.timeSlotActive : css.timeSlot}
                                             onClick={() => setSelectedTime(slot)}
                                         >
@@ -985,6 +1003,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     className={isFormValid() ? css.primaryButton : css.secondaryButton}
                     onClick={handlePayment}
                     disabled={!isFormValid()}
+                    data-testid="pay-button"
                 >
                     {loading ? <Loader /> : 'К оплате'}
                 </button>
