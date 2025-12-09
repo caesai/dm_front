@@ -86,7 +86,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         );
         setRestaurantsList(filteredRestaurantsByDishes);
     }, [currentCityA, cityListA, allGastronomyDishesList]);
-
+    console.log(restaurantsList, allGastronomyDishesList);
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
         setCurrentCityA(city.id);
