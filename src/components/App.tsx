@@ -8,13 +8,20 @@ import { ScrollToTop } from '@/navigation/utills.tsx';
 import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.api.ts';
 import { APIGetCityList } from '@/api/city.ts';
 import { APIGetCertificates } from '@/api/certificates.api.ts';
+import { APIGetGastronomyDishes } from '@/api/gastronomy.api.ts';
 // Atoms
 import { authAtom, reviewAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
+import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 // Components
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+import { EnvUnsupported } from '@/components/EnvUnsupported.tsx';
+import { Redirecter } from '@/components/Redirecter/Redirecter.tsx';
+import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
+import { Toast } from '@/components/Toast/Toast.tsx';
+// Pages
 import { IndexPage } from '@/pages/IndexPage/IndexPage.tsx';
 import { ProfilePage } from '@/pages/ProfilePage/ProfilePage.tsx';
 import { UserProfilePage } from '@/pages/UserProfilePage/UserProfilePage.tsx';
@@ -24,7 +31,6 @@ import { BookingInfoPage } from '@/pages/BookingInfoPage/BookingInfoPage.tsx';
 import { RestaurantPage } from '@/pages/RestaurantPage/RestaurantPage.tsx';
 import { BookingPage } from '@/pages/BookingPage/BookingPage.tsx';
 import { BookingConfirmationPage } from '@/pages/BookingConfirmationPage/BookingConfirmationPage.tsx';
-import { EnvUnsupported } from '@/components/EnvUnsupported.tsx';
 import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.tsx';
 import { EventListOutlet } from '@/pages/EventsPage/EventListOutlet/EventListOutlet.tsx';
 import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
@@ -32,13 +38,11 @@ import { EventConfirmationOutlet } from '@/pages/EventsPage/EventConfirmationOut
 import { EventBookingOutlet } from '@/pages/EventsPage/EventBookingOutlet/EventBookingOutlet.tsx';
 import { PaymentReturnPage } from '@/pages/PaymentReturnPage/PaymentReturnPage.tsx';
 import { TicketInfoPage } from '@/pages/TicketInfoPage/TicketInfoPage.tsx';
-import { Redirecter } from '@/components/Redirecter/Redirecter.tsx';
 import { UserPhoneConfirmationPage } from '@/pages/UserPhoneConfirmation/UserPhoneConfirmationPage.tsx';
 import { AdminScannerPage } from '@/pages/AdminScannerPage/AdminScannerPage.tsx';
 import { OnboardingPage } from '@/pages/OnboardingPage/OnboardingPage.tsx';
 import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
 import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
-import { BannerPopup } from '@/components/BannerPopup/BannerPopup.tsx';
 import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
 import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
 import { NewRestaurant } from '@/pages/NewRestaurant/NewRestaurant.tsx';
@@ -70,7 +74,6 @@ import { GastronomyChooseDishesPage } from '@/pages/GastronomyPage/stages/Gastro
 import { GastonomyDishDetailsPage } from '@/pages/GastronomyPage/stages/GastronomyDishDetailsPage/GastonomyDishDetailsPage.tsx';
 import { GastronomyBasketPage } from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.tsx';
 import { EventPaymentPage } from '@/pages/EventsPage/EventPaymentPage.tsx';
-import { Toast } from '@/components/Toast/Toast.tsx';
 import { BanquetAddressPage } from '@/pages/BanquetAddressPage/BanquetAddressPage.tsx';
 import { GastronomyOrderPage } from '@/pages/GastronomyPage/stages/GastronomyOrderPage/GastronomyOrderPage.tsx';
 import { GastronomyOrdersListPage } from '@/pages/GastronomyPage/stages/GastronomyOrdersListPage/GastronomyOrdersListPage.tsx';
@@ -81,6 +84,7 @@ const AppRouter: React.FC = () => {
     const [cities, setCities] = useAtom(cityListAtom);
     const [restaurants, setRestaurants] = useAtom(restaurantsListAtom);
     const [, setCertificates] = useAtom(certificatesListAtom);
+    const [, setAllGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
     // const [earlyAccess, setEarlyAccess] = useState(true);
     const [loadingComplete, setLoadingComplete] = useState<boolean>();
     const [, setReview] = useAtom(reviewAtom);
@@ -98,6 +102,24 @@ const AppRouter: React.FC = () => {
             APIGetCertificates(auth?.access_token, Number(user?.id)).then((response) => setCertificates(response.data));
         }
     }, [auth]);
+
+    /**
+     * Вызываем API для получения списка всех блюд во всех ресторанах
+     * и по этому списку фильтруем рестораны, которые имеют блюда
+     * и устанавливаем их в restaurantsList
+     */
+    useEffect(() => {
+        if (!auth?.access_token) {
+            return;
+        }
+        APIGetGastronomyDishes(auth?.access_token)
+            .then((res) => {
+                setAllGastronomyDishesList(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, [auth?.access_token]);
 
     useEffect(() => {
         if (auth?.access_token)

@@ -5,7 +5,6 @@ import moment from 'moment';
 // API's
 import { APIGetCurrentBookings } from '@/api/restaurants.api';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
-import { APIGetGastronomyDishes } from '@/api/gastronomy.api.ts';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.api.ts';
 // Types
 import { IStoryBlock } from '@/types/stories.types.ts';
@@ -15,7 +14,6 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
-import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { Header } from '@/components/Header/Header.tsx';
@@ -51,7 +49,6 @@ export const IndexPage: React.FC = () => {
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))
     );
-    const [, setAllGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
 
     const [currentCityS, setCurrentCityS] = useState<IConfirmationType>(
@@ -197,24 +194,6 @@ export const IndexPage: React.FC = () => {
             return;
         }
     }, [navigate, user?.license_agreement, user?.complete_onboarding, user?.phone_number]);
-
-    /**
-     * Вызываем API для получения списка всех блюд во всех ресторанах
-     * и по этому списку фильтруем рестораны, которые имеют блюда
-     * и устанавливаем их в restaurantsList
-     */
-    useEffect(() => {
-        if (!auth?.access_token) {
-            return;
-        }
-        APIGetGastronomyDishes(auth?.access_token)
-            .then((res) => {
-                setAllGastronomyDishesList(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }, [auth?.access_token]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
