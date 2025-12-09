@@ -8,13 +8,13 @@ import { ScrollToTop } from '@/navigation/utills.tsx';
 import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.api.ts';
 import { APIGetCityList } from '@/api/city.ts';
 import { APIGetCertificates } from '@/api/certificates.api.ts';
-import { APIGetGastronomyDishes } from '@/api/gastronomy.api';
+import { APIGetGastronomyDishes } from '@/api/gastronomy.api.ts';
 // Atoms
 import { authAtom, reviewAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
-import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
+import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 // Components
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import { EnvUnsupported } from '@/components/EnvUnsupported.tsx';
