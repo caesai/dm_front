@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import moment from 'moment';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 // APIs
 import { APIPostCreateGastronomyPayment, APIPostUserOrder } from '@/api/gastronomy.api.ts';
@@ -23,7 +22,7 @@ import { formatDate } from '@/utils.ts';
 import css from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.module.css';
 // Mocks
 import { R } from '@/__mocks__/restaurant.mock.ts';
-import { KAD_COORDS, MKAD_COORDS, PETROGRADKA_RESTAURANT_ID, PETROGRADKA_ZONE } from '@/__mocks__/gastronomy.mock.ts';
+import { BLACKCHOPS_SPB_FONTANKA_RIVER_ZONE, KAD_COORDS, MKAD_COORDS, PETROGRADKA_ZONE } from '@/__mocks__/gastronomy.mock.ts';
 import emptyBasketIcon from '/img/empty-basket.png';
 
 type DeliveryMethod = 'delivery' | 'pickup';
@@ -515,7 +514,6 @@ export const GastronomyBasketPage: React.FC = () => {
                 const geoObject = data.response.GeoObjectCollection.featureMember[0].GeoObject;
                 const pos = geoObject.Point.pos.split(' ').map(Number);
                 const coords: [number, number] = [pos[1], pos[0]]; // [широта, долгота]
-
                 return coords;
             }
 
@@ -547,8 +545,13 @@ export const GastronomyBasketPage: React.FC = () => {
         } else if (currentCity === 'spb') {
             // Для ресторана Smoke BBQ Санкт-Петербург (Лодейнопольская улица, ID 11) требуется особая зона доставки,
             // так как он находится вне стандартной зоны КАД. Используем PETROGRADKA_ZONE для проверки доставки.
-            if (String(res_id) === String(PETROGRADKA_RESTAURANT_ID)) {
+            if (String(res_id) === String(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID)) {
                 return isPointInPolygon(coords, PETROGRADKA_ZONE);
+            }
+            // Для ресторана BlackChops Санкт-Петербург (Фонтанка, ID 12) требуется особая зона доставки,
+            // так как он находится вне стандартной зоны КАД. Используем BLACKCHOPS_SPB_FONTANKA_RIVER_ZONE для проверки доставки.
+            if (String(res_id) === String(R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID)) {
+                return isPointInPolygon(coords, BLACKCHOPS_SPB_FONTANKA_RIVER_ZONE);
             }
             return isPointInPolygon(coords, KAD_COORDS);
         }
