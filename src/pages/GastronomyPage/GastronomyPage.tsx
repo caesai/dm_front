@@ -43,13 +43,15 @@ export const GastronomyPage: React.FC = () => {
     const isBasketPage = location.pathname.includes('/basket');
     const isDishDetailsPage = location.pathname.includes('/dish/');
 
+    // Если пользователь завершил onboarding, то очищаем список блюд
+    // Это нужно для того, что бы при переходе после онбординга на страницу корзины сохранить стейт заказа
     useEffect(() => {
-        if (user?.complete_onboarding) {
-            return () => {
+        return () => {
+            if (user?.complete_onboarding) {
                 setDishesList([]);
-            };
-        }
-    }, [setDishesList]);
+            }
+        };
+    }, [setDishesList, user?.complete_onboarding]);
 
     const handleGoBack = () => {
         if (!user?.complete_onboarding) {

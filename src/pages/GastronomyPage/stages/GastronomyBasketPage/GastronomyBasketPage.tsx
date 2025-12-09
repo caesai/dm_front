@@ -422,8 +422,8 @@ export const GastronomyBasketPage: React.FC = () => {
                 R.TRAPPIST_SPB_RADISHEVA_ID,
             ].includes(res_id as string)
         ) {
-            const newYearDateString = moment('2025-12-31').toString();
-            setSelectedDate({ title: formatDate(newYearDateString), value: newYearDateString });
+            const newYearDateValue = '2025-12-31';
+            setSelectedDate({ title: formatDate(newYearDateValue), value: newYearDateValue });
         } else {
             setSelectedDate({ title: 'unset', value: 'unset' });
         }
