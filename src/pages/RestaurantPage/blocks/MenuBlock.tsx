@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
+import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import { IMenuImg, IMenuItem } from '@/types/restaurant.types.ts';
@@ -14,9 +15,11 @@ import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 interface MenuBlockProps {
     menu: IMenuItem[] | undefined;
     menu_imgs: IMenuImg[] | undefined;
+    restaurant_id: number;
 }
 
-export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
+export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs, restaurant_id }) => {
+    const navigate = useNavigate();
     const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
 
     /**
@@ -31,10 +34,17 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
     };
 
     /**
-     * Обрабатывает открытие попапа с меню
+     * Обрабатывает открытие попапа с меню (старая версия)
      */
     const handleOpenMenuPopup = () => {
         setIsMenuPopupOpen(true);
+    };
+
+    /**
+     * Переход на новую страницу меню
+     */
+    const handleOpenInteractiveMenu = () => {
+        navigate(`/restaurant/${restaurant_id}/menu`);
     };
 
     const sortedMenuItems = menu?.sort((a, b) => a.id - b.id) || [];
@@ -82,7 +92,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs }) => {
                 <UniversalButton
                     title="Всё меню"
                     width="full"
-                    action={handleOpenMenuPopup}
+                    action={handleOpenInteractiveMenu}
                 />
             </ContentBlock>
         </ContentContainer>
