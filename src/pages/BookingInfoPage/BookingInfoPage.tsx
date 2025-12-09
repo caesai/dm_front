@@ -1,42 +1,43 @@
-import { Page } from '@/components/Page.tsx';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import css from './BookingInfoPage.module.css';
+import { useScript } from 'usehooks-ts';
+import { useAtom } from 'jotai';
 import { openLink } from '@telegram-apps/sdk-react';
+import classNames from 'classnames';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper/modules';
+// API's
+import { APICancelBooking, APIGetBooking, APIPOSTCancelReason } from '@/api/restaurants.api.ts';
+import { BASE_BOT } from '@/api/base.ts';
+// Types
+import { IBookingInfo } from '@/types/restaurant.types.ts';
+// Atoms
+import { authAtom } from '@/atoms/userAtom.ts';
+// Components
+import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { TimeCircle } from '@/components/Icons/TimeCircle.tsx';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-// import { ChatIcon } from '@/components/Icons/ChatIcon.tsx';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { useCallback, useEffect, useState } from 'react';
 import { CancelBookingPopup } from '@/pages/BookingInfoPage/CancelBookingPopup/CancelBookingPopup.tsx';
-import { IBookingInfo } from '@/types/restaurant.types.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { useScript } from 'usehooks-ts';
-import { APICancelBooking, APIGetBooking, APIPOSTCancelReason } from '@/api/restaurants.ts';
-import { useAtom } from 'jotai';
-import { authAtom } from '@/atoms/userAtom.ts';
 import { Taxi } from '@/components/YandexTaxi/Taxi.tsx';
-import {
-    formatDateDayMonthLong,
-    formatDateDayShort,
-    formatDateMonthShort,
-    weekdaysMap,
-} from '@/utils.ts';
-import classNames from 'classnames';
-import { BOOKINGCOMMENTMOCK } from '../../mockData.ts';
-import { BASE_BOT } from '@/api/base.ts';
 import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
 import { DoubleCheckIcon } from '@/components/Icons/DoubleCheckIcon.tsx';
 import { PhoneCallIcon } from '@/components/Icons/PhoneCallIcon.tsx';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode } from 'swiper/modules';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import BookingCertificate from '@/components/BookingCertificate/BookingCertificate.tsx';
+// Utils
+import { formatDateDayMonthLong, formatDateDayShort, formatDateMonthShort, weekdaysMap } from '@/utils.ts';
+// Styles
+import css from './BookingInfoPage.module.css';
+// Mocks
+import { BOOKINGCOMMENTMOCK } from '@/mockData.ts';
 
-export const BookingInfoPage = () => {
+export const BookingInfoPage: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [cancelPopup, setCancelPopup] = useState(false);
@@ -78,9 +79,7 @@ export const BookingInfoPage = () => {
             navigate('/');
             return;
         }
-        APIGetBooking(auth.access_token, Number(id)).then((res) =>
-            setBooking(res.data),
-        );
+        APIGetBooking(auth.access_token, Number(id)).then((res) => setBooking(res.data));
     }, []);
 
     const hideApp = () => {
@@ -108,17 +107,10 @@ export const BookingInfoPage = () => {
                     <div className={css.header}>
                         <div className={css.wh44} />
                         <div className={classNames(css.fc, css.headerContent)}>
-                            <h3 className={css.headerContent__title}>
-                                Бронирование
-                            </h3>
+                            <h3 className={css.headerContent__title}>Бронирование</h3>
                         </div>
-                        <div
-                            className={css.headerButtons}
-                            onClick={() => navigate('/myBookings')}
-                        >
-                            <RoundedButton
-                                icon={<CrossIcon size={44} color={'black'} />}
-                            />
+                        <div className={css.headerButtons} onClick={() => navigate('/myBookings')}>
+                            <RoundedButton icon={<CrossIcon size={44} color={'black'} />} />
                         </div>
                     </div>
                     <div className={classNames(css.fc, css.content)}>
@@ -138,10 +130,18 @@ export const BookingInfoPage = () => {
                         </div>
                         <div className={classNames(css.fc, css.bookingInfo_restaurant)}>
                             <h2 className={css.bookingInfo_restaurant__title}>
-                                {booking ? booking.restaurant.title : <PlaceholderBlock width={'200px'} height={'50px'} />}
+                                {booking ? (
+                                    booking.restaurant.title
+                                ) : (
+                                    <PlaceholderBlock width={'200px'} height={'50px'} />
+                                )}
                             </h2>
                             <span className={css.bookingInfo_restaurant__subtitle}>
-                                {booking ? booking.restaurant.address : <PlaceholderBlock width={'120px'} height={'17px'} />}
+                                {booking ? (
+                                    booking.restaurant.address
+                                ) : (
+                                    <PlaceholderBlock width={'120px'} height={'17px'} />
+                                )}
                             </span>
                         </div>
                         <div className={classNames(css.fc, css.bookingInfoDetails)}>
@@ -149,12 +149,18 @@ export const BookingInfoPage = () => {
                                 {booking?.booking_status == 'waiting' ? (
                                     <>
                                         <PhoneCallIcon size={24} />
-                                        <h3>Мы свяжемся с вами для <br />подтверждения бронирования</h3>
+                                        <h3>
+                                            Мы свяжемся с вами для <br />
+                                            подтверждения бронирования
+                                        </h3>
                                     </>
                                 ) : (
                                     <>
                                         <DoubleCheckIcon />
-                                        <h3>Ваше бронирование {booking?.booking_status == 'canceled' ? 'отменено' : 'подтверждено'}</h3>
+                                        <h3>
+                                            Ваше бронирование{' '}
+                                            {booking?.booking_status == 'canceled' ? 'отменено' : 'подтверждено'}
+                                        </h3>
                                     </>
                                 )}
                             </div>
@@ -175,7 +181,8 @@ export const BookingInfoPage = () => {
                                     <CalendarIcon size={16} color={'var(--dark-grey)'} />
                                     {booking ? (
                                         <span className={css.bookingInfoDetails_item__text}>
-                                            {formatDateDayMonthLong(booking.booking_date)}, {weekdaysMap[new Date(booking.booking_date).getDay()]}
+                                            {formatDateDayMonthLong(booking.booking_date)},{' '}
+                                            {weekdaysMap[new Date(booking.booking_date).getDay()]}
                                         </span>
                                     ) : (
                                         <PlaceholderBlock width={'80px'} height={'17px'} />
@@ -204,19 +211,26 @@ export const BookingInfoPage = () => {
                             </div>
                         </div>
                         <div className={classNames(css.fc, css.bookingInfoDetails)}>
-                            <div style={{ width: '100%' }} className={classNames(css.fr, css.bookingInfoDetails_container)}>
+                            <div
+                                style={{ width: '100%' }}
+                                className={classNames(css.fr, css.bookingInfoDetails_container)}
+                            >
                                 <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
-                                    {booking && booking.tags && (
+                                    {booking &&
+                                        booking.tags &&
                                         booking.tags.split(',').map((tag, i) => (
                                             <SwiperSlide key={i} style={{ width: 'max-content' }}>
                                                 <CommentaryOptionButton
                                                     disabled={true}
-                                                    text={String(BOOKINGCOMMENTMOCK.find(mock => mock.text === tag)?.text)}
-                                                    icon={String(BOOKINGCOMMENTMOCK.find(mock => mock.text === tag)?.emoji)}
+                                                    text={String(
+                                                        BOOKINGCOMMENTMOCK.find((mock) => mock.text === tag)?.text
+                                                    )}
+                                                    icon={String(
+                                                        BOOKINGCOMMENTMOCK.find((mock) => mock.text === tag)?.emoji
+                                                    )}
                                                 />
                                             </SwiperSlide>
-                                        ))
-                                    )}
+                                        ))}
                                 </Swiper>
                             </div>
                         </div>
@@ -242,7 +256,11 @@ export const BookingInfoPage = () => {
                                     ['new', 'waiting', 'confirmed'].some((v) => v === booking.booking_status) ? (
                                         <>
                                             <UniversalButton width={'full'} title={'Изменить'} action={hideApp} />
-                                            <UniversalButton width={'full'} title={'Отменить'} action={() => setCancelPopup(true)} />
+                                            <UniversalButton
+                                                width={'full'}
+                                                title={'Отменить'}
+                                                action={() => setCancelPopup(true)}
+                                            />
                                         </>
                                     ) : null
                                 ) : (
@@ -255,19 +273,34 @@ export const BookingInfoPage = () => {
                             <div className={classNames(css.fr, css.bookingInfoDetails_item)}>
                                 {booking ? (
                                     <>
-                                        <div className={css.redButton} onClick={() => navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)}>
+                                        <div
+                                            className={css.redButton}
+                                            onClick={() =>
+                                                navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)
+                                            }
+                                        >
                                             <span className={css.text}>Смотреть меню</span>
                                         </div>
                                         <RoundedButton
                                             radius={'50px'}
-                                            action={() => openLink(`https://yandex.ru/maps/?text=${booking?.restaurant.address}`, { tryInstantView: false })}
+                                            action={() =>
+                                                openLink(
+                                                    `https://yandex.ru/maps/?text=${booking?.restaurant.address}`,
+                                                    { tryInstantView: false }
+                                                )
+                                            }
                                             icon={<GoToPathIcon size={24} color={'var(--dark-grey)'} />}
                                         />
                                     </>
                                 ) : (
                                     <>
                                         <PlaceholderBlock width={'100%'} height={'52px'} rounded={'15px'} />
-                                        <PlaceholderBlock width={'50px'} height={'50px'} rounded={'50%'} minWidth={'50px'} />
+                                        <PlaceholderBlock
+                                            width={'50px'}
+                                            height={'50px'}
+                                            rounded={'50%'}
+                                            minWidth={'50px'}
+                                        />
                                     </>
                                 )}
                             </div>

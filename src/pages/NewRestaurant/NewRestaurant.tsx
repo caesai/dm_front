@@ -1,17 +1,17 @@
-import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
-import newres from '/img/chinois_app.png';
-import { Page } from '@/components/Page.tsx';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
-import css from '@/pages/Restaurant/Restaurant.module.css';
+import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
+import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+import newres from '/img/chinois_app.png';
 
-export const NewRestaurant = () => {
+export const NewRestaurant: React.FC = () => {
     const navigate = useNavigate();
-
     const [headerScrolled, setHeaderScrolled] = useState(false);
+
     useEffect(() => {
         const handleScroll = () => {
             setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 50px – меняем состояние
@@ -20,6 +20,7 @@ export const NewRestaurant = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
     return (
         <Page back={true}>
             <div

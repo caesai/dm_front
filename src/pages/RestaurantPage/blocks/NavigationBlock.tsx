@@ -1,42 +1,39 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai/index';
 import classNames from 'classnames';
-import css from '@/pages/Restaurant/Restaurant.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { Share } from '@/components/Icons/Share.tsx';
 import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
-import { mockEventsUsersList } from '@/__mocks__/events.mock.ts';
 import { BASE_BOT } from '@/api/base.ts';
-import { useAtom } from 'jotai/index';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
-import { useNavigate } from 'react-router-dom';
-import { IRestaurant } from '@/types/restaurant.types.ts';
-import { IEventInRestaurant } from '@/types/events.ts';
 import { userAtom } from '@/atoms/userAtom.ts';
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface INavigationBlockProps {
     restaurant_id: number;
-    restaurant: IRestaurant;
-    events: IEventInRestaurant[];
-    filteredEvents: IEventInRestaurant[];
-    hasGastronomy: boolean;
+    title: string;
+    isLoading: boolean;
+    isEvents: boolean;
+    isBanquets: boolean;
+    isGastronomy: boolean;
 }
 
 export const NavigationBlock: React.FC<INavigationBlockProps> = ({
     restaurant_id,
-    restaurant,
-    events,
-    filteredEvents,
-    hasGastronomy,
+    isBanquets,
+    isLoading,
+    isEvents,
+    isGastronomy,
+    title,
 }) => {
     const [headerScrolled, setHeaderScrolled] = useState(false);
 
     const [, setBackUrlAtom] = useAtom(backButtonAtom);
     const [user] = useAtom(userAtom);
     const navigate = useNavigate();
-
-    const tg_id = window.Telegram.WebApp.initDataUnsafe.user.id;
 
     const goBack = () => {
         if (!user?.complete_onboarding) {
@@ -52,10 +49,10 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
     };
 
     const shareRestaurant = () => {
-        const url = encodeURI(`https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant?.id}`);
-        const title = encodeURI(String(restaurant?.title));
+        const url = encodeURI(`https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant_id}`);
+        const sharedTitle = encodeURI(String(title));
         const shareData = {
-            title,
+            title: sharedTitle,
             url,
         };
         try {
@@ -68,7 +65,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
                     });
             }
         } catch (e) {
-            window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
+            window.open(`https://t.me/share/url?url=${url}&text=${sharedTitle}`, '_blank');
         }
     };
 
@@ -88,7 +85,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
                     <div className={css.headerNavBlock}>
                         <RoundedButton icon={<BackIcon color={'var(--dark-grey)'} />} action={goBack}></RoundedButton>
                     </div>
-                    {headerScrolled ? <span className={css.headerTitle}>{restaurant?.title}</span> : null}
+                    {headerScrolled ? <span className={css.headerTitle}>{title}</span> : null}
                     <div className={css.headerNavBlock}>
                         <RoundedButton icon={<Share color={'var(--dark-grey)'} />} action={() => shareRestaurant()} />
                         {user && user.complete_onboarding && (
@@ -101,10 +98,10 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
                 </div>
                 {headerScrolled ? (
                     <RestaurantNavigation
-                        isLoading={events == null && restaurant?.banquets == null}
-                        isBanquets={restaurant?.banquets?.banquet_options?.length > 0}
-                        isShow={tg_id && mockEventsUsersList.includes(tg_id) && hasGastronomy}
-                        isEvents={Boolean(filteredEvents && filteredEvents?.length > 0)}
+                        isLoading={isLoading}
+                        isBanquets={isBanquets}
+                        isGastronomy={isGastronomy}
+                        isEvents={isEvents}
                     />
                 ) : null}
             </div>

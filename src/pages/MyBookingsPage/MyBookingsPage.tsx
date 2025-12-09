@@ -1,18 +1,23 @@
-import { Page } from '@/components/Page.tsx';
-import css from './MyBookingsPage.module.css';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import classNames from 'classnames';
+// API's
+import { APIGetMyBookings } from '@/api/restaurants.api.ts';
+// Types
+import { IBookingInfo } from '@/types/restaurant.types.ts';
+// Atoms
+import { authAtom } from '@/atoms/userAtom.ts';
+// Components
+import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useNavigate } from 'react-router-dom';
 import { BookingCard } from '@/components/BookingCard/BookingCard.tsx';
-import { useEffect, useState } from 'react';
-import { IBookingInfo } from '@/types/restaurant.types.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { useAtom } from 'jotai';
-import { authAtom } from '@/atoms/userAtom.ts';
-import { APIGetMyBookings } from '@/api/restaurants.ts';
+// Styles
+import css from './MyBookingsPage.module.css';
 
-export const MyBookingsPage = () => {
+export const MyBookingsPage: React.FC = () => {
     const navigate = useNavigate();
     const [auth] = useAtom(authAtom);
     const [bookings, setBookings] = useState<IBookingInfo[]>([]);
@@ -47,47 +52,39 @@ export const MyBookingsPage = () => {
                     {!loading ? (
                         <>
                             {!bookings.length && <h2 className={css.header__title}>Список пуст</h2>}
-                            {bookings.sort(function(a, b) {
-                                const aDate = new Date(a.booking_date);
-                                const bDate = new Date(b.booking_date);
-                                return bDate.getTime() - aDate.getTime();
-                            }).sort((a, b) => {
-                                return Number(b.booking_status !== 'canceled') - Number(a.booking_status !== 'canceled');
-                            }).map((booking) => (
-                                <BookingCard
-                                    key={booking.id}
-                                    date={booking.booking_date}
-                                    image={booking.restaurant.thumbnail_photo}
-                                    time={booking.time}
-                                    active={[
-                                        'new',
-                                        'waiting',
-                                        'confirmed',
-                                    ].some((v) => v == booking.booking_status)}
-                                    booking_id={booking.id}
-                                    title={booking.restaurant.title}
-                                    address={booking.restaurant.address}
-                                    click_callback={clickOnActiveBooking}
-                                />
-                            ))}
+                            {bookings
+                                .sort(function (a, b) {
+                                    const aDate = new Date(a.booking_date);
+                                    const bDate = new Date(b.booking_date);
+                                    return bDate.getTime() - aDate.getTime();
+                                })
+                                .sort((a, b) => {
+                                    return (
+                                        Number(b.booking_status !== 'canceled') -
+                                        Number(a.booking_status !== 'canceled')
+                                    );
+                                })
+                                .map((booking) => (
+                                    <BookingCard
+                                        key={booking.id}
+                                        date={booking.booking_date}
+                                        image={booking.restaurant.thumbnail_photo}
+                                        time={booking.time}
+                                        active={['new', 'waiting', 'confirmed'].some(
+                                            (v) => v == booking.booking_status
+                                        )}
+                                        booking_id={booking.id}
+                                        title={booking.restaurant.title}
+                                        address={booking.restaurant.address}
+                                        click_callback={clickOnActiveBooking}
+                                    />
+                                ))}
                         </>
                     ) : (
                         <>
-                            <PlaceholderBlock
-                                width={'100%'}
-                                aspectRatio={'3/2'}
-                                rounded={'16px'}
-                            />
-                            <PlaceholderBlock
-                                width={'100%'}
-                                aspectRatio={'3/2'}
-                                rounded={'16px'}
-                            />
-                            <PlaceholderBlock
-                                width={'100%'}
-                                aspectRatio={'3/2'}
-                                rounded={'16px'}
-                            />
+                            <PlaceholderBlock width={'100%'} aspectRatio={'3/2'} rounded={'16px'} />
+                            <PlaceholderBlock width={'100%'} aspectRatio={'3/2'} rounded={'16px'} />
+                            <PlaceholderBlock width={'100%'} aspectRatio={'3/2'} rounded={'16px'} />
                         </>
                     )}
                 </div>

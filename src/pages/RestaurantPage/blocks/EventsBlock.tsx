@@ -1,6 +1,6 @@
-import { IEventInRestaurant } from '@/types/events.ts';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IEventInRestaurant } from '@/types/events.ts';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';

@@ -1,4 +1,4 @@
-import { APIValidatePayment } from '@/api/events';
+import { APIValidatePayment } from '@/api/events.api.ts';
 import React, { useEffect } from 'react';
 import { useNavigate, useParams,
     // useSearchParams

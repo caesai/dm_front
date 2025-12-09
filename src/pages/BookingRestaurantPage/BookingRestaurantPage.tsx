@@ -1,50 +1,46 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import css from '@/pages/BookingPage/BookingPage.module.css';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import classNames from 'classnames';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+// API's
+import { APICreateBooking, APIGetAvailableDays, APIGetAvailableTimeSlots } from '@/api/restaurants.api.ts';
+// Types
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+// Atoms
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { commAtom } from '@/atoms/bookingCommAtom.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+// Components
 import { Page } from '@/components/Page.tsx';
 import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import classNames from 'classnames';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-import {
-    formatDate,
-    formatDateShort,
-    getGuestsString,
-    getTimeShort,
-} from '@/utils.ts';
-import { BookingGuestCountSelectorPopup } from '@/components/BookingGuestCountSelectorPopup/BookingGuestCountSelectorPopup.tsx';
+import { GuestCountSelector } from '@/components/GuestCountSelector/GuestCountSelector.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import {
-    getGuestMaxNumber,
-    getServiceFeeData,
-} from '@/mockData.ts';
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import {
-    APICreateBooking,
-    APIGetAvailableDays,
-    APIGetAvailableTimeSlots,
-} from '@/api/restaurants.ts';
-import { useAtom } from 'jotai';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { commAtom } from '@/atoms/bookingCommAtom.ts';
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
-import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
+// Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
+import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
+// Utils
+import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
+// Styles
+import css from '@/pages/BookingPage/BookingPage.module.css';
+// Mocks
+import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -61,7 +57,7 @@ const confirmationList: IConfirmationType[] = [
     },
 ];
 
-export const BookingRestaurantPage: FC = () => {
+export const BookingRestaurantPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
@@ -70,7 +66,7 @@ export const BookingRestaurantPage: FC = () => {
     // Global state atoms
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
-    const [comms] = useAtom(commAtom)
+    const [comms] = useAtom(commAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [guestCount, setGuestCount] = useState(0);
     const [childrenCount, setChildrenCount] = useState(0);
@@ -103,36 +99,25 @@ export const BookingRestaurantPage: FC = () => {
     // Update bookingDates when guestCount changes
     useEffect(() => {
         auth?.access_token && restaurant.value !== 'unset'
-            ? APIGetAvailableDays(auth?.access_token, Number(id), 1).then(
-                (res) =>
-                    setAvailableDates(
-                        res.data.map((v) => ({
-                            title: formatDate(v),
-                            value: v,
-                        }))
-                    )
-            )
+            ? APIGetAvailableDays(auth?.access_token, Number(id), 1).then((res) =>
+                  setAvailableDates(
+                      res.data.map((v) => ({
+                          title: formatDate(v),
+                          value: v,
+                      }))
+                  )
+              )
             : null;
     }, [guestCount, restaurant]);
 
     useEffect(() => {
-        if (
-            restaurant.value === 'unset' ||
-            !auth?.access_token ||
-            date.value === 'unset' ||
-            !guestCount
-        ) {
+        if (restaurant.value === 'unset' || !auth?.access_token || date.value === 'unset' || !guestCount) {
             return;
         }
         setTimeslotsLoading(true);
-            APIGetAvailableTimeSlots(
-                auth.access_token,
-                Number(id),
-                date.value,
-                guestCount,
-            )
-                .then((res) => setAvailableTimeslots(res.data))
-                .finally(() => setTimeslotsLoading(false));
+        APIGetAvailableTimeSlots(auth.access_token, Number(id), date.value, guestCount)
+            .then((res) => setAvailableTimeslots(res.data))
+            .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount, restaurant]);
 
     useEffect(() => {
@@ -141,18 +126,20 @@ export const BookingRestaurantPage: FC = () => {
             setDate(bookedDate);
             setCurrentSelectedTime(bookedTime);
         }
-    },[state]);
+    }, [state]);
 
-    const restaurantList: PickerValueObj[] = useMemo(() =>
-        restaurants.map(({ title, address, id }) => ({
-            title,
-            address,
-            value: String(id),
-        })), [restaurants]
+    const restaurantList: PickerValueObj[] = useMemo(
+        () =>
+            restaurants.map(({ title, address, id }) => ({
+                title,
+                address,
+                value: String(id),
+            })),
+        [restaurants]
     );
 
     useEffect(() => {
-        const currentRestaurant = restaurantList.find(r => r.value === id);
+        const currentRestaurant = restaurantList.find((r) => r.value === id);
         if (currentRestaurant) {
             setRestaurant(currentRestaurant);
         }
@@ -164,7 +151,7 @@ export const BookingRestaurantPage: FC = () => {
     const [dateValidatedDisplay, setDateValidated] = useState(true);
     const [, setSelectedTimeValidated] = useState(true);
     const [guestsValidatedDisplay, setGuestsValidated] = useState(true);
-    const { isFormValid, validateForm  } = useBookingFormValidation(
+    const { isFormValid, validateForm } = useBookingFormValidation(
         // Pass the raw values
         { userName, userPhone, currentSelectedTime, guestCount, date },
         // Pass the setters for the *display* states
@@ -191,7 +178,7 @@ export const BookingRestaurantPage: FC = () => {
                 commentary,
                 comms,
                 confirmation.text,
-                (guestCount + childrenCount) < 8 ? false : preOrder,
+                guestCount + childrenCount < 8 ? false : preOrder,
                 null,
                 certificate_id
             )
@@ -215,8 +202,14 @@ export const BookingRestaurantPage: FC = () => {
 
     return (
         <Page back={true}>
-            <BookingErrorPopup isOpen={errorPopup} setOpen={setErrorPopup} resId={Number(id)} count={errorPopupCount} botError={botError}/>
-            <BookingGuestCountSelectorPopup
+            <BookingErrorPopup
+                isOpen={errorPopup}
+                setOpen={setErrorPopup}
+                resId={Number(id)}
+                count={errorPopupCount}
+                botError={botError}
+            />
+            <GuestCountSelector
                 guestCount={guestCount}
                 childrenCount={childrenCount}
                 setGuestCount={setGuestCount}
@@ -240,15 +233,13 @@ export const BookingRestaurantPage: FC = () => {
                             <div className={css.headerNav}>
                                 <div style={{ width: '44px' }}></div>
                                 <div className={css.headerInfo}>
-                                    <h3 className={css.headerInfo__title}>
-                                        {'Бронирование'}
-                                    </h3>
-                                        <>
-                                            <h3 className={css.headerInfo__title}>
-                                                <b>{String(restaurant.title)}</b>
-                                            </h3>
-                                            <h4 className={css.headerInfo__subtitle}>{String(restaurant.address)}</h4>
-                                        </>
+                                    <h3 className={css.headerInfo__title}>{'Бронирование'}</h3>
+                                    <>
+                                        <h3 className={css.headerInfo__title}>
+                                            <b>{String(restaurant.title)}</b>
+                                        </h3>
+                                        <h4 className={css.headerInfo__subtitle}>{String(restaurant.address)}</h4>
+                                    </>
                                 </div>
                                 <div>
                                     <RoundedButton
@@ -266,41 +257,40 @@ export const BookingRestaurantPage: FC = () => {
                             <div className={css.header_bottom}>
                                 <div className={classNames(css.header__selector)}>
                                     <DropDownSelect
-                                        title={date.value !== 'unset' ? formatDateShort(
-                                            date.value
-                                        ) : 'Дата'}
+                                        title={date.value !== 'unset' ? formatDateShort(date.value) : 'Дата'}
                                         isValid={dateValidatedDisplay}
-
-                                        icon={<CalendarIcon size={24}/>}
-                                        onClick={() =>
-                                            setBookingDatePopup(true)
-                                        }
+                                        icon={<CalendarIcon size={24} />}
+                                        onClick={() => setBookingDatePopup(true)}
                                     />
                                     <DropDownSelect
                                         title={guestCount ? getGuestsString(guestCount + childrenCount) : 'Гости'}
                                         isValid={guestsValidatedDisplay}
-                                        icon={<UsersIcon size={24}/>}
-                                        onClick={() =>
-                                            setGuestCountPopup(!guestCountPopup)
-                                        }
+                                        icon={<UsersIcon size={24} />}
+                                        onClick={() => setGuestCountPopup(!guestCountPopup)}
                                     />
                                 </div>
                             </div>
                         </div>
                     </ContentContainer>
-                    {!guestCount ||
-                    date.value === 'unset' ? (
+                    {!guestCount || date.value === 'unset' ? (
                         <ContentContainer>
                             <div className={css.timeOfDayContainer}>
-                                <span className={css.noTimeSlotsText}>
-                                    Выберите дату и количество гостей
-                                </span>
+                                <span className={css.noTimeSlotsText}>Выберите дату и количество гостей</span>
                             </div>
                         </ContentContainer>
                     ) : (
-                        <TimeSlots loading={timeslotsLoading} availableTimeslots={availableTimeslots} currentSelectedTime={currentSelectedTime} setCurrentSelectedTime={setCurrentSelectedTime} />
+                        <TimeSlots
+                            loading={timeslotsLoading}
+                            availableTimeslots={availableTimeslots}
+                            currentSelectedTime={currentSelectedTime}
+                            setCurrentSelectedTime={setCurrentSelectedTime}
+                        />
                     )}
-                    <CertificatesSelector setCertificateId={setCertificateId} isOpened={false} selectedCertificateId={null} />
+                    <CertificatesSelector
+                        setCertificateId={setCertificateId}
+                        isOpened={false}
+                        selectedCertificateId={null}
+                    />
                     <BookingWish
                         guestCount={guestCount}
                         childrenCount={childrenCount}

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { BookingBlock } from '@/pages/Restaurant/blocks/BookingsBlock.tsx';
+import { BookingBlock } from '@/pages/RestaurantPage/blocks/BookingsBlock.tsx';
 import { useAtom } from 'jotai';
 
 jest.mock('jotai', () => ({
@@ -79,9 +79,9 @@ const mockProps = {
         { start_datetime: '2024-01-01T20:00:00', end_datetime: '2024-01-01T22:00:00', is_free: false }
     ],
     setCurrentSelectedTime: jest.fn(),
-    isShow: true,
     isEvents: true,
     isBanquets: true,
+    isGastronomy: false,
     isNavigationLoading: false
 };
 

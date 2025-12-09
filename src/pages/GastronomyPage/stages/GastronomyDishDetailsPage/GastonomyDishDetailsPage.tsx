@@ -10,16 +10,11 @@ import { useAtom } from 'jotai';
 import { gastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 
 /**
- * Форматирует вес, добавляя "г" если единица измерения отсутствует
+ * Форматирует вес, добавляя единицу измерения
  */
-const formatWeight = (weight: string | undefined): string | undefined => {
-    if (!weight) return undefined;
-    // Если вес уже содержит единицы измерения (г, кг, л и т.д.), возвращаем как есть
-    if (/[а-яА-Яa-zA-Z]/.test(weight)) {
-        return weight;
-    }
-    // Иначе добавляем "г"
-    return `${weight} г`;
+export const formatWeight = (weight: string | undefined, weight_unit: string | undefined): string | undefined => {
+    if (!weight || !weight_unit) return undefined;
+    return `${weight} ${weight_unit}`;
 };
 
 export const GastonomyDishDetailsPage: React.FC = () => {
@@ -40,7 +35,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
 
     const quantity = getItemQuantity(dishFromState.id);
     const rawSelectedWeight = dishFromState.weights[selectedWeightIndex] || dishFromState.weights[0];
-    const selectedWeight = formatWeight(rawSelectedWeight);
+    const selectedWeight = formatWeight(rawSelectedWeight, dishFromState.weight_value || '');
     const selectedPrice = dishFromState.prices[selectedWeightIndex] || dishFromState.prices[0];
     const hasMultipleWeights = dishFromState.weights.length > 1;
 
@@ -77,7 +72,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
 
                     <div className={css.titleSection}>
                         <div className={css.titleRow}>
-                            <h2 className={css.dishTitle}>{dishFromState.title}</h2>
+                            <h2 className={css.dishTitle}>{dishFromState.guest_title}</h2>
                             <span className={css.dishPrice}>{selectedPrice} ₽</span>
                         </div>
                         {selectedWeight && <span className={css.selectedWeight}>{selectedWeight}</span>}
@@ -93,7 +88,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                                         className={index === selectedWeightIndex ? css.weightTagActive : css.weightTag}
                                         onClick={() => setSelectedWeightIndex(index)}
                                     >
-                                        {formatWeight(weight)}
+                                        {formatWeight(weight, dishFromState.weight_value || '')}
                                     </button>
                                 ))}
                             </div>
@@ -103,7 +98,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
                     <div className={css.section}>
                         <span className={css.sectionTitle}>Описание</span>
                         <p className={css.sectionText}>
-                            {(dishFromState as any).guest_title || dishFromState.description}
+                            {dishFromState.description || dishFromState.guest_title}
                         </p>
                     </div>
 

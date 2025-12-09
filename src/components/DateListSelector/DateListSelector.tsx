@@ -1,14 +1,14 @@
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import Popup from 'reactjs-popup';
-import { Dispatch, FC, SetStateAction, useEffect } from 'react';
 import styled from 'styled-components';
-import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-import css from './DateListSelector.module.css';
-import Picker, { PickerValue } from '@/lib/react-mobile-picker';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { formatDate } from '@/utils.ts';
 import classNames from 'classnames';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import Picker, { PickerValue } from '@/lib/react-mobile-picker';
+import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
+import { formatDate } from '@/utils.ts';
+import css from '@/components/DateListSelector/DateListSelector.module.css';
 
-interface Props {
+interface DateListSelectorProps {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
     date: PickerValue;
@@ -41,7 +41,13 @@ const handleClose = () => {
     document.body.style.overflow = 'unset'; // Or '' to remove the style
 };
 
-export const DateListSelector: FC<Props> = ({ isOpen, setOpen, date, setDate, values }) => {
+export const DateListSelector: React.FC<DateListSelectorProps> = ({
+    isOpen,
+    setOpen,
+    date,
+    setDate,
+    values,
+}) => {
     const onClose = () => {
         handleClose();
         setOpen(false);
@@ -60,19 +66,13 @@ export const DateListSelector: FC<Props> = ({ isOpen, setOpen, date, setDate, va
     };
     const picker = (
         <>
-            <Picker
-                // @ts-expect-error broken-lib
-                value={date}
-                onChange={onChange}
-                wheelMode="natural"
-                height={120}
-            >
+            <Picker value={date as unknown as PickerValueObj} onChange={onChange} wheelMode="natural" height={120}>
                 <Picker.Column name={'value'}>
                     {values.map((option) => (
-                        <Picker.Item key={option.value} value={option}>
+                        <Picker.Item key={option.value} value={option} data-testid="date-item">
                             {({ selected }) => (
                                 <div className={css.selectorItem}>
-                                    <span className={classNames(css.item, selected ? css.item__selected : null)}>
+                                    <span className={classNames(css.item, { [css.item__selected]: selected })}>
                                         {formatDate(option.value)}
                                     </span>
                                 </div>

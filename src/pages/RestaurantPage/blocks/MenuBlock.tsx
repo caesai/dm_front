@@ -1,15 +1,15 @@
-import { IMenuImg, IMenuItem } from '@/types/restaurant.types.ts';
 import React, { useState } from 'react';
+import classNames from 'classnames';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper/modules';
+import { IMenuImg, IMenuItem } from '@/types/restaurant.types.ts';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import css from '@/pages/Restaurant/Restaurant.module.css';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode } from 'swiper/modules';
-import classNames from 'classnames';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface MenuBlockProps {
     menu: IMenuItem[] | undefined;
