@@ -1,22 +1,26 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-
 import { useAtom } from 'jotai/index';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import { Calendar } from 'react-iconly';
-import { formatDateAlt, getTimeShort } from '@/utils.ts';
 import { FaAngleRight } from 'react-icons/fa';
 import classNames from 'classnames';
 import moment from 'moment/moment';
+// Types
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { IWorkTime } from '@/types/restaurant.types.ts';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+// Atoms
 import { guestCountAtom } from '@/atoms/bookingInfoAtom.ts';
+// Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+// Utils
+import { formatDateAlt, getTimeShort } from '@/utils.ts';
+// Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface BookingBlockProps {
@@ -32,6 +36,7 @@ interface BookingBlockProps {
     isNavigationLoading: boolean;
     isBanquets: boolean;
     isGastronomy: boolean;
+    isMenu: boolean;
 }
 
 /**
@@ -50,6 +55,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
     isBanquets,
     isEvents,
     isNavigationLoading,
+    isMenu,
 }) => {
     const [, setGuestCount] = useAtom(guestCountAtom);
     const [isBookingDatePopupOpen, setIsBookingDatePopupOpen] = useState(false);
@@ -119,6 +125,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
                         isEvents={isEvents}
                         isBanquets={isBanquets}
                         isGastronomy={isGastronomy}
+                        isMenu={isMenu}
                     />
                     <div className={css.bookingContaner}>
                         <Swiper

@@ -1,15 +1,20 @@
+import React from 'react';
 import classNames from 'classnames';
-import css from './RestaurantTopPreview.module.css';
+// Components
 import { MoneyIcon } from '@/components/Icons/MoneyIcon.tsx';
 import { TimeCircleIcon } from '@/components/Icons/TimeCircleIcon.tsx';
+// Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
+// Utils
 import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatusTyped } from '@/utils.ts';
+// Styles
+import css from '@/components/RestaurantTopPreview/RestaurantTopPreview.module.css';
 
-interface Props {
+interface IRestaurantTopPreviewProps {
     restaurant?: IRestaurant;
 }
 
-export const RestaurantTopPreview = ({ restaurant }: Props) => {
+export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ restaurant }) => {
     return (
         <div
             className={classNames(css.previewContainer, css.bgImage)}

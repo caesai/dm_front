@@ -23,6 +23,7 @@ interface INavigationBlockProps {
     isEvents: boolean;
     isBanquets: boolean;
     isGastronomy: boolean;
+    isMenu: boolean;
 }
 
 export const NavigationBlock: React.FC<INavigationBlockProps> = ({
@@ -32,6 +33,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
     isEvents,
     isGastronomy,
     title,
+    isMenu,
 }) => {
     const [headerScrolled, setHeaderScrolled] = useState(false);
 
@@ -106,6 +108,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
                         isBanquets={isBanquets}
                         isGastronomy={isGastronomy}
                         isEvents={isEvents}
+                        isMenu={isMenu}
                     />
                 ) : null}
             </div>

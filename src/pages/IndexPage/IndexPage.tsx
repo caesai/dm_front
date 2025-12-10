@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import moment from 'moment';
 // API's
-import { APIGetCurrentBookings } from '@/api/restaurants.api';
+import { APIGetCurrentBookings, APIPostCheckNewRestaurantVisitStatus } from '@/api/restaurants.api';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.api.ts';
 // Types
@@ -65,18 +65,30 @@ export const IndexPage: React.FC = () => {
     const navigate = useNavigate();
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
-
+    const [newRestaurantVisitStatus, setNewRestaurantVisitStatus] = useState(false);
     const want_first = getDataFromLocalStorage('want_first');
 
-    // Получаем статус первого запуска приложения и если это первый запуск, то добавляем мок ресторана в Санкт-Петербург
-    // Проверяем нажал ли пользователь на кнопку "Хочу быть первым"
-    let wantFirstParsed: any = {};
-
-    try {
-        wantFirstParsed = JSON.parse(String(want_first));
-    } catch (e) {
-        wantFirstParsed = {};
-    }
+    // Проверяем, нажимал ли пользователь на кнопку "Хочу быть первым"
+    useEffect(() => {
+        if (auth?.access_token && user?.telegram_id) {
+            APIPostCheckNewRestaurantVisitStatus(auth.access_token, user?.telegram_id)
+                .then((response) => {
+                    setNewRestaurantVisitStatus(response.data.found);
+                    // Если пользователь нажимал на кнопку "Хочу быть первым" раньше, надо удалить из localStorage
+                    try {
+                        const wantFirstParsed = JSON.parse(String(want_first));
+                        if (wantFirstParsed.done) {
+                            localStorage.removeItem('want_first');
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+    }, [auth?.access_token, user?.telegram_id]);
 
     /**
      * Эффект для инициализации данных страницы.
@@ -173,9 +185,9 @@ export const IndexPage: React.FC = () => {
             result.unshift(movableValue);
         }
         const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
-
+        // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
         const restaurantsListWithMock =
-            currentCityA === 'spb' && !wantFirstParsed?.done
+            currentCityA === 'spb' && !newRestaurantVisitStatus
                 ? [mockNewSelfEdgeChinoisRestaurant, ...filteredRestaurantsByCity]
                 : filteredRestaurantsByCity;
 

@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
 // API's
 import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.api.ts';
 // Types
@@ -36,8 +38,8 @@ import { GastronomyBlock } from '@/pages/RestaurantPage/blocks/GastronomyBlock.t
 // Utils
 import { formatDate } from '@/utils.ts';
 // Styles
-import 'swiper/css/bundle';
-import 'swiper/css/zoom';
+import 'swiper/css';
+import 'swiper/css/pagination';
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 // Mocks
 import gastroBtn from '/img/gastro_btn1.png';
@@ -179,6 +181,7 @@ export const RestaurantPage: React.FC = () => {
                 isLoading={events == null && restaurant?.banquets == null}
                 isGastronomy={hasGastronomy}
                 isEvents={hasEvents}
+                isMenu={restaurant && restaurant?.menu.length > 0 ? true : false}
             />
 
             <div className={css.floatingFooter}>
@@ -244,10 +247,13 @@ export const RestaurantPage: React.FC = () => {
                     isGastronomy={hasGastronomy}
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
+                    isMenu={restaurant && restaurant?.menu.length > 0 ? true : false}
                 />
 
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
-                <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
+                {restaurant && restaurant?.menu.length > 0 && (
+                    <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
+                )}
 
                 {restaurant && hasBanquets && (
                     <BanquetsBlock
@@ -278,12 +284,35 @@ export const RestaurantPage: React.FC = () => {
                     avg_cheque={String(restaurant?.avg_cheque)}
                     workTime={restaurant?.worktime}
                 />
-
-                <ChefBlock
-                    about={String(restaurant?.brand_chef.about)}
-                    photo_url={String(restaurant?.brand_chef.photo_url)}
-                    chef_name={String(restaurant?.brand_chef.name)}
-                />
+                {restaurant && restaurant?.brand_chefs.length > 0 ? (
+                    <Swiper
+                        pagination={{
+                            type: 'bullets',
+                            clickable: true,
+                        }}
+                        observer={true}
+                        modules={[Pagination]}
+                        slidesPerView={'auto'}
+                        className={css.swiper}
+                    >
+                        {restaurant &&
+                            restaurant?.brand_chefs.map((chef) => (
+                                <SwiperSlide key={chef.name}>
+                                    <ChefBlock
+                                        about={String(chef.about)}
+                                        photo_url={String(chef.photo_url)}
+                                        chef_name={String(chef.name)}
+                                    />
+                                </SwiperSlide>
+                            ))}
+                    </Swiper>
+                ) : (
+                    <ChefBlock
+                        about={String(restaurant?.brand_chef.about)}
+                        photo_url={String(restaurant?.brand_chef.photo_url)}
+                        chef_name={String(restaurant?.brand_chef.name)}
+                    />
+                )}
 
                 <AddressBlock
                     longitude={coordinates.longitude}

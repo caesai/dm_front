@@ -55,6 +55,11 @@ const mockRestaurant: IRestaurant = {
         description: '',
         image: '',
     },
+    brand_chefs: [{
+        name: '',
+        photo_url: '',
+        about: '',
+    }]
 };
 
 const mockProps = {
