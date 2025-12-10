@@ -65,7 +65,7 @@ export const IndexPage: React.FC = () => {
     const navigate = useNavigate();
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
-    const [newRestaurantVisitStatus, setNewRestaurantVisitStatus] = useState(false);
+    const [hasClickedWantToBeFirst, setHasClickedWantToBeFirst] = useState(false);
     const want_first = getDataFromLocalStorage('want_first');
 
     // Проверяем, нажимал ли пользователь на кнопку "Хочу быть первым"
@@ -73,7 +73,7 @@ export const IndexPage: React.FC = () => {
         if (auth?.access_token && user?.telegram_id) {
             APIPostCheckNewRestaurantVisitStatus(auth.access_token, user?.telegram_id)
                 .then((response) => {
-                    setNewRestaurantVisitStatus(response.data.found);
+                    setHasClickedWantToBeFirst(response.data.found);
                     // Если пользователь нажимал на кнопку "Хочу быть первым" раньше, надо удалить из localStorage
                     try {
                         const wantFirstParsed = JSON.parse(String(want_first));
@@ -187,7 +187,7 @@ export const IndexPage: React.FC = () => {
         const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
         // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
         const restaurantsListWithMock =
-            currentCityA === 'spb' && !newRestaurantVisitStatus
+            currentCityA === 'spb' && !hasClickedWantToBeFirst
                 ? [mockNewSelfEdgeChinoisRestaurant, ...filteredRestaurantsByCity]
                 : filteredRestaurantsByCity;
 

@@ -165,7 +165,7 @@ export const RestaurantPage: React.FC = () => {
         () => allGastronomyDishesList.some((dish) => dish.restaurant_id === Number(id)),
         [allGastronomyDishesList, id]
     );
-    console.log('restaurant', restaurant, coordinates);
+
     return (
         <Page back={true}>
             <CallRestaurantPopup
@@ -181,7 +181,7 @@ export const RestaurantPage: React.FC = () => {
                 isLoading={events == null && restaurant?.banquets == null}
                 isGastronomy={hasGastronomy}
                 isEvents={hasEvents}
-                isMenu={restaurant && restaurant?.menu.length > 0 ? true : false}
+                isMenu={Boolean(restaurant?.menu.length)}
             />
 
             <div className={css.floatingFooter}>
@@ -247,7 +247,7 @@ export const RestaurantPage: React.FC = () => {
                     isGastronomy={hasGastronomy}
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
-                    isMenu={restaurant && restaurant?.menu.length > 0 ? true : false}
+                    isMenu={Boolean(restaurant?.menu.length)}
                 />
 
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
