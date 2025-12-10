@@ -32,14 +32,24 @@ import {
 // Styles
 import 'swiper/css/bundle';
 import 'swiper/css/free-mode';
-import css from './RestrauntPreview.module.css';
+import css from '@/components/RestaurantPreview/RestrauntPreview.module.css';
+// Mocks
+import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
 
 interface IRestaurantPreviewProps {
     restaurant: IRestaurant;
     clickable?: boolean;
 }
 
-const RESTRICTED_RESTAURANT_IDS: number[] = [4, 6, 7, 9, 10, 11, 12];
+const RESTAURANT_IDS_WITH_POPUP: string[] = [
+    R.SELF_EDGE_SPB_RADISHEVA_ID,
+    R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID,
+    R.SELF_EDGE_EKAT_GOGOLYA,
+    R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
+    R.SELF_EDGE_MSC_BIG_GRUZINSKAYA_ID,
+    R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID,
+    mockNewSelfEdgeChinoisRestaurant.id.toString(), // Self Edge Chinois для заглушки на главной странице
+];
 
 export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restaurant, clickable }) => {
     const [user] = useAtom(userAtom);
@@ -54,7 +64,7 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
 
     const wantToBeFirst = () => {
         if (!auth?.access_token) {
-            navigate('/onboarding/5');
+            navigate('/onboarding/3');
             return;
         }
 
@@ -78,11 +88,13 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
             to={`/restaurant/${restaurant.id}`}
             onClick={(event) => {
                 event.preventDefault();
-                if (!RESTRICTED_RESTAURANT_IDS.includes(restaurant.id) && clickable) {
+                if (!RESTAURANT_IDS_WITH_POPUP.includes(String(restaurant.id)) && clickable) {
+                    // Если это не ресторан с popup, то открываем страницу ресторана
                     navigate(`/restaurant/${restaurant.id}`);
-                } else if (restaurant.id === 12) {
-                    // nothing
+                } else if (restaurant.id === mockNewSelfEdgeChinoisRestaurant.id) {
+                    // Если это заглушка ресторана Self Edge Chinois, то ничего не делаем
                 } else {
+                    // Если это ресторан с popup, то открываем popup
                     toggle();
                 }
             }}
@@ -139,8 +151,12 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                     }}
                 />
             )}
+            {/* Если это заглушка ресторана Self Edge Chinois, то не отображаем затемнение */}
             <div
-                className={classNames(css.bgImage, restaurant.id === 12 ? css.bgNoImaged : css.imaged)}
+                className={classNames(
+                    css.bgImage,
+                    restaurant.id === mockNewSelfEdgeChinoisRestaurant.id ? css.bgNoImaged : css.imaged
+                )}
                 style={{
                     backgroundImage: `url(${restaurant.thumbnail_photo})`,
                 }}
@@ -179,7 +195,8 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                             backgroundImage: `url(${restaurant.brand_chef.photo_url})`,
                         }}
                     ></div>
-                    {restaurant.id !== 12 && (
+                    {/* Если это не заглушка ресторана Self Edge Chinois, то отображаем бренд-шефа */}
+                    {restaurant.id !== mockNewSelfEdgeChinoisRestaurant.id && (
                         <div className={css.chefInfo}>
                             <span className={css.chefTitle}>Бренд-шеф</span>
                             <span className={css.chefName}>{restaurant.brand_chef.name}</span>
@@ -193,7 +210,8 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                     <span className={css.resSlogan}>{restaurant.slogan}</span>
                     <span className={css.resSlogan}>{restaurant.address}</span>
                 </div>
-                {restaurant.id !== 12 ? (
+                {/* Если это не заглушка ресторана Self Edge Chinois, то отображаем теги */}
+                {restaurant.id !== mockNewSelfEdgeChinoisRestaurant.id ? (
                     <div className={css.tags}>
                         <InfoTag
                             text={getRestaurantStatus(
@@ -205,6 +223,7 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                         <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`} />
                     </div>
                 ) : (
+                    // Если это заглушка ресторана Self Edge Chinois, то отображаем кнопку "Хочу побывать первым"
                     <div style={{ display: 'flex' }}>
                         {want_first ? (
                             <div className={css.success_animation}>
