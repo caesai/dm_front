@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
 // API's
 import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.api.ts';
 // Types
@@ -38,8 +36,6 @@ import { GastronomyBlock } from '@/pages/RestaurantPage/blocks/GastronomyBlock.t
 // Utils
 import { formatDate } from '@/utils.ts';
 // Styles
-import 'swiper/css';
-import 'swiper/css/pagination';
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 // Mocks
 import gastroBtn from '/img/gastro_btn1.png';
