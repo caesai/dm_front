@@ -53,7 +53,7 @@ export const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_nam
                     />
                     <div className={css.chefInfoList}>
                         {chef_names?.map((name) => (
-                            <div className={css.chefInfo}>
+                            <div className={css.chefInfo} key={name}>
                                 <span className={css.title}>{name}</span>
                                 <span className={css.subTitle}>Бренд-шеф</span>
                             </div>

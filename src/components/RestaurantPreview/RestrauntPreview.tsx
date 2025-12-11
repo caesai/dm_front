@@ -206,7 +206,7 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({
                                 Бренд-шеф{restaurant.brand_chef.names.length > 1 ? 'ы' : ''}
                             </span>
                             {restaurant.brand_chef.names.map((name) => (
-                                <span className={css.chefName}>{name}</span>
+                                <span className={css.chefName} key={name}>{name}</span>
                             ))}
                         </div>
                     )}
