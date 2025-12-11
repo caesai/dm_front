@@ -41,6 +41,8 @@ import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 import gastroBtn from '/img/gastro_btn1.png';
 import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
+import { R } from '@/__mocks__/restaurant.mock';
+import moment from 'moment';
 
 export const RestaurantPage: React.FC = () => {
     const navigate = useNavigate();
@@ -131,17 +133,25 @@ export const RestaurantPage: React.FC = () => {
     useEffect(() => {
         if (!auth?.access_token) return;
 
-        APIGetAvailableDays(auth.access_token, Number(id), 1).then((res) => {
-            const formattedDates = res.data.map((date) => ({
-                title: formatDate(date),
-                value: date,
-            }));
-            setBookingDates(formattedDates);
+        APIGetAvailableDays(auth.access_token, Number(id), 1)
+            .then((res) => {
+                let formattedDates = res.data.map((date) => ({
+                    title: formatDate(date),
+                    value: date,
+                }));
+                if (restaurant?.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
+                    // Если ресторан Self Edge Chinois, то выбираем даты с 21.12.2025
+                    formattedDates = formattedDates.filter((date) => moment(date.value).isAfter('2025-12-21') || moment(date.value).isSame('2025-12-21', 'day'));
+                }
+                setBookingDates(formattedDates);
 
-            if (formattedDates.length > 0) {
-                setBookingDate(formattedDates[0]);
-            }
-        });
+                if (formattedDates.length > 0) {
+                    setBookingDate(formattedDates[0]);
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     }, [auth?.access_token, id]);
 
     // Загрузка доступных таймслотов для выбранной даты

@@ -1,14 +1,18 @@
-import { IWorkTime } from '@/types/restaurant.types.ts';
 import React, { useState } from 'react';
+import classNames from 'classnames';
+import { UnmountClosed } from 'react-collapse';
+// Types
+import { IWorkTime } from '@/types/restaurant.types.ts';
+// Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
-import classNames from 'classnames';
-import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatus } from '@/utils.ts';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
-import { UnmountClosed } from 'react-collapse';
+// Utils
+import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatus } from '@/utils.ts';
+// Styles
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface AboutBlockProps {
     about_text: string;
@@ -36,7 +40,7 @@ export const AboutBlock: React.FC<AboutBlockProps> = ({
     const toggleAbout = () => setIsAboutCollapsed((prev) => !prev);
     const toggleWorkHours = () => setIsWorkHoursCollapsed((prev) => !prev);
 
-    const getKitchenInfo = () => [about_kitchen, about_dishes].filter(Boolean).join(', ').replace(/\\n/g, '\n');
+    const getKitchenInfo = () => [about_kitchen, about_dishes].filter(Boolean).join(', ');
 
     const renderWorkHours = () => {
         if (!workTime?.length) return null;
