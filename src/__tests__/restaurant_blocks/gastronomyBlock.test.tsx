@@ -39,9 +39,10 @@ const mockRestaurant: IRestaurant = {
     },
     gallery: [],
     brand_chef: {
-        name: '',
+        names: [],
         photo_url: '',
-        about: ''
+        about: '',
+        avatars: [],
     },
     worktime: [],
     menu: [],
@@ -54,12 +55,7 @@ const mockRestaurant: IRestaurant = {
         additional_options: [],
         description: '',
         image: '',
-    },
-    brand_chefs: [{
-        name: '',
-        photo_url: '',
-        about: '',
-    }]
+    },  
 };
 
 const mockProps = {

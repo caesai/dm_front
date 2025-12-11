@@ -25,9 +25,10 @@ export const mockNewSelfEdgeChinoisRestaurant: IRestaurant = {
     },
     'gallery': [],
     'brand_chef': {
-        'name': '',
+        'names': [],
         'photo_url': '',
         'about': '',
+        'avatars': [],
     },
     'worktime': [],
     'menu': [],
@@ -41,11 +42,6 @@ export const mockNewSelfEdgeChinoisRestaurant: IRestaurant = {
         description: '',
         image: '',
     },
-    brand_chefs: [{
-        name: '',
-        photo_url: '',
-        about: '',
-    }]
 }
 
 // Restaurant IDs

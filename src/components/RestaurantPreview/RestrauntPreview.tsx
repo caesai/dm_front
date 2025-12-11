@@ -22,13 +22,7 @@ import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 import useToastState from '@/hooks/useToastState.ts';
 // Utils
-import {
-    getCurrentTimeShort,
-    getCurrentWeekdayShort,
-    getDataFromLocalStorage,
-    getRestaurantStatus,
-    setDataToLocalStorage,
-} from '@/utils.ts';
+import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatus } from '@/utils.ts';
 // Styles
 import 'swiper/css/bundle';
 import 'swiper/css/free-mode';
@@ -51,16 +45,22 @@ const RESTAURANT_IDS_WITH_POPUP: string[] = [
     mockNewSelfEdgeChinoisRestaurant.id.toString(), // Self Edge Chinois для заглушки на главной странице
 ];
 
-export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restaurant, clickable }) => {
-    const [user] = useAtom(userAtom);
+export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({
+    restaurant,
+    clickable,
+}) => {
     const navigate = useNavigate();
-    const { isShowing, toggle } = useModal();
-    const [changeRes, setChangeRes] = useState(false);
-    const [restaurants] = useAtom(restaurantsListAtom);
-    const [selectedCity, setSelectedCity] = useState<number | null>(null);
+    // Atoms
+    const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
+    const [restaurants] = useAtom(restaurantsListAtom);
+    // States
+    const [changeRes, setChangeRes] = useState(false);
+    const [selectedCity, setSelectedCity] = useState<number | null>(null);
+    const [hasClickedWantToBeFirst, setHasClickedWantToBeFirst] = useState(false);
+    // Hooks
     const { showToast } = useToastState();
-    const want_first = getDataFromLocalStorage('want_first');
+    const { isShowing, toggle } = useModal();
 
     const wantToBeFirst = () => {
         if (!auth?.access_token) {
@@ -73,7 +73,7 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
         APIPostNewRestaurant(auth?.access_token)
             .then(() => {
                 showToast('Спасибо. Мы сообщим вам, когда ресторан откроется');
-                setDataToLocalStorage('want_first', { done: true });
+                setHasClickedWantToBeFirst(true);
             })
             .catch((err) => {
                 if (err.response) {
@@ -189,17 +189,25 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                 </div>
 
                 <div className={css.imagedBottom}>
-                    <div
-                        className={classNames(css.chefPhoto, css.bgImage)}
-                        style={{
-                            backgroundImage: `url(${restaurant.brand_chef.photo_url})`,
-                        }}
-                    ></div>
+                    {restaurant.brand_chef?.avatars?.map((avatar) => (
+                        <div
+                            key={avatar}
+                            className={classNames(css.chefPhoto, css.bgImage)}
+                            style={{
+                                backgroundImage: `url(${avatar})`,
+                            }}
+                        ></div>
+                    ))}
+
                     {/* Если это не заглушка ресторана Self Edge Chinois, то отображаем бренд-шефа */}
                     {restaurant.id !== mockNewSelfEdgeChinoisRestaurant.id && (
                         <div className={css.chefInfo}>
-                            <span className={css.chefTitle}>Бренд-шеф</span>
-                            <span className={css.chefName}>{restaurant.brand_chef.name}</span>
+                            <span className={css.chefTitle}>
+                                Бренд-шеф{restaurant.brand_chef.names.length > 1 ? 'ы' : ''}
+                            </span>
+                            {restaurant.brand_chef.names.map((name) => (
+                                <span className={css.chefName} key={name}>{name}</span>
+                            ))}
                         </div>
                     )}
                 </div>
@@ -225,7 +233,7 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                 ) : (
                     // Если это заглушка ресторана Self Edge Chinois, то отображаем кнопку "Хочу побывать первым"
                     <div style={{ display: 'flex' }}>
-                        {want_first ? (
+                        {hasClickedWantToBeFirst ? (
                             <div className={css.success_animation}>
                                 <svg className={css.checkmark} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                                     <circle className={css.checkmark__circle} cx="26" cy="26" r="25" fill="none" />

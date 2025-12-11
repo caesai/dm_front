@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
 // API's
 import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.api.ts';
 // Types
@@ -38,8 +36,6 @@ import { GastronomyBlock } from '@/pages/RestaurantPage/blocks/GastronomyBlock.t
 // Utils
 import { formatDate } from '@/utils.ts';
 // Styles
-import 'swiper/css';
-import 'swiper/css/pagination';
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 // Mocks
 import gastroBtn from '/img/gastro_btn1.png';
@@ -49,13 +45,14 @@ import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
 export const RestaurantPage: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
+    // Atoms
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
     const [currentSelectedTime, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
     const [allGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
-
+    // States
     const [restaurant, setRestaurant] = useState<IRestaurant>();
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
@@ -156,7 +153,7 @@ export const RestaurantPage: React.FC = () => {
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotLoading(false));
     }, [auth?.access_token, bookingDate, id]);
-
+    // Вычисляемые значения
     const filteredEvents = useMemo(() => getFilteredEvents(), [events]);
     const coordinates = useMemo(() => getRestaurantCoordinates(), [restaurant?.address_lonlng]);
     const hasBanquets = restaurant?.banquets && restaurant?.banquets.banquet_options.length > 0;
@@ -284,35 +281,12 @@ export const RestaurantPage: React.FC = () => {
                     avg_cheque={String(restaurant?.avg_cheque)}
                     workTime={restaurant?.worktime}
                 />
-                {restaurant && restaurant?.brand_chefs.length > 0 ? (
-                    <Swiper
-                        pagination={{
-                            type: 'bullets',
-                            clickable: true,
-                        }}
-                        observer={true}
-                        modules={[Pagination]}
-                        slidesPerView={'auto'}
-                        className={css.swiper}
-                    >
-                        {restaurant &&
-                            restaurant?.brand_chefs.map((chef) => (
-                                <SwiperSlide key={chef.name}>
-                                    <ChefBlock
-                                        about={String(chef.about)}
-                                        photo_url={String(chef.photo_url)}
-                                        chef_name={String(chef.name)}
-                                    />
-                                </SwiperSlide>
-                            ))}
-                    </Swiper>
-                ) : (
-                    <ChefBlock
-                        about={String(restaurant?.brand_chef.about)}
-                        photo_url={String(restaurant?.brand_chef.photo_url)}
-                        chef_name={String(restaurant?.brand_chef.name)}
-                    />
-                )}
+
+                <ChefBlock
+                    about={String(restaurant?.brand_chef.about)}
+                    photo_url={String(restaurant?.brand_chef.photo_url)}
+                    chef_names={restaurant?.brand_chef.names || []}
+                />
 
                 <AddressBlock
                     longitude={coordinates.longitude}
