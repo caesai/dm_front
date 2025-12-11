@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
+import moment from 'moment';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 // API's
 import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.api.ts';
@@ -42,7 +43,6 @@ import gastroBtn from '/img/gastro_btn1.png';
 import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
 import { R } from '@/__mocks__/restaurant.mock';
-import moment from 'moment';
 
 export const RestaurantPage: React.FC = () => {
     const navigate = useNavigate();
