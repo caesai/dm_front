@@ -162,7 +162,7 @@ describe('GastronomyBasketPage', () => {
         if (deliveryOption) fireEvent.click(deliveryOption);
 
         await waitFor(() => {
-            expect(screen.getByText(/Заказ от 5000₽/)).toBeInTheDocument();
+            expect(screen.getByText(/Минимальная сумма заказа 5000₽/)).toBeInTheDocument();
         });
 
         expect(screen.getByText('К оплате')).toBeDisabled();
@@ -185,7 +185,7 @@ describe('GastronomyBasketPage', () => {
         if (deliveryOption) fireEvent.click(deliveryOption);
 
         await waitFor(() => {
-            expect(screen.getByText(/Заказ от 10000₽/)).toBeInTheDocument();
+            expect(screen.getByText(/Минимальная сумма заказа 10000₽/)).toBeInTheDocument();
         });
     });
 
