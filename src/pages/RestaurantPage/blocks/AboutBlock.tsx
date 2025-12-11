@@ -23,20 +23,20 @@ interface AboutBlockProps {
  * Компонент блока информации о ресторане
  */
 export const AboutBlock: React.FC<AboutBlockProps> = ({
-                                                          about_text,
-                                                          workTime,
-                                                          about_dishes,
-                                                          about_kitchen,
-                                                          about_features,
-                                                          avg_cheque,
-                                                      }) => {
+    about_text,
+    workTime,
+    about_dishes,
+    about_kitchen,
+    about_features,
+    avg_cheque,
+}) => {
     const [isAboutCollapsed, setIsAboutCollapsed] = useState(true);
     const [isWorkHoursCollapsed, setIsWorkHoursCollapsed] = useState(true);
 
-    const toggleAbout = () => setIsAboutCollapsed(prev => !prev);
-    const toggleWorkHours = () => setIsWorkHoursCollapsed(prev => !prev);
+    const toggleAbout = () => setIsAboutCollapsed((prev) => !prev);
+    const toggleWorkHours = () => setIsWorkHoursCollapsed((prev) => !prev);
 
-    const getKitchenInfo = () => [about_kitchen, about_dishes].filter(Boolean).join(', ');
+    const getKitchenInfo = () => [about_kitchen, about_dishes].filter(Boolean).join(', ').replace(/\\n/g, '\n');
 
     const renderWorkHours = () => {
         if (!workTime?.length) return null;
@@ -67,14 +67,7 @@ export const AboutBlock: React.FC<AboutBlockProps> = ({
                     <HeaderContent id="about" title="О месте" />
                 </HeaderContainer>
                 <div className={css.aboutContainer}>
-                    <span
-                        className={classNames(
-                            css.aboutText,
-                            isAboutCollapsed && css.trimLines
-                        )}
-                    >
-                        {about_text}
-                    </span>
+                    <span className={classNames(css.aboutText, isAboutCollapsed && css.trimLines)} dangerouslySetInnerHTML={{ __html: about_text.replace(/\\n/g, '\n') }}></span>
                     <div
                         className={css.trimLinesButton}
                         onClick={toggleAbout}
@@ -82,9 +75,7 @@ export const AboutBlock: React.FC<AboutBlockProps> = ({
                         tabIndex={0}
                         onKeyDown={(e) => e.key === 'Enter' && toggleAbout()}
                     >
-                        <span className={css.text}>
-                            {isAboutCollapsed ? 'Читать больше' : 'Скрыть'}
-                        </span>
+                        <span className={css.text}>{isAboutCollapsed ? 'Читать больше' : 'Скрыть'}</span>
                     </div>
                 </div>
             </ContentBlock>
@@ -93,9 +84,7 @@ export const AboutBlock: React.FC<AboutBlockProps> = ({
             <ContentBlock>
                 <div className={css.infoBlock}>
                     <div className={css.top}>
-                        <span className={css.title}>
-                            {getRestaurantStatusText()}
-                        </span>
+                        <span className={css.title}>{getRestaurantStatusText()}</span>
                         <div
                             className={css.right}
                             onClick={toggleWorkHours}
@@ -104,13 +93,7 @@ export const AboutBlock: React.FC<AboutBlockProps> = ({
                             onKeyDown={(e) => e.key === 'Enter' && toggleWorkHours()}
                         >
                             <span className={css.expandButton}>График</span>
-                            <div
-                                className={classNames(
-                                    css.right,
-                                    css.opened,
-                                    { [css.closed]: isWorkHoursCollapsed }
-                                )}
-                            >
+                            <div className={classNames(css.right, css.opened, { [css.closed]: isWorkHoursCollapsed })}>
                                 <DownArrow size={20} color="var(--grey)" />
                             </div>
                         </div>

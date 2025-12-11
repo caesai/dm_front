@@ -33,7 +33,7 @@ export const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_nam
 
                 {/* Блок с текстом о шефе */}
                 <div className={css.aboutContainer}>
-                    <span className={classNames(css.aboutText, isChefAboutCollapsed && css.trimLines)}>{about}</span>
+                    <span className={classNames(css.aboutText, isChefAboutCollapsed && css.trimLines)} dangerouslySetInnerHTML={{ __html: about.replace(/\\n/g, '\n') }}></span>
                     <div
                         className={css.trimLinesButton}
                         onClick={toggleChefInfo}
