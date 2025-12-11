@@ -335,6 +335,7 @@
     font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 14px;
+    white-space: pre-line;
 }
 
 .trimLines {
@@ -342,6 +343,7 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 4;
+    line-clamp: 4;
     -webkit-box-orient: vertical;
 }
 
