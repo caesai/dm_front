@@ -300,6 +300,12 @@
     gap: 16px;
 }
 
+.chefInfoList {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+}
+
 .chefInfo {
     display: flex;
     flex-direction: column;

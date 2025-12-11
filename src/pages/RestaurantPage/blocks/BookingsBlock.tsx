@@ -65,10 +65,10 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
      * @returns {moment.Moment | null} Время закрытия или null если данные недоступны
      */
     const getWorkEndTime = (): moment.Moment | null => {
-        if (!workTime) return null;
+        if (workTime === undefined) return null;
 
-        const restaurantWorkEndTime = workTime.find(
-            (item) => String(item.weekday) === String(bookingDate.title).slice(-2)
+        const restaurantWorkEndTime = workTime?.find(
+            (item) => String(item.weekday).toLowerCase() === String(bookingDate.title).toLowerCase().slice(-2)
         )?.time_end;
 
         if (!restaurantWorkEndTime) return null;
@@ -89,7 +89,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
         setCurrentSelectedTime(ts);
         setGuestCount({ title: '1 гость', value: '1' });
     };
-
+    
     /**
      * Форматирует отображение времени для таймслота
      * @param {ITimeSlot} ts - Таймслот для форматирования
@@ -104,7 +104,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
         const endTime = workEndTime && moment(ts.end_datetime).isBefore(workEndTime)
             ? getTimeShort(ts.end_datetime)
             : workTime?.find(item => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
-
+        console.log('endTime: ', endTime, ts.end_datetime, workEndTime);
         return `${getTimeShort(ts.start_datetime)} - ${endTime}`;
     };
 

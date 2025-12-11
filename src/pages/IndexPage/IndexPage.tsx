@@ -49,7 +49,7 @@ export const IndexPage: React.FC = () => {
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))
     );
-    const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
+    // const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
 
     const [currentCityS, setCurrentCityS] = useState<IConfirmationType>(
         cityListConfirm.find((v) => v.id == currentCityA) ?? {
@@ -57,7 +57,7 @@ export const IndexPage: React.FC = () => {
             text: 'Москва',
         }
     );
-    const [restaurants] = useAtom(restaurantsListAtom);
+    const [restaurants, setRestaurantsList] = useAtom(restaurantsListAtom);
     const [auth] = useAtom(authAtom);
 
     const [currentBookings, setCurrentBookings] = useState<IBookingInfo[]>([]);
@@ -279,8 +279,8 @@ export const IndexPage: React.FC = () => {
                 <OptionsNavigation cityId={cityId} />
 
                 <div className={css.restaurants}>
-                    {restaurantsList.map((rest) => (
-                        <RestaurantPreview restaurant={rest} key={`rest-${rest.id}`} clickable />
+                    {restaurants.map((rest) => (
+                        <RestaurantPreview restaurant={rest} key={`rest-${rest.id}`} clickable hasClickedWantToBeFirst={hasClickedWantToBeFirst}/>
                     ))}
                 </div>
             </div>

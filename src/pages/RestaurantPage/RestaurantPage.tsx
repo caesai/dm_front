@@ -284,35 +284,12 @@ export const RestaurantPage: React.FC = () => {
                     avg_cheque={String(restaurant?.avg_cheque)}
                     workTime={restaurant?.worktime}
                 />
-                {restaurant && restaurant?.brand_chefs.length > 0 ? (
-                    <Swiper
-                        pagination={{
-                            type: 'bullets',
-                            clickable: true,
-                        }}
-                        observer={true}
-                        modules={[Pagination]}
-                        slidesPerView={'auto'}
-                        className={css.swiper}
-                    >
-                        {restaurant &&
-                            restaurant?.brand_chefs.map((chef) => (
-                                <SwiperSlide key={chef.name}>
-                                    <ChefBlock
-                                        about={String(chef.about)}
-                                        photo_url={String(chef.photo_url)}
-                                        chef_name={String(chef.name)}
-                                    />
-                                </SwiperSlide>
-                            ))}
-                    </Swiper>
-                ) : (
-                    <ChefBlock
-                        about={String(restaurant?.brand_chef.about)}
-                        photo_url={String(restaurant?.brand_chef.photo_url)}
-                        chef_name={String(restaurant?.brand_chef.name)}
-                    />
-                )}
+
+                <ChefBlock
+                    about={String(restaurant?.brand_chef.about)}
+                    photo_url={String(restaurant?.brand_chef.photo_url)}
+                    chef_names={restaurant?.brand_chef.names || []}
+                />
 
                 <AddressBlock
                     longitude={coordinates.longitude}

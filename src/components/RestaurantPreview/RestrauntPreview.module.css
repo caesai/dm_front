@@ -79,6 +79,10 @@
     height: 54px;
     border-radius: 9999px;
     /*background-size: 56px;*/
+
+    &:nth-child(2) {
+        left: -20px;
+    }
 }
 
 .chefInfo {
