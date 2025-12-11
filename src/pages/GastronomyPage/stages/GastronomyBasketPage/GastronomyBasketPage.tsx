@@ -983,7 +983,7 @@ export const GastronomyBasketPage: React.FC = () => {
             {/* Кнопка оплаты */}
             <div className={css.buttonContainer}>
                 {showMinAmountError && (
-                    <p className={css.minAmountError}>Заказ от {minOrderAmount}₽ - без учета доставки</p>
+                    <p className={css.minAmountError}>Минимальная сумма заказа {minOrderAmount}₽ - без учета доставки</p>
                 )}
                 <button
                     className={isFormValid() ? css.primaryButton : css.secondaryButton}
