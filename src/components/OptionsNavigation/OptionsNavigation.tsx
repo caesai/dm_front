@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
+// Components
 import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
 import { PrivelegiesPopup } from '@/components/PrivelegiesPopup/PrivelegiesPopup.tsx';
+// Styles
 import css from '@/components/OptionsNavigation/OptionsNavigation.module.css';
+// Mocks
 import neweventBg from '/img/gastro_btn.png';
 import gastroBtn from '/img/gastro_btn1.png';
 import gastroBtn2 from '/img/gastro_btn2.png';
 import gastroBtn3 from '/img/gastro_btn3.png';
-interface OptionsNavigationProps {
+
+interface IOptionsNavigationProps {
     cityId: number;
 }
 
-export const OptionsNavigation: React.FC<OptionsNavigationProps> = ({ cityId }) => {
+export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ cityId }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (

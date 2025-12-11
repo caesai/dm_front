@@ -3,19 +3,19 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    background-color: #FCC200;
     border-radius: 12px;
     padding: 16px;
     width: 100%;
     height: 200px;
     min-height: 200px;
-    justify-content: space-between;
     align-items: center;
+    background-size: 100% 100%;
 }
 
 .certificateLogo {
-    max-width: 150px;
-    max-height: 25px;
+    max-width: 110px;
+    max-height: 20px;
+    margin-top: 16px;
 
     > img {
         width: 100%;
@@ -26,9 +26,10 @@
 .placeholder {
     font-family: 'Mont', sans-serif;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 0.75rem;
     color: #3B3C40;
     text-align: center;
+    margin-top: 25px;
 }
 
 .bigFont {
@@ -41,13 +42,13 @@
 
 .certificateData {
     display: flex;
-    gap: 20px;
+    justify-content: space-around;
     font-family: 'Mont', sans-serif;
-    justify-content: space-between;
     width: 100%;
+    margin-top: 60px;
 
     span {
-        color: var(--dark-grey);
+        color: var(--primary-background);
         font-size: 11px;
     }
 

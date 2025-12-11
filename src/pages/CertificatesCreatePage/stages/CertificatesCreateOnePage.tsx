@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
-import CertificateImage from '/img/certificate_1.png';
+import CertificateImage from '/img/certificate_new.png';
 import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.tsx';
 
 export const CertificatesCreateOnePage: React.FC = () => {

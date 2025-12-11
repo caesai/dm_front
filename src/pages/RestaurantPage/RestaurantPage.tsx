@@ -2,13 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
 // API's
 import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.api.ts';
 // Types
-import { IPhotoCard, IRestaurant } from '@/types/restaurant.types.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
 import { IEventInRestaurant } from '@/types/events.ts';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { GalleryCollection, GalleryPhoto } from '@/pages/RestaurantPage/RestaurantPage.types.ts';
 // Atoms
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
@@ -21,6 +22,8 @@ import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/Restaura
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
+// Page Blocks
 import { BookingBlock } from '@/pages/RestaurantPage/blocks/BookingsBlock.tsx';
 import { GalleryBlock } from '@/pages/RestaurantPage/blocks/GalleryBlock.tsx';
 import { MenuBlock } from '@/pages/RestaurantPage/blocks/MenuBlock.tsx';
@@ -32,38 +35,16 @@ import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock.tsx';
 import { AddressBlock } from '@/pages/RestaurantPage/blocks/AddressBlock.tsx';
 import { NavigationBlock } from '@/pages/RestaurantPage/blocks/NavigationBlock.tsx';
 import { GastronomyBlock } from '@/pages/RestaurantPage/blocks/GastronomyBlock.tsx';
-import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
 // Utils
 import { formatDate } from '@/utils.ts';
 // Styles
-import 'swiper/css/bundle';
-import 'swiper/css/zoom';
+import 'swiper/css';
+import 'swiper/css/pagination';
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 // Mocks
 import gastroBtn from '/img/gastro_btn1.png';
 import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
-
-/**
- * Преобразует массив фотографий в структурированную галерею с группировкой по категориям
- * @param {IPhotoCard[]} gallery - Массив фотографий ресторана
- * @returns {GalleryCollection[]} Структурированная галерея с категориями
- */
-export const transformGallery = (gallery: IPhotoCard[]): GalleryCollection[] => {
-    const groupedByCategory: Record<string, GalleryPhoto[]> = {};
-
-    gallery.forEach((photo) => {
-        if (!groupedByCategory[photo.category]) {
-            groupedByCategory[photo.category] = [];
-        }
-        groupedByCategory[photo.category].push({ link: photo.url });
-    });
-
-    return Object.entries(groupedByCategory).map(([title, photos]) => ({
-        title,
-        photos,
-    }));
-};
 
 export const RestaurantPage: React.FC = () => {
     const navigate = useNavigate();
@@ -193,16 +174,15 @@ export const RestaurantPage: React.FC = () => {
                 phone={restaurant?.phone_number || ''}
             />
 
-            {restaurant && events && restaurant?.banquets && filteredEvents !== undefined && (
-                <NavigationBlock
-                    restaurant_id={Number(id)}
-                    title={restaurant?.title}
-                    isBanquets={Boolean(hasBanquets)}
-                    isLoading={events == null && restaurant?.banquets == null}
-                    isGastronomy={hasGastronomy}
-                    isEvents={hasEvents}
-                />
-            )}
+            <NavigationBlock
+                restaurant_id={Number(id)}
+                title={restaurant?.title}
+                isBanquets={Boolean(hasBanquets)}
+                isLoading={events == null && restaurant?.banquets == null}
+                isGastronomy={hasGastronomy}
+                isEvents={hasEvents}
+                isMenu={Boolean(restaurant?.menu.length)}
+            />
 
             <div className={css.floatingFooter}>
                 <BottomButtonWrapper
@@ -217,7 +197,7 @@ export const RestaurantPage: React.FC = () => {
             </div>
 
             <div className={css.pageContainer}>
-                <RestaurantTopPreview rest={restaurant} />
+                {restaurant && <RestaurantTopPreview restaurant={restaurant} />}
 
                 {/* Яндекс Такси виджет */}
                 <div className={css.yaTaxi}>
@@ -249,7 +229,7 @@ export const RestaurantPage: React.FC = () => {
                             className={css.gastronomyBannerButton}
                             textWrapperClassName={css.gastronomyBannerText}
                             link={'/gastronomy/choose'}
-                            locationState={{ restaurant: restaurant }}
+                            locationState={{ restaurant }}
                         />
                     )}
                 </div>
@@ -267,10 +247,13 @@ export const RestaurantPage: React.FC = () => {
                     isGastronomy={hasGastronomy}
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
+                    isMenu={Boolean(restaurant?.menu.length)}
                 />
 
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
-                <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
+                {restaurant && restaurant?.menu.length > 0 && (
+                    <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
+                )}
 
                 {restaurant && hasBanquets && (
                     <BanquetsBlock
@@ -301,12 +284,35 @@ export const RestaurantPage: React.FC = () => {
                     avg_cheque={String(restaurant?.avg_cheque)}
                     workTime={restaurant?.worktime}
                 />
-
-                <ChefBlock
-                    about={String(restaurant?.brand_chef.about)}
-                    photo_url={String(restaurant?.brand_chef.photo_url)}
-                    chef_name={String(restaurant?.brand_chef.name)}
-                />
+                {restaurant && restaurant?.brand_chefs.length > 0 ? (
+                    <Swiper
+                        pagination={{
+                            type: 'bullets',
+                            clickable: true,
+                        }}
+                        observer={true}
+                        modules={[Pagination]}
+                        slidesPerView={'auto'}
+                        className={css.swiper}
+                    >
+                        {restaurant &&
+                            restaurant?.brand_chefs.map((chef) => (
+                                <SwiperSlide key={chef.name}>
+                                    <ChefBlock
+                                        about={String(chef.about)}
+                                        photo_url={String(chef.photo_url)}
+                                        chef_name={String(chef.name)}
+                                    />
+                                </SwiperSlide>
+                            ))}
+                    </Swiper>
+                ) : (
+                    <ChefBlock
+                        about={String(restaurant?.brand_chef.about)}
+                        photo_url={String(restaurant?.brand_chef.photo_url)}
+                        chef_name={String(restaurant?.brand_chef.name)}
+                    />
+                )}
 
                 <AddressBlock
                     longitude={coordinates.longitude}

@@ -49,6 +49,7 @@ export interface IRestaurantShort {
     avg_cheque: number;
     photo_cards: IPhotoCard[];
     brand_chef: IRestaurantChef;
+    brand_chefs: IRestaurantChef[];
     city: ICity;
     banquets: IBanquet;
 }

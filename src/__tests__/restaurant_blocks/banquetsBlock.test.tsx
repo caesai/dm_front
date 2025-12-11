@@ -107,6 +107,11 @@ const mockProps = {
             description: '',
             image: '',
         },
+        brand_chefs: [{
+            name: '',
+            photo_url: '',
+            about: '',
+        }]
     },
     workTime: [
         { weekday: '1', time_start: '10:00', time_end: '22:00' },

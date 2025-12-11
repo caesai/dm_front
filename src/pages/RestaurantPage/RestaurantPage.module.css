@@ -142,8 +142,10 @@
     background-color: var(--secondary-background);
     gap: 4px;
     margin-bottom: 160px;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .pageContainer::-webkit-scrollbar {
@@ -480,4 +482,39 @@
 
 .gastronomyBannerText {
     flex-basis: 70%;
+}
+
+
+.swiper {
+    /* --swiper-navigation-color: #fff !important; */
+    /* --swiper-pagination-color: #fff !important; */
+    --swiper-pagination-bullet-inactive-color: #393535 !important;
+    width: 100%;
+    position: relative;
+
+    .swiper-pagination {
+        bottom: 10px !important;
+        top: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        width: auto !important;
+        margin: auto;
+        display: flex;
+        gap: 4px;
+    }
+
+    .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        background-color: rgba(9, 8, 8, 0.5) !important;
+        opacity: 1;
+    }
+
+    .swiper-pagination-bullet-active {
+        background-color: rgb(7, 7, 7) !important;
+    }
+}
+
+.slide {
+    position: relative;
 }
