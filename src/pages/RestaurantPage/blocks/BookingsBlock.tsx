@@ -104,7 +104,6 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
         const endTime = workEndTime && moment(ts.end_datetime).isBefore(workEndTime)
             ? getTimeShort(ts.end_datetime)
             : workTime?.find(item => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
-        console.log('endTime: ', endTime, ts.end_datetime, workEndTime);
         return `${getTimeShort(ts.start_datetime)} - ${endTime}`;
     };
 

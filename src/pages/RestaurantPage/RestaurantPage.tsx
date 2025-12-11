@@ -45,13 +45,14 @@ import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
 export const RestaurantPage: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
+    // Atoms
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
     const [currentSelectedTime, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
     const [allGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
-
+    // States
     const [restaurant, setRestaurant] = useState<IRestaurant>();
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
@@ -152,7 +153,7 @@ export const RestaurantPage: React.FC = () => {
             .then((res) => setAvailableTimeslots(res.data))
             .finally(() => setTimeslotLoading(false));
     }, [auth?.access_token, bookingDate, id]);
-
+    // Вычисляемые значения
     const filteredEvents = useMemo(() => getFilteredEvents(), [events]);
     const coordinates = useMemo(() => getRestaurantCoordinates(), [restaurant?.address_lonlng]);
     const hasBanquets = restaurant?.banquets && restaurant?.banquets.banquet_options.length > 0;

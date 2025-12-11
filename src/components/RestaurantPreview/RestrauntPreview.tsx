@@ -33,7 +33,6 @@ import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock
 interface IRestaurantPreviewProps {
     restaurant: IRestaurant;
     clickable?: boolean;
-    hasClickedWantToBeFirst?: boolean;
 }
 
 const RESTAURANT_IDS_WITH_POPUP: string[] = [
@@ -49,16 +48,19 @@ const RESTAURANT_IDS_WITH_POPUP: string[] = [
 export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({
     restaurant,
     clickable,
-    hasClickedWantToBeFirst,
 }) => {
-    const [user] = useAtom(userAtom);
     const navigate = useNavigate();
-    const { isShowing, toggle } = useModal();
-    const [changeRes, setChangeRes] = useState(false);
-    const [restaurants] = useAtom(restaurantsListAtom);
-    const [selectedCity, setSelectedCity] = useState<number | null>(null);
+    // Atoms
+    const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
+    const [restaurants] = useAtom(restaurantsListAtom);
+    // States
+    const [changeRes, setChangeRes] = useState(false);
+    const [selectedCity, setSelectedCity] = useState<number | null>(null);
+    const [hasClickedWantToBeFirst, setHasClickedWantToBeFirst] = useState(false);
+    // Hooks
     const { showToast } = useToastState();
+    const { isShowing, toggle } = useModal();
 
     const wantToBeFirst = () => {
         if (!auth?.access_token) {
@@ -71,7 +73,7 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({
         APIPostNewRestaurant(auth?.access_token)
             .then(() => {
                 showToast('Спасибо. Мы сообщим вам, когда ресторан откроется');
-                // setDataToLocalStorage('want_first', { done: true });
+                setHasClickedWantToBeFirst(true);
             })
             .catch((err) => {
                 if (err.response) {
