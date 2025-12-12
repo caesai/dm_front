@@ -203,9 +203,9 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({
                     {restaurant.id !== mockNewSelfEdgeChinoisRestaurant.id && (
                         <div className={css.chefInfo}>
                             <span className={css.chefTitle}>
-                                Бренд-шеф{restaurant.brand_chef.names.length > 1 ? 'ы' : ''}
+                                Бренд-шеф{restaurant?.brand_chef?.names?.length > 1 ? 'ы' : ''}
                             </span>
-                            {restaurant.brand_chef.names.map((name) => (
+                            {restaurant?.brand_chef?.names?.map((name) => (
                                 <span className={css.chefName} key={name}>{name}</span>
                             ))}
                         </div>

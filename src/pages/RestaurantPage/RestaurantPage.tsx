@@ -294,8 +294,8 @@ export const RestaurantPage: React.FC = () => {
 
                 <ChefBlock
                     about={String(restaurant?.brand_chef.about)}
-                    photo_url={String(restaurant?.brand_chef.photo_url)}
-                    chef_names={restaurant?.brand_chef.names || []}
+                    photo_url={String(restaurant?.brand_chef?.photo_url)}
+                    chef_names={restaurant?.brand_chef?.names || []}
                 />
 
                 <AddressBlock
