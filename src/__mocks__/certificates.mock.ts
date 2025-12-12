@@ -1,5 +1,5 @@
 import { ICertificate, ICertificateBlockProps } from '@/types/certificates.types.ts';
-import certificateImage from '/img/certificate_2.png';
+import certificateImage from '/img/certificate_new.png';
 
 export const certificatesListMock: ICertificate[] = [
     {

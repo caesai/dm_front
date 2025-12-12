@@ -6,7 +6,7 @@ import { useAtom } from 'jotai';
 import { ScrollToTop } from '@/navigation/utills.tsx';
 // API's
 import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.api.ts';
-import { APIGetCityList } from '@/api/city.ts';
+import { APIGetCityList } from '@/api/city.api.ts';
 import { APIGetCertificates } from '@/api/certificates.api.ts';
 import { APIGetGastronomyDishes } from '@/api/gastronomy.api.ts';
 // Atoms
@@ -56,7 +56,7 @@ import { PreferencesOne } from '@/pages/PreferencesPage/stages/PreferencesOne.ts
 import { PreferencesTwo } from '@/pages/PreferencesPage/stages/PreferencesTwo.tsx';
 import { PreferencesPage } from '@/pages/PreferencesPage/PreferencesPage.tsx';
 import { StageOne } from '@/pages/OnboardingPage/stages/StageOne.tsx';
-import AllergiesPage from '@/pages/AllergiesPage/AllergiesPage.tsx';
+import { AllergiesPage } from '@/pages/AllergiesPage/AllergiesPage.tsx';
 import { CertificatesCreatePage } from '@/pages/CertificatesCreatePage/CertificatesCreatePage.tsx';
 import { CertificatesCreateOnePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOnePage.tsx';
 import { CertificatesCreateTwoPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateTwoPage.tsx';
@@ -66,7 +66,7 @@ import { CertificatesCreateOfflinePage } from '@/pages/CertificatesCreatePage/st
 import { BookingRestaurantPage } from '@/pages/BookingRestaurantPage/BookingRestaurantPage.tsx';
 import { BookingFreeEventPage } from '@/pages/BookingFreeEventPage/BookingFreeEventPage.tsx';
 import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/CertificatesPaymentPage.tsx';
-import CertificateLandingPage from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
+import { CertificateLandingPage } from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
 import { CertificatesCreateErrorPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateErrorPage.tsx';
 import { GastronomyPage } from '@/pages/GastronomyPage/GastronomyPage.tsx';
 import { GastronomyChooseRestaurantPage } from '@/pages/GastronomyPage/stages/GastronomyChooseRestaurantPage.tsx';
@@ -89,7 +89,7 @@ const AppRouter: React.FC = () => {
     const [loadingComplete, setLoadingComplete] = useState<boolean>();
     const [, setReview] = useAtom(reviewAtom);
 
-    // Auth and preloading
+    // Загрузка городов и ресторанов
     useEffect(() => {
         if (!loadingComplete && auth?.access_token) {
             APIGetCityList().then((res) => setCities(res.data));
@@ -97,6 +97,7 @@ const AppRouter: React.FC = () => {
         }
     }, [loadingComplete]);
 
+    // Загрузка сертификатов
     useEffect(() => {
         if (auth?.access_token) {
             APIGetCertificates(auth?.access_token, Number(user?.id)).then((response) => setCertificates(response.data));
@@ -121,6 +122,8 @@ const AppRouter: React.FC = () => {
             });
     }, [auth?.access_token]);
 
+    // Загрузка статуса отзывов
+    // TODO: Выяснить, нужно ли это
     useEffect(() => {
         if (auth?.access_token)
             APIIsReviewAvailable(auth.access_token).then((res) =>
@@ -131,6 +134,7 @@ const AppRouter: React.FC = () => {
             );
     }, [auth]);
 
+    // Загрузка статуса завершения загрузки
     useEffect(() => {
         if (!cities.length || !restaurants.length) {
             setLoadingComplete(false);
@@ -151,68 +155,116 @@ const AppRouter: React.FC = () => {
             ) : (
                 <Routes>
                     <Route path={'/'} element={<IndexPage />} />
+                    {/* Страница карты ресторанов */}
                     <Route path={'/map'} element={<RestaurantMapPage />} />
+                    {/* Страница профиля */}
                     <Route path={'/profile'} element={<ProfilePage />} />
+                    {/* Страница профиля пользователя */}
                     <Route path={'/me'} element={<UserProfilePage />} />
+                    {/* Страница аллергий */}
                     <Route path={'/me/allergies'} element={<AllergiesPage />} />
+                    {/* Мероприятия */}
                     <Route path={'/events'} element={<EventsPage />}>
+                        {/* Страница списка мероприятий */}
                         <Route path={'/events'} element={<EventListOutlet />} />
+                        {/* Страница подтверждения мероприятия */}
                         <Route path={'/events/:eventId'} element={<EventConfirmationOutlet />} />
+                        {/* Страница бронирования мероприятия */}
                         <Route path={'/events/:eventId/confirm'} element={<EventBookingOutlet />} />
+                        {/* Страница оплаты мероприятия */}
                         <Route path={'/events/payment/:orderId'} element={<EventPaymentPage />} />
+                        {/* Страница информации о супер-мероприятии */}
                         <Route path={'/events/super'} element={<EventSuperInfoOutlet />} />
+                        {/* Страница заявки на супер-мероприятие */}
                         <Route path={'/events/super/apply'} element={<EventSuperApplyOutlet />} />
                     </Route>
+                    {/* Бронирование мероприятия */}
                     <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
+                    {/* Мои билеты */}
                     <Route path={'/tickets'} element={<UserTicketsPage />} />
+                    {/* Информация о билете */}
                     <Route path={'/tickets/:id'} element={<TicketInfoPage />} />
+                    {/* Мои бронирования */}
                     <Route path={'/myBookings'} element={<MyBookingsPage />} />
+                    {/* Информация о бронировании */}
                     <Route path={'/myBookings/:id'} element={<BookingInfoPage />} />
+                    {/* Страница ресторана */}
                     <Route path={'/restaurant/:id'} element={<RestaurantPage />} />
+                    {/* Бронирование ресторана */}
                     <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
+                    {/* Страница нового ресторана */}
                     <Route path={'/newrestaurant'} element={<NewRestaurant />} />
+                    {/* Бронирование столика */}
                     <Route path={'/booking'} element={<BookingPage />} />
+                    {/* Подтверждение бронирования */}
                     <Route path={'/bookingConfirmation'} element={<BookingConfirmationPage />} />
+                    {/* Неподдерживаемая среда */}
                     <Route path={'/unsupported'} element={<EnvUnsupported />} />
+                    {/* Возврат платежа */}
                     <Route path={'/paymentReturn'} element={<PaymentReturnPage />} />
+                    {/* Подтверждение телефона */}
                     <Route path={'/phoneConfirmation'} element={<UserPhoneConfirmationPage />} />
+                    {/* Сканнер */}
                     <Route path={'/scanner'} element={<AdminScannerPage />} />
+                    {/* Онбординг */}
                     <Route path={'/onboarding'} element={<OnboardingPage />}>
                         <Route path={'/onboarding/1'} element={<StageOne />} />
                         <Route path={'/onboarding/2'} element={<StageTwo />} />
                         <Route path={'/onboarding/3'} element={<StageThree />} />
                         <Route path={'/onboarding/4'} element={<StageFour />} />
                     </Route>
+                    {/* Предпочтения */}
                     <Route path={'/preferences'} element={<PreferencesPage />}>
                         <Route path={'/preferences/1'} element={<PreferencesOne />} />
                         <Route path={'/preferences/2'} element={<PreferencesTwo />} />
                         <Route path={'/preferences/3'} element={<PreferencesThree />} />
                     </Route>
-
+                    {/* Банкеты */}
+                    {/* Страница выбора ресторана для банкета */}
                     <Route path={'banquets/:id/address'} element={<BanquetAddressPage />} />
+                    {/* Выбор опций банкета */}
                     <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
+                    {/* Страница опции банкета */}
                     <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />
+                    {/* Страница дополнительных услуг */}
                     <Route path={'banquets/:id/additional-services'} element={<BanquetAdditionalServicesPage />} />
+                    {/* Страница бронирования банкета */}
                     <Route path={'banquets/:id/reservation'} element={<BanquetReservationPage />} />
 
+                    {/* Сертификаты */}
+                    {/* Страница создания сертификата */}
                     <Route path={'/certificates'} element={<CertificatesCreatePage />}>
+                        {/* Страница выбора типа сертификата */}
                         <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
+                        {/* Страница выбора типа сертификата */}
                         <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
+                        {/* Страница онлайн-сертификата */}
                         <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
                         <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
+                        {/* Страница моих сертификатов */}
                         <Route path={'/certificates/my'} element={<CertificatesListPage />} />
+                        {/* Страница оплаты сертификата */}
                         <Route path={'/certificates/payment'} element={<CertificatesPaymentPage />} />
+                        {/* Страница ошибки при создании сертификата */}
                         <Route path={'/certificates/error'} element={<CertificatesCreateErrorPage />} />
                     </Route>
+                    {/* Страница сертификата */}
                     <Route path={'/certificates/landing/:id'} element={<CertificateLandingPage />} />
 
+                    {/* Гастрономия */}
                     <Route path={'/gastronomy'} element={<GastronomyPage />}>
+                        {/* Страница выбора ресторана для гастрономии */}
                         <Route path={'/gastronomy/choose'} element={<GastronomyChooseRestaurantPage />} />
+                        {/* Страница выбора блюд для гастрономии */}
                         <Route path={'/gastronomy/:res_id'} element={<GastronomyChooseDishesPage />} />
+                        {/* Страница деталей блюда */}
                         <Route path={'/gastronomy/:res_id/dish/:dish_id'} element={<GastonomyDishDetailsPage />} />
+                        {/* Страница корзины */}
                         <Route path={'/gastronomy/:res_id/basket'} element={<GastronomyBasketPage />} />
+                        {/* Страница моих заказов */}
                         <Route path={'/gastronomy/my'} element={<GastronomyOrdersListPage />} />
                     </Route>
+                    {/* Страница заказа гастрономии */}
                     <Route path={'/gastronomy/order/:order_id'} element={<GastronomyOrderPage />} />
 
                     <Route path="*" element={<Navigate to="/" />} />

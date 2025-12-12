@@ -36,33 +36,33 @@
     aspect-ratio: 120/85;
     max-height: 270px;
     width: 100%;
-}
 
-:global(.swiper-pagination) {
-    top: 10px !important;
-    bottom: auto !important;
-    right: 10px !important;
-    left: auto !important;
-    width: auto !important;
-    display: flex;
-    gap: 4px;
-}
+    .swiper-pagination {
+        top: 10px !important;
+        bottom: auto !important;
+        right: 10px !important;
+        left: auto !important;
+        width: auto !important;
+        display: flex;
+        gap: 4px;
+    }
 
-:global(.swiper-pagination-bullet) {
-    width: 8px;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.5);
-    opacity: 1;
-}
+    .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 1;
+    }
 
-:global(.swiper-pagination-bullet-active) {
-    background: white;
+    .swiper-pagination-bullet-active {
+        background: white;
+    }
 }
 
 .slide {
     position: relative;
 
-    > img {
+    >img {
         width: 100%;
         height: 100%;
         border-radius: 12px;
@@ -78,7 +78,7 @@
     display: flex;
     gap: 4px;
 
-    > div {
+    >div {
         display: flex;
         gap: 4px;
         width: fit-content;
@@ -87,7 +87,7 @@
         background-color: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(20px);
 
-        > span {
+        >span {
             color: var(--primary-background);
             text-align: center;
             font-family: "Mont", sans-serif;
@@ -164,7 +164,6 @@
         color: var(--red);
     }
 }
-
 
 .banquet_button {
     margin-top: 5px;

@@ -1,7 +1,7 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
-import CertificateLandingPage from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
+import { CertificateLandingPage } from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { showToastAtom } from '@/atoms/toastAtom.ts';

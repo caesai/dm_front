@@ -8,8 +8,8 @@ import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButt
 import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.tsx';
 // Styles
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
-// Mocks
-import CertificateImage from '/img/certificate_1.png';
+import CertificateImage from '/img/certificate_new.png';
+import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.tsx';
 
 export const CertificatesCreateOnePage: React.FC = () => {
     const navigate = useNavigate();
