@@ -155,10 +155,10 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                         </h2>
                         <img src={GastronomyImg} alt={'New Year Gastronomy'} />
                         <ul>
-                            <li>Оформите заказ до 30 декабря.</li>
+                            <li>Оформите заказ до 29 декабря.</li>
                             <li>Оплатите заказ (100% предоплата).</li>
                             <li>
-                                Заберите блюда из ресторана или оформим для вас доставку в период <br /> с 25 по 31
+                                Заберите блюда из ресторана или оформим для вас доставку {currentCityA !== 'moscow' ? 'в период \n с 25 по' : ''} 31
                                 декабря.
                             </li>
                         </ul>

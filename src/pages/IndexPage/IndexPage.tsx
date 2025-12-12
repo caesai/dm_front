@@ -49,7 +49,7 @@ export const IndexPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
     const [cityListA] = useAtom(cityListAtom);
-    const [restaurants, setRestaurantsList] = useAtom(restaurantsListAtom);
+    const [restaurants] = useAtom(restaurantsListAtom);
     // States
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))
@@ -65,6 +65,7 @@ export const IndexPage: React.FC = () => {
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
     const [hasClickedWantToBeFirst, setHasClickedWantToBeFirst] = useState(false);
+    const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
     // Local Storage
     const want_first = getDataFromLocalStorage('want_first');
 
@@ -296,7 +297,7 @@ export const IndexPage: React.FC = () => {
                 <OptionsNavigation cityId={cityId} />
 
                 <div className={css.restaurants}>
-                    {restaurants.map((rest) => (
+                    {restaurantsList.map((rest) => (
                         <RestaurantPreview
                             restaurant={rest}
                             key={`rest-${rest.id}`}

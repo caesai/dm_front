@@ -107,6 +107,7 @@
 
         > li {
             font-size: 0.875rem;
+            white-space: pre-line;
     }
 }
 }
