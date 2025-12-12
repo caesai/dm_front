@@ -2,23 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import classNames from 'classnames';
+// APIs
+import { BASE_BOT } from '@/api/base.ts';
+// Atoms
+import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
+import { userAtom } from '@/atoms/userAtom.ts';
+// Components
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { Share } from '@/components/Icons/Share.tsx';
 import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
-import { BASE_BOT } from '@/api/base.ts';
-import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
-import { userAtom } from '@/atoms/userAtom.ts';
+// Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface INavigationBlockProps {
     restaurant_id: number;
-    title: string;
+    title?: string;
     isLoading: boolean;
     isEvents: boolean;
     isBanquets: boolean;
     isGastronomy: boolean;
+    isMenu: boolean;
 }
 
 export const NavigationBlock: React.FC<INavigationBlockProps> = ({
@@ -28,6 +33,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
     isEvents,
     isGastronomy,
     title,
+    isMenu,
 }) => {
     const [headerScrolled, setHeaderScrolled] = useState(false);
 
@@ -102,6 +108,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
                         isBanquets={isBanquets}
                         isGastronomy={isGastronomy}
                         isEvents={isEvents}
+                        isMenu={isMenu}
                     />
                 ) : null}
             </div>

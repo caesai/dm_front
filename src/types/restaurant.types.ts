@@ -2,9 +2,10 @@ import { ICity } from '@/atoms/cityListAtom.ts';
 import { IBanquet } from '@/types/banquets.types.ts';
 
 export interface IRestaurantChef {
-    name: string;
-    photo_url: string;
+    names: string[];
+    avatars: string[];
     about: string;
+    photo_url: string;
 }
 
 export interface IPhotoCard {

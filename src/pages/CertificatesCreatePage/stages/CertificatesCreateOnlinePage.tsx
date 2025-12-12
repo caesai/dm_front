@@ -54,7 +54,7 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
     }, []);
 
     const isValid = useMemo(() => {
-        return name.trim() !== '' && compliment.trim() !== '' && rating !== '';
+        return name.trim() !== '' && rating !== '****';
     }, [name, compliment, rating]);
 
     const handleNextClick = () => {

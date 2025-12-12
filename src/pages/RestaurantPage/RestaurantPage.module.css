@@ -142,8 +142,10 @@
     background-color: var(--secondary-background);
     gap: 4px;
     margin-bottom: 160px;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .pageContainer::-webkit-scrollbar {
@@ -298,6 +300,12 @@
     gap: 16px;
 }
 
+.chefInfoList {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+}
+
 .chefInfo {
     display: flex;
     flex-direction: column;
@@ -327,6 +335,7 @@
     font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 14px;
+    white-space: pre-line;
 }
 
 .trimLines {
@@ -334,6 +343,7 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 4;
+    line-clamp: 4;
     -webkit-box-orient: vertical;
 }
 

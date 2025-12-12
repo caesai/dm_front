@@ -2,7 +2,7 @@ import { IRestaurant } from "@/types/restaurant.types";
 import newSelfEdgeChinoisThumbnail from '/img/chinois_app.png';
 
 export const mockNewSelfEdgeChinoisRestaurant: IRestaurant = {
-    'id': 12,
+    'id': 99,
     'title': 'Self Edge Chinois',
     'slogan': 'Современная Азия с акцентом на Китай и культовый raw bar',
     'address': 'Санкт-Петербург, ул. Добролюбова, 11',
@@ -25,9 +25,10 @@ export const mockNewSelfEdgeChinoisRestaurant: IRestaurant = {
     },
     'gallery': [],
     'brand_chef': {
-        'name': '',
+        'names': [],
         'photo_url': '',
         'about': '',
+        'avatars': [],
     },
     'worktime': [],
     'menu': [],
@@ -40,7 +41,7 @@ export const mockNewSelfEdgeChinoisRestaurant: IRestaurant = {
         additional_options: [],
         description: '',
         image: '',
-    }
+    },
 }
 
 // Restaurant IDs
@@ -55,4 +56,5 @@ export const R = {
   SMOKE_BBQ_MSC_TRUBNAYA_ID: '9',
   SELF_EDGE_MSC_BIG_GRUZINSKAYA_ID: '10',
   SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID: '11',
+  SELF_EDGE_SPB_CHINOIS_ID: '13',
 }

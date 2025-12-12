@@ -1,17 +1,31 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+// Components
+import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useLocation, useNavigate } from 'react-router-dom';
-import css from '@/pages/AllergiesPage/AllergiesPage.module.css';
-import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
-import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { TextInput } from '@/components/TextInput/TextInput.tsx';
+// Utils
 import { findOtherAllergies } from '@/utils.ts';
+// Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
+// Styles
+import css from '@/pages/AllergiesPage/AllergiesPage.module.css';
+// Mocks
+import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
 
-const AllergiesPage: React.FC = () => {
+/**
+ * Страница выбора аллергенов.
+ *
+ * Позволяет пользователю выбрать аллергены из предопределенного списка
+ * или указать свой вариант в поле "Другое".
+ *
+ * Принимает текущий список аллергенов через `location.state.allergies`.
+ * При сохранении возвращает обновленный список аллергенов на страницу профиля (`/me`).
+ */
+export const AllergiesPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { goBack } = useNavigationHistory();
@@ -34,80 +48,76 @@ const AllergiesPage: React.FC = () => {
     }, [allergies]);
 
     const onOptionSelect = (option: string) => {
-        // Create a new array based on the previous state.
-        setSelectedAllergies(prevSelectedAllergies => {
-            // Check if the item already exists in the array.
+        // Создаем новый массив на основе предыдущего состояния.
+        setSelectedAllergies((prevSelectedAllergies) => {
+            // Проверяем, если элемент уже существует в массиве.
             if (prevSelectedAllergies.includes(option)) {
-                // If it exists, filter it out (remove it).
-                return prevSelectedAllergies.filter(item => item !== option);
+                // Если он существует, фильтруем его (удаляем).
+                return prevSelectedAllergies.filter((item) => item !== option);
             } else {
-                // If it doesn't exist, add it to the new array using the spread operator.
+                // Если он не существует, добавляем его в новый массив используя spread оператор.
                 return [...prevSelectedAllergies, option];
             }
         });
     };
 
     const toggleOtherOption = () => {
-        setIsOtherOption((prev) => !prev)
-    }
+        setIsOtherOption((prev) => !prev);
+    };
 
     const handleOtherAllergyOptions = (value: string) => {
-        const other = findOtherAllergies(selectedAllergies)
+        const other = findOtherAllergies(selectedAllergies);
         if (allergies && allergies.length > 0 && other.length > 0) {
-            const allergyIndexToUpdate = selectedAllergies.findIndex(item => item === otherAllergyOptions);
+            const allergyIndexToUpdate = selectedAllergies.findIndex((item) => item === otherAllergyOptions);
             if (allergyIndexToUpdate > -1) {
                 const updatedAllergies = [...selectedAllergies];
                 updatedAllergies[allergyIndexToUpdate] = value;
                 setSelectedAllergies(updatedAllergies);
                 setOtherAllergyOptions(value);
             }
-
         } else {
             setOtherAllergyOptions(value);
         }
-    }
+    };
 
     const handleContinue = () => {
         const other = findOtherAllergies(selectedAllergies);
         let updatedAllergies = [...selectedAllergies];
 
         if (otherAllergyOptions === '') {
-            updatedAllergies = updatedAllergies.filter(item => !other.includes(item));
+            updatedAllergies = updatedAllergies.filter((item) => !other.includes(item));
         } else {
             if (other.length === 0) {
                 updatedAllergies = [...selectedAllergies, otherAllergyOptions];
             }
         }
 
-        navigate('/me', { state: {
+        navigate('/me', {
+            state: {
                 allergies: updatedAllergies,
-            }
+            },
         });
-    }
+    };
 
     return (
         <Page back={true}>
             <div className={css.page}>
                 <div className={css.header}>
-                    <RoundedButton
-                        icon={<BackIcon size={24} color={'var(--dark-grey)'} />}
-                        action={goBack}
-                    />
+                    <RoundedButton icon={<BackIcon size={24} color={'var(--dark-grey)'} />} action={goBack} />
                     <span className={css.header_title}>Аллергены</span>
                     <div className={css.header_spacer} />
                 </div>
                 <div className={css.options}>
                     {allergiesOptions.map((item, index) => (
                         <CommentaryOptionButton
-                                newDesign
-                                text={item.content}
-                                icon={item.icon}
-                                active={selectedAllergies.includes(item.content)}
-                                onClick={() => onOptionSelect(item.content)}
-                                key={index}
-                            />
-                        )
-                    )}
+                            newDesign
+                            text={item.content}
+                            icon={item.icon}
+                            active={selectedAllergies.includes(item.content)}
+                            onClick={() => onOptionSelect(item.content)}
+                            key={index}
+                        />
+                    ))}
                     <CommentaryOptionButton
                         newDesign
                         text={'Другое'}
@@ -129,13 +139,19 @@ const AllergiesPage: React.FC = () => {
                     <UniversalButton
                         width={'full'}
                         title={'Сохранить'}
-                        theme={selectedAllergies.length > 0 || otherAllergyOptions.length > 0 || allergies ? 'red' : undefined}
-                        action={selectedAllergies.length > 0 || otherAllergyOptions.length > 0  || allergies  ? handleContinue : undefined}
+                        theme={
+                            selectedAllergies.length > 0 || otherAllergyOptions.length > 0 || allergies
+                                ? 'red'
+                                : undefined
+                        }
+                        action={
+                            selectedAllergies.length > 0 || otherAllergyOptions.length > 0 || allergies
+                                ? handleContinue
+                                : undefined
+                        }
                     />
                 </div>
             </div>
         </Page>
     );
 };
-
-export default AllergiesPage;

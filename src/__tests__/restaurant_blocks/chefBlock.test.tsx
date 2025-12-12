@@ -4,7 +4,7 @@ import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock.tsx';
 const mockProps = {
     about: 'Test chef description text that is quite long and needs to be truncated',
     photo_url: 'chef-photo.jpg',
-    chef_name: 'John Doe'
+    chef_names: ['John Doe']
 };
 
 describe('ChefBlock', () => {

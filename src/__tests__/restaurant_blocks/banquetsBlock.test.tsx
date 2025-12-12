@@ -47,9 +47,10 @@ const mockProps = {
             }
         ],
         brand_chef: {
-            name: "lorem",
+            names: ["lorem"],
             photo_url: "https://storage.yandexcloud.net/dreamteam-storage/212d0f1e30014e6cbbf2513bbc1d387d.jpg",
-            about: "about text"
+            about: "about text",
+            avatars: [],
         },
         city: {
             id: 1,
