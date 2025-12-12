@@ -1,8 +1,7 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useAtom } from 'jotai/index';
 import classnames from 'classnames';
 import moment from 'moment';
-import { useLocation, useNavigate } from 'react-router-dom';
 // Types
 import { CERTIFICATION_TYPES } from '@/types/certificates.types.ts';
 // API
@@ -22,9 +21,6 @@ const MAX_NAME_LENGTH = 15;
 const MAX_COMPLIMENT_LENGTH = 30;
 
 export const CertificatesCreateOnlinePage: React.FC = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const state = location?.state;
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [name, setName] = useState<string>('');
@@ -62,26 +58,13 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
     }, [name, compliment, rating]);
 
     const handleNextClick = () => {
-        if (!user?.complete_onboarding) {
-            navigate('/onboarding/3', {
-                state: {
-                    value: Number(rating.replace(/\s/g, '')),
-                    name,
-                    compliment,
-                    certificate_type: CERTIFICATION_TYPES.ONLINE,
-                    sharedCertificateCreate: true,
-                },
-            });
-            return;
-        }
-
         if (isValid) {
             setLoading(true);
             APIPostCreateWithPayment(
                 String(auth?.access_token),
                 Number(user?.id),
                 CERTIFICATION_TYPES.ONLINE,
-                1, // Number(rating.replace(/\s/g, '')),
+                Number(rating.replace(/\s/g, '')),
                 name,
                 compliment
             )
@@ -94,19 +77,6 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
                 });
         }
     };
-
-    // При возврате с онбординга заполняем поля для быстрого создания сертификата
-    useEffect(() => {
-        if (state?.value) {
-            setRating(state.value.toString());
-        }
-        if (state?.name) {
-            setName(state.name);
-        }
-        if (state?.compliment) {
-            setCompliment(state.compliment);
-        }
-    }, [state?.value, state?.name, state?.compliment]);
 
     if (loading) {
         return (
