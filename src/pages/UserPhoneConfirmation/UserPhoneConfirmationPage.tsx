@@ -54,6 +54,9 @@ export const UserPhoneConfirmationPage = () => {
                 if (state.sharedGastronomy) {
                     navigate(`/gastronomy/${state.id}/basket`, { state });
                 }
+                if (state.sharedCertificateCreate) {
+                    navigate('/certificates/online', { state });
+                }
             } else {
                 navigate('/');
             }

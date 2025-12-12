@@ -1,22 +1,30 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useAtom } from 'jotai/index';
 import classnames from 'classnames';
-import { APIPostCreateWithPayment } from '@/api/certificates.api.ts';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import moment from 'moment';
+import { useLocation, useNavigate } from 'react-router-dom';
+// Types
 import { CERTIFICATION_TYPES } from '@/types/certificates.types.ts';
+// API
+import { APIPostCreateWithPayment } from '@/api/certificates.api.ts';
+// Atoms
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+// Components
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
-import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
-
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
-import moment from 'moment';
+// Styles
+import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 
 const ratings = ['3 000', '5 000', '10 000'];
 const MAX_NAME_LENGTH = 15;
 const MAX_COMPLIMENT_LENGTH = 30;
 
 export const CertificatesCreateOnlinePage: React.FC = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const state = location?.state;
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [name, setName] = useState<string>('');
@@ -54,28 +62,58 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
     }, [name, compliment, rating]);
 
     const handleNextClick = () => {
+        if (!user?.complete_onboarding) {
+            navigate('/onboarding/3', {
+                state: {
+                    value: Number(rating.replace(/\s/g, '')),
+                    name,
+                    compliment,
+                    certificate_type: CERTIFICATION_TYPES.ONLINE,
+                    sharedCertificateCreate: true,
+                },
+            });
+            return;
+        }
+
         if (isValid) {
             setLoading(true);
             APIPostCreateWithPayment(
                 String(auth?.access_token),
                 Number(user?.id),
                 CERTIFICATION_TYPES.ONLINE,
-                Number(rating.replace(/\s/g, '')),
+                1, // Number(rating.replace(/\s/g, '')),
                 name,
-                compliment,
+                compliment
             )
-                .then(response => {
+                .then((response) => {
                     window.location.href = response.data.form_url;
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error);
                     setLoading(false);
                 });
         }
     };
 
+    // При возврате с онбординга заполняем поля для быстрого создания сертификата
+    useEffect(() => {
+        if (state?.value) {
+            setRating(state.value.toString());
+        }
+        if (state?.name) {
+            setName(state.name);
+        }
+        if (state?.compliment) {
+            setCompliment(state.compliment);
+        }
+    }, [state?.value, state?.name, state?.compliment]);
+
     if (loading) {
-        return <div className={css.loader}><Loader /></div>;
+        return (
+            <div className={css.loader}>
+                <Loader />
+            </div>
+        );
     }
 
     return (
@@ -120,10 +158,7 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
 
             <div
                 data-testid="button-container"
-                className={classnames(
-                    css.absoluteBottom,
-                    { [css.relativeBottom]: isInputFocused },
-                )}
+                className={classnames(css.absoluteBottom, { [css.relativeBottom]: isInputFocused })}
             >
                 <div className={css.bottomWrapper}>
                     <UniversalButton
@@ -147,10 +182,7 @@ interface RatingComponentProps {
 const RatingComponent: React.FC<RatingComponentProps> = ({ rating, selectedRating, onClick }) => {
     return (
         <div
-            className={classnames(
-                css.rating,
-                { [css.ratingActive]: selectedRating === rating },
-            )}
+            className={classnames(css.rating, { [css.ratingActive]: selectedRating === rating })}
             onClick={() => onClick(rating)}
         >
             <span>{rating} ₽</span>
