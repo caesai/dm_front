@@ -81,7 +81,7 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
                 String(auth?.access_token),
                 Number(user?.id),
                 CERTIFICATION_TYPES.ONLINE,
-                Number(rating.replace(/\s/g, '')),
+                1, // Number(rating.replace(/\s/g, '')),
                 name,
                 compliment
             )
