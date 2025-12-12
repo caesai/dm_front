@@ -1,20 +1,28 @@
-import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
-import css from './RestaurantsList.module.css';
-import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
+import React, { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { useAtom } from 'jotai/index';
-import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+// Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
+// Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
+import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+// Components
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
+// Mocks
+import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
+// Utils
+import { isUserInTestGroup } from '@/utils';
 import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
+// Styles
+import css from '@/components/RestaurantsList/RestaurantsList.module.css';
 
 interface IRestaurantsListProps {
     titleStyle?: CSSProperties;
 }
 
-export const RestaurantsList: FC<IRestaurantsListProps> = ({ titleStyle }) => {
+export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle }) => {
     const [cityListA] = useAtom(cityListAtom);
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
@@ -47,9 +55,17 @@ export const RestaurantsList: FC<IRestaurantsListProps> = ({ titleStyle }) => {
         if (movableValue !== null) {
             result.unshift(movableValue);
         }
-
-        setRestaurantsList(result.filter((v) => v.city.name_english == currentCityA));
-    }, [currentCityA, cityListA]);
+        result = result.filter((v) => v.city.name_english == currentCityA);
+        if (currentCityA === 'spb') {
+            if (isUserInTestGroup) {
+                result = result.filter((v) => v.id !== mockNewSelfEdgeChinoisRestaurant.id);
+            } else {
+                result = result.filter((v) => v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID));
+            }
+        }
+        // Фильтруем дублирующийся мок ресторан
+        setRestaurantsList(result);
+    }, [currentCityA, cityListA, isUserInTestGroup]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);

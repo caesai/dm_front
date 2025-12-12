@@ -117,7 +117,7 @@
 }
 
 .certificateImage {
-    max-height: 185px;
+    /* max-height: 185px; */
 
     > img {
         width: 100%;
@@ -132,6 +132,7 @@
     font-weight: 300;
     padding: 0;
     margin-left: 20px;
+    margin-top: 0;
 
     > li::marker {
         font-size: 0.8rem;

@@ -26,7 +26,7 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 // Utils
-import { getDataFromLocalStorage } from '@/utils.ts';
+import { getDataFromLocalStorage, isUserInTestGroup } from '@/utils.ts';
 // Mocks
 import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
 // Styles
@@ -201,11 +201,15 @@ export const IndexPage: React.FC = () => {
                 restaurantsList = [mockNewSelfEdgeChinoisRestaurant, ...filterDoubledMockRestaurant];
             } else {
                 // Если пользователь нажимал на кнопку "Хочу быть первым", то добавляем только фильтрованный список ресторанов
-                restaurantsList = filterDoubledMockRestaurant;
+                if (isUserInTestGroup) {
+                    restaurantsList = filterDoubledMockRestaurant;
+                } else {
+                    restaurantsList = filterDoubledMockRestaurant.filter((v) => v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID));
+                }
             }
         }
         setRestaurantsList(restaurantsList);
-    }, [currentCityA, cityListA, hasClickedWantToBeFirst]);
+    }, [currentCityA, cityListA, hasClickedWantToBeFirst, isUserInTestGroup]);
 
     // Устнавливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
     useEffect(() => {

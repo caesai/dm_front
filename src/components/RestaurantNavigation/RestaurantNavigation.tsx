@@ -24,7 +24,7 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({
     isGastronomy,
     isMenu,
 }) => {
-    const [hash, setHash] = useState<string | null>(null);
+    const [hash, setHash] = useState<string>('booking');
     const [swiperInstance, setSwiperInstance] = useState<SwiperCore | null>(null);
     const hashes = ['booking', 'gallery', 'menu', 'banquet', 'events', 'certificates', 'ny_cooking', 'about', 'chef'];
 
@@ -39,7 +39,7 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({
         const handleScroll = () => {
             const elements = hashes.map((id) => document.getElementById(id));
             elements.forEach((element) => {
-                if (element && element.offsetTop - window.scrollY < window.innerHeight / 2) {
+                if (element && window.scrollY !== 0 && element.offsetTop - window.scrollY < window.innerHeight / 2) {
                     setHash(element.id);
                 }
             });
