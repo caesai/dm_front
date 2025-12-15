@@ -199,7 +199,7 @@ export const IndexPage: React.FC = () => {
                         return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
                     } else {
                         // Если в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID показываем
-                        return true;
+                        return v.id !== Number(mockNewSelfEdgeChinoisRestaurant.id);
                     }
                 } else {
                     // Если не Санкт-Петербург то показываем все рестораны

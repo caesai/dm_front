@@ -45,7 +45,8 @@ import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/ut
 import css from './BookingPage.module.css';
 // Mocks
 import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
-
+import { R } from '@/__mocks__/restaurant.mock';
+import moment from 'moment';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -110,14 +111,35 @@ export const BookingPage: React.FC = () => {
 
     useEffect(() => {
         auth?.access_token && restaurant.value !== 'unset'
-            ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1).then((res) =>
-                  setAvailableDates(
-                      res.data.map((v) => ({
-                          title: formatDate(v),
-                          value: v,
-                      }))
+            ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1)
+                  .then((res) =>
+                      setAvailableDates(
+                          res.data
+                              .map((v: string) => ({
+                                  title: formatDate(v),
+                                  value: v,
+                              }))
+                              .filter((v: PickerValueObj) => {
+                                  // TODO: Убрать после 21.12.2025
+                                  if (restaurant.value === R.SELF_EDGE_SPB_CHINOIS_ID) {
+                                      if (
+                                          moment(v.value).isAfter('2025-12-21') ||
+                                          moment(v.value).isSame('2025-12-21', 'day')
+                                      ) {
+                                          return true;
+                                      } else {
+                                          return false;
+                                      }
+                                  } else {
+                                      return true;
+                                  }
+                              })
+                      )
                   )
-              )
+                  .catch((err) => {
+                      console.error('err: ', err);
+                      // setErrorPopup(true); // TODO: Добавить ошибку в UI
+                  })
             : null;
     }, [guestCount, restaurant]);
 
@@ -182,6 +204,10 @@ export const BookingPage: React.FC = () => {
         setTimeslotsLoading(true);
         APIGetAvailableTimeSlots(auth.access_token, parseInt(String(restaurant.value)), date.value, guestCount)
             .then((res) => setAvailableTimeslots(res.data))
+            .catch((err) => {
+                console.error('err: ', err);
+                // setErrorPopup(true); // TODO: Добавить ошибку в UI
+            })
             .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount, restaurant]);
 
@@ -198,9 +224,12 @@ export const BookingPage: React.FC = () => {
             )
                 .then(() => {
                     // Обновляем список сертификатов в приложении
-                    APIGetCertificates(auth?.access_token, Number(user?.id)).then((response) =>
-                        setCertificates(response.data)
-                    );
+                    APIGetCertificates(auth?.access_token, Number(user?.id))
+                        .then((response) => setCertificates(response.data))
+                        .catch((err) => {
+                            console.error('err: ', err);
+                            // setErrorPopup(true); // TODO: Добавить ошибку в UI
+                        });
                 })
                 .catch((err) => {
                     console.log(err);
