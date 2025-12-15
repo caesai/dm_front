@@ -336,6 +336,7 @@ export const BookingPage: React.FC = () => {
                         selectedCertificateId={state?.certificateId}
                     />
                     <BookingWish
+                        restaurantId={Number(restaurant.value)}
                         guestCount={guestCount}
                         childrenCount={childrenCount}
                         preOrder={preOrder}

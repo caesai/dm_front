@@ -274,6 +274,7 @@ export const BookingFreeEventPage: React.FC = () => {
                         selectedCertificateId={null}
                     />
                     <BookingWish
+                        restaurantId={Number(id)}
                         guestCount={guestCount}
                         childrenCount={childrenCount}
                         preOrder={preOrder}
