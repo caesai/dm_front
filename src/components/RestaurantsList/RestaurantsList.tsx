@@ -46,9 +46,9 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (e.id !== 11) {
+            if (e.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 result.push(e);
-            } else if (e.id === 11) {
+            } else if (e.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 movableValue = e;
             }
         });
@@ -65,11 +65,11 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
                     return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
                 } else {
                     // Если в гест листе то мок ресторан не показываем
-                    return v.id !== mockNewSelfEdgeChinoisRestaurant.id;
+                    return true;
                 }
             } else {
                 // Если не Санкт-Петербург то мок ресторан не показываем
-                return v.id !== mockNewSelfEdgeChinoisRestaurant.id;
+                return true;
             }
         });
         setRestaurantsList(filterDoubledMockRestaurant);
