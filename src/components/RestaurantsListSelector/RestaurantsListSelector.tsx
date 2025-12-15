@@ -16,7 +16,6 @@ import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx'
 import { R } from '@/__mocks__/restaurant.mock';
 // Styles
 import css from '@/components/RestaurantsListSelector/RestaurantsListSelector.module.css';
-import { isUserInTestGroup } from '@/utils';
 
 type SetAtom<Args extends unknown[], Result> = <A extends Args>(...args: A) => Result;
 
@@ -79,15 +78,15 @@ export const RestaurantsListSelector: React.FC<IRestaurantsListSelectorProps> = 
         return filteredRestaurants
             ? filteredRestaurants
             : allRestaurants.filter((v) => {
-                  if (!isUserInGuestList && !isUserInTestGroup) {
-                      // Если не в гест листе и не в тестовой группе то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
+                  if (!isUserInGuestList) {
+                      // Если не в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
                       return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
                   } else {
-                      // Если в гест листе или в тестовой группе то показываем все рестораны
+                      // Если в гест листе то показываем все рестораны
                       return true;
                   }
               });
-    }, [filteredRestaurants, allRestaurants, isUserInGuestList, isUserInTestGroup]);
+    }, [filteredRestaurants, allRestaurants, isUserInGuestList]);
 
     // Memoize the mapping process to create the Picker-compatible list
     const restaurantList: PickerValueObj[] = useMemo(

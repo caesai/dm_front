@@ -26,9 +26,9 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 // Utils
-import { getDataFromLocalStorage, isUserInTestGroup } from '@/utils.ts';
+import { getDataFromLocalStorage } from '@/utils.ts';
 // Mocks
-import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock';
 // Styles
 import css from './IndexPage.module.css';
 // Images
@@ -190,16 +190,16 @@ export const IndexPage: React.FC = () => {
             result.unshift(movableValue);
         }
         const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
-        const filterDoubledMockRestaurant = [mockNewSelfEdgeChinoisRestaurant, ...filteredRestaurantsByCity].filter(
+        const filterDoubledMockRestaurant = filteredRestaurantsByCity.filter(
             (v) => {
                 // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
                 if (currentCityA === 'spb') {
-                    if (!isUserInGuestList && !isUserInTestGroup) {
+                    if (!isUserInGuestList) {
                         // Если не нажимал на кнопку то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
                         return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
                     } else {
                         // Если в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID показываем
-                        return v.id !== Number(mockNewSelfEdgeChinoisRestaurant.id);
+                        return true;
                     }
                 } else {
                     // Если не Санкт-Петербург то показываем все рестораны
@@ -208,7 +208,7 @@ export const IndexPage: React.FC = () => {
             }
         );
         setRestaurantsList(filterDoubledMockRestaurant);
-    }, [currentCityA, cityListA, isUserInGuestList, isUserInTestGroup]);
+    }, [currentCityA, cityListA, isUserInGuestList]);
 
     // Устнавливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
     useEffect(() => {

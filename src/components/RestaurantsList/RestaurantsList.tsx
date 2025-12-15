@@ -15,7 +15,6 @@ import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPrevi
 import { R } from '@/__mocks__/restaurant.mock.ts';
 // Utils
 import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
-import { isUserInTestGroup } from '@/utils.ts';
 // Styles
 import css from '@/components/RestaurantsList/RestaurantsList.module.css';
 
@@ -61,11 +60,11 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
         const filterDoubledMockRestaurant = result.filter((v) => {
             // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
             if (currentCityA === 'spb') {
-                if (!isUserInGuestList && !isUserInTestGroup) {
-                    // Если не в гест листе и не в тестовой группе то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
+                if (!isUserInGuestList) {
+                    // Если не в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
                     return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
                 } else {
-                    // Если в гест листе или в тестовой группе то ресторан SELF_EDGE_SPB_CHINOIS_ID показываем
+                    // Если в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID показываем
                     return true;
                 }
             } else {
@@ -74,7 +73,7 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
             }
         });
         setRestaurantsList(filterDoubledMockRestaurant);
-    }, [currentCityA, cityListA, isUserInGuestList, isUserInTestGroup]);
+    }, [currentCityA, cityListA, isUserInGuestList]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
