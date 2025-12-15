@@ -6,18 +6,18 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { isUserInGuestListAtom } from '@/atoms/userAtom.ts';
 // Components
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
 // Mocks
-import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock.ts';
 // Utils
 import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
+import { isUserInTestGroup } from '@/utils.ts';
 // Styles
 import css from '@/components/RestaurantsList/RestaurantsList.module.css';
-import { isUserInGuestListAtom } from '@/atoms/userAtom';
-import { isUserInTestGroup } from '@/utils';
 
 interface IRestaurantsListProps {
     titleStyle?: CSSProperties;
@@ -58,7 +58,7 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
             result.unshift(movableValue);
         }
         result = result.filter((v) => v.city.name_english == currentCityA);
-        const filterDoubledMockRestaurant = [mockNewSelfEdgeChinoisRestaurant, ...result].filter((v) => {
+        const filterDoubledMockRestaurant = result.filter((v) => {
             // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
             if (currentCityA === 'spb') {
                 if (!isUserInGuestList && !isUserInTestGroup) {

@@ -9,7 +9,7 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatusTyped } from '@/utils.ts';
 // Styles
 import css from '@/components/RestaurantTopPreview/RestaurantTopPreview.module.css';
-import { R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock.ts';
 
 interface IRestaurantTopPreviewProps {
     restaurant?: IRestaurant;

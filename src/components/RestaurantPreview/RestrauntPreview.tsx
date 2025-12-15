@@ -28,7 +28,7 @@ import 'swiper/css/bundle';
 import 'swiper/css/free-mode';
 import css from '@/components/RestaurantPreview/RestrauntPreview.module.css';
 // Mocks
-import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
+import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock.ts';
 
 interface IRestaurantPreviewProps {
     restaurant: IRestaurant;
@@ -234,7 +234,7 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                             // TODO: Убрать условие после 21.12.2025
                             text={
                                 restaurant.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)
-                                    ? 'Открытие 21.12'
+                                    ? 'Откроется 21.12'
                                     : getRestaurantStatus(
                                           restaurant.worktime,
                                           getCurrentWeekdayShort(),

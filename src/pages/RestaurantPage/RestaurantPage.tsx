@@ -42,7 +42,7 @@ import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 import gastroBtn from '/img/gastro_btn1.png';
 import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
-import { R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock.ts';
 
 export const RestaurantPage: React.FC = () => {
     const navigate = useNavigate();
