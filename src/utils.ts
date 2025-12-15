@@ -412,6 +412,18 @@ interface RestaurantStatus {
     interval: string;
 }
 
+/**
+ * Возвращает типизированный статус работы ресторана.
+ *
+ * Определяет, открыт ли ресторан в данный момент, и возвращает время следующего
+ * изменения статуса (время закрытия, если открыт, или время открытия, если закрыт).
+ * Учитывает переходы времени работы через полночь.
+ *
+ * @param worktime - Массив объектов с расписанием работы (день недели, время начала и конца).
+ * @param currentWeekday - Текущий день недели (например, 'mon', 'tue' и т.д.).
+ * @param currentTimeStr - Текущее время в формате 'HH:mm'.
+ * @returns Объект { status, interval }, где interval — время до которого открыт или во сколько откроется.
+ */
 export const getRestaurantStatusTyped = (
     worktime: IWorkTime[],
     currentWeekday: string,
@@ -597,7 +609,6 @@ export const setShortCookie = (name: string, value: string, seconds: number, pat
     const expires = date.toUTCString();
     document.cookie = `${name}=${value}; expires=${expires}; path=${path}`;
 };
-
 export const findOtherAllergies = (allergies: string[]) => {
     // Создаем Set для быстрого поиска по названиям аллергенов
     const validAllergies = new Set(allergiesOptions.map(option => option.content));

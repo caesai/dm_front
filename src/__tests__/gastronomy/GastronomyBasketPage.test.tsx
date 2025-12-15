@@ -98,26 +98,12 @@ describe('GastronomyBasketPage', () => {
         );
     };
 
-    const originalLocation = window.location;
-
-    beforeAll(() => {
-        delete (window as any).location;
-        (window as any).location = { href: '', assign: jest.fn() };
-    });
-
-    afterAll(() => {
-        (window as any).location = originalLocation;
-    });
-
     beforeEach(() => {
         jest.clearAllMocks();
         (APIPostUserOrder as jest.Mock).mockResolvedValue({ data: { order_id: 123 } });
         (APIPostCreateGastronomyPayment as jest.Mock).mockResolvedValue({
             data: { payment_url: 'http://payment.url' },
         });
-
-        // Перезагружаем страницу
-        (window.location as any).href = '';
 
         // Мокируем успешный геокодинг по умолчанию
         mockFetch.mockResolvedValue({
@@ -227,6 +213,11 @@ describe('GastronomyBasketPage', () => {
         fireEvent.click(suggestion);
 
         expect(addressInput).toHaveValue('Test Address');
+
+        // Ждем завершения геокодинга, чтобы избежать предупреждения "update inside a test was not wrapped in act"
+        await waitFor(() => {
+            expect(mockFetch).toHaveBeenCalledTimes(2);
+        });
     });
 
     it('должен успешно создавать заказ при корректных данных', async () => {

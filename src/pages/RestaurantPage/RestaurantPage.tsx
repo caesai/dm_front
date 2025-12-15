@@ -139,7 +139,8 @@ export const RestaurantPage: React.FC = () => {
                     title: formatDate(date),
                     value: date,
                 }));
-                if (restaurant?.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
+                // TODO: Убрать после 21.12.2025
+                if (id === R.SELF_EDGE_SPB_CHINOIS_ID) {
                     // Если ресторан Self Edge Chinois, то выбираем даты с 21.12.2025
                     formattedDates = formattedDates.filter((date) => moment(date.value).isAfter('2025-12-21') || moment(date.value).isSame('2025-12-21', 'day'));
                 }

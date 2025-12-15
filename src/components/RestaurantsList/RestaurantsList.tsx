@@ -56,15 +56,23 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
             result.unshift(movableValue);
         }
         result = result.filter((v) => v.city.name_english == currentCityA);
-        if (currentCityA === 'spb') {
-            if (isUserInTestGroup) {
-                result = result.filter((v) => v.id !== mockNewSelfEdgeChinoisRestaurant.id);
+        const filterDoubledMockRestaurant = [mockNewSelfEdgeChinoisRestaurant, ...result].filter((v) => {
+            // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
+            if (currentCityA === 'spb') {
+                console.log('isUserInTestGroup', isUserInTestGroup);
+                if (!isUserInTestGroup) {
+                    // Если не в тестовой группе то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
+                    return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
+                } else {
+                    // Если в тестовой группе то мок ресторан не показываем
+                    return v.id !== mockNewSelfEdgeChinoisRestaurant.id;
+                }
             } else {
-                result = result.filter((v) => v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID));
+                // Если не Санкт-Петербург то мок ресторан не показываем
+                return v.id !== mockNewSelfEdgeChinoisRestaurant.id;
             }
-        }
-        // Фильтруем дублирующийся мок ресторан
-        setRestaurantsList(result);
+        });
+        setRestaurantsList(filterDoubledMockRestaurant);
     }, [currentCityA, cityListA, isUserInTestGroup]);
 
     const updateCurrentCity = (city: IConfirmationType) => {

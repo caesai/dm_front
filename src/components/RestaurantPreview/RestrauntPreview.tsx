@@ -222,7 +222,8 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({
                 {restaurant.id !== mockNewSelfEdgeChinoisRestaurant.id ? (
                     <div className={css.tags}>
                         <InfoTag
-                            text={getRestaurantStatus(
+                            // TODO: Убрать условие после 21.12.2025
+                            text={restaurant.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID) ? 'Открытие 21.12' : getRestaurantStatus(
                                 restaurant.worktime,
                                 getCurrentWeekdayShort(),
                                 getCurrentTimeShort()
