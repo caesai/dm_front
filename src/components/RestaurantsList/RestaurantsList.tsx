@@ -13,10 +13,10 @@ import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPrevi
 // Mocks
 import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
 // Utils
-import { isUserInTestGroup } from '@/utils';
 import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
 // Styles
 import css from '@/components/RestaurantsList/RestaurantsList.module.css';
+import { isUserInGuestListAtom } from '@/atoms/userAtom';
 
 interface IRestaurantsListProps {
     titleStyle?: CSSProperties;
@@ -27,6 +27,7 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
+    const [isUserInGuestList] = useAtom(isUserInGuestListAtom);
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))
     );
@@ -59,12 +60,11 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
         const filterDoubledMockRestaurant = [mockNewSelfEdgeChinoisRestaurant, ...result].filter((v) => {
             // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
             if (currentCityA === 'spb') {
-                console.log('isUserInTestGroup', isUserInTestGroup);
-                if (!isUserInTestGroup) {
-                    // Если не в тестовой группе то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
+                if (!isUserInGuestList) {
+                    // Если не в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
                     return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
                 } else {
-                    // Если в тестовой группе то мок ресторан не показываем
+                    // Если в гест листе то мок ресторан не показываем
                     return v.id !== mockNewSelfEdgeChinoisRestaurant.id;
                 }
             } else {
@@ -73,7 +73,7 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
             }
         });
         setRestaurantsList(filterDoubledMockRestaurant);
-    }, [currentCityA, cityListA, isUserInTestGroup]);
+    }, [currentCityA, cityListA, isUserInGuestList]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
