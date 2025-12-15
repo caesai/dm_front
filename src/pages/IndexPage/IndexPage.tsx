@@ -26,7 +26,7 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 // Utils
-import { getDataFromLocalStorage } from '@/utils.ts';
+import { getDataFromLocalStorage, isUserInTestGroup } from '@/utils.ts';
 // Mocks
 import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
 // Styles
@@ -194,21 +194,21 @@ export const IndexPage: React.FC = () => {
             (v) => {
                 // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
                 if (currentCityA === 'spb') {
-                    if (!isUserInGuestList) {
+                    if (!isUserInGuestList && !isUserInTestGroup) {
                         // Если не нажимал на кнопку то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
                         return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
                     } else {
-                        // Если в гест листе то мок ресторан не показываем
-                        return v.id !== mockNewSelfEdgeChinoisRestaurant.id;
+                        // Если в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID показываем
+                        return true;
                     }
                 } else {
-                    // Если не Санкт-Петербург то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
+                    // Если не Санкт-Петербург то показываем все рестораны
                     return true;
                 }
             }
         );
         setRestaurantsList(filterDoubledMockRestaurant);
-    }, [currentCityA, cityListA, isUserInGuestList]);
+    }, [currentCityA, cityListA, isUserInGuestList, isUserInTestGroup]);
 
     // Устнавливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
     useEffect(() => {
