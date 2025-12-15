@@ -6,12 +6,12 @@ import { FreeMode } from 'swiper/modules';
 import { SwiperSlide } from 'swiper/react';
 import classNames from 'classnames';
 // API's
-import { APIPostNewRestaurant } from '@/api/restaurants.api.ts';
+import { APIPostCheckNewRestaurantVisitStatus, APIPostNewRestaurant } from '@/api/restaurants.api.ts';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
 // Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { authAtom, isUserInGuestListAtom, userAtom } from '@/atoms/userAtom.ts';
 // Components
 import { RestaurantBadge } from '@/components/RestaurantPreview/RestaurantBadge/RestaurantBadge.tsx';
 import { RestaurantBadgePhoto } from '@/components/RestaurantPreview/RestaurantBadgePhoto/RestaurantBadgePhoto.tsx';
@@ -45,15 +45,13 @@ const RESTAURANT_IDS_WITH_POPUP: string[] = [
     mockNewSelfEdgeChinoisRestaurant.id.toString(), // Self Edge Chinois для заглушки на главной странице
 ];
 
-export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({
-    restaurant,
-    clickable,
-}) => {
+export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restaurant, clickable }) => {
     const navigate = useNavigate();
     // Atoms
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
+    const [, setIsUserInGuestList] = useAtom(isUserInGuestListAtom);
     // States
     const [changeRes, setChangeRes] = useState(false);
     const [selectedCity, setSelectedCity] = useState<number | null>(null);
@@ -70,10 +68,19 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({
 
         if (!clickable) return;
 
+        if (!user?.telegram_id) return;
+
         APIPostNewRestaurant(auth?.access_token)
             .then(() => {
                 showToast('Спасибо. Мы сообщим вам, когда ресторан откроется');
                 setHasClickedWantToBeFirst(true);
+                APIPostCheckNewRestaurantVisitStatus(auth.access_token, user?.telegram_id)
+                    .then((response) => {
+                        setIsUserInGuestList(response.data.found);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
             })
             .catch((err) => {
                 if (err.response) {
@@ -206,7 +213,9 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({
                                 Бренд-шеф{restaurant?.brand_chef?.names?.length > 1 ? 'ы' : ''}
                             </span>
                             {restaurant?.brand_chef?.names?.map((name) => (
-                                <span className={css.chefName} key={name}>{name}</span>
+                                <span className={css.chefName} key={name}>
+                                    {name}
+                                </span>
                             ))}
                         </div>
                     )}
@@ -223,11 +232,15 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({
                     <div className={css.tags}>
                         <InfoTag
                             // TODO: Убрать условие после 21.12.2025
-                            text={restaurant.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID) ? 'Открытие 21.12' : getRestaurantStatus(
-                                restaurant.worktime,
-                                getCurrentWeekdayShort(),
-                                getCurrentTimeShort()
-                            )}
+                            text={
+                                restaurant.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)
+                                    ? 'Открытие 21.12'
+                                    : getRestaurantStatus(
+                                          restaurant.worktime,
+                                          getCurrentWeekdayShort(),
+                                          getCurrentTimeShort()
+                                      )
+                            }
                         />
                         <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`} />
                     </div>

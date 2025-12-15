@@ -179,9 +179,9 @@ export const IndexPage: React.FC = () => {
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (e.id !== Number(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID)) {
+            if (e.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 result.push(e);
-            } else if (e.id === Number(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID)) {
+            } else if (e.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 movableValue = e;
             }
         });
