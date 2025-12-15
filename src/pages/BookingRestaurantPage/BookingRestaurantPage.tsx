@@ -298,6 +298,7 @@ export const BookingRestaurantPage: React.FC = () => {
                         </ContentContainer>
                     ) : (
                         <TimeSlots
+                            restaurantId={Number(id)}
                             loading={timeslotsLoading}
                             availableTimeslots={availableTimeslots}
                             currentSelectedTime={currentSelectedTime}
