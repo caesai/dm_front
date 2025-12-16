@@ -11,7 +11,7 @@ import { IStoryBlock } from '@/types/stories.types.ts';
 import { IBookingInfo, IRestaurant } from '@/types/restaurant.types.ts';
 // Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { authAtom, isUserInGuestListAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
 // Components
@@ -26,9 +26,9 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 // Utils
-import { getDataFromLocalStorage, isUserInTestGroup } from '@/utils.ts';
+import { getDataFromLocalStorage } from '@/utils.ts';
 // Mocks
-import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock';
 // Styles
 import css from './IndexPage.module.css';
 // Images
@@ -50,6 +50,7 @@ export const IndexPage: React.FC = () => {
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
     const [cityListA] = useAtom(cityListAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
+    const [isUserInGuestList, setIsUserInGuestList] = useAtom(isUserInGuestListAtom);
     // States
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))
@@ -64,7 +65,6 @@ export const IndexPage: React.FC = () => {
     const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
-    const [hasClickedWantToBeFirst, setHasClickedWantToBeFirst] = useState(false);
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
     // Local Storage
     const want_first = getDataFromLocalStorage('want_first');
@@ -74,7 +74,7 @@ export const IndexPage: React.FC = () => {
         if (auth?.access_token && user?.telegram_id) {
             APIPostCheckNewRestaurantVisitStatus(auth.access_token, user?.telegram_id)
                 .then((response) => {
-                    setHasClickedWantToBeFirst(response.data.found);
+                    setIsUserInGuestList(response.data.found);
                     // Если пользователь нажимал на кнопку "Хочу быть первым" раньше, надо удалить из localStorage
                     try {
                         const wantFirstParsed = JSON.parse(String(want_first));
@@ -179,9 +179,9 @@ export const IndexPage: React.FC = () => {
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (e.id !== Number(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID)) {
+            if (e.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 result.push(e);
-            } else if (e.id === Number(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID)) {
+            } else if (e.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 movableValue = e;
             }
         });
@@ -190,27 +190,25 @@ export const IndexPage: React.FC = () => {
             result.unshift(movableValue);
         }
         const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
-        let restaurantsList: IRestaurant[] = filteredRestaurantsByCity;
-        // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
-        if (currentCityA === 'spb') {
-            // Фильтруем дублирующийся мок ресторан
-            const filterDoubledMockRestaurant = filteredRestaurantsByCity.filter(
-                (v) => v.id !== mockNewSelfEdgeChinoisRestaurant.id
-            );
-            // Если пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
-            if (!hasClickedWantToBeFirst) {
-                restaurantsList = [mockNewSelfEdgeChinoisRestaurant, ...filterDoubledMockRestaurant];
-            } else {
-                // Если пользователь нажимал на кнопку "Хочу быть первым", то добавляем только фильтрованный список ресторанов
-                if (isUserInTestGroup) {
-                    restaurantsList = filterDoubledMockRestaurant;
+        const filterDoubledMockRestaurant = filteredRestaurantsByCity.filter(
+            (v) => {
+                // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
+                if (currentCityA === 'spb') {
+                    if (!isUserInGuestList) {
+                        // Если не нажимал на кнопку то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
+                        return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
+                    } else {
+                        // Если в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID показываем
+                        return true;
+                    }
                 } else {
-                    restaurantsList = filterDoubledMockRestaurant.filter((v) => v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID));
+                    // Если не Санкт-Петербург то показываем все рестораны
+                    return true;
                 }
             }
-        }
-        setRestaurantsList(restaurantsList);
-    }, [currentCityA, cityListA, hasClickedWantToBeFirst, isUserInTestGroup]);
+        );
+        setRestaurantsList(filterDoubledMockRestaurant);
+    }, [currentCityA, cityListA, isUserInGuestList]);
 
     // Устнавливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
     useEffect(() => {
@@ -298,11 +296,7 @@ export const IndexPage: React.FC = () => {
 
                 <div className={css.restaurants}>
                     {restaurantsList.map((rest) => (
-                        <RestaurantPreview
-                            restaurant={rest}
-                            key={`rest-${rest.id}`}
-                            clickable
-                        />
+                        <RestaurantPreview restaurant={rest} key={`rest-${rest.id}`} clickable />
                     ))}
                 </div>
             </div>

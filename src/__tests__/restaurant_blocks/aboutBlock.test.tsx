@@ -23,7 +23,6 @@ const mockProps = {
         { weekday: '2', time_start: '10:00', time_end: '22:00' }
     ],
     about_kitchen: 'Kitchen',
-    about_dishes: 'Dishes',
     about_features: 'Features test',
     avg_cheque: '1500'
 };
@@ -40,7 +39,7 @@ describe('AboutBlock', () => {
         render(<AboutBlock {...mockProps} />);
 
         expect(screen.getByText('Кухня:')).toBeInTheDocument();
-        expect(screen.getByText('Kitchen, Dishes')).toBeInTheDocument();
+        expect(screen.getByText('Kitchen')).toBeInTheDocument();
         expect(screen.getByText('Особенности:')).toBeInTheDocument();
         expect(screen.getByText('Features test')).toBeInTheDocument();
         expect(screen.getByText('Средний чек:')).toBeInTheDocument();
@@ -81,7 +80,6 @@ describe('AboutBlock', () => {
         const propsWithEmptyKitchen = {
             ...mockProps,
             about_kitchen: '',
-            about_dishes: ''
         };
 
         render(<AboutBlock {...propsWithEmptyKitchen} />);

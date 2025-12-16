@@ -59,7 +59,6 @@ const mockProps = {
             name_english: "moscow",
         },
         about_text: "text",
-        about_dishes: "Мясо, Рыба и морепродукты",
         about_kitchen: "Американская, Европейская",
         about_features: "Обеды, Бранчи, Веранда",
         address_lonlng: "123123",

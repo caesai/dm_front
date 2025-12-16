@@ -33,8 +33,9 @@ import BookingCertificate from '@/components/BookingCertificate/BookingCertifica
 // Utils
 import { formatDateDayMonthLong, formatDateDayShort, formatDateMonthShort, weekdaysMap } from '@/utils.ts';
 // Styles
-import css from './BookingInfoPage.module.css';
+import css from '@/pages/BookingInfoPage/BookingInfoPage.module.css';
 // Mocks
+import { R } from '@/__mocks__/restaurant.mock.ts';
 import { BOOKINGCOMMENTMOCK } from '@/mockData.ts';
 
 export const BookingInfoPage: React.FC = () => {
@@ -44,14 +45,14 @@ export const BookingInfoPage: React.FC = () => {
     const [booking, setBooking] = useState<IBookingInfo>();
     const [auth] = useAtom(authAtom);
 
-    // Return the end time of the booking based on the start time and duration
-    // start is in format 'HH:mm'
-    // duration is in minutes (from BOOKING_DURATION mock data)
+    // Возвращает конечное время бронирования на основе начального времени и продолжительности
+    // start имеет формат 'HH:mm'
+    // duration в минутах (из данных mock BOOKING_DURATION)
     const getEndTime = useCallback((start: string, duration: number): string => {
         const [hours, minutes] = start.split(':').map(Number);
         const endDate = new Date();
         endDate.setHours(hours, minutes + duration, 0);
-        return endDate.toTimeString().slice(0, 5); // Returns in 'HH:mm' format
+        return endDate.toTimeString().slice(0, 5); // возвращает в формате 'HH:mm'
     }, []);
 
     useEffect(() => {
@@ -273,14 +274,18 @@ export const BookingInfoPage: React.FC = () => {
                             <div className={classNames(css.fr, css.bookingInfoDetails_item)}>
                                 {booking ? (
                                     <>
-                                        <div
-                                            className={css.redButton}
-                                            onClick={() =>
-                                                navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)
-                                            }
-                                        >
-                                            <span className={css.text}>Смотреть меню</span>
-                                        </div>
+                                        {/** TODO: Убрать условие после 21.12.2025 */}
+                                        {/* Если ресторан не SELF_EDGE_SPB_CHINOIS_ID, то показываем кнопку "Смотреть меню" */}
+                                        {booking.restaurant.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID) && (
+                                            <div
+                                                className={css.redButton}
+                                                onClick={() =>
+                                                    navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)
+                                                }
+                                            >
+                                                <span className={css.text}>Смотреть меню</span>
+                                            </div>
+                                        )}
                                         <RoundedButton
                                             radius={'50px'}
                                             action={() =>

@@ -1,8 +1,10 @@
 import React from 'react';
-import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
-import stage_logos from "/img/stage_logos.png";
 import { useNavigate } from 'react-router-dom';
+// Mocks
+import stage_logos from "/img/stage_logos.png";
+// Styles
+import css from '@/pages/OnboardingPage/OnboardingPage.module.css';
 
 export const StageOne: React.FC = () => {
     const navigate = useNavigate();
