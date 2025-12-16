@@ -61,18 +61,18 @@ export const BookingWish: React.FC<BookingWishProps> = ({
                 <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
                     {restaurant !== 'unset' &&
                         getBookingCommentMock(String(restaurant))
+                            .filter((obj) => {
+                                if (restaurantId === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
+                                    return obj.text !== 'Нужен детский стул';
+                                } else {
+                                    return true;
+                                }
+                            })
                             .map((obj) => (
                                 <SwiperSlide key={obj.text} style={{ width: 'max-content' }}>
                                     <CommentaryOptionButton text={obj.text} icon={obj.emoji} />
                                 </SwiperSlide>
-                            ))
-                            .filter((obj) => {
-                                if (restaurantId === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
-                                    return obj.key !== 'Нужен детский стул';
-                                } else {
-                                    return true;
-                                }
-                            })}
+                            ))}
                 </Swiper>
             </div>
         </ContentContainer>
