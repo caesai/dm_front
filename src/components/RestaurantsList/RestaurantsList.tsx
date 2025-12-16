@@ -6,14 +6,14 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { isUserInGuestListAtom } from '@/atoms/userAtom.ts';
 // Components
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
 // Mocks
-import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock.ts';
 // Utils
-import { isUserInTestGroup } from '@/utils';
 import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
 // Styles
 import css from '@/components/RestaurantsList/RestaurantsList.module.css';
@@ -27,6 +27,7 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
+    const [isUserInGuestList] = useAtom(isUserInGuestListAtom);
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))
     );
@@ -45,9 +46,9 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (e.id !== 11) {
+            if (e.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 result.push(e);
-            } else if (e.id === 11) {
+            } else if (e.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 movableValue = e;
             }
         });
@@ -56,16 +57,23 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
             result.unshift(movableValue);
         }
         result = result.filter((v) => v.city.name_english == currentCityA);
-        if (currentCityA === 'spb') {
-            if (isUserInTestGroup) {
-                result = result.filter((v) => v.id !== mockNewSelfEdgeChinoisRestaurant.id);
+        const filterDoubledMockRestaurant = result.filter((v) => {
+            // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
+            if (currentCityA === 'spb') {
+                if (!isUserInGuestList) {
+                    // Если не в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
+                    return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
+                } else {
+                    // Если в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID показываем
+                    return true;
+                }
             } else {
-                result = result.filter((v) => v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID));
+                // Если не Санкт-Петербург то показываем все рестораны
+                return true;
             }
-        }
-        // Фильтруем дублирующийся мок ресторан
-        setRestaurantsList(result);
-    }, [currentCityA, cityListA, isUserInTestGroup]);
+        });
+        setRestaurantsList(filterDoubledMockRestaurant);
+    }, [currentCityA, cityListA, isUserInGuestList]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
