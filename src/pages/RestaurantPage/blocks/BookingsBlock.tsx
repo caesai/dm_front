@@ -89,7 +89,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
         setCurrentSelectedTime(ts);
         setGuestCount({ title: '1 гость', value: '1' });
     };
-    
+
     /**
      * Форматирует отображение времени для таймслота
      * @param {ITimeSlot} ts - Таймслот для форматирования
@@ -101,9 +101,12 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
         }
 
         const workEndTime = getWorkEndTime();
-        const endTime = workEndTime && moment(ts.end_datetime).isBefore(workEndTime)
-            ? getTimeShort(ts.end_datetime)
-            : workTime?.find(item => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+        // если время окончания таймслота меньше времени закрытия ресторана или равно, то используем время окончания таймслота
+        // иначе используем время закрытия ресторана
+        const endTime =
+            workEndTime && (moment(ts.end_datetime).isBefore(workEndTime) || moment(ts.end_datetime).isSame(workEndTime))
+                ? getTimeShort(ts.end_datetime)
+                : workTime?.find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
         return `${getTimeShort(ts.start_datetime)} - ${endTime}`;
     };
 

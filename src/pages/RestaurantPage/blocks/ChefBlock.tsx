@@ -28,7 +28,7 @@ export const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_nam
         <ContentContainer>
             <ContentBlock>
                 <HeaderContainer>
-                    <HeaderContent id="chef" title="О шефе" />
+                    <HeaderContent id="chef" title={`О шеф${chef_names?.length > 1 ? 'ах' : 'е'}`} />
                 </HeaderContainer>
 
                 {/* Блок с текстом о шефе */}

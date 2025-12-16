@@ -62,7 +62,8 @@
 .event_params_row {
     display: flex;
     flex-direction: row;
-    gap: 96px;
+    gap: 10px;
+    justify-content: space-between;
 }
 
 .event_params_col {

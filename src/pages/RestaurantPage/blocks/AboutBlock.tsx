@@ -18,7 +18,6 @@ interface AboutBlockProps {
     about_text: string;
     workTime: IWorkTime[] | undefined;
     about_kitchen: string;
-    about_dishes: string;
     about_features: string;
     avg_cheque: string;
 }
@@ -29,7 +28,6 @@ interface AboutBlockProps {
 export const AboutBlock: React.FC<AboutBlockProps> = ({
     about_text,
     workTime,
-    about_dishes,
     about_kitchen,
     about_features,
     avg_cheque,
@@ -39,8 +37,6 @@ export const AboutBlock: React.FC<AboutBlockProps> = ({
 
     const toggleAbout = () => setIsAboutCollapsed((prev) => !prev);
     const toggleWorkHours = () => setIsWorkHoursCollapsed((prev) => !prev);
-
-    const getKitchenInfo = () => [about_kitchen, about_dishes].filter(Boolean).join(', ');
 
     const renderWorkHours = () => {
         if (!workTime?.length) return null;
@@ -115,7 +111,7 @@ export const AboutBlock: React.FC<AboutBlockProps> = ({
                     <div className={css.infoBlock}>
                         <div className={css.textRow}>
                             <span className={css.title}>Кухня:</span>
-                            <span className={css.value}>{getKitchenInfo()}</span>
+                            <span className={css.value}>{about_kitchen}</span>
                         </div>
                         <div className={css.textRow}>
                             <span className={css.title}>Особенности:</span>

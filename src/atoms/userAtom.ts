@@ -13,3 +13,5 @@ export const reviewAtom = atom<IReviewAtom>({
     available: false,
     loading: true,
 });
+
+export const isUserInGuestListAtom = atom<boolean>(false);

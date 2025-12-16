@@ -87,12 +87,10 @@
 }
 
 .sectionTitle {
-    font-family: 'Heading Pro Ultracompressed', sans-serif;
-    font-weight: 400;
-    font-size: 30px;
-    line-height: 32px;
-    text-transform: uppercase;
-    color: #000000;
+    font-family: "Mont", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--dark-grey);
     margin: 0;
 }
 
@@ -141,9 +139,8 @@
 .totalLabel,
 .totalValue {
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
-    font-size: 20px;
-    line-height: 26px;
+    font-weight: 600;
+    font-size: 16px;
     color: #000000;
 }
 
@@ -176,9 +173,8 @@
 
 .deliveryText {
     font-family: 'Mont', sans-serif;
-    font-weight: 800;
+    font-weight: 600;
     font-size: 16px;
-    line-height: 22px;
     color: #000000;
 }
 
@@ -493,7 +489,7 @@
     padding: 9px 24px;
     border-radius: 16px;
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 14px;
     line-height: 18px;
     background: transparent;
@@ -514,7 +510,7 @@
 
 .hint {
     font-family: 'Mont', sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 12px;
     line-height: 16px;
     color: #545454;
@@ -539,7 +535,7 @@
 .minAmountError {
     font-family: 'Mont', sans-serif;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 16px;
     color: #FF0000;
     margin: 0;

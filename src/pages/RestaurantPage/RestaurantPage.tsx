@@ -42,7 +42,7 @@ import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 import gastroBtn from '/img/gastro_btn1.png';
 import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
-import { R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock.ts';
 
 export const RestaurantPage: React.FC = () => {
     const navigate = useNavigate();
@@ -139,7 +139,8 @@ export const RestaurantPage: React.FC = () => {
                     title: formatDate(date),
                     value: date,
                 }));
-                if (restaurant?.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
+                // TODO: Убрать после 21.12.2025
+                if (id === R.SELF_EDGE_SPB_CHINOIS_ID) {
                     // Если ресторан Self Edge Chinois, то выбираем даты с 21.12.2025
                     formattedDates = formattedDates.filter((date) => moment(date.value).isAfter('2025-12-21') || moment(date.value).isSame('2025-12-21', 'day'));
                 }
@@ -285,7 +286,6 @@ export const RestaurantPage: React.FC = () => {
 
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}
-                    about_dishes={String(restaurant?.about_dishes)}
                     about_kitchen={String(restaurant?.about_kitchen)}
                     about_features={String(restaurant?.about_features)}
                     avg_cheque={String(restaurant?.avg_cheque)}

@@ -9,6 +9,7 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatusTyped } from '@/utils.ts';
 // Styles
 import css from '@/components/RestaurantTopPreview/RestaurantTopPreview.module.css';
+import { R } from '@/__mocks__/restaurant.mock.ts';
 
 interface IRestaurantTopPreviewProps {
     restaurant?: IRestaurant;
@@ -61,6 +62,7 @@ export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ res
                                         <span className={css.extraTop}>Закрыто</span>
                                         <span className={css.extraBottom}>
                                             до{' '}
+                                            {restaurant.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID) && '21.12.2025'}
                                             {
                                                 getRestaurantStatusTyped(
                                                     restaurant?.worktime,
