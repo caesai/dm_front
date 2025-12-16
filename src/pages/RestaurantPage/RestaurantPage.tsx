@@ -286,7 +286,6 @@ export const RestaurantPage: React.FC = () => {
 
                 <AboutBlock
                     about_text={String(restaurant?.about_text)}
-                    about_dishes={String(restaurant?.about_dishes)}
                     about_kitchen={String(restaurant?.about_kitchen)}
                     about_features={String(restaurant?.about_features)}
                     avg_cheque={String(restaurant?.avg_cheque)}

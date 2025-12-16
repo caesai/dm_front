@@ -10,7 +10,6 @@ export const mockNewSelfEdgeChinoisRestaurant: IRestaurant = {
     'thumbnail_photo': newSelfEdgeChinoisThumbnail,
     'avg_cheque': 3000,
     'about_text': '',
-    'about_dishes': 'Европейская',
     'about_kitchen': 'Американская',
     'about_features': '',
     'phone_number': '',

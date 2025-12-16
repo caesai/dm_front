@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import css from '@/pages/BookingPage/BookingPage.module.css';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { BASE_BOT } from '@/api/base';
+import { R } from '@/__mocks__/restaurant.mock';
 // import { BASE_BOT } from '@/api/base.ts';
 
 // Define the type for the part of the day
@@ -210,11 +211,15 @@ export const TimeSlots: React.FC<TimeSlotProps> = ({ loading, availableTimeslots
                         )}
                     </div>
                 )}
-                <UniversalButton
-                    action={hideApp}
-                    width={'full'}
-                    title={'Не нашли стол на желаемую дату и время?'}
-                    style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />
+                {/** TODO: Убрать условие после 21.12.2025 */}
+                {/* Если ресторан не SELF_EDGE_SPB_CHINOIS_ID, то показываем кнопку "Не нашли стол на желаемую дату и время?" */}
+                {restaurantId !== Number(R.SELF_EDGE_SPB_CHINOIS_ID) && (
+                    <UniversalButton
+                        action={hideApp}
+                        width={'full'}
+                        title={'Не нашли стол на желаемую дату и время?'}
+                        style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />
+                )}
             </div>
         </ContentContainer>
     );

@@ -64,7 +64,6 @@ export interface IRestaurantShortBooking {
 
 export interface IRestaurant extends IRestaurantShort {
     about_text: string;
-    about_dishes: string;
     about_kitchen: string;
     about_features: string;
     address_lonlng: string;
