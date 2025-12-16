@@ -26,6 +26,7 @@ export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ cityId })
                     subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
                     img={gastroBtn}
                     className={css.gastronomyCTAbtn}
+                    textWrapperClassName={css.gastronomyTextWrapper}
                     link={'/gastronomy/choose'}
                 />
             )}
