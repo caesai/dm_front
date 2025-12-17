@@ -6,7 +6,7 @@ import {APIUserAuth, APIUserInfo} from '@/api/auth.ts';
 import {useLaunchParams, useRawInitData} from '@telegram-apps/sdk-react';
 
 export const Loader = () => {
-    return <div className={css.loader}></div>;
+    return <div className={css.loader} data-testid="loader"></div>;
 };
 
 export const AppLoadingScreen = () => {

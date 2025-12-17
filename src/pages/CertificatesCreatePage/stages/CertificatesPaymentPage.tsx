@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import moment from 'moment/moment';
@@ -37,6 +37,7 @@ export const CertificatesPaymentPage: React.FC = () => {
         navigate('/');
     };
 
+    // Получение данных сертификата при монтировании компонента
     useEffect(() => {
         if (auth?.access_token) {
             if (paramsObject.certificate_id) {
@@ -51,7 +52,13 @@ export const CertificatesPaymentPage: React.FC = () => {
         }
     }, [auth, user, paramsObject.certificate_id]);
 
-    useEffect(() => {
+    /**
+     * Проверяет статус оплаты сертификата.
+     *
+     * Если в параметрах URL передан `order_number`, отправляет запрос на проверку статуса оплаты.
+     * При успешной оплате (`is_paid: true`) обновляет состояние `isPaid` и перезагружает список сертификатов.
+     */
+    const checkPayment = useCallback(() => {
         if (auth?.access_token && certificate && user?.id) {
             if (paramsObject.order_number) {
                 // Проверка статуса оплаты сертификата
@@ -75,7 +82,12 @@ export const CertificatesPaymentPage: React.FC = () => {
                     });
             }
         }
-    }, [certificate]);
+    }, [auth, certificate, user, paramsObject.order_number]);
+
+    // Проверяем статус оплаты сертификата при монтировании компонента
+    useEffect(() => {
+        checkPayment();
+    }, [certificate, checkPayment]);
 
     if (loading) {
         return (
@@ -87,7 +99,7 @@ export const CertificatesPaymentPage: React.FC = () => {
 
     return (
         <div className={css.paymentContent}>
-            {certificate && (
+            {certificate ? (
                 <>
                     <h3 className={css.page_title}>
                         {isPaid ? 'Ваш сертификат оплачен!' : 'Ваш платёж обрабатывается'}
@@ -118,6 +130,14 @@ export const CertificatesPaymentPage: React.FC = () => {
                             </div>
                         )}
                     </div>
+                </>
+            ) : (
+                <>
+                    <h3 className={css.page_title}>
+                        Сертификат не найден
+                    </h3>
+                    <UniversalButton width={'full'} title={'Назад'} action={backToHome} />
+                    <UniversalButton width={'full'} title={'Попробовать ещё раз'} theme={'red'} action={checkPayment} />
                 </>
             )}
         </div>
