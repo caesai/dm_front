@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import moment from 'moment';
 // API's
-import { APIGetCurrentBookings, APIPostCheckNewRestaurantVisitStatus } from '@/api/restaurants.api';
+import { APIGetCurrentBookings } from '@/api/restaurants.api';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.api.ts';
 // Types
@@ -11,7 +11,7 @@ import { IStoryBlock } from '@/types/stories.types.ts';
 import { IBookingInfo, IRestaurant } from '@/types/restaurant.types.ts';
 // Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { authAtom, isUserInGuestListAtom, userAtom } from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
 // Components
@@ -25,8 +25,6 @@ import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-// Utils
-import { getDataFromLocalStorage } from '@/utils.ts';
 // Mocks
 import { R } from '@/__mocks__/restaurant.mock';
 // Styles
@@ -50,7 +48,6 @@ export const IndexPage: React.FC = () => {
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
     const [cityListA] = useAtom(cityListAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
-    const [isUserInGuestList, setIsUserInGuestList] = useAtom(isUserInGuestListAtom);
     // States
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))
@@ -66,30 +63,6 @@ export const IndexPage: React.FC = () => {
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
-    // Local Storage
-    const want_first = getDataFromLocalStorage('want_first');
-
-    // Проверяем, нажимал ли пользователь на кнопку "Хочу быть первым"
-    useEffect(() => {
-        if (auth?.access_token && user?.telegram_id) {
-            APIPostCheckNewRestaurantVisitStatus(auth.access_token, user?.telegram_id)
-                .then((response) => {
-                    setIsUserInGuestList(response.data.found);
-                    // Если пользователь нажимал на кнопку "Хочу быть первым" раньше, надо удалить из localStorage
-                    try {
-                        const wantFirstParsed = JSON.parse(String(want_first));
-                        if (wantFirstParsed.done) {
-                            localStorage.removeItem('want_first');
-                        }
-                    } catch (e) {
-                        console.error(e);
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        }
-    }, [auth?.access_token, user?.telegram_id]);
 
     /**
      * Эффект для инициализации данных страницы.
@@ -173,7 +146,6 @@ export const IndexPage: React.FC = () => {
     }, [cityListA]);
 
     // Эффект фильтрации и сортировки списка ресторанов по городу
-    // и добавления заглушки ресторана в Санкт-Петербург если это первый запуск приложения
     useEffect(() => {
         let result: IRestaurant[] = [];
         let movableValue = null;
@@ -187,28 +159,14 @@ export const IndexPage: React.FC = () => {
         });
 
         if (movableValue !== null) {
+            // Ставим первым в списке ресторан SELF_EDGE_SPB_CHINOIS_ID
             result.unshift(movableValue);
         }
+
+        // Фильтруем рестораны по городу
         const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
-        const filterDoubledMockRestaurant = filteredRestaurantsByCity.filter(
-            (v) => {
-                // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
-                if (currentCityA === 'spb') {
-                    if (!isUserInGuestList) {
-                        // Если не нажимал на кнопку то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
-                        return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
-                    } else {
-                        // Если в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID показываем
-                        return true;
-                    }
-                } else {
-                    // Если не Санкт-Петербург то показываем все рестораны
-                    return true;
-                }
-            }
-        );
-        setRestaurantsList(filterDoubledMockRestaurant);
-    }, [currentCityA, cityListA, isUserInGuestList]);
+        setRestaurantsList(filteredRestaurantsByCity);
+    }, [currentCityA, cityListA]);
 
     // Устнавливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
     useEffect(() => {

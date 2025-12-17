@@ -5,13 +5,10 @@ import { Swiper } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import { SwiperSlide } from 'swiper/react';
 import classNames from 'classnames';
-// API's
-import { APIPostCheckNewRestaurantVisitStatus, APIPostNewRestaurant } from '@/api/restaurants.api.ts';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
 // Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { authAtom, isUserInGuestListAtom, userAtom } from '@/atoms/userAtom.ts';
 // Components
 import { RestaurantBadge } from '@/components/RestaurantPreview/RestaurantBadge/RestaurantBadge.tsx';
 import { RestaurantBadgePhoto } from '@/components/RestaurantPreview/RestaurantBadgePhoto/RestaurantBadgePhoto.tsx';
@@ -20,7 +17,6 @@ import { InfoTag } from '@/components/InfoTag/InfoTag.tsx';
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 // Hooks
 import { useModal } from '@/components/ModalPopup/useModal.ts';
-import useToastState from '@/hooks/useToastState.ts';
 // Utils
 import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatus } from '@/utils.ts';
 // Styles
@@ -42,52 +38,17 @@ const RESTAURANT_IDS_WITH_POPUP: string[] = [
     R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
     R.SELF_EDGE_MSC_BIG_GRUZINSKAYA_ID,
     R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID,
-    mockNewSelfEdgeChinoisRestaurant.id.toString(), // Self Edge Chinois для заглушки на главной странице
 ];
 
 export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restaurant, clickable }) => {
     const navigate = useNavigate();
     // Atoms
-    const [user] = useAtom(userAtom);
-    const [auth] = useAtom(authAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
-    const [, setIsUserInGuestList] = useAtom(isUserInGuestListAtom);
     // States
     const [changeRes, setChangeRes] = useState(false);
     const [selectedCity, setSelectedCity] = useState<number | null>(null);
-    const [hasClickedWantToBeFirst, setHasClickedWantToBeFirst] = useState(false);
     // Hooks
-    const { showToast } = useToastState();
     const { isShowing, toggle } = useModal();
-
-    const wantToBeFirst = () => {
-        if (!auth?.access_token) {
-            navigate('/onboarding/3');
-            return;
-        }
-
-        if (!clickable) return;
-
-        if (!user?.telegram_id) return;
-
-        APIPostNewRestaurant(auth?.access_token)
-            .then(() => {
-                showToast('Спасибо. Мы сообщим вам, когда ресторан откроется');
-                setHasClickedWantToBeFirst(true);
-                APIPostCheckNewRestaurantVisitStatus(auth.access_token, user?.telegram_id)
-                    .then((response) => {
-                        setIsUserInGuestList(response.data.found);
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            })
-            .catch((err) => {
-                if (err.response) {
-                    showToast('Возникла ошибка: ' + err.response.data.message);
-                }
-            });
-    };
 
     return (
         <Link
@@ -98,8 +59,6 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                 if (!RESTAURANT_IDS_WITH_POPUP.includes(String(restaurant.id)) && clickable) {
                     // Если это не ресторан с popup, то открываем страницу ресторана
                     navigate(`/restaurant/${restaurant.id}`);
-                } else if (restaurant.id === mockNewSelfEdgeChinoisRestaurant.id) {
-                    // Если это заглушка ресторана Self Edge Chinois, то ничего не делаем
                 } else {
                     // Если это ресторан с popup, то открываем popup
                     toggle();
@@ -158,19 +117,12 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                     }}
                 />
             )}
-            {/* Если это заглушка ресторана Self Edge Chinois, то не отображаем затемнение */}
             <div
-                className={classNames(
-                    css.bgImage,
-                    restaurant.id === mockNewSelfEdgeChinoisRestaurant.id ? css.bgNoImaged : css.imaged
-                )}
+                className={classNames(css.bgImage, css.imaged)}
                 style={{
                     backgroundImage: `url(${restaurant.thumbnail_photo})`,
                 }}
             >
-                {user?.username &&
-                    ['martyad', 'w0esofwit', 'egormk', 'burovburov', 'iliathoughts'].includes(user?.username) &&
-                    restaurant.title === 'Self Edge Japanese' && <span className={css.discount}>Скидка 10%</span>}
                 <div className={css.floatingBadges}>
                     <Swiper
                         slidesPerView="auto"
@@ -228,44 +180,21 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                     <span className={css.resSlogan}>{restaurant.address}</span>
                 </div>
                 {/* Если это не заглушка ресторана Self Edge Chinois, то отображаем теги */}
-                {restaurant.id !== mockNewSelfEdgeChinoisRestaurant.id ? (
-                    <div className={css.tags}>
-                        <InfoTag
-                            // TODO: Убрать условие после 21.12.2025
-                            text={
-                                restaurant.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)
-                                    ? 'Откроется 21.12'
-                                    : getRestaurantStatus(
-                                          restaurant.worktime,
-                                          getCurrentWeekdayShort(),
-                                          getCurrentTimeShort()
-                                      )
-                            }
-                        />
-                        <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`} />
-                    </div>
-                ) : (
-                    // Если это заглушка ресторана Self Edge Chinois, то отображаем кнопку "Хочу побывать первым"
-                    <div style={{ display: 'flex' }}>
-                        {hasClickedWantToBeFirst ? (
-                            <div className={css.success_animation}>
-                                <svg className={css.checkmark} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                                    <circle className={css.checkmark__circle} cx="26" cy="26" r="25" fill="none" />
-                                    <path
-                                        className={css.checkmark__check}
-                                        fill="none"
-                                        d="M14.1 27.2l7.1 7.2 16.7-16.8"
-                                    />
-                                </svg>
-                            </div>
-                        ) : (
-                            <span onClick={wantToBeFirst} className={css.resFirst}>
-                                {' '}
-                                Хочу побывать первым
-                            </span>
-                        )}
-                    </div>
-                )}
+                <div className={css.tags}>
+                    <InfoTag
+                        // TODO: Убрать условие после 21.12.2025
+                        text={
+                            restaurant.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)
+                                ? 'Откроется 21.12'
+                                : getRestaurantStatus(
+                                      restaurant.worktime,
+                                      getCurrentWeekdayShort(),
+                                      getCurrentTimeShort()
+                                  )
+                        }
+                    />
+                    <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`} />
+                </div>
             </div>
         </Link>
     );
