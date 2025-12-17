@@ -7,13 +7,10 @@ import { useAtom } from 'jotai/index';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
 // Atoms
-import { isUserInGuestListAtom } from '@/atoms/userAtom';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 // Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-// Mocks
-import { R } from '@/__mocks__/restaurant.mock';
 // Styles
 import css from '@/components/RestaurantsListSelector/RestaurantsListSelector.module.css';
 
@@ -72,21 +69,10 @@ export const RestaurantsListSelector: React.FC<IRestaurantsListSelectorProps> = 
     }, [setOpen]);
 
     const [allRestaurants] = useAtom(restaurantsListAtom);
-    const [isUserInGuestList] = useAtom(isUserInGuestListAtom);
 
     const restaurants = useMemo(() => {
-        return filteredRestaurants
-            ? filteredRestaurants
-            : allRestaurants.filter((v) => {
-                  if (!isUserInGuestList) {
-                      // Если не в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
-                      return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
-                  } else {
-                      // Если в гест листе то показываем все рестораны
-                      return true;
-                  }
-              });
-    }, [filteredRestaurants, allRestaurants, isUserInGuestList]);
+        return filteredRestaurants ? filteredRestaurants : allRestaurants;
+    }, [filteredRestaurants, allRestaurants]);
 
     // Memoize the mapping process to create the Picker-compatible list
     const restaurantList: PickerValueObj[] = useMemo(

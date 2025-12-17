@@ -14,4 +14,4 @@ export const reviewAtom = atom<IReviewAtom>({
     loading: true,
 });
 
-export const isUserInGuestListAtom = atom<boolean>(false);
+// export const isUserInGuestListAtom = atom<boolean>(false);

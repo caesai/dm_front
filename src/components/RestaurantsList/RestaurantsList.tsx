@@ -6,7 +6,6 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
-import { isUserInGuestListAtom } from '@/atoms/userAtom.ts';
 // Components
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
@@ -27,7 +26,6 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
-    const [isUserInGuestList] = useAtom(isUserInGuestListAtom);
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))
     );
@@ -56,24 +54,10 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
         if (movableValue !== null) {
             result.unshift(movableValue);
         }
+        // Фильтруем рестораны по городу
         result = result.filter((v) => v.city.name_english == currentCityA);
-        const filterDoubledMockRestaurant = result.filter((v) => {
-            // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
-            if (currentCityA === 'spb') {
-                if (!isUserInGuestList) {
-                    // Если не в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID не показываем
-                    return v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID);
-                } else {
-                    // Если в гест листе то ресторан SELF_EDGE_SPB_CHINOIS_ID показываем
-                    return true;
-                }
-            } else {
-                // Если не Санкт-Петербург то показываем все рестораны
-                return true;
-            }
-        });
-        setRestaurantsList(filterDoubledMockRestaurant);
-    }, [currentCityA, cityListA, isUserInGuestList]);
+        setRestaurantsList(result);
+    }, [currentCityA, cityListA]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
