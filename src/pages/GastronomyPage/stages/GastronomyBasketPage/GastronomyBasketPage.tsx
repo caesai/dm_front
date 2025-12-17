@@ -839,7 +839,7 @@ export const GastronomyBasketPage: React.FC = () => {
 
                 {/* Заказ можно забрать по адресу (только для самовывоза) */}
                 {deliveryMethod === 'pickup' && (
-                    <div className={css.section}>
+                    <div className={css.section} style={{ gap: '8px' }}>
                         <h2 className={css.sectionTitle}>Заказ можно забрать по адресу</h2>
                         <p className={css.pickupFullAddress}>{restaurantAddress}</p>
                     </div>
