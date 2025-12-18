@@ -286,6 +286,12 @@ export const RestaurantMenuPage: React.FC = () => {
         );
     }
 
+    const handleDishClick = (dish: IMenuItem) => {
+        navigate(`/restaurant/${id}/menu/dish/${dish.id}`, {
+            state: { dish },
+        });
+    };
+
     // Рендер категории с карточками блюд
     const renderDishCategory = (category: MenuCategory) => (
         <div
@@ -296,7 +302,11 @@ export const RestaurantMenuPage: React.FC = () => {
             <h2 className={css.categoryTitle}>{category.name}</h2>
             <div className={css.items}>
                 {category.items.map((item) => (
-                    <div key={item.id} className={css.menuItemWrapper}>
+                    <div 
+                        key={item.id} 
+                        className={css.menuItemWrapper}
+                        onClick={() => handleDishClick(item)}
+                    >
                         <div
                             className={css.menuItemImage}
                             style={{ backgroundImage: `url(${item.photo_url})` }}

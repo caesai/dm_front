@@ -78,6 +78,7 @@ import { BanquetAddressPage } from '@/pages/BanquetAddressPage/BanquetAddressPag
 import { GastronomyOrderPage } from '@/pages/GastronomyPage/stages/GastronomyOrderPage/GastronomyOrderPage.tsx';
 import { GastronomyOrdersListPage } from '@/pages/GastronomyPage/stages/GastronomyOrdersListPage/GastronomyOrdersListPage.tsx';
 import { RestaurantMenuPage } from '@/pages/RestaurantMenuPage/RestaurantMenuPage.tsx';
+import { RestaurantDishDetailsPage } from '@/pages/RestaurantDishDetailsPage/RestaurantDishDetailsPage.tsx';
 
 const AppRouter: React.FC = () => {
     const [user] = useAtom(userAtom);
@@ -172,6 +173,7 @@ const AppRouter: React.FC = () => {
                     <Route path={'/restaurant/:id'} element={<RestaurantPage />} />
                     <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
                     <Route path={'/restaurant/:id/menu'} element={<RestaurantMenuPage />} />
+                    <Route path={'/restaurant/:id/menu/dish/:dishId'} element={<RestaurantDishDetailsPage />} />
                     <Route path={'/newrestaurant'} element={<NewRestaurant />} />
                     <Route path={'/booking'} element={<BookingPage />} />
                     <Route path={'/bookingConfirmation'} element={<BookingConfirmationPage />} />

@@ -1,0 +1,275 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 100px 0;
+    background-color: #F4F4F4;
+    min-height: 100vh;
+    margin: 0 -15px;
+    width: calc(100% + 30px);
+    box-sizing: border-box;
+}
+
+/* Основная карточка */
+.mainCard {
+    background-color: var(--primary-background);
+    border-radius: 10px;
+    margin: 0 15px 4px 15px;
+}
+
+/* Header внутри карточки */
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 15px 0;
+    height: 64px;
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.headerTitle {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 18px;
+    color: var(--black);
+    margin: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Контент */
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 15px 15px 15px;
+}
+
+.mainImage {
+    width: 100%;
+    height: 345px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 24px;
+    flex-shrink: 0;
+}
+
+/* Название и цена */
+.titleSection {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #F4F4F4;
+}
+
+.titleRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.dishTitle {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 1.375em;
+    color: var(--black);
+    margin: 0;
+    flex: 1;
+}
+
+.dishPrice {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 1.3em;
+    color: var(--black);
+    flex-shrink: 0;
+}
+
+.selectedWeight {
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1.2857em;
+    color: var(--grey);
+    text-align: left;
+}
+
+/* Секции */
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #F4F4F4;
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+.sectionTitle {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 1.4em;
+    color: var(--grey);
+}
+
+.sectionText {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.3333em;
+    color: var(--black);
+    margin: 0;
+}
+
+/* Выбор веса */
+.weightTags {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.weightTag {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.2857em;
+    color: var(--black);
+    padding: 9px 24px;
+    background-color: var(--primary-background);
+    border: 1.5px solid var(--secondary-background);
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.weightTagActive {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.2857em;
+    color: var(--black);
+    padding: 9px 24px;
+    background-color: var(--primary-background);
+    border: 1.5px solid var(--black);
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+/* КБЖУ */
+.nutritionGrid {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+}
+
+.nutritionItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.nutritionValue {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.25em;
+    color: var(--black);
+}
+
+.nutritionLabel {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 1.4em;
+    color: var(--grey);
+}
+
+/* Кнопка бронирования */
+.buttonContainer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 8px 8px 20px;
+    background-color: var(--primary-background);
+    box-shadow: 0px 0px 16px 0px rgba(101, 94, 94, 0.5);
+    border-radius: 24px 24px 0px 0px;
+    z-index: 9;
+}
+
+.bookButton {
+    width: 100%;
+    height: 50px;
+    background-color: var(--red);
+    border: none;
+    border-radius: 15px;
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 1.375em;
+    color: var(--primary-background);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.bookButton:active {
+    opacity: 0.8;
+}
+
+/* Ошибка */
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    min-height: 50vh;
+}
+
+.errorContainer p {
+    font-family: 'Mont', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--grey);
+    margin-bottom: 20px;
+}
+
+.errorContainer button {
+    padding: 12px 24px;
+    background-color: var(--red);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+}
+

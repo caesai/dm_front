@@ -115,6 +115,12 @@
     gap: 8px;
     flex: 0 1 calc(50% - 4.5px);
     max-width: calc(50% - 4.5px);
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.menuItemWrapper:active {
+    opacity: 0.7;
 }
 
 .menuItemImage {
@@ -124,7 +130,6 @@
     background-position: center;
     background-color: #F4F4F4;
     border-radius: 12px;
-    cursor: pointer;
 }
 
 .menuItemInfo {
