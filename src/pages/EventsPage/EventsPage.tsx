@@ -1,68 +1,34 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useAtom } from 'jotai/index';
+// Types
+import { IEventBooking, IEvent } from '@/types/events.types.ts';
+// APIs
+import { BASE_BOT } from '@/api/base.ts';
+// Atoms
+import { eventsListAtom, guestCountAtom } from '@/atoms/eventListAtom.ts';
+// Components
 import { Page } from '@/components/Page.tsx';
-import css from './EventsPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import React, { useEffect, useMemo, useState } from 'react';
-// import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { useAtom } from 'jotai/index';
-import { eventsListAtom, guestCountAtom } from '@/atoms/eventBookingAtom.ts';
-import { APIGetEvents } from '@/api/events.api.ts';
 import { Share } from '@/components/Icons/Share.tsx';
-import { BASE_BOT } from '@/api/base.ts';
-import { IEventBooking, IEventInRestaurant } from '@/types/events.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+// Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
-
-// export interface IEventBooking {
-//     event?: IEvent;
-//     restaurant?: IEventRestaurant;
-//     date?: ITimeSlot;
-//     event_date?: IEventDate;
-//     time?: string;
-//     guestCount?: number;
-// }
-
-export interface IEvent {
-    name: string;
-    description: string;
-    ticket_price: number;
-    image_url?: string;
-    restaurants: IEventRestaurant[];
-}
-
-export interface IEventRestaurant {
-    id: number;
-    title: string;
-    address: string;
-    thumbnail_photo: string;
-    dates: IEventDate[];
-}
-
-export interface IEventDate {
-    id: number;
-    date_start: string;
-    date_end: string;
-    ticket_price: number;
-    tickets_left: number;
-}
+// Styles
+import css from './EventsPage.module.css';
 
 export const EventsPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [params] = useSearchParams();
 
-    const [events, setEvents] = useAtom<IEventInRestaurant[]>(eventsListAtom);
-    const [bookingInfo, setBookingInfo] = useState<IEventBooking>({});
+    const [events] = useAtom<IEvent[]>(eventsListAtom);
     const [, setGuestCount] = useAtom(guestCountAtom);
+    const [bookingInfo, setBookingInfo] = useState<IEventBooking>({});
 
     const { goBack } = useNavigationHistory();
 
-    useEffect(() => {
-        APIGetEvents().then((res) => {
-            setEvents(res.data);
-        });
-    }, []);
 
     useEffect(() => {
         const pathSegments = location.pathname.split('/');

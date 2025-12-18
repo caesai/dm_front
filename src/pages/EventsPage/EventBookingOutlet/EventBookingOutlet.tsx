@@ -10,7 +10,7 @@ import moment from 'moment';
 import { APICreateInvoice } from '@/api/events.api.ts';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { guestCountAtom } from '@/atoms/eventBookingAtom.ts';
+import { guestCountAtom } from '@/atoms/eventListAtom';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import { ClockIcon } from '@/components/Icons/ClockIcon.tsx';
 import { HomeIcon } from '@/components/Icons/HomeIcon.tsx';

@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { BASE_URL, CLIENT_URL } from '@/api/base.ts';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { EventTicket, IEventInRestaurant, ISuperEventHasApplicationResponse } from '@/types/events.ts';
+import { EventTicket, IEvent, ISuperEventHasApplicationResponse } from '@/types/events.types.ts';
 
-export const APIGetEvents = async () => {
-    return await axios.get<IEventInRestaurant[]>(`${BASE_URL}/events/`);
+export const APIGetEventsList = async () => {
+    return await axios.get<IEvent[]>(`${BASE_URL}/events/`);
 };
 
 export const APIGetAvailableEventTimeslots = async (
@@ -58,7 +58,8 @@ export const APICreateInvoice = async (
             confirmation,
             guest_count,
             // success_url: `https://dt-mini-app.local/dm_front/events/payment`,
-            success_url: `${CLIENT_URL}/events/payment`,
+            success_url: `${CLIENT_URL}/events/payment-success`,
+            fail_url: `${CLIENT_URL}/events/payment-error`,
         },
         {
             headers: {
@@ -69,24 +70,19 @@ export const APICreateInvoice = async (
 };
 
 interface IValidatePayment {
-    // status: 'new' | 'finished' | 'cancelled';
-    // booking_id?: number;
     event_id?: number;
     paid: boolean;
 }
 
 export const APIValidatePayment = async (id: string, token: string) => {
-    return await axios.get<IValidatePayment>(
-        `${BASE_URL}/events/validate_payment`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            params: {
-                id,
-            },
-        }
-    );
+    return await axios.get<IValidatePayment>(`${BASE_URL}/events/validate_payment`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params: {
+            id,
+        },
+    });
 };
 
 export const APIGetTicket = async (id: number, token: string) => {
@@ -117,20 +113,20 @@ export const APIGetTickets = async (token: string) => {
 };
 
 export const APIPostSuperEventCheckLink = async (token: string) => {
-    return await axios.post(`${BASE_URL}/events/super_events/check_link`,null, {
+    return await axios.post(`${BASE_URL}/events/super_events/check_link`, null, {
         headers: {
             Authorization: `Bearer ${token}`,
-        }
-    })
-}
+        },
+    });
+};
 
-export const APIGetSuperEventHasApplication = async ( token: string ) => {
+export const APIGetSuperEventHasApplication = async (token: string) => {
     return await axios.get<ISuperEventHasApplicationResponse>(`${BASE_URL}/events/super_events/has_application`, {
         headers: {
             Authorization: `Bearer ${token}`,
-        }
-    })
-}
+        },
+    });
+};
 
 export const APIPostSuperEventCreateApplication = async (
     token: string,
@@ -143,37 +139,41 @@ export const APIPostSuperEventCreateApplication = async (
         experience,
         visit_purpose,
     }: {
-        name: string,
-        surname: string,
-        phone: string,
-        work_place: string,
-        job_title: string,
-        experience: string,
-        visit_purpose: string,
-    },
+        name: string;
+        surname: string;
+        phone: string;
+        work_place: string;
+        job_title: string;
+        experience: string;
+        visit_purpose: string;
+    }
 ) => {
-    return await axios.post(`${BASE_URL}/events/super_events/create_application`,{
-        name,
-        surname,
-        phone,
-        work_place,
-        job_title,
-        experience,
-        visit_purpose,
-    }, {
-        headers: {
-            Authorization: `Bearer ${token}`,
+    return await axios.post(
+        `${BASE_URL}/events/super_events/create_application`,
+        {
+            name,
+            surname,
+            phone,
+            work_place,
+            job_title,
+            experience,
+            visit_purpose,
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         }
-    })
-}
+    );
+};
 
-export const APIGetSuperEventHasAccess = async ( token: string ) => {
+export const APIGetSuperEventHasAccess = async (token: string) => {
     return await axios.get(`${BASE_URL}/events/super_events/has_access`, {
         headers: {
             Authorization: `Bearer ${token}`,
-        }
-    })
-}
+        },
+    });
+};
 
 export const APIDeleteTicket = async (event_id: number, token: string) => {
     return await axios.delete<EventTicket>(`${BASE_URL}/events/cancel/${event_id}`, {
@@ -183,12 +183,11 @@ export const APIDeleteTicket = async (event_id: number, token: string) => {
     });
 };
 
-
 export const APIGetAvailableEventTimeSlots = (
     token: string,
     restaurant_id: number,
     guestCount: number,
-    event_id: number,
+    event_id: number
 ) => {
     return axios.post(
         `${BASE_URL}/events/availableTimeslots`,
@@ -201,7 +200,6 @@ export const APIGetAvailableEventTimeSlots = (
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-
         }
     );
 };

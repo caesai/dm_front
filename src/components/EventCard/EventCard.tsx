@@ -1,73 +1,63 @@
-import css from './EventCard.module.css';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
-import {FC} from 'react';
-// import {IEventDate} from "@/pages/EventsPage/EventsPage.tsx";
-import moment from "moment";
-// import {InfoTag} from "@/components/InfoTag/InfoTag.tsx";
-// import {getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatus} from "@/utils.ts";
+import moment from 'moment';
+// Types
+import { IEvent } from '@/types/events.types';
+// Styles
+import css from '@/components/EventCard/EventCard.module.css';
 
-interface IEventCard {
-    event_name: string;
-    event_price: number;
-    event_img?: string;
-    event_desc?: string;
-    event_address?: string;
-    event_date?: string;
-    event_restaurant: string;
-    onClick: () => void;
-    sold?: boolean;
-}
-
-export const EventCard: FC<IEventCard> = ({
-  event_name,
-  event_price,
-  // event_desc,
-  event_img,
-  event_date,
-  event_address,
-  event_restaurant,
-  onClick,
-  sold,
+export const EventCard: React.FC<IEvent & { onClick: (id: number) => void }> = ({
+    name,
+    ticket_price,
+    image_url,
+    date_start,
+    restaurant,
+    id,
+    tickets_left,
+    onClick,
 }) => {
+    const sold = tickets_left === 0;
+    const handleClick = useCallback(() => {
+        onClick?.(id);
+    }, [id, onClick]);
     return (
-        <div onClick={onClick} style={{cursor: 'pointer', marginBottom: 5}}>
+        <div onClick={handleClick} style={{ cursor: 'pointer', marginBottom: 5 }} data-testid="event-card">
             <div
-                className={classNames(css.card, css.bgImage,
-                    sold ? css.notActive : null
-                )}
+                className={classNames(css.card, css.bgImage, sold ? css.notActive : null)}
                 style={{
-                    backgroundImage: `url(${event_img ? event_img : 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg'})`,
+                    backgroundImage: `url(${image_url ? image_url : 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg'})`,
                 }}
             >
                 <div className={css.footer}>
-                    {!sold ? <span className={classNames(css.card_price)}>{Number(event_price) == 0 ? 'Заказ по меню' : event_price + ' ₽'}</span> :
-                        (
-                            <span className={classNames(css.card_price)}>Sold out</span>
-                        )}
-                    {/*<span className={css.footer__title}>{event_name}</span>*/}
+                    {!sold ? (
+                        <span className={classNames(css.card_price)}>
+                            {Number(ticket_price) == 0 ? 'Заказ по меню' : ticket_price + ' ₽'}
+                        </span>
+                    ) : (
+                        <span className={classNames(css.card_price)}>Sold out</span>
+                    )}
                 </div>
             </div>
             <div className={css.resInfo}>
                 <div className={css.resTitleWrapper}>
-                    <h2 className={css.resTitle}>{event_name}</h2>
+                    <h2 className={css.resTitle}>{name}</h2>
                     <span className={css.resSlogan}>
-                        {event_date && moment(event_date).format('DD.MM.YYYY')} <span style={{ display: 'flex', alignItems: 'center', fontSize: 2, margin: '0 2px', color: 'var(--dark-grey)'}}>{'\u2B24'}</span> {event_restaurant}
+                        {date_start && moment(date_start).format('DD.MM.YYYY')}{' '}
+                        <span
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                fontSize: 2,
+                                margin: '0 2px',
+                                color: 'var(--dark-grey)',
+                            }}
+                        >
+                            {'\u2B24'}
+                        </span>{' '}
+                        {restaurant?.title}
                     </span>
-                    <span className={css.resAddress}>{event_address}</span>
-                    {/*<span className={css.resSlogan}>{restaurant.address}</span>*/}
-                    {/*<span className={css.footer__address}>{event_desc}</span>*/}
-
+                    <span className={css.resAddress}>{restaurant?.address}</span>
                 </div>
-                {/*<div className={css.tags}>*/}
-                {/*    <InfoTag*/}
-                {/*        text={getRestaurantStatus(*/}
-                {/*            restaurant.worktime,*/}
-                {/*            getCurrentWeekdayShort(),*/}
-                {/*            getCurrentTimeShort()*/}
-                {/*        )}*/}
-                {/*    />*/}
-                {/*    <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`}/>*/}
-                {/*</div>*/}
             </div>
         </div>
     );

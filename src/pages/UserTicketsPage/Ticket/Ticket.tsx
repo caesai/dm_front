@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import css from './Ticket.module.css';
 import { useNavigate } from 'react-router-dom';
-import { EventTicket } from '@/types/events.ts';
+import { EventTicket } from '@/types/events.types';
 import moment from 'moment';
 
 interface Props {

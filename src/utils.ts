@@ -3,7 +3,7 @@ import { IRestaurant, IWorkTime } from '@/types/restaurant.types.ts';
 import { Dispatch, SetStateAction } from 'react';
 // import moment from 'moment';
 // import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { IEventBooking } from '@/types/events.ts';
+import { IEventBooking } from '@/types/events.types';
 import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
 import { testUsersList } from '@/__mocks__/user.mock.ts';
 // import axios from 'axios';

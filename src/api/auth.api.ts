@@ -7,10 +7,7 @@ interface AuthParams {
     code?: string;
 }
 
-export const APIUserAuth = async (
-    data: string | undefined,
-    start: string | undefined
-) => {
+export const APIUserAuth = async (data: string | undefined, start: string | undefined) => {
     const params = <AuthParams>{
         data: data,
     };

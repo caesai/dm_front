@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IEventInRestaurant } from '@/types/events.ts';
+// Types
+import { IEvent } from '@/types/events.types.ts';
+// Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
@@ -8,19 +10,19 @@ import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderC
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
 
 interface EventsBlockProps {
-    events: IEventInRestaurant[] | null;
+    events: IEvent[] | null;
 }
 
 export const EventsBlock: React.FC<EventsBlockProps> = ({ events }) => {
     const navigate = useNavigate();
 
     /**
-     * Обрабатывает клик по карточке события для навигации на страницу события
-     * @param {number} eventId - ID события для навигации
+     * Обрабатывает клик по карточке мероприятия для навигации на страницу деталей мероприятия
+     * @param {number} eventId - ID мероприятия для навигации
      */
-    const handleEventClick = (eventId: number) => {
-        navigate(`/events/${eventId}`);
-    };
+    const handleEventClick = useCallback((eventId: number) => {
+        navigate(`/events/${eventId}/details`);
+    }, [navigate]);
 
     if (!events || events.length === 0) {
         return null;
@@ -33,17 +35,7 @@ export const EventsBlock: React.FC<EventsBlockProps> = ({ events }) => {
                     <HeaderContent title="Мероприятия" id="events" />
                 </HeaderContainer>
                 {events.map((event) => (
-                    <EventCard
-                        key={event.id}
-                        onClick={() => handleEventClick(event.id)}
-                        event_price={event.ticket_price}
-                        event_name={event.name}
-                        event_img={event.image_url}
-                        event_restaurant={event.restaurant.title}
-                        event_date={event.date_start}
-                        event_address={event.restaurant.address}
-                        sold={event.tickets_left === 0}
-                    />
+                    <EventCard key={event.id} onClick={handleEventClick} {...event} />
                 ))}
             </ContentBlock>
         </ContentContainer>

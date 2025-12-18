@@ -7,7 +7,7 @@ import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx'
 import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.api.ts';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
-import { IEventInRestaurant } from '@/types/events.ts';
+import { IEvent } from '@/types/events.types.ts';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 // Atoms
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
@@ -60,7 +60,7 @@ export const RestaurantPage: React.FC = () => {
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
     const [timeslotLoading, setTimeslotLoading] = useState(true);
     const [isCallPopupOpen, setIsCallPopupOpen] = useState(false);
-    const [events, setEvents] = useState<IEventInRestaurant[] | null>(null);
+    const [events, setEvents] = useState<IEvent[] | null>(null);
     const [nyCookings] = useState(NewYearCookingData);
 
     /**
@@ -95,9 +95,9 @@ export const RestaurantPage: React.FC = () => {
 
     /**
      * Фильтрует события без билетов
-     * @returns {IEventInRestaurant[] | undefined} Отфильтрованный список событий
+     * @returns {IEvent[] | undefined} Отфильтрованный список событий
      */
-    const getFilteredEvents = (): IEventInRestaurant[] | undefined => {
+    const getFilteredEvents = (): IEvent[] | undefined => {
         if (!events) return undefined;
 
         return events.filter((event) => {

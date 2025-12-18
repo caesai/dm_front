@@ -13,7 +13,7 @@ export const APIGetUserOrders = async (token: string) => {
     );
 };
 
-export const APIGetGastronomyDishes = async (token: string, res_id?: string) => {
+export const APIGetGastronomyDishesList = async (token: string, res_id?: string) => {
     return await axios.get<IDish[]>(
         `${BASE_URL}/culinary/dishes`,
         {
