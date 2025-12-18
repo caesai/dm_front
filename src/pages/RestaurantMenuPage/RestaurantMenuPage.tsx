@@ -206,7 +206,9 @@ export const RestaurantMenuPage: React.FC = () => {
                         const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
                         const imageUrl = defaultSize?.button_image_url || '';
                         const portionWeight = defaultSize?.portion_weight_grams;
-                        const weight = portionWeight ? `${portionWeight} ${item.measure_unit}` : '';
+                        // Добавляем "г" если measure_unit пустой или не содержит единицу измерения
+                        const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || 'г';
+                        const weight = portionWeight ? `${portionWeight} ${measureUnit}` : '';
                         const price = extractPrice(defaultSize?.prices);
 
                         return (
@@ -228,7 +230,7 @@ export const RestaurantMenuPage: React.FC = () => {
                                         {weight && <span className={css.menuItemWeight}>{weight}</span>}
                                     </div>
                                     <div className={css.menuItemPrice}>
-                                        {price > 0 && <span className={css.priceText}>{price} ₽</span>}
+                                        <span className={css.priceText}>{price > 0 ? `${price} ₽` : ''}</span>
                                     </div>
                                 </div>
                             </div>

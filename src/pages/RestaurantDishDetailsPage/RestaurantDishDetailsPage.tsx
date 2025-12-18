@@ -220,8 +220,7 @@ export const RestaurantDishDetailsPage: React.FC = () => {
             {/* Кнопка бронирования */}
             <div className={css.buttonContainer}>
                 <button className={css.bookButton} onClick={handleBookTable}>
-                    <span>Забронировать стол</span>
-                    <span>{currentPrice} ₽</span>
+                    Забронировать стол
                 </button>
             </div>
         </div>
