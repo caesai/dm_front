@@ -145,6 +145,7 @@ export const RestaurantDishDetailsPage: React.FC = () => {
                         <BackIcon />
                     </button>
                     <h1 className={css.headerTitle}>{dishFromState.title}</h1>
+                    <div className={css.spacer} />
                 </div>
 
                 {/* Контент */}
