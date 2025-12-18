@@ -25,6 +25,8 @@ export const RestaurantMenuPage: React.FC = () => {
     const [menuData, setMenuData] = useState<IMenu | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+    const tabsContainerRef = useRef<HTMLDivElement | null>(null);
+    const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
 
     const restaurant = useMemo(() => {
         return restaurants.find(r => r.id === Number(id));
@@ -101,6 +103,33 @@ export const RestaurantMenuPage: React.FC = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [menuData]);
+
+    // Автоскролл активной категории в блоке tabs
+    useEffect(() => {
+        if (!selectedCategory || !tabsContainerRef.current || !tabRefs.current[selectedCategory]) return;
+
+        const container = tabsContainerRef.current;
+        const activeTab = tabRefs.current[selectedCategory];
+
+        if (activeTab) {
+            const containerRect = container.getBoundingClientRect();
+            const tabRect = activeTab.getBoundingClientRect();
+
+            // Проверяем, виден ли элемент в контейнере
+            const isVisible = 
+                tabRect.left >= containerRect.left &&
+                tabRect.right <= containerRect.right;
+
+            if (!isVisible) {
+                // Прокручиваем контейнер так, чтобы активная кнопка была в центре
+                const scrollLeft = activeTab.offsetLeft - container.offsetWidth / 2 + activeTab.offsetWidth / 2;
+                container.scrollTo({
+                    left: scrollLeft,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    }, [selectedCategory]);
 
     const handleBackClick = () => {
         navigate(`/restaurant/${id}`);
@@ -412,10 +441,11 @@ export const RestaurantMenuPage: React.FC = () => {
 
             {/* Вкладки категорий */}
             <div className={css.tabsContainer}>
-                <div className={css.tabs}>
+                <div className={css.tabs} ref={tabsContainerRef}>
                     {visibleCategories.map((category) => (
                         <button
                             key={category.id}
+                            ref={(el) => (tabRefs.current[category.id] = el)}
                             className={`${css.tab} ${selectedCategory === category.id ? css.tabActive : ''}`}
                             onClick={() => scrollToCategory(category.id)}
                         >
