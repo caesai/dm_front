@@ -200,10 +200,29 @@ export const RestaurantMenuPage: React.FC = () => {
         });
     };
 
-    // Определяем, является ли категория напитками (должна отображаться таблицей)
-    const isDrinkCategory = (categoryName: string): boolean => {
-        const drinkKeywords = ['вино', 'пиво', 'напитки', 'коктейл'];
-        return drinkKeywords.some(keyword => categoryName.toLowerCase().includes(keyword));
+    // Определяем, является ли блюдо напитком (нет изображения, но есть цена)
+    const isDrinkItem = (item: IAPIMenuItem): boolean => {
+        const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
+        const hasImage = defaultSize?.button_image_url && defaultSize.button_image_url.trim().length > 0;
+        const price = extractPrice(defaultSize?.prices);
+        
+        // Напиток = нет изображения + есть цена
+        return !hasImage && price > 0;
+    };
+    
+    // Определяем, нужно ли отображать категорию как таблицу (все видимые блюда - напитки)
+    const shouldRenderAsTable = (category: IAPIMenuCategory): boolean => {
+        const visibleItems = category.menu_items.filter(item => {
+            if (item.is_hidden) return false;
+            const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
+            const price = extractPrice(defaultSize?.prices);
+            return price > 0;
+        });
+        
+        if (visibleItems.length === 0) return false;
+        
+        // Если все видимые блюда - напитки, показываем таблицей
+        return visibleItems.every(item => isDrinkItem(item));
     };
 
     // Рендер категории с карточками блюд из API (2 колонки с фото)
@@ -231,6 +250,7 @@ export const RestaurantMenuPage: React.FC = () => {
                     {visibleItems.map((item) => {
                         const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
                         const imageUrl = defaultSize?.button_image_url || '';
+                        const hasImage = imageUrl && imageUrl.trim().length > 0;
                         const portionWeight = defaultSize?.portion_weight_grams;
                         // Добавляем "г" если measure_unit пустой или не содержит единицу измерения
                         const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || 'г';
@@ -246,8 +266,9 @@ export const RestaurantMenuPage: React.FC = () => {
                                 <div
                                     className={css.menuItemImage}
                                     style={{ 
-                                        backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
-                                        backgroundColor: imageUrl ? 'transparent' : '#F4F4F4'
+                                        backgroundImage: hasImage ? `url(${imageUrl})` : 'none',
+                                        backgroundColor: hasImage ? 'transparent' : '#FFFFFF',
+                                        border: hasImage ? 'none' : '1px solid #E9E9E9'
                                     }}
                                 />
                                 <div className={css.menuItemContent}>
@@ -407,8 +428,8 @@ export const RestaurantMenuPage: React.FC = () => {
             {/* Контент категорий */}
             <div className={css.content}>
                 {visibleCategories.map((category) => {
-                    // Определяем, должна ли категория отображаться как таблица или как карточки
-                    if (isDrinkCategory(category.name)) {
+                    // Определяем, должна ли категория отображаться как таблица (все блюда - напитки)
+                    if (shouldRenderAsTable(category)) {
                         return renderDrinkCategory(category);
                     }
                     return renderDishCategory(category);
