@@ -34,7 +34,7 @@
 /* Вкладки */
 .tabsContainer {
     position: sticky;
-    top: 60px; /* Прилипает сразу под header */
+    top: 84px; /* Прилипает сразу под header (20px + 44px + 20px = 84px) */
     background-color: var(--primary-background);
     z-index: 99;
     padding: 0 15px 12px;

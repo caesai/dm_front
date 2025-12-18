@@ -139,10 +139,32 @@ export const RestaurantMenuPage: React.FC = () => {
         setSelectedCategory(categoryId);
         const element = categoryRefs.current[categoryId];
         if (element) {
-            const yOffset = -140; // Отступ для sticky заголовка и вкладок
+            // Отступ: header (84px) + tabsContainer (56px) = 140px
+            const yOffset = -140;
             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({ top: y, behavior: 'smooth' });
         }
+    };
+
+    // Нормализация единиц измерения
+    const normalizeMeasureUnit = (unit: string | undefined): string => {
+        if (!unit) return 'г';
+        
+        const upperUnit = unit.toUpperCase().trim();
+        
+        // Замена английских названий на русские сокращения
+        if (upperUnit === 'GRAM' || upperUnit === 'GRAMS' || upperUnit === 'G') return 'г';
+        if (upperUnit === 'ML' || upperUnit === 'MILLILITER' || upperUnit === 'MILLILITERS') return 'мл';
+        if (upperUnit === 'L' || upperUnit === 'LITER' || upperUnit === 'LITERS') return 'л';
+        if (upperUnit === 'KG' || upperUnit === 'KILOGRAM' || upperUnit === 'KILOGRAMS') return 'кг';
+        if (upperUnit === 'PORTION' || upperUnit === 'PORTIONS' || upperUnit === 'PCS') return 'порц';
+        
+        // Если уже на русском, возвращаем как есть
+        if (upperUnit === 'Г' || upperUnit === 'МЛ' || upperUnit === 'Л' || upperUnit === 'КГ' || upperUnit === 'ПОРЦ') {
+            return unit.toLowerCase();
+        }
+        
+        return unit;
     };
 
     // Функция для извлечения цены из prices массива
@@ -220,7 +242,7 @@ export const RestaurantMenuPage: React.FC = () => {
             weights: dish.item_sizes
                 .filter(s => !s.is_hidden)
                 .map(s => s.portion_weight_grams.toString()),
-            weight_value: dish.measure_unit,
+            weight_value: normalizeMeasureUnit(dish.measure_unit || defaultSize?.measure_unit_type),
             item_sizes: dish.item_sizes.filter(s => !s.is_hidden), // Передаем все размеры для выбора
         };
 
@@ -281,8 +303,8 @@ export const RestaurantMenuPage: React.FC = () => {
                         const imageUrl = defaultSize?.button_image_url || '';
                         const hasImage = imageUrl && imageUrl.trim().length > 0;
                         const portionWeight = defaultSize?.portion_weight_grams;
-                        // Добавляем "г" если measure_unit пустой или не содержит единицу измерения
-                        const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || 'г';
+                        // Нормализуем единицу измерения
+                        const measureUnit = normalizeMeasureUnit(item.measure_unit || defaultSize?.measure_unit_type);
                         const weight = portionWeight ? `${portionWeight} ${measureUnit}` : '';
                         const price = extractPrice(defaultSize?.prices);
 
@@ -345,7 +367,8 @@ export const RestaurantMenuPage: React.FC = () => {
                         {visibleItems.map((item) => {
                             const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
                             const portionWeight = defaultSize?.portion_weight_grams;
-                            const volume = portionWeight ? `${portionWeight} ${item.measure_unit}` : '';
+                            const measureUnit = normalizeMeasureUnit(item.measure_unit || defaultSize?.measure_unit_type);
+                            const volume = portionWeight ? `${portionWeight} ${measureUnit}` : '';
                             const price = extractPrice(defaultSize?.prices);
 
                             return (
