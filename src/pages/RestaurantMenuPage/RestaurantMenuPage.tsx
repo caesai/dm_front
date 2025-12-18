@@ -358,8 +358,24 @@ export const RestaurantMenuPage: React.FC = () => {
         );
     }
 
-    // Фильтруем скрытые категории
-    const visibleCategories = menuData.item_categories.filter(cat => !cat.is_hidden);
+    // Функция для проверки, есть ли в категории блюда с ценами
+    const categoryHasItemsWithPrice = (category: IAPIMenuCategory): boolean => {
+        const items = category.menu_items.filter(item => {
+            if (item.is_hidden) return false;
+            
+            const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
+            const price = extractPrice(defaultSize?.prices);
+            
+            return price > 0;
+        });
+        
+        return items.length > 0;
+    };
+
+    // Фильтруем скрытые категории и категории без блюд с ценами
+    const visibleCategories = menuData.item_categories.filter(cat => 
+        !cat.is_hidden && categoryHasItemsWithPrice(cat)
+    );
 
     return (
         <div className={css.page}>
