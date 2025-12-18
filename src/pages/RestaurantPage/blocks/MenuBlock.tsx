@@ -70,8 +70,28 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
     // Функция для извлечения цены из prices массива
     const extractPrice = (prices: any[] | undefined): number => {
         if (!prices || prices.length === 0) return 0;
-        const defaultPrice = prices.find(p => p.price_list_id === 'default') || prices[0];
-        return defaultPrice?.value || 0;
+        
+        // Берем первый элемент массива prices
+        const priceObj = prices[0];
+        if (!priceObj || typeof priceObj !== 'object') return 0;
+        
+        // Извлекаем значение цены из первого свойства объекта
+        // Структура: [{ "additionalProp1": {} }] или [{ "default": { "value": 1000 } }]
+        const keys = Object.keys(priceObj);
+        if (keys.length === 0) return 0;
+        
+        const firstKey = keys[0];
+        const priceData = priceObj[firstKey];
+        
+        // Если priceData - число, возвращаем его
+        if (typeof priceData === 'number') return priceData;
+        
+        // Если priceData - объект, ищем поле value, price, amount
+        if (typeof priceData === 'object' && priceData !== null) {
+            return priceData.value || priceData.price || priceData.amount || 0;
+        }
+        
+        return 0;
     };
 
     /**
