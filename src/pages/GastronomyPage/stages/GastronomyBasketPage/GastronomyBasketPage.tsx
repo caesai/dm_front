@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import moment from 'moment';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 // APIs
 import { APIPostCreateGastronomyPayment, APIPostUserOrder } from '@/api/gastronomy.api.ts';
@@ -23,7 +22,7 @@ import { formatDate } from '@/utils.ts';
 import css from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.module.css';
 // Mocks
 import { R } from '@/__mocks__/restaurant.mock.ts';
-import { KAD_COORDS, MKAD_COORDS, PETROGRADKA_RESTAURANT_ID, PETROGRADKA_ZONE } from '@/__mocks__/gastronomy.mock.ts';
+import { BLACKCHOPS_SPB_FONTANKA_RIVER_ZONE, KAD_COORDS, MKAD_COORDS, PETROGRADKA_ZONE } from '@/__mocks__/gastronomy.mock.ts';
 import emptyBasketIcon from '/img/empty-basket.png';
 
 type DeliveryMethod = 'delivery' | 'pickup';
@@ -422,8 +421,8 @@ export const GastronomyBasketPage: React.FC = () => {
                 R.TRAPPIST_SPB_RADISHEVA_ID,
             ].includes(res_id as string)
         ) {
-            const newYearDateString = moment('2025-12-31').toString();
-            setSelectedDate({ title: formatDate(newYearDateString), value: newYearDateString });
+            const newYearDateValue = '2025-12-31';
+            setSelectedDate({ title: formatDate(newYearDateValue), value: newYearDateValue });
         } else {
             setSelectedDate({ title: 'unset', value: 'unset' });
         }
@@ -515,7 +514,6 @@ export const GastronomyBasketPage: React.FC = () => {
                 const geoObject = data.response.GeoObjectCollection.featureMember[0].GeoObject;
                 const pos = geoObject.Point.pos.split(' ').map(Number);
                 const coords: [number, number] = [pos[1], pos[0]]; // [широта, долгота]
-
                 return coords;
             }
 
@@ -547,8 +545,13 @@ export const GastronomyBasketPage: React.FC = () => {
         } else if (currentCity === 'spb') {
             // Для ресторана Smoke BBQ Санкт-Петербург (Лодейнопольская улица, ID 11) требуется особая зона доставки,
             // так как он находится вне стандартной зоны КАД. Используем PETROGRADKA_ZONE для проверки доставки.
-            if (String(res_id) === String(PETROGRADKA_RESTAURANT_ID)) {
+            if (String(res_id) === String(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID)) {
                 return isPointInPolygon(coords, PETROGRADKA_ZONE);
+            }
+            // Для ресторана BlackChops Санкт-Петербург (Фонтанка, ID 12) требуется особая зона доставки,
+            // так как он находится вне стандартной зоны КАД. Используем BLACKCHOPS_SPB_FONTANKA_RIVER_ZONE для проверки доставки.
+            if (String(res_id) === String(R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID)) {
+                return isPointInPolygon(coords, BLACKCHOPS_SPB_FONTANKA_RIVER_ZONE);
             }
             return isPointInPolygon(coords, KAD_COORDS);
         }
@@ -693,6 +696,21 @@ export const GastronomyBasketPage: React.FC = () => {
 
     const showMinAmountError = cart.totalAmount < minOrderAmount && minOrderAmount > 0;
 
+    const handleDatePickerClick = () => {
+        setShowDatePicker(true);
+        if (
+            deliveryMethod === 'delivery' &&
+            [
+                R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
+                R.PAME_SPB_MOIKA_RIVER_ID,
+                R.POLY_SPB_BELINSKOGO_ID,
+                R.TRAPPIST_SPB_RADISHEVA_ID,
+            ].includes(res_id as string)
+        ) {
+            return;
+        }
+    };
+
     if (loading) {
         return (
             <div className={css.loader}>
@@ -760,14 +778,14 @@ export const GastronomyBasketPage: React.FC = () => {
                     {deliveryMethod === 'delivery' && (
                         <div className={css.delivery}>
                             <span className={css.deliveryLabel}>Доставка</span>
-                            <span className={css.deliveryValue}>
+                            <span className={css.deliveryValue} data-testid="delivery-fee">
                                 {deliveryFee === 0 ? 'Бесплатно' : `${Number(deliveryFee)} ₽`}
                             </span>
                         </div>
                     )}
                     <div className={css.total}>
                         <span className={css.totalLabel}>Итого</span>
-                        <span className={css.totalValue}>
+                        <span className={css.totalValue} data-testid="total-amount">
                             {deliveryFee !== null ? cart.totalAmount + Number(deliveryFee) : cart.totalAmount} ₽
                         </span>
                     </div>
@@ -778,7 +796,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.section}>
                         <h2 className={css.sectionTitle}>Способ получения</h2>
                         <div className={css.deliveryDropdown}>
-                            <div className={css.deliveryRow} onClick={handleToggleDropdown}>
+                            <div className={css.deliveryRow} onClick={handleToggleDropdown} data-testid="delivery-method-toggle">
                                 <span className={css.deliveryText}>
                                     {deliveryMethod === 'delivery' ? 'Доставка' : 'Заберу сам'}
                                 </span>
@@ -821,7 +839,7 @@ export const GastronomyBasketPage: React.FC = () => {
 
                 {/* Заказ можно забрать по адресу (только для самовывоза) */}
                 {deliveryMethod === 'pickup' && (
-                    <div className={css.section}>
+                    <div className={css.section} style={{ gap: '8px' }}>
                         <h2 className={css.sectionTitle}>Заказ можно забрать по адресу</h2>
                         <p className={css.pickupFullAddress}>{restaurantAddress}</p>
                     </div>
@@ -890,21 +908,9 @@ export const GastronomyBasketPage: React.FC = () => {
                     />
                     <div className={css.datePickerWrapper}>
                         <div
+                            data-testid="date-picker"
                             className={css.datePicker}
-                            onClick={() => {
-                                if (
-                                    deliveryMethod === 'delivery' &&
-                                    [
-                                        R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
-                                        R.PAME_SPB_MOIKA_RIVER_ID,
-                                        R.POLY_SPB_BELINSKOGO_ID,
-                                        R.TRAPPIST_SPB_RADISHEVA_ID,
-                                    ].includes(res_id as string)
-                                ) {
-                                    return;
-                                }
-                                setShowDatePicker(true);
-                            }}
+                            onClick={handleDatePickerClick}
                         >
                             <div className={css.datePickerContent}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -959,6 +965,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                     {timeSlots.map((slot) => (
                                         <button
                                             key={slot}
+                                            data-testid="time-slot"
                                             className={selectedTime === slot ? css.timeSlotActive : css.timeSlot}
                                             onClick={() => setSelectedTime(slot)}
                                         >
@@ -976,12 +983,13 @@ export const GastronomyBasketPage: React.FC = () => {
             {/* Кнопка оплаты */}
             <div className={css.buttonContainer}>
                 {showMinAmountError && (
-                    <p className={css.minAmountError}>Заказ от {minOrderAmount}₽ - без учета доставки</p>
+                    <p className={css.minAmountError}>Минимальная сумма заказа {minOrderAmount}₽ - <br/> без учета доставки</p>
                 )}
                 <button
                     className={isFormValid() ? css.primaryButton : css.secondaryButton}
                     onClick={handlePayment}
                     disabled={!isFormValid()}
+                    data-testid="pay-button"
                 >
                     {loading ? <Loader /> : 'К оплате'}
                 </button>

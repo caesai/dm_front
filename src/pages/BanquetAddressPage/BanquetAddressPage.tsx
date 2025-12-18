@@ -103,7 +103,7 @@ export const BanquetAddressPage: React.FC = () => {
     }, [currentRestaurant.value]);
 
     useEffect(() => {
-        const filteredRestaurantsWithBanquetOptions = restaurants.filter((item) => item.banquets.banquet_options.length > 0);
+        const filteredRestaurantsWithBanquetOptions = restaurants.filter((item) => item.banquets?.banquet_options?.length > 0);
         setRestaurantsList(filteredRestaurantsWithBanquetOptions);
     }, [restaurants]);
 

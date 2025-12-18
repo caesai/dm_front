@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
 import GastronomyImg from '/img/gastronomy-choose.png';
+import GastronomyMoscowImg from '/img/gastronomy-choose-moscow.jpeg';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
@@ -153,12 +154,20 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                         <h2>
                             Закажите праздничные <br /> блюда заранее и встретьте <br /> Новый год дома без хлопот
                         </h2>
-                        <img src={GastronomyImg} alt={'New Year Gastronomy'} />
+                        {currentCityS.id === 'moscow' ? (
+                            <img
+                                src={GastronomyMoscowImg}
+                                alt={'New Year Gastronomy'}
+                                style={{ objectFit: 'cover', objectPosition: 'bottom' }}
+                            />
+                        ) : (
+                            <img src={GastronomyImg} alt={'New Year Gastronomy'} />
+                        )}
                         <ul>
-                            <li>Оформите заказ до 30 декабря.</li>
+                            <li>Оформите заказ до 29 декабря.</li>
                             <li>Оплатите заказ (100% предоплата).</li>
                             <li>
-                                Заберите блюда из ресторана или оформим для вас доставку в период <br /> с 25 по 31
+                                Заберите блюда из ресторана или оформим для вас доставку {currentCityA !== 'moscow' ? 'в период \n с 25 по' : ''} 31
                                 декабря.
                             </li>
                         </ul>

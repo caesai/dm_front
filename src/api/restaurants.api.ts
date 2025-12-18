@@ -175,3 +175,13 @@ export const APIPOSTCancelReason = (token: string, booking_id: number, cancel_re
         }
     );
 };
+
+export const APIPostCheckNewRestaurantVisitStatus = (token: string, telegram_id: number) => {
+    return axios.post(`${BASE_URL}/onboarding/check`, {
+        telegram_id
+    },{
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};

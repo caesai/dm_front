@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
-import { IMenuImg, IMenuItem } from '@/types/restaurant.types.ts';
+import { IMenuImg } from '@/types/restaurant.types.ts';
+import { authAtom } from '@/atoms/userAtom.ts';
+import { restaurantMenusAtom } from '@/atoms/restaurantMenuAtom.ts';
+import { APIGetRestaurantMenu, IMenuItem as IAPIMenuItem } from '@/api/menu.api.ts';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
@@ -13,14 +17,62 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface MenuBlockProps {
-    menu: IMenuItem[] | undefined;
     menu_imgs: IMenuImg[] | undefined;
     restaurant_id: number;
 }
 
-export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs, restaurant_id }) => {
+export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }) => {
     const navigate = useNavigate();
+    const [auth] = useAtom(authAtom);
+    const [restaurantMenus, setRestaurantMenus] = useAtom(restaurantMenusAtom);
     const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
+    const [menuItems, setMenuItems] = useState<IAPIMenuItem[]>([]);
+
+    // Загрузка меню из кеша или API
+    useEffect(() => {
+        if (!auth?.access_token || !restaurant_id) return;
+
+        // Проверяем кеш
+        if (restaurantMenus[restaurant_id]) {
+            console.log('[MenuBlock] Меню загружено из кеша');
+            const menu = restaurantMenus[restaurant_id];
+            const allItems = menu.item_categories
+                .filter(cat => !cat.is_hidden)
+                .flatMap(cat => cat.menu_items.filter(item => !item.is_hidden))
+                .slice(0, 10); // Берем первые 10 блюд
+            setMenuItems(allItems);
+            return;
+        }
+
+        // Загружаем из API
+        console.log('[MenuBlock] Загрузка меню из API...');
+        APIGetRestaurantMenu(auth.access_token, restaurant_id)
+            .then((response) => {
+                const menu = response.data[0];
+                
+                // Сохраняем в кеш
+                setRestaurantMenus(prev => ({
+                    ...prev,
+                    [restaurant_id]: menu
+                }));
+                
+                const allItems = menu.item_categories
+                    .filter(cat => !cat.is_hidden)
+                    .flatMap(cat => cat.menu_items.filter(item => !item.is_hidden))
+                    .slice(0, 10); // Берем первые 10 блюд
+                setMenuItems(allItems);
+            })
+            .catch((error) => {
+                console.error('[MenuBlock] Ошибка загрузки меню:', error);
+            });
+    }, [auth?.access_token, restaurant_id, restaurantMenus, setRestaurantMenus]);
+
+    // Функция для извлечения цены из prices массива
+    const extractPrice = (prices: any[] | undefined): number => {
+        if (!prices || prices.length === 0) return 0;
+        const defaultPrice = prices.find(p => p.price_list_id === 'default') || prices[0];
+        return defaultPrice?.value || 0;
+    };
 
     /**
      * Получает отсортированные URL изображений меню для попапа
@@ -34,20 +86,12 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs, restauran
     };
 
     /**
-     * Обрабатывает открытие попапа с меню (старая версия)
-     */
-    const handleOpenMenuPopup = () => {
-        setIsMenuPopupOpen(true);
-    };
-
-    /**
      * Переход на новую страницу меню
      */
     const handleOpenInteractiveMenu = () => {
         navigate(`/restaurant/${restaurant_id}/menu`);
     };
 
-    const sortedMenuItems = menu?.sort((a, b) => a.id - b.id) || [];
     const menuImageUrls = getSortedMenuImageUrls();
 
     return (
@@ -66,27 +110,38 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu, menu_imgs, restauran
                 </HeaderContainer>
 
                 {/* Слайдер блюд меню */}
-                <div className={css.photoSliderContainer}>
-                    <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
-                        {sortedMenuItems.map((item, index) => (
-                            <SwiperSlide
-                                style={{ width: '162px' }}
-                                key={`${item.id}-${index}`}
-                            >
-                                <div className={css.menuItem}>
-                                    <div
-                                        className={classNames(css.menuItemPhoto, css.bgImage)}
-                                        style={{ backgroundImage: `url(${item.photo_url})` }}
-                                    />
-                                    <div className={css.menuItemInfo}>
-                                        <span className={css.title}>{item.title}</span>
-                                        <span className={css.subtitle}>{item.price} ₽</span>
-                                    </div>
-                                </div>
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </div>
+                {menuItems.length > 0 && (
+                    <div className={css.photoSliderContainer}>
+                        <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
+                            {menuItems.map((item, index) => {
+                                const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
+                                const imageUrl = defaultSize?.button_image_url || '';
+                                const price = extractPrice(defaultSize?.prices);
+
+                                return (
+                                    <SwiperSlide
+                                        style={{ width: '162px' }}
+                                        key={`${item.id}-${index}`}
+                                    >
+                                        <div className={css.menuItem}>
+                                            <div
+                                                className={classNames(css.menuItemPhoto, css.bgImage)}
+                                                style={{ 
+                                                    backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
+                                                    backgroundColor: imageUrl ? 'transparent' : '#F4F4F4'
+                                                }}
+                                            />
+                                            <div className={css.menuItemInfo}>
+                                                <span className={css.title}>{item.name}</span>
+                                                {price > 0 && <span className={css.subtitle}>{price} ₽</span>}
+                                            </div>
+                                        </div>
+                                    </SwiperSlide>
+                                );
+                            })}
+                        </Swiper>
+                    </div>
+                )}
 
                 {/* Кнопка открытия полного меню */}
                 <UniversalButton

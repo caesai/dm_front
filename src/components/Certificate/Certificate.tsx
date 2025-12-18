@@ -1,7 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
+// Styles
 import css from '@/components/Certificate/Certificate.module.css';
+// Images
 import logo from '/img/DT_hospitality_logo_1.png';
+import backgroundImg from '/img/certificate_new_background.png';
 
 interface CertificateProps {
     placeholder: string;
@@ -13,13 +16,28 @@ interface CertificateProps {
     forwardRef?: React.Ref<HTMLDivElement>;
 }
 
-export const Certificate: React.FC<CertificateProps> = ({ placeholder, date, rating, cardholder, big, forwardRef, dreamteam_id }) => {
+export const Certificate: React.FC<CertificateProps> = ({
+    placeholder,
+    date,
+    rating,
+    cardholder,
+    big,
+    forwardRef,
+    dreamteam_id,
+}) => {
     return (
-        <div className={css.certificate} ref={forwardRef}>
+        <div
+            className={css.certificate}
+            ref={forwardRef}
+            style={{ backgroundImage: `url(${backgroundImg})` }}
+            data-testid="certificate-container"
+        >
             <div className={css.certificateLogo}>
                 <img src={logo} alt={'DreamTeam'} />
             </div>
-            <span className={classnames(css.placeholder, { [css.bigFont]: big })}>{placeholder}</span>
+            <span className={classnames(css.placeholder, { [css.bigFont]: big })} data-testid="certificate-message">
+                {placeholder}
+            </span>
             <div className={css.certificateData}>
                 <div>
                     <span>{cardholder}</span>

@@ -52,7 +52,10 @@ export const UserPhoneConfirmationPage = () => {
                     navigate(`/banquets/${state.id}/choose`, { state });
                 }
                 if (state.sharedGastronomy) {
-                    navigate(`/gastronomy/${state.id}`, { state });
+                    navigate(`/gastronomy/${state.id}/basket`, { state });
+                }
+                if (state.sharedCertificateCreate) {
+                    navigate('/certificates/online', { state });
                 }
             } else {
                 navigate('/');

@@ -82,7 +82,8 @@ const mockProps = {
     isEvents: true,
     isBanquets: true,
     isGastronomy: false,
-    isNavigationLoading: false
+    isNavigationLoading: false,
+    isMenu: false,
 };
 
 describe('BookingBlock', () => {

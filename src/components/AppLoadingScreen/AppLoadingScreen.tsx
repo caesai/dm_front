@@ -6,7 +6,7 @@ import {APIUserAuth, APIUserInfo} from '@/api/auth.ts';
 import {useLaunchParams, useRawInitData} from '@telegram-apps/sdk-react';
 
 export const Loader = () => {
-    return <div className={css.loader}></div>;
+    return <div className={css.loader} data-testid="loader"></div>;
 };
 
 export const AppLoadingScreen = () => {
@@ -16,19 +16,36 @@ export const AppLoadingScreen = () => {
     const rawLp = useRawInitData();
     useEffect(() => {
         if (!auth?.access_token) {
+            console.log('[AppLoadingScreen] Начало авторизации...');
+            console.log('[AppLoadingScreen] rawLp:', rawLp);
+            console.log('[AppLoadingScreen] startParam:', lp.tgWebAppStartParam);
+            
             APIUserAuth(rawLp, lp.tgWebAppStartParam)
                 .then((res) => {
+                    console.log('[AppLoadingScreen] Авторизация успешна:', res.data);
                     setAuth(res.data);
                     return res.data.access_token;
                 })
                 .then((token) => {
-                    APIUserInfo(token)
-                        .then((res) => {
-                        setUser(res.data);
-                    });
+                    console.log('[AppLoadingScreen] Получение информации о пользователе...');
+                    return APIUserInfo(token);
+                })
+                .then((res) => {
+                    console.log('[AppLoadingScreen] Информация о пользователе получена:', res.data);
+                    setUser(res.data);
                 })
                 .catch(err => {
-                    console.error('auth', err);
+                    console.error('[AppLoadingScreen] Ошибка авторизации:', err);
+                    console.error('[AppLoadingScreen] Детали ошибки:', err.response?.data);
+                    
+                    // Устанавливаем пустого пользователя, чтобы не застрять на загрузке
+                    setUser({
+                        id: 0,
+                        first_name: 'Guest',
+                        username: 'guest',
+                        phone_number: '',
+                        selected_restaurants: []
+                    });
                 });
         }
     }, []);

@@ -261,6 +261,7 @@ export const BookingFreeEventPage: React.FC = () => {
                         </ContentContainer>
                     ) : (
                         <TimeSlots
+                            restaurantId={Number(id)}
                             loading={timeslotsLoading}
                             availableTimeslots={availableTimeslots}
                             currentSelectedTime={currentSelectedTime}
@@ -273,6 +274,7 @@ export const BookingFreeEventPage: React.FC = () => {
                         selectedCertificateId={null}
                     />
                     <BookingWish
+                        restaurantId={Number(id)}
                         guestCount={guestCount}
                         childrenCount={childrenCount}
                         preOrder={preOrder}

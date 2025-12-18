@@ -1,20 +1,27 @@
-import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
-import css from './RestaurantsList.module.css';
-import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
+import React, { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { useAtom } from 'jotai/index';
-import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+// Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
+// Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
+import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+// Components
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
+// Mocks
+import { R } from '@/__mocks__/restaurant.mock.ts';
+// Utils
 import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
+// Styles
+import css from '@/components/RestaurantsList/RestaurantsList.module.css';
 
 interface IRestaurantsListProps {
     titleStyle?: CSSProperties;
 }
 
-export const RestaurantsList: FC<IRestaurantsListProps> = ({ titleStyle }) => {
+export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle }) => {
     const [cityListA] = useAtom(cityListAtom);
     const [currentCityA] = useAtom(currentCityAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
@@ -37,9 +44,9 @@ export const RestaurantsList: FC<IRestaurantsListProps> = ({ titleStyle }) => {
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (e.id !== 11) {
+            if (e.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 result.push(e);
-            } else if (e.id === 11) {
+            } else if (e.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 movableValue = e;
             }
         });
@@ -47,8 +54,9 @@ export const RestaurantsList: FC<IRestaurantsListProps> = ({ titleStyle }) => {
         if (movableValue !== null) {
             result.unshift(movableValue);
         }
-
-        setRestaurantsList(result.filter((v) => v.city.name_english == currentCityA));
+        // Фильтруем рестораны по городу
+        result = result.filter((v) => v.city.name_english == currentCityA);
+        setRestaurantsList(result);
     }, [currentCityA, cityListA]);
 
     const updateCurrentCity = (city: IConfirmationType) => {

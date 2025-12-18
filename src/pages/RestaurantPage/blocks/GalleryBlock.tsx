@@ -2,19 +2,42 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+// Types
 import { IPhotoCard } from '@/types/restaurant.types.ts';
-import { GalleryCollection } from '@/pages/RestaurantPage/RestaurantPage.types';
+import { GalleryCollection, GalleryPhoto } from '@/pages/RestaurantPage/RestaurantPage.types';
+// Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ImageViewerPopup } from '@/components/ImageViewerPopup/ImageViewerPopup.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import { transformGallery } from '@/pages/RestaurantPage/RestaurantPage';
+// Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface GalleryBlockProps {
     restaurant_gallery: IPhotoCard[] | undefined;
 }
+
+/**
+ * Преобразует массив фотографий в структурированную галерею с группировкой по категориям
+ * @param {IPhotoCard[]} gallery - Массив фотографий ресторана
+ * @returns {GalleryCollection[]} Структурированная галерея с категориями
+ */
+export const transformGallery = (gallery: IPhotoCard[]): GalleryCollection[] => {
+    const groupedByCategory: Record<string, GalleryPhoto[]> = {};
+
+    gallery.forEach((photo) => {
+        if (!groupedByCategory[photo.category]) {
+            groupedByCategory[photo.category] = [];
+        }
+        groupedByCategory[photo.category].push({ link: photo.url });
+    });
+
+    return Object.entries(groupedByCategory).map(([title, photos]) => ({
+        title,
+        photos,
+    }));
+};
 
 export const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
     const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);

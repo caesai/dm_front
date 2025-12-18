@@ -95,7 +95,7 @@
     font-family: 'Mont', sans-serif;
     font-weight: 800;
     font-size: 16px;
-    line-height: 22px;
+    line-height: 1.375em;
     color: #000000;
     margin: 0 0 14px 0;
 }
@@ -132,6 +132,13 @@
     border-radius: 12px;
 }
 
+.menuItemContent {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-self: stretch;
+}
+
 .menuItemInfo {
     display: flex;
     flex-direction: row;
@@ -144,7 +151,7 @@
     font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 10px;
-    line-height: 14px;
+    line-height: 1.4em;
     color: #545454;
     flex: 1;
     overflow: hidden;
@@ -156,26 +163,29 @@
     font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 10px;
-    line-height: 14px;
+    line-height: 1.4em;
     color: #989898;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .menuItemPrice {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 11px 16px;
-    background-color: #F4F4F4;
-    border-radius: 8px;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+    align-self: stretch;
+    gap: 2px;
+    width: 100%;
 }
 
 .priceText {
     font-family: 'Mont', sans-serif;
     font-weight: 800;
     font-size: 12px;
-    line-height: 16px;
+    line-height: 1.3333333333333333em;
     color: #000000;
+    flex: 1;
 }
 
 /* Напитки (вино, пиво, другие) */
@@ -189,6 +199,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    align-self: stretch;
 }
 
 .drinkSectionTitle {
@@ -203,31 +214,40 @@
 .drinkItems {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 12px;
+    align-self: stretch;
+}
+
+.drinkSectionTitle {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.2857142857142858em;
+    color: #000000;
+    margin: 0 0 12px 0;
 }
 
 .drinkItem {
     display: flex;
     justify-content: space-between;
     gap: 8px;
-    padding: 8px 0;
-}
-
-.drinkItem:not(:last-child) {
-    border-bottom: 1px solid #F4F4F4;
+    padding: 0;
+    min-height: 36px;
+    align-items: flex-start;
 }
 
 .drinkInfo {
     display: flex;
     gap: 8px;
     flex: 1;
+    align-items: flex-start;
 }
 
-.drinkYear {
+.drinkVolume {
     font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 12px;
-    line-height: 16px;
+    line-height: 1.3333333333333333em;
     color: #545454;
     min-width: 27px;
     flex-shrink: 0;
@@ -237,7 +257,7 @@
     font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 12px;
-    line-height: 16px;
+    line-height: 1.3333333333333333em;
     color: #000000;
     flex: 1;
 }
@@ -246,24 +266,27 @@
     font-family: 'Mont', sans-serif;
     font-weight: 800;
     font-size: 12px;
-    line-height: 16px;
+    line-height: 1.3333333333333333em;
     color: #000000;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 /* Ошибка */
-.errorContainer {
+.errorContainer,
+.loadingContainer {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    padding: 16px;
+    min-height: 50vh;
+    padding: 40px 16px;
 }
 
-.errorContainer p {
+.errorContainer p,
+.loadingContainer p {
     font-family: 'Mont', sans-serif;
     font-weight: 600;
-    font-size: 18px;
-    line-height: 24px;
-    color: #000000;
+    font-size: 16px;
+    line-height: 22px;
+    color: var(--grey);
 }

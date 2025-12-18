@@ -2,265 +2,89 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom';
+import { authAtom } from '@/atoms/userAtom';
+import { restaurantMenusAtom } from '@/atoms/restaurantMenuAtom';
 import { IMenuItem } from '@/types/restaurant.types';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton';
 import { BackIcon } from '@/components/Icons/BackIcon';
+import { 
+    APIGetRestaurantMenu, 
+    IMenu, 
+    IMenuCategory as IAPIMenuCategory,
+    IMenuItem as IAPIMenuItem 
+} from '@/api/menu.api';
 import css from './RestaurantMenuPage.module.css';
-
-interface MenuCategory {
-    id: string;
-    name: string;
-    items: IMenuItem[];
-}
-
-// Моковые данные для категорий (временно, пока нет API)
-const MOCK_CATEGORIES: MenuCategory[] = [
-    {
-        id: 'special',
-        name: 'Special Menu',
-        items: [
-            {
-                id: 1,
-                title: 'Крем - суп из пастернака',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/e7edc89403ac4da2ba4542683eae345a.jpg',
-                price: 1300,
-            },
-            {
-                id: 2,
-                title: 'Пирог бефстроганов с копченой мозговой костью',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/3fd327138615467c881a33db39544c6b.jpg',
-                price: 1300,
-            },
-            {
-                id: 3,
-                title: 'Крем - суп из пастернака',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/0325b515bb14493cae5dcd39aaab0812.jpg',
-                price: 1300,
-            },
-            {
-                id: 4,
-                title: 'Пирог бефстроганов с копченой мозговой костью',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/f15a7c01a6a94329a292d64a0433109c.jpg',
-                price: 1300,
-            },
-        ]
-    },
-    {
-        id: 'gastronomy',
-        name: 'Гастрономия',
-        items: [
-            {
-                id: 5,
-                title: 'Крем - суп из пастернака',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/e7edc89403ac4da2ba4542683eae345a.jpg',
-                price: 1300,
-            },
-            {
-                id: 6,
-                title: 'Крем - суп из пастернака',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/3fd327138615467c881a33db39544c6b.jpg',
-                price: 1300,
-            },
-            {
-                id: 7,
-                title: 'Пирог бефстроганов с копченой мозговой костью',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/0325b515bb14493cae5dcd39aaab0812.jpg',
-                price: 1300,
-            },
-        ]
-    },
-    {
-        id: 'salads',
-        name: 'Салаты',
-        items: [
-            {
-                id: 8,
-                title: 'Греческий салат',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/e7edc89403ac4da2ba4542683eae345a.jpg',
-                price: 890,
-            },
-            {
-                id: 9,
-                title: 'Цезарь с курицей',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/3fd327138615467c881a33db39544c6b.jpg',
-                price: 990,
-            },
-        ]
-    },
-    {
-        id: 'cocktails',
-        name: 'Коктейли',
-        items: [
-            {
-                id: 10,
-                title: 'Вишневое наслаждение',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/e7edc89403ac4da2ba4542683eae345a.jpg',
-                price: 1300,
-            },
-            {
-                id: 11,
-                title: 'Вишневое наслаждение',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/3fd327138615467c881a33db39544c6b.jpg',
-                price: 1300,
-            },
-            {
-                id: 12,
-                title: 'Вишневое наслаждение',
-                photo_url: 'https://storage.yandexcloud.net/dreamteam-storage/0325b515bb14493cae5dcd39aaab0812.jpg',
-                price: 1300,
-            },
-        ]
-    },
-    {
-        id: 'wine',
-        name: 'Вино',
-        items: []
-    },
-    {
-        id: 'beer',
-        name: 'Пиво',
-        items: []
-    },
-    {
-        id: 'drinks',
-        name: 'Другие напитки',
-        items: []
-    },
-];
-
-interface WineItem {
-    year: string;
-    name: string;
-    price: string;
-}
-
-interface WineCategory {
-    title: string;
-    items: WineItem[];
-}
-
-// Моковые данные для вина
-const MOCK_WINE: WineCategory[] = [
-    {
-        title: 'Игристые вина / 125 мл',
-        items: [
-            { year: 'NV', name: 'Tete de Cheval Brut Pinskiy&Co / Kuban', price: '650 ₽' },
-            { year: 'NV', name: 'Corvezzo Prosecco Treviso Extra Dry / Veneto', price: '1000 ₽' },
-            { year: '2022', name: 'Calvet Cremant de Bordeauc Blanc de Noirs Brut / Bordeaux', price: '1100 ₽' },
-            { year: 'NV', name: 'Andre Delorme Cremant de Bourgogne Rose Brut / Bourgogne', price: '1200 ₽' },
-        ]
-    },
-    {
-        title: 'Белые вина / 125 мл',
-        items: [
-            { year: '2023', name: 'San Matteo Pinot Grigio "Alla Moda" / Italy, Veneto', price: '850 ₽' },
-            { year: '2019', name: 'Rem Akchurin-RBC Chardonnay Reserve / Russia, Crimea', price: '900 ₽' },
-            { year: '2022', name: 'The Kauri Tree Sauvignon Blanc / New Zealand, Hawkes Bay', price: '950 ₽' },
-            { year: '2022', name: 'The Kauri Tree Sauvignon Blanc / New Zealand, Hawkes Bay', price: '950 ₽' },
-        ]
-    },
-    {
-        title: 'Розовое вино / 125 мл',
-        items: [
-            { year: '2024', name: 'Alma Valley Розе "Невинность" / Russia, Crimea', price: '800 ₽' },
-        ]
-    },
-    {
-        title: 'Красные вина / 125 мл',
-        items: [
-            { year: '2024', name: 'Alma Valley Розе "Невинность" / Russia, Crimea', price: '800 ₽' },
-            { year: '2024', name: 'Alma Valley Розе "Невинность" / Russia, Crimea', price: '800 ₽' },
-            { year: '2024', name: 'Alma Valley Розе "Невинность" / Russia, Crimea', price: '800 ₽' },
-        ]
-    },
-    {
-        title: 'Безалкогольное вино / 750 мл',
-        items: [
-            { year: '', name: 'Vintae Grenache Blanc Le Naturel Zero Zero / Navarr', price: '6000 ₽' },
-        ]
-    },
-    {
-        title: 'Десертные вина / 40 мл',
-        items: [
-            { year: '', name: 'Lheraud Ugni Blanc Pineau des Charentes / Cognac', price: '500 ₽' },
-            { year: '', name: 'Lheraud Ugni Blanc Pineau des Charentes / Cognac', price: '500 ₽' },
-            { year: '', name: 'Lheraud Ugni Blanc Pineau des Charentes / Cognac', price: '500 ₽' },
-        ]
-    },
-];
-
-// Моковые данные для пива
-const MOCK_BEER: WineCategory[] = [
-    {
-        title: 'Игристые вина / 125 мл',
-        items: [
-            { year: 'NV', name: 'Tete de Cheval Brut Pinskiy&Co / Kuban', price: '650 ₽' },
-            { year: 'NV', name: 'Corvezzo Prosecco Treviso Extra Dry / Veneto', price: '1000 ₽' },
-            { year: '2022', name: 'Calvet Cremant de Bordeauc Blanc de Noirs Brut / Bordeaux', price: '1100 ₽' },
-            { year: 'NV', name: 'Andre Delorme Cremant de Bourgogne Rose Brut / Bourgogne', price: '1200 ₽' },
-        ]
-    },
-    {
-        title: 'Десертные вина / 40 мл',
-        items: [
-            { year: '', name: 'Lheraud Ugni Blanc Pineau des Charentes / Cognac', price: '500 ₽' },
-            { year: '', name: 'Lheraud Ugni Blanc Pineau des Charentes / Cognac', price: '500 ₽' },
-            { year: '', name: 'Lheraud Ugni Blanc Pineau des Charentes / Cognac', price: '500 ₽' },
-        ]
-    },
-];
-
-// Моковые данные для других напитков
-const MOCK_OTHER_DRINKS: WineCategory[] = [
-    {
-        title: 'Чай',
-        items: [
-            { year: '', name: 'Бергамот 300/500 мл', price: '800/1000 ₽' },
-            { year: '', name: 'Бергамот 300/500 мл', price: '800/1000 ₽' },
-            { year: '', name: 'Бергамот 300/500 мл', price: '800/1000 ₽' },
-        ]
-    },
-    {
-        title: 'Кофе',
-        items: [
-            { year: '', name: 'Латте 220/330/500 мл', price: '300/500/600 ₽' },
-            { year: '', name: 'Латте 220/330/500 мл', price: '300/500/600 ₽' },
-            { year: '', name: 'Латте 220/330/500 мл', price: '300/500/600 ₽' },
-        ]
-    },
-];
 
 export const RestaurantMenuPage: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [restaurants] = useAtom(restaurantsListAtom);
-    const [selectedCategory, setSelectedCategory] = useState<string>('special');
+    const [auth] = useAtom(authAtom);
+    const [restaurantMenus, setRestaurantMenus] = useAtom(restaurantMenusAtom);
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [menuData, setMenuData] = useState<IMenu | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
     const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
     const restaurant = useMemo(() => {
         return restaurants.find(r => r.id === Number(id));
     }, [restaurants, id]);
 
-    const handleBackClick = () => {
-        navigate(`/restaurant/${id}`);
-    };
-
-    const scrollToCategory = (categoryId: string) => {
-        setSelectedCategory(categoryId);
-        const element = categoryRefs.current[categoryId];
-        if (element) {
-            const yOffset = -140; // Отступ для sticky заголовка и вкладок
-            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({ top: y, behavior: 'smooth' });
-        }
-    };
-
-    // Определяем, какая категория видна при скролле
+    // Загрузка меню из кеша или API
     useEffect(() => {
+        if (!auth?.access_token || !id) return;
+
+        const restaurantId = Number(id);
+        
+        // Проверяем кеш
+        if (restaurantMenus[restaurantId]) {
+            console.log('[RestaurantMenuPage] Меню загружено из кеша');
+            setMenuData(restaurantMenus[restaurantId]);
+            
+            const firstVisibleCategory = restaurantMenus[restaurantId].item_categories?.find(cat => !cat.is_hidden);
+            if (firstVisibleCategory) {
+                setSelectedCategory(firstVisibleCategory.id);
+            }
+            setLoading(false);
+            return;
+        }
+
+        // Загружаем из API
+        console.log('[RestaurantMenuPage] Загрузка меню из API...');
+        setLoading(true);
+        APIGetRestaurantMenu(auth.access_token, restaurantId)
+            .then((response) => {
+                const menu = response.data[0];
+                setMenuData(menu);
+                
+                // Сохраняем в кеш
+                setRestaurantMenus(prev => ({
+                    ...prev,
+                    [restaurantId]: menu
+                }));
+                
+                const firstVisibleCategory = menu?.item_categories?.find(cat => !cat.is_hidden);
+                if (firstVisibleCategory) {
+                    setSelectedCategory(firstVisibleCategory.id);
+                }
+            })
+            .catch((error) => {
+                console.error('[RestaurantMenuPage] Ошибка загрузки меню:', error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [auth?.access_token, id, restaurantMenus, setRestaurantMenus]);
+
+    // Обновление видимой категории при скролле
+    useEffect(() => {
+        if (!menuData) return;
+
         const handleScroll = () => {
             const scrollPosition = window.scrollY + 200;
+            const visibleCategories = menuData.item_categories?.filter(cat => !cat.is_hidden) || [];
             
-            for (const category of MOCK_CATEGORIES) {
+            for (const category of visibleCategories) {
                 const element = categoryRefs.current[category.id];
                 if (element) {
                     const { offsetTop } = element;
@@ -276,7 +100,183 @@ export const RestaurantMenuPage: React.FC = () => {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [menuData]);
+
+    const handleBackClick = () => {
+        navigate(`/restaurant/${id}`);
+    };
+
+    const scrollToCategory = (categoryId: string) => {
+        setSelectedCategory(categoryId);
+        const element = categoryRefs.current[categoryId];
+        if (element) {
+            const yOffset = -140; // Отступ для sticky заголовка и вкладок
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    };
+
+    // Функция для извлечения цены из prices массива
+    const extractPrice = (prices: any[] | undefined): number => {
+        if (!prices || prices.length === 0) return 0;
+        
+        // Ищем цену с типом "default" или берем первую
+        const defaultPrice = prices.find(p => p.price_list_id === 'default') || prices[0];
+        return defaultPrice?.value || 0;
+    };
+
+    const handleDishClick = (dish: IAPIMenuItem) => {
+        // Преобразуем данные из API в формат для детальной страницы
+        const defaultSize = dish.item_sizes.find(s => s.is_default) || dish.item_sizes[0];
+        const price = extractPrice(defaultSize?.prices);
+        
+        // Извлекаем КБЖУ из nutrition_per_hundred первого размера
+        const nutrition = defaultSize?.nutrition_per_hundred;
+        const calories = nutrition?.calories || nutrition?.energy || null;
+        const proteins = nutrition?.proteins || nutrition?.protein || null;
+        const fats = nutrition?.fats || nutrition?.fat || null;
+        const carbohydrates = nutrition?.carbohydrates || nutrition?.carbs || null;
+        
+        const dishData: IMenuItem & {
+            description?: string;
+            calories?: number | null;
+            proteins?: number | null;
+            fats?: number | null;
+            carbohydrates?: number | null;
+            allergens?: string[];
+            weights?: string[];
+            weight_value?: string;
+            item_sizes?: IAPIMenuItem['item_sizes'];
+        } = {
+            id: parseInt(dish.id) || 0,
+            title: dish.name,
+            photo_url: defaultSize?.button_image_url || '',
+            price: price,
+            description: dish.description,
+            calories,
+            proteins,
+            fats,
+            carbohydrates,
+            allergens: dish.allergens
+                ?.map(a => {
+                    // Извлекаем только название аллергена без кода (A1, B3 и т.д.)
+                    if (typeof a === 'string') return a;
+                    if (a && typeof a === 'object') {
+                        // Ищем поле name/title/value, игнорируя code
+                        return a.name || a.title || a.value || Object.values(a).find(v => 
+                            typeof v === 'string' && v.length > 0 && !/^[A-Z]\d+$/.test(v)
+                        );
+                    }
+                    return null;
+                })
+                .filter(Boolean) as string[],
+            weights: dish.item_sizes
+                .filter(s => !s.is_hidden)
+                .map(s => s.portion_weight_grams.toString()),
+            weight_value: dish.measure_unit,
+            item_sizes: dish.item_sizes.filter(s => !s.is_hidden), // Передаем все размеры для выбора
+        };
+
+        navigate(`/restaurant/${id}/menu/dish/${dish.id}`, {
+            state: { dish: dishData },
+        });
+    };
+
+    // Определяем, является ли категория напитками (должна отображаться таблицей)
+    const isDrinkCategory = (categoryName: string): boolean => {
+        const drinkKeywords = ['вино', 'пиво', 'напитки', 'коктейл'];
+        return drinkKeywords.some(keyword => categoryName.toLowerCase().includes(keyword));
+    };
+
+    // Рендер категории с карточками блюд из API (2 колонки с фото)
+    const renderDishCategory = (category: IAPIMenuCategory) => {
+        const visibleItems = category.menu_items.filter(item => !item.is_hidden);
+        
+        if (visibleItems.length === 0) return null;
+
+        return (
+            <div
+                key={category.id}
+                ref={(el) => (categoryRefs.current[category.id] = el)}
+                className={css.categorySection}
+            >
+                <h2 className={css.categoryTitle}>{category.name}</h2>
+                <div className={css.items}>
+                    {visibleItems.map((item) => {
+                        const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
+                        const imageUrl = defaultSize?.button_image_url || '';
+                        const portionWeight = defaultSize?.portion_weight_grams;
+                        const weight = portionWeight ? `${portionWeight} ${item.measure_unit}` : '';
+                        const price = extractPrice(defaultSize?.prices);
+
+                        return (
+                            <div 
+                                key={item.id} 
+                                className={css.menuItemWrapper}
+                                onClick={() => handleDishClick(item)}
+                            >
+                                <div
+                                    className={css.menuItemImage}
+                                    style={{ 
+                                        backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
+                                        backgroundColor: imageUrl ? 'transparent' : '#F4F4F4'
+                                    }}
+                                />
+                                <div className={css.menuItemContent}>
+                                    <div className={css.menuItemInfo}>
+                                        <span className={css.menuItemTitle}>{item.name}</span>
+                                        {weight && <span className={css.menuItemWeight}>{weight}</span>}
+                                    </div>
+                                    <div className={css.menuItemPrice}>
+                                        {price > 0 && <span className={css.priceText}>{price} ₽</span>}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        );
+    };
+
+    // Рендер категории напитков в виде таблицы
+    const renderDrinkCategory = (category: IAPIMenuCategory) => {
+        const visibleItems = category.menu_items.filter(item => !item.is_hidden);
+        
+        if (visibleItems.length === 0) return null;
+
+        // Группируем по типам (если есть теги или описание)
+        // Пока просто рендерим все в одном списке
+        return (
+            <div
+                key={category.id}
+                ref={(el) => (categoryRefs.current[category.id] = el)}
+                className={css.categorySection}
+            >
+                <h2 className={css.categoryTitle}>{category.name}</h2>
+                <div className={css.drinkSections}>
+                    <div className={css.drinkItems}>
+                        {visibleItems.map((item) => {
+                            const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
+                            const portionWeight = defaultSize?.portion_weight_grams;
+                            const volume = portionWeight ? `${portionWeight} ${item.measure_unit}` : '';
+                            const price = extractPrice(defaultSize?.prices);
+
+                            return (
+                                <div key={item.id} className={css.drinkItem}>
+                                    <div className={css.drinkInfo}>
+                                        {volume && <span className={css.drinkVolume}>{volume}</span>}
+                                        <span className={css.drinkName}>{item.name}</span>
+                                    </div>
+                                    {price > 0 && <span className={css.drinkPrice}>{price} ₽</span>}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     if (!restaurant) {
         return (
@@ -286,72 +286,44 @@ export const RestaurantMenuPage: React.FC = () => {
         );
     }
 
-    const handleDishClick = (dish: IMenuItem) => {
-        navigate(`/restaurant/${id}/menu/dish/${dish.id}`, {
-            state: { dish },
-        });
-    };
-
-    // Рендер категории с карточками блюд
-    const renderDishCategory = (category: MenuCategory) => (
-        <div
-            key={category.id}
-            ref={(el) => (categoryRefs.current[category.id] = el)}
-            className={css.categorySection}
-        >
-            <h2 className={css.categoryTitle}>{category.name}</h2>
-            <div className={css.items}>
-                {category.items.map((item) => (
-                    <div 
-                        key={item.id} 
-                        className={css.menuItemWrapper}
-                        onClick={() => handleDishClick(item)}
-                    >
-                        <div
-                            className={css.menuItemImage}
-                            style={{ backgroundImage: `url(${item.photo_url})` }}
-                        />
-                        <div className={css.menuItemInfo}>
-                            <span className={css.menuItemTitle}>{item.title}</span>
-                            <span className={css.menuItemWeight}>200 г</span>
-                        </div>
-                        <div className={css.menuItemPrice}>
-                            <span className={css.priceText}>{item.price} ₽</span>
-                        </div>
-                    </div>
-                ))}
+    if (loading) {
+        return (
+            <div className={css.page}>
+                <div className={css.header}>
+                    <RoundedButton
+                        icon={<BackIcon />}
+                        action={handleBackClick}
+                    />
+                    <h1 className={css.title}>{restaurant.title}</h1>
+                    <div className={css.spacer} />
+                </div>
+                <div className={css.loadingContainer}>
+                    <p>Загрузка меню...</p>
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
 
-    // Рендер категории напитков (вино, пиво, другие напитки)
-    const renderDrinkCategory = (categoryId: string, categoryName: string, data: WineCategory[]) => (
-        <div
-            key={categoryId}
-            ref={(el) => (categoryRefs.current[categoryId] = el)}
-            className={css.categorySection}
-        >
-            <h2 className={css.categoryTitle}>{categoryName}</h2>
-            <div className={css.drinkSections}>
-                {data.map((section, idx) => (
-                    <div key={idx} className={css.drinkSection}>
-                        <h3 className={css.drinkSectionTitle}>{section.title}</h3>
-                        <div className={css.drinkItems}>
-                            {section.items.map((item, itemIdx) => (
-                                <div key={itemIdx} className={css.drinkItem}>
-                                    <div className={css.drinkInfo}>
-                                        {item.year && <span className={css.drinkYear}>{item.year}</span>}
-                                        <span className={css.drinkName}>{item.name}</span>
-                                    </div>
-                                    <span className={css.drinkPrice}>{item.price}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ))}
+    if (!menuData || !menuData.item_categories || menuData.item_categories.length === 0) {
+        return (
+            <div className={css.page}>
+                <div className={css.header}>
+                    <RoundedButton
+                        icon={<BackIcon />}
+                        action={handleBackClick}
+                    />
+                    <h1 className={css.title}>{restaurant.title}</h1>
+                    <div className={css.spacer} />
+                </div>
+                <div className={css.errorContainer}>
+                    <p>Меню временно недоступно</p>
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
+
+    // Фильтруем скрытые категории
+    const visibleCategories = menuData.item_categories.filter(cat => !cat.is_hidden);
 
     return (
         <div className={css.page}>
@@ -368,7 +340,7 @@ export const RestaurantMenuPage: React.FC = () => {
             {/* Вкладки категорий */}
             <div className={css.tabsContainer}>
                 <div className={css.tabs}>
-                    {MOCK_CATEGORIES.map((category) => (
+                    {visibleCategories.map((category) => (
                         <button
                             key={category.id}
                             className={`${css.tab} ${selectedCategory === category.id ? css.tabActive : ''}`}
@@ -382,26 +354,13 @@ export const RestaurantMenuPage: React.FC = () => {
 
             {/* Контент категорий */}
             <div className={css.content}>
-                {/* Special Menu */}
-                {renderDishCategory(MOCK_CATEGORIES.find(c => c.id === 'special')!)}
-                
-                {/* Гастрономия */}
-                {renderDishCategory(MOCK_CATEGORIES.find(c => c.id === 'gastronomy')!)}
-                
-                {/* Салаты */}
-                {renderDishCategory(MOCK_CATEGORIES.find(c => c.id === 'salads')!)}
-                
-                {/* Коктейли */}
-                {renderDishCategory(MOCK_CATEGORIES.find(c => c.id === 'cocktails')!)}
-                
-                {/* Вино */}
-                {renderDrinkCategory('wine', 'Вино по бокалам', MOCK_WINE)}
-                
-                {/* Пиво */}
-                {renderDrinkCategory('beer', 'Пиво', MOCK_BEER)}
-                
-                {/* Другие напитки */}
-                {renderDrinkCategory('drinks', 'Другие напитки', MOCK_OTHER_DRINKS)}
+                {visibleCategories.map((category) => {
+                    // Определяем, должна ли категория отображаться как таблица или как карточки
+                    if (isDrinkCategory(category.name)) {
+                        return renderDrinkCategory(category);
+                    }
+                    return renderDishCategory(category);
+                })}
             </div>
         </div>
     );

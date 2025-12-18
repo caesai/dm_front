@@ -24,8 +24,7 @@ const mockRestaurant: IRestaurant = {
     thumbnail_photo: 'thumbnail.jpg',
     avg_cheque: 3000,
     about_text: 'About text',
-    about_dishes: 'Европейская',
-    about_kitchen: 'Американская',
+    about_kitchen: 'Американская, Европейская',
     about_features: 'Some features',
     phone_number: '+79999999999',
     address_lonlng: '0,0',
@@ -39,9 +38,10 @@ const mockRestaurant: IRestaurant = {
     },
     gallery: [],
     brand_chef: {
-        name: '',
+        names: [],
         photo_url: '',
-        about: ''
+        about: '',
+        avatars: [],
     },
     worktime: [],
     menu: [],
@@ -54,7 +54,7 @@ const mockRestaurant: IRestaurant = {
         additional_options: [],
         description: '',
         image: '',
-    },
+    },  
 };
 
 const mockProps = {

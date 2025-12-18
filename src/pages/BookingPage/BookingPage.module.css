@@ -77,7 +77,7 @@
 
 .headerNav {
     display: flex;
-    gap: 22px;
+    gap: 20px;
     align-items: center;
     justify-content: space-between;
 }

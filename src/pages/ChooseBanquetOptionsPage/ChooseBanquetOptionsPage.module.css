@@ -32,13 +32,13 @@
 .swiper {
     --swiper-navigation-color: #fff !important;
     --swiper-pagination-color: #fff !important;
-    --swiper-pagination-bullet-inactive-color: #B8B8B8 !important;
+    --swiper-pagination-bullet-inactive-color: #b8b8b8 !important;
     aspect-ratio: 120/85;
     max-height: 270px;
     width: 100%;
 }
 
-:global(.swiper-pagination) {
+.swiper :global(.swiper-pagination) {
     top: 10px !important;
     bottom: auto !important;
     right: 10px !important;
@@ -48,14 +48,15 @@
     gap: 4px;
 }
 
-:global(.swiper-pagination-bullet) {
+.swiper :global(.swiper-pagination-bullet) {
     width: 8px;
     height: 8px;
     background: rgba(255, 255, 255, 0.5);
     opacity: 1;
+    margin: 0 !important;
 }
 
-:global(.swiper-pagination-bullet-active) {
+.swiper :global(.swiper-pagination-bullet-active) {
     background: white;
 }
 
@@ -90,7 +91,7 @@
         > span {
             color: var(--primary-background);
             text-align: center;
-            font-family: "Mont", sans-serif;
+            font-family: 'Mont', sans-serif;
             font-size: 0.75rem;
             font-weight: 600;
         }
@@ -110,7 +111,7 @@
 }
 
 .infoButton {
-    padding: .5rem 1rem;
+    padding: 0.5rem 1rem;
     height: fit-content;
 
     color: var(--primary-background);
@@ -164,7 +165,6 @@
         color: var(--red);
     }
 }
-
 
 .banquet_button {
     margin-top: 5px;

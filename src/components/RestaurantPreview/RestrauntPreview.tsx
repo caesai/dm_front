@@ -5,13 +5,10 @@ import { Swiper } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import { SwiperSlide } from 'swiper/react';
 import classNames from 'classnames';
-// API's
-import { APIPostNewRestaurant } from '@/api/restaurants.api.ts';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
 // Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 // Components
 import { RestaurantBadge } from '@/components/RestaurantPreview/RestaurantBadge/RestaurantBadge.tsx';
 import { RestaurantBadgePhoto } from '@/components/RestaurantPreview/RestaurantBadgePhoto/RestaurantBadgePhoto.tsx';
@@ -20,57 +17,38 @@ import { InfoTag } from '@/components/InfoTag/InfoTag.tsx';
 import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
 // Hooks
 import { useModal } from '@/components/ModalPopup/useModal.ts';
-import useToastState from '@/hooks/useToastState.ts';
 // Utils
-import {
-    getCurrentTimeShort,
-    getCurrentWeekdayShort,
-    getDataFromLocalStorage,
-    getRestaurantStatus,
-    setDataToLocalStorage,
-} from '@/utils.ts';
+import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatus } from '@/utils.ts';
 // Styles
 import 'swiper/css/bundle';
 import 'swiper/css/free-mode';
-import css from './RestrauntPreview.module.css';
+import css from '@/components/RestaurantPreview/RestrauntPreview.module.css';
+// Mocks
+import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock.ts';
 
 interface IRestaurantPreviewProps {
     restaurant: IRestaurant;
     clickable?: boolean;
 }
 
-const RESTRICTED_RESTAURANT_IDS: number[] = [4, 6, 7, 9, 10, 11, 12];
+const RESTAURANT_IDS_WITH_POPUP: string[] = [
+    R.SELF_EDGE_SPB_RADISHEVA_ID,
+    R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID,
+    R.SELF_EDGE_EKAT_GOGOLYA,
+    R.SMOKE_BBQ_MSC_TRUBNAYA_ID,
+    R.SELF_EDGE_MSC_BIG_GRUZINSKAYA_ID,
+    R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID,
+];
 
 export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restaurant, clickable }) => {
-    const [user] = useAtom(userAtom);
     const navigate = useNavigate();
-    const { isShowing, toggle } = useModal();
-    const [changeRes, setChangeRes] = useState(false);
+    // Atoms
     const [restaurants] = useAtom(restaurantsListAtom);
+    // States
+    const [changeRes, setChangeRes] = useState(false);
     const [selectedCity, setSelectedCity] = useState<number | null>(null);
-    const [auth] = useAtom(authAtom);
-    const { showToast } = useToastState();
-    const want_first = getDataFromLocalStorage('want_first');
-
-    const wantToBeFirst = () => {
-        if (!auth?.access_token) {
-            navigate('/onboarding/5');
-            return;
-        }
-
-        if (!clickable) return;
-
-        APIPostNewRestaurant(auth?.access_token)
-            .then(() => {
-                showToast('Спасибо. Мы сообщим вам, когда ресторан откроется');
-                setDataToLocalStorage('want_first', { done: true });
-            })
-            .catch((err) => {
-                if (err.response) {
-                    showToast('Возникла ошибка: ' + err.response.data.message);
-                }
-            });
-    };
+    // Hooks
+    const { isShowing, toggle } = useModal();
 
     return (
         <Link
@@ -78,11 +56,11 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
             to={`/restaurant/${restaurant.id}`}
             onClick={(event) => {
                 event.preventDefault();
-                if (!RESTRICTED_RESTAURANT_IDS.includes(restaurant.id) && clickable) {
+                if (!RESTAURANT_IDS_WITH_POPUP.includes(String(restaurant.id)) && clickable) {
+                    // Если это не ресторан с popup, то открываем страницу ресторана
                     navigate(`/restaurant/${restaurant.id}`);
-                } else if (restaurant.id === 12) {
-                    // nothing
                 } else {
+                    // Если это ресторан с popup, то открываем popup
                     toggle();
                 }
             }}
@@ -140,14 +118,11 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                 />
             )}
             <div
-                className={classNames(css.bgImage, restaurant.id === 12 ? css.bgNoImaged : css.imaged)}
+                className={classNames(css.bgImage, css.imaged)}
                 style={{
                     backgroundImage: `url(${restaurant.thumbnail_photo})`,
                 }}
             >
-                {user?.username &&
-                    ['martyad', 'w0esofwit', 'egormk', 'burovburov', 'iliathoughts'].includes(user?.username) &&
-                    restaurant.title === 'Self Edge Japanese' && <span className={css.discount}>Скидка 10%</span>}
                 <div className={css.floatingBadges}>
                     <Swiper
                         slidesPerView="auto"
@@ -173,16 +148,27 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                 </div>
 
                 <div className={css.imagedBottom}>
-                    <div
-                        className={classNames(css.chefPhoto, css.bgImage)}
-                        style={{
-                            backgroundImage: `url(${restaurant.brand_chef.photo_url})`,
-                        }}
-                    ></div>
-                    {restaurant.id !== 12 && (
+                    {restaurant.brand_chef?.avatars?.map((avatar) => (
+                        <div
+                            key={avatar}
+                            className={classNames(css.chefPhoto, css.bgImage)}
+                            style={{
+                                backgroundImage: `url(${avatar})`,
+                            }}
+                        ></div>
+                    ))}
+
+                    {/* Если это не заглушка ресторана Self Edge Chinois, то отображаем бренд-шефа */}
+                    {restaurant.id !== mockNewSelfEdgeChinoisRestaurant.id && (
                         <div className={css.chefInfo}>
-                            <span className={css.chefTitle}>Бренд-шеф</span>
-                            <span className={css.chefName}>{restaurant.brand_chef.name}</span>
+                            <span className={css.chefTitle}>
+                                Бренд-шеф{restaurant?.brand_chef?.names?.length > 1 ? 'ы' : ''}
+                            </span>
+                            {restaurant?.brand_chef?.names?.map((name) => (
+                                <span className={css.chefName} key={name}>
+                                    {name}
+                                </span>
+                            ))}
                         </div>
                     )}
                 </div>
@@ -193,38 +179,22 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                     <span className={css.resSlogan}>{restaurant.slogan}</span>
                     <span className={css.resSlogan}>{restaurant.address}</span>
                 </div>
-                {restaurant.id !== 12 ? (
-                    <div className={css.tags}>
-                        <InfoTag
-                            text={getRestaurantStatus(
-                                restaurant.worktime,
-                                getCurrentWeekdayShort(),
-                                getCurrentTimeShort()
-                            )}
-                        />
-                        <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`} />
-                    </div>
-                ) : (
-                    <div style={{ display: 'flex' }}>
-                        {want_first ? (
-                            <div className={css.success_animation}>
-                                <svg className={css.checkmark} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                                    <circle className={css.checkmark__circle} cx="26" cy="26" r="25" fill="none" />
-                                    <path
-                                        className={css.checkmark__check}
-                                        fill="none"
-                                        d="M14.1 27.2l7.1 7.2 16.7-16.8"
-                                    />
-                                </svg>
-                            </div>
-                        ) : (
-                            <span onClick={wantToBeFirst} className={css.resFirst}>
-                                {' '}
-                                Хочу побывать первым
-                            </span>
-                        )}
-                    </div>
-                )}
+                {/* Если это не заглушка ресторана Self Edge Chinois, то отображаем теги */}
+                <div className={css.tags}>
+                    <InfoTag
+                        // TODO: Убрать условие после 21.12.2025
+                        text={
+                            restaurant.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)
+                                ? 'Откроется 21.12'
+                                : getRestaurantStatus(
+                                      restaurant.worktime,
+                                      getCurrentWeekdayShort(),
+                                      getCurrentTimeShort()
+                                  )
+                        }
+                    />
+                    <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`} />
+                </div>
             </div>
         </Link>
     );

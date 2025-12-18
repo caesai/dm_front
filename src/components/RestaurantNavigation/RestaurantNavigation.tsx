@@ -1,21 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import css from './RestaurantNavigation.module.css';
 import AnchorLink from 'react-anchor-link-smooth-scroll';
 import classNames from 'classnames';
 import { Swiper as SwiperCore } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
+// Components
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+// Styles
+import css from '@/components/RestaurantNavigation/RestaurantNavigation.module.css';
 
 interface IRestaurantNavigationProps {
     isEvents: boolean;
     isLoading: boolean;
     isBanquets: boolean;
     isGastronomy: boolean;
+    isMenu: boolean;
 }
 
-export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isEvents, isLoading, isBanquets, isGastronomy }) => {
-    const [hash, setHash] = useState<string | null>(null);
+export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({
+    isEvents,
+    isLoading,
+    isBanquets,
+    isGastronomy,
+    isMenu,
+}) => {
+    const [hash, setHash] = useState<string>('booking');
     const [swiperInstance, setSwiperInstance] = useState<SwiperCore | null>(null);
     const hashes = ['booking', 'gallery', 'menu', 'banquet', 'events', 'certificates', 'ny_cooking', 'about', 'chef'];
 
@@ -30,7 +39,7 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isE
         const handleScroll = () => {
             const elements = hashes.map((id) => document.getElementById(id));
             elements.forEach((element) => {
-                if (element && element.offsetTop - window.scrollY < window.innerHeight / 2) {
+                if (element && window.scrollY !== 0 && element.offsetTop - window.scrollY < window.innerHeight / 2) {
                     setHash(element.id);
                 }
             });
@@ -77,18 +86,20 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isE
                             </div>
                         </AnchorLink>
                     </SwiperSlide>
-                    <SwiperSlide style={{ width: 'fit-content' }}>
-                        <AnchorLink href="#menu" offset={160}>
-                            <div
-                                className={classNames(
-                                    css.navigationLink,
-                                    hash === 'menu' ? css.navigationLinkActive : ''
-                                )}
-                            >
-                                Меню
-                            </div>
-                        </AnchorLink>
-                    </SwiperSlide>
+                    {isMenu && (
+                        <SwiperSlide style={{ width: 'fit-content' }}>
+                            <AnchorLink href="#menu" offset={160}>
+                                <div
+                                    className={classNames(
+                                        css.navigationLink,
+                                        hash === 'menu' ? css.navigationLinkActive : ''
+                                    )}
+                                >
+                                    Меню
+                                </div>
+                            </AnchorLink>
+                        </SwiperSlide>
+                    )}
                     {isBanquets && (
                         <SwiperSlide style={{ width: 'fit-content' }}>
                             <AnchorLink href="#banquet" offset={160}>
@@ -117,25 +128,25 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({ isE
                             </AnchorLink>
                         </SwiperSlide>
                     )}
-                        <SwiperSlide style={{ width: 'fit-content' }}>
-                            <AnchorLink href="#certificates" offset={160}>
-                                <div
-                                    className={classNames(
-                                        css.navigationLink,
-                                        hash === 'certificates' ? css.navigationLinkActive : ''
-                                    )}
-                                >
-                                    Сертификаты
-                                </div>
-                            </AnchorLink>
-                        </SwiperSlide>
+                    <SwiperSlide style={{ width: 'fit-content' }}>
+                        <AnchorLink href="#certificates" offset={160}>
+                            <div
+                                className={classNames(
+                                    css.navigationLink,
+                                    hash === 'certificates' ? css.navigationLinkActive : ''
+                                )}
+                            >
+                                Сертификаты
+                            </div>
+                        </AnchorLink>
+                    </SwiperSlide>
                     {isGastronomy && (
                         <SwiperSlide style={{ width: 'fit-content' }}>
                             <AnchorLink href="#ny_cooking" offset={160}>
                                 <div
                                     className={classNames(
                                         css.navigationLink,
-                                        hash === 'ny_cooking' ? css.navigationLinkActive : '',
+                                        hash === 'ny_cooking' ? css.navigationLinkActive : ''
                                     )}
                                 >
                                     Новогодняя кулинария

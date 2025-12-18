@@ -5,7 +5,7 @@ import { Dispatch, SetStateAction } from 'react';
 // import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { IEventBooking } from '@/types/events.ts';
 import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
-import { mockEventsUsersList } from './__mocks__/events.mock';
+import { testUsersList } from '@/__mocks__/user.mock.ts';
 // import axios from 'axios';
 // import { IEventBooking } from '@/pages/EventsPage/EventsPage.tsx';
 // import { Dispatch, SetStateAction } from 'react';
@@ -412,6 +412,18 @@ interface RestaurantStatus {
     interval: string;
 }
 
+/**
+ * Возвращает типизированный статус работы ресторана.
+ *
+ * Определяет, открыт ли ресторан в данный момент, и возвращает время следующего
+ * изменения статуса (время закрытия, если открыт, или время открытия, если закрыт).
+ * Учитывает переходы времени работы через полночь.
+ *
+ * @param worktime - Массив объектов с расписанием работы (день недели, время начала и конца).
+ * @param currentWeekday - Текущий день недели (например, 'mon', 'tue' и т.д.).
+ * @param currentTimeStr - Текущее время в формате 'HH:mm'.
+ * @returns Объект { status, interval }, где interval — время до которого открыт или во сколько откроется.
+ */
 export const getRestaurantStatusTyped = (
     worktime: IWorkTime[],
     currentWeekday: string,
@@ -597,7 +609,6 @@ export const setShortCookie = (name: string, value: string, seconds: number, pat
     const expires = date.toUTCString();
     document.cookie = `${name}=${value}; expires=${expires}; path=${path}`;
 };
-
 export const findOtherAllergies = (allergies: string[]) => {
     // Создаем Set для быстрого поиска по названиям аллергенов
     const validAllergies = new Set(allergiesOptions.map(option => option.content));
@@ -621,4 +632,4 @@ const tg_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
  * @param tg_id - Telegram Id из объекта window.Telegram.WebApp.initDataUnsafe.user.id
  * @returns true, если пользователь принадлежит тестовой группе, false в противном случае
  */
-export const isUserInTestGroup = tg_id && mockEventsUsersList.includes(tg_id);
+export const isUserInTestGroup = tg_id && testUsersList.includes(tg_id);
