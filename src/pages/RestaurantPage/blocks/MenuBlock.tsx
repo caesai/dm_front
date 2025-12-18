@@ -28,6 +28,28 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
     const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
     const [menuItems, setMenuItems] = useState<IAPIMenuItem[]>([]);
 
+    // Функция для извлечения цены из prices массива
+    const extractPriceForFilter = (prices: any[] | undefined): number => {
+        if (!prices || prices.length === 0) return 0;
+        
+        const priceObj = prices[0];
+        if (!priceObj || typeof priceObj !== 'object') return 0;
+        
+        const keys = Object.keys(priceObj);
+        if (keys.length === 0) return 0;
+        
+        const firstKey = keys[0];
+        const priceData = priceObj[firstKey];
+        
+        if (typeof priceData === 'number') return priceData;
+        
+        if (typeof priceData === 'object' && priceData !== null) {
+            return priceData.value || priceData.price || priceData.amount || 0;
+        }
+        
+        return 0;
+    };
+
     // Загрузка меню из кеша или API
     useEffect(() => {
         if (!auth?.access_token || !restaurant_id) return;
@@ -38,7 +60,15 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
             const menu = restaurantMenus[restaurant_id];
             const allItems = menu.item_categories
                 .filter(cat => !cat.is_hidden)
-                .flatMap(cat => cat.menu_items.filter(item => !item.is_hidden))
+                .flatMap(cat => cat.menu_items.filter(item => {
+                    if (item.is_hidden) return false;
+                    
+                    // Проверяем, есть ли цена
+                    const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
+                    const price = extractPriceForFilter(defaultSize?.prices);
+                    
+                    return price > 0;
+                }))
                 .slice(0, 10); // Берем первые 10 блюд
             setMenuItems(allItems);
             return;
@@ -58,7 +88,15 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
                 
                 const allItems = menu.item_categories
                     .filter(cat => !cat.is_hidden)
-                    .flatMap(cat => cat.menu_items.filter(item => !item.is_hidden))
+                    .flatMap(cat => cat.menu_items.filter(item => {
+                        if (item.is_hidden) return false;
+                        
+                        // Проверяем, есть ли цена
+                        const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
+                        const price = extractPriceForFilter(defaultSize?.prices);
+                        
+                        return price > 0;
+                    }))
                     .slice(0, 10); // Берем первые 10 блюд
                 setMenuItems(allItems);
             })

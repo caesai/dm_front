@@ -208,7 +208,15 @@ export const RestaurantMenuPage: React.FC = () => {
 
     // Рендер категории с карточками блюд из API (2 колонки с фото)
     const renderDishCategory = (category: IAPIMenuCategory) => {
-        const visibleItems = category.menu_items.filter(item => !item.is_hidden);
+        const visibleItems = category.menu_items.filter(item => {
+            if (item.is_hidden) return false;
+            
+            // Проверяем, есть ли цена у блюда
+            const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
+            const price = extractPrice(defaultSize?.prices);
+            
+            return price > 0;
+        });
         
         if (visibleItems.length === 0) return null;
 
@@ -261,7 +269,15 @@ export const RestaurantMenuPage: React.FC = () => {
 
     // Рендер категории напитков в виде таблицы
     const renderDrinkCategory = (category: IAPIMenuCategory) => {
-        const visibleItems = category.menu_items.filter(item => !item.is_hidden);
+        const visibleItems = category.menu_items.filter(item => {
+            if (item.is_hidden) return false;
+            
+            // Проверяем, есть ли цена у напитка
+            const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
+            const price = extractPrice(defaultSize?.prices);
+            
+            return price > 0;
+        });
         
         if (visibleItems.length === 0) return null;
 
