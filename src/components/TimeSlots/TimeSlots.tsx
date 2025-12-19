@@ -7,9 +7,9 @@ import { ContentContainer } from '@/components/ContentContainer/ContentContainer
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import classNames from 'classnames';
 import css from '@/pages/BookingPage/BookingPage.module.css';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { BASE_BOT } from '@/api/base';
-import { R } from '@/__mocks__/restaurant.mock';
+// import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+// import { BASE_BOT } from '@/api/base';
+// import { R } from '@/__mocks__/restaurant.mock';
 // import { BASE_BOT } from '@/api/base.ts';
 
 // Define the type for the part of the day
@@ -100,10 +100,10 @@ interface TimeSlotProps {
     availableTimeslots: ITimeSlot[];
     currentSelectedTime: ITimeSlot | null;
     setCurrentSelectedTime: (currentSelectedTime: ITimeSlot | null) => void;
-    restaurantId: number;
+    restaurantId?: number;
 }
 
-export const TimeSlots: React.FC<TimeSlotProps> = ({ loading, availableTimeslots, currentSelectedTime, setCurrentSelectedTime, restaurantId }) => {
+export const TimeSlots: React.FC<TimeSlotProps> = ({ loading, availableTimeslots, currentSelectedTime, setCurrentSelectedTime }) => {
     // Filter timeslots into categories using helper functions
     const morningTimeslots = useMemo(() => filterByPartOfDay(availableTimeslots, 'morning'), [availableTimeslots]);
     const dayTimeslots = useMemo(() => filterByPartOfDay(availableTimeslots, 'day'), [availableTimeslots]);
@@ -152,15 +152,15 @@ export const TimeSlots: React.FC<TimeSlotProps> = ({ loading, availableTimeslots
     // Check if there are any slots at all
     const hasAnyTimeSlots = availableTimeslots.length > 0;
 
-    const hideApp = () => {
-        // window.location.href = "tg:resolve";
-        if (window.Telegram.WebApp) {
-            window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${restaurantId}`
-            window.Telegram.WebApp.close();
-        } else {
-            window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${restaurantId}`
-        }
-    }
+    // const hideApp = () => {
+    //     // window.location.href = "tg:resolve";
+    //     if (window.Telegram.WebApp) {
+    //         window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${restaurantId}`
+    //         window.Telegram.WebApp.close();
+    //     } else {
+    //         window.location.href = `https://t.me/${BASE_BOT}?start=find_table-${restaurantId}`
+    //     }
+    // }
 
     return (
         <ContentContainer>
@@ -213,13 +213,13 @@ export const TimeSlots: React.FC<TimeSlotProps> = ({ loading, availableTimeslots
                 )}
                 {/** TODO: Убрать условие после 21.12.2025 */}
                 {/* Если ресторан не SELF_EDGE_SPB_CHINOIS_ID, то показываем кнопку "Не нашли стол на желаемую дату и время?" */}
-                {restaurantId !== Number(R.SELF_EDGE_SPB_CHINOIS_ID) && (
+                {/* {restaurantId !== Number(R.SELF_EDGE_SPB_CHINOIS_ID) && (
                     <UniversalButton
                         action={hideApp}
                         width={'full'}
                         title={'Не нашли стол на желаемую дату и время?'}
                         style={{ fontSize: 12, color: "gray", textDecoration: 'underline', fontFamily: 'Mont'}} />
-                )}
+                )} */}
             </div>
         </ContentContainer>
     );
