@@ -5,7 +5,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 // Atoms
 import { userAtom } from '@/atoms/userAtom.ts';
-import { guestCountAtom } from '@/atoms/eventListAtom';
+import { guestCountAtom } from '@/atoms/eventListAtom.ts';
 // Components
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
