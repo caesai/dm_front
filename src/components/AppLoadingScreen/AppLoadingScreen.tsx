@@ -38,14 +38,6 @@ export const AppLoadingScreen = () => {
                     console.error('[AppLoadingScreen] Ошибка авторизации:', err);
                     console.error('[AppLoadingScreen] Детали ошибки:', err.response?.data);
                     
-                    // Устанавливаем пустого пользователя, чтобы не застрять на загрузке
-                    setUser({
-                        id: 0,
-                        first_name: 'Guest',
-                        username: 'guest',
-                        phone_number: '',
-                        selected_restaurants: []
-                    });
                 });
         }
     }, []);

@@ -206,25 +206,25 @@ export const RestaurantDishDetailsPage: React.FC = () => {
                             <div className={css.nutritionGrid}>
                                 {dishFromState.calories !== null && (
                                     <div className={css.nutritionItem}>
-                                        <span className={css.nutritionValue}>{Math.round(dishFromState.calories)}</span>
+                                        <span className={css.nutritionValue}>{Math.round(dishFromState?.calories || 0)}</span>
                                         <span className={css.nutritionLabel}>ккал</span>
                                     </div>
                                 )}
                                 {dishFromState.proteins !== null && (
                                     <div className={css.nutritionItem}>
-                                        <span className={css.nutritionValue}>{Math.round(dishFromState.proteins)}</span>
+                                        <span className={css.nutritionValue}>{Math.round(dishFromState?.proteins || 0)}</span>
                                         <span className={css.nutritionLabel}>белки</span>
                                     </div>
                                 )}
                                 {dishFromState.fats !== null && (
                                     <div className={css.nutritionItem}>
-                                        <span className={css.nutritionValue}>{Math.round(dishFromState.fats)}</span>
+                                        <span className={css.nutritionValue}>{Math.round(dishFromState?.fats || 0)}</span>
                                         <span className={css.nutritionLabel}>жиры</span>
                                     </div>
                                 )}
                                 {dishFromState.carbohydrates !== null && (
                                     <div className={css.nutritionItem}>
-                                        <span className={css.nutritionValue}>{Math.round(dishFromState.carbohydrates)}</span>
+                                        <span className={css.nutritionValue}>{Math.round(dishFromState?.carbohydrates || 0)}</span>
                                         <span className={css.nutritionLabel}>углеводы</span>
                                     </div>
                                 )}

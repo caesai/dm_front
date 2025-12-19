@@ -15,6 +15,7 @@ import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/Heade
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+import { DEV_MODE } from '@/api/base';
 
 interface MenuBlockProps {
     menu_imgs: IMenuImg[] | undefined;
@@ -103,7 +104,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
             .catch((error) => {
                 console.error('[MenuBlock] Ошибка загрузки меню:', error);
             });
-    }, [auth?.access_token, restaurant_id, restaurantMenus, setRestaurantMenus]);
+    }, [auth?.access_token, restaurant_id]);
 
     // Функция для извлечения цены из prices массива
     const extractPrice = (prices: any[] | undefined): number => {
@@ -148,6 +149,10 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
      */
     const handleOpenInteractiveMenu = () => {
         navigate(`/restaurant/${restaurant_id}/menu`);
+    };
+
+    const handleOpenMenuPopup = () => {
+        setIsMenuPopupOpen(true);
     };
 
     const menuImageUrls = getSortedMenuImageUrls();
@@ -205,7 +210,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
                 <UniversalButton
                     title="Всё меню"
                     width="full"
-                    action={handleOpenInteractiveMenu}
+                    action={DEV_MODE ? handleOpenInteractiveMenu : handleOpenMenuPopup}
                 />
             </ContentBlock>
         </ContentContainer>
