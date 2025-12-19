@@ -202,15 +202,6 @@
     align-self: stretch;
 }
 
-.drinkSectionTitle {
-    font-family: 'Mont', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 18px;
-    color: #000000;
-    margin: 0;
-}
-
 .drinkItems {
     display: flex;
     flex-direction: column;

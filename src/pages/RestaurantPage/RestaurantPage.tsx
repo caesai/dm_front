@@ -136,23 +136,23 @@ export const RestaurantPage: React.FC = () => {
         APIGetAvailableDays(auth.access_token, Number(id), 1)
             .then((res) => {
                 let formattedDates = res.data.map((date) => ({
-                title: formatDate(date),
-                value: date,
-            }));
+                    title: formatDate(date),
+                    value: date,
+                }));
                 // TODO: Убрать после 21.12.2025
                 if (id === R.SELF_EDGE_SPB_CHINOIS_ID) {
                     // Если ресторан Self Edge Chinois, то выбираем даты с 21.12.2025
                     formattedDates = formattedDates.filter((date) => moment(date.value).isAfter('2025-12-21') || moment(date.value).isSame('2025-12-21', 'day'));
                 }
-            setBookingDates(formattedDates);
+                setBookingDates(formattedDates);
 
-            if (formattedDates.length > 0) {
-                setBookingDate(formattedDates[0]);
-            }
+                if (formattedDates.length > 0) {
+                    setBookingDate(formattedDates[0]);
+                }
             })
             .catch((err) => {
                 console.error(err);
-        });
+            });
     }, [auth?.access_token, id]);
 
     // Загрузка доступных таймслотов для выбранной даты
@@ -182,15 +182,15 @@ export const RestaurantPage: React.FC = () => {
                 phone={restaurant?.phone_number || ''}
             />
 
-                <NavigationBlock
-                    restaurant_id={Number(id)}
-                    title={restaurant?.title}
-                    isBanquets={Boolean(hasBanquets)}
-                    isLoading={events == null && restaurant?.banquets == null}
-                    isGastronomy={hasGastronomy}
-                    isEvents={hasEvents}
+            <NavigationBlock
+                restaurant_id={Number(id)}
+                title={restaurant?.title}
+                isBanquets={Boolean(hasBanquets)}
+                isLoading={events == null && restaurant?.banquets == null}
+                isGastronomy={hasGastronomy}
+                isEvents={hasEvents}
                 isMenu={Boolean(restaurant?.menu.length)}
-                />
+            />
 
             <div className={css.floatingFooter}>
                 <BottomButtonWrapper
@@ -261,8 +261,8 @@ export const RestaurantPage: React.FC = () => {
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
                 
                 <MenuBlock 
-                    menu_imgs={restaurant?.menu_imgs}
                     restaurant_id={restaurant?.id || 0}
+                    menu_imgs={restaurant?.menu_imgs}
                 />
 
                 {restaurant && hasBanquets && (

@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { IMenuItem } from '@/types/restaurant.types';
 import { IMenuItem as IAPIMenuItem } from '@/api/menu.api';
 import { BackIcon } from '@/components/Icons/BackIcon';
+import { extractPrice } from '@/utils/menu.utils';
 import css from './RestaurantDishDetailsPage.module.css';
 
 /**
@@ -14,34 +15,6 @@ export const formatWeight = (weight: string | undefined, weight_unit?: string): 
     return `${weight} ${weight_unit}`;
 };
 
-/**
- * Извлекает цену из массива prices
- */
-const extractPrice = (prices: any[] | undefined): number => {
-    if (!prices || prices.length === 0) return 0;
-    
-    // Берем первый элемент массива prices
-    const priceObj = prices[0];
-    if (!priceObj || typeof priceObj !== 'object') return 0;
-    
-    // Извлекаем значение цены из первого свойства объекта
-    // Структура: [{ "additionalProp1": {} }] или [{ "default": { "value": 1000 } }]
-    const keys = Object.keys(priceObj);
-    if (keys.length === 0) return 0;
-    
-    const firstKey = keys[0];
-    const priceData = priceObj[firstKey];
-    
-    // Если priceData - число, возвращаем его
-    if (typeof priceData === 'number') return priceData;
-    
-    // Если priceData - объект, ищем поле value, price, amount
-    if (typeof priceData === 'object' && priceData !== null) {
-        return priceData.value || priceData.price || priceData.amount || 0;
-    }
-    
-    return 0;
-};
 
 
 export const RestaurantDishDetailsPage: React.FC = () => {
@@ -184,25 +157,25 @@ export const RestaurantDishDetailsPage: React.FC = () => {
                             <div className={css.nutritionGrid}>
                                 {dishFromState.calories !== null && (
                                     <div className={css.nutritionItem}>
-                                        <span className={css.nutritionValue}>{Math.round(dishFromState.calories)}</span>
+                                        <span className={css.nutritionValue}>{dishFromState.calories}</span>
                                         <span className={css.nutritionLabel}>ккал</span>
                                     </div>
                                 )}
                                 {dishFromState.proteins !== null && (
                                     <div className={css.nutritionItem}>
-                                        <span className={css.nutritionValue}>{Math.round(dishFromState.proteins)}</span>
+                                        <span className={css.nutritionValue}>{dishFromState.proteins}</span>
                                         <span className={css.nutritionLabel}>белки</span>
                                     </div>
                                 )}
                                 {dishFromState.fats !== null && (
                                     <div className={css.nutritionItem}>
-                                        <span className={css.nutritionValue}>{Math.round(dishFromState.fats)}</span>
+                                        <span className={css.nutritionValue}>{dishFromState.fats}</span>
                                         <span className={css.nutritionLabel}>жиры</span>
                                     </div>
                                 )}
                                 {dishFromState.carbohydrates !== null && (
                                     <div className={css.nutritionItem}>
-                                        <span className={css.nutritionValue}>{Math.round(dishFromState.carbohydrates)}</span>
+                                        <span className={css.nutritionValue}>{dishFromState.carbohydrates}</span>
                                         <span className={css.nutritionLabel}>углеводы</span>
                                     </div>
                                 )}

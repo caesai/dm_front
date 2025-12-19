@@ -8,6 +8,7 @@ import { IMenuImg } from '@/types/restaurant.types.ts';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { restaurantMenusAtom } from '@/atoms/restaurantMenuAtom.ts';
 import { APIGetRestaurantMenu, IMenuItem as IAPIMenuItem } from '@/api/menu.api.ts';
+import { extractPrice } from '@/utils/menu.utils.ts';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
@@ -27,28 +28,6 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
     const [restaurantMenus, setRestaurantMenus] = useAtom(restaurantMenusAtom);
     const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
     const [menuItems, setMenuItems] = useState<IAPIMenuItem[]>([]);
-
-    // Функция для извлечения цены из prices массива
-    const extractPriceForFilter = (prices: any[] | undefined): number => {
-        if (!prices || prices.length === 0) return 0;
-        
-        const priceObj = prices[0];
-        if (!priceObj || typeof priceObj !== 'object') return 0;
-        
-        const keys = Object.keys(priceObj);
-        if (keys.length === 0) return 0;
-        
-        const firstKey = keys[0];
-        const priceData = priceObj[firstKey];
-        
-        if (typeof priceData === 'number') return priceData;
-        
-        if (typeof priceData === 'object' && priceData !== null) {
-            return priceData.value || priceData.price || priceData.amount || 0;
-        }
-        
-        return 0;
-    };
 
     // Загрузка меню из кеша или API
     useEffect(() => {
@@ -88,33 +67,6 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
                 console.error('[MenuBlock] Ошибка загрузки меню:', error);
             });
     }, [auth?.access_token, restaurant_id, restaurantMenus, setRestaurantMenus]);
-
-    // Функция для извлечения цены из prices массива
-    const extractPrice = (prices: any[] | undefined): number => {
-        if (!prices || prices.length === 0) return 0;
-        
-        // Берем первый элемент массива prices
-        const priceObj = prices[0];
-        if (!priceObj || typeof priceObj !== 'object') return 0;
-        
-        // Извлекаем значение цены из первого свойства объекта
-        // Структура: [{ "additionalProp1": {} }] или [{ "default": { "value": 1000 } }]
-        const keys = Object.keys(priceObj);
-        if (keys.length === 0) return 0;
-        
-        const firstKey = keys[0];
-        const priceData = priceObj[firstKey];
-        
-        // Если priceData - число, возвращаем его
-        if (typeof priceData === 'number') return priceData;
-        
-        // Если priceData - объект, ищем поле value, price, amount
-        if (typeof priceData === 'object' && priceData !== null) {
-            return priceData.value || priceData.price || priceData.amount || 0;
-        }
-        
-        return 0;
-    };
 
     /**
      * Получает отсортированные URL изображений меню для попапа
