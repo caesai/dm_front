@@ -60,15 +60,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
             const menu = restaurantMenus[restaurant_id];
             const allItems = menu.item_categories
                 .filter(cat => !cat.is_hidden)
-                .flatMap(cat => cat.menu_items.filter(item => {
-                    if (item.is_hidden) return false;
-                    
-                    // Проверяем, есть ли цена
-                    const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
-                    const price = extractPriceForFilter(defaultSize?.prices);
-                    
-                    return price > 0;
-                }))
+                .flatMap(cat => cat.menu_items.filter(item => !item.is_hidden))
                 .slice(0, 10); // Берем первые 10 блюд
             setMenuItems(allItems);
             return;
@@ -88,15 +80,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
                 
                 const allItems = menu.item_categories
                     .filter(cat => !cat.is_hidden)
-                    .flatMap(cat => cat.menu_items.filter(item => {
-                        if (item.is_hidden) return false;
-                        
-                        // Проверяем, есть ли цена
-                        const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
-                        const price = extractPriceForFilter(defaultSize?.prices);
-                        
-                        return price > 0;
-                    }))
+                    .flatMap(cat => cat.menu_items.filter(item => !item.is_hidden))
                     .slice(0, 10); // Берем первые 10 блюд
                 setMenuItems(allItems);
             })
@@ -169,36 +153,36 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
 
                 {/* Слайдер блюд меню */}
                 {menuItems.length > 0 && (
-                    <div className={css.photoSliderContainer}>
-                        <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
+                <div className={css.photoSliderContainer}>
+                    <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
                             {menuItems.map((item, index) => {
                                 const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
                                 const imageUrl = defaultSize?.button_image_url || '';
                                 const price = extractPrice(defaultSize?.prices);
 
                                 return (
-                                    <SwiperSlide
-                                        style={{ width: '162px' }}
-                                        key={`${item.id}-${index}`}
-                                    >
-                                        <div className={css.menuItem}>
-                                            <div
-                                                className={classNames(css.menuItemPhoto, css.bgImage)}
+                            <SwiperSlide
+                                style={{ width: '162px' }}
+                                key={`${item.id}-${index}`}
+                            >
+                                <div className={css.menuItem}>
+                                    <div
+                                        className={classNames(css.menuItemPhoto, css.bgImage)}
                                                 style={{ 
                                                     backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
                                                     backgroundColor: imageUrl ? 'transparent' : '#F4F4F4'
                                                 }}
-                                            />
-                                            <div className={css.menuItemInfo}>
+                                    />
+                                    <div className={css.menuItemInfo}>
                                                 <span className={css.title}>{item.name}</span>
                                                 {price > 0 && <span className={css.subtitle}>{price} ₽</span>}
-                                            </div>
-                                        </div>
-                                    </SwiperSlide>
+                                    </div>
+                                </div>
+                            </SwiperSlide>
                                 );
                             })}
-                        </Swiper>
-                    </div>
+                    </Swiper>
+                </div>
                 )}
 
                 {/* Кнопка открытия полного меню */}

@@ -146,26 +146,6 @@ export const RestaurantMenuPage: React.FC = () => {
         }
     };
 
-    // Нормализация единиц измерения
-    const normalizeMeasureUnit = (unit: string | undefined): string => {
-        if (!unit) return 'г';
-        
-        const upperUnit = unit.toUpperCase().trim();
-        
-        // Замена английских названий на русские сокращения
-        if (upperUnit === 'GRAM' || upperUnit === 'GRAMS' || upperUnit === 'G') return 'г';
-        if (upperUnit === 'ML' || upperUnit === 'MILLILITER' || upperUnit === 'MILLILITERS') return 'мл';
-        if (upperUnit === 'L' || upperUnit === 'LITER' || upperUnit === 'LITERS') return 'л';
-        if (upperUnit === 'KG' || upperUnit === 'KILOGRAM' || upperUnit === 'KILOGRAMS') return 'кг';
-        if (upperUnit === 'PORTION' || upperUnit === 'PORTIONS' || upperUnit === 'PCS') return 'порц';
-        
-        // Если уже на русском, возвращаем как есть
-        if (upperUnit === 'Г' || upperUnit === 'МЛ' || upperUnit === 'Л' || upperUnit === 'КГ' || upperUnit === 'ПОРЦ') {
-            return unit.toLowerCase();
-        }
-        
-        return unit;
-    };
 
     // Функция для извлечения цены из prices массива
     const extractPrice = (prices: any[] | undefined): number => {
@@ -242,7 +222,7 @@ export const RestaurantMenuPage: React.FC = () => {
             weights: dish.item_sizes
                 .filter(s => !s.is_hidden)
                 .map(s => s.portion_weight_grams.toString()),
-            weight_value: normalizeMeasureUnit(dish.measure_unit || defaultSize?.measure_unit_type),
+            weight_value: dish.measure_unit || defaultSize?.measure_unit_type || '',
             item_sizes: dish.item_sizes.filter(s => !s.is_hidden), // Передаем все размеры для выбора
         };
 
@@ -251,24 +231,18 @@ export const RestaurantMenuPage: React.FC = () => {
         });
     };
 
-    // Определяем, является ли блюдо напитком (нет изображения, но есть цена)
+    // Определяем, является ли блюдо напитком (нет изображения)
     const isDrinkItem = (item: IAPIMenuItem): boolean => {
         const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
         const hasImage = defaultSize?.button_image_url && defaultSize.button_image_url.trim().length > 0;
-        const price = extractPrice(defaultSize?.prices);
         
-        // Напиток = нет изображения + есть цена
-        return !hasImage && price > 0;
+        // Напиток = нет изображения
+        return !hasImage;
     };
     
     // Определяем, нужно ли отображать категорию как таблицу (все видимые блюда - напитки)
     const shouldRenderAsTable = (category: IAPIMenuCategory): boolean => {
-        const visibleItems = category.menu_items.filter(item => {
-            if (item.is_hidden) return false;
-            const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
-            const price = extractPrice(defaultSize?.prices);
-            return price > 0;
-        });
+        const visibleItems = category.menu_items.filter(item => !item.is_hidden);
         
         if (visibleItems.length === 0) return false;
         
@@ -278,15 +252,7 @@ export const RestaurantMenuPage: React.FC = () => {
 
     // Рендер категории с карточками блюд из API (2 колонки с фото)
     const renderDishCategory = (category: IAPIMenuCategory) => {
-        const visibleItems = category.menu_items.filter(item => {
-            if (item.is_hidden) return false;
-            
-            // Проверяем, есть ли цена у блюда
-            const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
-            const price = extractPrice(defaultSize?.prices);
-            
-            return price > 0;
-        });
+        const visibleItems = category.menu_items.filter(item => !item.is_hidden);
         
         if (visibleItems.length === 0) return null;
 
@@ -304,7 +270,7 @@ export const RestaurantMenuPage: React.FC = () => {
                         const hasImage = imageUrl && imageUrl.trim().length > 0;
                         const portionWeight = defaultSize?.portion_weight_grams;
                         // Нормализуем единицу измерения
-                        const measureUnit = normalizeMeasureUnit(item.measure_unit || defaultSize?.measure_unit_type);
+                        const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || '';
                         const weight = portionWeight ? `${portionWeight} ${measureUnit}` : '';
                         const price = extractPrice(defaultSize?.prices);
 
@@ -341,15 +307,7 @@ export const RestaurantMenuPage: React.FC = () => {
 
     // Рендер категории напитков в виде таблицы
     const renderDrinkCategory = (category: IAPIMenuCategory) => {
-        const visibleItems = category.menu_items.filter(item => {
-            if (item.is_hidden) return false;
-            
-            // Проверяем, есть ли цена у напитка
-            const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
-            const price = extractPrice(defaultSize?.prices);
-            
-            return price > 0;
-        });
+        const visibleItems = category.menu_items.filter(item => !item.is_hidden);
         
         if (visibleItems.length === 0) return null;
 
@@ -367,7 +325,7 @@ export const RestaurantMenuPage: React.FC = () => {
                         {visibleItems.map((item) => {
                             const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
                             const portionWeight = defaultSize?.portion_weight_grams;
-                            const measureUnit = normalizeMeasureUnit(item.measure_unit || defaultSize?.measure_unit_type);
+                            const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || '';
                             const volume = portionWeight ? `${portionWeight} ${measureUnit}` : '';
                             const price = extractPrice(defaultSize?.prices);
 
@@ -431,23 +389,14 @@ export const RestaurantMenuPage: React.FC = () => {
         );
     }
 
-    // Функция для проверки, есть ли в категории блюда с ценами
-    const categoryHasItemsWithPrice = (category: IAPIMenuCategory): boolean => {
-        const items = category.menu_items.filter(item => {
-            if (item.is_hidden) return false;
-            
-            const defaultSize = item.item_sizes.find(s => s.is_default) || item.item_sizes[0];
-            const price = extractPrice(defaultSize?.prices);
-            
-            return price > 0;
-        });
-        
-        return items.length > 0;
+    // Функция для проверки, есть ли в категории видимые блюда
+    const categoryHasItems = (category: IAPIMenuCategory): boolean => {
+        return category.menu_items.some(item => !item.is_hidden);
     };
 
-    // Фильтруем скрытые категории и категории без блюд с ценами
+    // Фильтруем скрытые категории и категории без блюд
     const visibleCategories = menuData.item_categories.filter(cat => 
-        !cat.is_hidden && categoryHasItemsWithPrice(cat)
+        !cat.is_hidden && categoryHasItems(cat)
     );
 
     return (

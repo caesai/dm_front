@@ -129,11 +129,11 @@ const AppRouter: React.FC = () => {
     useEffect(() => {
         if (auth?.access_token)
             APIIsReviewAvailable(auth.access_token).then((res) =>
-                setReview({
-                    loading: false,
-                    available: res.data.available,
+                    setReview({
+                        loading: false,
+                        available: res.data.available,
                 })
-            );
+                );
     }, [auth]);
 
     // Загрузка статуса завершения загрузки
@@ -153,128 +153,128 @@ const AppRouter: React.FC = () => {
             <Redirecter />
             <Toast />
             {!loadingComplete ? (
-                <AppLoadingScreen />
-            ) : (
-                <Routes>
-                    <Route path={'/'} element={<IndexPage />} />
+                    <AppLoadingScreen />
+                ) : (
+                    <Routes>
+                        <Route path={'/'} element={<IndexPage />} />
                     {/* Страница карты ресторанов */}
-                    <Route path={'/map'} element={<RestaurantMapPage />} />
+                        <Route path={'/map'} element={<RestaurantMapPage />} />
                     {/* Страница профиля */}
-                    <Route path={'/profile'} element={<ProfilePage />} />
+                        <Route path={'/profile'} element={<ProfilePage />} />
                     {/* Страница профиля пользователя */}
-                    <Route path={'/me'} element={<UserProfilePage />} />
+                        <Route path={'/me'} element={<UserProfilePage />} />
                     {/* Страница аллергий */}
-                    <Route path={'/me/allergies'} element={<AllergiesPage />} />
+                        <Route path={'/me/allergies'} element={<AllergiesPage />} />
                     {/* Мероприятия */}
-                    <Route path={'/events'} element={<EventsPage />}>
+                        <Route path={'/events'} element={<EventsPage />}>
                         {/* Страница списка мероприятий */}
-                        <Route path={'/events'} element={<EventListOutlet />} />
+                            <Route path={'/events'} element={<EventListOutlet />} />
                         {/* Страница подтверждения мероприятия */}
-                        <Route path={'/events/:eventId'} element={<EventConfirmationOutlet />} />
+                            <Route path={'/events/:eventId'} element={<EventConfirmationOutlet />} />
                         {/* Страница бронирования мероприятия */}
-                        <Route path={'/events/:eventId/confirm'} element={<EventBookingOutlet />} />
+                            <Route path={'/events/:eventId/confirm'} element={<EventBookingOutlet />} />
                         {/* Страница оплаты мероприятия */}
-                        <Route path={'/events/payment/:orderId'} element={<EventPaymentPage />} />
+                            <Route path={'/events/payment/:orderId'} element={<EventPaymentPage />} />
                         {/* Страница информации о супер-мероприятии */}
-                        <Route path={'/events/super'} element={<EventSuperInfoOutlet />} />
+                            <Route path={'/events/super'} element={<EventSuperInfoOutlet />} />
                         {/* Страница заявки на супер-мероприятие */}
-                        <Route path={'/events/super/apply'} element={<EventSuperApplyOutlet />} />
-                    </Route>
+                            <Route path={'/events/super/apply'} element={<EventSuperApplyOutlet />} />
+                        </Route>
                     {/* Бронирование мероприятия */}
-                    <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
+                        <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
                     {/* Мои билеты */}
-                    <Route path={'/tickets'} element={<UserTicketsPage />} />
+                        <Route path={'/tickets'} element={<UserTicketsPage />} />
                     {/* Информация о билете */}
-                    <Route path={'/tickets/:id'} element={<TicketInfoPage />} />
+                        <Route path={'/tickets/:id'} element={<TicketInfoPage />} />
                     {/* Мои бронирования */}
-                    <Route path={'/myBookings'} element={<MyBookingsPage />} />
+                        <Route path={'/myBookings'} element={<MyBookingsPage />} />
                     {/* Информация о бронировании */}
                     <Route path={'/myBookings/:id'} element={<BookingInfoPage />} />
                     {/* Страница ресторана */}
                     <Route path={'/restaurant/:id'} element={<RestaurantPage />} />
                     {/* Бронирование ресторана */}
-                    <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
+                        <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
                     {/* Меню ресторана */}
                     <Route path={'/restaurant/:id/menu'} element={<RestaurantMenuPage />} />
                     <Route path={'/restaurant/:id/menu/dish/:dishId'} element={<RestaurantDishDetailsPage />} />
                     {/* Страница нового ресторана */}
-                    <Route path={'/newrestaurant'} element={<NewRestaurant />} />
+                        <Route path={'/newrestaurant'} element={<NewRestaurant />} />
                     {/* Бронирование столика */}
-                    <Route path={'/booking'} element={<BookingPage />} />
+                        <Route path={'/booking'} element={<BookingPage />} />
                     {/* Подтверждение бронирования */}
                     <Route path={'/bookingConfirmation'} element={<BookingConfirmationPage />} />
                     {/* Неподдерживаемая среда */}
-                    <Route path={'/unsupported'} element={<EnvUnsupported />} />
+                        <Route path={'/unsupported'} element={<EnvUnsupported />} />
                     {/* Возврат платежа */}
                     <Route path={'/paymentReturn'} element={<PaymentReturnPage />} />
                     {/* Подтверждение телефона */}
                     <Route path={'/phoneConfirmation'} element={<UserPhoneConfirmationPage />} />
                     {/* Сканнер */}
-                    <Route path={'/scanner'} element={<AdminScannerPage />} />
+                        <Route path={'/scanner'} element={<AdminScannerPage />} />
                     {/* Онбординг */}
-                    <Route path={'/onboarding'} element={<OnboardingPage />}>
-                        <Route path={'/onboarding/1'} element={<StageOne />} />
-                        <Route path={'/onboarding/2'} element={<StageTwo />} />
-                        <Route path={'/onboarding/3'} element={<StageThree />} />
-                        <Route path={'/onboarding/4'} element={<StageFour />} />
-                    </Route>
+                        <Route path={'/onboarding'} element={<OnboardingPage />}>
+                            <Route path={'/onboarding/1'} element={<StageOne />} />
+                            <Route path={'/onboarding/2'} element={<StageTwo />} />
+                            <Route path={'/onboarding/3'} element={<StageThree />} />
+                            <Route path={'/onboarding/4'} element={<StageFour />} />
+                        </Route>
                     {/* Предпочтения */}
-                    <Route path={'/preferences'} element={<PreferencesPage />}>
-                        <Route path={'/preferences/1'} element={<PreferencesOne />} />
-                        <Route path={'/preferences/2'} element={<PreferencesTwo />} />
-                        <Route path={'/preferences/3'} element={<PreferencesThree />} />
-                    </Route>
+                        <Route path={'/preferences'} element={<PreferencesPage />}>
+                            <Route path={'/preferences/1'} element={<PreferencesOne />} />
+                            <Route path={'/preferences/2'} element={<PreferencesTwo />} />
+                            <Route path={'/preferences/3'} element={<PreferencesThree />} />
+                        </Route>
                     {/* Банкеты */}
                     {/* Страница выбора ресторана для банкета */}
-                    <Route path={'banquets/:id/address'} element={<BanquetAddressPage />} />
+                        <Route path={'banquets/:id/address'} element={<BanquetAddressPage />} />
                     {/* Выбор опций банкета */}
-                    <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
+                        <Route path={'banquets/:id/choose'} element={<ChooseBanquetOptionsPage />} />
                     {/* Страница опции банкета */}
-                    <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />
+                        <Route path={'banquets/:id/option'} element={<BanquetOptionPage />} />
                     {/* Страница дополнительных услуг */}
-                    <Route path={'banquets/:id/additional-services'} element={<BanquetAdditionalServicesPage />} />
+                        <Route path={'banquets/:id/additional-services'} element={<BanquetAdditionalServicesPage />} />
                     {/* Страница бронирования банкета */}
-                    <Route path={'banquets/:id/reservation'} element={<BanquetReservationPage />} />
+                        <Route path={'banquets/:id/reservation'} element={<BanquetReservationPage />} />
 
                     {/* Сертификаты */}
                     {/* Страница создания сертификата */}
-                    <Route path={'/certificates'} element={<CertificatesCreatePage />}>
+                        <Route path={'/certificates'} element={<CertificatesCreatePage />}>
                         {/* Страница выбора типа сертификата */}
-                        <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
+                            <Route path={'/certificates/1'} element={<CertificatesCreateOnePage />} />
                         {/* Страница выбора типа сертификата */}
-                        <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
+                            <Route path={'/certificates/2'} element={<CertificatesCreateTwoPage />} />
                         {/* Страница онлайн-сертификата */}
-                        <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
-                        <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
+                            <Route path={'/certificates/online'} element={<CertificatesCreateOnlinePage />} />
+                            <Route path={'/certificates/offline'} element={<CertificatesCreateOfflinePage />} />
                         {/* Страница моих сертификатов */}
-                        <Route path={'/certificates/my'} element={<CertificatesListPage />} />
+                            <Route path={'/certificates/my'} element={<CertificatesListPage />} />
                         {/* Страница оплаты сертификата */}
-                        <Route path={'/certificates/payment'} element={<CertificatesPaymentPage />} />
+                            <Route path={'/certificates/payment'} element={<CertificatesPaymentPage />} />
                         {/* Страница ошибки при создании сертификата */}
-                        <Route path={'/certificates/error'} element={<CertificatesCreateErrorPage />} />
-                    </Route>
+                            <Route path={'/certificates/error'} element={<CertificatesCreateErrorPage />} />
+                        </Route>
                     {/* Страница сертификата */}
-                    <Route path={'/certificates/landing/:id'} element={<CertificateLandingPage />} />
+                        <Route path={'/certificates/landing/:id'} element={<CertificateLandingPage />} />
 
                     {/* Гастрономия */}
-                    <Route path={'/gastronomy'} element={<GastronomyPage />}>
+                        <Route path={'/gastronomy'} element={<GastronomyPage />}>
                         {/* Страница выбора ресторана для гастрономии */}
-                        <Route path={'/gastronomy/choose'} element={<GastronomyChooseRestaurantPage />} />
+                            <Route path={'/gastronomy/choose'} element={<GastronomyChooseRestaurantPage />} />
                         {/* Страница выбора блюд для гастрономии */}
-                        <Route path={'/gastronomy/:res_id'} element={<GastronomyChooseDishesPage />} />
+                            <Route path={'/gastronomy/:res_id'} element={<GastronomyChooseDishesPage />} />
                         {/* Страница деталей блюда */}
-                        <Route path={'/gastronomy/:res_id/dish/:dish_id'} element={<GastonomyDishDetailsPage />} />
+                            <Route path={'/gastronomy/:res_id/dish/:dish_id'} element={<GastonomyDishDetailsPage />} />
                         {/* Страница корзины */}
-                        <Route path={'/gastronomy/:res_id/basket'} element={<GastronomyBasketPage />} />
+                            <Route path={'/gastronomy/:res_id/basket'} element={<GastronomyBasketPage />} />
                         {/* Страница моих заказов */}
-                        <Route path={'/gastronomy/my'} element={<GastronomyOrdersListPage />} />
-                    </Route>
+                            <Route path={'/gastronomy/my'} element={<GastronomyOrdersListPage />} />
+                        </Route>
                     {/* Страница заказа гастрономии */}
-                    <Route path={'/gastronomy/order/:order_id'} element={<GastronomyOrderPage />} />
+                        <Route path={'/gastronomy/order/:order_id'} element={<GastronomyOrderPage />} />
 
-                    <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-            )}
+                        <Route path="*" element={<Navigate to="/" />} />
+                    </Routes>
+                )}
         </BrowserRouter>
     );
 };

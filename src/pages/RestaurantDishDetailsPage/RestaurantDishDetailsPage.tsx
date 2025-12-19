@@ -43,28 +43,6 @@ const extractPrice = (prices: any[] | undefined): number => {
     return 0;
 };
 
-/**
- * Нормализует единицы измерения (GRAM -> г, ML -> мл и т.д.)
- */
-const normalizeMeasureUnit = (unit: string | undefined): string => {
-    if (!unit) return 'г';
-    
-    const upperUnit = unit.toUpperCase().trim();
-    
-    // Замена английских названий на русские сокращения
-    if (upperUnit === 'GRAM' || upperUnit === 'GRAMS' || upperUnit === 'G') return 'г';
-    if (upperUnit === 'ML' || upperUnit === 'MILLILITER' || upperUnit === 'MILLILITERS') return 'мл';
-    if (upperUnit === 'L' || upperUnit === 'LITER' || upperUnit === 'LITERS') return 'л';
-    if (upperUnit === 'KG' || upperUnit === 'KILOGRAM' || upperUnit === 'KILOGRAMS') return 'кг';
-    if (upperUnit === 'PORTION' || upperUnit === 'PORTIONS' || upperUnit === 'PCS') return 'порц';
-    
-    // Если уже на русском, возвращаем как есть
-    if (upperUnit === 'Г' || upperUnit === 'МЛ' || upperUnit === 'Л' || upperUnit === 'КГ' || upperUnit === 'ПОРЦ') {
-        return unit.toLowerCase();
-    }
-    
-    return unit;
-};
 
 export const RestaurantDishDetailsPage: React.FC = () => {
     const location = useLocation();
@@ -113,14 +91,14 @@ export const RestaurantDishDetailsPage: React.FC = () => {
 
     // Текущий вес для отображения
     const currentWeight = useMemo(() => {
-        const normalizedUnit = normalizeMeasureUnit(dishFromState.weight_value);
+        const unit = dishFromState.weight_value || '';
         
         if (currentSize) {
-            return `${currentSize.portion_weight_grams} ${normalizedUnit}`.trim();
+            return `${currentSize.portion_weight_grams} ${unit}`.trim();
         }
         if (dishFromState.weights && dishFromState.weights.length > 0) {
             const rawWeight = dishFromState.weights[selectedWeightIndex] || dishFromState.weights[0];
-            return formatWeight(rawWeight, normalizedUnit);
+            return formatWeight(rawWeight, unit);
         }
         return undefined;
     }, [currentSize, dishFromState, selectedWeightIndex]);
@@ -181,7 +159,7 @@ export const RestaurantDishDetailsPage: React.FC = () => {
                                         className={index === selectedWeightIndex ? css.weightTagActive : css.weightTag}
                                         onClick={() => setSelectedWeightIndex(index)}
                                     >
-                                        {size.portion_weight_grams} {normalizeMeasureUnit(dishFromState.weight_value)}
+                                        {size.portion_weight_grams} {dishFromState.weight_value}
                                     </button>
                                 ))}
                             </div>

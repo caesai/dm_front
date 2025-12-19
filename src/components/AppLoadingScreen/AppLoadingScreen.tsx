@@ -30,9 +30,9 @@ export const AppLoadingScreen = () => {
                     console.log('[AppLoadingScreen] Получение информации о пользователе...');
                     return APIUserInfo(token);
                 })
-                .then((res) => {
+                        .then((res) => {
                     console.log('[AppLoadingScreen] Информация о пользователе получена:', res.data);
-                    setUser(res.data);
+                        setUser(res.data);
                 })
                 .catch(err => {
                     console.error('[AppLoadingScreen] Ошибка авторизации:', err);
