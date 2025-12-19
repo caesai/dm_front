@@ -160,6 +160,8 @@
     width: 96px;
     height: 96px;
     margin-bottom: 8px;
+    display: block;
+    object-fit: contain;
 }
 
 .emptyStateText {

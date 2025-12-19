@@ -24,3 +24,7 @@ export const extractPrice = (prices: any[] | undefined): number => {
     return 0;
 };
 
+export const getDefaultSize = <T extends { is_default?: boolean }>(sizes: T[]): T | undefined => {
+    return sizes.find(s => s.is_default) || sizes[0];
+};
+
