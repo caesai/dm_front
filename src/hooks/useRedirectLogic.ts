@@ -42,7 +42,7 @@ export const useRedirectLogic = () => {
     const handleNavigation = useCallback((paramKey: string, path: string) => {
         const id = getEventIdFromParams(paramsObject, paramKey);
         if (id) {
-            if (path.includes('booking')) {
+            if (path.includes('booking') || path.includes('events')) {
                 const params = new URLSearchParams({ id, shared: 'true' });
                 navigate(`${path}?${params.toString()}`, { replace: true });
             } else {
@@ -59,6 +59,11 @@ export const useRedirectLogic = () => {
         // Highest priority: Handle specific Telegram Web App start parameters
         if (paramsObject.tgWebAppStartParam) {
             const bookingId = extractIdFromParam(paramsObject.tgWebAppStartParam, 'bookingId_');
+            const eventsId = extractIdFromParam(paramsObject.tgWebAppStartParam, 'eventsId_');
+            if (eventsId) {
+                navigate(`/events?id=${eventsId}?shared=true`, { replace: true });
+                return;
+            }
             if (bookingId) {
                 navigate(`/booking?id=${bookingId}&shared=true`, { replace: true });
                 return;
@@ -87,6 +92,7 @@ export const useRedirectLogic = () => {
 
         // Redirect based on query parameters (highest priority)
         const hasRedirectedByParam = handleNavigation('eventId', '/events/') ||
+        handleNavigation('eventId_', '/events/') ||
             handleNavigation('restaurantId', '/restaurant/') ||
             handleNavigation('bookingId', '/booking/') ||
             handleNavigation('ticketId', '/tickets/') ||

@@ -10,6 +10,7 @@ import { APIGetCityList } from '@/api/city.api.ts';
 import { APIGetCertificates } from '@/api/certificates.api.ts';
 import { APIGetGastronomyDishesList } from '@/api/gastronomy.api.ts';
 import { APIGetEventsList } from '@/api/events.api.ts';
+import { DEV_MODE } from '@/api/base.ts';
 // Atoms
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
@@ -149,7 +150,7 @@ const AppRouter: React.FC = () => {
     }, [loadApplicationData]);
     
     return (
-        <BrowserRouter basename={import.meta.env.MODE !== 'development' ? undefined : '/dm_front/'}>
+        <BrowserRouter basename={!DEV_MODE ? undefined : '/dm_front/'}>
             <ScrollToTop />
             <BannerPopup />
             <Redirecter />

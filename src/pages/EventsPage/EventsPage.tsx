@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 // Types
@@ -53,7 +53,7 @@ export const EventsPage: React.FC = () => {
         return location.pathname.split('/')[2] && !location.pathname.includes('confirm');
     }, [location.pathname]);
 
-    const shareEvent = () => {
+    const shareEvent = useCallback(() => {
         const url = encodeURI(
             `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.event?.id}`
         );
@@ -71,7 +71,7 @@ export const EventsPage: React.FC = () => {
         } catch (e) {
             window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
         }
-    };
+    }, [bookingInfo.event?.id, bookingInfo.event?.name]);
 
     useEffect(() => {
         // TODO: handling error through Modal Popup
@@ -109,12 +109,12 @@ export const EventsPage: React.FC = () => {
                         {isRestaurantsPage ? 'Выберите ресторан' : 'Мероприятия'}
                     </span>
                     <div className={css.header_spacer}>
-                        {(eventURL && !location.pathname.includes('super')) ? (
+                        {(!location.pathname.includes('super')) ? (
                             <RoundedButton
                                 icon={
                                     <Share color={'var(--dark-grey)'} />
                                 }
-                                action={() => shareEvent()}
+                                action={shareEvent}
                             />
                         ) : null}
                     </div>
