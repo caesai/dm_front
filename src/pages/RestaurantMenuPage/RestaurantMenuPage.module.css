@@ -31,12 +31,74 @@
     height: 44px;
 }
 
+/* Поисковая строка */
+.searchContainer {
+    padding: 0 15px 16px;
+    background-color: var(--primary-background);
+    position: sticky;
+    top: 84px;
+    z-index: 99;
+}
+
+.searchInput {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    width: 100%;
+    height: 45px;
+    background: #F4F4F4;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.searchIcon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.searchField {
+    flex: 1;
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+    color: #000000;
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+.searchField::placeholder {
+    color: #989898;
+}
+
+.clearButton {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: #989898;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.clearButton:hover {
+    color: #545454;
+}
+
 /* Вкладки */
 .tabsContainer {
     position: sticky;
-    top: 84px; /* Прилипает сразу под header (20px + 44px + 20px = 84px) */
+    top: 145px; /* Прилипает под header (84px) + search (45px + 16px padding) */
     background-color: var(--primary-background);
-    z-index: 99;
+    z-index: 98;
     padding: 0 15px 12px;
 }
 
@@ -82,6 +144,59 @@
     flex-direction: column;
     gap: 4px;
     padding: 0;
+}
+
+/* Пустые состояния (ничего не найдено, ошибка) */
+.emptyStateContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 45px 40px;
+    min-height: calc(100vh - 200px);
+}
+
+.emptyStateIcon {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 8px;
+}
+
+.emptyStateText {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: center;
+    color: #000000;
+    margin: 0 0 16px 0;
+}
+
+.emptyStateButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    width: 198px;
+    height: 40px;
+    background: #CA0E11;
+    border-radius: 12px;
+    border: none;
+    font-family: 'Mont', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 18px;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.emptyStateButton:hover {
+    opacity: 0.9;
+}
+
+.emptyStateButton:active {
+    opacity: 0.8;
 }
 
 /* Секция категории */

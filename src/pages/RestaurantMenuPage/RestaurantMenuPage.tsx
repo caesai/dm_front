@@ -14,6 +14,7 @@ import {
     IMenuItem as IAPIMenuItem 
 } from '@/api/menu.api';
 import { extractPrice } from '@/utils/menu.utils';
+import { trigramMatch } from '@/utils/trigram.utils';
 import css from './RestaurantMenuPage.module.css';
 
 export const RestaurantMenuPage: React.FC = () => {
@@ -25,6 +26,8 @@ export const RestaurantMenuPage: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [menuData, setMenuData] = useState<IMenu | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const tabsContainerRef = useRef<HTMLDivElement | null>(null);
     const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
@@ -73,18 +76,22 @@ export const RestaurantMenuPage: React.FC = () => {
             })
             .catch((error) => {
                 console.error('[RestaurantMenuPage] Ошибка загрузки меню:', error);
+                setError(true);
+                setLoading(false);
             })
             .finally(() => {
-                setLoading(false);
+                if (!error) {
+                    setLoading(false);
+                }
             });
     }, [auth?.access_token, id, restaurantMenus, setRestaurantMenus]);
 
     // Обновление видимой категории при скролле
     useEffect(() => {
-        if (!menuData) return;
+        if (!menuData || searchQuery) return; // Не обновляем категорию при активном поиске
 
         const handleScroll = () => {
-            const scrollPosition = window.scrollY + 200;
+            const scrollPosition = window.scrollY + 210; // Смещение: header + search + tabs
             const visibleCategories = menuData.item_categories?.filter(cat => !cat.is_hidden) || [];
             
             for (const category of visibleCategories) {
@@ -103,7 +110,7 @@ export const RestaurantMenuPage: React.FC = () => {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [menuData]);
+    }, [menuData, searchQuery]);
 
     // Автоскролл активной категории в блоке tabs
     useEffect(() => {
@@ -140,8 +147,8 @@ export const RestaurantMenuPage: React.FC = () => {
         setSelectedCategory(categoryId);
         const element = categoryRefs.current[categoryId];
         if (element) {
-            // Отступ: header (84px) + tabsContainer (56px) = 140px
-            const yOffset = -140;
+            // Отступ: header (84px) + search (61px) + tabsContainer (56px) = 201px
+            const yOffset = -201;
             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({ top: y, behavior: 'smooth' });
         }
@@ -225,7 +232,15 @@ export const RestaurantMenuPage: React.FC = () => {
 
     // Рендер категории с карточками блюд из API (2 колонки с фото)
     const renderDishCategory = (category: IAPIMenuCategory) => {
-        const visibleItems = category.menu_items.filter(item => !item.is_hidden);
+        let visibleItems = category.menu_items.filter(item => !item.is_hidden);
+        
+        // Фильтрация по поисковому запросу
+        if (searchQuery.trim()) {
+            visibleItems = visibleItems.filter(item => {
+                const searchText = `${item.name} ${item.description || ''}`.toLowerCase();
+                return trigramMatch(searchText, searchQuery);
+            });
+        }
         
         if (visibleItems.length === 0) return null;
 
@@ -280,7 +295,15 @@ export const RestaurantMenuPage: React.FC = () => {
 
     // Рендер категории напитков в виде таблицы
     const renderDrinkCategory = (category: IAPIMenuCategory) => {
-        const visibleItems = category.menu_items.filter(item => !item.is_hidden);
+        let visibleItems = category.menu_items.filter(item => !item.is_hidden);
+        
+        // Фильтрация по поисковому запросу
+        if (searchQuery.trim()) {
+            visibleItems = visibleItems.filter(item => {
+                const searchText = `${item.name} ${item.description || ''}`.toLowerCase();
+                return trigramMatch(searchText, searchQuery);
+            });
+        }
         
         if (visibleItems.length === 0) return null;
 
@@ -326,6 +349,16 @@ export const RestaurantMenuPage: React.FC = () => {
         );
     }
 
+    const handleRetry = () => {
+        setError(false);
+        setLoading(true);
+        window.location.reload();
+    };
+
+    const handleClearSearch = () => {
+        setSearchQuery('');
+    };
+
     if (loading) {
         return (
             <div className={css.page}>
@@ -344,7 +377,7 @@ export const RestaurantMenuPage: React.FC = () => {
         );
     }
 
-    if (!menuData || !menuData.item_categories || menuData.item_categories.length === 0) {
+    if (error || !menuData || !menuData.item_categories || menuData.item_categories.length === 0) {
         return (
             <div className={css.page}>
                 <div className={css.header}>
@@ -355,8 +388,17 @@ export const RestaurantMenuPage: React.FC = () => {
                     <h1 className={css.title}>{restaurant.title}</h1>
                     <div className={css.spacer} />
                 </div>
-                <div className={css.errorContainer}>
-                    <p>Меню временно недоступно</p>
+                <div className={css.emptyStateContainer}>
+                    <svg className={css.emptyStateIcon} width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="48" cy="48" r="44.5" stroke="#A6A6A6" strokeWidth="7"/>
+                        <path d="M66 48C66 57.9411 58.9411 66 49 66C39.0589 66 32 57.9411 32 48C32 38.0589 39.0589 31 49 31C58.9411 31 66 38.0589 66 48Z" stroke="#A6A6A6" strokeWidth="7"/>
+                        <rect x="72" y="72" width="4" height="12" transform="rotate(45 72 72)" fill="#A6A6A6"/>
+                        <circle cx="48" cy="40" r="12" fill="#F4F4F4"/>
+                    </svg>
+                    <p className={css.emptyStateText}>Не удалось загрузить меню</p>
+                    <button className={css.emptyStateButton} onClick={handleRetry}>
+                        Повторить попытку
+                    </button>
                 </div>
             </div>
         );
@@ -372,6 +414,25 @@ export const RestaurantMenuPage: React.FC = () => {
         !cat.is_hidden && categoryHasItems(cat)
     );
 
+    // Подсчитываем количество результатов поиска
+    const getSearchResultsCount = () => {
+        if (!searchQuery.trim()) return 0;
+        
+        let count = 0;
+        visibleCategories.forEach(category => {
+            const items = category.menu_items.filter(item => {
+                if (item.is_hidden) return false;
+                const searchText = `${item.name} ${item.description || ''}`.toLowerCase();
+                return trigramMatch(searchText, searchQuery);
+            });
+            count += items.length;
+        });
+        return count;
+    };
+
+    const searchResultsCount = searchQuery.trim() ? getSearchResultsCount() : 0;
+    const hasNoSearchResults = searchQuery.trim() && searchResultsCount === 0;
+
     return (
         <div className={css.page}>
             {/* Заголовок */}
@@ -384,8 +445,34 @@ export const RestaurantMenuPage: React.FC = () => {
                 <div className={css.spacer} />
             </div>
 
+            {/* Поисковая строка */}
+            <div className={css.searchContainer}>
+                <div className={css.searchInput}>
+                    <svg className={css.searchIcon} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="#545454" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M21 21L16.65 16.65" stroke="#545454" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <input
+                        type="text"
+                        className={css.searchField}
+                        placeholder="Поиск по меню"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    {searchQuery && (
+                        <button 
+                            className={css.clearButton}
+                            onClick={() => setSearchQuery('')}
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
+            </div>
+
             {/* Вкладки категорий */}
-            <div className={css.tabsContainer}>
+            {!searchQuery && (
+                <div className={css.tabsContainer}>
                 <div className={css.tabs} ref={tabsContainerRef}>
                     {visibleCategories.map((category) => (
                         <button
@@ -399,17 +486,33 @@ export const RestaurantMenuPage: React.FC = () => {
                     ))}
                 </div>
             </div>
+            )}
 
-            {/* Контент категорий */}
-            <div className={css.content}>
-                {visibleCategories.map((category) => {
-                    // Определяем, должна ли категория отображаться как таблица (все блюда - напитки)
-                    if (shouldRenderAsTable(category)) {
-                        return renderDrinkCategory(category);
-                    }
-                    return renderDishCategory(category);
-                })}
-            </div>
+            {/* Контент категорий или пустое состояние */}
+            {hasNoSearchResults ? (
+                <div className={css.emptyStateContainer}>
+                    <svg className={css.emptyStateIcon} width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="48" cy="48" r="44.5" stroke="#A6A6A6" strokeWidth="7"/>
+                        <path d="M66 48C66 57.9411 58.9411 66 49 66C39.0589 66 32 57.9411 32 48C32 38.0589 39.0589 31 49 31C58.9411 31 66 38.0589 66 48Z" stroke="#A6A6A6" strokeWidth="7"/>
+                        <rect x="72" y="72" width="4" height="12" transform="rotate(45 72 72)" fill="#A6A6A6"/>
+                        <circle cx="48" cy="40" r="12" fill="#F4F4F4"/>
+                    </svg>
+                    <p className={css.emptyStateText}>По вашему запросу ничего не нашлось</p>
+                    <button className={css.emptyStateButton} onClick={handleClearSearch}>
+                        Перейти в меню
+                    </button>
+                </div>
+            ) : (
+                <div className={css.content}>
+                    {visibleCategories.map((category) => {
+                        // Определяем, должна ли категория отображаться как таблица (все блюда - напитки)
+                        if (shouldRenderAsTable(category)) {
+                            return renderDrinkCategory(category);
+                        }
+                        return renderDishCategory(category);
+                    })}
+                </div>
+            )}
         </div>
     );
 };
