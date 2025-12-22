@@ -16,7 +16,7 @@ import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 // Styles
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 
-const ratings = ['3 000', '5 000', '10 000'];
+const ratings = ['5 000', '10 000', '15 000', '25 000'];
 const MAX_NAME_LENGTH = 15;
 const MAX_COMPLIMENT_LENGTH = 30;
 
