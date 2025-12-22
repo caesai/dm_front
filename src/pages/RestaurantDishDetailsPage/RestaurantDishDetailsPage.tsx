@@ -10,7 +10,6 @@ import css from '@/pages/RestaurantDishDetailsPage/RestaurantDishDetailsPage.mod
 // Utils
 import { extractPrice } from '@/utils/menu.utils.ts';
 
-
 const formatWeight = (weight: string | undefined, weight_unit?: string): string | undefined => {
     if (!weight) return undefined;
     if (!weight_unit) return weight;
@@ -19,9 +18,9 @@ const formatWeight = (weight: string | undefined, weight_unit?: string): string 
 
 const formatAllergens = (allergens: any[] | undefined): string => {
     if (!allergens?.length) return 'Нет';
-    
+
     const names = allergens
-        .map(a => {
+        .map((a) => {
             if (typeof a === 'string' && a.trim()) return a.trim();
             if (a && typeof a === 'object') {
                 return (a as any).name || (a as any).title || '';
@@ -29,7 +28,7 @@ const formatAllergens = (allergens: any[] | undefined): string => {
             return '';
         })
         .filter(Boolean);
-    
+
     return names.length > 0 ? names.join(', ') : 'Нет';
 };
 
@@ -58,12 +57,12 @@ export const RestaurantDishDetailsPage: React.FC = () => {
     }, [dishFromState, selectedWeightIndex]);
 
     const currentPrice = useMemo(() => {
-        return currentSize ? extractPrice(currentSize.prices) : (dishFromState?.price || 0);
+        return currentSize ? extractPrice(currentSize.prices) : dishFromState?.price || 0;
     }, [currentSize, dishFromState]);
 
     const currentWeight = useMemo(() => {
         const unit = dishFromState?.weight_value || '';
-        
+
         if (currentSize) {
             return `${currentSize.portion_weight_grams} ${unit}`.trim();
         }
@@ -105,14 +104,12 @@ export const RestaurantDishDetailsPage: React.FC = () => {
                 </div>
 
                 <div className={css.content}>
-                    <div 
-                        className={css.mainImage} 
-                        style={{ 
-                            backgroundImage: dishFromState.photo_url 
-                                ? `url(${dishFromState.photo_url})` 
-                                : 'none',
-                            backgroundColor: dishFromState.photo_url ? 'transparent' : '#F4F4F4'
-                        }} 
+                    <div
+                        className={css.mainImage}
+                        style={{
+                            backgroundImage: dishFromState.photo_url ? `url(${dishFromState.photo_url})` : 'none',
+                            backgroundColor: dishFromState.photo_url ? 'transparent' : '#F4F4F4',
+                        }}
                     />
 
                     <div className={css.titleSection}>
@@ -143,14 +140,14 @@ export const RestaurantDishDetailsPage: React.FC = () => {
                     {dishFromState.description && (
                         <div className={css.section}>
                             <span className={css.sectionTitle}>Состав</span>
-                            <p className={css.sectionText}>
-                                {dishFromState.description}
-                            </p>
+                            <p className={css.sectionText}>{dishFromState.description}</p>
                         </div>
                     )}
 
-                    {(dishFromState.calories !== null || dishFromState.proteins !== null || 
-                      dishFromState.fats !== null || dishFromState.carbohydrates !== null) && (
+                    {(dishFromState.calories !== null ||
+                        dishFromState.proteins !== null ||
+                        dishFromState.fats !== null ||
+                        dishFromState.carbohydrates !== null) && (
                         <div className={css.section}>
                             <span className={css.sectionTitle}>На 100 граммов</span>
                             <div className={css.nutritionGrid}>
@@ -184,9 +181,7 @@ export const RestaurantDishDetailsPage: React.FC = () => {
 
                     <div className={css.section}>
                         <span className={css.sectionTitle}>Аллергены</span>
-                        <p className={css.sectionText}>
-                            {formatAllergens(dishFromState.allergens)}
-                        </p>
+                        <p className={css.sectionText}>{formatAllergens(dishFromState.allergens)}</p>
                     </div>
                 </div>
             </div>
@@ -200,4 +195,3 @@ export const RestaurantDishDetailsPage: React.FC = () => {
         </div>
     );
 };
-

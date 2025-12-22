@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 // Types
 import { IEvent } from '@/types/events.types';
@@ -28,8 +28,6 @@ const initialRestaurant: PickerValueObj = {
 
 export const EventsListPage: React.FC = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
-    console.log('id: ', id);
     const [events] = useAtom<IEvent[]>(eventsListAtom);
     const [cityListA] = useAtom(cityListAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);

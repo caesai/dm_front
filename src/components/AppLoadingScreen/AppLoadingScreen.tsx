@@ -1,4 +1,4 @@
-import React,{ useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { useLaunchParams, useRawInitData } from '@telegram-apps/sdk-react';
 // APIs
@@ -29,7 +29,7 @@ export const AppLoadingScreen: React.FC = () => {
                         setUser(res.data);
                     });
                 })
-                .catch(err => {
+                .catch((err) => {
                     console.error('[AppLoadingScreen] Ошибка авторизации:', err);
                 });
         }
