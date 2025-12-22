@@ -1,6 +1,6 @@
-import { IEventInRestaurant } from '@/types/events.ts';
+import { IEvent } from '@/types/events.types.ts';
 
-export const mockEventsList: IEventInRestaurant[] = [
+export const mockEventsList: IEvent[] = [
     {
         id: 122,
         name: 'Дегустация чая',

@@ -7,7 +7,7 @@ import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx'
 import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.api.ts';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
-import { IEventInRestaurant } from '@/types/events.ts';
+import { IEvent } from '@/types/events.types.ts';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 // Atoms
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
@@ -43,6 +43,8 @@ import gastroBtn from '/img/gastro_btn1.png';
 import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
 import { R } from '@/__mocks__/restaurant.mock.ts';
+// Hooks
+import useToastState from '@/hooks/useToastState.ts';
 
 export const RestaurantPage: React.FC = () => {
     const navigate = useNavigate();
@@ -60,9 +62,9 @@ export const RestaurantPage: React.FC = () => {
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
     const [timeslotLoading, setTimeslotLoading] = useState(true);
     const [isCallPopupOpen, setIsCallPopupOpen] = useState(false);
-    const [events, setEvents] = useState<IEventInRestaurant[] | null>(null);
+    const [events, setEvents] = useState<IEvent[] | null>(null);
     const [nyCookings] = useState(NewYearCookingData);
-
+    const { showToast } = useToastState();
     /**
      * Обрабатывает переход к бронированию столика
      */
@@ -95,9 +97,9 @@ export const RestaurantPage: React.FC = () => {
 
     /**
      * Фильтрует события без билетов
-     * @returns {IEventInRestaurant[] | undefined} Отфильтрованный список событий
+     * @returns {IEvent[] | undefined} Отфильтрованный список событий
      */
-    const getFilteredEvents = (): IEventInRestaurant[] | undefined => {
+    const getFilteredEvents = (): IEvent[] | undefined => {
         if (!events) return undefined;
 
         return events.filter((event) => {
@@ -126,7 +128,13 @@ export const RestaurantPage: React.FC = () => {
         setRestaurant(restaurants.find((rest) => rest.id === Number(id)));
         setCurrentSelectedTime(null);
         setBookingDate({ value: 'unset', title: 'unset' });
-        APIGetEventsInRestaurant(Number(id), String(auth?.access_token)).then((res) => setEvents(res.data));
+        APIGetEventsInRestaurant(Number(id), String(auth?.access_token))
+            .then((res) => setEvents(res.data))
+            .catch((err) => {
+                console.error(err);
+                setEvents([]);
+                showToast('Ошибка при загрузке событий. Попробуйте позже');
+            });
     }, [id, restaurants, auth?.access_token]);
 
     // Загрузка доступных дней для бронирования
@@ -142,7 +150,10 @@ export const RestaurantPage: React.FC = () => {
                 // TODO: Убрать после 21.12.2025
                 if (id === R.SELF_EDGE_SPB_CHINOIS_ID) {
                     // Если ресторан Self Edge Chinois, то выбираем даты с 21.12.2025
-                    formattedDates = formattedDates.filter((date) => moment(date.value).isAfter('2025-12-21') || moment(date.value).isSame('2025-12-21', 'day'));
+                    formattedDates = formattedDates.filter(
+                        (date) =>
+                            moment(date.value).isAfter('2025-12-21') || moment(date.value).isSame('2025-12-21', 'day')
+                    );
                 }
                 setBookingDates(formattedDates);
 
@@ -162,6 +173,11 @@ export const RestaurantPage: React.FC = () => {
         setTimeslotLoading(true);
         APIGetAvailableTimeSlots(auth.access_token, Number(id), bookingDate.value, 1)
             .then((res) => setAvailableTimeslots(res.data))
+            .catch((err) => {
+                console.error(err);
+                setAvailableTimeslots([]);
+                showToast('Ошибка при загрузке доступных таймслотов. Попробуйте позже');
+            })
             .finally(() => setTimeslotLoading(false));
     }, [auth?.access_token, bookingDate, id]);
     // Вычисляемые значения

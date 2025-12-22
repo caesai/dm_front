@@ -7,9 +7,9 @@ import {
     IIsReviewAvailable,
     IRestaurant,
 } from '@/types/restaurant.types.ts';
-import { IEventInRestaurant } from '@/types/events.ts';
+import { IEvent } from '@/types/events.types.ts';
 
-export const APIGetRestaurants = (token: string) => {
+export const APIGetRestaurantsList = (token: string) => {
     return axios.get<IRestaurant[]>(`${BASE_URL}/restaurant/list`, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ export const APISendReview = (token: string, rate: number, features: string[], c
 };
 
 export const APIGetEventsInRestaurant = async (restaurant_id: number, token: string) => {
-    return await axios.get<IEventInRestaurant[]>(`${BASE_URL}/restaurant/${restaurant_id}/events`, {
+    return await axios.get<IEvent[]>(`${BASE_URL}/restaurant/${restaurant_id}/events`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -177,11 +177,15 @@ export const APIPOSTCancelReason = (token: string, booking_id: number, cancel_re
 };
 
 export const APIPostCheckNewRestaurantVisitStatus = (token: string, telegram_id: number) => {
-    return axios.post(`${BASE_URL}/onboarding/check`, {
-        telegram_id
-    },{
-        headers: {
-            Authorization: `Bearer ${token}`,
+    return axios.post(
+        `${BASE_URL}/onboarding/check`,
+        {
+            telegram_id,
         },
-    });
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
 };

@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
-import { IMenu } from '@/api/menu.api';
+// Types
+import { IMenu } from '@/types/menu.types.ts';
 
 /**
  * Атом для хранения кешированных меню ресторанов

@@ -116,6 +116,7 @@ export interface IBookingInfo {
     tags: string;
     booking_type?: string;
     event_title?: string;
+    title?: string;
     duration: number;
     certificate_value: number;
     certificate_expired_at: string;

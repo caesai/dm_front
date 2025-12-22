@@ -1,14 +1,20 @@
 import React, { useEffect } from 'react';
-import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
-import { DishCard } from '@/components/DishCard/DishCard.tsx';
-import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
-import { FloatingCartButton } from '@/components/FloatingCartButton/FloatingCartButton.tsx';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IDish } from '@/types/gastronomy.types.ts';
-import { APIGetGastronomyDishes } from '@/api/gastronomy.api.ts';
 import { useAtom } from 'jotai';
+// Types
+import { IDish } from '@/types/gastronomy.types.ts';
+// APIs
+import { APIGetGastronomyDishesList } from '@/api/gastronomy.api.ts';
+// Atoms
 import { authAtom } from '@/atoms/userAtom.ts';
 import { gastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
+// Components
+import { DishCard } from '@/components/DishCard/DishCard.tsx';
+import { FloatingCartButton } from '@/components/FloatingCartButton/FloatingCartButton.tsx';
+// Hooks
+import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
+// Styles
+import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
 
 export const GastronomyChooseDishesPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
@@ -24,7 +30,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
 
     const handleDishClick = (dish: IDish) => {
         navigate(`/gastronomy/${res_id}/dish/${dish.id}`, {
-            state: { dish }
+            state: { dish },
         });
     };
 
@@ -32,13 +38,14 @@ export const GastronomyChooseDishesPage: React.FC = () => {
         if (!auth) {
             return;
         }
-        APIGetGastronomyDishes(auth.access_token, res_id)
+        APIGetGastronomyDishesList(auth.access_token, res_id)
             .then((res) => {
                 setDishesList(res.data);
             })
-            .catch(() => {});
+            .catch((error) => {
+                console.error(error);
+            });
     }, [auth, res_id]);
-
 
     return (
         <>
@@ -54,12 +61,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
                     />
                 ))}
             </div>
-            {cart.totalItems > 0 && (
-                <FloatingCartButton
-                    totalAmount={cart.totalAmount}
-                    onClick={handleCartClick}
-                />
-            )}
+            {cart.totalItems > 0 && <FloatingCartButton totalAmount={cart.totalAmount} onClick={handleCartClick} />}
         </>
     );
 };

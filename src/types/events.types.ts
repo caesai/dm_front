@@ -1,6 +1,18 @@
 import { IRestaurantShortBooking } from '@/types/restaurant.types.ts';
 import { IUser } from '@/types/user.types.ts';
 
+export interface IEvent {
+    id: number;
+    name: string;
+    description: string;
+    ticket_price: number;
+    image_url: string;
+    date_start: string;
+    date_end: string;
+    tickets_left: number;
+    restaurant: IRestaurantShortBooking
+}
+
 interface EventRestaurant {
     id: number;
     title: string;
@@ -23,17 +35,6 @@ export interface EventTicket {
     restaurant: EventRestaurant;
 }
 
-export interface IEventInRestaurant {
-    id: number;
-    name: string;
-    description: string;
-    ticket_price: number;
-    image_url: string;
-    date_start: string;
-    date_end: string;
-    tickets_left: number;
-    restaurant: IRestaurantShortBooking
-}
 
 export interface IEventTicketScanner extends EventTicket {
     is_confirmed: boolean;
@@ -41,7 +42,7 @@ export interface IEventTicketScanner extends EventTicket {
 }
 
 export interface IEventBooking {
-    event?: IEventInRestaurant;
+    event?: IEvent;
     restaurant?: EventRestaurant;
     guestCount?: number;
 }

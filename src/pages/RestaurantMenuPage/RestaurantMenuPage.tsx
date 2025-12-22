@@ -1,19 +1,22 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom';
-import { IMenuItem } from '@/types/restaurant.types';
-import { RoundedButton } from '@/components/RoundedButton/RoundedButton';
-import { BackIcon } from '@/components/Icons/BackIcon';
-import { 
-    IMenuCategory as IAPIMenuCategory,
-    IMenuItem as IAPIMenuItem 
-} from '@/api/menu.api';
+// Types
+import { IMenuCategory as IAPIMenuCategory, IMenuItem as IAPIMenuItem } from '@/types/menu.types.ts';
+import { IMenuItem } from '@/types/restaurant.types.ts';
+// Atoms
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+// Components
+import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
+import { BackIcon } from '@/components/Icons/BackIcon.tsx';
+// Utils
 import { extractPrice, getDefaultSize } from '@/utils/menu.utils';
 import { trigramMatch } from '@/utils/trigram.utils';
+// Hooks
 import { useRestaurantMenu } from '@/hooks/useRestaurantMenu';
+// Styles
 import menuErrorIcon from '/icons/menu-error.png';
-import css from './RestaurantMenuPage.module.css';
+import css from '@/pages/RestaurantMenuPage/RestaurantMenuPage.module.css';
 
 export const RestaurantMenuPage: React.FC = () => {
     const { id } = useParams();
@@ -26,24 +29,24 @@ export const RestaurantMenuPage: React.FC = () => {
     const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
 
     const restaurant = useMemo(() => {
-        return restaurants.find(r => r.id === Number(id));
+        return restaurants.find((r) => r.id === Number(id));
     }, [restaurants, id]);
 
     const { menuData, loading, error, refetch } = useRestaurantMenu(Number(id));
 
     const visibleCategories = useMemo(() => {
         if (!menuData) return [];
-        return menuData.item_categories.filter(cat => 
-            !cat.is_hidden && cat.menu_items.some(item => !item.is_hidden)
+        return menuData.item_categories.filter(
+            (cat) => !cat.is_hidden && cat.menu_items.some((item) => !item.is_hidden)
         );
     }, [menuData]);
 
     const searchResultsCount = useMemo(() => {
         if (!searchQuery.trim()) return 0;
-        
+
         let count = 0;
-        visibleCategories.forEach(category => {
-            const items = category.menu_items.filter(item => {
+        visibleCategories.forEach((category) => {
+            const items = category.menu_items.filter((item) => {
                 if (item.is_hidden) return false;
                 const searchText = `${item.name} ${item.description || ''}`.toLowerCase();
                 return trigramMatch(searchText, searchQuery);
@@ -57,7 +60,7 @@ export const RestaurantMenuPage: React.FC = () => {
 
     useEffect(() => {
         if (menuData) {
-            const firstVisibleCategory = menuData.item_categories?.find(cat => !cat.is_hidden);
+            const firstVisibleCategory = menuData.item_categories?.find((cat) => !cat.is_hidden);
             if (firstVisibleCategory) {
                 setSelectedCategory(firstVisibleCategory.id);
             }
@@ -69,14 +72,14 @@ export const RestaurantMenuPage: React.FC = () => {
 
         const handleScroll = () => {
             const scrollPosition = window.scrollY + 210;
-            const visibleCategories = menuData.item_categories?.filter(cat => !cat.is_hidden) || [];
-            
+            const visibleCategories = menuData.item_categories?.filter((cat) => !cat.is_hidden) || [];
+
             for (const category of visibleCategories) {
                 const element = categoryRefs.current[category.id];
                 if (element) {
                     const { offsetTop } = element;
                     const offsetBottom = offsetTop + element.offsetHeight;
-                    
+
                     if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
                         setSelectedCategory(category.id);
                         break;
@@ -99,15 +102,13 @@ export const RestaurantMenuPage: React.FC = () => {
             const containerRect = container.getBoundingClientRect();
             const tabRect = activeTab.getBoundingClientRect();
 
-            const isVisible = 
-                tabRect.left >= containerRect.left &&
-                tabRect.right <= containerRect.right;
+            const isVisible = tabRect.left >= containerRect.left && tabRect.right <= containerRect.right;
 
             if (!isVisible) {
                 const scrollLeft = activeTab.offsetLeft - container.offsetWidth / 2 + activeTab.offsetWidth / 2;
                 container.scrollTo({
                     left: scrollLeft,
-                    behavior: 'smooth'
+                    behavior: 'smooth',
                 });
             }
         }
@@ -134,13 +135,13 @@ export const RestaurantMenuPage: React.FC = () => {
     const handleDishClick = (dish: IAPIMenuItem) => {
         const defaultSize = getDefaultSize(dish.item_sizes);
         const price = extractPrice(defaultSize?.prices);
-        
+
         const nutrition = defaultSize?.nutrition_per_hundred;
         const calories = nutrition?.calories || nutrition?.energy || null;
         const proteins = nutrition?.proteins || nutrition?.protein || null;
         const fats = nutrition?.fats || nutrition?.fat || null;
         const carbohydrates = nutrition?.carbohydrates || nutrition?.carbs || null;
-        
+
         const dishData: IMenuItem & {
             description?: string;
             calories?: number | null;
@@ -162,21 +163,22 @@ export const RestaurantMenuPage: React.FC = () => {
             fats,
             carbohydrates,
             allergens: dish.allergens
-                ?.map(a => {
+                ?.map((a) => {
                     if (typeof a === 'string') return a;
                     if (a && typeof a === 'object') {
-                        return a.name || a.title || a.value || Object.values(a).find(v => 
-                            typeof v === 'string' && v.length > 0 && !/^[A-Z]\d+$/.test(v)
+                        return (
+                            a.name ||
+                            a.title ||
+                            a.value ||
+                            Object.values(a).find((v) => typeof v === 'string' && v.length > 0 && !/^[A-Z]\d+$/.test(v))
                         );
                     }
                     return null;
                 })
                 .filter(Boolean) as string[],
-            weights: dish.item_sizes
-                .filter(s => !s.is_hidden)
-                .map(s => s.portion_weight_grams.toString()),
+            weights: dish.item_sizes.filter((s) => !s.is_hidden).map((s) => s.portion_weight_grams.toString()),
             weight_value: dish.measure_unit || defaultSize?.measure_unit_type || '',
-            item_sizes: dish.item_sizes.filter(s => !s.is_hidden),
+            item_sizes: dish.item_sizes.filter((s) => !s.is_hidden),
         };
 
         navigate(`/restaurant/${id}/menu/dish/${dish.id}`, {
@@ -188,22 +190,22 @@ export const RestaurantMenuPage: React.FC = () => {
         const defaultSize = getDefaultSize(item.item_sizes);
         return !defaultSize?.button_image_url || defaultSize.button_image_url.trim().length === 0;
     };
-    
+
     const shouldRenderAsTable = (category: IAPIMenuCategory): boolean => {
-        const visibleItems = category.menu_items.filter(item => !item.is_hidden);
-        return visibleItems.length > 0 && visibleItems.every(item => isDrinkItem(item));
+        const visibleItems = category.menu_items.filter((item) => !item.is_hidden);
+        return visibleItems.length > 0 && visibleItems.every((item) => isDrinkItem(item));
     };
 
     const renderDishCategory = (category: IAPIMenuCategory) => {
-        let visibleItems = category.menu_items.filter(item => !item.is_hidden);
-        
+        let visibleItems = category.menu_items.filter((item) => !item.is_hidden);
+
         if (searchQuery.trim()) {
-            visibleItems = visibleItems.filter(item => {
+            visibleItems = visibleItems.filter((item) => {
                 const searchText = `${item.name} ${item.description || ''}`.toLowerCase();
                 return trigramMatch(searchText, searchQuery);
             });
         }
-        
+
         if (visibleItems.length === 0) return null;
 
         return (
@@ -224,17 +226,13 @@ export const RestaurantMenuPage: React.FC = () => {
                         const price = extractPrice(defaultSize?.prices);
 
                         return (
-                            <div 
-                                key={item.id} 
-                                className={css.menuItemWrapper}
-                                onClick={() => handleDishClick(item)}
-                            >
+                            <div key={item.id} className={css.menuItemWrapper} onClick={() => handleDishClick(item)}>
                                 <div
                                     className={css.menuItemImage}
-                                    style={{ 
+                                    style={{
                                         backgroundImage: hasImage ? `url(${imageUrl})` : 'none',
                                         backgroundColor: hasImage ? 'transparent' : '#FFFFFF',
-                                        border: hasImage ? 'none' : '1px solid #E9E9E9'
+                                        border: hasImage ? 'none' : '1px solid #E9E9E9',
                                     }}
                                 />
                                 <div className={css.menuItemContent}>
@@ -255,15 +253,15 @@ export const RestaurantMenuPage: React.FC = () => {
     };
 
     const renderDrinkCategory = (category: IAPIMenuCategory) => {
-        let visibleItems = category.menu_items.filter(item => !item.is_hidden);
-        
+        let visibleItems = category.menu_items.filter((item) => !item.is_hidden);
+
         if (searchQuery.trim()) {
-            visibleItems = visibleItems.filter(item => {
+            visibleItems = visibleItems.filter((item) => {
                 const searchText = `${item.name} ${item.description || ''}`.toLowerCase();
                 return trigramMatch(searchText, searchQuery);
             });
         }
-        
+
         if (visibleItems.length === 0) return null;
 
         return (
@@ -310,10 +308,7 @@ export const RestaurantMenuPage: React.FC = () => {
         return (
             <div className={css.page}>
                 <div className={css.header}>
-                    <RoundedButton
-                        icon={<BackIcon />}
-                        action={handleBackClick}
-                    />
+                    <RoundedButton icon={<BackIcon />} action={handleBackClick} />
                     <h1 className={css.title}>{restaurant.title}</h1>
                     <div className={css.spacer} />
                 </div>
@@ -328,19 +323,12 @@ export const RestaurantMenuPage: React.FC = () => {
         return (
             <div className={css.page}>
                 <div className={css.header}>
-                    <RoundedButton
-                        icon={<BackIcon />}
-                        action={handleBackClick}
-                    />
+                    <RoundedButton icon={<BackIcon />} action={handleBackClick} />
                     <h1 className={css.title}>{restaurant.title}</h1>
                     <div className={css.spacer} />
                 </div>
                 <div className={css.emptyStateContainer}>
-                    <img 
-                        src={menuErrorIcon} 
-                        alt="Ошибка загрузки меню" 
-                        className={css.emptyStateIcon}
-                    />
+                    <img src={menuErrorIcon} alt="Ошибка загрузки меню" className={css.emptyStateIcon} />
                     <p className={css.emptyStateText}>Не удалось загрузить меню</p>
                     <button className={css.emptyStateButton} onClick={refetch}>
                         Повторить попытку
@@ -353,19 +341,35 @@ export const RestaurantMenuPage: React.FC = () => {
     return (
         <div className={css.page}>
             <div className={css.header}>
-                <RoundedButton
-                    icon={<BackIcon />}
-                    action={handleBackClick}
-                />
+                <RoundedButton icon={<BackIcon />} action={handleBackClick} />
                 <h1 className={css.title}>{restaurant.title}</h1>
                 <div className={css.spacer} />
             </div>
 
             <div className={css.searchContainer}>
                 <div className={css.searchInput}>
-                    <svg className={css.searchIcon} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="#545454" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M21 21L16.65 16.65" stroke="#545454" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <svg
+                        className={css.searchIcon}
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"
+                            stroke="#545454"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                        <path
+                            d="M21 21L16.65 16.65"
+                            stroke="#545454"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
                     </svg>
                     <input
                         type="text"
@@ -375,10 +379,7 @@ export const RestaurantMenuPage: React.FC = () => {
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                     {searchQuery && (
-                        <button 
-                            className={css.clearButton}
-                            onClick={() => setSearchQuery('')}
-                        >
+                        <button className={css.clearButton} onClick={() => setSearchQuery('')}>
                             ✕
                         </button>
                     )}
@@ -404,11 +405,7 @@ export const RestaurantMenuPage: React.FC = () => {
 
             {hasNoSearchResults ? (
                 <div className={css.emptyStateContainer}>
-                    <img 
-                        src={menuErrorIcon} 
-                        alt="Ничего не найдено" 
-                        className={css.emptyStateIcon}
-                    />
+                    <img src={menuErrorIcon} alt="Ничего не найдено" className={css.emptyStateIcon} />
                     <p className={css.emptyStateText}>По вашему запросу ничего не нашлось</p>
                     <button className={css.emptyStateButton} onClick={handleClearSearch}>
                         Перейти в меню

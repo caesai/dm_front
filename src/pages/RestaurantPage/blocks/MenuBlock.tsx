@@ -3,17 +3,23 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
+// Types
 import { IMenuImg } from '@/types/restaurant.types.ts';
+// Utils
 import { extractPrice, getDefaultSize } from '@/utils/menu.utils.ts';
+// Hooks
 import { useRestaurantMenu } from '@/hooks/useRestaurantMenu.ts';
+// Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { MenuPopup } from '@/components/MenuPopup/MenuPopup.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+// Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
-import { DEV_MODE } from '@/api/base';
+// API
+import { DEV_MODE } from '@/api/base.ts';
 
 interface MenuBlockProps {
     menu_imgs: IMenuImg[] | undefined;

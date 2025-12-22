@@ -22,7 +22,6 @@ import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPrevi
 import { BookingReminder } from '@/components/BookingReminder/BookingReminder.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
-import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 // Mocks
@@ -58,11 +57,10 @@ export const IndexPage: React.FC = () => {
             text: 'Москва',
         }
     );
-    const [currentBookings, setCurrentBookings] = useState<IBookingInfo[]>([]);
-    const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
+    const [currentBookings, setCurrentBookings] = useState<IBookingInfo[] | null>(null);
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
-    const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
-    const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
+    const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[] | null>(null);
+    const [restaurantsList, setRestaurantsList] = useState<IRestaurant[] | null>(null);
 
     /**
      * Эффект для инициализации данных страницы.
@@ -77,8 +75,6 @@ export const IndexPage: React.FC = () => {
         if (!auth?.access_token) {
             return;
         }
-        setCurrentBookingsLoading(true);
-
         // Запрашиваем текущие бронирования и билеты
         // объединяем в один массив чтобы отображать их в одном списке
         Promise.all([APIGetCurrentBookings(auth.access_token), APIGetTickets(auth.access_token)])
@@ -104,8 +100,11 @@ export const IndexPage: React.FC = () => {
                 const bookings = [...events, ...responses[0].data.currentBookings];
                 setCurrentBookings(bookings);
             })
-            .finally(() => {
-                setCurrentBookingsLoading(false);
+            .catch((error) => {
+                console.error(error);
+                // Кладем пустой массив, чтобы не было ошибки при рендере
+                // и блок не отображался
+                setCurrentBookings([]);
             });
         // Запрашиваем доступ к спец-событию
         APIGetSuperEventHasAccess(auth.access_token)
@@ -166,7 +165,7 @@ export const IndexPage: React.FC = () => {
         // Фильтруем рестораны по городу
         const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
         setRestaurantsList(filteredRestaurantsByCity);
-    }, [currentCityA, cityListA]);
+    }, [currentCityA, cityListA, restaurants]);
 
     // Устнавливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
     useEffect(() => {
@@ -211,33 +210,7 @@ export const IndexPage: React.FC = () => {
                 <div style={{ marginRight: 15 }}>
                     <CitySelect options={cityOptions} currentValue={currentCityS} onChange={updateCurrentCity} />
                 </div>
-                {currentBookingsLoading ? (
-                    <div style={{ marginRight: '15px' }}>
-                        <PlaceholderBlock width={'100%'} height={'108px'} rounded={'16px'} />
-                    </div>
-                ) : (
-                    currentBookings
-                        .filter((book) => {
-                            return (
-                                new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <=
-                                new Date(book.booking_date).getTime()
-                            );
-                        })
-                        .map((book) => (
-                            <BookingReminder
-                                key={book.id}
-                                id={book.id}
-                                title={book.restaurant.title}
-                                address={book.restaurant.address}
-                                date={book.booking_date}
-                                time={book.time}
-                                persons={book.guests_count}
-                                children={book.children_count}
-                                booking_type={book.booking_type}
-                                event_title={book.event_title}
-                            />
-                        ))
-                )}
+                <BookingReminder bookings={currentBookings} />
                 {hasSuperEventAccess && (
                     <div style={{ marginRight: 15, height: 85 }}>
                         <Link to={'/events/super'}>
@@ -253,7 +226,7 @@ export const IndexPage: React.FC = () => {
                 <OptionsNavigation cityId={cityId} />
 
                 <div className={css.restaurants}>
-                    {restaurantsList.map((rest) => (
+                    {restaurantsList?.map((rest) => (
                         <RestaurantPreview restaurant={rest} key={`rest-${rest.id}`} clickable />
                     ))}
                 </div>

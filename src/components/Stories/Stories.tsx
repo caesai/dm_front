@@ -6,16 +6,16 @@ import { useAtom } from 'jotai';
 import { ILocalStory, localStoriesListAtom } from '@/atoms/localStoriesListAtom.ts';
 
 interface IStoriesProps {
-    storiesBlocks: IStoryBlock[];
+    storiesBlocks: IStoryBlock[] | null;
 }
 
 export const Stories: React.FC<IStoriesProps> = ({ storiesBlocks }) => {
     const [localStories] = useAtom(localStoriesListAtom);
     const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
     const [isPaused, setIsPaused] = useState(false);
-    // Memoize the sorted story blocks.
+    // Мемоизируем отсортированные блоки историй
     const sortedStoriesBlocks = useMemo(() => {
-        return [...storiesBlocks].sort((a, b) => {
+        return [...storiesBlocks ?? [...Array(10)]].sort((a, b) => {
             const aRef = localStories.find((item: ILocalStory) => item.id === a.id);
             const bRef = localStories.find((item: ILocalStory) => item.id === b.id);
             if (aRef?.isSeen && !bRef?.isSeen) {
@@ -27,10 +27,10 @@ export const Stories: React.FC<IStoriesProps> = ({ storiesBlocks }) => {
             return 0;
         });
     }, [storiesBlocks, localStories]);
-    // Memoize the openStory and closeStory functions using useCallback.
-    // This prevents these functions from being recreated on every render,
-    // which can be a performance optimization, especially if they are passed
-    // down to memoized child components.
+    // Мемоизируем функции openStory и closeStory using useCallback.
+    // Это предотвращает пересоздание этих функций при каждом рендере,
+    // что может быть оптимизацией производительности, особенно если они передаются
+    // в мемоизированные дочерние компоненты.
     const openStory = useCallback((index: number) => {
         setActiveStoryIndex(index);
         setIsPaused(false);
@@ -41,11 +41,11 @@ export const Stories: React.FC<IStoriesProps> = ({ storiesBlocks }) => {
         setIsPaused(true);
     }, []);
 
-    // Memoize the StoriesSwiper component's render using useMemo.
-    // This ensures that the Swiper component and its children are only
-    // rendered when activeStoryIndex actually changes.
+    // Мемоизируем рендер StoriesSwiper компонента используя useMemo.
+    // Это гарантирует, что Swiper компонент и его дочерние компоненты только
+    // рендерятся, когда activeStoryIndex фактически изменяется.
     const renderStoriesSwiper = useMemo(() => {
-        if (activeStoryIndex !== null) {
+        if (activeStoryIndex !== null && storiesBlocks && storiesBlocks.length > 0) {
             return (
                 <StoriesSwiper
                     storiesBlocks={sortedStoriesBlocks}
@@ -56,13 +56,13 @@ export const Stories: React.FC<IStoriesProps> = ({ storiesBlocks }) => {
             );
         }
         return null;
-    }, [activeStoryIndex, sortedStoriesBlocks, closeStory]);
+    }, [activeStoryIndex, sortedStoriesBlocks, closeStory, storiesBlocks]);
 
     return (
         <>
-            {renderStoriesSwiper}
+            {storiesBlocks && renderStoriesSwiper}
             <div>
-                <StoriesBlocksSwiper storiesBlocks={sortedStoriesBlocks} openStory={openStory} />
+                <StoriesBlocksSwiper storiesBlocks={sortedStoriesBlocks} isLoading={!storiesBlocks} openStory={openStory} />
             </div>
         </>
     );
