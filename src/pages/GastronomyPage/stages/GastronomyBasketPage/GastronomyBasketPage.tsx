@@ -364,7 +364,7 @@ export const GastronomyBasketPage: React.FC = () => {
         
         // Для Smoke BBQ Рубинштейна при самовывозе: слоты по 30 минут
         const isSmokeRubinshteinaPickup = 
-            String(res_id) === R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID && deliveryMethod === 'pickup';
+            String(res_id) === String(R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID) && deliveryMethod === 'pickup';
         
         if (isSmokeRubinshteinaPickup) {
             // Генерируем слоты по 30 минут
