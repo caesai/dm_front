@@ -13,7 +13,7 @@ import { gastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
  * Форматирует вес, добавляя единицу измерения
  */
 export const formatWeight = (weight: string | undefined, weight_unit: string | undefined): string | undefined => {
-    if (!weight || !weight_unit) return undefined;
+    if (!weight || weight.length === 0 || !weight_unit) return undefined;
     return `${weight} ${weight_unit}`;
 };
 
