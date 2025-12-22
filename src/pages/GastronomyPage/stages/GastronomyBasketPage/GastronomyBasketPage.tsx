@@ -361,34 +361,64 @@ export const GastronomyBasketPage: React.FC = () => {
         }
 
         const slots: string[] = [];
-        let currentHour = openHour;
+        
+        // Для Smoke BBQ Рубинштейна при самовывозе: слоты по 30 минут
+        const isSmokeRubinshteinaPickup = 
+            String(res_id) === R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID && deliveryMethod === 'pickup';
+        
+        if (isSmokeRubinshteinaPickup) {
+            // Генерируем слоты по 30 минут
+            let currentMinutes = openHour * 60;
+            const closeMinutesAdjusted = closeHour < openHour 
+                ? (closeHour + 24) * 60 
+                : closeHour * 60;
 
-        // Определяем конечный час работы с учетом перехода через полночь
-        // Если закрытие раньше открытия (например, 20:00-01:00), добавляем 24 часа к времени закрытия
-        const closeHourAdjusted = closeHour < openHour ? closeHour + 24 : closeHour;
+            while (currentMinutes < closeMinutesAdjusted) {
+                let nextMinutes = currentMinutes + 30;
 
-        // Генерируем слоты по 3 часа от открытия до закрытия
-        while (currentHour < closeHourAdjusted) {
-            let nextHour = currentHour + 3;
+                if (nextMinutes > closeMinutesAdjusted) {
+                    nextMinutes = closeMinutesAdjusted;
+                }
 
-            // Если следующий час выходит за время закрытия, ограничиваем его временем закрытия
-            if (nextHour > closeHourAdjusted) {
-                nextHour = closeHourAdjusted;
+                const currentHour = Math.floor(currentMinutes / 60);
+                const currentMin = currentMinutes % 60;
+                const nextHour = Math.floor(nextMinutes / 60);
+                const nextMin = nextMinutes % 60;
+
+                const displayCurrentHour = currentHour >= 24 ? currentHour - 24 : currentHour;
+                const displayNextHour = nextHour >= 24 ? nextHour - 24 : nextHour;
+
+                slots.push(
+                    `${String(displayCurrentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}–${String(displayNextHour).padStart(2, '0')}:${String(nextMin).padStart(2, '0')}`
+                );
+
+                currentMinutes = nextMinutes;
             }
+        } else {
+            // Для остальных случаев: слоты по 3 часа
+            let currentHour = openHour;
+            const closeHourAdjusted = closeHour < openHour ? closeHour + 24 : closeHour;
 
-            // Форматируем часы для отображения (приводим к диапазону 0-23)
-            const displayCurrentHour = currentHour >= 24 ? currentHour - 24 : currentHour;
-            const displayNextHour = nextHour >= 24 ? nextHour - 24 : nextHour;
+            while (currentHour < closeHourAdjusted) {
+                let nextHour = currentHour + 3;
 
-            slots.push(
-                `${String(displayCurrentHour).padStart(2, '0')}:00–${String(displayNextHour).padStart(2, '0')}:00`
-            );
+                if (nextHour > closeHourAdjusted) {
+                    nextHour = closeHourAdjusted;
+                }
 
-            currentHour = nextHour;
+                const displayCurrentHour = currentHour >= 24 ? currentHour - 24 : currentHour;
+                const displayNextHour = nextHour >= 24 ? nextHour - 24 : nextHour;
+
+                slots.push(
+                    `${String(displayCurrentHour).padStart(2, '0')}:00–${String(displayNextHour).padStart(2, '0')}:00`
+                );
+
+                currentHour = nextHour;
+            }
         }
 
         return slots;
-    }, [selectedDate, restaurant]);
+    }, [selectedDate, restaurant, deliveryMethod, res_id]);
 
     // Сбрасываем выбранное время при смене даты
     useEffect(() => {
@@ -864,7 +894,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                 ref={addressInputRef}
                                 type="text"
                                 className={address ? css.inputFilled : css.input}
-                                placeholder="Адрес"
+                                placeholder="Укажите полный адрес доставки"
                                 value={address}
                                 onChange={(e) => {
                                     const value = e.target.value;
