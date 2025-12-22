@@ -198,7 +198,7 @@ describe('GastronomyBasketPage', () => {
         const deliveryOption = screen.getAllByText('Доставка').find((el) => el.classList.contains('deliveryText'));
         if (deliveryOption) fireEvent.click(deliveryOption);
 
-        const addressInput = screen.getByPlaceholderText('Адрес');
+        const addressInput = screen.getByPlaceholderText('Укажите полный адрес доставки');
         fireEvent.change(addressInput, { target: { value: 'Nevsky' } });
 
         await waitFor(
@@ -236,7 +236,7 @@ describe('GastronomyBasketPage', () => {
         fireEvent.click(date[0] as HTMLElement);  
         const timePicker = screen.getAllByTestId('time-slot');
         fireEvent.click(timePicker[0] as HTMLElement);
-        const addressInput = screen.getByPlaceholderText('Адрес');
+        const addressInput = screen.getByPlaceholderText('Укажите полный адрес доставки');
         fireEvent.change(addressInput, { target: { value: 'Test Address' } });
         fireEvent.click(screen.getByTestId('pay-button'));
         await waitFor(() => {
