@@ -221,7 +221,7 @@ export const RestaurantPage: React.FC = () => {
             </div>
 
             <div className={css.pageContainer}>
-                {restaurant && <RestaurantTopPreview restaurant={restaurant} />}
+                <RestaurantTopPreview restaurant={restaurant} />
 
                 {/* Яндекс Такси виджет */}
                 <div className={css.yaTaxi}>
@@ -245,17 +245,16 @@ export const RestaurantPage: React.FC = () => {
                 </div>
 
                 <div className={css.gastronomyBanner}>
-                    {hasGastronomy && (
-                        <OptionsNavigationElement
-                            title={'Новогодняя кулинария'}
-                            subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
-                            img={gastroBtn}
-                            className={css.gastronomyBannerButton}
-                            textWrapperClassName={css.gastronomyBannerText}
-                            link={'/gastronomy/choose'}
-                            locationState={{ restaurant }}
-                        />
-                    )}
+                    <OptionsNavigationElement
+                        isLoading={!hasGastronomy}
+                        title={'Новогодняя кулинария'}
+                        subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
+                        img={gastroBtn}
+                        className={css.gastronomyBannerButton}
+                        textWrapperClassName={css.gastronomyBannerText}
+                        link={'/gastronomy/choose'}
+                        locationState={{ restaurant }}
+                    />
                 </div>
 
                 <BookingBlock
@@ -275,11 +274,8 @@ export const RestaurantPage: React.FC = () => {
                 />
 
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
-                
-                <MenuBlock 
-                    restaurant_id={restaurant?.id || 0}
-                    menu_imgs={restaurant?.menu_imgs}
-                />
+
+                <MenuBlock restaurant_id={restaurant?.id || 0} menu_imgs={restaurant?.menu_imgs} />
 
                 {restaurant && hasBanquets && (
                     <BanquetsBlock

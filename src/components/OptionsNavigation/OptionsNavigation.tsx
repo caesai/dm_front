@@ -12,9 +12,10 @@ import gastroBtn3 from '/img/gastro_btn3.png';
 
 interface IOptionsNavigationProps {
     cityId: number;
+    isLoading: boolean;
 }
 
-export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ cityId }) => {
+export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ cityId, isLoading }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -22,6 +23,7 @@ export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ cityId })
             <PrivelegiesPopup isOpen={isOpen} setOpen={setIsOpen} />
             {cityId !== 3 && (
                 <OptionsNavigationElement
+                    isLoading={isLoading}
                     title={'Новогодняя кулинария'}
                     subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
                     img={gastroBtn}
@@ -32,12 +34,14 @@ export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ cityId })
             )}
             <div style={{ display: 'flex', gap: 8 }}>
                 <OptionsNavigationElement
+                    isLoading={isLoading}
                     title={'Подарочные сертификаты'}
                     img={gastroBtn2}
                     className={css.certificateCTAbtn}
                     link={'/certificates/1'}
                 />
                 <OptionsNavigationElement
+                    isLoading={isLoading}
                     title={'Организовать праздник'}
                     img={gastroBtn3}
                     className={css.banquetsCTAbtn}
@@ -45,6 +49,7 @@ export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ cityId })
                 />
             </div>
             <OptionsNavigationElement
+                isLoading={isLoading}
                 title={'Гастро-события'}
                 subtitle={'От уютных ужинов до шумных вечеринок'}
                 img={neweventBg}
