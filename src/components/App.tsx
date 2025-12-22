@@ -48,7 +48,6 @@ import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
 import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
 import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
 import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
-import { NewRestaurant } from '@/pages/NewRestaurant/NewRestaurant.tsx';
 import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.tsx';
 import { BanquetOptionPage } from '@/pages/BanquetOptionPage/BanquetOptionPage.tsx';
 import { BanquetAdditionalServicesPage } from '@/pages/BanquetAdditionalServices/BanquetAdditionalServicesPage.tsx';
@@ -203,9 +202,8 @@ const AppRouter: React.FC = () => {
                     <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
                     {/* Меню ресторана */}
                     <Route path={'/restaurant/:id/menu'} element={<RestaurantMenuPage />} />
+                    {/* Страница деталей блюда */}
                     <Route path={'/restaurant/:id/menu/dish/:dishId'} element={<RestaurantDishDetailsPage />} />
-                    {/* Страница нового ресторана */}
-                    <Route path={'/newrestaurant'} element={<NewRestaurant />} />
                     {/* Бронирование столика */}
                     <Route path={'/booking'} element={<BookingPage />} />
                     {/* Подтверждение бронирования */}
