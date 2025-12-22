@@ -223,7 +223,7 @@ export const IndexPage: React.FC = () => {
                     </div>
                 )}
 
-                <OptionsNavigation cityId={cityId} />
+                <OptionsNavigation cityId={cityId} isLoading={!restaurantsList} />
 
                 <div className={css.restaurants}>
                     {restaurantsList?.map((rest) => (

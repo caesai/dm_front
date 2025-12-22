@@ -45,8 +45,6 @@ import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/ut
 import css from './BookingPage.module.css';
 // Mocks
 import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
-import { R } from '@/__mocks__/restaurant.mock';
-import moment from 'moment';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -114,26 +112,10 @@ export const BookingPage: React.FC = () => {
             ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1)
                   .then((res) =>
                       setAvailableDates(
-                          res.data
-                              .map((v: string) => ({
-                                  title: formatDate(v),
-                                  value: v,
-                              }))
-                              .filter((v: PickerValueObj) => {
-                                  // TODO: Убрать после 21.12.2025
-                                  if (restaurant.value === R.SELF_EDGE_SPB_CHINOIS_ID) {
-                                      if (
-                                          moment(v.value).isAfter('2025-12-21') ||
-                                          moment(v.value).isSame('2025-12-21', 'day')
-                                      ) {
-                                          return true;
-                                      } else {
-                                          return false;
-                                      }
-                                  } else {
-                                      return true;
-                                  }
-                              })
+                          res.data.map((v: string) => ({
+                              title: formatDate(v),
+                              value: v,
+                          }))
                       )
                   )
                   .catch((err) => {

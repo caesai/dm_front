@@ -7,6 +7,7 @@ import { restaurantMenusAtom } from '@/atoms/restaurantMenuAtom.ts';
 import { APIGetRestaurantMenu } from '@/api/menu.api.ts';
 // Types
 import { IMenu } from '@/types/menu.types.ts';
+import { DEV_MODE } from '@/api/base';
 
 export const useRestaurantMenu = (restaurantId: number | undefined) => {
     const [auth] = useAtom(authAtom);
@@ -17,6 +18,7 @@ export const useRestaurantMenu = (restaurantId: number | undefined) => {
 
     useEffect(() => {
         if (!auth?.access_token || !restaurantId) return;
+        if (!DEV_MODE) return;
 
         if (restaurantMenus[restaurantId]) {
             setMenuData(restaurantMenus[restaurantId]);
@@ -29,9 +31,9 @@ export const useRestaurantMenu = (restaurantId: number | undefined) => {
             .then((response) => {
                 const menu = response.data[0];
                 setMenuData(menu);
-                setRestaurantMenus(prev => ({
+                setRestaurantMenus((prev) => ({
                     ...prev,
-                    [restaurantId]: menu
+                    [restaurantId]: menu,
                 }));
             })
             .catch(() => {
@@ -45,7 +47,7 @@ export const useRestaurantMenu = (restaurantId: number | undefined) => {
     const refetch = () => {
         setError(false);
         setLoading(true);
-        setRestaurantMenus(prev => {
+        setRestaurantMenus((prev) => {
             const newMenus = { ...prev };
             if (restaurantId) delete newMenus[restaurantId];
             return newMenus;
@@ -54,4 +56,3 @@ export const useRestaurantMenu = (restaurantId: number | undefined) => {
 
     return { menuData, loading, error, refetch };
 };
-

@@ -29,34 +29,40 @@ export const useRedirectLogic = () => {
     // path - это путь, на который нужно перенаправить
     // id - это id объекта, на который нужно перенаправить
     // navigate - это функция для перенаправления
-    const handleNavigation = useCallback((param: string) => {
-        const paths = ['restaurant', 'event', 'ticket', 'certificate'];
-        // param - это параметр при старте приложения из бота
-        const path = param.substring(0, param.indexOf('Id_'));
-        if (paths.includes(path)) {
-            const id = param.replace(`${path}Id_`, '');
-            switch (path) {
-                // Перенаправление на страницу ресторана
-                case 'restaurant':
-                    navigate(`/${path}/${id}?shared=true`, { replace: true });
-                    break;
-                // Перенаправление на страницу деталей мероприятия
-                case 'event':
-                    navigate(`/events/${id}/details?shared=true`, { replace: true });
-                    break;
-                // Перенаправление на страницу информации о билете
-                case 'ticket':
-                    navigate(`/tickets/${id}?shared=true`, { replace: true });
-                    break;
-                // Перенаправление на страницу информации о сертификате
-                case 'certificate':
-                    navigate(`/certificates/landing/${id}?shared=true`, { replace: true });
-                    break;
+    const handleNavigation = useCallback(
+        (param: string) => {
+            const paths = ['restaurant', 'event', 'ticket', 'certificate', 'event_city'];
+            // param - это параметр при старте приложения из бота
+            const path = param.substring(0, param.indexOf('Id_'));
+            if (paths.includes(path)) {
+                const id = param.replace(`${path}Id_`, '');
+                switch (path) {
+                    // Перенаправление на страницу ресторана
+                    case 'restaurant':
+                        navigate(`/${path}/${id}?shared=true`, { replace: true });
+                        break;
+                    // Перенаправление на страницу деталей мероприятия
+                    case 'event':
+                        navigate(`/events/${id}/details?shared=true`, { replace: true });
+                        break;
+                    // Перенаправление на страницу информации о билете
+                    case 'ticket':
+                        navigate(`/tickets/${id}?shared=true`, { replace: true });
+                        break;
+                    // Перенаправление на страницу информации о сертификате
+                    case 'certificate':
+                        navigate(`/certificates/landing/${id}?shared=true`, { replace: true });
+                        break;
+                    case 'event_city':
+                        navigate(`/events/?city=${id}&shared=true`, { replace: true });
+                        break;
+                }
+            } else {
+                navigate('/', { replace: true });
             }
-        } else {
-            navigate('/', { replace: true });
-        }
-    }, [navigate]);
+        },
+        [navigate]
+    );
 
     useEffect(() => {
         const { pathname } = location;

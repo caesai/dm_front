@@ -139,7 +139,7 @@ const AppRouter: React.FC = () => {
                 .catch(console.error)
                 .finally(completeLoading);
 
-            APIGetEventsList()
+            APIGetEventsList(auth.access_token)
                 .then((events) => setEventsList(events.data))
                 .catch(console.error)
                 .finally(completeLoading);
