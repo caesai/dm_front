@@ -29,7 +29,7 @@ const initialRestaurant: PickerValueObj = {
 export const EventsListPage: React.FC = () => {
     const navigate = useNavigate();
     const [params] = useSearchParams();
-    
+
     const [events] = useAtom<IEvent[]>(eventsListAtom);
     const [cityListA] = useAtom(cityListAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
@@ -40,7 +40,7 @@ export const EventsListPage: React.FC = () => {
     );
 
     const [currentCityS, setCurrentCityS] = useState<IConfirmationType>(
-        cityListConfirm.find((v) => v.id == currentCityA) ?? {
+        cityListConfirm.find((v) => v.id === currentCityA) ?? {
             id: 'moscow',
             text: 'Москва',
         }
@@ -61,31 +61,34 @@ export const EventsListPage: React.FC = () => {
 
     // Фильтруем рестораны по выбранному городу
     const restaurantsList = useMemo(() => {
-        return restaurants.filter((restaurant) => restaurant.city.name_english == currentCityS.id);
+        return restaurants.filter((restaurant) => restaurant.city.name_english === currentCityS.id);
     }, [restaurants, currentCityS]);
 
     // Фильтруем мероприятия по выбранному ресторану и городу
     const filteredEvents = useMemo(() => {
-        return events.filter(
-            (event) =>{ 
-                if (currentRestaurant.value !== 'unset' && event.restaurant.id === Number(currentRestaurant.value)) {
-                    return true;
-                } else if (currentRestaurant.value === 'unset' && restaurantsList.find((restaurant) => restaurant.id == event.restaurant.id)) {
-                    return true;
-                } else {
-                    return false;
-                }
+        return events.filter((event) => {
+            if (currentRestaurant.value !== 'unset' && event.restaurant.id === Number(currentRestaurant.value)) {
+                return true;
+            } else if (
+                currentRestaurant.value === 'unset' &&
+                restaurantsList.find((restaurant) => restaurant.id === event.restaurant.id)
+            ) {
+                return true;
+            } else {
+                return false;
             }
-        );
+        });
     }, [events, currentCityS, currentRestaurant, restaurantsList]);
 
     // Если перешли по ссылке на страницу списка мероприятий в выбранном городе, то устанавливаем текущий город
     useEffect(() => {
         if (params.get('city')) {
-            setCurrentCityS(cityListConfirm.find((v) => v.id == params.get('city')) ?? {
-                id: 'moscow',
-                text: 'Москва',
-            });
+            setCurrentCityS(
+                cityListConfirm.find((v) => v.id === params.get('city')) ?? {
+                    id: 'moscow',
+                    text: 'Москва',
+                }
+            );
         }
     }, [params]);
 

@@ -49,9 +49,6 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
     const [selectedCity, setSelectedCity] = useState<number | null>(null);
     // Hooks
     const { isShowing, toggle } = useModal();
-    if (restaurant.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
-        console.log('restaurant: ', restaurant);
-    }
 
     return (
         <Link

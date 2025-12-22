@@ -1,4 +1,4 @@
-import React,{ ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 // Components
@@ -19,9 +19,18 @@ interface OptionsNavigationElementProps {
     isLoading?: boolean;
 }
 
-export const OptionsNavigationElement: React.FC<OptionsNavigationElementProps> = (
-    { icon, title, subtitle, img, link, onClick, locationState, className, textWrapperClassName, isLoading }
-) => {
+export const OptionsNavigationElement: React.FC<OptionsNavigationElementProps> = ({
+    icon,
+    title,
+    subtitle,
+    img,
+    link,
+    onClick,
+    locationState,
+    className,
+    textWrapperClassName,
+    isLoading,
+}) => {
     if (isLoading) {
         return (
             <div className={css.element}>
@@ -30,13 +39,16 @@ export const OptionsNavigationElement: React.FC<OptionsNavigationElementProps> =
         );
     }
     return link ? (
-        <Link to={link} className={classNames(css.element, className)} style={{ backgroundImage: `url(${img})` }} state={locationState}>
+        <Link
+            to={link}
+            className={classNames(css.element, className)}
+            style={{ backgroundImage: `url(${img})` }}
+            state={locationState}
+        >
             <div className={css.wrapper}>
                 <div className={classNames(css.textWrapper, textWrapperClassName)}>
                     <span className={css.title}>{title}</span>
-                    {subtitle && (
-                        <span className={css.subtitle}>{subtitle}</span>
-                    )}
+                    {subtitle && <span className={css.subtitle}>{subtitle}</span>}
                 </div>
                 <div className={css.separator} />
             </div>

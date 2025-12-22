@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import moment from 'moment';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 // API's
 import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.api.ts';
@@ -42,7 +41,6 @@ import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 import gastroBtn from '/img/gastro_btn1.png';
 import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
-import { R } from '@/__mocks__/restaurant.mock.ts';
 // Hooks
 import useToastState from '@/hooks/useToastState.ts';
 
@@ -147,14 +145,7 @@ export const RestaurantPage: React.FC = () => {
                     title: formatDate(date),
                     value: date,
                 }));
-                // TODO: Убрать после 21.12.2025
-                if (id === R.SELF_EDGE_SPB_CHINOIS_ID) {
-                    // Если ресторан Self Edge Chinois, то выбираем даты с 21.12.2025
-                    formattedDates = formattedDates.filter(
-                        (date) =>
-                            moment(date.value).isAfter('2025-12-21') || moment(date.value).isSame('2025-12-21', 'day')
-                    );
-                }
+                
                 setBookingDates(formattedDates);
 
                 if (formattedDates.length > 0) {
