@@ -245,16 +245,18 @@ export const RestaurantPage: React.FC = () => {
                 </div>
 
                 <div className={css.gastronomyBanner}>
-                    <OptionsNavigationElement
-                        isLoading={!hasGastronomy}
-                        title={'Новогодняя кулинария'}
-                        subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
-                        img={gastroBtn}
-                        className={css.gastronomyBannerButton}
-                        textWrapperClassName={css.gastronomyBannerText}
-                        link={'/gastronomy/choose'}
-                        locationState={{ restaurant }}
-                    />
+                    {hasGastronomy && (
+                        <OptionsNavigationElement
+                            isLoading={false}
+                            title={'Новогодняя кулинария'}
+                            subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
+                            img={gastroBtn}
+                            className={css.gastronomyBannerButton}
+                            textWrapperClassName={css.gastronomyBannerText}
+                            link={'/gastronomy/choose'}
+                            locationState={{ restaurant }}
+                        />
+                    )}
                 </div>
 
                 <BookingBlock
