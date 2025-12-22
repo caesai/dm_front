@@ -7,6 +7,7 @@ import { IEventBooking, IEvent } from '@/types/events.types.ts';
 import { BASE_BOT } from '@/api/base.ts';
 // Atoms
 import { eventsListAtom, guestCountAtom } from '@/atoms/eventListAtom.ts';
+import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
@@ -25,16 +26,17 @@ export const EventsPage: React.FC = () => {
 
     const [events] = useAtom<IEvent[]>(eventsListAtom);
     const [, setGuestCount] = useAtom(guestCountAtom);
+    const [currentCityA] = useAtom(currentCityAtom);
+
     const [bookingInfo, setBookingInfo] = useState<IEventBooking>({});
 
     const { goBack } = useNavigationHistory();
-
 
     useEffect(() => {
         const pathSegments = location.pathname.split('/');
         if (pathSegments[2] !== undefined) {
             if (events === undefined) return;
-            const event = events.find(item => String(item.id) === String(pathSegments[2]));
+            const event = events.find((item) => String(item.id) === String(pathSegments[2]));
             if (event !== undefined) {
                 setBookingInfo((prev) => ({
                     ...prev,
@@ -53,25 +55,34 @@ export const EventsPage: React.FC = () => {
         return location.pathname.split('/')[2] && !location.pathname.includes('confirm');
     }, [location.pathname]);
 
+    // Шэринг мероприятия
     const shareEvent = useCallback(() => {
-        const url = encodeURI(
-            `https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.event?.id}`
-        );
+        let url = '';
+        // Если это страница мероприятия
+        if (eventURL) {
+            url = encodeURI(`https://t.me/${BASE_BOT}?startapp=eventId_${bookingInfo.event?.id}`);
+        } else {
+            // Если это страница списка мероприятий ссылка на мероприятия в выбранном городе
+            url = encodeURI(`https://t.me/${BASE_BOT}?startapp=event_cityId_${currentCityA}`);
+        }
         const title = encodeURI(String(bookingInfo.event?.name));
         const shareData = {
             title,
             url,
-        }
+        };
         try {
             if (navigator && navigator.canShare(shareData)) {
-                navigator.share(shareData).then().catch((err) => {
-                    console.error(JSON.stringify(err));
-                });
+                navigator
+                    .share(shareData)
+                    .then()
+                    .catch((err) => {
+                        console.error(JSON.stringify(err));
+                    });
             }
         } catch (e) {
-            window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
+            window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
         }
-    }, [bookingInfo.event?.id, bookingInfo.event?.name]);
+    }, [bookingInfo.event?.id, bookingInfo.event?.name, currentCityA]);
 
     useEffect(() => {
         // TODO: handling error through Modal Popup
@@ -105,39 +116,21 @@ export const EventsPage: React.FC = () => {
                         icon={<BackIcon color={'var(--dark-grey)'} />}
                         action={goPreviousPage}
                     />
-                    <span className={css.header_title}>
-                        {isRestaurantsPage ? 'Выберите ресторан' : 'Мероприятия'}
-                    </span>
+                    <span className={css.header_title}>{isRestaurantsPage ? 'Выберите ресторан' : 'Мероприятия'}</span>
                     <div className={css.header_spacer}>
-                        {(!location.pathname.includes('super')) ? (
-                            <RoundedButton
-                                icon={
-                                    <Share color={'var(--dark-grey)'} />
-                                }
-                                action={shareEvent}
-                            />
+                        {!location.pathname.includes('super') ? (
+                            <RoundedButton icon={<Share color={'var(--dark-grey)'} />} action={shareEvent} />
                         ) : null}
                     </div>
                 </div>
                 {events.length === 0 ? (
                     <div>
-                        <PlaceholderBlock
-                            width={'100%'}
-                            aspectRatio={'3/2'}
-                        />
-                        <div style={{marginTop: 10}}>
-                            <PlaceholderBlock
-                                width={'100%'}
-                                height={'32px'}
-
-                            />
+                        <PlaceholderBlock width={'100%'} aspectRatio={'3/2'} />
+                        <div style={{ marginTop: 10 }}>
+                            <PlaceholderBlock width={'100%'} height={'32px'} />
                         </div>
-                        <div style={{marginTop: 10}}>
-                            <PlaceholderBlock
-                                width={'100%'}
-                                height={'32px'}
-
-                            />
+                        <div style={{ marginTop: 10 }}>
+                            <PlaceholderBlock width={'100%'} height={'32px'} />
                         </div>
                     </div>
                 ) : (

@@ -1,25 +1,25 @@
-import React, { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 // Types
-import { IEvent } from '@/types/events.types';
+import { IEvent } from '@/types/events.types.ts';
 // Atoms
-import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom';
-import { cityListAtom, ICity } from '@/atoms/cityListAtom';
+import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { eventsListAtom } from '@/atoms/eventListAtom.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 // Components
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
-import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker';
-import { IConfirmationType } from '@/components/CitySelect/CitySelect.types';
-import { CitySelect } from '@/components/CitySelect/CitySelect';
-import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect';
-import { KitchenIcon } from '@/components/Icons/KitchenIcon';
+import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { IConfirmationType } from '@/components/CitySelect/CitySelect.types.ts';
+import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
+import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
+import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 // Styles
 import css from '@/pages/EventsPage/EventsPage.module.css';
 // Utils
-import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom';
+import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
@@ -28,6 +28,8 @@ const initialRestaurant: PickerValueObj = {
 
 export const EventsListPage: React.FC = () => {
     const navigate = useNavigate();
+    const [params] = useSearchParams();
+    
     const [events] = useAtom<IEvent[]>(eventsListAtom);
     const [cityListA] = useAtom(cityListAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
@@ -46,8 +48,9 @@ export const EventsListPage: React.FC = () => {
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
     const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
 
-    const next = (id: number) => {
-        navigate(`/events/${id}/details`);
+    // Переход на страницу деталей мероприятия
+    const next = (eventId: number) => {
+        navigate(`/events/${eventId}/details`);
     };
 
     const updateCurrentCity = (city: IConfirmationType) => {
@@ -56,10 +59,12 @@ export const EventsListPage: React.FC = () => {
         setCurrentRestaurant(initialRestaurant);
     };
 
+    // Фильтруем рестораны по выбранному городу
     const restaurantsList = useMemo(() => {
         return restaurants.filter((restaurant) => restaurant.city.name_english == currentCityS.id);
     }, [restaurants, currentCityS]);
 
+    // Фильтруем мероприятия по выбранному ресторану и городу
     const filteredEvents = useMemo(() => {
         return events.filter(
             (event) =>{ 
@@ -73,6 +78,16 @@ export const EventsListPage: React.FC = () => {
             }
         );
     }, [events, currentCityS, currentRestaurant, restaurantsList]);
+
+    // Если перешли по ссылке на страницу списка мероприятий в выбранном городе, то устанавливаем текущий город
+    useEffect(() => {
+        if (params.get('city')) {
+            setCurrentCityS(cityListConfirm.find((v) => v.id == params.get('city')) ?? {
+                id: 'moscow',
+                text: 'Москва',
+            });
+        }
+    }, [params]);
 
     return (
         <div className={css.cards}>
