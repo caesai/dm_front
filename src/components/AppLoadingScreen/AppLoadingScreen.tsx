@@ -29,11 +29,11 @@ export const AppLoadingScreen: React.FC = () => {
                         setUser(res.data);
                     });
                 })
-                .catch((err) => {
-                    console.error('auth', err);
+                .catch(err => {
+                    console.error('[AppLoadingScreen] Ошибка авторизации:', err);
                 });
         }
-    }, []);
+    }, [auth, setAuth, setUser, rawLp, lp.tgWebAppStartParam]);
 
     return (
         <div className={css.screen}>

@@ -80,6 +80,8 @@ import { EventPaymentSuccessPage } from '@/pages/EventsPage/EventPaymentSuccessP
 import { BanquetAddressPage } from '@/pages/BanquetAddressPage/BanquetAddressPage.tsx';
 import { GastronomyOrderPage } from '@/pages/GastronomyPage/stages/GastronomyOrderPage/GastronomyOrderPage.tsx';
 import { GastronomyOrdersListPage } from '@/pages/GastronomyPage/stages/GastronomyOrdersListPage/GastronomyOrdersListPage.tsx';
+import { RestaurantMenuPage } from '@/pages/RestaurantMenuPage/RestaurantMenuPage.tsx';
+import { RestaurantDishDetailsPage } from '@/pages/RestaurantDishDetailsPage/RestaurantDishDetailsPage.tsx';
 
 const AppRouter: React.FC = () => {
     const [user] = useAtom(userAtom);
@@ -199,6 +201,9 @@ const AppRouter: React.FC = () => {
                     <Route path={'/restaurant/:id'} element={<RestaurantPage />} />
                     {/* Бронирование ресторана */}
                     <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
+                    {/* Меню ресторана */}
+                    <Route path={'/restaurant/:id/menu'} element={<RestaurantMenuPage />} />
+                    <Route path={'/restaurant/:id/menu/dish/:dishId'} element={<RestaurantDishDetailsPage />} />
                     {/* Страница нового ресторана */}
                     <Route path={'/newrestaurant'} element={<NewRestaurant />} />
                     {/* Бронирование столика */}

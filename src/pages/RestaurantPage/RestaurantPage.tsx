@@ -275,9 +275,11 @@ export const RestaurantPage: React.FC = () => {
                 />
 
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />
-                {restaurant && restaurant?.menu.length > 0 && (
-                    <MenuBlock menu={restaurant?.menu} menu_imgs={restaurant?.menu_imgs} />
-                )}
+                
+                <MenuBlock 
+                    restaurant_id={restaurant?.id || 0}
+                    menu_imgs={restaurant?.menu_imgs}
+                />
 
                 {restaurant && hasBanquets && (
                     <BanquetsBlock
