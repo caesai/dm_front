@@ -88,6 +88,9 @@
 .ratings {
     display: flex;
     gap: 5px;
+    overflow-x: scroll;
+    flex-direction: row;
+    white-space: nowrap;
 }
 
 .rating {
