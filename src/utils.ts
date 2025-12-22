@@ -435,7 +435,7 @@ export const getRestaurantStatusTyped = (
     // Разделим расписание по дням для удобства
     const scheduleByDay: Record<number, { start: number; end: number }[]> = {};
     for (const wt of worktime) {
-        const dIndex = dayIndexMap[wt.weekday];
+        const dIndex = dayIndexMap[wt.weekday.toLowerCase()];
         const start = parseTimeToMinutes(wt.time_start);
         let end = parseTimeToMinutes(wt.time_end);
         if (end <= start) {
