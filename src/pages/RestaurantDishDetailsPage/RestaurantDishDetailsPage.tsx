@@ -1,10 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { IMenuItem } from '@/types/restaurant.types';
-import { IMenuItem as IAPIMenuItem } from '@/api/menu.api';
-import { BackIcon } from '@/components/Icons/BackIcon';
-import { extractPrice } from '@/utils/menu.utils';
-import css from './RestaurantDishDetailsPage.module.css';
+// Types
+import { IMenuItem } from '@/types/restaurant.types.ts';
+import { IMenuItem as IAPIMenuItem } from '@/types/menu.types.ts';
+// Components
+import { BackIcon } from '@/components/Icons/BackIcon.tsx';
+// Styles
+import css from '@/pages/RestaurantDishDetailsPage/RestaurantDishDetailsPage.module.css';
+// Utils
+import { extractPrice } from '@/utils/menu.utils.ts';
+
 
 const formatWeight = (weight: string | undefined, weight_unit?: string): string | undefined => {
     if (!weight) return undefined;

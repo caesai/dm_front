@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { authAtom } from '@/atoms/userAtom';
-import { restaurantMenusAtom } from '@/atoms/restaurantMenuAtom';
-import { APIGetRestaurantMenu, IMenu } from '@/api/menu.api';
+// Atoms
+import { authAtom } from '@/atoms/userAtom.ts';
+import { restaurantMenusAtom } from '@/atoms/restaurantMenuAtom.ts';
+// API
+import { APIGetRestaurantMenu } from '@/api/menu.api.ts';
+// Types
+import { IMenu } from '@/types/menu.types.ts';
 
 export const useRestaurantMenu = (restaurantId: number | undefined) => {
     const [auth] = useAtom(authAtom);
