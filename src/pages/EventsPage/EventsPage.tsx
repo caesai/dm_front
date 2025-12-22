@@ -17,7 +17,7 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 // Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 // Styles
-import css from './EventsPage.module.css';
+import css from '@/pages/EventsPage/EventsPage.module.css';
 
 export const EventsPage: React.FC = () => {
     const navigate = useNavigate();

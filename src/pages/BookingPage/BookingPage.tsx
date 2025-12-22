@@ -42,7 +42,7 @@ import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 // Utils
 import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
 // Styles
-import css from './BookingPage.module.css';
+import css from '@/pages/BookingPage/BookingPage.module.css';
 // Mocks
 import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
 
