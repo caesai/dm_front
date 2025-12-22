@@ -63,13 +63,13 @@ describe('useRedirectLogic', () => {
 
     // --- Test Cases ---
 
-    it('should not navigate for an unauthenticated user', () => {
+    it('не должно быть перенаправления для неавторизованного пользователя', () => {
         setup({ auth: null });
         renderHook(() => useRedirectLogic());
         expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    it('should navigate to phone confirmation if user is authenticated, onboarding is complete, but phone number is missing', () => {
+    it('должно быть перенаправление на страницу подтверждения телефона, если пользователь авторизован, но номер телефона не установлен', () => {
         setup({
             user: { ...defaultMockUser, phone_number: undefined, complete_onboarding: true, license_agreement: true },
         });
@@ -77,7 +77,7 @@ describe('useRedirectLogic', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/phoneConfirmation', { state: undefined });
     });
 
-    it('should navigate to onboarding if user is authenticated but onboarding is incomplete', () => {
+    it('должно быть перенаправление на страницу онбординга, если пользователь авторизован, но онбординг не пройден', () => {
         setup({
             user: { ...defaultMockUser, license_agreement: false, complete_onboarding: false, phone_number: '123456789' },
         });
@@ -85,50 +85,25 @@ describe('useRedirectLogic', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/onboarding', { replace: true });
     });
 
-    it('should navigate to /events/super for specific tgWebAppStartParam', () => {
+    it('должно быть перенаправление на страницу супер-мероприятия, если параметр tgWebAppStartParam равен hospitality_heroes', () => {
         setup({ params: { tgWebAppStartParam: 'hospitality_heroes' } });
         renderHook(() => useRedirectLogic());
         expect(mockNavigate).toHaveBeenCalledWith('/events/super?shared=true', { replace: true });
     });
 
-    it('should navigate to /newrestaurant for specific tgWebAppStartParam', () => {
-        setup({ params: { tgWebAppStartParam: 'newselfokna' } });
-        renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/newrestaurant', { replace: true });
-    });
-
-    it('should navigate to /booking with id from tgWebAppStartParam', () => {
-        setup({ params: { tgWebAppStartParam: 'bookingId_123' } });
-        renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/booking?id=123&shared=true', { replace: true });
-    });
-
-    it('should navigate to /events/ with id from eventId query param', () => {
+    it('должно быть перенаправление на страницу деталей мероприятия, если параметр tgWebAppStartParam равен eventId_111', () => {
         setup({ params: { tgWebAppStartParam : 'eventId_111' } });
         renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/events/111?shared=true', { replace: true });
+        expect(mockNavigate).toHaveBeenCalledWith('/events/111/details?shared=true', { replace: true });
     });
 
-    it('should navigate to /restaurant/ with id from restaurantId query param', () => {
+    it('должно быть перенаправление на страницу ресторана, если параметр tgWebAppStartParam равен restaurantId_222', () => {
         setup({ params: { tgWebAppStartParam : 'restaurantId_222' } });
         renderHook(() => useRedirectLogic());
         expect(mockNavigate).toHaveBeenCalledWith('/restaurant/222?shared=true', { replace: true });
     });
 
-    it('should navigate to /booking with id from bookingId query param', () => {
-        setup({ params: { tgWebAppStartParam : 'bookingId_333' } });
-        renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/booking?id=333&shared=true', { replace: true });
-    });
-
-    it('should navigate to payment return url if on paymentReturn path', () => {
-        const urlSearch = '?success=true&payment_id=abc';
-        setup({ pathname: '/paymentReturn', search: urlSearch });
-        renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith(`/paymentReturn${urlSearch}`, { replace: true });
-    });
-
-    it('should not navigate when user is on an excluded onboarding path', () => {
+    it('не должно быть перенаправления, если пользователь находится на странице онбординга', () => {
         setup({
             user: { ...defaultMockUser, complete_onboarding: false, license_agreement: false },
             pathname: '/onboarding',

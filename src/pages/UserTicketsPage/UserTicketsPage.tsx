@@ -1,22 +1,27 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
+// APIs
+import { APIGetTickets } from '@/api/events.api.ts';
+// Types
+import { EventTicket } from '@/types/events.types.ts';
+// Atoms
+import { authAtom } from '@/atoms/userAtom.ts';
+// Components
 import { Page } from '@/components/Page.tsx';
-import css from './UserTicketsPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useNavigate } from 'react-router-dom';
 import { Ticket } from '@/pages/UserTicketsPage/Ticket/Ticket.tsx';
-import { useEffect, useState } from 'react';
-import { EventTicket } from '@/types/events.ts';
-import { useAtom } from 'jotai';
-import { authAtom } from '@/atoms/userAtom.ts';
-import { APIGetTickets } from '@/api/events.api.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+// Styles
+import css from '@/pages/UserTicketsPage/UserTicketsPage.module.css';
 
-export const UserTicketsPage = () => {
+export const UserTicketsPage: React.FC = () => {
     const navigate = useNavigate();
     const [auth] = useAtom(authAtom);
-
     const [tickets, setTickets] = useState<EventTicket[]>([]);
     const [eventsLoading, setEventsLoading] = useState(true);
+
     useEffect(() => {
         if (!auth?.access_token) {
             return;
@@ -24,6 +29,7 @@ export const UserTicketsPage = () => {
         setEventsLoading(true);
         APIGetTickets(auth.access_token)
             .then((res) => setTickets(res.data))
+            .catch((err) => console.error(err))
             .finally(() => setEventsLoading(false));
     }, []);
 
@@ -45,24 +51,19 @@ export const UserTicketsPage = () => {
                         ? Array(3)
                               .fill(0)
                               .map((_, i) => (
-                                  <PlaceholderBlock
-                                      key={i}
-                                      width={'100%'}
-                                      rounded={'16px'}
-                                      aspectRatio={'3/2'}
-                                  />
+                                  <PlaceholderBlock key={i} width={'100%'} rounded={'16px'} aspectRatio={'3/2'} />
                               ))
                         : null}
-                    {!tickets.length && !eventsLoading ? (
-                        <span className={css.empty}>Список билетов пуст</span>
-                    ) : null}
-                    {tickets.sort(function(a, b) {
-                        const aDate = new Date(a.date_start);
-                        const bDate = new Date(b.date_start);
-                        return bDate.getTime() - aDate.getTime();
-                    }).map((ticket, i) => (
-                        <Ticket key={i} ticket={ticket} />
-                    ))}
+                    {!tickets.length && !eventsLoading ? <span className={css.empty}>Список билетов пуст</span> : null}
+                    {tickets
+                        .sort(function (a, b) {
+                            const aDate = new Date(a.date_start);
+                            const bDate = new Date(b.date_start);
+                            return bDate.getTime() - aDate.getTime();
+                        })
+                        .map((ticket, i) => (
+                            <Ticket key={i} ticket={ticket} />
+                        ))}
                 </div>
             </div>
         </Page>

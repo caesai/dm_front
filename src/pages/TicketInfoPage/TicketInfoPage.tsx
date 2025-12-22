@@ -5,7 +5,7 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import { EventTicket } from '@/types/events.ts';
+import { EventTicket } from '@/types/events.types';
 import { APIDeleteTicket, APIGetSharedTicket, APIGetTicket } from '@/api/events.api.ts';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';

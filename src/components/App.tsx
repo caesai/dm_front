@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom';
 import { swipeBehavior, useLaunchParams } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { useAtom } from 'jotai';
 import { ScrollToTop } from '@/navigation/utills.tsx';
 // API's
-import { APIGetRestaurants, APIIsReviewAvailable } from '@/api/restaurants.api.ts';
+import { APIGetRestaurantsList } from '@/api/restaurants.api.ts';
 import { APIGetCityList } from '@/api/city.api.ts';
 import { APIGetCertificates } from '@/api/certificates.api.ts';
-import { APIGetGastronomyDishes } from '@/api/gastronomy.api.ts';
+import { APIGetGastronomyDishesList } from '@/api/gastronomy.api.ts';
+import { APIGetEventsList } from '@/api/events.api.ts';
+import { DEV_MODE } from '@/api/base.ts';
 // Atoms
-import { authAtom, reviewAtom, userAtom } from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom } from '@/atoms/cityListAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
+import { eventsListAtom } from '@/atoms/eventListAtom.ts';
 // Components
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import { EnvUnsupported } from '@/components/EnvUnsupported.tsx';
@@ -32,9 +35,9 @@ import { RestaurantPage } from '@/pages/RestaurantPage/RestaurantPage.tsx';
 import { BookingPage } from '@/pages/BookingPage/BookingPage.tsx';
 import { BookingConfirmationPage } from '@/pages/BookingConfirmationPage/BookingConfirmationPage.tsx';
 import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.tsx';
-import { EventListOutlet } from '@/pages/EventsPage/EventListOutlet/EventListOutlet.tsx';
+import { EventsListPage } from '@/pages/EventsPage/EventsListPage/EventsListPage.tsx';
 import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
-import { EventConfirmationOutlet } from '@/pages/EventsPage/EventConfirmationOutlet/EventConfirmationOutlet.tsx';
+import { EventDetailsPage } from '@/pages/EventsPage/EventDetailsPage/EventDetailsPage.tsx';
 import { EventBookingOutlet } from '@/pages/EventsPage/EventBookingOutlet/EventBookingOutlet.tsx';
 import { PaymentReturnPage } from '@/pages/PaymentReturnPage/PaymentReturnPage.tsx';
 import { TicketInfoPage } from '@/pages/TicketInfoPage/TicketInfoPage.tsx';
@@ -45,7 +48,6 @@ import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
 import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
 import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
 import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
-import { NewRestaurant } from '@/pages/NewRestaurant/NewRestaurant.tsx';
 import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.tsx';
 import { BanquetOptionPage } from '@/pages/BanquetOptionPage/BanquetOptionPage.tsx';
 import { BanquetAdditionalServicesPage } from '@/pages/BanquetAdditionalServices/BanquetAdditionalServicesPage.tsx';
@@ -73,79 +75,83 @@ import { GastronomyChooseRestaurantPage } from '@/pages/GastronomyPage/stages/Ga
 import { GastronomyChooseDishesPage } from '@/pages/GastronomyPage/stages/GastronomyChooseDishesPage.tsx';
 import { GastonomyDishDetailsPage } from '@/pages/GastronomyPage/stages/GastronomyDishDetailsPage/GastonomyDishDetailsPage.tsx';
 import { GastronomyBasketPage } from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.tsx';
-import { EventPaymentPage } from '@/pages/EventsPage/EventPaymentPage.tsx';
+import { EventPaymentSuccessPage } from '@/pages/EventsPage/EventPaymentSuccessPage.tsx';
 import { BanquetAddressPage } from '@/pages/BanquetAddressPage/BanquetAddressPage.tsx';
 import { GastronomyOrderPage } from '@/pages/GastronomyPage/stages/GastronomyOrderPage/GastronomyOrderPage.tsx';
 import { GastronomyOrdersListPage } from '@/pages/GastronomyPage/stages/GastronomyOrdersListPage/GastronomyOrdersListPage.tsx';
+import { RestaurantMenuPage } from '@/pages/RestaurantMenuPage/RestaurantMenuPage.tsx';
+import { RestaurantDishDetailsPage } from '@/pages/RestaurantDishDetailsPage/RestaurantDishDetailsPage.tsx';
 
 const AppRouter: React.FC = () => {
     const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
-    const [cities, setCities] = useAtom(cityListAtom);
-    const [restaurants, setRestaurants] = useAtom(restaurantsListAtom);
-    const [, setCertificates] = useAtom(certificatesListAtom);
+    const [, setCitiesList] = useAtom(cityListAtom);
+    const [, setRestaurantsList] = useAtom(restaurantsListAtom);
+    const [, setCertificatesList] = useAtom(certificatesListAtom);
     const [, setAllGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
-    // const [earlyAccess, setEarlyAccess] = useState(true);
+    const [, setEventsList] = useAtom(eventsListAtom);
+
     const [loadingComplete, setLoadingComplete] = useState<boolean>();
-    const [, setReview] = useAtom(reviewAtom);
-
-    // Загрузка городов и ресторанов
-    useEffect(() => {
-        if (!loadingComplete && auth?.access_token) {
-            APIGetCityList().then((res) => setCities(res.data));
-            APIGetRestaurants(auth.access_token).then((res) => setRestaurants(res.data));
-        }
-    }, [loadingComplete]);
-
-    // Загрузка сертификатов
-    useEffect(() => {
-        if (auth?.access_token) {
-            APIGetCertificates(auth?.access_token, Number(user?.id)).then((response) => setCertificates(response.data));
-        }
-    }, [auth]);
 
     /**
-     * Вызываем API для получения списка всех блюд во всех ресторанах
-     * и по этому списку фильтруем рестораны, которые имеют блюда
-     * и устанавливаем их в restaurantsList
+     * Загружает начальные данные приложения.
+     *
+     * Выполняет параллельную загрузку следующих данных:
+     * - Список городов
+     * - Список ресторанов
+     * - Список блюд для гастрономии
+     * - Список сертификатов пользователя
+     * - Список мероприятий
+     *
+     * После успешной загрузки сохраняет данные в соответствующие атомы Jotai.
+     * Экран загрузки скрывается сразу после выполнения первого запроса,
+     * остальные данные подгружаются в фоновом режиме.
+     * Функция выполняется только один раз при наличии токена авторизации.
+     * 
+     * Все 5 запросов запускаются параллельно
+     * Как только любой из них завершается (успешно или с ошибкой) — экран загрузки скрывается
+     * Данные из каждого запроса сохраняются в атомы по мере их поступления
+     *
+     * @returns {Promise<void>} Промис, который разрешается после завершения загрузки данных
+     * @throws Логирует ошибку в консоль при неудачной загрузке
      */
-    useEffect(() => {
-        if (!auth?.access_token) {
-            return;
-        }
-        APIGetGastronomyDishes(auth?.access_token)
-            .then((res) => {
-                setAllGastronomyDishesList(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }, [auth?.access_token]);
+    const loadApplicationData = useCallback(async () => {
+        if (!loadingComplete && auth?.access_token) {
+            const completeLoading = () => setLoadingComplete(true);
 
-    // Загрузка статуса отзывов
-    // TODO: Выяснить, нужно ли это
-    useEffect(() => {
-        if (auth?.access_token)
-            APIIsReviewAvailable(auth.access_token).then((res) =>
-                setReview({
-                    loading: false,
-                    available: res.data.available,
-                })
-            );
-    }, [auth]);
+            APIGetCityList()
+                .then((cities) => setCitiesList(cities.data))
+                .catch(console.error)
+                .finally(completeLoading);
 
-    // Загрузка статуса завершения загрузки
-    useEffect(() => {
-        if (!cities.length || !restaurants.length) {
-            setLoadingComplete(false);
-        }
-        if (cities.length && restaurants.length) {
-            setLoadingComplete(true);
-        }
-    }, [cities, restaurants]);
+            APIGetRestaurantsList(auth.access_token)
+                .then((restaurants) => setRestaurantsList(restaurants.data))
+                .catch(console.error)
+                .finally(completeLoading);
 
+            APIGetGastronomyDishesList(auth.access_token)
+                .then((dishes) => setAllGastronomyDishesList(dishes.data))
+                .catch(console.error)
+                .finally(completeLoading);
+
+            APIGetCertificates(auth.access_token, Number(user?.id))
+                .then((certificates) => setCertificatesList(certificates.data))
+                .catch(console.error)
+                .finally(completeLoading);
+
+            APIGetEventsList(auth.access_token)
+                .then((events) => setEventsList(events.data))
+                .catch(console.error)
+                .finally(completeLoading);
+        }
+    }, [loadingComplete, auth?.access_token, user?.id]);
+
+    useEffect(() => {
+        loadApplicationData();
+    }, [loadApplicationData]);
+    
     return (
-        <BrowserRouter basename={import.meta.env.MODE !== 'development' ? undefined : '/dm_front/'}>
+        <BrowserRouter basename={!DEV_MODE ? undefined : '/dm_front/'}>
             <ScrollToTop />
             <BannerPopup />
             <Redirecter />
@@ -166,13 +172,15 @@ const AppRouter: React.FC = () => {
                     {/* Мероприятия */}
                     <Route path={'/events'} element={<EventsPage />}>
                         {/* Страница списка мероприятий */}
-                        <Route path={'/events'} element={<EventListOutlet />} />
-                        {/* Страница подтверждения мероприятия */}
-                        <Route path={'/events/:eventId'} element={<EventConfirmationOutlet />} />
+                        <Route path={'/events'} element={<EventsListPage />} />
+                        {/* Страница деталей мероприятия */}
+                        <Route path={'/events/:eventId/details'} element={<EventDetailsPage />} />
                         {/* Страница бронирования мероприятия */}
                         <Route path={'/events/:eventId/confirm'} element={<EventBookingOutlet />} />
-                        {/* Страница оплаты мероприятия */}
-                        <Route path={'/events/payment/:orderId'} element={<EventPaymentPage />} />
+                        {/* Страница успешной оплаты мероприятия */}
+                        <Route path={'/events/payment-success/:orderId'} element={<EventPaymentSuccessPage />} />
+                        {/* Страница ошибки оплаты мероприятия */}
+                        {/* <Route path={'/events/payment-error/:orderId'} element={<EventPaymentErrorPage />} /> */}
                         {/* Страница информации о супер-мероприятии */}
                         <Route path={'/events/super'} element={<EventSuperInfoOutlet />} />
                         {/* Страница заявки на супер-мероприятие */}
@@ -192,8 +200,10 @@ const AppRouter: React.FC = () => {
                     <Route path={'/restaurant/:id'} element={<RestaurantPage />} />
                     {/* Бронирование ресторана */}
                     <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
-                    {/* Страница нового ресторана */}
-                    <Route path={'/newrestaurant'} element={<NewRestaurant />} />
+                    {/* Меню ресторана */}
+                    <Route path={'/restaurant/:id/menu'} element={<RestaurantMenuPage />} />
+                    {/* Страница деталей блюда */}
+                    <Route path={'/restaurant/:id/menu/dish/:dishId'} element={<RestaurantDishDetailsPage />} />
                     {/* Бронирование столика */}
                     <Route path={'/booking'} element={<BookingPage />} />
                     {/* Подтверждение бронирования */}

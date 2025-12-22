@@ -2,7 +2,6 @@ import { App } from '../src/components/App.tsx';
 import { ErrorBoundary } from '../src/components/ErrorBoundary.tsx';
 
 function ErrorBoundaryError({ error }: { error: unknown }) {
-    console.error('ErrorBoundaryError', error);
     return (
         <div>
             <p>An unhandled error occurred:</p>

@@ -3,6 +3,7 @@ import classNames from 'classnames';
 // Components
 import { MoneyIcon } from '@/components/Icons/MoneyIcon.tsx';
 import { TimeCircleIcon } from '@/components/Icons/TimeCircleIcon.tsx';
+import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
 // Utils
@@ -15,6 +16,13 @@ interface IRestaurantTopPreviewProps {
 }
 
 export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ restaurant }) => {
+    if (restaurant === undefined) {
+        return (
+            <div className={css.previewContainer}>
+                <PlaceholderBlock width="100%" height="100%" rounded="0 0 20px 20px" />
+            </div>
+        );
+    }
     return (
         <div
             className={classNames(css.previewContainer, css.bgImage)}

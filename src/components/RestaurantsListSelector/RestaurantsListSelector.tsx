@@ -1,19 +1,22 @@
+import React, { SetStateAction, useCallback, useMemo } from 'react';
 import Popup from 'reactjs-popup';
-import { FC, SetStateAction, useCallback, useMemo } from 'react';
 import Picker from '@/lib/react-mobile-picker';
 import styled from 'styled-components';
-import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-// Define a clear interface for the data structure used
 import classNames from 'classnames';
-import css from '@/components/RestaurantsListSelector/RestaurantsListSelector.module.css';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { useAtom } from 'jotai/index';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+// Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
+// Atoms
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+// Components
+import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+// Styles
+import css from '@/components/RestaurantsListSelector/RestaurantsListSelector.module.css';
 
 type SetAtom<Args extends unknown[], Result> = <A extends Args>(...args: A) => Result;
 
-interface RestaurantsListSelectorProps {
+interface IRestaurantsListSelectorProps {
     isOpen: boolean;
     setOpen: (x: boolean) => void;
     restaurant: PickerValueObj;
@@ -45,7 +48,7 @@ const handleClose = () => {
 };
 
 // Extracted SaveButton for better readability and separation of concerns
-const SaveButton: FC<{ onClose: () => void }> = ({ onClose }) => (
+const SaveButton: React.FC<{ onClose: () => void }> = ({ onClose }) => (
     <div>
         <div className={css.redButton} onClick={onClose}>
             <span className={css.text}>Сохранить</span>
@@ -53,7 +56,7 @@ const SaveButton: FC<{ onClose: () => void }> = ({ onClose }) => (
     </div>
 );
 
-export const RestaurantsListSelector: FC<RestaurantsListSelectorProps> = ({
+export const RestaurantsListSelector: React.FC<IRestaurantsListSelectorProps> = ({
     isOpen,
     setOpen,
     restaurant,
@@ -96,16 +99,8 @@ export const RestaurantsListSelector: FC<RestaurantsListSelectorProps> = ({
             }
         },
         [selectRestaurant, restaurantList]
-    ); // Depend on restaurantList
+    );
 
-    // Set default selection logic when the popup opens
-    // useEffect(() => {
-    //     // Check if we have values, if the popup is open, and if a value hasn't been set yet (using a reliable 'unset' check)
-    //     if (restaurant?.value === 'unset') {
-    //         selectRestaurant(restaurantList[0]);
-    //     }
-    // }, [isOpen, restaurantList, restaurant, selectRestaurant]);
-    // Memoize the picker UI part if values are loaded
     const picker = useMemo(
         () => (
             <>

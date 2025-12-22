@@ -7,7 +7,7 @@ import { mainButton } from '@telegram-apps/sdk-react';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { formatDateDT } from '@/utils.ts';
 import moment from 'moment/moment';
-import { IEventTicketScanner } from '@/types/events.ts';
+import { IEventTicketScanner } from '@/types/events.types';
 import { qrScanner } from '@telegram-apps/sdk-react';
 import classNames from 'classnames';
 import axios from 'axios';

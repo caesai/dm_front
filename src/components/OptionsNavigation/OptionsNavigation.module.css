@@ -18,6 +18,11 @@
     height: 85px;
 }
 
+.gastronomyTextWrapper {
+    flex-basis: 100%;
+    padding-right: 65px;
+}
+
 .certificateCTAbtn {
     background-size: 60px;
     height: 60px;
@@ -34,5 +39,5 @@
 }
 
 .eventsTextWrapper {
-    gap: 2px;
+    gap: 0;
 }

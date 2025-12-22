@@ -46,7 +46,6 @@ import css from './BookingPage.module.css';
 // Mocks
 import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
 
-
 const confirmationList: IConfirmationType[] = [
     {
         id: 'telegram',
@@ -110,14 +109,19 @@ export const BookingPage: React.FC = () => {
 
     useEffect(() => {
         auth?.access_token && restaurant.value !== 'unset'
-            ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1).then((res) =>
-                  setAvailableDates(
-                      res.data.map((v) => ({
-                          title: formatDate(v),
-                          value: v,
-                      }))
+            ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1)
+                  .then((res) =>
+                      setAvailableDates(
+                          res.data.map((v: string) => ({
+                              title: formatDate(v),
+                              value: v,
+                          }))
+                      )
                   )
-              )
+                  .catch((err) => {
+                      console.error('err: ', err);
+                      // setErrorPopup(true); // TODO: Добавить ошибку в UI
+                  })
             : null;
     }, [guestCount, restaurant]);
 
@@ -182,6 +186,10 @@ export const BookingPage: React.FC = () => {
         setTimeslotsLoading(true);
         APIGetAvailableTimeSlots(auth.access_token, parseInt(String(restaurant.value)), date.value, guestCount)
             .then((res) => setAvailableTimeslots(res.data))
+            .catch((err) => {
+                console.error('err: ', err);
+                // setErrorPopup(true); // TODO: Добавить ошибку в UI
+            })
             .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount, restaurant]);
 
@@ -198,9 +206,12 @@ export const BookingPage: React.FC = () => {
             )
                 .then(() => {
                     // Обновляем список сертификатов в приложении
-                    APIGetCertificates(auth?.access_token, Number(user?.id)).then((response) =>
-                        setCertificates(response.data)
-                    );
+                    APIGetCertificates(auth?.access_token, Number(user?.id))
+                        .then((response) => setCertificates(response.data))
+                        .catch((err) => {
+                            console.error('err: ', err);
+                            // setErrorPopup(true); // TODO: Добавить ошибку в UI
+                        });
                 })
                 .catch((err) => {
                     console.log(err);
@@ -294,6 +305,7 @@ export const BookingPage: React.FC = () => {
                         </ContentContainer>
                     ) : (
                         <TimeSlots
+                            restaurantId={Number(restaurant.value)}
                             loading={timeslotsLoading}
                             availableTimeslots={availableTimeslots}
                             currentSelectedTime={currentSelectedTime}
@@ -306,6 +318,7 @@ export const BookingPage: React.FC = () => {
                         selectedCertificateId={state?.certificateId}
                     />
                     <BookingWish
+                        restaurantId={Number(restaurant.value)}
                         guestCount={guestCount}
                         childrenCount={childrenCount}
                         preOrder={preOrder}

@@ -33,6 +33,27 @@ export interface IMenuItem {
     price: number;
 }
 
+export interface IDishDetailed {
+    id: number;
+    title: string;
+    photo_url: string;
+    price: number;
+    weight?: string; // граммовка
+    description?: string; // состав
+    calories?: number;
+    proteins?: number;
+    fats?: number;
+    carbohydrates?: number;
+    allergens?: string[];
+    category_id: number;
+}
+
+export interface IMenuCategory {
+    id: number;
+    name: string;
+    dishes: IDishDetailed[];
+}
+
 export interface IMenuImg {
     id: number;
     image_url: string;
@@ -64,7 +85,6 @@ export interface IRestaurantShortBooking {
 
 export interface IRestaurant extends IRestaurantShort {
     about_text: string;
-    about_dishes: string;
     about_kitchen: string;
     about_features: string;
     address_lonlng: string;
@@ -96,6 +116,7 @@ export interface IBookingInfo {
     tags: string;
     booking_type?: string;
     event_title?: string;
+    title?: string;
     duration: number;
     certificate_value: number;
     certificate_expired_at: string;

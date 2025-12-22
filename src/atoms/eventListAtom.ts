@@ -1,6 +1,5 @@
 import { atom } from 'jotai';
-// import { IEvent } from '@/pages/EventsPage/EventsPage.tsx';
-import { IEventInRestaurant } from '@/types/events.ts';
+import { IEvent } from '@/types/events.types.ts';
 
 export const guestCountAtom = atom<number>(0);
 export const childrenCountAtom = atom<number>(0);
@@ -15,4 +14,4 @@ interface ISelectedEvent {
 
 export const selectedEventAtom = atom<ISelectedEvent | null>(null);
 
-export const eventsListAtom = atom<IEventInRestaurant[]>([]);
+export const eventsListAtom = atom<IEvent[]>([]);

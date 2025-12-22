@@ -97,6 +97,7 @@
     > img {
         aspect-ratio: 321 / 184;
         width: 100%;
+        border-radius: 12px;
     }
 
     > ul {
@@ -107,6 +108,7 @@
 
         > li {
             font-size: 0.875rem;
+            white-space: pre-line;
     }
 }
 }

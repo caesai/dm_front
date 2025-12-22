@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import moment from 'moment';
 // API's
-import { APIGetCurrentBookings, APIPostCheckNewRestaurantVisitStatus } from '@/api/restaurants.api';
+import { APIGetCurrentBookings } from '@/api/restaurants.api';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
 import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.api.ts';
 // Types
@@ -22,13 +22,10 @@ import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPrevi
 import { BookingReminder } from '@/components/BookingReminder/BookingReminder.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
-import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-// Utils
-import { getDataFromLocalStorage, isUserInTestGroup } from '@/utils.ts';
 // Mocks
-import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock';
 // Styles
 import css from './IndexPage.module.css';
 // Images
@@ -49,7 +46,7 @@ export const IndexPage: React.FC = () => {
     const [auth] = useAtom(authAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
     const [cityListA] = useAtom(cityListAtom);
-    const [restaurants, setRestaurantsList] = useAtom(restaurantsListAtom);
+    const [restaurants] = useAtom(restaurantsListAtom);
     // States
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))
@@ -60,35 +57,10 @@ export const IndexPage: React.FC = () => {
             text: 'Москва',
         }
     );
-    const [currentBookings, setCurrentBookings] = useState<IBookingInfo[]>([]);
-    const [currentBookingsLoading, setCurrentBookingsLoading] = useState(true);
+    const [currentBookings, setCurrentBookings] = useState<IBookingInfo[] | null>(null);
     const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
-    const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[]>([]);
-    const [hasClickedWantToBeFirst, setHasClickedWantToBeFirst] = useState(false);
-    // Local Storage
-    const want_first = getDataFromLocalStorage('want_first');
-
-    // Проверяем, нажимал ли пользователь на кнопку "Хочу быть первым"
-    useEffect(() => {
-        if (auth?.access_token && user?.telegram_id) {
-            APIPostCheckNewRestaurantVisitStatus(auth.access_token, user?.telegram_id)
-                .then((response) => {
-                    setHasClickedWantToBeFirst(response.data.found);
-                    // Если пользователь нажимал на кнопку "Хочу быть первым" раньше, надо удалить из localStorage
-                    try {
-                        const wantFirstParsed = JSON.parse(String(want_first));
-                        if (wantFirstParsed.done) {
-                            localStorage.removeItem('want_first');
-                        }
-                    } catch (e) {
-                        console.error(e);
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        }
-    }, [auth?.access_token, user?.telegram_id]);
+    const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[] | null>(null);
+    const [restaurantsList, setRestaurantsList] = useState<IRestaurant[] | null>(null);
 
     /**
      * Эффект для инициализации данных страницы.
@@ -103,8 +75,6 @@ export const IndexPage: React.FC = () => {
         if (!auth?.access_token) {
             return;
         }
-        setCurrentBookingsLoading(true);
-
         // Запрашиваем текущие бронирования и билеты
         // объединяем в один массив чтобы отображать их в одном списке
         Promise.all([APIGetCurrentBookings(auth.access_token), APIGetTickets(auth.access_token)])
@@ -130,8 +100,11 @@ export const IndexPage: React.FC = () => {
                 const bookings = [...events, ...responses[0].data.currentBookings];
                 setCurrentBookings(bookings);
             })
-            .finally(() => {
-                setCurrentBookingsLoading(false);
+            .catch((error) => {
+                console.error(error);
+                // Кладем пустой массив, чтобы не было ошибки при рендере
+                // и блок не отображался
+                setCurrentBookings([]);
             });
         // Запрашиваем доступ к спец-событию
         APIGetSuperEventHasAccess(auth.access_token)
@@ -172,44 +145,27 @@ export const IndexPage: React.FC = () => {
     }, [cityListA]);
 
     // Эффект фильтрации и сортировки списка ресторанов по городу
-    // и добавления заглушки ресторана в Санкт-Петербург если это первый запуск приложения
     useEffect(() => {
         let result: IRestaurant[] = [];
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (e.id !== Number(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID)) {
+            if (e.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 result.push(e);
-            } else if (e.id === Number(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID)) {
+            } else if (e.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 movableValue = e;
             }
         });
 
         if (movableValue !== null) {
+            // Ставим первым в списке ресторан SELF_EDGE_SPB_CHINOIS_ID
             result.unshift(movableValue);
         }
+
+        // Фильтруем рестораны по городу
         const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
-        let restaurantsList: IRestaurant[] = filteredRestaurantsByCity;
-        // Если город Санкт-Петербург и пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
-        if (currentCityA === 'spb') {
-            // Фильтруем дублирующийся мок ресторан
-            const filterDoubledMockRestaurant = filteredRestaurantsByCity.filter(
-                (v) => v.id !== mockNewSelfEdgeChinoisRestaurant.id
-            );
-            // Если пользователь не нажимал на кнопку "Хочу быть первым", то добавляем мок ресторан в Санкт-Петербург
-            if (!hasClickedWantToBeFirst) {
-                restaurantsList = [mockNewSelfEdgeChinoisRestaurant, ...filterDoubledMockRestaurant];
-            } else {
-                // Если пользователь нажимал на кнопку "Хочу быть первым", то добавляем только фильтрованный список ресторанов
-                if (isUserInTestGroup) {
-                    restaurantsList = filterDoubledMockRestaurant;
-                } else {
-                    restaurantsList = filterDoubledMockRestaurant.filter((v) => v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID));
-                }
-            }
-        }
-        setRestaurantsList(restaurantsList);
-    }, [currentCityA, cityListA, hasClickedWantToBeFirst, isUserInTestGroup]);
+        setRestaurantsList(filteredRestaurantsByCity);
+    }, [currentCityA, cityListA, restaurants]);
 
     // Устнавливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
     useEffect(() => {
@@ -254,33 +210,7 @@ export const IndexPage: React.FC = () => {
                 <div style={{ marginRight: 15 }}>
                     <CitySelect options={cityOptions} currentValue={currentCityS} onChange={updateCurrentCity} />
                 </div>
-                {currentBookingsLoading ? (
-                    <div style={{ marginRight: '15px' }}>
-                        <PlaceholderBlock width={'100%'} height={'108px'} rounded={'16px'} />
-                    </div>
-                ) : (
-                    currentBookings
-                        .filter((book) => {
-                            return (
-                                new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <=
-                                new Date(book.booking_date).getTime()
-                            );
-                        })
-                        .map((book) => (
-                            <BookingReminder
-                                key={book.id}
-                                id={book.id}
-                                title={book.restaurant.title}
-                                address={book.restaurant.address}
-                                date={book.booking_date}
-                                time={book.time}
-                                persons={book.guests_count}
-                                children={book.children_count}
-                                booking_type={book.booking_type}
-                                event_title={book.event_title}
-                            />
-                        ))
-                )}
+                <BookingReminder bookings={currentBookings} />
                 {hasSuperEventAccess && (
                     <div style={{ marginRight: 15, height: 85 }}>
                         <Link to={'/events/super'}>
@@ -293,15 +223,11 @@ export const IndexPage: React.FC = () => {
                     </div>
                 )}
 
-                <OptionsNavigation cityId={cityId} />
+                <OptionsNavigation cityId={cityId} isLoading={!restaurantsList} />
 
                 <div className={css.restaurants}>
-                    {restaurants.map((rest) => (
-                        <RestaurantPreview
-                            restaurant={rest}
-                            key={`rest-${rest.id}`}
-                            clickable
-                        />
+                    {restaurantsList?.map((rest) => (
+                        <RestaurantPreview restaurant={rest} key={`rest-${rest.id}`} clickable />
                     ))}
                 </div>
             </div>

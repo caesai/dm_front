@@ -101,7 +101,7 @@ export const BookingRestaurantPage: React.FC = () => {
         auth?.access_token && restaurant.value !== 'unset'
             ? APIGetAvailableDays(auth?.access_token, Number(id), 1).then((res) =>
                   setAvailableDates(
-                      res.data.map((v) => ({
+                      res.data.map((v: string) => ({
                           title: formatDate(v),
                           value: v,
                       }))
@@ -280,6 +280,7 @@ export const BookingRestaurantPage: React.FC = () => {
                         </ContentContainer>
                     ) : (
                         <TimeSlots
+                            restaurantId={Number(id)}
                             loading={timeslotsLoading}
                             availableTimeslots={availableTimeslots}
                             currentSelectedTime={currentSelectedTime}
@@ -292,6 +293,7 @@ export const BookingRestaurantPage: React.FC = () => {
                         selectedCertificateId={null}
                     />
                     <BookingWish
+                        restaurantId={Number(id)}
                         guestCount={guestCount}
                         childrenCount={childrenCount}
                         preOrder={preOrder}

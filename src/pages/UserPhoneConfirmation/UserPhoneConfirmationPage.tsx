@@ -5,7 +5,7 @@ import { mainButton } from '@telegram-apps/sdk-react';
 import { requestPhone } from '@/components/RequestPermissions/utils.ts';
 import { useAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APIUserInfo } from '@/api/auth.ts';
+import { APIUserInfo } from '@/api/auth.api';
 import { useLocation, useNavigate } from 'react-router-dom';
 // import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
 

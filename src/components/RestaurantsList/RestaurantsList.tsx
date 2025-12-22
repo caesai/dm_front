@@ -11,9 +11,8 @@ import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
 // Mocks
-import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock.ts';
 // Utils
-import { isUserInTestGroup } from '@/utils';
 import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
 // Styles
 import css from '@/components/RestaurantsList/RestaurantsList.module.css';
@@ -45,9 +44,9 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
         let movableValue = null;
 
         restaurants.map((e) => {
-            if (e.id !== 11) {
+            if (e.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 result.push(e);
-            } else if (e.id === 11) {
+            } else if (e.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 movableValue = e;
             }
         });
@@ -55,17 +54,10 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
         if (movableValue !== null) {
             result.unshift(movableValue);
         }
+        // Фильтруем рестораны по городу
         result = result.filter((v) => v.city.name_english == currentCityA);
-        if (currentCityA === 'spb') {
-            if (isUserInTestGroup) {
-                result = result.filter((v) => v.id !== mockNewSelfEdgeChinoisRestaurant.id);
-            } else {
-                result = result.filter((v) => v.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID));
-            }
-        }
-        // Фильтруем дублирующийся мок ресторан
         setRestaurantsList(result);
-    }, [currentCityA, cityListA, isUserInTestGroup]);
+    }, [currentCityA, cityListA]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);
