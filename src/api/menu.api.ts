@@ -8,7 +8,7 @@ import { IMenu } from '@/types/menu.types.ts';
  */
 export const APIGetRestaurantMenu = (token: string, restaurantId?: number) => {
     const params = restaurantId ? { restaurant_id: restaurantId } : {};
-    
+
     return axios.get<IMenu[]>(`${BASE_URL}/maitred/menus`, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -16,4 +16,3 @@ export const APIGetRestaurantMenu = (token: string, restaurantId?: number) => {
         params,
     });
 };
-

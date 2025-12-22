@@ -3,7 +3,7 @@ import classNames from 'classnames';
 // Components
 import { MoneyIcon } from '@/components/Icons/MoneyIcon.tsx';
 import { TimeCircleIcon } from '@/components/Icons/TimeCircleIcon.tsx';
-import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock';
+import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
 // Utils
