@@ -15,6 +15,16 @@ import css from '@/pages/BookingPage/BookingPage.module.css';
 // Define the type for the part of the day
 type PartOfDay = 'morning' | 'day' | 'evening';
 
+// Helper function to validate a time slot
+const isValidTimeSlot = (slot: ITimeSlot): boolean => {
+    if (!slot.start_datetime || !slot.end_datetime) return false;
+
+    const startDate = new Date(slot.start_datetime);
+    const endDate = new Date(slot.end_datetime);
+
+    return !(isNaN(startDate.getTime()) || isNaN(endDate.getTime()));
+};
+
 // Helper function to determine the part of the day from a date
 const getPartOfDay = (dt: Date): PartOfDay => {
     const hours = dt.getHours();
@@ -38,6 +48,8 @@ interface TimeSlotButtonProps {
 
 const TimeSlotButton: React.FC<TimeSlotButtonProps> = React.memo(({ slot, isSelected, onClick }) => {
     const handleClick = useCallback(() => onClick(slot), [onClick, slot]);
+
+    if (!isValidTimeSlot(slot)) return null;
 
     return (
         <div
@@ -103,11 +115,19 @@ interface TimeSlotProps {
     restaurantId?: number;
 }
 
-export const TimeSlots: React.FC<TimeSlotProps> = ({ loading, availableTimeslots, currentSelectedTime, setCurrentSelectedTime }) => {
+export const TimeSlots: React.FC<TimeSlotProps> = ({
+    loading,
+    availableTimeslots,
+    currentSelectedTime,
+    setCurrentSelectedTime,
+}) => {
+    // Filter out invalid timeslots first
+    const validTimeslots = useMemo(() => availableTimeslots.filter(isValidTimeSlot), [availableTimeslots]);
+
     // Filter timeslots into categories using helper functions
-    const morningTimeslots = useMemo(() => filterByPartOfDay(availableTimeslots, 'morning'), [availableTimeslots]);
-    const dayTimeslots = useMemo(() => filterByPartOfDay(availableTimeslots, 'day'), [availableTimeslots]);
-    const eveningTimeslots = useMemo(() => filterByPartOfDay(availableTimeslots, 'evening'), [availableTimeslots]);
+    const morningTimeslots = useMemo(() => filterByPartOfDay(validTimeslots, 'morning'), [validTimeslots]);
+    const dayTimeslots = useMemo(() => filterByPartOfDay(validTimeslots, 'day'), [validTimeslots]);
+    const eveningTimeslots = useMemo(() => filterByPartOfDay(validTimeslots, 'evening'), [validTimeslots]);
 
     // Use local state to manage the active part of the day UI selection
     const [currentPartOfDay, setCurrentPartOfDay] = useState<PartOfDay | null>(null);
@@ -129,7 +149,7 @@ export const TimeSlots: React.FC<TimeSlotProps> = ({ loading, availableTimeslots
             else if (eveningTimeslots.length > 0) setCurrentPartOfDay('evening');
             else setCurrentPartOfDay(null);
         }
-    }, [availableTimeslots, morningTimeslots, dayTimeslots, eveningTimeslots, currentSelectedTime]);
+    }, [validTimeslots, morningTimeslots, dayTimeslots, eveningTimeslots, currentSelectedTime]);
 
     // Sync part of day selector when the externally managed currentSelectedTime changes
     useEffect(() => {
@@ -150,7 +170,7 @@ export const TimeSlots: React.FC<TimeSlotProps> = ({ loading, availableTimeslots
     }
 
     // Check if there are any slots at all
-    const hasAnyTimeSlots = availableTimeslots.length > 0;
+    const hasAnyTimeSlots = validTimeslots.length > 0;
 
     // const hideApp = () => {
     //     // window.location.href = "tg:resolve";
