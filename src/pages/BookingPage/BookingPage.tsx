@@ -42,11 +42,9 @@ import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 // Utils
 import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
 // Styles
-import css from './BookingPage.module.css';
+import css from '@/pages/BookingPage/BookingPage.module.css';
 // Mocks
 import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
-import { R } from '@/__mocks__/restaurant.mock';
-import moment from 'moment';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -102,6 +100,7 @@ export const BookingPage: React.FC = () => {
     const [requestLoading, setRequestLoading] = useState(false);
     const [errorPopup, setErrorPopup] = useState(false);
     const [botError, setBotError] = useState(false);
+    const [timeslotsError, setTimeslotsError] = useState(true);
     const [errorPopupCount, setErrorPopupCount] = useState(0);
     const [preOrder, setPreOrder] = useState(false);
     const [certificate_id, setCertificateId] = useState<string | null>(null);
@@ -114,26 +113,10 @@ export const BookingPage: React.FC = () => {
             ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1)
                   .then((res) =>
                       setAvailableDates(
-                          res.data
-                              .map((v: string) => ({
-                                  title: formatDate(v),
-                                  value: v,
-                              }))
-                              .filter((v: PickerValueObj) => {
-                                  // TODO: Убрать после 21.12.2025
-                                  if (restaurant.value === R.SELF_EDGE_SPB_CHINOIS_ID) {
-                                      if (
-                                          moment(v.value).isAfter('2025-12-21') ||
-                                          moment(v.value).isSame('2025-12-21', 'day')
-                                      ) {
-                                          return true;
-                                      } else {
-                                          return false;
-                                      }
-                                  } else {
-                                      return true;
-                                  }
-                              })
+                          res.data.map((v: string) => ({
+                              title: formatDate(v),
+                              value: v,
+                          }))
                       )
                   )
                   .catch((err) => {
@@ -203,10 +186,13 @@ export const BookingPage: React.FC = () => {
         if (restaurant.value === 'unset' || !auth?.access_token || date.value === 'unset' || !guestCount) return;
         setTimeslotsLoading(true);
         APIGetAvailableTimeSlots(auth.access_token, parseInt(String(restaurant.value)), date.value, guestCount)
-            .then((res) => setAvailableTimeslots(res.data))
+            .then((res) => {
+                setAvailableTimeslots(res.data)
+                setTimeslotsError(false)
+            })
             .catch((err) => {
                 console.error('err: ', err);
-                // setErrorPopup(true); // TODO: Добавить ошибку в UI
+                setTimeslotsError(true);
             })
             .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount, restaurant]);
@@ -322,13 +308,15 @@ export const BookingPage: React.FC = () => {
                             </div>
                         </ContentContainer>
                     ) : (
-                        <TimeSlots
-                            restaurantId={Number(restaurant.value)}
-                            loading={timeslotsLoading}
-                            availableTimeslots={availableTimeslots}
-                            currentSelectedTime={currentSelectedTime}
-                            setCurrentSelectedTime={setCurrentSelectedTime}
-                        />
+                        (!timeslotsError ? (
+                            <TimeSlots
+                                restaurantId={Number(restaurant.value)}
+                                loading={timeslotsLoading}
+                                availableTimeslots={availableTimeslots}
+                                currentSelectedTime={currentSelectedTime}
+                                setCurrentSelectedTime={setCurrentSelectedTime}
+                            />
+                        ) : <p className={css.timeslotsError}>Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату</p>)
                     )}
                     <CertificatesSelector
                         setCertificateId={setCertificateId}

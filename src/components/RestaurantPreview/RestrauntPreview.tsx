@@ -182,16 +182,7 @@ export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restauran
                 {/* Если это не заглушка ресторана Self Edge Chinois, то отображаем теги */}
                 <div className={css.tags}>
                     <InfoTag
-                        // TODO: Убрать условие после 21.12.2025
-                        text={
-                            restaurant.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)
-                                ? 'Откроется 21.12'
-                                : getRestaurantStatus(
-                                      restaurant.worktime,
-                                      getCurrentWeekdayShort(),
-                                      getCurrentTimeShort()
-                                  )
-                        }
+                        text={getRestaurantStatus(restaurant.worktime, getCurrentWeekdayShort(), getCurrentTimeShort())}
                     />
                     <InfoTag text={`Ср. чек ${restaurant.avg_cheque}₽`} />
                 </div>

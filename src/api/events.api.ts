@@ -3,8 +3,12 @@ import { BASE_URL, CLIENT_URL } from '@/api/base.ts';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { EventTicket, IEvent, ISuperEventHasApplicationResponse } from '@/types/events.types.ts';
 
-export const APIGetEventsList = async () => {
-    return await axios.get<IEvent[]>(`${BASE_URL}/events/`);
+export const APIGetEventsList = async (token: string) => {
+    return await axios.get<IEvent[]>(`${BASE_URL}/events/`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 };
 
 export const APIGetAvailableEventTimeslots = async (

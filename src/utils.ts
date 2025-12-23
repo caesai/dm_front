@@ -319,15 +319,15 @@ function formatMinutesToTime(totalMins: number): string {
 export const getRestaurantStatus = (
     worktime: IWorkTime[],
     currentWeekday: string,
-    currentTimeStr: string
+    currentTimeStr: string,
 ): string => {
     const currentDayIndex = dayIndexMap[currentWeekday];
     const currentMins = parseTimeToMinutes(currentTimeStr);
-
+    
     // Разделим расписание по дням для удобства
     const scheduleByDay: Record<number, { start: number; end: number }[]> = {};
     for (const wt of worktime) {
-        const dIndex = dayIndexMap[wt.weekday];
+        const dIndex = dayIndexMap[wt.weekday.toLowerCase()];
         const start = parseTimeToMinutes(wt.time_start);
         let end = parseTimeToMinutes(wt.time_end);
         // Если время окончания меньше или равно времени начала,
@@ -335,12 +335,13 @@ export const getRestaurantStatus = (
         if (end <= start) {
             end += 24 * 60; // +1440
         }
+        
         if (!scheduleByDay[dIndex]) {
             scheduleByDay[dIndex] = [];
         }
         scheduleByDay[dIndex].push({ start, end });
     }
-
+   
     // Упорядочим интервалы для каждого дня по времени старта
     for (const day in scheduleByDay) {
         scheduleByDay[day].sort((a, b) => a.start - b.start);
@@ -370,7 +371,6 @@ export const getRestaurantStatus = (
             }
         }
     }
-
     // 2) Если мы дошли сюда, значит либо ресторан не открыт «со вчера», либо нет слотов с переходом через полночь.
     //    Проверяем текущий день. Смотрим все интервалы. Может быть, он открыт уже сегодня, или скоро откроется.
     if (scheduleByDay[currentDayIndex]) {
@@ -435,7 +435,7 @@ export const getRestaurantStatusTyped = (
     // Разделим расписание по дням для удобства
     const scheduleByDay: Record<number, { start: number; end: number }[]> = {};
     for (const wt of worktime) {
-        const dIndex = dayIndexMap[wt.weekday];
+        const dIndex = dayIndexMap[wt.weekday.toLowerCase()];
         const start = parseTimeToMinutes(wt.time_start);
         let end = parseTimeToMinutes(wt.time_end);
         if (end <= start) {
