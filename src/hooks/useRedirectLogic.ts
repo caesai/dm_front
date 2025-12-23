@@ -31,7 +31,7 @@ export const useRedirectLogic = () => {
     // navigate - это функция для перенаправления
     const handleNavigation = useCallback(
         (param: string) => {
-            const paths = ['restaurant', 'event', 'ticket', 'certificate', 'event_city'];
+            const paths = ['restaurant', 'event', 'ticket', 'certificate', 'event_city', 'event_restaurant'];
             // param - это параметр при старте приложения из бота
             const path = param.substring(0, param.indexOf('Id_'));
             if (paths.includes(path)) {
@@ -55,6 +55,9 @@ export const useRedirectLogic = () => {
                         break;
                     case 'event_city':
                         navigate(`/events/?city=${id}&shared=true`, { replace: true });
+                        break;
+                    case 'event_restaurant':
+                        navigate(`/events/?restaurant=${id}&shared=true`, { replace: true });
                         break;
                 }
             } else {
@@ -111,7 +114,7 @@ export const useRedirectLogic = () => {
                 return;
             }
 
-            const isUserIncomplete = !user?.license_agreement || !user.complete_onboarding;
+            const isUserIncomplete = !user?.complete_onboarding;
 
             // Если навигация идет не на страницы онбординга, то проверяем, чтобы пользователь прошел онбординг
             const isOnboardingNotExcluded =

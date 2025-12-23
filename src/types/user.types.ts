@@ -4,23 +4,16 @@ export interface IUser {
     email: string | null;
     first_name: string;
     last_name: string;
-    phone_number?: string;
+    phone_number: string | undefined;
     photo_url: string | null;
     allergies: string[] | null;
-    early_access: boolean;
-    license_agreement: boolean;
-    advertisement_agreement: boolean;
-    gdpr_agreement: boolean;
     date_of_birth: string | null | undefined;
     mailing_enabled: boolean;
-    administrator: IUserAdmin | null;
     complete_onboarding: boolean;
-    username?: string;
+    permissions: IUserPermission[];
 }
 
-interface IUserAdmin {
-    is_active: boolean;
-}
+type IUserPermission = 'tester' | 'hospitality_heroes';
 
 export interface IUserUpdate {
     first_name?: string;

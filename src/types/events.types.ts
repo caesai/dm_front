@@ -1,5 +1,6 @@
 import { IRestaurantShortBooking } from '@/types/restaurant.types.ts';
 import { IUser } from '@/types/user.types.ts';
+import { Dispatch, SetStateAction } from 'react';
 
 export interface IEvent {
     id: number;
@@ -35,17 +36,20 @@ export interface EventTicket {
     restaurant: EventRestaurant;
 }
 
-
 export interface IEventTicketScanner extends EventTicket {
     is_confirmed: boolean;
     user: IUser;
 }
 
-export interface IEventBooking {
-    event?: IEvent;
-    restaurant?: EventRestaurant;
-    guestCount?: number;
+export interface IEventBooking extends IEvent {
+    restaurantId: string;
+    guestCount: number;
 }
+
+export type IEventBookingContext = [
+    IEventBooking | null,
+    Dispatch<SetStateAction<IEventBooking | null>>,
+];
 
 export interface ISuperEventHasApplicationResponse {
     has_application: boolean;

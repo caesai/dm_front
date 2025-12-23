@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import moment from 'moment';
 // Types
 import { IEvent } from '@/types/events.types';
+// Components
+import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 // Styles
 import css from '@/components/EventCard/EventCard.module.css';
 
@@ -20,12 +22,32 @@ export const EventCard: React.FC<IEvent & { onClick: (id: number) => void }> = (
     const handleClick = useCallback(() => {
         onClick?.(id);
     }, [id, onClick]);
+    // Если данные не загружены, то показываем skeleton из placeholder блоков
+    if (!image_url || !name || !date_start || !restaurant) {
+        return (
+            <div>
+                <div className={classNames(css.card, css.bgImage)}>
+                    <PlaceholderBlock width={'100%'} height={'100%'} aspectRatio={'3/2'} />
+                </div>
+                <div className={css.resInfo}>
+                    <div className={css.resTitleWrapper}>
+                        <h2 className={css.resTitle}>
+                            <PlaceholderBlock width={'100%'} height={'16px'} />
+                        </h2>
+                        <span className={css.resSlogan}>
+                            <PlaceholderBlock width={'100%'} height={'14px'} />
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     return (
         <div onClick={handleClick} style={{ cursor: 'pointer', marginBottom: 5 }} data-testid="event-card">
             <div
                 className={classNames(css.card, css.bgImage, sold ? css.notActive : null)}
                 style={{
-                    backgroundImage: `url(${image_url ? image_url : 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg'})`,
+                    backgroundImage: `url(${image_url ? image_url : 'https://storage.yandexcloud.net/dreamteam-storage/67f296fadfab49a1a9bfd98a291821d5.png'})`,
                 }}
             >
                 <div className={css.footer}>

@@ -38,7 +38,7 @@ import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.t
 import { EventsListPage } from '@/pages/EventsPage/EventsListPage/EventsListPage.tsx';
 import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
 import { EventDetailsPage } from '@/pages/EventsPage/EventDetailsPage/EventDetailsPage.tsx';
-import { EventBookingOutlet } from '@/pages/EventsPage/EventBookingOutlet/EventBookingOutlet.tsx';
+import { EventBookingPage } from '@/pages/EventsPage/EventBookingPage/EventBookingPage.tsx';
 import { PaymentReturnPage } from '@/pages/PaymentReturnPage/PaymentReturnPage.tsx';
 import { TicketInfoPage } from '@/pages/TicketInfoPage/TicketInfoPage.tsx';
 import { UserPhoneConfirmationPage } from '@/pages/UserPhoneConfirmation/UserPhoneConfirmationPage.tsx';
@@ -176,7 +176,7 @@ const AppRouter: React.FC = () => {
                         {/* Страница деталей мероприятия */}
                         <Route path={'/events/:eventId/details'} element={<EventDetailsPage />} />
                         {/* Страница бронирования мероприятия */}
-                        <Route path={'/events/:eventId/confirm'} element={<EventBookingOutlet />} />
+                        <Route path={'/events/:eventId/confirm'} element={<EventBookingPage />} />
                         {/* Страница успешной оплаты мероприятия */}
                         <Route path={'/events/payment-success/:orderId'} element={<EventPaymentSuccessPage />} />
                         {/* Страница ошибки оплаты мероприятия */}
