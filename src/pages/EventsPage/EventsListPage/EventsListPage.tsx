@@ -69,16 +69,14 @@ export const EventsListPage: React.FC = () => {
 
     // Обновляем ресторан
     useEffect(() => {
-        if (currentRestaurant.value !== 'unset') {
-            setEventBookingInfo(
-                (prev) =>
-                    ({
-                        ...prev,
-                        restaurantId: String(currentRestaurant.value),
-                    }) as IEventBooking
-            );
-        }
-    }, [currentRestaurant, setEventBookingInfo]);
+        setEventBookingInfo(
+            (prev) =>
+                ({
+                    ...prev,
+                    restaurantId: String(currentRestaurant.value),
+                }) as IEventBooking
+        );
+    }, [currentRestaurant, currentCityS, setEventBookingInfo]);
 
     // Фильтруем рестораны по выбранному городу
     const restaurantsList = useMemo(() => {
@@ -105,6 +103,7 @@ export const EventsListPage: React.FC = () => {
     // или из бота на страницу списка мероприятий в выбранном ресторане, то устанавливаем текущий ресторан
     useEffect(() => {
         if (params.get('city')) {
+            // Устанавливаем текущий город
             setCurrentCityS(
                 cityListConfirm.find((v) => v.id === params.get('city')) ?? {
                     id: 'moscow',
@@ -113,11 +112,30 @@ export const EventsListPage: React.FC = () => {
             );
         }
         if (params.get('restaurant')) {
+            // Устанавливаем текущий ресторан
             setCurrentRestaurant({
-                title: restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.title ?? 'unset',
-                address: restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.address ?? 'unset',
-                value: String(restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.id) ?? 'unset',
+                title:
+                    restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.title ??
+                    'unset',
+                address:
+                    restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.address ??
+                    'unset',
+                value:
+                    String(restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.id) ??
+                    'unset',
             });
+            // Устанавливаем текущий город по выбранному ресторану
+            setCurrentCityS(
+                cityListConfirm.find(
+                    (v) =>
+                        v.id ===
+                        restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.city
+                            .name_english
+                ) ?? {
+                    id: 'moscow',
+                    text: 'Москва',
+                }
+            );
         }
     }, [params, restaurants]);
     return (
