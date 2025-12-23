@@ -64,7 +64,7 @@ export const EventCard: React.FC<IEvent & { onClick: (id: number) => void }> = (
                 <div className={css.resTitleWrapper}>
                     <h2 className={css.resTitle}>{name}</h2>
                     <span className={css.resSlogan}>
-                        {date_start && moment(date_start).format('DD.MM.YYYY')}{' '}
+                        <span data-testid="event-date">{date_start && moment(date_start).format('DD.MM.YYYY')}</span>{' '}
                         <span
                             style={{
                                 display: 'flex',
@@ -76,7 +76,7 @@ export const EventCard: React.FC<IEvent & { onClick: (id: number) => void }> = (
                         >
                             {'\u2B24'}
                         </span>{' '}
-                        {restaurant?.title}
+                        <span data-testid="event-restaurant-title">{restaurant?.title}</span>
                     </span>
                     <span className={css.resAddress}>{restaurant?.address}</span>
                 </div>
