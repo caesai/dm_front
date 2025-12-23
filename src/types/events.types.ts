@@ -11,17 +11,10 @@ export interface IEvent {
     date_start: string;
     date_end: string;
     tickets_left: number;
-    restaurant: IRestaurantShortBooking
+    restaurant: IRestaurantShortBooking;
 }
 
-interface EventRestaurant {
-    id: number;
-    title: string;
-    address: string;
-    thumbnail_photo: string;
-}
-
-export interface EventTicket {
+export interface IEventTicket {
     id: number;
     remarked_id: number;
     event_title: string;
@@ -33,10 +26,10 @@ export interface EventTicket {
     total: number;
     phone?: string;
     ticket_identifier: number;
-    restaurant: EventRestaurant;
+    restaurant: IRestaurantShortBooking;
 }
 
-export interface IEventTicketScanner extends EventTicket {
+export interface IEventTicketScanner extends IEventTicket {
     is_confirmed: boolean;
     user: IUser;
 }
@@ -46,10 +39,7 @@ export interface IEventBooking extends IEvent {
     guestCount: number;
 }
 
-export type IEventBookingContext = [
-    IEventBooking | null,
-    Dispatch<SetStateAction<IEventBooking | null>>,
-];
+export type IEventBookingContext = [IEventBooking | null, Dispatch<SetStateAction<IEventBooking | null>>];
 
 export interface ISuperEventHasApplicationResponse {
     has_application: boolean;

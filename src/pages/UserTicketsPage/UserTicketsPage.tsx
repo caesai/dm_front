@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 // APIs
 import { APIGetTickets } from '@/api/events.api.ts';
 // Types
-import { EventTicket } from '@/types/events.types.ts';
+import { IEventTicket } from '@/types/events.types.ts';
 // Atoms
 import { authAtom } from '@/atoms/userAtom.ts';
 // Components
@@ -19,7 +19,7 @@ import css from '@/pages/UserTicketsPage/UserTicketsPage.module.css';
 export const UserTicketsPage: React.FC = () => {
     const navigate = useNavigate();
     const [auth] = useAtom(authAtom);
-    const [tickets, setTickets] = useState<EventTicket[]>([]);
+    const [tickets, setTickets] = useState<IEventTicket[]>([]);
     const [eventsLoading, setEventsLoading] = useState(true);
 
     useEffect(() => {

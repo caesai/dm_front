@@ -10,10 +10,10 @@ export interface IUser {
     date_of_birth: string | null | undefined;
     mailing_enabled: boolean;
     complete_onboarding: boolean;
-    permissions: IUserPermission[];
+    permissions: TUserPermission[];
 }
 
-type IUserPermission = 'tester' | 'hospitality_heroes';
+type TUserPermission = 'tester' | 'hospitality_heroes';
 
 export interface IUserUpdate {
     first_name?: string;
