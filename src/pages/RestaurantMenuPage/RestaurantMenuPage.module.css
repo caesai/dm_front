@@ -247,6 +247,13 @@
     background-position: center;
     background-color: #F4F4F4;
     border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.blurredImage {
+    filter: blur(8px);
+    transition: filter 0.3s ease;
 }
 
 .menuItemContent {

@@ -14,6 +14,8 @@ import { extractPrice, getDefaultSize } from '@/utils/menu.utils';
 import { trigramMatch } from '@/utils/trigram.utils';
 // Hooks
 import { useRestaurantMenu } from '@/hooks/useRestaurantMenu';
+// Components
+import { AgeVerificationPopup } from '@/components/AgeVerificationPopup/AgeVerificationPopup';
 // Styles
 import menuErrorIcon from '/icons/menu-error.png';
 import css from '@/pages/RestaurantMenuPage/RestaurantMenuPage.module.css';
@@ -24,6 +26,11 @@ export const RestaurantMenuPage: React.FC = () => {
     const [restaurants] = useAtom(restaurantsListAtom);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [isAgeVerificationOpen, setIsAgeVerificationOpen] = useState<boolean>(false);
+    const [selectedCocktailItem, setSelectedCocktailItem] = useState<IAPIMenuItem | null>(null);
+    const [isAgeVerified, setIsAgeVerified] = useState<boolean>(() => {
+        return localStorage.getItem('ageVerified') === 'true';
+    });
     const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const tabsContainerRef = useRef<HTMLDivElement | null>(null);
     const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
@@ -196,6 +203,48 @@ export const RestaurantMenuPage: React.FC = () => {
         return visibleItems.length > 0 && visibleItems.every((item) => isDrinkItem(item));
     };
 
+    // Проверка, является ли категория категорией коктейлей
+    const isCocktailCategory = (categoryName: string): boolean => {
+        return categoryName.toLowerCase().includes('коктейл');
+    };
+
+    // Получить изображение для коктейля по названию
+    const getCocktailImage = (name: string): string => {
+        const lowerName = name.toLowerCase().trim();
+        if (lowerName.includes('негрони') || lowerName.includes('negroni')) {
+            return '/img/cocktails/negroni.png';
+        }
+        if (lowerName.includes('маргарита') || lowerName.includes('margarita')) {
+            return '/img/cocktails/margarita.png';
+        }
+        if (lowerName.includes('мохито') || lowerName.includes('mojito')) {
+            return '/img/cocktails/mojito-classic.png';
+        }
+        if (lowerName.includes('вишневое') || lowerName.includes('cherry')) {
+            return '/img/cocktails/cherry-delight.png';
+        }
+        return '/img/cocktails/negroni.png';
+    };
+
+    const handleVerifyAge = (verified: boolean) => {
+        setIsAgeVerified(verified);
+        localStorage.setItem('ageVerified', String(verified));
+        setIsAgeVerificationOpen(false);
+        if (verified && selectedCocktailItem) {
+            handleDishClick(selectedCocktailItem);
+        }
+        setSelectedCocktailItem(null);
+    };
+
+    const handleCocktailClick = (item: IAPIMenuItem) => {
+        if (!isAgeVerified) {
+            setSelectedCocktailItem(item);
+            setIsAgeVerificationOpen(true);
+        } else {
+            handleDishClick(item);
+        }
+    };
+
     const renderDishCategory = (category: IAPIMenuCategory) => {
         let visibleItems = category.menu_items.filter((item) => !item.is_hidden);
 
@@ -218,7 +267,17 @@ export const RestaurantMenuPage: React.FC = () => {
                 <div className={css.items}>
                     {visibleItems.map((item) => {
                         const defaultSize = getDefaultSize(item.item_sizes);
-                        const imageUrl = defaultSize?.button_image_url || '';
+                        const isCocktail = isCocktailCategory(category.name);
+                        const shouldBlur = isCocktail && !isAgeVerified;
+                        
+                        // Для коктейлей используем специальные изображения
+                        let imageUrl = '';
+                        if (isCocktail) {
+                            imageUrl = getCocktailImage(item.name);
+                        } else {
+                            imageUrl = defaultSize?.button_image_url || '';
+                        }
+                        
                         const hasImage = imageUrl && imageUrl.trim().length > 0;
                         const portionWeight = defaultSize?.portion_weight_grams;
                         const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || '';
@@ -226,9 +285,13 @@ export const RestaurantMenuPage: React.FC = () => {
                         const price = extractPrice(defaultSize?.prices);
 
                         return (
-                            <div key={item.id} className={css.menuItemWrapper} onClick={() => handleDishClick(item)}>
+                            <div 
+                                key={item.id} 
+                                className={css.menuItemWrapper} 
+                                onClick={() => isCocktail ? handleCocktailClick(item) : handleDishClick(item)}
+                            >
                                 <div
-                                    className={css.menuItemImage}
+                                    className={`${css.menuItemImage} ${shouldBlur ? css.blurredImage : ''}`}
                                     style={{
                                         backgroundImage: hasImage ? `url(${imageUrl})` : 'none',
                                         backgroundColor: hasImage ? 'transparent' : '#FFFFFF',
@@ -422,6 +485,12 @@ export const RestaurantMenuPage: React.FC = () => {
                     })}
                 </div>
             )}
+            
+            <AgeVerificationPopup
+                isOpen={isAgeVerificationOpen}
+                onConfirm={() => handleVerifyAge(true)}
+                onCancel={() => handleVerifyAge(false)}
+            />
         </div>
     );
 };
