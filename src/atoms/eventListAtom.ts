@@ -14,4 +14,4 @@ interface ISelectedEvent {
 
 export const selectedEventAtom = atom<ISelectedEvent | null>(null);
 
-export const eventsListAtom = atom<IEvent[]>([]);
+export const eventsListAtom = atom<IEvent[] | null>(null);

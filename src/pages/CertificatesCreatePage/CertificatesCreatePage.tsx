@@ -1,11 +1,13 @@
 import React from 'react';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import classnames from 'classnames';
+// Components
 import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
+// Styles
+import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 
 export const CertificatesCreatePage: React.FC = () => {
     const navigate = useNavigate();

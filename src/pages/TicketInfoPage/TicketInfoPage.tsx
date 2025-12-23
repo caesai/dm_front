@@ -1,37 +1,40 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import moment from 'moment';
+import classNames from 'classnames';
+import { useAtom } from 'jotai';
+// APIs
+import { BASE_BOT } from '@/api/base.ts';
+import { APIDeleteTicket, APIGetSharedTicket, APIGetTicket } from '@/api/events.api.ts';
+// Types
+import { IEventTicket } from '@/types/events.types';
+// Atoms
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+// Components
 import { Page } from '@/components/Page.tsx';
-import css from './TicketInfoPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import classNames from 'classnames';
-import { useEffect, useState } from 'react';
-import { EventTicket } from '@/types/events.types';
-import { APIDeleteTicket, APIGetSharedTicket, APIGetTicket } from '@/api/events.api.ts';
-import { useAtom } from 'jotai';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import moment from 'moment';
-// @ts-ignore
-import html2pdf from 'html2pdf.js';
-// import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
-import { BASE_BOT } from '@/api/base.ts';
-import { Share } from '@/components/Icons/Share.tsx';
-import { getDataFromLocalStorage, setDataToLocalStorage } from '@/utils.ts';
 import { CancelBookingPopup } from '@/pages/BookingInfoPage/CancelBookingPopup/CancelBookingPopup.tsx';
+// Icons
+import { Share } from '@/components/Icons/Share.tsx';
+// Utils
+import { getDataFromLocalStorage, setDataToLocalStorage } from '@/utils.ts';
+// Styles
+import css from '@/pages/TicketInfoPage/TicketInfoPage.module.css';
 
-
-export const TicketInfoPage = () => {
+export const TicketInfoPage: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
-    const [ticket, setTicket] = useState<EventTicket>();
+    const [ticket, setTicket] = useState<IEventTicket>();
     const [cancelPopup, setCancelPopup] = useState(false);
 
     const shared = Boolean(searchParams.get('shared'));
     const ticket_refund = getDataFromLocalStorage('ticket_refund');
-    // console.log('ticket_refund: ', ticket_refund);
+
     useEffect(() => {
         if (!auth?.access_token || shared) {
             APIGetSharedTicket(Number(id)).then((res) => {
@@ -43,18 +46,6 @@ export const TicketInfoPage = () => {
             });
         }
     }, [id]);
-
-    // const sharePdf = () => {
-    //     const ticketEl = document.getElementById('ticket');
-    //     html2pdf().from(ticketEl).output('blob').then((pdfAsString: string) => {
-    //         const buffer = Buffer.from(pdfAsString, 'utf-8');
-    //         const pdf = new File([buffer], ticket?.event_title + '.pdf', { type: 'application/pdf' });
-    //         const files = [pdf];
-    //         navigator.share({
-    //             files,
-    //         }).then();
-    //     });
-    // };
 
     const shareTicket = () => {
         const url = encodeURI(

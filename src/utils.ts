@@ -1,14 +1,6 @@
 import { IRestaurant, IWorkTime } from '@/types/restaurant.types.ts';
-// import { IEventDate } from '@/pages/EventsPage/EventsPage.tsx';
-import { Dispatch, SetStateAction } from 'react';
-// import moment from 'moment';
-// import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { IEventBooking } from '@/types/events.types';
 import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
 import { testUsersList } from '@/__mocks__/user.mock.ts';
-// import axios from 'axios';
-// import { IEventBooking } from '@/pages/EventsPage/EventsPage.tsx';
-// import { Dispatch, SetStateAction } from 'react';
 
 export const callPhone = (tel: string) => {
     // https://github.com/Telegram-Mini-Apps/telegram-apps/issues/677
@@ -499,11 +491,6 @@ export const getRestaurantStatusTyped = (
     }
     return { status: 'closed', interval: '' };
 };
-
-export type IEventBookingContext = [
-    IEventBooking,
-    Dispatch<SetStateAction<IEventBooking>>,
-];
 //
 // export const findCurrentDate = (
 //     bookingInfo: IEventBooking,

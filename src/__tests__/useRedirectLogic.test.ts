@@ -29,7 +29,7 @@ describe('useRedirectLogic', () => {
         // Reset and provide default mock values for Jotai and router hooks
         (useAtom as jest.Mock).mockImplementation((atom) => {
             if (atom === authAtom) return [{ access_token: 'valid_token' }];
-            if (atom === userAtom) return [{ ...defaultMockUser, complete_onboarding: true, license_agreement: true, phone_number: '123456789' }];
+            if (atom === userAtom) return [{ ...defaultMockUser, complete_onboarding: true, phone_number: '123456789' }];
             return [null];
         });
         (useLocation as jest.Mock).mockReturnValue({ pathname: '/', search: '', state: undefined });
@@ -39,7 +39,7 @@ describe('useRedirectLogic', () => {
     // --- Helper function for test setup ---
     const setup = ({
                        auth = { access_token: 'valid_token' },
-                       user = { ...defaultMockUser, complete_onboarding: true, license_agreement: true, phone_number: '123456789' },
+                       user = { ...defaultMockUser, complete_onboarding: true, phone_number: '123456789' },
                        pathname = '/',
                        search = '',
                        state = undefined,
@@ -71,7 +71,7 @@ describe('useRedirectLogic', () => {
 
     it('должно быть перенаправление на страницу подтверждения телефона, если пользователь авторизован, но номер телефона не установлен', () => {
         setup({
-            user: { ...defaultMockUser, phone_number: undefined, complete_onboarding: true, license_agreement: true },
+            user: { ...defaultMockUser, phone_number: undefined, complete_onboarding: true },
         });
         renderHook(() => useRedirectLogic());
         expect(mockNavigate).toHaveBeenCalledWith('/phoneConfirmation', { state: undefined });
@@ -79,7 +79,7 @@ describe('useRedirectLogic', () => {
 
     it('должно быть перенаправление на страницу онбординга, если пользователь авторизован, но онбординг не пройден', () => {
         setup({
-            user: { ...defaultMockUser, license_agreement: false, complete_onboarding: false, phone_number: '123456789' },
+            user: { ...defaultMockUser, complete_onboarding: false, phone_number: '123456789' },
         });
         renderHook(() => useRedirectLogic());
         expect(mockNavigate).toHaveBeenCalledWith('/onboarding', { replace: true });
@@ -105,7 +105,7 @@ describe('useRedirectLogic', () => {
 
     it('не должно быть перенаправления, если пользователь находится на странице онбординга', () => {
         setup({
-            user: { ...defaultMockUser, complete_onboarding: false, license_agreement: false },
+            user: { ...defaultMockUser, complete_onboarding: false },
             pathname: '/onboarding',
         });
         renderHook(() => useRedirectLogic());

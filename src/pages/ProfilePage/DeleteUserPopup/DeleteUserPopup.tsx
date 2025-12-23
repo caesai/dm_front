@@ -4,11 +4,10 @@ import { FC, useEffect, useState } from 'react';
 import css from './DeleteUserPopup.module.css';
 import classNames from 'classnames';
 import { useAtom } from 'jotai';
-import {authAtom, userAtom} from '@/atoms/userAtom.ts';
-import {APIDeleteUser} from "@/api/user.api.ts";
-import {useNavigate} from "react-router-dom";
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { APIDeleteUser } from '@/api/user.api.ts';
+import { useNavigate } from 'react-router-dom';
 import useToastState from '@/hooks/useToastState.ts';
-
 
 const StyledPopup = styled(Popup)`
     &-overlay {
@@ -35,7 +34,7 @@ declare global {
             WebApp: {
                 close: () => void;
                 initDataUnsafe: any;
-            }
+            };
         };
     }
 }
@@ -66,7 +65,6 @@ export const DeleteUserPopup: FC<Props> = (props) => {
         };
     }, [props]);
 
-
     useEffect(() => {
         if (props.isOpen) {
             setIsClosing(false);
@@ -81,40 +79,37 @@ export const DeleteUserPopup: FC<Props> = (props) => {
         //         window.Telegram.WebApp.close();
         // }
         // return;
-        APIDeleteUser(authInfo.access_token).then(() => {
-            setAuth({
-                access_token: '',
-                expires_in: 0
-            });
-            setUser({
-                administrator: null,
-                id: 0,
-                mailing_enabled: false,
-                photo_url: null,
-                telegram_id: 0,
-                username: '',
-                advertisement_agreement: false,
-                allergies: [""],
-                complete_onboarding: false,
-                date_of_birth: "",
-                early_access: false,
-                email: "",
-                first_name: "",
-                gdpr_agreement: false,
-                last_name: "",
-                license_agreement: false,
-                phone_number: ""
-            })
-            navigate('/onboarding');
-            if (window.Telegram && window.Telegram.WebApp) {
+        APIDeleteUser(authInfo.access_token)
+            .then(() => {
+                setAuth({
+                    access_token: '',
+                    expires_in: 0,
+                });
+                setUser({
+                    id: 0,
+                    mailing_enabled: false,
+                    photo_url: null,
+                    telegram_id: 0,
+                    allergies: [''],
+                    complete_onboarding: false,
+                    date_of_birth: '',
+                    email: '',
+                    first_name: '',
+                    last_name: '',
+                    phone_number: '',
+                    permissions: [],
+                });
+                navigate('/onboarding');
+                if (window.Telegram && window.Telegram.WebApp) {
                     window.Telegram.WebApp.close();
-            }
-        }).catch((err) => {
-            if (err.response) {
-                showToast('Возникла ошибка: ' + err.response.data.message);
-            }
-        });
-    }
+                }
+            })
+            .catch((err) => {
+                if (err.response) {
+                    showToast('Возникла ошибка: ' + err.response.data.message);
+                }
+            });
+    };
 
     return (
         <StyledPopup
@@ -123,29 +118,16 @@ export const DeleteUserPopup: FC<Props> = (props) => {
             closeOnDocumentClick={true}
             className={isClosing ? 'popupClose' : 'popup'}
         >
-            <div
-                className={classNames(
-                    css.popup,
-                    isClosing ? css.popup__closing : null
-                )}
-            >
+            <div className={classNames(css.popup, isClosing ? css.popup__closing : null)}>
                 <span className={css.title}>Подтвердите удаление учетной записи</span>
-                <span className={css.tags_title}>Все данные, связанные с ней, также будут удалены. Удалить учетную запись?</span>
+                <span className={css.tags_title}>
+                    Все данные, связанные с ней, также будут удалены. Удалить учетную запись?
+                </span>
 
-                <button
-                    className={classNames(
-                        css.button, css.button__disabled
-                    )}
-                    onClick={deleteUser}
-                >
+                <button className={classNames(css.button, css.button__disabled)} onClick={deleteUser}>
                     Подтверждаю
                 </button>
-                <button
-                    className={classNames(
-                        css.button, css.button__disabled
-                    )}
-                    onClick={close}
-                >
+                <button className={classNames(css.button, css.button__disabled)} onClick={close}>
                     Отмена
                 </button>
             </div>
