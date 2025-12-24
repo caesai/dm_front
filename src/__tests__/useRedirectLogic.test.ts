@@ -88,7 +88,7 @@ describe('useRedirectLogic', () => {
     it('должно быть перенаправление на страницу супер-мероприятия, если параметр tgWebAppStartParam равен hospitality_heroes', () => {
         setup({ params: { tgWebAppStartParam: 'hospitality_heroes' } });
         renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/events/super?shared=true', { replace: true });
+        expect(mockNavigate).toHaveBeenCalledWith('/hospitality-heroes?shared=true', { replace: true });
     });
 
     it('должно быть перенаправление на страницу деталей мероприятия, если параметр tgWebAppStartParam равен eventId_111', () => {

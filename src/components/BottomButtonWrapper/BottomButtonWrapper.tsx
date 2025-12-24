@@ -1,8 +1,9 @@
 import React, { ReactNode, Ref } from 'react';
 import classnames from 'classnames';
-import css from './BottomButtonWrapper.module.css';
+// Styles
+import css from '@/components/BottomButtonWrapper/BottomButtonWrapper.module.css';
 
-interface BottomButtonWrapperProps {
+interface IBottomButtonWrapperProps {
     isDisabled?: boolean;
     isLoading?: boolean;
     onClick?: () => void;
@@ -11,35 +12,39 @@ interface BottomButtonWrapperProps {
     content?: ReactNode;
     isFixed?: boolean;
     theme?: 'red' | 'primary';
+    type?: 'button' | 'submit' | 'reset';
 }
 
-export const BottomButtonWrapper: React.FC<BottomButtonWrapperProps> =
-    ({
-         isDisabled,
-         isLoading,
-         onClick,
-         forwardedRef,
-         additionalBtns,
-         content = 'Забронировать',
-         isFixed = true,
-         theme = 'red',
-    }) => {
+export const BottomButtonWrapper: React.FC<IBottomButtonWrapperProps> = ({
+    isDisabled,
+    isLoading,
+    onClick,
+    forwardedRef,
+    additionalBtns,
+    content = 'Забронировать',
+    isFixed = true,
+    theme = 'red',
+    type = 'button',
+}) => {
     return (
-        <div className={classnames(css.absoluteBottom, { [css.relativeBottom]: !isFixed})} ref={forwardedRef}>
-            <div className={css.absoluteBottom_wrapper}>
-                <div
+        <div className={classnames(css.bottom_wrapper, { [css.bottom_wrapper_relative]: !isFixed })} ref={forwardedRef}>
+            <div className={css.button_wrapper}>
+                <button
                     className={classnames(
-                        css.redButton,
-                        isDisabled ? null : css.disabledButton,
-                        isLoading && css.loadingButton,
-                        theme === 'red' ? css.red : css.primary,
+                        css.button,
+                        {[css.disabled]: isDisabled},
+                        {[css.loading]: isLoading},
+                        {[css.red]: theme === 'red'},
+                        {[css.primary]: theme === 'primary'}
                     )}
+                    disabled={isDisabled}
                     onClick={onClick}
+                    type={type}
                 >
                     <span className={css.text}>{content}</span>
-                </div>
+                </button>
                 {additionalBtns && additionalBtns}
             </div>
         </div>
-    )
-}
+    );
+};

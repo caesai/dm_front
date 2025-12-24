@@ -112,30 +112,22 @@ export const EventsListPage: React.FC = () => {
             );
         }
         if (params.get('restaurant')) {
-            // Устанавливаем текущий ресторан
-            setCurrentRestaurant({
-                title:
-                    restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.title ??
-                    'unset',
-                address:
-                    restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.address ??
-                    'unset',
-                value:
-                    String(restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.id) ??
-                    'unset',
-            });
-            // Устанавливаем текущий город по выбранному ресторану
-            setCurrentCityS(
-                cityListConfirm.find(
-                    (v) =>
-                        v.id ===
-                        restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')))?.city
-                            .name_english
-                ) ?? {
-                    id: 'moscow',
-                    text: 'Москва',
-                }
-            );
+            const foundRestaurant = restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')));
+            if (foundRestaurant) {
+                // Устанавливаем текущий ресторан
+                setCurrentRestaurant({
+                    title: foundRestaurant.title,
+                    address: foundRestaurant.address,
+                    value: String(foundRestaurant.id),
+                });
+                // Устанавливаем текущий город по выбранному ресторану
+                setCurrentCityS(
+                    cityListConfirm.find((v) => v.id === foundRestaurant.city.name_english) ?? {
+                        id: 'moscow',
+                        text: 'Москва',
+                    }
+                );
+            }
         }
     }, [params, restaurants]);
     return (
@@ -169,8 +161,8 @@ export const EventsListPage: React.FC = () => {
                       .filter((event) => event.tickets_left > 0)
                       .map((event) => <EventCard key={event.name} {...event} onClick={goToEventDetails} />)
                 : [...Array(10)].map((event, index) => <EventCard key={index} {...event} />)}
-            {/** Если данных нет или нет доступных мероприятий, то показываем сообщение о том, что мероприятий пока нет */}
-            {(!filteredEvents || !filteredEvents.filter((event) => event.tickets_left > 0).length) && (
+            {/** Если данные загружены, но нет доступных мероприятий, то показываем сообщение о том, что мероприятий пока нет */}
+            {filteredEvents && !filteredEvents.filter((event) => event.tickets_left > 0).length && (
                 <span className={css.header_title}>Мероприятий пока нет</span>
             )}
         </div>
