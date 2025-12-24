@@ -46,8 +46,6 @@ import { AdminScannerPage } from '@/pages/AdminScannerPage/AdminScannerPage.tsx'
 import { OnboardingPage } from '@/pages/OnboardingPage/OnboardingPage.tsx';
 import { StageTwo } from '@/pages/OnboardingPage/stages/StageTwo.tsx';
 import { StageThree } from '@/pages/OnboardingPage/stages/StageThree.tsx';
-import { EventSuperApplyOutlet } from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.tsx';
-import { EventSuperInfoOutlet } from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.tsx';
 import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.tsx';
 import { BanquetOptionPage } from '@/pages/BanquetOptionPage/BanquetOptionPage.tsx';
 import { BanquetAdditionalServicesPage } from '@/pages/BanquetAdditionalServices/BanquetAdditionalServicesPage.tsx';
@@ -81,6 +79,9 @@ import { GastronomyOrderPage } from '@/pages/GastronomyPage/stages/GastronomyOrd
 import { GastronomyOrdersListPage } from '@/pages/GastronomyPage/stages/GastronomyOrdersListPage/GastronomyOrdersListPage.tsx';
 import { RestaurantMenuPage } from '@/pages/RestaurantMenuPage/RestaurantMenuPage.tsx';
 import { RestaurantDishDetailsPage } from '@/pages/RestaurantDishDetailsPage/RestaurantDishDetailsPage.tsx';
+import { HospitalityHeroesPage } from '@/pages/HospitalityHeroesPage/HospitalityHeroesPage.tsx';
+import { HospitalityHeroesApplicationFormPage } from '@/pages/HospitalityHeroesPage/HospitalityHeroesApplicationFormPage.tsx';
+import { PrivilegePage } from '@/pages/PrivilegePage/PrivilegePage.tsx';
 
 const AppRouter: React.FC = () => {
     const [user] = useAtom(userAtom);
@@ -181,13 +182,14 @@ const AppRouter: React.FC = () => {
                             <Route path={'/events/payment-success/:orderId'} element={<EventPaymentSuccessPage />} />
                             {/* Страница ошибки оплаты мероприятия */}
                             {/* <Route path={'/events/payment-error/:orderId'} element={<EventPaymentErrorPage />} /> */}
-                            {/* Страница информации о супер-мероприятии */}
-                            <Route path={'/events/super'} element={<EventSuperInfoOutlet />} />
-                            {/* Страница заявки на супер-мероприятие */}
-                            <Route path={'/events/super/apply'} element={<EventSuperApplyOutlet />} />
                         </Route>
                         {/* Бронирование мероприятия */}
                         <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
+                        {/* Страница Hospitality Heroes */}
+                        <Route path={'/hospitality-heroes'} element={<HospitalityHeroesPage />} />
+                        <Route path={'/hospitality-heroes/application'} element={<HospitalityHeroesApplicationFormPage />} />
+                        {/* Страница привилегий */}
+                        <Route path={'/privilege'} element={<PrivilegePage />} />
                         {/* Мои билеты */}
                         <Route path={'/tickets'} element={<UserTicketsPage />} />
                         {/* Информация о билете */}

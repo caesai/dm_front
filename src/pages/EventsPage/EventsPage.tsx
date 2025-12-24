@@ -33,20 +33,20 @@ export const EventsPage: React.FC = () => {
     // Шэринг мероприятия
     const shareEvent = useCallback(() => {
         let url = '';
-        let title = '';
+        const title = '';
         // Если это страница мероприятия
         if (eventBookingInfo?.name) {
-            title = encodeURI(String(eventBookingInfo?.name));
+            // title = encodeURI(String(eventBookingInfo?.name));
             url = encodeURI(`https://t.me/${BASE_BOT}?startapp=eventId_${eventBookingInfo?.id}`);
         } else {
             // Если это страница списка мероприятий: ссылка на мероприятия в выбранном городе и ресторан не выбран,
             // то шэрим все мероприятия в выбранном городе, иначе шэрим мероприятие в выбранном ресторане
             if (eventBookingInfo?.restaurantId !== 'unset') {
                 url = encodeURI(`https://t.me/${BASE_BOT}?startapp=event_restaurantId_${eventBookingInfo?.restaurantId}`);
-                title = encodeURI(String(eventBookingInfo?.restaurantId));
+                // title = encodeURI(String(eventBookingInfo?.restaurantId));
             } else {
                 url = encodeURI(`https://t.me/${BASE_BOT}?startapp=event_cityId_${currentCityA}`);
-                title = encodeURI(String(currentCityA));
+                // title = encodeURI(String(currentCityA));
             }
         }
         const shareData = {
