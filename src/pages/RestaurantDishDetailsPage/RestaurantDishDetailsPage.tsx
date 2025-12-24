@@ -8,7 +8,9 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 // Styles
 import css from '@/pages/RestaurantDishDetailsPage/RestaurantDishDetailsPage.module.css';
 // Utils
-import { extractPrice } from '@/utils/menu.utils.ts';
+import { extractPrice, getDefaultSize } from '@/utils/menu.utils.ts';
+// Hooks
+import { useRestaurantMenu } from '@/hooks/useRestaurantMenu';
 
 const formatWeight = (weight: string | undefined, weight_unit?: string): string | undefined => {
     if (!weight) return undefined;
@@ -39,6 +41,7 @@ export const RestaurantDishDetailsPage: React.FC = () => {
 
     const dishFromState = location.state?.dish as IMenuItem & {
         description?: string;
+        composition?: string;
         calories?: number | null;
         proteins?: number | null;
         fats?: number | null;
@@ -48,9 +51,43 @@ export const RestaurantDishDetailsPage: React.FC = () => {
         weight_value?: string;
         volume?: string;
         item_sizes?: IAPIMenuItem['item_sizes'];
+        isCocktail?: boolean;
     };
 
+    const { menuData } = useRestaurantMenu(Number(id));
     const [selectedWeightIndex, setSelectedWeightIndex] = useState(0);
+
+    // Найти первое блюдо с изображением из меню для использования в коктейлях
+    const firstDishImage = useMemo(() => {
+        if (!menuData) return '';
+        
+        for (const category of menuData.item_categories) {
+            if (category.is_hidden) continue;
+            
+            for (const item of category.menu_items) {
+                if (item.is_hidden) continue;
+                
+                const defaultSize = getDefaultSize(item.item_sizes);
+                const imageUrl = defaultSize?.button_image_url || '';
+                
+                if (imageUrl && imageUrl.trim().length > 0) {
+                    return imageUrl;
+                }
+            }
+        }
+        
+        return '';
+    }, [menuData]);
+
+    // Определить изображение для отображения
+    const displayImageUrl = useMemo(() => {
+        // Если это коктейль и есть изображение первого блюда, используем его
+        if (dishFromState?.isCocktail && firstDishImage) {
+            return firstDishImage;
+        }
+        // Иначе используем обычное изображение блюда
+        return dishFromState?.photo_url || '';
+    }, [dishFromState, firstDishImage]);
 
     const currentSize = useMemo(() => {
         return dishFromState?.item_sizes?.[selectedWeightIndex] || dishFromState?.item_sizes?.[0] || null;
@@ -107,8 +144,8 @@ export const RestaurantDishDetailsPage: React.FC = () => {
                     <div
                         className={css.mainImage}
                         style={{
-                            backgroundImage: dishFromState.photo_url ? `url(${dishFromState.photo_url})` : 'none',
-                            backgroundColor: dishFromState.photo_url ? 'transparent' : '#F4F4F4',
+                            backgroundImage: displayImageUrl ? `url(${displayImageUrl})` : 'none',
+                            backgroundColor: displayImageUrl ? 'transparent' : '#F4F4F4',
                         }}
                     />
 
@@ -137,10 +174,19 @@ export const RestaurantDishDetailsPage: React.FC = () => {
                         </div>
                     )}
 
-                    {dishFromState.description && (
+                    {/* Описание - выводим только если есть */}
+                    {dishFromState.description && dishFromState.description.trim() && (
+                        <div className={css.section}>
+                            <span className={css.sectionTitle}>Описание</span>
+                            <p className={css.sectionText}>{dishFromState.description}</p>
+                        </div>
+                    )}
+
+                    {/* Состав - выводим только если есть, это отдельное поле */}
+                    {dishFromState.composition && dishFromState.composition.trim() && (
                         <div className={css.section}>
                             <span className={css.sectionTitle}>Состав</span>
-                            <p className={css.sectionText}>{dishFromState.description}</p>
+                            <p className={css.sectionText}>{dishFromState.composition}</p>
                         </div>
                     )}
 

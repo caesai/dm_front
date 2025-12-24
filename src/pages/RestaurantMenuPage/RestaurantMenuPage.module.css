@@ -252,8 +252,11 @@
 }
 
 .blurredImage {
-    filter: blur(8px);
+    filter: blur(8px) !important;
     transition: filter 0.3s ease;
+    /* Увеличиваем размер фона, чтобы блюр не обрезался по краям */
+    background-size: 110% 110% !important;
+    background-position: center !important;
 }
 
 .menuItemContent {
