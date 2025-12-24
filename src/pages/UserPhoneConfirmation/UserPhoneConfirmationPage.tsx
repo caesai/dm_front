@@ -1,15 +1,18 @@
-import { Page } from '@/components/Page.tsx';
-import css from './UserPhoneConfirmationPage.module.css';
-import { useEffect } from 'react';
-import { mainButton } from '@telegram-apps/sdk-react';
-import { requestPhone } from '@/components/RequestPermissions/utils.ts';
-import { useAtom } from 'jotai/index';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APIUserInfo } from '@/api/auth.api';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import { getDataFromLocalStorage, removeDataFromLocalStorage } from '@/utils.ts';
+import { useAtom } from 'jotai/index';
+import { mainButton } from '@telegram-apps/sdk-react';
+// API's
+import { APIUserInfo } from '@/api/auth.api.ts';
+// Atoms
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+// Components
+import { Page } from '@/components/Page.tsx';
+import { requestPhone } from '@/components/RequestPermissions/utils.ts';
+// Styles
+import css from '@/pages/UserPhoneConfirmation/UserPhoneConfirmationPage.module.css';
 
-export const UserPhoneConfirmationPage = () => {
+export const UserPhoneConfirmationPage: React.FC = () => {
     const [user, setUser] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
     const navigate = useNavigate();
@@ -24,13 +27,13 @@ export const UserPhoneConfirmationPage = () => {
         mainButton.setParams({
             isLoaderVisible: true,
         });
-        setTimeout(
-            () =>
-                APIUserInfo(auth.access_token).then((data) =>
-                    setUser(data.data),
-                ),
-            5000,
-        );
+        setTimeout(() => {
+            APIUserInfo(auth.access_token)
+                .then((data) => setUser(data.data))
+                .catch((error) => {
+                    console.log(error);
+                });
+        }, 5000);
     };
 
     useEffect(() => {
@@ -78,7 +81,14 @@ export const UserPhoneConfirmationPage = () => {
         }
 
         const removeListener = mainButton.onClick(() =>
-            requestPhone().then((res) => (res === 'sent' ? updateUser() : null)),
+            requestPhone()
+                .then((res) => {
+                    console.log(res);
+                    return res === 'sent' ? updateUser() : null;
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
         );
 
         return () => {
@@ -98,8 +108,8 @@ export const UserPhoneConfirmationPage = () => {
             <div className={css.page}>
                 <span className={css.header}>Подтверждение телефона</span>
                 <span className={css.content}>
-                    Чтобы начать пользоваться приложением, просто отправьте свой
-                    номер телефона, нажав на кнопку <b>«Поделиться»</b>.
+                    Чтобы начать пользоваться приложением, просто отправьте свой номер телефона, нажав на кнопку{' '}
+                    <b>«Поделиться»</b>.
                 </span>
             </div>
         </Page>
