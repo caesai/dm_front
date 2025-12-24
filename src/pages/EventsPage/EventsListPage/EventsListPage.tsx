@@ -170,10 +170,9 @@ export const EventsListPage: React.FC = () => {
                       .map((event) => <EventCard key={event.name} {...event} onClick={goToEventDetails} />)
                 : [...Array(10)].map((event, index) => <EventCard key={index} {...event} />)}
             {/** Если данных нет или нет доступных мероприятий, то показываем сообщение о том, что мероприятий пока нет */}
-            {!filteredEvents ||
-                (!filteredEvents.filter((event) => event.tickets_left > 0).length && (
-                    <span className={css.header_title}>Мероприятий пока нет</span>
-                ))}
+            {(!filteredEvents || !filteredEvents.filter((event) => event.tickets_left > 0).length) && (
+                <span className={css.header_title}>Мероприятий пока нет</span>
+            )}
         </div>
     );
 };

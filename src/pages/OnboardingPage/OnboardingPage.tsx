@@ -1,11 +1,14 @@
-import {Page} from '@/components/Page.tsx';
-import css from './OnboardingPage.module.css';
+import React, { useEffect } from 'react';
 import classNames from 'classnames';
-import {Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
-import {useEffect} from 'react';
-import logoNew from "/img/DT_concierge_logo_color1.svg";
+import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+// Components
+import { Page } from '@/components/Page.tsx';
+// Styles
+import css from './OnboardingPage.module.css';
+// Images
+import logoNew from '/img/DT_concierge_logo_color1.svg';
 
-export const OnboardingPage = () => {
+export const OnboardingPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [params] = useSearchParams();
@@ -18,9 +21,7 @@ export const OnboardingPage = () => {
     }, [location]);
 
     const getCurrentPage = () => {
-        const pg = location.pathname
-            .replace('/onboarding', '')
-            .replace('/', '');
+        const pg = location.pathname.replace('/onboarding', '').replace('/', '');
         return Number(pg) || 1;
     };
 
@@ -61,11 +62,7 @@ export const OnboardingPage = () => {
                         </div>
                     )}
                     <div className={css.logo_container}>
-                        <img
-                            className={css.logo}
-                            src={logoNew}
-                            alt="DreamTeam logo"
-                        />
+                        <img className={css.logo} src={logoNew} alt="DreamTeam logo" />
                     </div>
                 </div>
             </div>

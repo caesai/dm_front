@@ -79,10 +79,10 @@ describe('useRedirectLogic', () => {
 
     it('должно быть перенаправление на страницу онбординга, если пользователь авторизован, но онбординг не пройден', () => {
         setup({
-            user: { ...defaultMockUser, complete_onboarding: false, phone_number: '123456789' },
+            user: { ...defaultMockUser, complete_onboarding: false, phone_number: undefined },
         });
         renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/onboarding', { replace: true });
+        expect(mockNavigate).toHaveBeenCalledWith('/onboarding/1', { replace: true });
     });
 
     it('должно быть перенаправление на страницу супер-мероприятия, если параметр tgWebAppStartParam равен hospitality_heroes', () => {
