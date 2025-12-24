@@ -1,4 +1,4 @@
-import { IMenu, IMenuCategory, IMenuItem, IMenuItemSize } from '@/types/menu.types.ts';
+import { IMenuCategory, IMenuItem, IMenuItemSize } from '@/types/menu.types.ts';
 
 /**
  * Тестовые данные для коктейлей
@@ -33,8 +33,8 @@ const createCocktail = (
     name: string,
     description: string,
     volume: number,
-    price: number,
-    imagePath: string
+    price: number
+    // imagePath: string
 ): IMenuItem => ({
     id,
     category_id: 'cocktail-category',
@@ -65,9 +65,33 @@ export const mockCocktailCategory: IMenuCategory = {
     tags: [],
     labels: [],
     menu_items: [
-        createCocktail('1', 'Негрони', 'Классический итальянский коктейль с джином, вермутом и кампари', 200, 1300, '/img/cocktails/negroni.png'),
-        createCocktail('2', 'Маргарита', 'Мексиканский коктейль с текилой, лаймом и трипл-секом', 200, 1200, '/img/cocktails/margarita.png'),
-        createCocktail('3', 'Мохито Классик', 'Освежающий коктейль с белым ромом, мятой и лаймом', 250, 1100, '/img/cocktails/mojito-classic.png'),
-        createCocktail('4', 'Вишневое наслаждение', 'Сладкий коктейль с вишней и виски', 200, 1400, '/img/cocktails/cherry-delight.png'),
+        createCocktail(
+            '1',
+            'Негрони',
+            'Классический итальянский коктейль с джином, вермутом и кампари',
+            200,
+            1300
+        ),
+        createCocktail(
+            '2',
+            'Маргарита',
+            'Мексиканский коктейль с текилой, лаймом и трипл-секом',
+            200,
+            1200
+        ),
+        createCocktail(
+            '3',
+            'Мохито Классик',
+            'Освежающий коктейль с белым ромом, мятой и лаймом',
+            250,
+            1100
+        ),
+        createCocktail(
+            '4',
+            'Вишневое наслаждение',
+            'Сладкий коктейль с вишней и виски',
+            200,
+            1400
+        ),
     ],
 };

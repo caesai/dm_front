@@ -27,7 +27,7 @@ export const RestaurantMenuPage: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isAgeVerificationOpen, setIsAgeVerificationOpen] = useState<boolean>(false);
-    const [selectedCocktailItem, setSelectedCocktailItem] = useState<IAPIMenuItem | null>(null);
+    const [, setSelectedCocktailItem] = useState<IAPIMenuItem | null>(null);
     // Используем sessionStorage, чтобы состояние сохранялось при навигации, но сбрасывалось при перезагрузке страницы
     const [isAgeVerified, setIsAgeVerified] = useState<boolean>(() => {
         return sessionStorage.getItem('ageVerified') === 'true';
