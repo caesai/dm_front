@@ -368,7 +368,7 @@ export const BookingPage: React.FC = () => {
             </div>
             <BottomButtonWrapper
                 forwardedRef={bookingBtn}
-                isDisabled={isFormValid}
+                isDisabled={!isFormValid}
                 isLoading={requestLoading}
                 onClick={createBooking}
             />
