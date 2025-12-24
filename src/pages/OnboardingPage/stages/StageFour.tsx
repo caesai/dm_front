@@ -22,8 +22,16 @@ export const StageFour: React.FC = () => {
         }
         APIUserName(auth.access_token, name, surname).then();
         APICompleteOnboarding(auth.access_token, true)
-            .then((d) => setUser(d.data))
-            .then(() => navigate('/', { state } ))
+            .then((d) => {
+                setUser(d.data);
+                // Если у пользователя нет телефона — сразу на подтверждение телефона
+                // Иначе — на главную или целевую страницу из state
+                if (!d.data.phone_number) {
+                    navigate('/phoneConfirmation', { state });
+                } else {
+                    navigate('/', { state });
+                }
+            })
             .catch(() =>
                 alert(
                     'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
