@@ -15,7 +15,7 @@ import { BookIcon } from '@/components/Icons/BookIcon.tsx';
 import { UserProfileIcon } from '@/components/Icons/UserProfileIcon.tsx';
 import { PlainGiftIcon } from '@/components/Icons/PlaingGiftIcon.tsx';
 import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
-import { StarPrivelegyIcon } from '@/components/Icons/StarPrivelegy.tsx';
+import { StarPrivilegeIcon } from '@/components/Icons/StarPrivilege.tsx';
 // Styles
 import css from '@/pages/ProfilePage/ProfilePage.module.css';
 
@@ -50,8 +50,8 @@ export const ProfilePage: React.FC = () => {
                             <span className={css.navLinkTitle}>Мои заказы</span>
                         </Link>
                         {DEV_MODE && user?.permissions.includes('hospitality_heroes') && (
-                            <Link to={'/privelegies'} className={css.navLink}>
-                                <StarPrivelegyIcon size={24} color={'black'} />
+                            <Link to={'/privilege'} className={css.navLink}>
+                                <StarPrivilegeIcon size={24} color={'black'} />
                                 <span className={css.navLinkTitle}>Привилегии</span>
                             </Link>
                         )}

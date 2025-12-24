@@ -8,12 +8,12 @@ import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButt
 // Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 // Styles
-import css from '@/pages/PrivelegiesPage/PrivelegiesPage.module.css';
+import css from '@/pages/PrivilegePage/PrivilegePage.module.css';
 // Images
 import hospitalityHeroesLogo from '/img/hospitality_heroes.png';
 
 
-export const PrivelegiesPage: React.FC = () => {
+export const PrivilegePage: React.FC = () => {
     const navigate = useNavigate();
     const { goBack } = useNavigationHistory();
     const goToBookingPage = () => {

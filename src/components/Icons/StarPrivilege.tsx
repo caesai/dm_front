@@ -3,7 +3,7 @@ type IconProps = {
     color?: string;
 };
 
-export const StarPrivelegyIcon = ({ size = 24, color = '#B9B9B9' }: IconProps) => {
+export const StarPrivilegeIcon = ({ size = 24, color = '#B9B9B9' }: IconProps) => {
     return (
         <svg width={size} height={size} viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path

@@ -81,7 +81,7 @@ import { RestaurantMenuPage } from '@/pages/RestaurantMenuPage/RestaurantMenuPag
 import { RestaurantDishDetailsPage } from '@/pages/RestaurantDishDetailsPage/RestaurantDishDetailsPage.tsx';
 import { HospitalityHeroesPage } from '@/pages/HospitalityHeroesPage/HospitalityHeroesPage.tsx';
 import { HospitalityHeroesApplicationFormPage } from '@/pages/HospitalityHeroesPage/HospitalityHeroesApplicationFormPage.tsx';
-import { PrivelegiesPage } from '@/pages/PrivelegiesPage/PrivelegiesPage';
+import { PrivilegePage } from '@/pages/PrivilegePage/PrivilegePage.tsx';
 
 const AppRouter: React.FC = () => {
     const [user] = useAtom(userAtom);
@@ -189,7 +189,7 @@ const AppRouter: React.FC = () => {
                         <Route path={'/hospitality-heroes'} element={<HospitalityHeroesPage />} />
                         <Route path={'/hospitality-heroes/application'} element={<HospitalityHeroesApplicationFormPage />} />
                         {/* Страница привилегий */}
-                        <Route path={'/privelegies'} element={<PrivelegiesPage />} />
+                        <Route path={'/privilege'} element={<PrivilegePage />} />
                         {/* Мои билеты */}
                         <Route path={'/tickets'} element={<UserTicketsPage />} />
                         {/* Информация о билете */}
