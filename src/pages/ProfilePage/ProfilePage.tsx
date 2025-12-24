@@ -15,9 +15,11 @@ import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 import { StarPrivelegyIcon } from '@/components/Icons/StarPrivelegy.tsx';
 // Styles
 import css from '@/pages/ProfilePage/ProfilePage.module.css';
+import { userAtom } from '@/atoms/userAtom.ts';
 
 export const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
+    const [user] = useAtom(userAtom);
     const [backUrlAtom] = useAtom(backButtonAtom);
 
     return (
@@ -45,10 +47,12 @@ export const ProfilePage: React.FC = () => {
                             <KitchenIcon size={24} color={'black'} />
                             <span className={css.navLinkTitle}>Мои заказы</span>
                         </Link>
-                        <Link to={'/privelegies'} className={css.navLink}>
-                            <StarPrivelegyIcon size={24} color={'black'} />
-                            <span className={css.navLinkTitle}>Привилегии</span>
-                        </Link>
+                        {user?.permissions.includes('hospitality_heroes') && (
+                            <Link to={'/privelegies'} className={css.navLink}>
+                                <StarPrivelegyIcon size={24} color={'black'} />
+                                <span className={css.navLinkTitle}>Привилегии</span>
+                            </Link>
+                        )}
                         <Link to={'/certificates/my'} className={css.navLink}>
                             <PlainGiftIcon size={24} color={'black'} />
                             <span className={css.navLinkTitle}>Подарочные сертификаты</span>
