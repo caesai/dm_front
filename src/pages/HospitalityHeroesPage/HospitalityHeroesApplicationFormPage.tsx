@@ -65,7 +65,7 @@ export const HospitalityHeroesApplicationFormPage: React.FC = () => {
                 if (response.data.success) {
                     const userResponse = await APIUserInfo(auth.access_token);
                     setUser(userResponse.data);
-                    navigate('/privelegies');
+                    navigate('/privilege');
                 }
             } catch (error) {
                 console.error(error);

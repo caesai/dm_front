@@ -206,7 +206,7 @@ export const IndexPage: React.FC = () => {
                 {/* Отображаем блок с супер-мероприятием только для пользователей с разрешением hospitality_heroes */}
                 {/* {DEV_MODE && user?.permissions.includes('hospitality_heroes') && (
                     <div style={{ marginRight: 15, height: 85 }}>
-                        <Link to={'/privelegies'}>
+                        <Link to={'/privilege'}>
                             <img
                                 src={superevent}
                                 style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }}
