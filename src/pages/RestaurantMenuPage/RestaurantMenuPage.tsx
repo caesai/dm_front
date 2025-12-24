@@ -241,9 +241,13 @@ export const RestaurantMenuPage: React.FC = () => {
         return visibleItems.length > 0 && visibleItems.every((item) => isDrinkItem(item));
     };
 
+    // Ключевые слова для определения категорий коктейлей
+    const COCKTAIL_CATEGORY_KEYWORDS = ['коктейл', 'коктейли', 'cocktail', 'cocktails'];
+
     // Проверка, является ли категория категорией коктейлей
     const isCocktailCategory = (categoryName: string): boolean => {
-        return categoryName.toLowerCase().includes('коктейл');
+        const name = categoryName.toLowerCase().trim();
+        return COCKTAIL_CATEGORY_KEYWORDS.some((keyword) => name.includes(keyword));
     };
 
     // Получить изображение для коктейля - используем изображение первого блюда с картинкой из меню

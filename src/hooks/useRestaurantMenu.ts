@@ -26,7 +26,7 @@ export const useRestaurantMenu = (restaurantId: number | undefined) => {
             cat => cat.name === 'Замоканные коктейли'
         );
 
-        // Всегда добавляем категорию "Замоканные коктейли" для демонстрации
+        // Добавляем категорию "Замоканные коктейли" для демонстрации, если её ещё нет
         if (!hasMockCocktailCategory) {
             // Создаем копию категории с уникальными ID
             const cocktailCategory = {
@@ -73,10 +73,12 @@ export const useRestaurantMenu = (restaurantId: number | undefined) => {
                 const menu = response.data[0];
                 const menuWithCocktails = addMockCocktails(menu);
                 setMenuData(menuWithCocktails);
-                setRestaurantMenus((prev) => ({
-                    ...prev,
-                    [restaurantId]: menu, // Сохраняем оригинальное меню без коктейлей в кеш
-                }));
+                if (menuWithCocktails) {
+                    setRestaurantMenus((prev) => ({
+                        ...prev,
+                        [restaurantId]: menuWithCocktails, // Сохраняем меню с замоканными коктейлями в кеш
+                    }));
+                }
             })
             .catch(() => {
                 setError(true);

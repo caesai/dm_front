@@ -12,7 +12,7 @@ interface AgeVerificationPopupProps {
 export const AgeVerificationPopup: React.FC<AgeVerificationPopupProps> = ({ isOpen, onConfirm, onCancel }) => {
     return (
         <Popup open={isOpen} closeOnDocumentClick={false} modal nested>
-            {(close: () => void) => (
+            {() => (
                 <div className={css.modal}>
                     <div className={css.content}>
                         <p className={css.text}>
