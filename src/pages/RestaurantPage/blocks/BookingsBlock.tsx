@@ -138,7 +138,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
                             style={{ marginLeft: '0' }}
                         >
                             {/* Дата бронирования */}
-                            {bookingDate.value === 'unset' || !bookingDates.length ? (
+                            {!bookingDates.length || bookingDate.value === 'unset' ? (
                                 <SwiperSlide style={{ width: 'min-content' }}>
                                     <PlaceholderBlock width="150px" height="41px" rounded="20px" />
                                 </SwiperSlide>

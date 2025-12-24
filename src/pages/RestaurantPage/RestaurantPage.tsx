@@ -123,9 +123,10 @@ export const RestaurantPage: React.FC = () => {
 
     // Инициализация ресторана и событий
     useEffect(() => {
-        setRestaurant(restaurants.find((rest) => rest.id === Number(id)));
+        const currentRestaurant = restaurants.find((rest) => rest.id === Number(id));
+        setRestaurant(currentRestaurant);
         setCurrentSelectedTime(null);
-        setBookingDate({ value: 'unset', title: 'unset' });
+        // Не сбрасываем bookingDate здесь - он будет установлен после загрузки доступных дат
         APIGetEventsInRestaurant(Number(id), String(auth?.access_token))
             .then((res) => setEvents(res.data))
             .catch((err) => {
@@ -148,14 +149,15 @@ export const RestaurantPage: React.FC = () => {
                 
                 setBookingDates(formattedDates);
 
-                if (formattedDates.length > 0) {
+                // Устанавливаем первую дату только если дата еще не установлена
+                if (formattedDates.length > 0 && bookingDate.value === 'unset') {
                     setBookingDate(formattedDates[0]);
                 }
             })
             .catch((err) => {
                 console.error(err);
             });
-    }, [auth?.access_token, id]);
+    }, [auth?.access_token, id, bookingDate.value]);
 
     // Загрузка доступных таймслотов для выбранной даты
     useEffect(() => {
