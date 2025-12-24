@@ -21,7 +21,7 @@ export const BottomButtonWrapper: React.FC<IBottomButtonWrapperProps> = ({
     onClick,
     forwardedRef,
     additionalBtns,
-    content = 'Забронировать',
+    content = 'Забронировать стол',
     isFixed = true,
     theme = 'red',
     type = 'button',

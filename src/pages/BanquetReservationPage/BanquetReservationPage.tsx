@@ -202,7 +202,7 @@ export const BanquetReservationPage = () => {
                     <div className={css.button}>
                         <UniversalButton
                             width={'full'}
-                            title={'Забронировать'}
+                            title={'Забронировать стол'}
                             theme={'red'}
                             action={createBooking}
                         />
