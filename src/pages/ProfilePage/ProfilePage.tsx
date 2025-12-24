@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
+// APIs
+import { DEV_MODE } from '@/api/base.ts';
 // Atoms
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
+import { userAtom } from '@/atoms/userAtom.ts';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
@@ -15,7 +18,6 @@ import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 import { StarPrivelegyIcon } from '@/components/Icons/StarPrivelegy.tsx';
 // Styles
 import css from '@/pages/ProfilePage/ProfilePage.module.css';
-import { userAtom } from '@/atoms/userAtom.ts';
 
 export const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
@@ -47,7 +49,7 @@ export const ProfilePage: React.FC = () => {
                             <KitchenIcon size={24} color={'black'} />
                             <span className={css.navLinkTitle}>Мои заказы</span>
                         </Link>
-                        {user?.permissions.includes('hospitality_heroes') && (
+                        {DEV_MODE && user?.permissions.includes('hospitality_heroes') && (
                             <Link to={'/privelegies'} className={css.navLink}>
                                 <StarPrivelegyIcon size={24} color={'black'} />
                                 <span className={css.navLinkTitle}>Привилегии</span>

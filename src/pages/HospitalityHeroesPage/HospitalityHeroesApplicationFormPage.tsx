@@ -1,5 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import classnames from 'classnames';
+import { useAtom } from 'jotai';
+// APIs
+import { APIPostSuperEventCreateApplication } from '@/api/events.api.ts';
+import { APIUserInfo } from '@/api/auth.api.ts';
+// Atoms
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
@@ -8,11 +15,16 @@ import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButt
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 // Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
+import useToastState from '@/hooks/useToastState.ts';
 // Styles
 import css from '@/pages/HospitalityHeroesPage/HospitalityHeroesPage.module.css';
 
 export const HospitalityHeroesApplicationFormPage: React.FC = () => {
+    const navigate = useNavigate();
     const { goBack } = useNavigationHistory();
+    const { showToast } = useToastState();
+    const [auth] = useAtom(authAtom);
+    const [, setUser] = useAtom(userAtom);
     const [name, setName] = useState<string>('');
     const [surname, setSurname] = useState<string>('');
     const [phone, setPhone] = useState<string>('');
@@ -20,9 +32,9 @@ export const HospitalityHeroesApplicationFormPage: React.FC = () => {
     const [jobTitle, setJobTitle] = useState<string>('');
     const [experience, setExperience] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
-    const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
-    const validate = useMemo(() => {
+    // Валидация формы
+    const isValid = useMemo(() => {
         return (
             name.trim() !== '' &&
             surname.trim() !== '' &&
@@ -32,19 +44,39 @@ export const HospitalityHeroesApplicationFormPage: React.FC = () => {
             experience.trim() !== ''
         );
     }, [name, surname, phone, workPlace, jobTitle, experience]);
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (validate) {
+
+    // Отправка формы
+    const handleSubmit = useCallback(
+        async (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            if (!isValid || !auth?.access_token) return;
+
             setLoading(true);
-            console.log(name, surname, phone, workPlace, jobTitle, experience);
-            setLoading(false);
-        } else {
-            setIsDisabled(true);
-        }
-    };
-    useEffect(() => {
-        setIsDisabled(!validate);
-    }, [validate]);
+            try {
+                const response = await APIPostSuperEventCreateApplication(auth.access_token, {
+                    name,
+                    surname,
+                    phone,
+                    work_place: workPlace,
+                    job_title: jobTitle,
+                    experience,
+                });
+
+                if (response.data.success) {
+                    const userResponse = await APIUserInfo(auth.access_token);
+                    setUser(userResponse.data);
+                    navigate('/privelegies');
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Произошла ошибка при присоединении к программе. Попробуйте позже');
+            } finally {
+                setLoading(false);
+            }
+        },
+        [auth?.access_token, name, surname, phone, workPlace, jobTitle, experience, isValid, showToast, navigate, setUser]
+    );
+
     return (
         <Page>
             <div className={classnames(css.page, css.bg_white)}>
@@ -64,7 +96,12 @@ export const HospitalityHeroesApplicationFormPage: React.FC = () => {
                     <TextInput placeholder={'Ваше место работы'} value={workPlace} onChange={setWorkPlace} />
                     <TextInput placeholder={'Ваша должность'} value={jobTitle} onChange={setJobTitle} />
                     <TextInput placeholder={'Ваш опыт работы'} value={experience} onChange={setExperience} />
-                    <BottomButtonWrapper content={'Присоединиться'} type={'submit'} isDisabled={isDisabled} isLoading={loading} />
+                    <BottomButtonWrapper
+                        content={'Присоединиться'}
+                        type={'submit'}
+                        isDisabled={!isValid}
+                        isLoading={loading}
+                    />
                 </form>
             </div>
         </Page>
