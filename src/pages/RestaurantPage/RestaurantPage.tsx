@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
@@ -63,6 +63,8 @@ export const RestaurantPage: React.FC = () => {
     const [events, setEvents] = useState<IEvent[] | null>(null);
     const [nyCookings] = useState(NewYearCookingData);
     const { showToast } = useToastState();
+    // Ref для отслеживания инициализации даты для текущего ресторана
+    const initializedRestaurantIdRef = useRef<number | null>(null);
     /**
      * Обрабатывает переход к бронированию столика
      */
@@ -123,23 +125,29 @@ export const RestaurantPage: React.FC = () => {
 
     // Инициализация ресторана и событий
     useEffect(() => {
-        setRestaurant(restaurants.find((rest) => rest.id === Number(id)));
+        const restaurantId = Number(id);
+        setRestaurant(restaurants.find((rest) => rest.id === restaurantId));
         setCurrentSelectedTime(null);
-        setBookingDate({ value: 'unset', title: 'unset' });
-        APIGetEventsInRestaurant(Number(id), String(auth?.access_token))
+        // Сбрасываем дату только при смене ресторана
+        if (initializedRestaurantIdRef.current !== restaurantId) {
+            setBookingDate({ value: 'unset', title: 'unset' });
+            initializedRestaurantIdRef.current = null; // Сбрасываем флаг инициализации
+        }
+        APIGetEventsInRestaurant(restaurantId, String(auth?.access_token))
             .then((res) => setEvents(res.data))
             .catch((err) => {
                 console.error(err);
                 setEvents([]);
                 showToast('Ошибка при загрузке событий. Попробуйте позже');
             });
-    }, [id, restaurants, auth?.access_token]);
+    }, [id, restaurants, auth?.access_token, setBookingDate, setCurrentSelectedTime, showToast]);
 
     // Загрузка доступных дней для бронирования
     useEffect(() => {
         if (!auth?.access_token) return;
 
-        APIGetAvailableDays(auth.access_token, Number(id), 1)
+        const restaurantId = Number(id);
+        APIGetAvailableDays(auth.access_token, restaurantId, 1)
             .then((res) => {
                 let formattedDates = res.data.map((date) => ({
                     title: formatDate(date),
@@ -148,14 +156,16 @@ export const RestaurantPage: React.FC = () => {
                 
                 setBookingDates(formattedDates);
 
-                if (formattedDates.length > 0) {
+                // Устанавливаем первую дату только если она еще не была установлена для этого ресторана
+                if (formattedDates.length > 0 && initializedRestaurantIdRef.current !== restaurantId) {
                     setBookingDate(formattedDates[0]);
+                    initializedRestaurantIdRef.current = restaurantId;
                 }
             })
             .catch((err) => {
                 console.error(err);
             });
-    }, [auth?.access_token, id]);
+    }, [auth?.access_token, id, setBookingDate]);
 
     // Загрузка доступных таймслотов для выбранной даты
     useEffect(() => {
