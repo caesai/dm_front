@@ -12,7 +12,7 @@ import { BookIcon } from '@/components/Icons/BookIcon.tsx';
 import { UserProfileIcon } from '@/components/Icons/UserProfileIcon.tsx';
 import { PlainGiftIcon } from '@/components/Icons/PlaingGiftIcon.tsx';
 import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
-import { StarPrivelegyIcon } from '@/components/Icons/StarPrivelegy';
+import { StarPrivelegyIcon } from '@/components/Icons/StarPrivelegy.tsx';
 // Styles
 import css from '@/pages/ProfilePage/ProfilePage.module.css';
 

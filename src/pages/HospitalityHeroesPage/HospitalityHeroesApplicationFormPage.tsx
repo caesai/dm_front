@@ -19,10 +19,9 @@ export const HospitalityHeroesApplicationFormPage: React.FC = () => {
     const [workPlace, setWorkPlace] = useState<string>('');
     const [jobTitle, setJobTitle] = useState<string>('');
     const [experience, setExperience] = useState<string>('');
-    // 
     const [loading, setLoading] = useState<boolean>(false);
     const [isDisabled, setIsDisabled] = useState<boolean>(true);
-    
+
     const validate = useMemo(() => {
         return (
             name.trim() !== '' &&

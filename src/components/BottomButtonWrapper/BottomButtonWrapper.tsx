@@ -37,6 +37,7 @@ export const BottomButtonWrapper: React.FC<IBottomButtonWrapperProps> = ({
                         {[css.red]: theme === 'red'},
                         {[css.primary]: theme === 'primary'}
                     )}
+                    disabled={isDisabled}
                     onClick={onClick}
                     type={type}
                 >

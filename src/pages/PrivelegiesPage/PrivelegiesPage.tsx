@@ -16,7 +16,7 @@ import hospitalityHeroesLogo from '/img/hospitality_heroes.png';
 export const PrivelegiesPage: React.FC = () => {
     const navigate = useNavigate();
     const { goBack } = useNavigationHistory();
-    const goToBookkingPage = () => {
+    const goToBookingPage = () => {
         navigate('/booking');
     };
     return (
@@ -38,7 +38,7 @@ export const PrivelegiesPage: React.FC = () => {
                         <li>Скидка предоставляется только при бронировании стола через приложение.</li>
                         <li>Скидка не действует на покупку сертификатов, специальные предложения и некоторые позиции меню (уточняйте у официанта)</li>
                     </ul>
-                    <BottomButtonWrapper content={'Забронировать'} type={'button'} onClick={goToBookkingPage} />
+                    <BottomButtonWrapper content={'Забронировать'} type={'button'} onClick={goToBookingPage} />
                 </div>
             </div>
         </Page>
