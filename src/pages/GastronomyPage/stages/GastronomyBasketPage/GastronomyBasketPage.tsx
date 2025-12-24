@@ -22,7 +22,12 @@ import { formatDate } from '@/utils.ts';
 import css from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.module.css';
 // Mocks
 import { R } from '@/__mocks__/restaurant.mock.ts';
-import { BLACKCHOPS_SPB_FONTANKA_RIVER_ZONE, KAD_COORDS, MKAD_COORDS, PETROGRADKA_ZONE } from '@/__mocks__/gastronomy.mock.ts';
+import {
+    BLACKCHOPS_SPB_FONTANKA_RIVER_ZONE,
+    KAD_COORDS,
+    MKAD_COORDS,
+    PETROGRADKA_ZONE,
+} from '@/__mocks__/gastronomy.mock.ts';
 import emptyBasketIcon from '/img/empty-basket.png';
 
 type DeliveryMethod = 'delivery' | 'pickup';
@@ -323,8 +328,40 @@ export const GastronomyBasketPage: React.FC = () => {
         const day = selectedDateObj.getDate();
         const month = selectedDateObj.getMonth();
 
+        // Для Smoke BBQ Рубинштейна при самовывозе: слоты по 30 минут
+        const isSmokeRubinshteinaPickup =
+            String(res_id) === String(R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID) && deliveryMethod === 'pickup';
+
         // 31 декабря - специальные слоты
         if (day === 31 && month === 11) {
+            // Для Smoke BBQ Рубинштейна при самовывозе: слоты по 30 минут от 12:00 до 17:00
+            if (isSmokeRubinshteinaPickup) {
+                const slots: string[] = [];
+                let currentMinutes = 12 * 60; // 12:00
+                const closeMinutes = 17 * 60; // 17:00
+
+                while (currentMinutes < closeMinutes) {
+                    let nextMinutes = currentMinutes + 30;
+
+                    if (nextMinutes > closeMinutes) {
+                        nextMinutes = closeMinutes;
+                    }
+
+                    const currentHour = Math.floor(currentMinutes / 60);
+                    const currentMin = currentMinutes % 60;
+                    const nextHour = Math.floor(nextMinutes / 60);
+                    const nextMin = nextMinutes % 60;
+
+                    slots.push(
+                        `${String(currentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}–${String(nextHour).padStart(2, '0')}:${String(nextMin).padStart(2, '0')}`
+                    );
+
+                    currentMinutes = nextMinutes;
+                }
+
+                return slots;
+            }
+            // Для остальных случаев: фиксированные слоты
             return ['12:00–14:00', '14:00–17:00'];
         }
 
@@ -361,17 +398,11 @@ export const GastronomyBasketPage: React.FC = () => {
         }
 
         const slots: string[] = [];
-        
-        // Для Smoke BBQ Рубинштейна при самовывозе: слоты по 30 минут
-        const isSmokeRubinshteinaPickup = 
-            String(res_id) === String(R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID) && deliveryMethod === 'pickup';
-        
+
         if (isSmokeRubinshteinaPickup) {
             // Генерируем слоты по 30 минут
             let currentMinutes = openHour * 60;
-            const closeMinutesAdjusted = closeHour < openHour 
-                ? (closeHour + 24) * 60 
-                : closeHour * 60;
+            const closeMinutesAdjusted = closeHour < openHour ? (closeHour + 24) * 60 : closeHour * 60;
 
             while (currentMinutes < closeMinutesAdjusted) {
                 let nextMinutes = currentMinutes + 30;
@@ -826,7 +857,11 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.section}>
                         <h2 className={css.sectionTitle}>Способ получения</h2>
                         <div className={css.deliveryDropdown}>
-                            <div className={css.deliveryRow} onClick={handleToggleDropdown} data-testid="delivery-method-toggle">
+                            <div
+                                className={css.deliveryRow}
+                                onClick={handleToggleDropdown}
+                                data-testid="delivery-method-toggle"
+                            >
                                 <span className={css.deliveryText}>
                                     {deliveryMethod === 'delivery' ? 'Доставка' : 'Заберу сам'}
                                 </span>
@@ -937,11 +972,7 @@ export const GastronomyBasketPage: React.FC = () => {
                         values={availableDates}
                     />
                     <div className={css.datePickerWrapper}>
-                        <div
-                            data-testid="date-picker"
-                            className={css.datePicker}
-                            onClick={handleDatePickerClick}
-                        >
+                        <div data-testid="date-picker" className={css.datePicker} onClick={handleDatePickerClick}>
                             <div className={css.datePickerContent}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <rect
@@ -1013,7 +1044,9 @@ export const GastronomyBasketPage: React.FC = () => {
             {/* Кнопка оплаты */}
             <div className={css.buttonContainer}>
                 {showMinAmountError && (
-                    <p className={css.minAmountError}>Минимальная сумма заказа {minOrderAmount}₽ - <br/> без учета доставки</p>
+                    <p className={css.minAmountError}>
+                        Минимальная сумма заказа {minOrderAmount}₽ - <br /> без учета доставки
+                    </p>
                 )}
                 <button
                     className={isFormValid() ? css.primaryButton : css.secondaryButton}

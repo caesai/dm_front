@@ -171,7 +171,7 @@ export const IndexPage: React.FC = () => {
     useEffect(() => {
         const preferencesStatus = JSON.parse(localStorage.getItem('PREFERENCES_STATUS') as string);
 
-        if (!user?.license_agreement || !user.complete_onboarding || !user?.phone_number) return;
+        if (!user?.complete_onboarding || !user?.phone_number) return;
 
         if (!preferencesStatus) {
             localStorage.setItem('PREFERENCES_STATUS', JSON.stringify({ visit_number: 1 }));
@@ -190,7 +190,7 @@ export const IndexPage: React.FC = () => {
             navigate('/preferences/1');
             return;
         }
-    }, [navigate, user?.license_agreement, user?.complete_onboarding, user?.phone_number]);
+    }, [navigate, user?.complete_onboarding, user?.phone_number]);
 
     const updateCurrentCity = (city: IConfirmationType) => {
         setCurrentCityS(city);

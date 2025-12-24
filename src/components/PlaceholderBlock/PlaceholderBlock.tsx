@@ -18,6 +18,7 @@ export const PlaceholderBlock = ({
     return (
         <div
             className={css.loadWrapper}
+            data-testid="placeholder-block"
             style={{
                 width,
                 height,

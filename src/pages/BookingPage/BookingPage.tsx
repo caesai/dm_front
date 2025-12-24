@@ -100,6 +100,7 @@ export const BookingPage: React.FC = () => {
     const [requestLoading, setRequestLoading] = useState(false);
     const [errorPopup, setErrorPopup] = useState(false);
     const [botError, setBotError] = useState(false);
+    const [timeslotsError, setTimeslotsError] = useState(true);
     const [errorPopupCount, setErrorPopupCount] = useState(0);
     const [preOrder, setPreOrder] = useState(false);
     const [certificate_id, setCertificateId] = useState<string | null>(null);
@@ -185,10 +186,13 @@ export const BookingPage: React.FC = () => {
         if (restaurant.value === 'unset' || !auth?.access_token || date.value === 'unset' || !guestCount) return;
         setTimeslotsLoading(true);
         APIGetAvailableTimeSlots(auth.access_token, parseInt(String(restaurant.value)), date.value, guestCount)
-            .then((res) => setAvailableTimeslots(res.data))
+            .then((res) => {
+                setAvailableTimeslots(res.data);
+                setTimeslotsError(false);
+            })
             .catch((err) => {
                 console.error('err: ', err);
-                // setErrorPopup(true); // TODO: Добавить ошибку в UI
+                setTimeslotsError(true);
             })
             .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount, restaurant]);
@@ -303,7 +307,7 @@ export const BookingPage: React.FC = () => {
                                 <span className={css.noTimeSlotsText}>Выберите дату и количество гостей</span>
                             </div>
                         </ContentContainer>
-                    ) : (
+                    ) : !timeslotsError ? (
                         <TimeSlots
                             restaurantId={Number(restaurant.value)}
                             loading={timeslotsLoading}
@@ -311,6 +315,10 @@ export const BookingPage: React.FC = () => {
                             currentSelectedTime={currentSelectedTime}
                             setCurrentSelectedTime={setCurrentSelectedTime}
                         />
+                    ) : (
+                        <p className={css.timeslotsError}>
+                            Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату
+                        </p>
                     )}
                     <CertificatesSelector
                         setCertificateId={setCertificateId}

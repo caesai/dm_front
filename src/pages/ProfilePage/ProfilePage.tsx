@@ -8,14 +8,12 @@ import { TicketsIcon } from '@/components/Icons/TicketsIcon.tsx';
 import { BookIcon } from '@/components/Icons/BookIcon.tsx';
 import { UserProfileIcon } from '@/components/Icons/UserProfileIcon.tsx';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
-import { userAtom } from '@/atoms/userAtom.ts';
 import { PlainGiftIcon } from '@/components/Icons/PlaingGiftIcon.tsx';
 import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 import css from '@/pages/ProfilePage/ProfilePage.module.css';
 
 export const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
-    const [user] = useAtom(userAtom);
     const [backUrlAtom] = useAtom(backButtonAtom);
 
     return (
@@ -51,16 +49,6 @@ export const ProfilePage: React.FC = () => {
                             <KitchenIcon size={24} color={'black'} />
                             <span className={css.navLinkTitle}>Мои заказы</span>
                         </Link>
-                        {user?.administrator?.is_active ? (
-                            <Link to={'/scanner'} className={css.navLink}>
-                                <UserProfileIcon size={24} color={'black'} />
-                                <span className={css.navLinkTitle}>Сканер билетов</span>
-                            </Link>
-                        ) : null}
-                        {/*<Link to={'/support'} className={css.navLink}>*/}
-                        {/*    <SupportIcon size={24} color={'black'} />*/}
-                        {/*    <span className={css.navLinkTitle}>Поддержка</span>*/}
-                        {/*</Link>*/}
                     </div>
                 </div>
             </div>

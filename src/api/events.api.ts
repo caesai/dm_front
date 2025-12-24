@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { BASE_URL, CLIENT_URL } from '@/api/base.ts';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { EventTicket, IEvent, ISuperEventHasApplicationResponse } from '@/types/events.types.ts';
+import { IEventTicket, IEvent, ISuperEventHasApplicationResponse } from '@/types/events.types.ts';
 
 export const APIGetEventsList = async (token: string) => {
     return await axios.get<IEvent[]>(`${BASE_URL}/events/`, {
@@ -90,7 +90,7 @@ export const APIValidatePayment = async (id: string, token: string) => {
 };
 
 export const APIGetTicket = async (id: number, token: string) => {
-    return await axios.get<EventTicket>(`${BASE_URL}/events/tickets/one`, {
+    return await axios.get<IEventTicket>(`${BASE_URL}/events/tickets/one`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -101,7 +101,7 @@ export const APIGetTicket = async (id: number, token: string) => {
 };
 
 export const APIGetSharedTicket = async (id: number) => {
-    return await axios.get<EventTicket>(`${BASE_URL}/events/tickets/by-id/${id}`, {
+    return await axios.get<IEventTicket>(`${BASE_URL}/events/tickets/by-id/${id}`, {
         params: {
             id,
         },
@@ -109,7 +109,7 @@ export const APIGetSharedTicket = async (id: number) => {
 };
 
 export const APIGetTickets = async (token: string) => {
-    return await axios.get<EventTicket[]>(`${BASE_URL}/events/tickets`, {
+    return await axios.get<IEventTicket[]>(`${BASE_URL}/events/tickets`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -180,7 +180,7 @@ export const APIGetSuperEventHasAccess = async (token: string) => {
 };
 
 export const APIDeleteTicket = async (event_id: number, token: string) => {
-    return await axios.delete<EventTicket>(`${BASE_URL}/events/cancel/${event_id}`, {
+    return await axios.delete<IEventTicket>(`${BASE_URL}/events/cancel/${event_id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },

@@ -14,6 +14,8 @@ import { extractPrice, getDefaultSize } from '@/utils/menu.utils';
 import { trigramMatch } from '@/utils/trigram.utils';
 // Hooks
 import { useRestaurantMenu } from '@/hooks/useRestaurantMenu';
+// Components
+import { AgeVerificationPopup } from '@/components/AgeVerificationPopup/AgeVerificationPopup';
 // Styles
 import menuErrorIcon from '/icons/menu-error.png';
 import css from '@/pages/RestaurantMenuPage/RestaurantMenuPage.module.css';
@@ -24,6 +26,12 @@ export const RestaurantMenuPage: React.FC = () => {
     const [restaurants] = useAtom(restaurantsListAtom);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [isAgeVerificationOpen, setIsAgeVerificationOpen] = useState<boolean>(false);
+    const [, setSelectedCocktailItem] = useState<IAPIMenuItem | null>(null);
+    // Используем sessionStorage, чтобы состояние сохранялось при навигации, но сбрасывалось при перезагрузке страницы
+    const [isAgeVerified, setIsAgeVerified] = useState<boolean>(() => {
+        return sessionStorage.getItem('ageVerified') === 'true';
+    });
     const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const tabsContainerRef = useRef<HTMLDivElement | null>(null);
     const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
@@ -39,6 +47,28 @@ export const RestaurantMenuPage: React.FC = () => {
         return menuData.item_categories.filter(
             (cat) => !cat.is_hidden && cat.menu_items.some((item) => !item.is_hidden)
         );
+    }, [menuData]);
+
+    // Найти первое блюдо с изображением из меню для использования в коктейлях
+    const firstDishImage = useMemo(() => {
+        if (!menuData) return '';
+        
+        for (const category of menuData.item_categories) {
+            if (category.is_hidden) continue;
+            
+            for (const item of category.menu_items) {
+                if (item.is_hidden) continue;
+                
+                const defaultSize = getDefaultSize(item.item_sizes);
+                const imageUrl = defaultSize?.button_image_url || '';
+                
+                if (imageUrl && imageUrl.trim().length > 0) {
+                    return imageUrl;
+                }
+            }
+        }
+        
+        return '';
     }, [menuData]);
 
     const searchResultsCount = useMemo(() => {
@@ -142,8 +172,17 @@ export const RestaurantMenuPage: React.FC = () => {
         const fats = nutrition?.fats || nutrition?.fat || null;
         const carbohydrates = nutrition?.carbohydrates || nutrition?.carbs || null;
 
+        const isCocktail = isCocktailCategory(
+            menuData?.item_categories.find((cat) => cat.id === dish.category_id)?.name || ''
+        );
+        
+        // Для коктейлей используем изображение первого блюда с картинкой из меню
+        const cocktailImageUrl = isCocktail ? getCocktailImage() : '';
+        const photoUrl = isCocktail && cocktailImageUrl ? cocktailImageUrl : (defaultSize?.button_image_url || '');
+
         const dishData: IMenuItem & {
             description?: string;
+            composition?: string;
             calories?: number | null;
             proteins?: number | null;
             fats?: number | null;
@@ -152,12 +191,17 @@ export const RestaurantMenuPage: React.FC = () => {
             weights?: string[];
             weight_value?: string;
             item_sizes?: IAPIMenuItem['item_sizes'];
+            isCocktail?: boolean;
         } = {
             id: parseInt(dish.id) || 0,
             title: dish.name,
-            photo_url: defaultSize?.button_image_url || '',
+            photo_url: photoUrl,
             price: price,
-            description: dish.description,
+            // Используем поля из API напрямую, без fallback
+            // Если есть guest_description - используем его, иначе description (если есть)
+            description: dish.guest_description || (dish.description ? dish.description : undefined),
+            // Используем composition из API (если есть)
+            composition: dish.composition,
             calories,
             proteins,
             fats,
@@ -179,6 +223,7 @@ export const RestaurantMenuPage: React.FC = () => {
             weights: dish.item_sizes.filter((s) => !s.is_hidden).map((s) => s.portion_weight_grams.toString()),
             weight_value: dish.measure_unit || defaultSize?.measure_unit_type || '',
             item_sizes: dish.item_sizes.filter((s) => !s.is_hidden),
+            isCocktail: isCocktail,
         };
 
         navigate(`/restaurant/${id}/menu/dish/${dish.id}`, {
@@ -194,6 +239,45 @@ export const RestaurantMenuPage: React.FC = () => {
     const shouldRenderAsTable = (category: IAPIMenuCategory): boolean => {
         const visibleItems = category.menu_items.filter((item) => !item.is_hidden);
         return visibleItems.length > 0 && visibleItems.every((item) => isDrinkItem(item));
+    };
+
+    // Ключевые слова для определения категорий коктейлей
+    const COCKTAIL_CATEGORY_KEYWORDS = ['коктейл', 'коктейли', 'cocktail', 'cocktails'];
+
+    // Проверка, является ли категория категорией коктейлей
+    const isCocktailCategory = (categoryName: string): boolean => {
+        const name = categoryName.toLowerCase().trim();
+        return COCKTAIL_CATEGORY_KEYWORDS.some((keyword) => name.includes(keyword));
+    };
+
+    // Получить изображение для коктейля - используем изображение первого блюда с картинкой из меню
+    const getCocktailImage = (): string => {
+        // Используем изображение первого блюда с картинкой из меню
+        return firstDishImage || '';
+    };
+
+    const handleVerifyAge = (verified: boolean) => {
+        setIsAgeVerified(verified);
+        // Сохраняем в sessionStorage, чтобы состояние сохранялось при навигации
+        // но сбрасывалось при перезагрузке страницы
+        if (verified) {
+            sessionStorage.setItem('ageVerified', 'true');
+        } else {
+            sessionStorage.removeItem('ageVerified');
+        }
+        setIsAgeVerificationOpen(false);
+        // После подтверждения возраста блюр снимается, но навигация не происходит автоматически
+        // Пользователь должен кликнуть еще раз, чтобы перейти на детальную страницу
+        setSelectedCocktailItem(null);
+    };
+
+    const handleCocktailClick = (item: IAPIMenuItem) => {
+        if (!isAgeVerified) {
+            setSelectedCocktailItem(item);
+            setIsAgeVerificationOpen(true);
+        } else {
+            handleDishClick(item);
+        }
     };
 
     const renderDishCategory = (category: IAPIMenuCategory) => {
@@ -218,21 +302,37 @@ export const RestaurantMenuPage: React.FC = () => {
                 <div className={css.items}>
                     {visibleItems.map((item) => {
                         const defaultSize = getDefaultSize(item.item_sizes);
-                        const imageUrl = defaultSize?.button_image_url || '';
-                        const hasImage = imageUrl && imageUrl.trim().length > 0;
+                        const isCocktail = isCocktailCategory(category.name);
+                        const shouldBlur = isCocktail && !isAgeVerified;
+                        
+                        // Для коктейлей используем изображение первого блюда с картинкой из меню
+                        let imageUrl = '';
+                        if (isCocktail) {
+                            imageUrl = getCocktailImage();
+                        } else {
+                            imageUrl = defaultSize?.button_image_url || '';
+                        }
+                        
+                        // Для коктейлей всегда считаем, что изображение есть (даже если firstDishImage пустое)
+                        const hasImage = isCocktail ? (imageUrl && imageUrl.trim().length > 0) : (imageUrl && imageUrl.trim().length > 0);
                         const portionWeight = defaultSize?.portion_weight_grams;
                         const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || '';
                         const weight = portionWeight ? `${portionWeight} ${measureUnit}` : '';
                         const price = extractPrice(defaultSize?.prices);
 
                         return (
-                            <div key={item.id} className={css.menuItemWrapper} onClick={() => handleDishClick(item)}>
+                            <div 
+                                key={item.id} 
+                                className={css.menuItemWrapper} 
+                                onClick={() => isCocktail ? handleCocktailClick(item) : handleDishClick(item)}
+                            >
                                 <div
-                                    className={css.menuItemImage}
+                                    className={`${css.menuItemImage} ${shouldBlur ? css.blurredImage : ''}`}
                                     style={{
                                         backgroundImage: hasImage ? `url(${imageUrl})` : 'none',
                                         backgroundColor: hasImage ? 'transparent' : '#FFFFFF',
                                         border: hasImage ? 'none' : '1px solid #E9E9E9',
+                                        borderRadius: '12px',
                                     }}
                                 />
                                 <div className={css.menuItemContent}>
@@ -422,6 +522,12 @@ export const RestaurantMenuPage: React.FC = () => {
                     })}
                 </div>
             )}
+            
+            <AgeVerificationPopup
+                isOpen={isAgeVerificationOpen}
+                onConfirm={() => handleVerifyAge(true)}
+                onCancel={() => handleVerifyAge(false)}
+            />
         </div>
     );
 };

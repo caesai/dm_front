@@ -37,7 +37,7 @@
 
 .logo {
     width: 160px;
-    /*height: 16px;*/
+    min-height: 28px;
 }
 
 .stage_page {
@@ -132,69 +132,9 @@
     align-items: center;
 }
 
-.stageOne_icons {
-    width: 375px;
-    /*width: 100%;*/
-    height: 300px;
-    position: relative;
-
-    .stageOne_icons_1 {
-        left: 110px;
-        z-index: 2;
-    }
-
-    .stageOne_icons_2 {
-        left: 0;
-        top: -20px;
-        z-index: 1;
-    }
-
-    .stageOne_icons_3 {
-        right: 0;
-        top: -23px;
-        z-index: 1;
-    }
-
-    .stageOne_icons_4 {
-        left: 145px;
-        top: 43px;
-        z-index: 2;
-    }
-
-    .stageOne_icons_5 {
-        left: 40px;
-        top: 93px;
-        z-index: 1;
-    }
-
-    .stageOne_icons_6 {
-        right: 0;
-        top: 131px;
-        z-index: 1;
-    }
-
-    .stageOne_icons_7 {
-        left: 11px;
-        top: 190px;
-        z-index: 0;
-    }
-
-    .stageOne_icons_8 {
-        left: 155px;
-        bottom: -20px;
-        z-index: 0;
-        border-radius: 12px;
-    }
-
-}
-
 .stageOne_icon {
-    /*filter: drop-shadow(8px 8px 17px rgba(86, 85, 85, 0.5));*/
-    position: relative;
-    top: -50px;
-    /*width: 130px;*/
     max-width: 100%;
-    /*height: 130px;*/
+    min-height: 280px;
 }
 
 .stageTwo__background {
@@ -211,10 +151,7 @@
     height: 100%;
     justify-content: center;
     align-items: center;
-    /*overflow-x: hidden;*/
-    /*overflow-y: hidden;*/
     overflow-x: clip;
-
 }
 
 .stageThree_images {
