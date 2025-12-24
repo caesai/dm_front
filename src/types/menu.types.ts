@@ -23,6 +23,8 @@ export interface IMenuItem {
     sku: string;
     name: string;
     description: string;
+    composition?: string; // Состав блюда (если API возвращает отдельно)
+    guest_description?: string; // Описание для гостя (если API возвращает отдельно)
     type: string;
     measure_unit: string;
     allergens?: Record<string, any>[];
