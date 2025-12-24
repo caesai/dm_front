@@ -1,0 +1,89 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 15px 90px;
+}
+
+.bg_white {
+    background-color: white;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.header_spacer {
+    width: 44px;
+    height: 44px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+    border-radius: 16px;
+    background-color: white;
+    gap: 16px;
+}
+
+.content_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.content_img {
+    width: 100%;
+    aspect-ratio: 3/2;
+    background-color: var(--secondary-background);
+    border-radius: 16px;
+    background-size: cover;
+    background-position: center;
+}
+
+.content_description {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 150%;
+    color: black;
+    margin: 0;
+    padding: 0;
+}
+
+.content_description_list {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 150%;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}

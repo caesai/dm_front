@@ -1,15 +1,20 @@
+import React, { useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
+// Atoms
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+// Components
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import css from './EventSuperApplyOutlet.module.css';
-import { useNavigate } from 'react-router-dom';
-import { useMemo, useRef, useState } from 'react';
-import { useAtom } from 'jotai';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
+// APIs
 import { APIPostSuperEventCreateApplication } from '@/api/events.api.ts';
+// Hooks
 import useToastState from '@/hooks/useToastState.ts';
+// Styles
+import css from '@/pages/EventsPage/EventSuperApplyOutlet/EventSuperApplyOutlet.module.css';
 
-export const EventSuperApplyOutlet = () => {
+export const EventSuperApplyOutlet: React.FC = () => {
     const navigate = useNavigate();
     const { showToast } = useToastState();
     const [auth] = useAtom(authAtom);

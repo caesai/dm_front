@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import css from './EventSuperInfoOutlet.module.css';
-import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import classNames from 'classnames';
 import { useAtom } from 'jotai/index';
+import classNames from 'classnames';
+// Atoms
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import hh from '/img/hh.jpg';
+// Components
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
+// APIs
 import { APIGetSuperEventHasApplication, APIPostSuperEventCheckLink } from '@/api/events.api.ts';
+// Styles
+import css from '@/pages/EventsPage/EventSuperInfoOutlet/EventSuperInfoOutlet.module.css';
+// Images
+import hh from '/img/hh.jpg';
 
 export const EventSuperInfoOutlet: React.FC = () => {
     const navigate = useNavigate();

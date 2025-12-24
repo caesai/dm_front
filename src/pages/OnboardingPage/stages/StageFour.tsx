@@ -1,11 +1,15 @@
-import css from '../OnboardingPage.module.css';
-import classNames from 'classnames';
-import { useLocation, useNavigate } from 'react-router-dom';
-import {useAtom} from 'jotai';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import {TextInput} from "@/components/TextInput/TextInput.tsx";
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import classNames from 'classnames';
+import { useAtom } from 'jotai';
+// API's
 import { APICompleteOnboarding, APIUserName } from '@/api/user.api.ts';
+// Atoms
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+// Components
+import { TextInput } from '@/components/TextInput/TextInput.tsx';
+// Styles
+import css from '@/pages/OnboardingPage/OnboardingPage.module.css';
 
 export const StageFour: React.FC = () => {
     const [user, setUser] = useAtom(userAtom);
@@ -17,7 +21,7 @@ export const StageFour: React.FC = () => {
     const state = location?.state;
 
     const handleConfirm = () => {
-        if (!user || !auth?.access_token || !name ) {
+        if (!user || !auth?.access_token || !name) {
             return;
         }
         APIUserName(auth.access_token, name, surname).then();
@@ -33,10 +37,16 @@ export const StageFour: React.FC = () => {
                 }
             })
             .catch(() =>
-                alert(
-                    'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
-                )
+                alert('При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.')
             );
+    };
+
+    const handleNameChange = (value: string) => {
+        setName(value);
+    };
+
+    const handleSurnameChange = (value: string) => {
+        setSurname(value);
     };
 
     return (
@@ -48,7 +58,7 @@ export const StageFour: React.FC = () => {
                             className={classNames(css.redButton, {
                                 [css.redButton__disabled]: !name,
                             })}
-                            onClick={() => handleConfirm()}
+                            onClick={handleConfirm}
                         >
                             <span>Продолжить</span>
                         </div>
@@ -56,10 +66,12 @@ export const StageFour: React.FC = () => {
                 </div>
                 <div className={css.stageSix_wrapper}>
                     <h2 className={css.stage_description_title}>
-                        Как мы могли бы<br /> к вам обращаться?</h2>
+                        Как мы могли бы
+                        <br /> к вам обращаться?
+                    </h2>
                     <div className={css.form}>
-                        <TextInput placeholder={'Имя'} value={name} onChange={(e) => setName(e)} />
-                        <TextInput placeholder={'Фамилия'} value={surname} onChange={(e) => setSurname(e)} />
+                        <TextInput placeholder={'Имя'} value={name} onChange={handleNameChange} />
+                        <TextInput placeholder={'Фамилия'} value={surname} onChange={handleSurnameChange} />
                     </div>
                 </div>
             </div>

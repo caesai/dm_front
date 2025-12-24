@@ -44,3 +44,12 @@ export type IEventBookingContext = [IEventBooking | null, Dispatch<SetStateActio
 export interface ISuperEventHasApplicationResponse {
     has_application: boolean;
 }
+
+export interface IHospitalityHeroesApplication {
+    name: string;
+    surname: string;
+    phone: string;
+    work_place: string;
+    job_title: string;
+    experience: string;
+}
