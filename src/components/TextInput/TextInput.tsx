@@ -26,7 +26,14 @@ export const TextInput: React.FC<ITextInputProps> = ({
 }) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(e.target.value);
+        let newValue = e.target.value;
+        
+        // Для телефона разрешаем только цифры, +, -, пробелы и скобки
+        if (type === 'tel') {
+            newValue = newValue.replace(/[^\d+\-\s()]/g, '');
+        }
+        
+        onChange(newValue);
     };
     return (
         <input

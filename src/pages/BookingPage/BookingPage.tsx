@@ -351,6 +351,7 @@ export const BookingPage: React.FC = () => {
                                 onChange={setUserPhone}
                                 placeholder={'Телефон'}
                                 validation_failed={!phoneValidatedDisplay}
+                                type='tel'
                             />
                         </div>
                     </ContentContainer>

@@ -2,9 +2,9 @@ import { useMemo, useCallback } from 'react';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 
-// Define the phone regex once outside the hook
-// Matches formats like: +7(XXX)XXX-XX-XX, 8XXX-XXX-XX-XX, +7 9XX XXX XX XX, 88005553535 etc.
-const PHONE_REGEX = /^([87])[- ]?(\d{3})[- ]?(\d{3})[- ]?(\d{2})[- ]?(\d{2})$/;
+// Определение регулярного выражения для телефона один раз вне хука
+// Совпадает с форматами: +7(XXX)XXX-XX-XX, 8XXX-XXX-XX-XX, +7 9XX XXX XX XX, 88005553535 etc.
+const PHONE_REGEX = /^\+?([87])[- ]?(\d{3})[- ]?(\d{3})[- ]?(\d{2})[- ]?(\d{2})$/;
 
 
 interface FormValues {
