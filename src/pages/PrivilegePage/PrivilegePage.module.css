@@ -1,0 +1,50 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 15px 90px;
+}
+
+.bg_white {
+    background-color: white;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_title {
+    font-family: 'Mont', sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.header_spacer {
+    width: 44px;
+    height: 44px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+    border-radius: 16px;
+    background-color: white;
+    gap: 16px;
+}
+
+.content_description_list {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 150%;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 20px;
+    margin: 0;
+}

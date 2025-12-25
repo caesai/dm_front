@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import moment from 'moment';
 // API's
-import { APIGetCurrentBookings } from '@/api/restaurants.api';
+import { APIGetCurrentBookings } from '@/api/restaurants.api.ts';
 import { ApiGetStoriesBlocks } from '@/api/stories.api.ts';
-import { APIGetSuperEventHasAccess, APIGetTickets } from '@/api/events.api.ts';
+import { APIGetTickets } from '@/api/events.api.ts';
+// import { DEV_MODE } from '@/api/base.ts';
 // Types
 import { IStoryBlock } from '@/types/stories.types.ts';
 import { IBookingInfo, IRestaurant } from '@/types/restaurant.types.ts';
@@ -25,11 +26,11 @@ import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 // Mocks
-import { R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock.ts';
 // Styles
-import css from './IndexPage.module.css';
+import css from '@/pages/IndexPage/IndexPage.module.css';
 // Images
-import superevent from '/img/hh2.jpg';
+// import superevent from '/img/hh2.jpg';
 
 export const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
     return {
@@ -58,7 +59,6 @@ export const IndexPage: React.FC = () => {
         }
     );
     const [currentBookings, setCurrentBookings] = useState<IBookingInfo[] | null>(null);
-    const [hasSuperEventAccess, setHasSuperEventAccess] = useState(false);
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[] | null>(null);
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[] | null>(null);
 
@@ -105,14 +105,6 @@ export const IndexPage: React.FC = () => {
                 // Кладем пустой массив, чтобы не было ошибки при рендере
                 // и блок не отображался
                 setCurrentBookings([]);
-            });
-        // Запрашиваем доступ к спец-событию
-        APIGetSuperEventHasAccess(auth.access_token)
-            .then((response) => {
-                setHasSuperEventAccess(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
             });
     }, []);
 
@@ -211,9 +203,10 @@ export const IndexPage: React.FC = () => {
                     <CitySelect options={cityOptions} currentValue={currentCityS} onChange={updateCurrentCity} />
                 </div>
                 <BookingReminder bookings={currentBookings} />
-                {hasSuperEventAccess && (
+                {/* Отображаем блок с супер-мероприятием только для пользователей с разрешением hospitality_heroes */}
+                {/* {DEV_MODE && user?.permissions.includes('hospitality_heroes') && (
                     <div style={{ marginRight: 15, height: 85 }}>
-                        <Link to={'/events/super'}>
+                        <Link to={'/privilege'}>
                             <img
                                 src={superevent}
                                 style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }}
@@ -221,10 +214,8 @@ export const IndexPage: React.FC = () => {
                             />
                         </Link>
                     </div>
-                )}
-
+                )} */}
                 <OptionsNavigation cityId={cityId} isLoading={!restaurantsList} />
-
                 <div className={css.restaurants}>
                     {restaurantsList?.map((rest) => (
                         <RestaurantPreview restaurant={rest} key={`rest-${rest.id}`} clickable />

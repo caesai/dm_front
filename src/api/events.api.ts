@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { BASE_URL, CLIENT_URL } from '@/api/base.ts';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { IEventTicket, IEvent, ISuperEventHasApplicationResponse } from '@/types/events.types.ts';
+import { IEventTicket, IEvent, ISuperEventHasApplicationResponse, IHospitalityHeroesApplication } from '@/types/events.types.ts';
 
 export const APIGetEventsList = async (token: string) => {
     return await axios.get<IEvent[]>(`${BASE_URL}/events/`, {
@@ -141,16 +141,7 @@ export const APIPostSuperEventCreateApplication = async (
         work_place,
         job_title,
         experience,
-        visit_purpose,
-    }: {
-        name: string;
-        surname: string;
-        phone: string;
-        work_place: string;
-        job_title: string;
-        experience: string;
-        visit_purpose: string;
-    }
+    }: IHospitalityHeroesApplication
 ) => {
     return await axios.post(
         `${BASE_URL}/events/super_events/create_application`,
@@ -161,7 +152,6 @@ export const APIPostSuperEventCreateApplication = async (
             work_place,
             job_title,
             experience,
-            visit_purpose,
         },
         {
             headers: {

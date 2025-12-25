@@ -316,7 +316,7 @@ export const BookingFreeEventPage: React.FC = () => {
             </div>
             <BottomButtonWrapper
                 forwardedRef={bookingBtn}
-                isDisabled={isFormValid}
+                isDisabled={!isFormValid}
                 isLoading={requestLoading}
                 onClick={createBooking}
             />

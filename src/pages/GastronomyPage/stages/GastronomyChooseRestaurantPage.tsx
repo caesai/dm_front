@@ -198,7 +198,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                     content={'Перейти к списку блюд'}
                     onClick={goToDishesPage}
                     isDisabled={isDisabledButton}
-                    theme={isDisabledButton ? 'primary' : 'red'}
+                    theme={'red'}
                 />
             </div>
         </>
