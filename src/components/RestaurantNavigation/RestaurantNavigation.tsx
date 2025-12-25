@@ -48,7 +48,13 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({
         return () => {
             document.removeEventListener('scroll', handleScroll);
         };
-    });
+    }, [hash, swiperInstance]);
+    useEffect(() => {
+        if (hash && swiperInstance) {
+            const index = hashes.indexOf(hash);
+            swiperInstance.slideTo(index);
+        }
+    }, [hash]);
 
     return (
         <div className={css.navigationSlider}>
