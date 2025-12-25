@@ -20,6 +20,105 @@ import { AgeVerificationPopup } from '@/components/AgeVerificationPopup/AgeVerif
 import menuErrorIcon from '/icons/menu-error.png';
 import css from '@/pages/RestaurantMenuPage/RestaurantMenuPage.module.css';
 
+// Константы для проверки возраста
+const AGE_VERIFIED_STORAGE_KEY = 'ageVerified';
+
+/**
+ * Читает состояние проверки возраста из sessionStorage
+ * @returns {boolean} true, если возраст был подтвержден
+ */
+const readAgeVerified = (): boolean => {
+    return sessionStorage.getItem(AGE_VERIFIED_STORAGE_KEY) === 'true';
+};
+
+/**
+ * Записывает состояние проверки возраста в sessionStorage
+ * @param {boolean} verified - состояние проверки возраста
+ */
+const writeAgeVerified = (verified: boolean): void => {
+    if (verified) {
+        sessionStorage.setItem(AGE_VERIFIED_STORAGE_KEY, 'true');
+    } else {
+        sessionStorage.removeItem(AGE_VERIFIED_STORAGE_KEY);
+    }
+};
+
+// Ключевые слова для определения категорий коктейлей
+const COCKTAIL_CATEGORY_KEYWORDS = ['коктейл', 'коктейли', 'cocktail', 'cocktails'] as const;
+
+/**
+ * RestaurantMenuPage
+ *
+ * Страница меню ресторана.
+ *
+ * ### Источники данных
+ * - `id` берётся из URL-параметра `useParams()` и используется:
+ *   - для поиска ресторана в `restaurantsListAtom`
+ *   - для загрузки меню через `useRestaurantMenu(Number(id))`
+ *
+ * ### Основные сценарии
+ * 1. **Loading**
+ *    - пока `useRestaurantMenu` возвращает `loading=true`, показывается заголовок и текст "Загрузка меню..."
+ *
+ * 2. **Error / Empty**
+ *    - если `error === true` ИЛИ `menuData` отсутствует ИЛИ нет `item_categories`,
+ *      показывается пустое состояние "Не удалось загрузить меню" и кнопка `Повторить попытку` (вызывает `refetch`)
+ *
+ * 3. **Success**
+ *    - отображаются:
+ *      - поисковая строка
+ *      - вкладки категорий (если нет поиска)
+ *      - список категорий с блюдами
+ *
+ * ### Правила видимости категорий и блюд
+ * - `visibleCategories` = категории, у которых:
+ *   - `!cat.is_hidden`
+ *   - и есть хотя бы один `menu_item` с `!item.is_hidden`
+ *
+ * ### Поиск
+ * - поиск работает по всем `visibleCategories`
+ * - фильтрация блюд по `trigramMatch(searchText, searchQuery)`
+ * - `searchText` = `${item.name} ${item.description || ''}` в lower-case
+ * - если по запросу не найдено ни одного блюда, показывается состояние "По вашему запросу ничего не нашлось"
+ *   и кнопка "Перейти в меню" очищает поиск
+ *
+ * ### Вкладки категорий и скролл-синхронизация
+ * - при первой загрузке меню выбирается первая НЕ скрытая категория как `selectedCategory`
+ * - при скролле (когда нет поиска) активная вкладка обновляется по положению секций на странице
+ * - при выборе вкладки происходит `scrollToCategory`, скроллим к секции с offset -201px
+ * - при смене активной вкладки вкладка горизонтально прокручивается в контейнере, чтобы была видима
+ *
+ * ### Отрисовка категорий
+ * - если категория состоит только из "напитков" (у каждого item нет `button_image_url` на дефолтном размере),
+ *   то категория рисуется "таблично" (`renderDrinkCategory`)
+ * - иначе категория рисуется сеткой карточек (`renderDishCategory`)
+ *
+ * ### Особый случай: коктейли + проверка возраста
+ * - категория считается коктейльной, если её название содержит ключевые слова:
+ *   `['коктейл', 'коктейли', 'cocktail', 'cocktails']` (case-insensitive)
+ * - если пользователь НЕ подтвердил возраст:
+ *   - изображение коктейля блюрится
+ *   - клик по коктейлю НЕ ведёт на детальную страницу, вместо этого открывается `AgeVerificationPopup`
+ * - подтверждение возраста сохраняется в `sessionStorage` под ключом `ageVerified=true`
+ *   и применяется при навигации в пределах сессии вкладки (сброс при перезагрузке)
+ *
+ * ### Навигация
+ * - "назад" ведёт на `/restaurant/${id}`
+ * - клик по блюду ведёт на `/restaurant/${id}/menu/dish/${dish.id}` и передаёт подготовленные данные блюда через `location.state`
+ *
+ * ### Подготовка данных блюда для детальной страницы
+ * - берётся дефолтный размер `getDefaultSize(dish.item_sizes)`
+ * - цена вычисляется через `extractPrice(defaultSize?.prices)`
+ * - КБЖУ мапится из `nutrition_per_hundred` (с поддержкой альтернативных ключей: energy/protein/fat/carbs)
+ * - allergens нормализуются в string[]
+ * - weights = список `portion_weight_grams` для НЕ скрытых размеров
+ * - для коктейлей:
+ *   - `photo_url` подставляется из `firstDishImage` (первое блюдо с реальной картинкой в меню)
+ *
+ * ### Важные ограничения (для тестов)
+ * - состояние возраста инициализируется из `sessionStorage` в `useState(() => ...)`
+ * - внутри компонента есть `window.addEventListener('scroll', ...)` (нужно аккуратно мокать в тестах)
+ */
 export const RestaurantMenuPage: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -29,9 +128,7 @@ export const RestaurantMenuPage: React.FC = () => {
     const [isAgeVerificationOpen, setIsAgeVerificationOpen] = useState<boolean>(false);
     const [, setSelectedCocktailItem] = useState<IAPIMenuItem | null>(null);
     // Используем sessionStorage, чтобы состояние сохранялось при навигации, но сбрасывалось при перезагрузке страницы
-    const [isAgeVerified, setIsAgeVerified] = useState<boolean>(() => {
-        return sessionStorage.getItem('ageVerified') === 'true';
-    });
+    const [isAgeVerified, setIsAgeVerified] = useState<boolean>(readAgeVerified);
     const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const tabsContainerRef = useRef<HTMLDivElement | null>(null);
     const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
@@ -162,6 +259,11 @@ export const RestaurantMenuPage: React.FC = () => {
         }
     };
 
+    /**
+     * Обрабатывает клик по блюду
+     * Подготавливает dishData и делает navigate на страницу деталей, передавая данные через `location.state`.
+     * @param {IAPIMenuItem} dish - Блюдо, по которому был клик
+     */
     const handleDishClick = (dish: IAPIMenuItem) => {
         const defaultSize = getDefaultSize(dish.item_sizes);
         const price = extractPrice(defaultSize?.prices);
@@ -231,43 +333,61 @@ export const RestaurantMenuPage: React.FC = () => {
         });
     };
 
+    /**
+     * Определяет, является ли item "напитком" для табличного отображения
+     * Напиток — это item, у которого на дефолтном размере отсутствует `button_image_url`.
+     * @param {IAPIMenuItem} item - Элемент меню для проверки
+     * @returns {boolean} true, если item является напитком
+     */
     const isDrinkItem = (item: IAPIMenuItem): boolean => {
         const defaultSize = getDefaultSize(item.item_sizes);
         return !defaultSize?.button_image_url || defaultSize.button_image_url.trim().length === 0;
     };
 
+    /**
+     * Возвращает true, если категорию нужно рисовать таблицей
+     * Категория рисуется таблицей, если:
+     * - есть хотя бы 1 видимый item
+     * - и все видимые items считаются "напитками" (isDrinkItem)
+     * @param {IAPIMenuCategory} category - Категория меню для проверки
+     * @returns {boolean} true, если категория должна отображаться как таблица
+     */
     const shouldRenderAsTable = (category: IAPIMenuCategory): boolean => {
         const visibleItems = category.menu_items.filter((item) => !item.is_hidden);
         return visibleItems.length > 0 && visibleItems.every((item) => isDrinkItem(item));
     };
 
-    // Ключевые слова для определения категорий коктейлей
-    const COCKTAIL_CATEGORY_KEYWORDS = ['коктейл', 'коктейли', 'cocktail', 'cocktails'];
-
-    // Проверка, является ли категория категорией коктейлей
+    /**
+     * Проверка, является ли категория категорией коктейлей
+     * Категория коктейлей определяется по ключевым словам в названии (case-insensitive).
+     * @param {string} categoryName - Название категории
+     * @returns {boolean} true, если категория является категорией коктейлей
+     */
     const isCocktailCategory = (categoryName: string): boolean => {
         const name = categoryName.toLowerCase().trim();
         return COCKTAIL_CATEGORY_KEYWORDS.some((keyword) => name.includes(keyword));
     };
 
-    // Получить изображение для коктейля - используем изображение первого блюда с картинкой из меню
+    /**
+     * Получить изображение для коктейля
+     * Возвращает изображение первого блюда с реальной картинкой из меню.
+     * @returns {string} URL изображения или пустая строка
+     */
     const getCocktailImage = (): string => {
-        // Используем изображение первого блюда с картинкой из меню
         return firstDishImage || '';
     };
 
+    /**
+     * Обрабатывает подтверждение возраста
+     * Обновляет стейт, записывает/удаляет sessionStorage('ageVerified'), закрывает попап.
+     * После подтверждения возраста блюр снимается, но навигация не происходит автоматически.
+     * Пользователь должен кликнуть еще раз, чтобы перейти на детальную страницу.
+     * @param {boolean} verified - Результат проверки возраста
+     */
     const handleVerifyAge = (verified: boolean) => {
         setIsAgeVerified(verified);
-        // Сохраняем в sessionStorage, чтобы состояние сохранялось при навигации
-        // но сбрасывалось при перезагрузке страницы
-        if (verified) {
-            sessionStorage.setItem('ageVerified', 'true');
-        } else {
-            sessionStorage.removeItem('ageVerified');
-        }
+        writeAgeVerified(verified);
         setIsAgeVerificationOpen(false);
-        // После подтверждения возраста блюр снимается, но навигация не происходит автоматически
-        // Пользователь должен кликнуть еще раз, чтобы перейти на детальную страницу
         setSelectedCocktailItem(null);
     };
 
@@ -313,8 +433,8 @@ export const RestaurantMenuPage: React.FC = () => {
                             imageUrl = defaultSize?.button_image_url || '';
                         }
                         
-                        // Для коктейлей всегда считаем, что изображение есть (даже если firstDishImage пустое)
-                        const hasImage = isCocktail ? (imageUrl && imageUrl.trim().length > 0) : (imageUrl && imageUrl.trim().length > 0);
+                        // Проверяем наличие изображения
+                        const hasImage = Boolean(imageUrl?.trim());
                         const portionWeight = defaultSize?.portion_weight_grams;
                         const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || '';
                         const weight = portionWeight ? `${portionWeight} ${measureUnit}` : '';
