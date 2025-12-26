@@ -12,7 +12,6 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 // Utils
 import { extractPrice, getDefaultSize } from '@/utils/menu.utils';
 import { trigramMatch } from '@/utils/trigram.utils';
-import { mapApiMenuItemToDishState } from '@/utils/menu.mapping';
 // Hooks
 import { useRestaurantMenu } from '@/hooks/useRestaurantMenu';
 // Components
@@ -21,88 +20,6 @@ import { AgeVerificationPopup } from '@/components/AgeVerificationPopup/AgeVerif
 import menuErrorIcon from '/icons/menu-error.png';
 import css from '@/pages/RestaurantMenuPage/RestaurantMenuPage.module.css';
 
-/**
- * RestaurantMenuPage
- *
- * Страница меню ресторана.
- *
- * ### Источники данных
- * - `id` берётся из URL-параметра `useParams()` и используется:
- *   - для поиска ресторана в `restaurantsListAtom`
- *   - для загрузки меню через `useRestaurantMenu(Number(id))`
- *
- * ### Основные сценарии
- * 1. **Loading**
- *    - пока `useRestaurantMenu` возвращает `loading=true`, показывается заголовок и текст "Загрузка меню..."
- *
- * 2. **Error / Empty**
- *    - если `error === true` ИЛИ `menuData` отсутствует ИЛИ нет `item_categories`,
- *      показывается пустое состояние "Не удалось загрузить меню" и кнопка `Повторить попытку` (вызывает `refetch`)
- *
- * 3. **Success**
- *    - отображаются:
- *      - поисковая строка
- *      - вкладки категорий (если нет поиска)
- *      - список категорий с блюдами
- *
- * ### Правила видимости категорий и блюд
- * - `visibleCategories` = категории, у которых:
- *   - `!cat.is_hidden`
- *   - и есть хотя бы один `menu_item` с `!item.is_hidden`
- *
- * ### Поиск
- * - поиск работает по всем `visibleCategories`
- * - фильтрация блюд по `trigramMatch(searchText, searchQuery, 0.45)`
- * - `searchText` = `${item.name} ${item.description || ''} ${item.guest_description || ''}` в lower-case
- * - если по запросу не найдено ни одного блюда, показывается состояние "По вашему запросу ничего не нашлось"
- *   и кнопка "Перейти в меню" очищает поиск
- *
- * ### Вкладки категорий и скролл-синхронизация
- * - при первой загрузке меню выбирается первая НЕ скрытая категория как `selectedCategory`
- * - при скролле (когда нет поиска) активная вкладка обновляется по положению секций на странице
- * - при выборе вкладки происходит `scrollToCategory`, скроллим к секции с offset -201px
- * - при смене активной вкладки вкладка горизонтально прокручивается в контейнере, чтобы была видима
- *
- * ### Отрисовка категорий
- * - если категория состоит только из "напитков" (у каждого item нет `button_image_url` на дефолтном размере),
- *   то категория рисуется "таблично" (`renderDrinkCategory`)
- * - иначе категория рисуется сеткой карточек (`renderDishCategory`)
- *
- * ### Особый случай: коктейли + проверка возраста
- * - категория считается коктейльной, если её название содержит ключевые слова:
- *   `['коктейл', 'коктейли', 'cocktail', 'cocktails', 'замоканные']` (case-insensitive)
- * - если пользователь НЕ подтвердил возраст:
- *   - изображение коктейля блюрится
- *   - клик по коктейлю НЕ ведёт на детальную страницу, вместо этого открывается `AgeVerificationPopup`
- * - подтверждение возраста сохраняется в `sessionStorage` под ключом `ageVerified=true`
- *   и применяется при навигации в пределах сессии вкладки (сброс при перезагрузке)
- * - попап открывается автоматически при:
- *   - скролле до категории коктейлей (если элемент виден на экране)
- *   - выборе категории коктейлей во вкладках
- * - попап НЕ показывается при возврате назад со страницы деталей блюда
- *
- * ### Навигация
- * - "назад" ведёт на `/restaurant/${id}`
- * - клик по блюду ведёт на `/restaurant/${id}/menu/dish/${dish.id}` и передаёт подготовленные данные блюда через `location.state`
- *
- * ### Сохранение позиции скролла
- * - позиция скролла сохраняется в `sessionStorage` под ключом `menuScroll_${id}` при скролле
- * - при возврате со страницы деталей блюда позиция скролла восстанавливается
- *
- * ### Подготовка данных блюда для детальной страницы
- * - берётся дефолтный размер `getDefaultSize(dish.item_sizes)`
- * - цена вычисляется через `extractPrice(defaultSize?.prices)`
- * - КБЖУ мапится из `nutrition_per_hundred` (с поддержкой альтернативных ключей: energy/protein/fat/carbs)
- * - allergens нормализуются в string[]
- * - weights = список `portion_weight_grams` для НЕ скрытых размеров
- * - для коктейлей:
- *   - `photo_url` подставляется из `firstDishImage` (первое блюдо с реальной картинкой в меню)
- *
- * ### Важные ограничения (для тестов)
- * - состояние возраста инициализируется из `sessionStorage` в `useState(() => ...)`
- * - внутри компонента есть `window.addEventListener('scroll', ...)` (нужно аккуратно мокать в тестах)
- * - используется `window.scrollTo` для навигации по категориям
- */
 export const RestaurantMenuPage: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -175,14 +92,9 @@ export const RestaurantMenuPage: React.FC = () => {
     const hasNoSearchResults = searchQuery.trim() && searchResultsCount === 0;
 
     // Ключевые слова для определения категорий коктейлей
-    const COCKTAIL_CATEGORY_KEYWORDS = ['коктейл', 'коктейли', 'cocktail', 'cocktails', 'замоканные'] as const;
+    const COCKTAIL_CATEGORY_KEYWORDS = ['коктейл', 'коктейли', 'cocktail', 'cocktails', 'замоканные'];
 
-    /**
-     * Определяет, является ли категория категорией коктейлей
-     * Категория коктейлей определяется по ключевым словам в названии (case-insensitive).
-     * @param categoryName - Название категории
-     * @returns true, если категория является категорией коктейлей
-     */
+    // Проверка, является ли категория категорией коктейлей
     const isCocktailCategory = (categoryName: string): boolean => {
         const name = categoryName.toLowerCase().trim();
         return COCKTAIL_CATEGORY_KEYWORDS.some((keyword) => name.includes(keyword));
@@ -300,27 +212,14 @@ export const RestaurantMenuPage: React.FC = () => {
         }
     }, [selectedCategory]);
 
-    /**
-     * Обрабатывает клик по кнопке "Назад"
-     * Навигирует на страницу ресторана.
-     */
     const handleBackClick = () => {
         navigate(`/restaurant/${id}`);
     };
 
-    /**
-     * Очищает поисковый запрос
-     * Используется при нажатии на кнопку "Перейти в меню" в состоянии "ничего не найдено".
-     */
     const handleClearSearch = () => {
         setSearchQuery('');
     };
 
-    /**
-     * Скроллит к указанной категории и обновляет активную вкладку
-     * При скролле к категории коктейлей, если возраст не подтвержден, открывает попап проверки возраста.
-     * @param categoryId - ID категории, к которой нужно скроллить
-     */
     const scrollToCategory = (categoryId: string) => {
         setSelectedCategory(categoryId);
         const element = categoryRefs.current[categoryId];
@@ -347,63 +246,94 @@ export const RestaurantMenuPage: React.FC = () => {
         }
     };
 
-    /**
-     * Обрабатывает клик по блюду
-     * Подготавливает данные блюда (dishData) и навигирует на страницу деталей,
-     * передавая данные через `location.state`. Сохраняет позицию скролла перед переходом.
-     * @param dish - Элемент меню, по которому был клик
-     */
     const handleDishClick = (dish: IAPIMenuItem) => {
         // Сохраняем позицию скролла перед переходом
         const scrollKey = `menuScroll_${id}`;
         sessionStorage.setItem(scrollKey, window.scrollY.toString());
+        const defaultSize = getDefaultSize(dish.item_sizes);
+        const price = extractPrice(defaultSize?.prices);
+
+        const nutrition = defaultSize?.nutrition_per_hundred;
+        const calories = nutrition?.calories || nutrition?.energy || null;
+        const proteins = nutrition?.proteins || nutrition?.protein || null;
+        const fats = nutrition?.fats || nutrition?.fat || null;
+        const carbohydrates = nutrition?.carbohydrates || nutrition?.carbs || null;
+
+        const isCocktail = isCocktailCategory(
+            menuData?.item_categories.find((cat) => cat.id === dish.category_id)?.name || ''
+        );
         
-        // Используем утилиту для маппинга данных блюда
-        const dishData = mapApiMenuItemToDishState(dish, menuData, getCocktailImage(), isCocktailCategory);
+        // Для коктейлей используем изображение первого блюда с картинкой из меню
+        const cocktailImageUrl = isCocktail ? getCocktailImage() : '';
+        const photoUrl = isCocktail && cocktailImageUrl ? cocktailImageUrl : (defaultSize?.button_image_url || '');
+
+        const dishData: IMenuItem & {
+            description?: string;
+            composition?: string;
+            calories?: number | null;
+            proteins?: number | null;
+            fats?: number | null;
+            carbohydrates?: number | null;
+            allergens?: string[];
+            weights?: string[];
+            weight_value?: string;
+            item_sizes?: IAPIMenuItem['item_sizes'];
+            isCocktail?: boolean;
+        } = {
+            id: parseInt(dish.id) || 0,
+            title: dish.name,
+            photo_url: photoUrl,
+            price: price,
+            // Используем поля из API напрямую, без fallback
+            // Если есть guest_description - используем его, иначе description (если есть)
+            description: dish.guest_description || (dish.description ? dish.description : undefined),
+            // Используем composition из API (если есть)
+            composition: dish.composition,
+            calories,
+            proteins,
+            fats,
+            carbohydrates,
+            allergens: dish.allergens
+                ?.map((a) => {
+                    if (typeof a === 'string') return a;
+                    if (a && typeof a === 'object') {
+                        return (
+                            a.name ||
+                            a.title ||
+                            a.value ||
+                            Object.values(a).find((v) => typeof v === 'string' && v.length > 0 && !/^[A-Z]\d+$/.test(v))
+                        );
+                    }
+                    return null;
+                })
+                .filter(Boolean) as string[],
+            weights: dish.item_sizes.filter((s) => !s.is_hidden).map((s) => s.portion_weight_grams.toString()),
+            weight_value: dish.measure_unit || defaultSize?.measure_unit_type || '',
+            item_sizes: dish.item_sizes.filter((s) => !s.is_hidden),
+            isCocktail: isCocktail,
+        };
 
         navigate(`/restaurant/${id}/menu/dish/${dish.id}`, {
             state: { dish: dishData, fromMenu: true },
         });
     };
 
-    /**
-     * Определяет, является ли item "напитком" для табличного отображения
-     * Напиток — это item, у которого на дефолтном размере отсутствует `button_image_url`.
-     * @param item - Элемент меню для проверки
-     * @returns true, если элемент является напитком (без изображения)
-     */
     const isDrinkItem = (item: IAPIMenuItem): boolean => {
         const defaultSize = getDefaultSize(item.item_sizes);
         return !defaultSize?.button_image_url || defaultSize.button_image_url.trim().length === 0;
     };
 
-    /**
-     * Возвращает true, если категорию нужно рисовать таблицей
-     * Категория отображается таблицей, если все видимые items являются "напитками" (isDrinkItem).
-     * @param category - Категория меню для проверки
-     * @returns true, если категорию нужно отображать в табличном формате
-     */
     const shouldRenderAsTable = (category: IAPIMenuCategory): boolean => {
         const visibleItems = category.menu_items.filter((item) => !item.is_hidden);
         return visibleItems.length > 0 && visibleItems.every((item) => isDrinkItem(item));
     };
 
-    /**
-     * Получить изображение для коктейля
-     * Возвращает изображение первого блюда с реальной картинкой из меню.
-     * @returns URL изображения или пустая строка
-     */
+    // Получить изображение для коктейля - используем изображение первого блюда с картинкой из меню
     const getCocktailImage = (): string => {
+        // Используем изображение первого блюда с картинкой из меню
         return firstDishImage || '';
     };
 
-    /**
-     * Обрабатывает подтверждение возраста
-     * Обновляет стейт, записывает/удаляет sessionStorage('ageVerified'), закрывает попап.
-     * После подтверждения возраста блюр снимается, но навигация не происходит автоматически.
-     * Пользователь должен кликнуть еще раз, чтобы перейти на детальную страницу.
-     * @param verified - Результат проверки возраста (true - подтвержден, false - отклонен)
-     */
     const handleVerifyAge = (verified: boolean) => {
         setIsAgeVerified(verified);
         // Сохраняем в sessionStorage, чтобы состояние сохранялось при навигации
@@ -419,12 +349,6 @@ export const RestaurantMenuPage: React.FC = () => {
         setSelectedCocktailItem(null);
     };
 
-    /**
-     * Обрабатывает клик по коктейлю
-     * Если возраст не подтвержден, открывает попап проверки возраста.
-     * Если возраст подтвержден, навигирует на детальную страницу.
-     * @param item - Элемент меню (коктейль), по которому был клик
-     */
     const handleCocktailClick = (item: IAPIMenuItem) => {
         if (!isAgeVerified) {
             setSelectedCocktailItem(item);
@@ -434,13 +358,6 @@ export const RestaurantMenuPage: React.FC = () => {
         }
     };
 
-    /**
-     * Рендерит категорию с блюдами в формате карточек
-     * Отображает блюда в сетке 2 колонки с изображениями, названиями, весом и ценой.
-     * Применяет блюр к изображениям коктейлей, если возраст не подтвержден.
-     * @param category - Категория меню для отображения
-     * @returns JSX элемент категории или null, если нет видимых блюд
-     */
     const renderDishCategory = (category: IAPIMenuCategory) => {
         let visibleItems = category.menu_items.filter((item) => !item.is_hidden);
 
@@ -515,12 +432,6 @@ export const RestaurantMenuPage: React.FC = () => {
         );
     };
 
-    /**
-     * Рендерит категорию с напитками в табличном формате
-     * Отображает напитки в виде списка без изображений: объем, название, цена.
-     * @param category - Категория меню для отображения
-     * @returns JSX элемент категории или null, если нет видимых напитков
-     */
     const renderDrinkCategory = (category: IAPIMenuCategory) => {
         let visibleItems = category.menu_items.filter((item) => !item.is_hidden);
 
