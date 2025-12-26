@@ -21,6 +21,7 @@ import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx'
 import { useGastronomyCart } from '@/hooks/useGastronomyCart';
 import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
 import { R } from '@/__mocks__/restaurant.mock';
+import { useDataLoader } from '@/hooks/useDataLoader';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
@@ -38,6 +39,12 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
     const [isDisabledButton, setDisabledButton] = useState(true);
     const { clearCart } = useGastronomyCart();
+    const { loadGastronomyDishes } = useDataLoader();
+
+    // Ленивая загрузка блюд гастрономии при первом посещении страницы
+    useEffect(() => {
+        loadGastronomyDishes();
+    }, [loadGastronomyDishes]);
 
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))

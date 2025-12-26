@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
-// APIs
-import { DEV_MODE } from '@/api/base.ts';
 // Atoms
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
 import { userAtom } from '@/atoms/userAtom.ts';
@@ -49,7 +47,7 @@ export const ProfilePage: React.FC = () => {
                             <KitchenIcon size={24} color={'black'} />
                             <span className={css.navLinkTitle}>Мои заказы</span>
                         </Link>
-                        {DEV_MODE && user?.permissions.includes('hospitality_heroes') && (
+                        {user?.permissions.includes('hospitality_heroes') && (
                             <Link to={'/privilege'} className={css.navLink}>
                                 <StarPrivilegeIcon size={24} color={'black'} />
                                 <span className={css.navLinkTitle}>Привилегии</span>

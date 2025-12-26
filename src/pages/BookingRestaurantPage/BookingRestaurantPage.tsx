@@ -131,6 +131,8 @@ export const BookingRestaurantPage: React.FC = () => {
             const { bookedDate, bookedTime } = state;
             setDate(bookedDate);
             setCurrentSelectedTime(bookedTime);
+            setGuestCount(1);
+            setChildrenCount(0);
         }
     }, [state]);
 
