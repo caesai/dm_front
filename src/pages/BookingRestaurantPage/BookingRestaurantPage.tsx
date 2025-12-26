@@ -118,9 +118,7 @@ export const BookingRestaurantPage: React.FC = () => {
         setTimeslotsLoading(true);
         setTimeslotsError(false);
         APIGetAvailableTimeSlots(auth.access_token, Number(id), date.value, guestCount)
-            .then((res) => {
-                setAvailableTimeslots(res.data)
-            })
+            .then((res) => setAvailableTimeslots(res.data))
             .catch((err) => {
                 console.error('err: ', err);
                 setTimeslotsError(true);
