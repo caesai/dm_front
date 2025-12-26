@@ -14,6 +14,7 @@ import { TicketIcon } from '@/components/Icons/TicketIcon.tsx';
 import { weekdaysMap } from '@/utils.ts';
 // Styles
 import css from '@/components/BookingReminder/BookingReminder.module.css';
+import { StarPrivilegeIcon } from '../Icons/StarPrivilege';
 
 /**
  * Пропсы компонента BookingReminder.
@@ -112,6 +113,12 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }) =
                                 <>
                                     <ChildrenIcon size={16} />
                                     <span className={css.subText}>{booking.children_count}</span>
+                                </>
+                            )}
+                            {booking.features.includes('hospitality_heroes') && (
+                                <>
+                                    <StarPrivilegeIcon size={16} />
+                                    <span className={css.subText}>Скидка 40%</span>
                                 </>
                             )}
                         </div>
