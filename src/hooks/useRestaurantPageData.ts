@@ -33,6 +33,7 @@ interface UseRestaurantPageDataReturn {
     // Таймслоты
     availableTimeslots: ITimeSlot[];
     timeslotLoading: boolean;
+    timeslotsError: boolean;
     currentSelectedTime: ITimeSlot | null;
     setCurrentSelectedTime: (time: ITimeSlot | null) => void;
     // Общее состояние загрузки
@@ -67,6 +68,7 @@ export const useRestaurantPageData = ({
     const [datesLoading, setDatesLoading] = useState(true);
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
     const [timeslotLoading, setTimeslotLoading] = useState(true);
+    const [timeslotsError, setTimeslotsError] = useState(false);
 
     // Refs для отслеживания состояния
     const initializedRestaurantRef = useRef<number | null>(null);
@@ -218,6 +220,7 @@ export const useRestaurantPageData = ({
         currentRequestRef.current.timeslots = controller;
 
         setTimeslotLoading(true);
+        setTimeslotsError(false);
 
         try {
             const res = await APIGetAvailableTimeSlots(
@@ -234,6 +237,7 @@ export const useRestaurantPageData = ({
             if (!controller.signal.aborted) {
                 console.error('[useRestaurantPageData] Timeslots error:', err);
                 setAvailableTimeslots([]);
+                setTimeslotsError(true);
                 onError?.('Ошибка при загрузке доступного времени');
             }
         } finally {
@@ -272,6 +276,7 @@ export const useRestaurantPageData = ({
         datesLoading,
         availableTimeslots,
         timeslotLoading,
+        timeslotsError,
         currentSelectedTime,
         setCurrentSelectedTime: setCurrentSelectedTimeAtom,
         isInitialLoading,

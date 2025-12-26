@@ -68,6 +68,7 @@ export const RestaurantPage: React.FC = () => {
         setBookingDate,
         availableTimeslots,
         timeslotLoading,
+        timeslotsError,
         currentSelectedTime,
         setCurrentSelectedTime,
         isInitialLoading,
@@ -235,6 +236,7 @@ export const RestaurantPage: React.FC = () => {
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
                     isMenu={Boolean(restaurant?.menu.length)}
+                    timeslotsError={timeslotsError}
                 />
 
                 {/* Галерея */}
