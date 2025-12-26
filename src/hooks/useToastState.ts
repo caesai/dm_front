@@ -1,4 +1,5 @@
 // hooks/useToast.ts
+import { useCallback } from 'react';
 import { useSetAtom } from 'jotai';
 import { showToastAtom, TToast } from '@/atoms/toastAtom.ts';
 
@@ -15,11 +16,11 @@ const useToast = () => {
      * @param {string} message Сообщение для отображения.
      * @param type TToast Тип уведомления (success, error, warning, info).
      */
-    const show = (message: string, type?: TToast) => {
+    const showToast = useCallback((message: string, type?: TToast) => {
         setShowToast({ message, type });
-    };
+    }, [setShowToast]);
 
-    return { showToast: show };
+    return { showToast };
 };
 
 export default useToast;
