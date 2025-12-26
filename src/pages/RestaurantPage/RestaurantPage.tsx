@@ -130,7 +130,7 @@ export const RestaurantPage: React.FC = () => {
         setCurrentSelectedTime(null);
         // Сбрасываем дату только при смене ресторана
         if (initializedRestaurantIdRef.current !== restaurantId) {
-            setBookingDate({ value: 'unset', title: 'unset' });
+        setBookingDate({ value: 'unset', title: 'unset' });
             initializedRestaurantIdRef.current = null; // Сбрасываем флаг инициализации
         }
         APIGetEventsInRestaurant(restaurantId, String(auth?.access_token))
@@ -150,21 +150,21 @@ export const RestaurantPage: React.FC = () => {
         APIGetAvailableDays(auth.access_token, restaurantId, 1)
             .then((res) => {
                 let formattedDates = res.data.map((date) => ({
-                    title: formatDate(date),
-                    value: date,
-                }));
+                title: formatDate(date),
+                value: date,
+            }));
                 
-                setBookingDates(formattedDates);
+            setBookingDates(formattedDates);
 
                 // Устанавливаем первую дату только если она еще не была установлена для этого ресторана
                 if (formattedDates.length > 0 && initializedRestaurantIdRef.current !== restaurantId) {
-                    setBookingDate(formattedDates[0]);
+                setBookingDate(formattedDates[0]);
                     initializedRestaurantIdRef.current = restaurantId;
-                }
+            }
             })
             .catch((err) => {
                 console.error(err);
-            });
+        });
     }, [auth?.access_token, id, setBookingDate]);
 
     // Загрузка доступных таймслотов для выбранной даты
@@ -199,15 +199,15 @@ export const RestaurantPage: React.FC = () => {
                 phone={restaurant?.phone_number || ''}
             />
 
-            <NavigationBlock
-                restaurant_id={Number(id)}
-                title={restaurant?.title}
-                isBanquets={Boolean(hasBanquets)}
-                isLoading={events == null && restaurant?.banquets == null}
-                isGastronomy={hasGastronomy}
-                isEvents={hasEvents}
+                <NavigationBlock
+                    restaurant_id={Number(id)}
+                    title={restaurant?.title}
+                    isBanquets={Boolean(hasBanquets)}
+                    isLoading={events == null && restaurant?.banquets == null}
+                    isGastronomy={hasGastronomy}
+                    isEvents={hasEvents}
                 isMenu={Boolean(restaurant?.menu.length)}
-            />
+                />
 
             <div className={css.floatingFooter}>
                 <BottomButtonWrapper
