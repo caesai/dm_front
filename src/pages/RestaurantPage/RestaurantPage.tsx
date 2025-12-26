@@ -175,9 +175,7 @@ export const RestaurantPage: React.FC = () => {
         setTimeslotLoading(true);
         setTimeslotsError(false);
         APIGetAvailableTimeSlots(auth.access_token, Number(id), bookingDate.value, 1)
-            .then((res) => {
-                setAvailableTimeslots(res.data)
-            })
+            .then((res) => setAvailableTimeslots(res.data))
             .catch((err) => {
                 console.error(err);
                 setAvailableTimeslots([]);
