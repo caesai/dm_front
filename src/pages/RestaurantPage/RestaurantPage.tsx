@@ -59,6 +59,7 @@ export const RestaurantPage: React.FC = () => {
     const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
     const [timeslotLoading, setTimeslotLoading] = useState(true);
+    const [timeslotsError, setTimeslotsError] = useState(false);
     const [isCallPopupOpen, setIsCallPopupOpen] = useState(false);
     const [events, setEvents] = useState<IEvent[] | null>(null);
     const [nyCookings] = useState(NewYearCookingData);
@@ -172,11 +173,15 @@ export const RestaurantPage: React.FC = () => {
         if (!auth?.access_token || bookingDate.value === 'unset') return;
 
         setTimeslotLoading(true);
+        setTimeslotsError(false);
         APIGetAvailableTimeSlots(auth.access_token, Number(id), bookingDate.value, 1)
-            .then((res) => setAvailableTimeslots(res.data))
+            .then((res) => {
+                setAvailableTimeslots(res.data)
+            })
             .catch((err) => {
                 console.error(err);
                 setAvailableTimeslots([]);
+                setTimeslotsError(true);
                 showToast('Ошибка при загрузке доступных таймслотов. Попробуйте позже');
             })
             .finally(() => setTimeslotLoading(false));
@@ -274,6 +279,7 @@ export const RestaurantPage: React.FC = () => {
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
                     isMenu={Boolean(restaurant?.menu.length)}
+                    timeslotsError={timeslotsError}
                 />
 
                 <GalleryBlock restaurant_gallery={restaurant?.gallery} />

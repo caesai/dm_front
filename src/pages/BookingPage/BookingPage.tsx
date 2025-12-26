@@ -100,7 +100,7 @@ export const BookingPage: React.FC = () => {
     const [requestLoading, setRequestLoading] = useState(false);
     const [errorPopup, setErrorPopup] = useState(false);
     const [botError, setBotError] = useState(false);
-    const [timeslotsError, setTimeslotsError] = useState(true);
+    const [timeslotsError, setTimeslotsError] = useState(false);
     const [errorPopupCount, setErrorPopupCount] = useState(0);
     const [preOrder, setPreOrder] = useState(false);
     const [certificate_id, setCertificateId] = useState<string | null>(null);
@@ -185,10 +185,10 @@ export const BookingPage: React.FC = () => {
     useEffect(() => {
         if (restaurant.value === 'unset' || !auth?.access_token || date.value === 'unset' || !guestCount) return;
         setTimeslotsLoading(true);
+        setTimeslotsError(false);
         APIGetAvailableTimeSlots(auth.access_token, parseInt(String(restaurant.value)), date.value, guestCount)
             .then((res) => {
                 setAvailableTimeslots(res.data);
-                setTimeslotsError(false);
             })
             .catch((err) => {
                 console.error('err: ', err);
@@ -317,7 +317,7 @@ export const BookingPage: React.FC = () => {
                         />
                     ) : (
                         <p className={css.timeslotsError}>
-                            Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату
+                            Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.
                         </p>
                     )}
                     <CertificatesSelector

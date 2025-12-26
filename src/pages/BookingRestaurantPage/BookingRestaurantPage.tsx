@@ -92,6 +92,7 @@ export const BookingRestaurantPage: React.FC = () => {
     const [requestLoading, setRequestLoading] = useState(false);
     const [errorPopup, setErrorPopup] = useState(false);
     const [botError, setBotError] = useState(false);
+    const [timeslotsError, setTimeslotsError] = useState(false);
     const [errorPopupCount, setErrorPopupCount] = useState(0);
     const [preOrder, setPreOrder] = useState(false);
     const [certificate_id, setCertificateId] = useState<string | null>(null);
@@ -115,8 +116,15 @@ export const BookingRestaurantPage: React.FC = () => {
             return;
         }
         setTimeslotsLoading(true);
+        setTimeslotsError(false);
         APIGetAvailableTimeSlots(auth.access_token, Number(id), date.value, guestCount)
-            .then((res) => setAvailableTimeslots(res.data))
+            .then((res) => {
+                setAvailableTimeslots(res.data)
+            })
+            .catch((err) => {
+                console.error('err: ', err);
+                setTimeslotsError(true);
+            })
             .finally(() => setTimeslotsLoading(false));
     }, [date, guestCount, restaurant]);
 
@@ -278,7 +286,7 @@ export const BookingRestaurantPage: React.FC = () => {
                                 <span className={css.noTimeSlotsText}>Выберите дату и количество гостей</span>
                             </div>
                         </ContentContainer>
-                    ) : (
+                    ) : !timeslotsError ? (
                         <TimeSlots
                             restaurantId={Number(id)}
                             loading={timeslotsLoading}
@@ -286,6 +294,10 @@ export const BookingRestaurantPage: React.FC = () => {
                             currentSelectedTime={currentSelectedTime}
                             setCurrentSelectedTime={setCurrentSelectedTime}
                         />
+                    ) : (
+                        <p className={css.timeslotsError}>
+                            Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.
+                        </p>
                     )}
                     <CertificatesSelector
                         setCertificateId={setCertificateId}
