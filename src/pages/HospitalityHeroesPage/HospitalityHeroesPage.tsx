@@ -1,8 +1,6 @@
 import React from 'react';
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
-// APIs
-import { DEV_MODE } from '@/api/base.ts';
 // Atoms
 import { userAtom } from '@/atoms/userAtom.ts';
 // Components
@@ -36,10 +34,7 @@ export const HospitalityHeroesPage: React.FC = () => {
             goBack();
         }
     };
-    // TODO: Убрать этот блок когда будет готов к релизу
-    if (!DEV_MODE) {
-        return <Navigate to="/" replace />;
-    }
+
     return (
         <Page>
             <div className={css.page}>
