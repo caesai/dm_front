@@ -187,7 +187,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
                         </Swiper>
                     </div>
                     {timeslotsError && (
-                        <p className={css.timeslotsError}>Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.</p>
+                        <p className={css.timeslotsError} role="alert" data-testid="timeslots-error">Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.</p>
                     )}
                 </div>
             </ContentBlock>

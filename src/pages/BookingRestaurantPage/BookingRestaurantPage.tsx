@@ -295,7 +295,7 @@ export const BookingRestaurantPage: React.FC = () => {
                             setCurrentSelectedTime={setCurrentSelectedTime}
                         />
                     ) : (
-                        <p className={css.timeslotsError}>
+                        <p className={css.timeslotsError} role="alert" data-testid="timeslots-error">
                             Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.
                         </p>
                     )}
