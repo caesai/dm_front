@@ -37,6 +37,7 @@ import css from '@/pages/BookingInfoPage/BookingInfoPage.module.css';
 // Mocks
 import { R } from '@/__mocks__/restaurant.mock.ts';
 import { BOOKINGCOMMENTMOCK } from '@/mockData.ts';
+import { StarPrivilegeIcon } from '@/components/Icons/StarPrivilege';
 
 export const BookingInfoPage: React.FC = () => {
     const { id } = useParams();
@@ -201,6 +202,14 @@ export const BookingInfoPage: React.FC = () => {
                                                     <ChildrenIcon size={16} />
                                                     <span className={css.bookingInfoDetails_item__text}>
                                                         {Number(booking.children_count)}
+                                                    </span>
+                                                </>
+                                            )}
+                                            {booking.features.includes('hospitality_heroes') && (
+                                                <>
+                                                    <StarPrivilegeIcon size={16} />
+                                                    <span className={css.bookingInfoDetails_item__text}>
+                                                        Скидка 40%
                                                     </span>
                                                 </>
                                             )}
