@@ -13,7 +13,7 @@ export interface IUser {
     permissions: TUserPermission[];
 }
 
-type TUserPermission = 'tester' | 'hospitality_heroes';
+type TUserPermission = 'tester' | 'menu_tester' | 'hospitality_heroes';
 
 export interface IUserUpdate {
     first_name?: string;
@@ -25,10 +25,12 @@ export interface IUserUpdate {
 }
 
 export interface IUserPreferences {
-    preferences: [{
-        category: 'mood' | 'menu' | 'events',
-        choices: string[]
-    }]
+    preferences: [
+        {
+            category: 'mood' | 'menu' | 'events';
+            choices: string[];
+        },
+    ];
 }
 
 export interface IAuthInfo {

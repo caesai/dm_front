@@ -1,23 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom';
 import { swipeBehavior, useLaunchParams } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { useAtom } from 'jotai';
 import { ScrollToTop } from '@/navigation/utills.tsx';
 // API's
-import { APIGetRestaurantsList } from '@/api/restaurants.api.ts';
-import { APIGetCityList } from '@/api/city.api.ts';
-import { APIGetCertificates } from '@/api/certificates.api.ts';
-import { APIGetGastronomyDishesList } from '@/api/gastronomy.api.ts';
-import { APIGetEventsList } from '@/api/events.api.ts';
 import { DEV_MODE } from '@/api/base.ts';
 // Atoms
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { cityListAtom } from '@/atoms/cityListAtom.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
-import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
-import { eventsListAtom } from '@/atoms/eventListAtom.ts';
+// Hooks
+import { useDataLoader } from '@/hooks/useDataLoader.ts';
 // Components
 import { AppLoadingScreen } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import { EnvUnsupported } from '@/components/EnvUnsupported.tsx';
@@ -84,72 +76,44 @@ import { HospitalityHeroesApplicationFormPage } from '@/pages/HospitalityHeroesP
 import { PrivilegePage } from '@/pages/PrivilegePage/PrivilegePage.tsx';
 
 const AppRouter: React.FC = () => {
-    const [user] = useAtom(userAtom);
     const [auth] = useAtom(authAtom);
-    const [, setCitiesList] = useAtom(cityListAtom);
-    const [, setRestaurantsList] = useAtom(restaurantsListAtom);
-    const [, setCertificatesList] = useAtom(certificatesListAtom);
-    const [, setAllGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
-    const [, setEventsList] = useAtom(eventsListAtom);
-
-    const [loadingComplete, setLoadingComplete] = useState<boolean>();
+    const [loadingComplete, setLoadingComplete] = useState<boolean>(false);
+    
+    const { loadCriticalData, loadBackgroundData } = useDataLoader();
 
     /**
-     * Загружает начальные данные приложения.
+     * Загружает начальные данные приложения с приоритизацией.
      *
-     * Выполняет параллельную загрузку следующих данных:
-     * - Список городов
-     * - Список ресторанов
-     * - Список блюд для гастрономии
-     * - Список сертификатов пользователя
-     * - Список мероприятий
+     * Стратегия загрузки:
+     * 1. Критичные данные (города, рестораны) — загружаются первыми
+     *    - Используется кэширование: если есть кэш, сразу показываем UI
+     *    - В фоне обновляем данные из API
+     * 2. Фоновые данные (события) — загружаются после критичных
+     * 3. Ленивые данные (сертификаты, гастрономия) — загружаются на соответствующих страницах
      *
-     * После успешной загрузки сохраняет данные в соответствующие атомы Jotai.
-     * Экран загрузки скрывается сразу после выполнения первого запроса,
-     * остальные данные подгружаются в фоновом режиме.
-     * Функция выполняется только один раз при наличии токена авторизации.
-     *
-     * Все 5 запросов запускаются параллельно
-     * Как только любой из них завершается (успешно или с ошибкой) — экран загрузки скрывается
-     * Данные из каждого запроса сохраняются в атомы по мере их поступления
-     *
-     * @returns {Promise<void>} Промис, который разрешается после завершения загрузки данных
-     * @throws Логирует ошибку в консоль при неудачной загрузке
+     * Это обеспечивает:
+     * - Мгновенное отображение UI при наличии кэша
+     * - Минимальное время до интерактивности
+     * - Снижение нагрузки на сеть и сервер
      */
-    const loadApplicationData = useCallback(async () => {
-        if (!loadingComplete && auth?.access_token) {
-            const completeLoading = () => setLoadingComplete(true);
-
-            APIGetCityList()
-                .then((cities) => setCitiesList(cities.data))
-                .catch(console.error)
-                .finally(completeLoading);
-
-            APIGetRestaurantsList(auth.access_token)
-                .then((restaurants) => setRestaurantsList(restaurants.data))
-                .catch(console.error)
-                .finally(completeLoading);
-
-            APIGetGastronomyDishesList(auth.access_token)
-                .then((dishes) => setAllGastronomyDishesList(dishes.data))
-                .catch(console.error)
-                .finally(completeLoading);
-
-            APIGetCertificates(auth.access_token, Number(user?.id))
-                .then((certificates) => setCertificatesList(certificates.data))
-                .catch(console.error)
-                .finally(completeLoading);
-
-            APIGetEventsList(auth.access_token)
-                .then((events) => setEventsList(events.data))
-                .catch(console.error)
-                .finally(completeLoading);
-        }
-    }, [loadingComplete, auth?.access_token, user?.id]);
-
     useEffect(() => {
-        loadApplicationData();
-    }, [loadApplicationData]);
+        if (!auth?.access_token || loadingComplete) {
+            return;
+        }
+
+        const loadData = async () => {
+            // Загружаем критичные данные (с кэшированием)
+            await loadCriticalData();
+            
+            // Скрываем экран загрузки
+            setLoadingComplete(true);
+            
+            // Загружаем фоновые данные
+            loadBackgroundData();
+        };
+
+        loadData();
+    }, [auth?.access_token, loadingComplete, loadCriticalData, loadBackgroundData]);
 
     return (
         <BrowserRouter basename={!DEV_MODE ? undefined : '/dm_front/'}>
