@@ -141,7 +141,7 @@ export const TicketInfoPage: React.FC = () => {
                                     backgroundImage: `url(${ticket?.event_img !== '' ? ticket?.event_img : ticket.restaurant.thumbnail_photo})`,
                                 }}
                             />
-                            ) : (
+                        ) : (
                             <PlaceholderBlock
                                 width={'100%'}
                                 aspectRatio={'3/2'}
@@ -364,8 +364,11 @@ export const TicketInfoPage: React.FC = () => {
                                             height={'19px'}
                                         />
                                     )}
-                                </span>
+                            </span>
                         </div>
+                    </div>
+                    <div className={css.ticket_details_row}>
+                        <span className={css.cancelText}>Если вы захотите сдать билет менее чем за 3 дня до мероприятия, мы вернем 50% его стоимости.</span>
                     </div>
                     {/*<div*/}
                     {/*    style={{*/}
