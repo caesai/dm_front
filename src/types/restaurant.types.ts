@@ -120,8 +120,10 @@ export interface IBookingInfo {
     duration: number;
     certificate_value: number;
     certificate_expired_at: string;
+    features: TBookingFeature[];
 }
 
+type TBookingFeature = 'hospitality_heroes';
 export interface ICurrentBookings {
     currentBookings: IBookingInfo[];
 }
