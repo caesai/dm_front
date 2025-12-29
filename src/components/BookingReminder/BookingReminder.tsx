@@ -74,7 +74,6 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }) =
             </div>
         );
     }
-    console.log(bookings);
     return bookings
         .filter((book) => {
             return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime();
