@@ -114,7 +114,7 @@ export const RestaurantDishDetailsPage: React.FC = () => {
         return (
             <div className={css.errorContainer}>
                 <p>Блюдо не найдено</p>
-                <button onClick={() => navigate(-1)}>Назад</button>
+                <button onClick={() => navigate(`/restaurant/${id}/menu`, { state: { fromDishDetails: true } })}>Назад</button>
             </div>
         );
     }
@@ -126,7 +126,10 @@ export const RestaurantDishDetailsPage: React.FC = () => {
     };
 
     const handleGoBack = () => {
-        navigate(-1);
+        // Передаем информацию о том, что возвращаемся со страницы деталей
+        navigate(`/restaurant/${id}/menu`, {
+            state: { fromDishDetails: true },
+        });
     };
 
     return (

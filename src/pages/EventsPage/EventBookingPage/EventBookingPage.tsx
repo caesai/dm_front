@@ -148,13 +148,21 @@ export const EventBookingPage: React.FC = () => {
                         </div>
                     </div>
                     <div className={css.hr} />
-                    <div className={classNames(css.goodsItems_item, css.aic)}>
-                        <span className={css.goodsItems_item__total}>Количество билетов</span>
-                        <span className={css.goodsItems_item__price}>{guestCount}</span>
-                    </div>
-                    <div className={classNames(css.goodsItems_item, css.aic)}>
-                        <span className={css.goodsItems_item__total}>Предоплата</span>
-                        <span className={css.goodsItems_item__price}>{calculateTotal + ' ₽'}</span>
+                    <div className={css.goodsItems_container}>
+                        <div className={classNames(css.goodsItems_item, css.aic)}>
+                            <span className={css.goodsItems_item__total}>Количество билетов</span>
+                            <span className={css.goodsItems_item__price}>{guestCount}</span>
+                        </div>
+                        <div className={classNames(css.goodsItems_item, css.aic)}>
+                            <span className={css.goodsItems_item__total}>Предоплата</span>
+                            <span className={css.goodsItems_item__price}>{calculateTotal + ' ₽'}</span>
+                        </div>
+                        <div className={classNames(css.goodsItems_item, css.aic)}>
+                            <span className={css.goodsItems_item__cancelText}>
+                                Если вы захотите сдать билет менее чем за 3 дня до<br />
+                                мероприятия, мы вернем 50% его стоимости.
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

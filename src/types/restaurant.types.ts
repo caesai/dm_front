@@ -124,7 +124,6 @@ export interface IBookingInfo {
 }
 
 type TBookingFeature = 'hospitality_heroes';
-
 export interface ICurrentBookings {
     currentBookings: IBookingInfo[];
 }

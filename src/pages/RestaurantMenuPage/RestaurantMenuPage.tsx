@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 // Types
 import { IMenuCategory as IAPIMenuCategory, IMenuItem as IAPIMenuItem } from '@/types/menu.types.ts';
@@ -20,115 +20,21 @@ import { AgeVerificationPopup } from '@/components/AgeVerificationPopup/AgeVerif
 import menuErrorIcon from '/icons/menu-error.png';
 import css from '@/pages/RestaurantMenuPage/RestaurantMenuPage.module.css';
 
-// Константы для проверки возраста
-const AGE_VERIFIED_STORAGE_KEY = 'ageVerified';
-
-/**
- * Читает состояние проверки возраста из sessionStorage
- * @returns {boolean} true, если возраст был подтвержден
- */
-const readAgeVerified = (): boolean => {
-    return sessionStorage.getItem(AGE_VERIFIED_STORAGE_KEY) === 'true';
-};
-
-/**
- * Записывает состояние проверки возраста в sessionStorage
- * @param {boolean} verified - состояние проверки возраста
- */
-const writeAgeVerified = (verified: boolean): void => {
-    if (verified) {
-        sessionStorage.setItem(AGE_VERIFIED_STORAGE_KEY, 'true');
-    } else {
-        sessionStorage.removeItem(AGE_VERIFIED_STORAGE_KEY);
-    }
-};
-
-// Ключевые слова для определения категорий коктейлей
-const COCKTAIL_CATEGORY_KEYWORDS = ['коктейл', 'коктейли', 'cocktail', 'cocktails'] as const;
-
-/**
- * RestaurantMenuPage
- *
- * Страница меню ресторана.
- *
- * ### Источники данных
- * - `id` берётся из URL-параметра `useParams()` и используется:
- *   - для поиска ресторана в `restaurantsListAtom`
- *   - для загрузки меню через `useRestaurantMenu(Number(id))`
- *
- * ### Основные сценарии
- * 1. **Loading**
- *    - пока `useRestaurantMenu` возвращает `loading=true`, показывается заголовок и текст "Загрузка меню..."
- *
- * 2. **Error / Empty**
- *    - если `error === true` ИЛИ `menuData` отсутствует ИЛИ нет `item_categories`,
- *      показывается пустое состояние "Не удалось загрузить меню" и кнопка `Повторить попытку` (вызывает `refetch`)
- *
- * 3. **Success**
- *    - отображаются:
- *      - поисковая строка
- *      - вкладки категорий (если нет поиска)
- *      - список категорий с блюдами
- *
- * ### Правила видимости категорий и блюд
- * - `visibleCategories` = категории, у которых:
- *   - `!cat.is_hidden`
- *   - и есть хотя бы один `menu_item` с `!item.is_hidden`
- *
- * ### Поиск
- * - поиск работает по всем `visibleCategories`
- * - фильтрация блюд по `trigramMatch(searchText, searchQuery)`
- * - `searchText` = `${item.name} ${item.description || ''}` в lower-case
- * - если по запросу не найдено ни одного блюда, показывается состояние "По вашему запросу ничего не нашлось"
- *   и кнопка "Перейти в меню" очищает поиск
- *
- * ### Вкладки категорий и скролл-синхронизация
- * - при первой загрузке меню выбирается первая НЕ скрытая категория как `selectedCategory`
- * - при скролле (когда нет поиска) активная вкладка обновляется по положению секций на странице
- * - при выборе вкладки происходит `scrollToCategory`, скроллим к секции с offset -201px
- * - при смене активной вкладки вкладка горизонтально прокручивается в контейнере, чтобы была видима
- *
- * ### Отрисовка категорий
- * - если категория состоит только из "напитков" (у каждого item нет `button_image_url` на дефолтном размере),
- *   то категория рисуется "таблично" (`renderDrinkCategory`)
- * - иначе категория рисуется сеткой карточек (`renderDishCategory`)
- *
- * ### Особый случай: коктейли + проверка возраста
- * - категория считается коктейльной, если её название содержит ключевые слова:
- *   `['коктейл', 'коктейли', 'cocktail', 'cocktails']` (case-insensitive)
- * - если пользователь НЕ подтвердил возраст:
- *   - изображение коктейля блюрится
- *   - клик по коктейлю НЕ ведёт на детальную страницу, вместо этого открывается `AgeVerificationPopup`
- * - подтверждение возраста сохраняется в `sessionStorage` под ключом `ageVerified=true`
- *   и применяется при навигации в пределах сессии вкладки (сброс при перезагрузке)
- *
- * ### Навигация
- * - "назад" ведёт на `/restaurant/${id}`
- * - клик по блюду ведёт на `/restaurant/${id}/menu/dish/${dish.id}` и передаёт подготовленные данные блюда через `location.state`
- *
- * ### Подготовка данных блюда для детальной страницы
- * - берётся дефолтный размер `getDefaultSize(dish.item_sizes)`
- * - цена вычисляется через `extractPrice(defaultSize?.prices)`
- * - КБЖУ мапится из `nutrition_per_hundred` (с поддержкой альтернативных ключей: energy/protein/fat/carbs)
- * - allergens нормализуются в string[]
- * - weights = список `portion_weight_grams` для НЕ скрытых размеров
- * - для коктейлей:
- *   - `photo_url` подставляется из `firstDishImage` (первое блюдо с реальной картинкой в меню)
- *
- * ### Важные ограничения (для тестов)
- * - состояние возраста инициализируется из `sessionStorage` в `useState(() => ...)`
- * - внутри компонента есть `window.addEventListener('scroll', ...)` (нужно аккуратно мокать в тестах)
- */
 export const RestaurantMenuPage: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const [restaurants] = useAtom(restaurantsListAtom);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [isAgeVerificationOpen, setIsAgeVerificationOpen] = useState<boolean>(false);
     const [, setSelectedCocktailItem] = useState<IAPIMenuItem | null>(null);
     // Используем sessionStorage, чтобы состояние сохранялось при навигации, но сбрасывалось при перезагрузке страницы
-    const [isAgeVerified, setIsAgeVerified] = useState<boolean>(readAgeVerified);
+    const [isAgeVerified, setIsAgeVerified] = useState<boolean>(() => {
+        return sessionStorage.getItem('ageVerified') === 'true';
+    });
+    // Флаг для отслеживания, был ли показан попап при возврате назад
+    const hasShownPopupOnReturnRef = useRef<boolean>(false);
     const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const tabsContainerRef = useRef<HTMLDivElement | null>(null);
     const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
@@ -185,6 +91,53 @@ export const RestaurantMenuPage: React.FC = () => {
 
     const hasNoSearchResults = searchQuery.trim() && searchResultsCount === 0;
 
+    // Ключевые слова для определения категорий коктейлей
+    const COCKTAIL_CATEGORY_KEYWORDS = ['коктейл', 'коктейли', 'cocktail', 'cocktails', 'замоканные'];
+
+    // Проверка, является ли категория категорией коктейлей
+    const isCocktailCategory = (categoryName: string): boolean => {
+        const name = categoryName.toLowerCase().trim();
+        return COCKTAIL_CATEGORY_KEYWORDS.some((keyword) => name.includes(keyword));
+    };
+
+    // Восстановление позиции скролла при возврате назад
+    useEffect(() => {
+        const scrollKey = `menuScroll_${id}`;
+        const savedScroll = sessionStorage.getItem(scrollKey);
+        
+        if (savedScroll && location.state?.fromDishDetails) {
+            // Если вернулись со страницы деталей блюда, восстанавливаем скролл
+            setTimeout(() => {
+                window.scrollTo(0, parseInt(savedScroll, 10));
+            }, 100);
+            // Помечаем, что попап уже был показан (если был), чтобы не показывать снова
+            hasShownPopupOnReturnRef.current = true;
+        }
+        
+        // Сохраняем позицию скролла при скролле
+        const handleScroll = () => {
+            sessionStorage.setItem(scrollKey, window.scrollY.toString());
+        };
+        
+        // Throttle для оптимизации
+        let ticking = false;
+        const throttledScroll = () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    handleScroll();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+        
+        window.addEventListener('scroll', throttledScroll, { passive: true });
+        
+        return () => {
+            window.removeEventListener('scroll', throttledScroll);
+        };
+    }, [id, location.state]);
+
     useEffect(() => {
         if (menuData) {
             const firstVisibleCategory = menuData.item_categories?.find((cat) => !cat.is_hidden);
@@ -209,6 +162,24 @@ export const RestaurantMenuPage: React.FC = () => {
 
                     if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
                         setSelectedCategory(category.id);
+                        
+                        // Проверяем, является ли категория категорией коктейлей
+                        const isCocktail = isCocktailCategory(category.name);
+                        
+                        // Если это категория коктейлей, пользователь не подтвердил возраст,
+                        // попап еще не был показан при возврате назад, и мы долистали до этой категории
+                        if (isCocktail && !isAgeVerified && !hasShownPopupOnReturnRef.current) {
+                            // Открываем попап только если пользователь действительно долистал до категории
+                            // (элемент виден на экране)
+                            const elementRect = element.getBoundingClientRect();
+                            const isVisible = elementRect.top < window.innerHeight && elementRect.bottom > 0;
+                            
+                            if (isVisible) {
+                                setIsAgeVerificationOpen(true);
+                                hasShownPopupOnReturnRef.current = true;
+                            }
+                        }
+                        
                         break;
                     }
                 }
@@ -217,7 +188,7 @@ export const RestaurantMenuPage: React.FC = () => {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [menuData, searchQuery]);
+    }, [menuData, searchQuery, isAgeVerified]);
 
     useEffect(() => {
         if (!selectedCategory || !tabsContainerRef.current || !tabRefs.current[selectedCategory]) return;
@@ -256,15 +227,29 @@ export const RestaurantMenuPage: React.FC = () => {
             const yOffset = -201;
             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({ top: y, behavior: 'smooth' });
+            
+            // Проверяем, является ли категория категорией коктейлей
+            const category = visibleCategories.find((cat) => cat.id === categoryId);
+            if (category) {
+                const isCocktail = isCocktailCategory(category.name);
+                
+                // Если это категория коктейлей, пользователь не подтвердил возраст,
+                // и попап еще не был показан при возврате назад
+                if (isCocktail && !isAgeVerified && !hasShownPopupOnReturnRef.current) {
+                    // Небольшая задержка, чтобы скролл завершился
+                    setTimeout(() => {
+                        setIsAgeVerificationOpen(true);
+                        hasShownPopupOnReturnRef.current = true;
+                    }, 300);
+                }
+            }
         }
     };
 
-    /**
-     * Обрабатывает клик по блюду
-     * Подготавливает dishData и делает navigate на страницу деталей, передавая данные через `location.state`.
-     * @param {IAPIMenuItem} dish - Блюдо, по которому был клик
-     */
     const handleDishClick = (dish: IAPIMenuItem) => {
+        // Сохраняем позицию скролла перед переходом
+        const scrollKey = `menuScroll_${id}`;
+        sessionStorage.setItem(scrollKey, window.scrollY.toString());
         const defaultSize = getDefaultSize(dish.item_sizes);
         const price = extractPrice(defaultSize?.prices);
 
@@ -329,65 +314,38 @@ export const RestaurantMenuPage: React.FC = () => {
         };
 
         navigate(`/restaurant/${id}/menu/dish/${dish.id}`, {
-            state: { dish: dishData },
+            state: { dish: dishData, fromMenu: true },
         });
     };
 
-    /**
-     * Определяет, является ли item "напитком" для табличного отображения
-     * Напиток — это item, у которого на дефолтном размере отсутствует `button_image_url`.
-     * @param {IAPIMenuItem} item - Элемент меню для проверки
-     * @returns {boolean} true, если item является напитком
-     */
     const isDrinkItem = (item: IAPIMenuItem): boolean => {
         const defaultSize = getDefaultSize(item.item_sizes);
         return !defaultSize?.button_image_url || defaultSize.button_image_url.trim().length === 0;
     };
 
-    /**
-     * Возвращает true, если категорию нужно рисовать таблицей
-     * Категория рисуется таблицей, если:
-     * - есть хотя бы 1 видимый item
-     * - и все видимые items считаются "напитками" (isDrinkItem)
-     * @param {IAPIMenuCategory} category - Категория меню для проверки
-     * @returns {boolean} true, если категория должна отображаться как таблица
-     */
     const shouldRenderAsTable = (category: IAPIMenuCategory): boolean => {
         const visibleItems = category.menu_items.filter((item) => !item.is_hidden);
         return visibleItems.length > 0 && visibleItems.every((item) => isDrinkItem(item));
     };
 
-    /**
-     * Проверка, является ли категория категорией коктейлей
-     * Категория коктейлей определяется по ключевым словам в названии (case-insensitive).
-     * @param {string} categoryName - Название категории
-     * @returns {boolean} true, если категория является категорией коктейлей
-     */
-    const isCocktailCategory = (categoryName: string): boolean => {
-        const name = categoryName.toLowerCase().trim();
-        return COCKTAIL_CATEGORY_KEYWORDS.some((keyword) => name.includes(keyword));
-    };
-
-    /**
-     * Получить изображение для коктейля
-     * Возвращает изображение первого блюда с реальной картинкой из меню.
-     * @returns {string} URL изображения или пустая строка
-     */
+    // Получить изображение для коктейля - используем изображение первого блюда с картинкой из меню
     const getCocktailImage = (): string => {
+        // Используем изображение первого блюда с картинкой из меню
         return firstDishImage || '';
     };
 
-    /**
-     * Обрабатывает подтверждение возраста
-     * Обновляет стейт, записывает/удаляет sessionStorage('ageVerified'), закрывает попап.
-     * После подтверждения возраста блюр снимается, но навигация не происходит автоматически.
-     * Пользователь должен кликнуть еще раз, чтобы перейти на детальную страницу.
-     * @param {boolean} verified - Результат проверки возраста
-     */
     const handleVerifyAge = (verified: boolean) => {
         setIsAgeVerified(verified);
-        writeAgeVerified(verified);
+        // Сохраняем в sessionStorage, чтобы состояние сохранялось при навигации
+        // но сбрасывалось при перезагрузке страницы
+        if (verified) {
+            sessionStorage.setItem('ageVerified', 'true');
+        } else {
+            sessionStorage.removeItem('ageVerified');
+        }
         setIsAgeVerificationOpen(false);
+        // После подтверждения возраста блюр снимается, но навигация не происходит автоматически
+        // Пользователь должен кликнуть еще раз, чтобы перейти на детальную страницу
         setSelectedCocktailItem(null);
     };
 
@@ -405,8 +363,10 @@ export const RestaurantMenuPage: React.FC = () => {
 
         if (searchQuery.trim()) {
             visibleItems = visibleItems.filter((item) => {
-                const searchText = `${item.name} ${item.description || ''}`.toLowerCase();
-                return trigramMatch(searchText, searchQuery);
+                const searchText = `${item.name} ${item.description || ''} ${item.guest_description || ''}`.toLowerCase();
+                // Используем более строгий порог для более точного поиска
+                // Порог 0.45 обеспечивает лучшее качество результатов
+                return trigramMatch(searchText, searchQuery, 0.45);
             });
         }
 
@@ -433,8 +393,8 @@ export const RestaurantMenuPage: React.FC = () => {
                             imageUrl = defaultSize?.button_image_url || '';
                         }
                         
-                        // Проверяем наличие изображения
-                        const hasImage = Boolean(imageUrl?.trim());
+                        // Для коктейлей всегда считаем, что изображение есть (даже если firstDishImage пустое)
+                        const hasImage = isCocktail ? (imageUrl && imageUrl.trim().length > 0) : (imageUrl && imageUrl.trim().length > 0);
                         const portionWeight = defaultSize?.portion_weight_grams;
                         const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || '';
                         const weight = portionWeight ? `${portionWeight} ${measureUnit}` : '';
@@ -477,8 +437,10 @@ export const RestaurantMenuPage: React.FC = () => {
 
         if (searchQuery.trim()) {
             visibleItems = visibleItems.filter((item) => {
-                const searchText = `${item.name} ${item.description || ''}`.toLowerCase();
-                return trigramMatch(searchText, searchQuery);
+                const searchText = `${item.name} ${item.description || ''} ${item.guest_description || ''}`.toLowerCase();
+                // Используем более строгий порог для более точного поиска
+                // Порог 0.45 обеспечивает лучшее качество результатов
+                return trigramMatch(searchText, searchQuery, 0.45);
             });
         }
 
