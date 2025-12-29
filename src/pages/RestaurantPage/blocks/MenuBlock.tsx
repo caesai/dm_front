@@ -1,10 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
+import { useAtomValue } from 'jotai';
+import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 // Types
 import { IMenuImg } from '@/types/restaurant.types.ts';
+// Atoms
+import { userAtom } from '@/atoms/userAtom.ts';
 // Utils
 import { extractPrice, getDefaultSize } from '@/utils/menu.utils.ts';
 // Hooks
@@ -18,15 +21,13 @@ import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderC
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
-// API
-import { DEV_MODE } from '@/api/base.ts';
-
 interface MenuBlockProps {
     menu_imgs: IMenuImg[] | undefined;
     restaurant_id: number;
 }
 
 export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }) => {
+    const user = useAtomValue(userAtom);
     const navigate = useNavigate();
     const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
 
@@ -106,7 +107,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }
                 <UniversalButton
                     title="Всё меню"
                     width="full"
-                    action={DEV_MODE ? handleOpenInteractiveMenu : handleOpenMenuPopup}
+                    action={user?.permissions.includes('menu_tester') ? handleOpenInteractiveMenu : handleOpenMenuPopup}
                 />
             </ContentBlock>
         </ContentContainer>
