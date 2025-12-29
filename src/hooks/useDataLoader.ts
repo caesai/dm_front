@@ -18,6 +18,7 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { ICity } from '@/atoms/cityListAtom.ts';
 // Utils
 import { getCachedData, setCachedData } from '@/hooks/useCachedData.ts';
+import { R } from '@/__mocks__/restaurant.mock';
 
 const CACHE_KEYS = {
     cities: 'app_cities',
@@ -26,7 +27,7 @@ const CACHE_KEYS = {
 
 /**
  * Хук для умной загрузки данных приложения.
- * 
+ *
  * Реализует:
  * - Приоритизацию загрузки (критичные данные сначала)
  * - Кэширование с stale-while-revalidate
@@ -52,7 +53,7 @@ export const useDataLoader = () => {
     /**
      * Загружает критичные данные для отображения IndexPage.
      * Использует кэширование для мгновенного отображения.
-     * 
+     *
      * @returns Promise, который разрешается когда критичные данные загружены
      */
     const loadCriticalData = useCallback(async (): Promise<boolean> => {
@@ -94,9 +95,7 @@ export const useDataLoader = () => {
         }
 
         return Boolean(
-            hasCachedData || 
-            citiesResult.status === 'fulfilled' || 
-            restaurantsResult.status === 'fulfilled'
+            hasCachedData || citiesResult.status === 'fulfilled' || restaurantsResult.status === 'fulfilled'
         );
     }, [auth?.access_token, setCitiesList, setRestaurantsList]);
 
@@ -150,7 +149,17 @@ export const useDataLoader = () => {
 
         try {
             const response = await APIGetGastronomyDishesList(auth.access_token);
-            setAllGastronomyDishesList(response.data);
+            setAllGastronomyDishesList(
+                // TODO: Выключаем кулинарию для списка ресторанов
+                response.data.filter(
+                    (dish) =>
+                        dish.restaurant_id !== Number(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) &&
+                        dish.restaurant_id !== Number(R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID) &&
+                        dish.restaurant_id !== Number(R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID) &&
+                        dish.restaurant_id !== Number(R.TRAPPIST_SPB_RADISHEVA_ID) &&
+                        dish.restaurant_id !== Number(R.SMOKE_BBQ_MSC_TRUBNAYA_ID)
+                )
+            );
         } catch (error) {
             console.error('[useDataLoader] Failed to load gastronomy dishes:', error);
             loadedRef.current.gastronomy = false;
@@ -202,4 +211,3 @@ export const useLazyLoad = (loadFn: () => Promise<void>, deps: unknown[] = []) =
         }
     }, deps);
 };
-
