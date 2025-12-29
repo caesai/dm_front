@@ -22,6 +22,7 @@ import { Share } from '@/components/Icons/Share.tsx';
 import { getDataFromLocalStorage, setDataToLocalStorage } from '@/utils.ts';
 // Styles
 import css from '@/pages/TicketInfoPage/TicketInfoPage.module.css';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 
 export const TicketInfoPage: React.FC = () => {
     const navigate = useNavigate();
@@ -141,7 +142,7 @@ export const TicketInfoPage: React.FC = () => {
                                     backgroundImage: `url(${ticket?.event_img !== '' ? ticket?.event_img : ticket.restaurant.thumbnail_photo})`,
                                 }}
                             />
-                            ) : (
+                        ) : (
                             <PlaceholderBlock
                                 width={'100%'}
                                 aspectRatio={'3/2'}
@@ -175,14 +176,6 @@ export const TicketInfoPage: React.FC = () => {
                                 )}
                             </span>
                         </div>
-                        {!shared && (
-                            <div>
-                                <span onClick={refund} className={classNames(
-                                    css.refundBtn,
-                                    ticket_refund && JSON.parse(ticket_refund).id === id ? css.refundTrue : null
-                                )}>{ticket_refund && JSON.parse(ticket_refund).id === id ? 'Запрос на возврат оформлен' : 'Оформить возврат'}</span>
-                            </div>
-                        )}
                     </div>
                     <div className={css.ticket_details}>
                         <div className={css.ticket_details_row}>
@@ -198,7 +191,7 @@ export const TicketInfoPage: React.FC = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj_cont,
+                                        css.ticket_details_row_obj_cont_small,
                                     )}
                                 >
                                     {ticket?.restaurant.address || (
@@ -223,7 +216,7 @@ export const TicketInfoPage: React.FC = () => {
                                 <span
                                     className={classNames(
                                         css.mont,
-                                        css.ticket_details_row_obj_cont,
+                                        css.ticket_details_row_obj_cont_small,
                                     )}
                                 >
                                     {ticket?.ticket_identifier !== undefined ? ticket.ticket_identifier : (
@@ -364,9 +357,19 @@ export const TicketInfoPage: React.FC = () => {
                                             height={'19px'}
                                         />
                                     )}
-                                </span>
+                            </span>
                         </div>
                     </div>
+                    <div className={css.ticket_details_row}>
+                        <span className={css.cancelText}>Если вы захотите сдать билет менее чем за 3 дня до мероприятия, мы вернем 50% его стоимости.</span>
+                    </div>
+                    <UniversalButton
+                        width={'full'}
+                        action={refund}
+                        title={ticket_refund && JSON.parse(ticket_refund).id === id ?
+                            'Запрос на возврат оформлен' : 'Оформить возврат'}
+                        style={{ fontSize: '12px' }}
+                    />
                     {/*<div*/}
                     {/*    style={{*/}
                     {/*        display: 'flex',*/}
