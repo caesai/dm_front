@@ -38,3 +38,7 @@
     display: flex;
     align-items: center;
 }
+
+.boldLabel {
+    font-weight: 700;
+}

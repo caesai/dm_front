@@ -168,7 +168,7 @@ export const RestaurantPage: React.FC = () => {
                 isLoading={isInitialLoading}
                 isGastronomy={hasGastronomy}
                 isEvents={hasEvents}
-                isMenu={Boolean(restaurant?.menu.length)}
+                isMenu={Boolean(restaurant?.menu.length) || Boolean(restaurant?.menu_imgs.length)}
             />
 
             <div className={css.floatingFooter}>
@@ -235,7 +235,7 @@ export const RestaurantPage: React.FC = () => {
                     isGastronomy={hasGastronomy}
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
-                    isMenu={Boolean(restaurant?.menu.length)}
+                    isMenu={Boolean(restaurant?.menu.length) || Boolean(restaurant?.menu_imgs.length)}
                     timeslotsError={timeslotsError}
                 />
 
@@ -248,7 +248,7 @@ export const RestaurantPage: React.FC = () => {
 
                 {/* Меню */}
                 {restaurant?.menu_imgs ? (
-                    <MenuBlock restaurant_id={restaurant.id} menu_imgs={restaurant.menu_imgs} />
+                    <MenuBlock restaurant_id={restaurant.id} menu_imgs={restaurant.menu_imgs} menu={restaurant.menu} />
                 ) : (
                     <MenuBlockSkeleton />
                 )}

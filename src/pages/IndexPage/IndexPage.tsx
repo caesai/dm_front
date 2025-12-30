@@ -116,18 +116,6 @@ export const IndexPage: React.FC = () => {
                     <CitySelect options={cityOptions} currentValue={currentCityS} onChange={updateCurrentCity} />
                 </div>
                 <BookingReminder bookings={currentBookings} />
-                {/* Отображаем блок с супер-мероприятием только для пользователей с разрешением hospitality_heroes */}
-                {/* {DEV_MODE && user?.permissions.includes('hospitality_heroes') && (
-                    <div style={{ marginRight: 15, height: 85 }}>
-                        <Link to={'/privilege'}>
-                            <img
-                                src={superevent}
-                                style={{ maxWidth: '100%', width: '100%', borderRadius: 16 }}
-                                alt={''}
-                            />
-                        </Link>
-                    </div>
-                )} */}
                 <OptionsNavigation cityId={cityId} isLoading={restaurantsLoading} />
                 <div className={css.restaurants}>
                     {restaurantsLoading ? (

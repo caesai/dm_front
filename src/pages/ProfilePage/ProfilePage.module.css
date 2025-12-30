@@ -47,3 +47,21 @@
     width: 44px;
     height: 44px;
 }
+
+.testerModeDivider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--light-grey);
+    margin-bottom: -15px;
+}
+
+.testerModeDescription {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--grey);
+    padding: 10px;
+    background-color: var(--secondary-background);
+    border-radius: 12px;
+    margin-top: -15px;
+}
