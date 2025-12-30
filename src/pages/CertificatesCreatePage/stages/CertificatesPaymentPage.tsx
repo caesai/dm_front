@@ -4,7 +4,8 @@ import { useAtom } from 'jotai/index';
 import moment from 'moment/moment';
 import classnames from 'classnames';
 // APIs
-import { APIGetCertificateById, APIGetCertificates, APIPostCertificateCheckPayment } from '@/api/certificates.api.ts';
+import { APIGetCertificateById, APIGetCertificates, APIPostCertificateCheckPayment, APIPostEGiftCertificateOffline } from '@/api/certificates.api.ts';
+import { EGIFT_API_TOKEN, EGIFT_CLIENT_ID } from '@/api/base';
 // Types
 import { ICertificate } from '@/types/certificates.types.ts';
 // Atoms
@@ -18,7 +19,6 @@ import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 // Utils
 import { shareCertificate } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
-import { DEV_MODE } from '@/api/base';
 
 export const CertificatesPaymentPage: React.FC = () => {
     const navigate = useNavigate();
@@ -86,25 +86,78 @@ export const CertificatesPaymentPage: React.FC = () => {
         }
     }, [auth, certificate, user, paramsObject.order_number]);
 
-    const createEGiftCertificate = useCallback(() => {
-        // TODO: Создаем сертификат в e-gift
-    }, []);
+    /**
+     * Создает сертификат в eGift после успешной оплаты
+     * Вызывается только если сертификат оплачен и у него есть dreamteam_id
+     */
+    const createEGiftCertificate = useCallback(async () => {
+        if (!certificate?.dreamteam_id || !certificate?.value) {
+            console.warn('Недостаточно данных для создания сертификата в eGift');
+            return;
+        }
+
+        try {
+            await APIPostEGiftCertificateOffline(
+                EGIFT_API_TOKEN,
+                EGIFT_CLIENT_ID,
+                certificate.dreamteam_id,
+                Number(certificate.value),
+                'tma'
+            );
+            console.log('Сертификат успешно создан в eGift');
+        } catch (error) {
+            console.error('Ошибка при создании сертификата в eGift:', error);
+        }
+    }, [certificate]);
 
     // Проверяем статус оплаты сертификата при монтировании компонента
     useEffect(() => {
         checkPayment();
-        // TODO: в данном файле надо убедиться что логика следущая:
-        // 1. Проверяем статус оплаты сертификата isPaid
-        // 2. Если isPaid = true нужно обновить данные сертификата APIGetCertificateById проверяем есть ли в нем dreamteam_id
-        // 3. Если dreamteam_id не пустое, то создаем сертификат в e-gift
-        if (DEV_MODE && isPaid) {
-            // Проверяем что у сертификата не пустое поле dreamteam_id
-            if (certificate?.dreamteam_id) {
-                // Создаем сертификат в e-gift
-                createEGiftCertificate();
-            }
+    }, [checkPayment]);
+
+    /**
+     * Эффект для создания сертификата в eGift после успешной оплаты
+     * Логика:
+     * 1. Проверяем статус оплаты сертификата isPaid
+     * 2. Если isPaid = true, обновляем данные сертификата через APIGetCertificateById
+     * 3. Проверяем наличие dreamteam_id в обновленных данных
+     * 4. Если dreamteam_id не пустое, создаем сертификат в eGift
+     */
+    useEffect(() => {
+        if (!isPaid || !auth?.access_token || !certificate?.id) {
+            return;
         }
-    }, [certificate, checkPayment]);
+
+        // Обновляем данные сертификата для получения актуального dreamteam_id
+        APIGetCertificateById(auth.access_token, certificate.id)
+            .then((response) => {
+                const updatedCertificate = response.data;
+                setCertificate(updatedCertificate);
+
+                // Если dreamteam_id присвоен, создаем сертификат в eGift
+                if (updatedCertificate?.dreamteam_id && updatedCertificate.dreamteam_id.trim() !== '') {
+                    // Вызываем создание сертификата напрямую, без использования callback
+                    if (updatedCertificate.value) {
+                        APIPostEGiftCertificateOffline(
+                            EGIFT_API_TOKEN,
+                            EGIFT_CLIENT_ID,
+                            updatedCertificate.dreamteam_id,
+                            Number(updatedCertificate.value),
+                            'tma'
+                        )
+                            .then(() => {
+                                console.log('Сертификат успешно создан в eGift');
+                            })
+                            .catch((error) => {
+                                console.error('Ошибка при создании сертификата в eGift:', error);
+                            });
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error('Ошибка при обновлении данных сертификата:', error);
+            });
+    }, [isPaid, auth?.access_token, certificate?.id]);
 
     if (loading) {
         return (

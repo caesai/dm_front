@@ -37,7 +37,6 @@ interface BookingBlockProps {
     isBanquets: boolean;
     isGastronomy: boolean;
     isMenu: boolean;
-    timeslotsError: boolean;
 }
 
 /**
@@ -50,14 +49,13 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
     setBookingDate,
     bookingDates,
     timeslotLoading,
-    availableTimeslots = [],
+    availableTimeslots,
     setCurrentSelectedTime,
     isGastronomy,
     isBanquets,
     isEvents,
     isNavigationLoading,
     isMenu,
-    timeslotsError,
 }) => {
     const [, setGuestCount] = useAtom(guestCountAtom);
     const [isBookingDatePopupOpen, setIsBookingDatePopupOpen] = useState(false);
@@ -176,7 +174,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
                                         <div
                                             className={classNames(
                                                 css.timeItem,
-                                                currentSelectedTime === ts && css.timeItemActive,
+                                                currentSelectedTime === ts && css.timeItemActive
                                             )}
                                         >
                                             {formatTimeDisplay(ts)}
@@ -186,9 +184,6 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
                             )}
                         </Swiper>
                     </div>
-                    {timeslotsError && (
-                        <p className={css.timeslotsError} role="alert" data-testid="timeslots-error">Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.</p>
-                    )}
                 </div>
             </ContentBlock>
         </ContentContainer>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ADMIN_URL, BASE_URL, CLIENT_URL } from '@/api/base.ts';
+import { ADMIN_URL, BASE_URL, EGIFT_API_URL } from '@/api/base.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
 
 export const APIGetCertificates = async (token: string, user_id: number) => {
@@ -40,10 +40,10 @@ export const APIPostCreateWithPayment = async (
         value,
         recipient_name,
         message,
-        return_url: `${CLIENT_URL}/certificates/payment`,
-        // return_url: `https://dt-mini-app.local/dm_front/certificates/payment`,
-        fail_url: `${CLIENT_URL}/certificates/error`,
-        // fail_url: `https://dt-mini-app.local/dm_front/certificates/error`,
+        // return_url: `${CLIENT_URL}/certificates/payment`,
+        return_url: `https://dt-mini-app.local/dm_front/certificates/payment`,
+        // fail_url: `${CLIENT_URL}/certificates/error`,
+        fail_url: `https://dt-mini-app.local/dm_front/certificates/error`,
 
     }, {
         headers: {
@@ -106,5 +106,44 @@ export const APIPostCreateAlfaPayment = async (token: string, user_id: number, a
         headers: {
             Authorization: `Bearer ${token}`,
         }
+    });
+};
+
+/**
+ * Создает сертификат в eGift после успешной оплаты
+ * @param api_token - API токен для eGift
+ * @param client_id - ID клиента в eGift
+ * @param promo_code - Промокод сертификата (dreamteam_id)
+ * @param amount - Номинал сертификата
+ * @param source - Источник создания (tma для Telegram Mini App)
+ */
+export const APIPostEGiftCertificateOffline = async (
+    api_token: string,
+    client_id: string,
+    promo_code: string,
+    amount: number,
+    source: string = 'tma'
+) => {
+    return axios.post(`${EGIFT_API_URL}/Certificate:Offline`, {
+        api_token,
+        client_id,
+        promo_code,
+        amount,
+        source,
+    });
+};
+
+/**
+ * Получает информацию о сертификате из eGift, включая баланс
+ * @param api_token - API токен для eGift
+ * @param promo_code - Промокод сертификата (dreamteam_id)
+ */
+export const APIPostEGiftCertificateInfo = async (
+    api_token: string,
+    promo_code: string
+) => {
+    return axios.post(`${EGIFT_API_URL}/Certificate:Info`, {
+        api_token,
+        promo_code,
     });
 };

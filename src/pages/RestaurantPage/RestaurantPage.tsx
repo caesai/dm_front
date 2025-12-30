@@ -1,11 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
+import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+// API's
+import { APIGetAvailableDays, APIGetAvailableTimeSlots, APIGetEventsInRestaurant } from '@/api/restaurants.api.ts';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
+import { IEvent } from '@/types/events.types.ts';
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 // Atoms
-import { userAtom } from '@/atoms/userAtom.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 // Components
 import { Page } from '@/components/Page.tsx';
@@ -27,16 +33,8 @@ import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock.tsx';
 import { AddressBlock } from '@/pages/RestaurantPage/blocks/AddressBlock.tsx';
 import { NavigationBlock } from '@/pages/RestaurantPage/blocks/NavigationBlock.tsx';
 import { GastronomyBlock } from '@/pages/RestaurantPage/blocks/GastronomyBlock.tsx';
-import { 
-    GalleryBlockSkeleton, 
-    MenuBlockSkeleton, 
-    AboutBlockSkeleton, 
-    ChefBlockSkeleton, 
-    AddressBlockSkeleton,
-    EventsBlockSkeleton,
-} from '@/pages/RestaurantPage/blocks/RestaurantPageSkeletons.tsx';
-// Types
-import { IEvent } from '@/types/events.types.ts';
+// Utils
+import { formatDate } from '@/utils.ts';
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 // Mocks
@@ -45,42 +43,28 @@ import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
 // Hooks
 import useToastState from '@/hooks/useToastState.ts';
-import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
 
 export const RestaurantPage: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const restaurantId = Number(id);
-
     // Atoms
+    const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [restaurants] = useAtom(restaurantsListAtom);
+    const [bookingDate, setBookingDate] = useAtom(bookingDateAtom);
+    const [currentSelectedTime, setCurrentSelectedTime] = useAtom<ITimeSlot | null>(timeslotAtom);
     const [allGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
-
-    // Toast для ошибок
-    const { showToast } = useToastState();
-
-    // Оптимизированная загрузка данных через хук
-    const {
-        events,
-        bookingDates,
-        bookingDate,
-        setBookingDate,
-        availableTimeslots,
-        timeslotLoading,
-        timeslotsError,
-        currentSelectedTime,
-        setCurrentSelectedTime,
-        isInitialLoading,
-    } = useRestaurantPageData({
-        restaurantId,
-        onError: showToast,
-    });
-
-    // Локальные состояния
+    // States
     const [restaurant, setRestaurant] = useState<IRestaurant>();
+    const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
+    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
+    const [timeslotLoading, setTimeslotLoading] = useState(true);
     const [isCallPopupOpen, setIsCallPopupOpen] = useState(false);
+    const [events, setEvents] = useState<IEvent[] | null>(null);
     const [nyCookings] = useState(NewYearCookingData);
+    const { showToast } = useToastState();
+    // Ref для отслеживания инициализации даты для текущего ресторана
+    const initializedRestaurantIdRef = useRef<number | null>(null);
     /**
      * Обрабатывает переход к бронированию столика
      */
@@ -139,10 +123,64 @@ export const RestaurantPage: React.FC = () => {
         };
     };
 
-    // Инициализация ресторана из списка
+    // Инициализация ресторана и событий
     useEffect(() => {
+        const restaurantId = Number(id);
         setRestaurant(restaurants.find((rest) => rest.id === restaurantId));
-    }, [restaurantId, restaurants]);
+        setCurrentSelectedTime(null);
+        // Сбрасываем дату только при смене ресторана
+        if (initializedRestaurantIdRef.current !== restaurantId) {
+        setBookingDate({ value: 'unset', title: 'unset' });
+            initializedRestaurantIdRef.current = null; // Сбрасываем флаг инициализации
+        }
+        APIGetEventsInRestaurant(restaurantId, String(auth?.access_token))
+            .then((res) => setEvents(res.data))
+            .catch((err) => {
+                console.error(err);
+                setEvents([]);
+                showToast('Ошибка при загрузке событий. Попробуйте позже');
+            });
+    }, [id, restaurants, auth?.access_token, setBookingDate, setCurrentSelectedTime, showToast]);
+
+    // Загрузка доступных дней для бронирования
+    useEffect(() => {
+        if (!auth?.access_token) return;
+
+        const restaurantId = Number(id);
+        APIGetAvailableDays(auth.access_token, restaurantId, 1)
+            .then((res) => {
+                let formattedDates = res.data.map((date) => ({
+                title: formatDate(date),
+                value: date,
+            }));
+                
+            setBookingDates(formattedDates);
+
+                // Устанавливаем первую дату только если она еще не была установлена для этого ресторана
+                if (formattedDates.length > 0 && initializedRestaurantIdRef.current !== restaurantId) {
+                setBookingDate(formattedDates[0]);
+                    initializedRestaurantIdRef.current = restaurantId;
+            }
+            })
+            .catch((err) => {
+                console.error(err);
+        });
+    }, [auth?.access_token, id, setBookingDate]);
+
+    // Загрузка доступных таймслотов для выбранной даты
+    useEffect(() => {
+        if (!auth?.access_token || bookingDate.value === 'unset') return;
+
+        setTimeslotLoading(true);
+        APIGetAvailableTimeSlots(auth.access_token, Number(id), bookingDate.value, 1)
+            .then((res) => setAvailableTimeslots(res.data))
+            .catch((err) => {
+                console.error(err);
+                setAvailableTimeslots([]);
+                showToast('Ошибка при загрузке доступных таймслотов. Попробуйте позже');
+            })
+            .finally(() => setTimeslotLoading(false));
+    }, [auth?.access_token, bookingDate, id]);
     // Вычисляемые значения
     const filteredEvents = useMemo(() => getFilteredEvents(), [events]);
     const coordinates = useMemo(() => getRestaurantCoordinates(), [restaurant?.address_lonlng]);
@@ -161,15 +199,15 @@ export const RestaurantPage: React.FC = () => {
                 phone={restaurant?.phone_number || ''}
             />
 
-            <NavigationBlock
-                restaurant_id={Number(id)}
-                title={restaurant?.title}
-                isBanquets={Boolean(hasBanquets)}
-                isLoading={isInitialLoading}
-                isGastronomy={hasGastronomy}
-                isEvents={hasEvents}
-                isMenu={Boolean(restaurant?.menu.length) || Boolean(restaurant?.menu_imgs.length)}
-            />
+                <NavigationBlock
+                    restaurant_id={Number(id)}
+                    title={restaurant?.title}
+                    isBanquets={Boolean(hasBanquets)}
+                    isLoading={events == null && restaurant?.banquets == null}
+                    isGastronomy={hasGastronomy}
+                    isEvents={hasEvents}
+                isMenu={Boolean(restaurant?.menu.length)}
+                />
 
             <div className={css.floatingFooter}>
                 <BottomButtonWrapper
@@ -231,48 +269,30 @@ export const RestaurantPage: React.FC = () => {
                     timeslotLoading={timeslotLoading}
                     availableTimeslots={availableTimeslots}
                     setCurrentSelectedTime={setCurrentSelectedTime}
-                    isNavigationLoading={isInitialLoading}
+                    isNavigationLoading={events == null && restaurant?.banquets == null}
                     isGastronomy={hasGastronomy}
                     isBanquets={Boolean(hasBanquets)}
                     isEvents={hasEvents}
-                    isMenu={Boolean(restaurant?.menu.length) || Boolean(restaurant?.menu_imgs.length)}
-                    timeslotsError={timeslotsError}
+                    isMenu={Boolean(restaurant?.menu.length)}
                 />
 
-                {/* Галерея */}
-                {restaurant?.gallery ? (
-                    <GalleryBlock restaurant_gallery={restaurant.gallery} />
-                ) : (
-                    <GalleryBlockSkeleton />
-                )}
+                <GalleryBlock restaurant_gallery={restaurant?.gallery} />
 
-                {/* Меню */}
-                {restaurant?.menu_imgs ? (
-                    <MenuBlock restaurant_id={restaurant.id} menu_imgs={restaurant.menu_imgs} menu={restaurant.menu} />
-                ) : (
-                    <MenuBlockSkeleton />
-                )}
+                <MenuBlock restaurant_id={restaurant?.id || 0} menu_imgs={restaurant?.menu_imgs} />
 
-                {/* Банкеты */}
                 {restaurant && hasBanquets && (
                     <BanquetsBlock
-                        image={restaurant.banquets.image}
-                        description={restaurant.banquets.description}
+                        image={restaurant?.banquets.image}
+                        description={restaurant?.banquets.description}
                         restaurant={restaurant}
-                        workTime={restaurant.worktime}
+                        workTime={restaurant?.worktime}
                     />
                 )}
 
-                {/* События */}
-                {isInitialLoading ? (
-                    <EventsBlockSkeleton />
-                ) : (
-                    hasEvents && <EventsBlock events={events} />
-                )}
+                {hasEvents && <EventsBlock events={events} />}
 
                 <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />
 
-                {/* Гастрономия */}
                 {restaurant && hasGastronomy && (
                     <GastronomyBlock
                         description={nyCookings.description}
@@ -281,42 +301,27 @@ export const RestaurantPage: React.FC = () => {
                     />
                 )}
 
-                {/* О месте */}
-                {restaurant ? (
-                    <AboutBlock
-                        about_text={String(restaurant.about_text)}
-                        about_kitchen={String(restaurant.about_kitchen)}
-                        about_features={String(restaurant.about_features)}
-                        avg_cheque={String(restaurant.avg_cheque)}
-                        workTime={restaurant.worktime}
-                    />
-                ) : (
-                    <AboutBlockSkeleton />
-                )}
+                <AboutBlock
+                    about_text={String(restaurant?.about_text)}
+                    about_kitchen={String(restaurant?.about_kitchen)}
+                    about_features={String(restaurant?.about_features)}
+                    avg_cheque={String(restaurant?.avg_cheque)}
+                    workTime={restaurant?.worktime}
+                />
 
-                {/* О шефе */}
-                {restaurant?.brand_chef ? (
-                    <ChefBlock
-                        about={String(restaurant.brand_chef.about)}
-                        photo_url={String(restaurant.brand_chef.photo_url)}
-                        chef_names={restaurant.brand_chef.names || []}
-                    />
-                ) : (
-                    <ChefBlockSkeleton />
-                )}
+                <ChefBlock
+                    about={String(restaurant?.brand_chef.about)}
+                    photo_url={String(restaurant?.brand_chef?.photo_url)}
+                    chef_names={restaurant?.brand_chef?.names || []}
+                />
 
-                {/* Адрес */}
-                {restaurant ? (
-                    <AddressBlock
-                        longitude={coordinates.longitude}
-                        latitude={coordinates.latitude}
-                        address={String(restaurant.address)}
-                        logo_url={String(restaurant.logo_url)}
-                        address_station_color={String(restaurant.address_station_color)}
-                    />
-                ) : (
-                    <AddressBlockSkeleton />
-                )}
+                <AddressBlock
+                    longitude={coordinates.longitude}
+                    latitude={coordinates.latitude}
+                    address={String(restaurant?.address)}
+                    logo_url={String(restaurant?.logo_url)}
+                    address_station_color={String(restaurant?.address_station_color)}
+                />
             </div>
         </Page>
     );

@@ -3,7 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom, useSetAtom } from 'jotai/index';
 import moment from 'moment';
 // API
-import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
+import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim, APIPostEGiftCertificateInfo } from '@/api/certificates.api.ts';
+import { EGIFT_API_TOKEN } from '@/api/base';
 // Types
 import { ICertificate } from '@/types/certificates.types.ts';
 // Atoms
@@ -50,6 +51,8 @@ export const CertificateLandingPage: React.FC = () => {
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const setShowToast = useSetAtom(showToastAtom);
     const [loading, setLoading] = useState<boolean>(true);
+    const [balance, setBalance] = useState<number | null>(null);
+    const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
     const { isShowing, toggle, setIsShowing } = useModal();
 
     /**
@@ -67,18 +70,43 @@ export const CertificateLandingPage: React.FC = () => {
     );
 
     /**
+     * Получает баланс сертификата из eGift по dreamteam_id
+     * @param dreamteamId - Промокод сертификата (dreamteam_id)
+     */
+    const fetchCertificateBalance = useCallback(async (dreamteamId: string) => {
+        if (!dreamteamId || dreamteamId.trim() === '') {
+            return;
+        }
+
+        setBalanceLoading(true);
+        try {
+            const response = await APIPostEGiftCertificateInfo(EGIFT_API_TOKEN, dreamteamId);
+            // Из ответа берем поле balance
+            if (response.data?.balance !== undefined) {
+                setBalance(response.data.balance);
+            }
+        } catch (error) {
+            console.error('Ошибка при получении баланса сертификата из eGift:', error);
+            // Не показываем ошибку пользователю, просто не обновляем баланс
+        } finally {
+            setBalanceLoading(false);
+        }
+    }, []);
+
+    /**
      * Эффект для загрузки данных сертификата при монтировании компонента или изменении зависимостей.
      *
      * Отправляет запрос на получение данных сертификата по его ID из параметров URL.
-     * В случае успеха обновляет локальное состояние сертификата.
+     * В случае успеха обновляет локальное состояние сертификата и загружает баланс из eGift.
      * В случае ошибки показывает toast-уведомление и через 7 секунд перенаправляет
      * пользователя на страницу списка сертификатов.
      *
      * @effect
-     * @dependencies auth?.access_token, id, showToast, navigate
+     * @dependencies auth?.access_token, id, showToast, navigate, fetchCertificateBalance
      *
      * @fires APIGetCertificateById - Выполняет асинхронный запрос к API для получения данных сертификата
      * @modifies certificate - Обновляет локальное состояние сертификата через setCertificate
+     * @fires fetchCertificateBalance - Загружает баланс сертификата из eGift
      * @fires showToast - Показывает уведомление об ошибке загрузки
      * @fires navigate - Перенаправляет пользователя на страницу списка сертификатов при ошибке
      */
@@ -86,7 +114,14 @@ export const CertificateLandingPage: React.FC = () => {
         if (auth?.access_token) {
             if (id) {
                 APIGetCertificateById(auth.access_token, id)
-                    .then((response) => setCertificate(response.data))
+                    .then((response) => {
+                        const certData = response.data;
+                        setCertificate(certData);
+                        // После загрузки данных о сертификате загружаем баланс из eGift
+                        if (certData?.dreamteam_id && certData.dreamteam_id.trim() !== '') {
+                            fetchCertificateBalance(certData.dreamteam_id);
+                        }
+                    })
                     .catch(() => {
                         showToast('Не удалось загрузить сертификат. Попробуйте еще раз.');
                         setTimeout(() => {
@@ -95,7 +130,7 @@ export const CertificateLandingPage: React.FC = () => {
                     });
             }
         }
-    }, [auth?.access_token, id, showToast, navigate]);
+    }, [auth?.access_token, id, showToast, navigate, fetchCertificateBalance]);
     /**
      * Мемоизированная функция для активации (клейма) сертификата текущим пользователем.
      *
@@ -349,12 +384,18 @@ export const CertificateLandingPage: React.FC = () => {
                                 <b>{Number(certificate?.value).toFixed()}</b>
                             </span>
                         </div>
-                        {/** TODO: в DEV_MODE запросить баланс в апи e-gift, отобразить здесь */}
-                        {DEV_MODE && (
+                        {/** Отображаем баланс сертификата из eGift */}
+                        {certificate?.dreamteam_id && (
                             <div className={css.row}>
                                 <span>Баланс:</span>
                                 <span>
-                                    <b>{Number(certificate?.value).toFixed()}</b>
+                                    <b>
+                                        {balanceLoading
+                                            ? 'Загрузка...'
+                                            : balance !== null
+                                            ? `${balance.toFixed()} ₽`
+                                            : Number(certificate?.value).toFixed() + ' ₽'}
+                                    </b>
                                 </span>
                             </div>
                         )}

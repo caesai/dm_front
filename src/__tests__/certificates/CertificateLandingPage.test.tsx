@@ -6,7 +6,7 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { showToastAtom } from '@/atoms/toastAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
-import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
+import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim, APIPostEGiftCertificateInfo } from '@/api/certificates.api.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
 import { IUser, IAuthInfo } from '@/types/user.types.ts';
 import { mockUserData } from '@/__mocks__/user.mock';
@@ -17,6 +17,7 @@ jest.mock('@/api/certificates.api.ts', () => ({
     APIGetCertificateById: jest.fn(),
     APIGetCertificates: jest.fn(),
     APIPostCertificateClaim: jest.fn(),
+    APIPostEGiftCertificateInfo: jest.fn(),
 }));
 
 jest.mock('swiper/react', () => ({
@@ -130,6 +131,7 @@ describe('CertificateLandingPage', () => {
             data: [defaultCertificate],
         });
         (APIPostCertificateClaim as jest.Mock).mockResolvedValue({ data: {} });
+        (APIPostEGiftCertificateInfo as jest.Mock).mockResolvedValue({ data: { balance: 3000 } });
     });
 
     afterEach(() => {
@@ -216,6 +218,64 @@ describe('CertificateLandingPage', () => {
                 // dreamteam_id из mockCertificate = '', проверяем наличие поля "Код:"
                 expect(screen.getByText(/Код:/)).toBeInTheDocument();
             });
+        });
+
+        test('должен загружать и отображать баланс сертификата из eGift', async () => {
+            const certificateWithDreamteamId: ICertificate = {
+                ...mockCertificate,
+                dreamteam_id: 'TEST_DREAMTEAM_ID',
+                status: 'paid',
+                expired_at: '2026-12-31T23:59:59Z',
+            };
+
+            (APIGetCertificateById as jest.Mock).mockResolvedValue({
+                data: certificateWithDreamteamId,
+            });
+            (APIPostEGiftCertificateInfo as jest.Mock).mockResolvedValue({
+                data: { balance: 2500 },
+            });
+
+            renderComponent();
+
+            // Ждем загрузки сертификата
+            await waitFor(() => {
+                expect(APIGetCertificateById).toHaveBeenCalled();
+            });
+
+            // Проверяем, что был вызван метод получения баланса
+            await waitFor(() => {
+                expect(APIPostEGiftCertificateInfo).toHaveBeenCalledWith(
+                    expect.any(String), // EGIFT_API_TOKEN
+                    'TEST_DREAMTEAM_ID'
+                );
+            });
+
+            // Проверяем, что баланс отображается
+            await waitFor(() => {
+                expect(screen.getByText('2500 ₽')).toBeInTheDocument();
+            });
+        });
+
+        test('не должен загружать баланс, если dreamteam_id пустой', async () => {
+            const certificateWithoutDreamteamId: ICertificate = {
+                ...mockCertificate,
+                dreamteam_id: '',
+                status: 'paid',
+                expired_at: '2026-12-31T23:59:59Z',
+            };
+
+            (APIGetCertificateById as jest.Mock).mockResolvedValue({
+                data: certificateWithoutDreamteamId,
+            });
+
+            renderComponent();
+
+            await waitFor(() => {
+                expect(APIGetCertificateById).toHaveBeenCalled();
+            });
+
+            // Проверяем, что метод получения баланса НЕ был вызван
+            expect(APIPostEGiftCertificateInfo).not.toHaveBeenCalled();
         });
 
         // test('должен отображать правильную дату истечения', async () => {
