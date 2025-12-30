@@ -31,7 +31,7 @@ export const TextInput: React.FC<ITextInputProps> = ({
     const inputRef = useRef<HTMLInputElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         let newValue = e.target.value;
 
         // Для телефона разрешаем только цифры, +, -, пробелы и скобки
@@ -60,7 +60,7 @@ export const TextInput: React.FC<ITextInputProps> = ({
                     onFocus={handleFocus}
                     onBlur={onBlur}
                     disabled={disabled}
-                    onChange={(e) => handleChange(e as unknown as React.ChangeEvent<HTMLInputElement>)}
+                    onChange={handleChange}
                     className={classNames(css.text_input, validation_failed ? css.failed : null)}
                     ref={textareaRef}
                     role={'textarea'}

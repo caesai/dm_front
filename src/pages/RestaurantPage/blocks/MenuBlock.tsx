@@ -50,8 +50,9 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id, 
             .slice(0, 10);
     }, [menuData]);
 
-    // Сортируем блюда по id (старая версия меню)
-    const sortedMenuItems = menu?.sort((a, b) => a.id - b.id) || [];
+    // Сортируем блюда по id (старая версия меню) 
+    // slice() - создаем копию массива, чтобы не изменять исходный массив
+    const sortedMenuItems = menu?.slice().sort((a, b) => a.id - b.id) || [];
     // Получаем URL изображений блюд из menu_imgs (старая версия меню)
     const menuImageUrls = useMemo(() => {
         if (!menu_imgs) return [];
