@@ -22,7 +22,7 @@ export const CheckBoxInput: React.FC<CheckBoxInputProps> = ({
 }) => {
     return (
         <label
-            style={{ fontSize: fontSize }}
+            style={fontSize !== undefined ? { fontSize } : undefined}
             className={classnames(css.agreeCheckbox_container, css.agreeCheckbox_label, {
                 [css.noBackground]: noBackground,
                 [css.boldLabel]: bold,
