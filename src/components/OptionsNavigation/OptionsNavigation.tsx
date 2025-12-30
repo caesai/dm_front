@@ -6,7 +6,6 @@ import { PrivelegiesPopup } from '@/components/PrivelegiesPopup/PrivelegiesPopup
 import css from '@/components/OptionsNavigation/OptionsNavigation.module.css';
 // Mocks
 import neweventBg from '/img/gastro_btn.png';
-import gastroBtn from '/img/gastro_btn1.png';
 import gastroBtn2 from '/img/gastro_btn2.png';
 import gastroBtn3 from '/img/gastro_btn3.png';
 
@@ -15,23 +14,12 @@ interface IOptionsNavigationProps {
     isLoading: boolean;
 }
 
-export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ cityId, isLoading }) => {
+export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ isLoading }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
         <div className={css.optionsNavigation}>
             <PrivelegiesPopup isOpen={isOpen} setOpen={setIsOpen} />
-            {cityId !== 3 && (
-                <OptionsNavigationElement
-                    isLoading={isLoading}
-                    title={'Новогодняя кулинария'}
-                    subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
-                    img={gastroBtn}
-                    className={css.gastronomyCTAbtn}
-                    textWrapperClassName={css.gastronomyTextWrapper}
-                    link={'/gastronomy/choose'}
-                />
-            )}
             <div style={{ display: 'flex', gap: 8 }}>
                 <OptionsNavigationElement
                     isLoading={isLoading}

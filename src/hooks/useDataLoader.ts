@@ -156,8 +156,7 @@ export const useDataLoader = () => {
                         dish.restaurant_id !== Number(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) &&
                         dish.restaurant_id !== Number(R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID) &&
                         dish.restaurant_id !== Number(R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID) &&
-                        dish.restaurant_id !== Number(R.TRAPPIST_SPB_RADISHEVA_ID) &&
-                        dish.restaurant_id !== Number(R.SMOKE_BBQ_MSC_TRUBNAYA_ID)
+                        dish.restaurant_id !== Number(R.TRAPPIST_SPB_RADISHEVA_ID)
                 )
             );
         } catch (error) {
