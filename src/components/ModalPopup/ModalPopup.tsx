@@ -80,7 +80,7 @@ export const ModalPopup: React.FC<ModalProps> = (
                 {subtitle && <span className={css.sub_title}>{subtitle}</span>}
                 {text && (
                     <div className={css.center}>
-                        <span className={css.text}>{text}</span>
+                        <span className={classNames(css.text, { [css.margin_bottom]: !button })}>{text}</span>
                     </div>
                 )}
                 {list && list}

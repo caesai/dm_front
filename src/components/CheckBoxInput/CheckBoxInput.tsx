@@ -8,11 +8,27 @@ interface CheckBoxInputProps {
     toggle: () => void;
     label: React.ReactNode;
     noBackground?: boolean;
+    bold?: boolean;
+    fontSize?: number;
 }
 
-export const CheckBoxInput: React.FC<CheckBoxInputProps> = ({ checked, toggle, label, noBackground }) => {
+export const CheckBoxInput: React.FC<CheckBoxInputProps> = ({
+    checked,
+    toggle,
+    label,
+    noBackground,
+    bold,
+    fontSize,
+}) => {
     return (
-        <label className={classnames(css.agreeCheckbox_container, { [css.noBackground]: noBackground })} onClick={toggle}>
+        <label
+            style={{ fontSize: fontSize }}
+            className={classnames(css.agreeCheckbox_container, css.agreeCheckbox_label, {
+                [css.noBackground]: noBackground,
+                [css.boldLabel]: bold,
+            })}
+            onClick={toggle}
+        >
             <div className={`${css.checkbox} ${checked ? css.checked : ''}`}>
                 {checked && <CheckboxIcon size={14} />}
             </div>
