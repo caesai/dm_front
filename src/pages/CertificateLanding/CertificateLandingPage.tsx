@@ -54,6 +54,8 @@ export const CertificateLandingPage: React.FC = () => {
     const [balance, setBalance] = useState<number | null>(null);
     const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
     const { isShowing, toggle, setIsShowing } = useModal();
+    // Флаг для предотвращения повторного вызова acceptCertificate
+    const hasAcceptedCertificateRef = useRef<boolean>(false);
 
     /**
      * Мемоизированная функция для отображения toast-уведомлений.
@@ -157,31 +159,48 @@ export const CertificateLandingPage: React.FC = () => {
         const accessToken = auth?.access_token;
         const userId = Number(user?.id);
         const certId = id;
+        const currentCertificate = certificate;
 
-        if (!accessToken || !certificate || !certId || !userId) {
+        if (!accessToken || !currentCertificate || !certId || !userId) {
             // Ранний выход, если данные неполны
             console.warn('Недостаточно данных для клейма сертификата.');
             return;
         }
 
+        // Проверяем, не был ли сертификат уже принят этим пользователем
+        // Если recipient_id уже равен user.id, значит сертификат уже принят, не нужно вызывать API снова
+        if (currentCertificate.recipient_id === userId) {
+            console.log('Сертификат уже принят этим пользователем');
+            return;
+        }
+
         try {
             // 1. Клейм сертификата (основное действие)
-            await APIPostCertificateClaim(String(accessToken), userId, certId, certificate?.recipient_name);
+            await APIPostCertificateClaim(String(accessToken), userId, certId, currentCertificate?.recipient_name);
             const results = await Promise.all([
                 APIGetCertificates(accessToken, userId),
                 APIGetCertificateById(auth.access_token, id),
             ]);
             // 2. Если клейм успешен, получаем обновленный список сертификатов
             setCertificates(results[0].data);
-            // // 3. Обновляем сертификат на странице
-            setCertificate(results[1].data);
-            showToast('Сертификат успешно активирован!'); // Можно добавить тост успеха
+            // 3. Обновляем сертификат на странице
+            const updatedCert = results[1].data;
+            setCertificate(updatedCert);
+            
+            // Если у обновленного сертификата есть dreamteam_id, загружаем баланс
+            if (updatedCert?.dreamteam_id && updatedCert.dreamteam_id.trim() !== '') {
+                fetchCertificateBalance(updatedCert.dreamteam_id);
+            }
+            
+            showToast('Сертификат успешно активирован!');
         } catch (err) {
             // Обработка ошибок как первого, так и второго запроса
             console.error('Ошибка при работе с сертификатом:', err);
             showToast('Произошла ошибка. Попробуйте перезагрузить страницу');
+            // Сбрасываем флаг при ошибке, чтобы можно было попробовать снова
+            hasAcceptedCertificateRef.current = false;
         }
-    }, [auth?.access_token, certificate, id, user?.id, setCertificates, showToast]);
+    }, [auth?.access_token, certificate, id, user?.id, setCertificates, showToast, fetchCertificateBalance]);
 
     /**
      * Проверяет, использован ли сертификат.
@@ -243,7 +262,7 @@ export const CertificateLandingPage: React.FC = () => {
      *    - Если сертификат был подарен - перенаправляет на онбординг
      *
      * @effect
-     * @dependencies certificate, user, isCertificateDisabled, acceptCertificate, navigate
+     * @dependencies certificate, user, isCertificateDisabled, acceptCertificate, navigate, id
      *
      * @modifies loading - Устанавливает состояние загрузки в `false` при завершении проверок
      * @fires acceptCertificate - Автоматически активирует сертификат при соответствующих условиях
@@ -267,10 +286,17 @@ export const CertificateLandingPage: React.FC = () => {
                     return;
                 } else {
                     // Сертификат куплен другим пользователем, но еще не принят этим
-                    (async () => {
-                        await acceptCertificate();
+                    // Проверяем, не был ли уже вызван acceptCertificate для этого сертификата
+                    // Также проверяем, что сертификат еще не был принят (recipient_id не равен user.id)
+                    if (!hasAcceptedCertificateRef.current && certificate.recipient_id !== user.id) {
+                        hasAcceptedCertificateRef.current = true;
+                        (async () => {
+                            await acceptCertificate();
+                            setLoading(false);
+                        })();
+                    } else {
                         setLoading(false);
-                    })();
+                    }
                     return;
                 }
             } else {
@@ -295,7 +321,12 @@ export const CertificateLandingPage: React.FC = () => {
                 navigate('/onboarding/1');
             }
         }
-    }, [certificate, user, isCertificateDisabled, acceptCertificate, navigate]);
+    }, [certificate?.id, certificate?.customer_id, certificate?.recipient_id, certificate?.shared_at, user?.id, user?.complete_onboarding, isCertificateDisabled, acceptCertificate, navigate, id]);
+
+    // Сбрасываем флаг при изменении ID сертификата
+    useEffect(() => {
+        hasAcceptedCertificateRef.current = false;
+    }, [id]);
 
     /**
      * Перенаправляет пользователя на главную страницу.

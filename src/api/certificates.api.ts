@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ADMIN_URL, BASE_URL, EGIFT_API_URL } from '@/api/base.ts';
+import { ADMIN_URL, BASE_URL } from '@/api/base.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
 
 export const APIGetCertificates = async (token: string, user_id: number) => {
@@ -124,7 +124,7 @@ export const APIPostEGiftCertificateOffline = async (
     amount: number,
     source: string = 'tma'
 ) => {
-    return axios.post(`${EGIFT_API_URL}/Certificate:Offline`, {
+    return axios.post(`${BASE_URL}/Certificate:Offline`, {
         api_token,
         client_id,
         promo_code,
@@ -142,7 +142,7 @@ export const APIPostEGiftCertificateInfo = async (
     api_token: string,
     promo_code: string
 ) => {
-    return axios.post(`${EGIFT_API_URL}/Certificate:Info`, {
+    return axios.post(`${BASE_URL}/Certificate:Info`, {
         api_token,
         promo_code,
     });
