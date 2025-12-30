@@ -18,6 +18,7 @@ import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 // Utils
 import { shareCertificate } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
+import { DEV_MODE } from '@/api/base';
 
 export const CertificatesPaymentPage: React.FC = () => {
     const navigate = useNavigate();
@@ -64,6 +65,7 @@ export const CertificatesPaymentPage: React.FC = () => {
                 // Проверка статуса оплаты сертификата
                 APIPostCertificateCheckPayment(auth?.access_token, user?.id, paramsObject.order_number, certificate.id)
                     .then((response) => {
+                        // Возвращается объект с полем is_paid: true/false с Альфы
                         setIsPaid(response.data.is_paid);
                         // Обновление списка сертификатов в приложении
                         APIGetCertificates(auth?.access_token, Number(user?.id))
@@ -84,9 +86,24 @@ export const CertificatesPaymentPage: React.FC = () => {
         }
     }, [auth, certificate, user, paramsObject.order_number]);
 
+    const createEGiftCertificate = useCallback(() => {
+        // TODO: Создаем сертификат в e-gift
+    }, []);
+
     // Проверяем статус оплаты сертификата при монтировании компонента
     useEffect(() => {
         checkPayment();
+        // TODO: в данном файле надо убедиться что логика следущая:
+        // 1. Проверяем статус оплаты сертификата isPaid
+        // 2. Если isPaid = true нужно обновить данные сертификата APIGetCertificateById проверяем есть ли в нем dreamteam_id
+        // 3. Если dreamteam_id не пустое, то создаем сертификат в e-gift
+        if (DEV_MODE && isPaid) {
+            // Проверяем что у сертификата не пустое поле dreamteam_id
+            if (certificate?.dreamteam_id) {
+                // Создаем сертификат в e-gift
+                createEGiftCertificate();
+            }
+        }
     }, [certificate, checkPayment]);
 
     if (loading) {

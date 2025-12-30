@@ -24,6 +24,7 @@ import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.ts
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 // Styles
 import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
+import { DEV_MODE } from '@/api/base';
 
 /**
  * Компонент страницы отображения детальной информации о подарочном сертификате.
@@ -348,6 +349,15 @@ export const CertificateLandingPage: React.FC = () => {
                                 <b>{Number(certificate?.value).toFixed()}</b>
                             </span>
                         </div>
+                        {/** TODO: в DEV_MODE запросить баланс в апи e-gift, отобразить здесь */}
+                        {DEV_MODE && (
+                            <div className={css.row}>
+                                <span>Баланс:</span>
+                                <span>
+                                    <b>{Number(certificate?.value).toFixed()}</b>
+                                </span>
+                            </div>
+                        )}
                         <div className={css.row}>
                             <span>Для кого:</span>
                             <span>
