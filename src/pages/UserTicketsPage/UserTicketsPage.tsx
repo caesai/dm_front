@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 // APIs
 import { APIGetTickets } from '@/api/events.api.ts';
@@ -13,12 +12,14 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { Ticket } from '@/pages/UserTicketsPage/Ticket/Ticket.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+// Hooks
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 // Styles
 import css from '@/pages/UserTicketsPage/UserTicketsPage.module.css';
 
 export const UserTicketsPage: React.FC = () => {
-    const navigate = useNavigate();
     const [auth] = useAtom(authAtom);
+    const { goBack } = useNavigationHistory();
     const [tickets, setTickets] = useState<IEventTicket[]>([]);
     const [eventsLoading, setEventsLoading] = useState(true);
 
@@ -39,7 +40,7 @@ export const UserTicketsPage: React.FC = () => {
                 <div className={css.header}>
                     <RoundedButton
                         icon={<BackIcon size={24} color={'var(--dark-grey)'} />}
-                        action={() => navigate('/')}
+                        action={goBack}
                         bgColor={'var(--primary-background)'}
                     />
                     <span className={css.header_title}>Мои билеты</span>

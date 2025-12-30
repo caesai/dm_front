@@ -65,7 +65,7 @@ export const HospitalityHeroesApplicationFormPage: React.FC = () => {
                 if (response.data.success) {
                     const userResponse = await APIUserInfo(auth.access_token);
                     setUser(userResponse.data);
-                    navigate('/privilege');
+                    navigate('/privilege', { state: { application_success: true } });
                 }
             } catch (error) {
                 console.error(error);
@@ -95,7 +95,7 @@ export const HospitalityHeroesApplicationFormPage: React.FC = () => {
                     <TextInput placeholder={'Ваш контактный номер'} value={phone} onChange={setPhone} type={'tel'} />
                     <TextInput placeholder={'Ваше место работы'} value={workPlace} onChange={setWorkPlace} />
                     <TextInput placeholder={'Ваша должность'} value={jobTitle} onChange={setJobTitle} />
-                    <TextInput placeholder={'Ваш опыт работы'} value={experience} onChange={setExperience} />
+                    <TextInput placeholder={'Ваш опыт работы'} value={experience} onChange={setExperience} textarea={true} rows={4} />
                     <BottomButtonWrapper
                         content={'Присоединиться'}
                         type={'submit'}

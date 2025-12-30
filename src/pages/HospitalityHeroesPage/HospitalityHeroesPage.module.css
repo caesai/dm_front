@@ -3,6 +3,7 @@
     flex-direction: column;
     gap: 20px;
     padding: 20px 15px 90px;
+    min-height: 100vh;
 }
 
 .bg_white {

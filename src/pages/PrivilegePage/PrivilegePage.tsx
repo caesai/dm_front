@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 // Components
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { Page } from '@/components/Page.tsx';
@@ -11,17 +11,30 @@ import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 import css from '@/pages/PrivilegePage/PrivilegePage.module.css';
 // Images
 import hospitalityHeroesLogo from '/img/hospitality_heroes.png';
+import { ModalPopup } from '@/components/ModalPopup/ModalPopup';
 
 
 export const PrivilegePage: React.FC = () => {
     const navigate = useNavigate();
     const { goBack } = useNavigationHistory();
+    const location = useLocation();
+    const state = location.state;
+    const applicationSuccess = state?.application_success;
+    const [isApplicationSuccessOpen, setIsApplicationSuccessOpen] = useState(applicationSuccess);
     const goToBookingPage = () => {
         navigate('/booking');
+    };
+    const setOpen = () => {
+        setIsApplicationSuccessOpen(false);
     };
     return (
         <Page back={true}>
             <div className={css.page}>
+                <ModalPopup
+                    isOpen={isApplicationSuccessOpen}
+                    setOpen={setOpen}
+                    text={'Добро пожаловать в коммьюнити Hospitality Heroes! Ваша привилегия активирована.'}
+                />
                 <div className={css.header}>
                     <RoundedButton
                         icon={<BackIcon size={24} color={'var(--dark-grey)'} />}
@@ -36,7 +49,7 @@ export const PrivilegePage: React.FC = () => {
                         <li>Скидка 40% в ресторанах Smoke BBQ, Self Edge, Poly, Pame, Blackchops, Trappist.</li>
                         <li>Применяется по понедельникам с 15:00 до 19:00, кроме праздничных и выходных дней.</li>
                         <li>Скидка предоставляется только при бронировании стола через приложение.</li>
-                        <li>Скидка не действует на покупку сертификатов, специальные предложения и некоторые позиции меню (уточняйте у официанта)</li>
+                        <li>Скидка не действует на покупку сертификатов, специальные предложения и некоторые позиции меню (уточняйте у официанта).</li>
                     </ul>
                     <BottomButtonWrapper content={'Забронировать'} type={'button'} onClick={goToBookingPage} />
                 </div>
