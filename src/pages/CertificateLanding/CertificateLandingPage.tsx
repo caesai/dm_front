@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom, useSetAtom } from 'jotai/index';
 import moment from 'moment';
@@ -25,7 +25,6 @@ import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.ts
 import { useModal } from '@/components/ModalPopup/useModal.ts';
 // Styles
 import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
-import { DEV_MODE } from '@/api/base';
 
 /**
  * Компонент страницы отображения детальной информации о подарочном сертификате.

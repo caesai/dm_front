@@ -20,7 +20,6 @@ export const APIGetCertificateById = async (token: string, certificate_id: strin
             Authorization: `Bearer ${token}`,
         },
         params: {
-            // user_id,
             certificate_id,
         },
     });

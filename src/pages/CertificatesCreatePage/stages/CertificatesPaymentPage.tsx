@@ -40,18 +40,16 @@ export const CertificatesPaymentPage: React.FC = () => {
 
     // Получение данных сертификата при монтировании компонента
     useEffect(() => {
-        if (auth?.access_token) {
-            if (paramsObject.certificate_id) {
-                // Получение данных сертификата
-                APIGetCertificateById(auth.access_token, paramsObject.certificate_id)
-                    .then((response) => setCertificate(response.data))
-                    .catch((error) => {
-                        console.error('Error getting certificate:', error);
-                        setLoading(false);
-                    });
-            }
+        if (auth?.access_token && paramsObject.certificate_id) {
+            // Получение данных сертификата
+            APIGetCertificateById(auth.access_token, paramsObject.certificate_id)
+                .then((response) => setCertificate(response.data))
+                .catch((error) => {
+                    console.error('Error getting certificate:', error);
+                    setLoading(false);
+                });
         }
-    }, [auth, user, paramsObject.certificate_id]);
+    }, [auth?.access_token, paramsObject.certificate_id]);
 
     /**
      * Проверяет статус оплаты сертификата.
@@ -60,31 +58,29 @@ export const CertificatesPaymentPage: React.FC = () => {
      * При успешной оплате (`is_paid: true`) обновляет состояние `isPaid` и перезагружает список сертификатов.
      */
     const checkPayment = useCallback(() => {
-        if (auth?.access_token && certificate && user?.id) {
-            if (paramsObject.order_number) {
-                // Проверка статуса оплаты сертификата
-                APIPostCertificateCheckPayment(auth?.access_token, user?.id, paramsObject.order_number, certificate.id)
-                    .then((response) => {
-                        // Возвращается объект с полем is_paid: true/false с Альфы
-                        setIsPaid(response.data.is_paid);
-                        // Обновление списка сертификатов в приложении
-                        APIGetCertificates(auth?.access_token, Number(user?.id))
-                            .then((response) => setCertificates(response.data))
-                            .catch((error) => {
-                                console.error('Error getting certificates list:', error);
-                                setLoading(false);
-                            });
-                    })
-                    .catch((error) => {
-                        // Обработка ошибки, например, логирование или отображение уведомления
-                        console.error('Error checking payment status:', error);
-                    })
-                    .finally(() => {
-                        setLoading(false);
-                    });
-            }
+        if (auth?.access_token && certificate && user?.id && paramsObject.order_number) {
+            // Проверка статуса оплаты сертификата
+            APIPostCertificateCheckPayment(auth.access_token, user.id, paramsObject.order_number, certificate.id)
+                .then((response) => {
+                    // Возвращается объект с полем is_paid: true/false с Альфы
+                    setIsPaid(response.data.is_paid);
+                    // Обновление списка сертификатов в приложении
+                    APIGetCertificates(auth.access_token, Number(user.id))
+                        .then((response) => setCertificates(response.data))
+                        .catch((error) => {
+                            console.error('Error getting certificates list:', error);
+                            setLoading(false);
+                        });
+                })
+                .catch((error) => {
+                    // Обработка ошибки, например, логирование или отображение уведомления
+                    console.error('Error checking payment status:', error);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         }
-    }, [auth, certificate, user, paramsObject.order_number]);
+    }, [auth?.access_token, certificate, user?.id, paramsObject.order_number, setCertificates]);
 
     /**
      * Создает сертификат в eGift после успешной оплаты
@@ -125,8 +121,9 @@ export const CertificatesPaymentPage: React.FC = () => {
      * 3. Проверяем наличие dreamteam_id в обновленных данных
      * 4. Если dreamteam_id не пустое, создаем сертификат в eGift
      */
+    const hasCreatedEGiftRef = useRef<boolean>(false);
     useEffect(() => {
-        if (!isPaid || !auth?.access_token || !certificate?.id) {
+        if (!isPaid || !auth?.access_token || !certificate?.id || hasCreatedEGiftRef.current) {
             return;
         }
 
@@ -138,6 +135,7 @@ export const CertificatesPaymentPage: React.FC = () => {
 
                 // Если dreamteam_id присвоен, создаем сертификат в eGift
                 if (updatedCertificate?.dreamteam_id && updatedCertificate.dreamteam_id.trim() !== '') {
+                    hasCreatedEGiftRef.current = true;
                     // Используем функцию createEGiftCertificate для создания сертификата в eGift
                     createEGiftCertificate(updatedCertificate);
                 }
