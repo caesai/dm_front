@@ -1,13 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAtomValue } from 'jotai';
 import classNames from 'classnames';
+import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 // Types
-import { IMenuImg, IMenuItem } from '@/types/restaurant.types.ts';
-// Atoms
-import { permissionsAtom } from '@/atoms/userAtom.ts';
+import { IMenuImg } from '@/types/restaurant.types.ts';
 // Utils
 import { extractPrice, getDefaultSize } from '@/utils/menu.utils.ts';
 // Hooks
@@ -21,86 +18,59 @@ import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderC
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+// API
+import { DEV_MODE } from '@/api/base.ts';
+
 interface MenuBlockProps {
-    // Старая версия меню
-    menu: IMenuItem[] | undefined;
-    // Старая версия меню
     menu_imgs: IMenuImg[] | undefined;
-    // ID ресторана
     restaurant_id: number;
 }
-// Блок меню
-// TODO: новая версия меню доступна пользователям с разрешением menu_tester
-// как только будет реализована новая версия меню, нужно будет удалить старый блок меню
-export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id, menu }) => {
-    // Получаем разрешения пользователя
-    const permissions = useAtomValue(permissionsAtom);
-    // Навигация
+
+export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id }) => {
     const navigate = useNavigate();
-    // Открываем popup с меню (старая версия меню)
     const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
-    // Новая версия меню берет данные из базы данных, а не из menu_imgs
+
     const { menuData } = useRestaurantMenu(restaurant_id);
-    // Получаем блюда из базы данных
+
     const menuItems = useMemo(() => {
         if (!menuData) return [];
         return menuData.item_categories
-            .filter((cat) => !cat.is_hidden)
-            .flatMap((cat) => cat.menu_items.filter((item) => !item.is_hidden))
+            .filter(cat => !cat.is_hidden)
+            .flatMap(cat => cat.menu_items.filter(item => !item.is_hidden))
             .slice(0, 10);
     }, [menuData]);
 
-    // Сортируем блюда по id (старая версия меню) 
-    // slice() - создаем копию массива, чтобы не изменять исходный массив
-    const sortedMenuItems = menu?.slice().sort((a, b) => a.id - b.id) || [];
-    // Получаем URL изображений блюд из menu_imgs (старая версия меню)
     const menuImageUrls = useMemo(() => {
         if (!menu_imgs) return [];
-        return menu_imgs.sort((a, b) => a.order - b.order).map((item) => item.image_url);
+        return menu_imgs
+            .sort((a, b) => a.order - b.order)
+            .map(item => item.image_url);
     }, [menu_imgs]);
-    // Открываем интерактивное меню (новая версия меню)
+
     const handleOpenInteractiveMenu = () => {
         navigate(`/restaurant/${restaurant_id}/menu`);
     };
 
-    // Открываем popup с меню (старая версия меню)
     const handleOpenMenuPopup = () => {
         setIsMenuPopupOpen(true);
     };
 
     return (
         <ContentContainer>
-            {/* Открываем popup с меню (старая версия меню) */}
-            {menu_imgs && <MenuPopup isOpen={isMenuPopupOpen} setOpen={setIsMenuPopupOpen} menuItems={menuImageUrls} />}
-            {/* Блок контента */}
+            {menu_imgs && (
+                <MenuPopup
+                    isOpen={isMenuPopupOpen}
+                    setOpen={setIsMenuPopupOpen}
+                    menuItems={menuImageUrls}
+                />
+            )}
+
             <ContentBlock>
                 <HeaderContainer id="menu">
                     <HeaderContent title="Меню" />
                 </HeaderContainer>
 
-                {/* Слайдер блюд меню доступен всем пользователям */}
-                {!permissions.includes('menu_tester') && (
-                    <div className={css.photoSliderContainer}>
-                        <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
-                            {sortedMenuItems.map((item, index) => (
-                                <SwiperSlide style={{ width: '162px' }} key={`${item.id}-${index}`}>
-                                    <div className={css.menuItem}>
-                                        <div
-                                            className={classNames(css.menuItemPhoto, css.bgImage)}
-                                            style={{ backgroundImage: `url(${item.photo_url})` }}
-                                        />
-                                        <div className={css.menuItemInfo}>
-                                            <span className={css.title}>{item.title}</span>
-                                            <span className={css.subtitle}>{item.price} ₽</span>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
-                    </div>
-                )}
-                {/* Слайдер новой версии блюд меню доступен пользователям с разрешением menu_tester */}
-                {permissions.includes('menu_tester') && menuItems.length > 0 && (
+                {menuItems.length > 0 && (
                     <div className={css.photoSliderContainer}>
                         <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
                             {menuItems.map((item, index) => {
@@ -109,13 +79,16 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id, 
                                 const price = extractPrice(defaultSize?.prices);
 
                                 return (
-                                    <SwiperSlide style={{ width: '162px' }} key={`${item.id}-${index}`}>
+                                    <SwiperSlide
+                                        style={{ width: '162px' }}
+                                        key={`${item.id}-${index}`}
+                                    >
                                         <div className={css.menuItem}>
                                             <div
                                                 className={classNames(css.menuItemPhoto, css.bgImage)}
-                                                style={{
+                                                style={{ 
                                                     backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
-                                                    backgroundColor: imageUrl ? 'transparent' : '#F4F4F4',
+                                                    backgroundColor: imageUrl ? 'transparent' : '#F4F4F4'
                                                 }}
                                             />
                                             <div className={css.menuItemInfo}>
@@ -133,8 +106,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id, 
                 <UniversalButton
                     title="Всё меню"
                     width="full"
-                    // Если пользователь имеет разрешение menu_tester, открываем страницу меню, иначе открываем popup с меню
-                    action={permissions.includes('menu_tester') ? handleOpenInteractiveMenu : handleOpenMenuPopup}
+                    action={DEV_MODE ? handleOpenInteractiveMenu : handleOpenMenuPopup}
                 />
             </ContentBlock>
         </ContentContainer>

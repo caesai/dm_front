@@ -19,7 +19,6 @@ export const AppLoadingScreen: React.FC = () => {
     const rawLp = useRawInitData();
     useEffect(() => {
         if (!auth?.access_token) {
-            console.log('lp.tgWebAppStartParam: ', lp.tgWebAppStartParam)
             APIUserAuth(rawLp, lp.tgWebAppStartParam)
                 .then((res) => {
                     setAuth(res.data);
