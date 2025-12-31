@@ -232,6 +232,14 @@ export const BookingPage: React.FC = () => {
         setCertificates,
     ]);
 
+    const handleGoBack = () => {
+        if (state?.shared) {
+            navigate('/');
+        } else {
+            goBack();
+        }
+    };
+
     return (
         <Page back={true}>
             <BookingErrorPopup
@@ -274,7 +282,7 @@ export const BookingPage: React.FC = () => {
                                     <h3 className={css.headerInfo__title}>{'Бронирование'}</h3>
                                 </div>
                                 <div>
-                                    <RoundedButton icon={<CrossIcon size={44} />} action={goBack} />
+                                    <RoundedButton icon={<CrossIcon size={44} />} action={handleGoBack} />
                                 </div>
                             </div>
                             <div className={css.header_bottom}>
