@@ -17,7 +17,7 @@ export const Header = () => {
     };
 
     return (
-        <div className={css.header}>
+        <header className={css.header}>
             <img
                 className={css.logo}
                 src={logoNew}
@@ -34,6 +34,6 @@ export const Header = () => {
                     action={() => goToProfile()}
                 />
             </div>
-        </div>
+        </header>
     );
 };

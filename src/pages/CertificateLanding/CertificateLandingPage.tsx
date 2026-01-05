@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom, useSetAtom } from 'jotai/index';
 import moment from 'moment';
@@ -49,7 +49,9 @@ export const CertificateLandingPage: React.FC = () => {
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const setShowToast = useSetAtom(showToastAtom);
     const [loading, setLoading] = useState<boolean>(true);
-    const { isShowing, toggle, setIsShowing } = useModal();
+    const { isShowing, toggle, setIsShowing } = useModal()
+    // Необходимо для предотвращения повторного вызова функции acceptCertificate при одновременном монтировании и размонтировании компонента
+    const isAcceptingRef = useRef(false);
 
     /**
      * Мемоизированная функция для отображения toast-уведомлений.
@@ -229,14 +231,17 @@ export const CertificateLandingPage: React.FC = () => {
                     // Пользователь — владелец. Ничего не делаем.
                     setLoading(false);
                     return;
-                } else {
-                    // Сертификат куплен другим пользователем, но еще не принят этим
+            } else {
+                // Сертификат куплен другим пользователем, но еще не принят этим
+                if (!isAcceptingRef.current) {
+                    isAcceptingRef.current = true;
                     (async () => {
                         await acceptCertificate();
                         setLoading(false);
                     })();
-                    return;
                 }
+                return;
+            }
             } else {
                 // Сертификат уже был передан (shared_at существует)
                 if (certificate.recipient_id === user.id) {

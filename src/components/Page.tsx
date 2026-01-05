@@ -23,5 +23,5 @@ export function Page({
         backButton.hide();
     }, [back]);
 
-    return <>{children}</>;
+    return <section>{children}</section>;
 }

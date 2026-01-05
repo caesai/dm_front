@@ -30,13 +30,13 @@ export const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
 
 export const IndexPage: React.FC = () => {
     const navigate = useNavigate();
-    
+
     // Atoms
     const [currentCityA] = useAtom(currentCityAtom);
     const [user] = useAtom(userAtom);
     const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
     const [cityListA] = useAtom(cityListAtom);
-    
+
     // Состояния для города
     const [cityListConfirm] = useState<IConfirmationType[]>(
         cityListA.map((v: ICity) => transformToConfirmationFormat(v))
@@ -52,12 +52,7 @@ export const IndexPage: React.FC = () => {
     const cityId = cityListA.find((item) => item.name_english === currentCityS.id)?.id ?? 1;
 
     // Оптимизированная загрузка данных через хук
-    const {
-        currentBookings,
-        storiesBlocks,
-        restaurantsList,
-        restaurantsLoading,
-    } = useIndexPageData({
+    const { currentBookings, storiesBlocks, restaurantsList, restaurantsLoading } = useIndexPageData({
         currentCity: currentCityA,
         cityId,
     });
@@ -112,9 +107,9 @@ export const IndexPage: React.FC = () => {
             <div className={css.pageContainer}>
                 <Header />
                 <Stories storiesBlocks={storiesBlocks} />
-                <div style={{ marginRight: 15 }}>
-                    <CitySelect options={cityOptions} currentValue={currentCityS} onChange={updateCurrentCity} />
-                </div>
+                {/* <div style={{ marginRight: 15 }}> */}
+                <CitySelect options={cityOptions} currentValue={currentCityS} onChange={updateCurrentCity} />
+                {/* </div> */}
                 <BookingReminder bookings={currentBookings} />
                 <OptionsNavigation cityId={cityId} isLoading={restaurantsLoading} />
                 <div className={css.restaurants}>

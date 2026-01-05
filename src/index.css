@@ -36,11 +36,6 @@ body::-webkit-scrollbar {
     text-decoration: none;
 }
 
-.swiper-wrapper {
-    /*gap: 8px;*/
-    /*-webkit-column-gap: 8px;*/
-}
-
 .ReactCollapse--collapse {
     transition: height 500ms;
 }
