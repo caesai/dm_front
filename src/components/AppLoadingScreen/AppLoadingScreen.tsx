@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useLaunchParams, useRawInitData } from '@telegram-apps/sdk-react';
 // APIs
 import { APIUserAuth, APIUserInfo } from '@/api/auth.api.ts';
@@ -13,8 +13,9 @@ export const Loader = () => {
 };
 
 export const AppLoadingScreen: React.FC = () => {
-    const [, setUser] = useAtom(userAtom);
-    const [auth, setAuth] = useAtom(authAtom);
+    const auth = useAtomValue(authAtom);
+    const setUser = useSetAtom(userAtom);
+    const setAuth = useSetAtom(authAtom);
     const lp = useLaunchParams();
     const rawLp = useRawInitData();
     useEffect(() => {

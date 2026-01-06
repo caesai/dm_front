@@ -4,8 +4,7 @@ import { MemoryRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { EventsListPage } from '@/pages/EventsPage/EventsListPage/EventsListPage.tsx';
 import { userAtom } from '@/atoms/userAtom.ts';
 import { eventsListAtom } from '@/atoms/eventListAtom.ts';
-import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
-import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { cityListAtom, getCurrentCity, ICity } from '@/atoms/cityListAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock';
@@ -89,7 +88,7 @@ const mockCityList: ICity[] = [
 // Mock рестораны
 const mockRestaurants: IRestaurant[] = [
     {
-        id: 4,
+        id: String(4),
         title: 'Self Edge Japanese',
         slogan: 'Японский ресторан',
         address: 'Санкт-Петербург, ул. Радищева, 34',
@@ -115,7 +114,7 @@ const mockRestaurants: IRestaurant[] = [
         socials: [],
     },
     {
-        id: 10,
+        id: String(10),
         title: 'Self Edge Moscow',
         slogan: 'Московский ресторан',
         address: 'Москва, ул. Большая Грузинская, 12',
@@ -170,7 +169,7 @@ describe('EventsListPage', () => {
             [userAtom, user],
             [eventsListAtom, events],
             [cityListAtom, cities],
-            [currentCityAtom, currentCity],
+            [getCurrentCity, currentCity],
             [restaurantsListAtom, restaurants],
         ];
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAtom, useSetAtom } from 'jotai/index';
+import { useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
 import moment from 'moment';
 // API
 import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
@@ -40,12 +40,12 @@ import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
  * @component
  * @returns {JSX.Element} Компонент страницы сертификата
  */
-export const CertificateLandingPage: React.FC = () => {
+export const CertificateLandingPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [auth] = useAtom(authAtom);
-    const [user] = useAtom(userAtom);
-    const [, setCertificates] = useAtom(certificatesListAtom);
+    const auth = useAtomValue(authAtom);
+    const user = useAtomValue(userAtom);
+    const setCertificates = useSetAtom(certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>);
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const setShowToast = useSetAtom(showToastAtom);
     const [loading, setLoading] = useState<boolean>(true);
@@ -418,7 +418,7 @@ export const CertificateLandingPage: React.FC = () => {
                     </AccordionComponent>
                     <div className={css.restaurantsList}>
                         <span className={css.pageTitle}>Доступно в ресторанах</span>
-                        <RestaurantsList titleStyle={{ fontSize: '14px', fontWeight: '600' }} />
+                        <RestaurantsList />
                     </div>
                     {!isCertificateDisabled() && (
                         <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />

@@ -60,7 +60,7 @@ const confirmationList: IConfirmationType[] = [
 export const BookingRestaurantPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { id } = useParams();
+    const { restaurantId } = useParams();
     const { goBack } = useNavigationHistory();
     const state = location?.state;
     // Global state atoms
@@ -100,7 +100,7 @@ export const BookingRestaurantPage: React.FC = () => {
     // Update bookingDates when guestCount changes
     useEffect(() => {
         auth?.access_token && restaurant.value !== 'unset'
-            ? APIGetAvailableDays(auth?.access_token, Number(id), 1).then((res) =>
+            ? APIGetAvailableDays(auth?.access_token, String(restaurantId), 1).then((res) =>
                   setAvailableDates(
                       res.data.map((v: string) => ({
                           title: formatDate(v),
@@ -117,7 +117,7 @@ export const BookingRestaurantPage: React.FC = () => {
         }
         setTimeslotsLoading(true);
         setTimeslotsError(false);
-        APIGetAvailableTimeSlots(auth.access_token, Number(id), date.value, guestCount)
+        APIGetAvailableTimeSlots(auth.access_token, String(restaurantId), date.value, guestCount)
             .then((res) => setAvailableTimeslots(res.data))
             .catch((err) => {
                 console.error('err: ', err);
@@ -147,7 +147,7 @@ export const BookingRestaurantPage: React.FC = () => {
     );
 
     useEffect(() => {
-        const currentRestaurant = restaurantList.find((r) => r.value === id);
+        const currentRestaurant = restaurantList.find((r) => r.value === restaurantId);
         if (currentRestaurant) {
             setRestaurant(currentRestaurant);
         }
@@ -168,14 +168,14 @@ export const BookingRestaurantPage: React.FC = () => {
 
     const createBooking = () => {
         if (!user?.complete_onboarding) {
-            navigate('/onboarding/3', { state: { id, date, time: currentSelectedTime, sharedRestaurant: true } });
+            navigate('/onboarding/3', { state: { id: restaurantId, date, time: currentSelectedTime, sharedRestaurant: true } });
             return;
         }
         if (validateForm() && auth?.access_token && currentSelectedTime) {
             setRequestLoading(true);
             APICreateBooking(
                 auth.access_token,
-                Number(id),
+                String(restaurantId),
                 date.value,
                 getTimeShort(currentSelectedTime.start_datetime),
                 guestCount,
@@ -213,7 +213,7 @@ export const BookingRestaurantPage: React.FC = () => {
             <BookingErrorPopup
                 isOpen={errorPopup}
                 setOpen={setErrorPopup}
-                resId={Number(id)}
+                resId={Number(restaurantId)}
                 count={errorPopupCount}
                 botError={botError}
             />
@@ -288,7 +288,7 @@ export const BookingRestaurantPage: React.FC = () => {
                         </ContentContainer>
                     ) : !timeslotsError ? (
                         <TimeSlots
-                            restaurantId={Number(id)}
+                            restaurantId={Number(restaurantId)}
                             loading={timeslotsLoading}
                             availableTimeslots={availableTimeslots}
                             currentSelectedTime={currentSelectedTime}
@@ -305,12 +305,12 @@ export const BookingRestaurantPage: React.FC = () => {
                         selectedCertificateId={null}
                     />
                     <BookingWish
-                        restaurantId={Number(id)}
+                        restaurantId={Number(restaurantId)}
                         guestCount={guestCount}
                         childrenCount={childrenCount}
                         preOrder={preOrder}
                         setPreOrder={setPreOrder}
-                        restaurant={String(id)}
+                        restaurant={String(restaurantId)}
                         commentary={commentary}
                         setCommentary={setCommentary}
                     />

@@ -17,7 +17,7 @@ import { formatDate } from '@/utils.ts';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 
 interface UseRestaurantPageDataOptions {
-    restaurantId: number;
+    restaurantId: string;
     onError?: (message: string) => void;
 }
 
@@ -52,6 +52,21 @@ const DAYS_CACHE_TTL = 5 * 60 * 1000; // 5 минут
  * - Кэширование доступных дней в памяти
  * - Предотвращение дублирующих запросов
  * - Умная инвалидация при смене ресторана
+ * - Загрузка данных только для текущего ресторана
+ * - Уменьшение количества запросов к API
+ *  Возвращает:
+ * - События 
+ * - Загрузка событий
+ * - Даты бронирования
+ * - Дата бронирования
+ * - Установка даты бронирования
+ * - Загрузка дат бронирования
+ * - Доступные таймслоты
+ * - Загрузка таймслотов
+ * - Ошибка загрузки таймслотов
+ * - Текущий выбранный таймслот
+ * - Установка текущего выбранного таймслота
+ * - Начальная загрузка
  */
 export const useRestaurantPageData = ({
     restaurantId,
@@ -71,13 +86,13 @@ export const useRestaurantPageData = ({
     const [timeslotsError, setTimeslotsError] = useState(false);
 
     // Refs для отслеживания состояния
-    const initializedRestaurantRef = useRef<number | null>(null);
+    const initializedRestaurantRef = useRef<string | null>(null);
     const currentRequestRef = useRef<{ events?: AbortController; days?: AbortController; timeslots?: AbortController }>({});
 
     /**
      * Получает закэшированные дни или null
      */
-    const getCachedDays = useCallback((id: number): PickerValueObj[] | null => {
+    const getCachedDays = useCallback((id: string): PickerValueObj[] | null => {
         const cacheKey = `restaurant_${id}`;
         const cached = daysCache.get(cacheKey);
         
@@ -91,7 +106,7 @@ export const useRestaurantPageData = ({
     /**
      * Сохраняет дни в кэш
      */
-    const cacheDays = useCallback((id: number, days: PickerValueObj[]) => {
+    const cacheDays = useCallback((id: string, days: PickerValueObj[]) => {
         const cacheKey = `restaurant_${id}`;
         daysCache.set(cacheKey, { data: days, timestamp: Date.now() });
     }, []);

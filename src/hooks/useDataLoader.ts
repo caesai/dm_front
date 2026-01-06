@@ -1,5 +1,5 @@
 import { useCallback, useRef, useEffect } from 'react';
-import { useAtom } from 'jotai';
+import { useAtomValue, useSetAtom, WritableAtom } from 'jotai';
 // API
 import { APIGetCityList } from '@/api/city.api.ts';
 import { APIGetRestaurantsList } from '@/api/restaurants.api.ts';
@@ -8,7 +8,7 @@ import { APIGetGastronomyDishesList } from '@/api/gastronomy.api.ts';
 import { APIGetEventsList } from '@/api/events.api.ts';
 // Atoms
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { cityListAtom } from '@/atoms/cityListAtom.ts';
+import { cityListAtom, TCityList } from '@/atoms/cityListAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
@@ -18,7 +18,10 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import { ICity } from '@/atoms/cityListAtom.ts';
 // Utils
 import { getCachedData, setCachedData } from '@/hooks/useCachedData.ts';
-import { R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock.ts';
+import { ICertificate } from '@/types/certificates.types';
+import { IDish } from '@/types/gastronomy.types';
+import { IEvent } from '@/types/events.types';
 
 const CACHE_KEYS = {
     cities: 'app_cities',
@@ -34,13 +37,13 @@ const CACHE_KEYS = {
  * - Ленивую загрузку некритичных данных
  */
 export const useDataLoader = () => {
-    const [auth] = useAtom(authAtom);
-    const [user] = useAtom(userAtom);
-    const [, setCitiesList] = useAtom(cityListAtom);
-    const [, setRestaurantsList] = useAtom(restaurantsListAtom);
-    const [, setCertificatesList] = useAtom(certificatesListAtom);
-    const [, setAllGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
-    const [, setEventsList] = useAtom(eventsListAtom);
+    const auth = useAtomValue(authAtom);
+    const user = useAtomValue(userAtom);
+    const setCitiesList = useSetAtom(cityListAtom as WritableAtom<TCityList, [TCityList], void>);
+    const setRestaurantsList = useSetAtom(restaurantsListAtom as WritableAtom<IRestaurant[], [IRestaurant[]], void>);
+    const setCertificatesList = useSetAtom(certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>);
+    const setAllGastronomyDishesList = useSetAtom(allGastronomyDishesListAtom as WritableAtom<IDish[], [IDish[]], void>);
+    const setEventsList = useSetAtom(eventsListAtom as WritableAtom<IEvent[] | null, [IEvent[] | null], void>);
 
     // Флаги для предотвращения повторной загрузки
     const loadedRef = useRef({

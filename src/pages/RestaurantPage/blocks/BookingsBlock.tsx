@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import { useAtom } from 'jotai/index';
+import React, { useState } from 'react';
+import { useSetAtom } from 'jotai/index';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
 import { Calendar } from 'react-iconly';
@@ -11,55 +11,64 @@ import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 import { IWorkTime } from '@/types/restaurant.types.ts';
 // Atoms
 import { guestCountAtom } from '@/atoms/bookingInfoAtom.ts';
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 // Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 // Utils
 import { formatDateAlt, getTimeShort } from '@/utils.ts';
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+// Hooks
+import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
 
-interface BookingBlockProps {
-    currentSelectedTime: ITimeSlot | null;
-    workTime: IWorkTime[] | undefined;
-    bookingDate: PickerValueObj;
-    bookingDates: PickerValueObj[];
-    setBookingDate: Dispatch<SetStateAction<PickerValueObj>>;
-    timeslotLoading: boolean;
-    availableTimeslots: ITimeSlot[];
-    setCurrentSelectedTime: (currentSelectedTime: ITimeSlot) => void;
-    isEvents: boolean;
-    isNavigationLoading: boolean;
-    isBanquets: boolean;
-    isGastronomy: boolean;
-    isMenu: boolean;
-    timeslotsError: boolean;
+/**
+ * Пропсы компонента BookingBlock.
+ *
+ * @interface IBookingBlockProps
+ */
+interface IBookingBlockProps {
+    /**
+     * ID ресторана.
+     */
+    restaurantId: string;
 }
 
 /**
  * Компонент блока бронирования столика в ресторане
+ *
+ * @component
+ * @param {BookingBlockProps} props - Пропсы компонента
+ * @returns {JSX.Element} Компонент блока бронирования столика в ресторане
  */
-export const BookingBlock: React.FC<BookingBlockProps> = ({
-    currentSelectedTime,
-    workTime,
-    bookingDate,
-    setBookingDate,
-    bookingDates,
-    timeslotLoading,
-    availableTimeslots = [],
-    setCurrentSelectedTime,
-    isGastronomy,
-    isBanquets,
-    isEvents,
-    isNavigationLoading,
-    isMenu,
-    timeslotsError,
-}) => {
-    const [, setGuestCount] = useAtom(guestCountAtom);
+export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }): JSX.Element => {
+    /**
+     * Ресторан.
+     */
+    const restaurant = useGetRestaurantById(restaurantId);
+    /**
+     * Устанавливает количество гостей.
+     */
+    const setGuestCount = useSetAtom(guestCountAtom);
+    /**
+     * Данные бронирования.
+     */
+    const {
+        bookingDate,
+        currentSelectedTime,
+        setCurrentSelectedTime,
+        bookingDates,
+        timeslotLoading,
+        availableTimeslots,
+        timeslotsError,
+        setBookingDate,
+    } = useRestaurantPageData({ restaurantId });
+    /**
+     * Состояние открытия popup с датой бронирования.
+     */
     const [isBookingDatePopupOpen, setIsBookingDatePopupOpen] = useState(false);
 
     /**
@@ -67,10 +76,11 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
      * @returns {moment.Moment | null} Время закрытия или null если данные недоступны
      */
     const getWorkEndTime = (): moment.Moment | null => {
-        if (workTime === undefined) return null;
+        if (restaurant?.worktime === undefined) return null;
 
-        const restaurantWorkEndTime = workTime?.find(
-            (item) => String(item.weekday).toLowerCase() === String(bookingDate.title).toLowerCase().slice(-2)
+        const restaurantWorkEndTime = restaurant?.worktime?.find(
+            (item: IWorkTime) =>
+                String(item.weekday).toLowerCase() === String(bookingDate.title).toLowerCase().slice(-2)
         )?.time_end;
 
         if (!restaurantWorkEndTime) return null;
@@ -87,7 +97,11 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
         return workEndTime;
     };
 
-    const handleTimeSlotClick = (ts: ITimeSlot) => {
+    /**
+     * Обработчик клика на таймслот
+     * @param {ITimeSlot} ts - Таймслот для обработки
+     */
+    const handleTimeSlotClick = (ts: ITimeSlot): void => {
         setCurrentSelectedTime(ts);
         setGuestCount({ title: '1 гость', value: '1' });
     };
@@ -103,12 +117,18 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
         }
 
         const workEndTime = getWorkEndTime();
-        // если время окончания таймслота меньше времени закрытия ресторана или равно, то используем время окончания таймслота
-        // иначе используем время закрытия ресторана
+        /**
+         * Если время окончания таймслота меньше времени закрытия ресторана или равно, то используем время окончания таймслота
+         * иначе используем время закрытия ресторана
+         */
         const endTime =
-            workEndTime && (moment(ts.end_datetime).isBefore(workEndTime) || moment(ts.end_datetime).isSame(workEndTime))
+            workEndTime &&
+            (moment(ts.end_datetime).isBefore(workEndTime) || moment(ts.end_datetime).isSame(workEndTime))
                 ? getTimeShort(ts.end_datetime)
-                : workTime?.find((item) => String(item.weekday) === String(bookingDate.title).slice(-2))?.time_end;
+                : restaurant?.worktime?.find(
+                      (item: IWorkTime) =>
+                          String(item.weekday).toLowerCase() === String(bookingDate.title).toLowerCase().slice(-2)
+                  )?.time_end;
         return `${getTimeShort(ts.start_datetime)} - ${endTime}`;
     };
 
@@ -124,13 +144,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
 
             <ContentBlock id="booking">
                 <div className={css.navSliderAndBookingContainer}>
-                    <RestaurantNavigation
-                        isLoading={isNavigationLoading}
-                        isEvents={isEvents}
-                        isBanquets={isBanquets}
-                        isGastronomy={isGastronomy}
-                        isMenu={isMenu}
-                    />
+                    <RestaurantNavigation restaurantId={restaurantId} />
                     <div className={css.bookingContaner}>
                         <Swiper
                             slidesPerView="auto"
@@ -176,7 +190,7 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
                                         <div
                                             className={classNames(
                                                 css.timeItem,
-                                                currentSelectedTime === ts && css.timeItemActive,
+                                                currentSelectedTime === ts && css.timeItemActive
                                             )}
                                         >
                                             {formatTimeDisplay(ts)}
@@ -187,7 +201,9 @@ export const BookingBlock: React.FC<BookingBlockProps> = ({
                         </Swiper>
                     </div>
                     {timeslotsError && (
-                        <p className={css.timeslotsError} role="alert" data-testid="timeslots-error">Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.</p>
+                        <p className={css.timeslotsError} role="alert" data-testid="timeslots-error">
+                            Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.
+                        </p>
                     )}
                 </div>
             </ContentBlock>

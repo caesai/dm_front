@@ -1,15 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock.tsx';
 
-const mockProps = {
-    about: 'Test chef description text that is quite long and needs to be truncated',
-    photo_url: 'chef-photo.jpg',
-    chef_names: ['John Doe']
-};
-
 describe('ChefBlock', () => {
     it('renders chef block with title and chef name', () => {
-        render(<ChefBlock {...mockProps} />);
+        render(<ChefBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('О шефе')).toBeInTheDocument();
         expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -17,13 +11,13 @@ describe('ChefBlock', () => {
     });
 
     it('shows read more button for long text', () => {
-        render(<ChefBlock {...mockProps} />);
+        render(<ChefBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('Читать больше')).toBeInTheDocument();
     });
 
     it('toggles text when read more button is clicked', () => {
-        render(<ChefBlock {...mockProps} />);
+        render(<ChefBlock restaurantId={String(1)} />);
 
         fireEvent.click(screen.getByText('Читать больше'));
 
@@ -31,14 +25,14 @@ describe('ChefBlock', () => {
     });
 
     it('displays chef photo', () => {
-        render(<ChefBlock {...mockProps} />);
+        render(<ChefBlock restaurantId={String(1)} />);
 
         const photo = document.querySelector('[style*="background-image"]');
         expect(photo).toBeInTheDocument();
     });
 
     it('handles keyboard navigation', () => {
-        render(<ChefBlock {...mockProps} />);
+        render(<ChefBlock restaurantId={String(1)} />);
 
         const readMoreButton = screen.getByText('Читать больше');
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom';
 import { swipeBehavior, useLaunchParams } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { ScrollToTop } from '@/navigation/utills.tsx';
 // API's
 import { DEV_MODE } from '@/api/base.ts';
@@ -75,8 +75,16 @@ import { HospitalityHeroesPage } from '@/pages/HospitalityHeroesPage/Hospitality
 import { HospitalityHeroesApplicationFormPage } from '@/pages/HospitalityHeroesPage/HospitalityHeroesApplicationFormPage.tsx';
 import { PrivilegePage } from '@/pages/PrivilegePage/PrivilegePage.tsx';
 
-const AppRouter: React.FC = () => {
-    const [auth] = useAtom(authAtom);
+/**
+ * Компонент маршрутизации приложения.
+ *
+ * Обеспечивает маршрутизацию между страницами приложения.
+ *
+ * @component
+ * @returns {JSX.Element} Компонент маршрутизации приложения
+ */
+const AppRouter: React.FC = (): JSX.Element => {
+    const auth = useAtomValue(authAtom);
     const [loadingComplete, setLoadingComplete] = useState<boolean>(false);
     
     const { loadCriticalData, loadBackgroundData } = useDataLoader();
@@ -163,9 +171,9 @@ const AppRouter: React.FC = () => {
                         {/* Информация о бронировании */}
                         <Route path={'/myBookings/:id'} element={<BookingInfoPage />} />
                         {/* Страница ресторана */}
-                        <Route path={'/restaurant/:id'} element={<RestaurantPage />} />
+                        <Route path={'/restaurant/:restaurantId'} element={<RestaurantPage />} />
                         {/* Бронирование ресторана */}
-                        <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
+                        <Route path={'/restaurant/:restaurantId/booking'} element={<BookingRestaurantPage />} />
                         {/* Меню ресторана */}
                         <Route path={'/restaurant/:id/menu'} element={<RestaurantMenuPage />} />
                         {/* Страница деталей блюда */}
@@ -251,12 +259,24 @@ const AppRouter: React.FC = () => {
     );
 };
 
-export function App() {
+/**
+ * Компонент приложения.
+ *
+ * Обеспечивает запуск приложения в Telegram WebApp.
+ *
+ * @component
+ * @returns {JSX.Element} Компонент приложения
+ */
+export const App: React.FC = (): JSX.Element => {
+    // Получаем параметры запуска приложения
     const lp = useLaunchParams();
+    // Монтируем поведение свайпа
     useEffect(() => {
         swipeBehavior.mount();
     }, []);
-    const [userState] = useAtom(userAtom);
+    // Получаем состояние пользователя
+    const userState = useAtomValue(userAtom);
+    // Возвращаем компонент приложения
     return (
         <AppRoot appearance={'light'} platform={['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'}>
             {!userState ? <AppLoadingScreen /> : <AppRouter />}

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { UnmountClosed } from 'react-collapse';
-// Types
-import { IWorkTime } from '@/types/restaurant.types.ts';
+// Atoms
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 // Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
@@ -14,24 +14,34 @@ import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatus } from
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
-interface AboutBlockProps {
-    about_text: string;
-    workTime: IWorkTime[] | undefined;
-    about_kitchen: string;
-    about_features: string;
-    avg_cheque: string;
+/**
+ * Пропсы компонента AboutBlock.
+ *
+ * @interface IAboutBlockProps
+ */
+interface IAboutBlockProps {
+    /**
+     * ID ресторана.
+     */
+    restaurantId: string;
 }
 
 /**
  * Компонент блока информации о ресторане
  */
-export const AboutBlock: React.FC<AboutBlockProps> = ({
-    about_text,
-    workTime,
-    about_kitchen,
-    about_features,
-    avg_cheque,
-}) => {
+export const AboutBlock: React.FC<IAboutBlockProps> = ({ restaurantId }): JSX.Element => {
+    /**
+     * Ресторан.
+     */
+    const restaurant = useGetRestaurantById(restaurantId);
+    /**
+     * Время работы.
+     */
+    const workTime = useMemo(() => restaurant?.worktime || [], [restaurant?.worktime]);
+    const aboutText = useMemo(() => restaurant?.about_text || '', [restaurant?.about_text]);
+    const aboutKitchen = useMemo(() => restaurant?.about_kitchen || '', [restaurant?.about_kitchen]);
+    const aboutFeatures = useMemo(() => restaurant?.about_features || '', [restaurant?.about_features]);
+    const avgCheque = useMemo(() => restaurant?.avg_cheque || 0, [restaurant?.avg_cheque]);
     const [isAboutCollapsed, setIsAboutCollapsed] = useState(true);
     const [isWorkHoursCollapsed, setIsWorkHoursCollapsed] = useState(true);
 
@@ -67,7 +77,10 @@ export const AboutBlock: React.FC<AboutBlockProps> = ({
                     <HeaderContent id="about" title="О месте" />
                 </HeaderContainer>
                 <div className={css.aboutContainer}>
-                    <span className={classNames(css.aboutText, isAboutCollapsed && css.trimLines)} dangerouslySetInnerHTML={{ __html: about_text.replace(/\\n/g, '\n') }}></span>
+                    <span
+                        className={classNames(css.aboutText, isAboutCollapsed && css.trimLines)}
+                        dangerouslySetInnerHTML={{ __html: aboutText.replace(/\\n/g, '\n') }}
+                    ></span>
                     <div
                         className={css.trimLinesButton}
                         onClick={toggleAbout}
@@ -111,15 +124,15 @@ export const AboutBlock: React.FC<AboutBlockProps> = ({
                     <div className={css.infoBlock}>
                         <div className={css.textRow}>
                             <span className={css.title}>Кухня:</span>
-                            <span className={css.value}>{about_kitchen}</span>
+                            <span className={css.value}>{aboutKitchen}</span>
                         </div>
                         <div className={css.textRow}>
                             <span className={css.title}>Особенности:</span>
-                            <span className={css.value}>{about_features}</span>
+                            <span className={css.value}>{aboutFeatures}</span>
                         </div>
                         <div className={css.textRow}>
                             <span className={css.title}>Средний чек:</span>
-                            <span className={css.value}>{avg_cheque} ₽</span>
+                            <span className={css.value}>{avgCheque} ₽</span>
                         </div>
                     </div>
                 </div>

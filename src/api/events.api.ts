@@ -34,12 +34,12 @@ export const APIGetAvailableEventTimeslots = async (
 
 interface Invoice {
     payment_url: string | null;
-    booking_id: number;
+    booking_id: string;
 }
 
 export const APICreateInvoice = async (
-    restaurant_id: number,
-    event_id: number,
+    restaurant_id: string,
+    event_id: string,
     timeslot: ITimeSlot,
     name: string,
     phone: string,
@@ -74,7 +74,7 @@ export const APICreateInvoice = async (
 };
 
 interface IValidatePayment {
-    event_id?: number;
+    event_id?: string;
     paid: boolean;
 }
 

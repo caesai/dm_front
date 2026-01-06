@@ -33,21 +33,14 @@ jest.mock('@/pages/RestaurantPage/RestaurantPage', () => ({
     ]
 }));
 
-const mockGallery = [
-    { category: 'Interior', url: 'photo1.jpg', id: 1 },
-    { category: 'Interior', url: 'photo2.jpg', id: 2 },
-    { category: 'Food', url: 'photo3.jpg', id: 3 },
-    { category: 'Food', url: 'photo4.jpg', id: 4 }
-];
-
 describe('GalleryBlock', () => {
     it('renders nothing when no gallery provided', () => {
-        const { container } = render(<GalleryBlock restaurant_gallery={undefined} />);
+        const { container } = render(<GalleryBlock restaurantId={String(1)} />);
         expect(container.firstChild).toBeNull();
     });
 
     it('renders gallery with title and categories', () => {
-        render(<GalleryBlock restaurant_gallery={mockGallery} />);
+        render(<GalleryBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('Галерея')).toBeInTheDocument();
         expect(screen.getByText('Все фото')).toBeInTheDocument();
@@ -56,14 +49,14 @@ describe('GalleryBlock', () => {
     });
 
     it('shows all photos category as active by default', () => {
-        render(<GalleryBlock restaurant_gallery={mockGallery} />);
+        render(<GalleryBlock restaurantId={String(1)} />);
 
         const allPhotosCategory = screen.getByText('Все фото');
         expect(allPhotosCategory).toHaveClass('photoSliderNavigationActive');
     });
 
     it('displays photos in gallery', () => {
-        render(<GalleryBlock restaurant_gallery={mockGallery} />);
+        render(<GalleryBlock restaurantId={String(1)} />);
 
         const photos = document.querySelectorAll('[style*="background-image"]');
         expect(photos.length).toBeGreaterThan(0);

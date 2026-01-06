@@ -1,18 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 // Atoms
 import { userAtom } from '@/atoms/userAtom.ts';
-import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
-import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { getCurrentCity, getCurrentCityId } from '@/atoms/cityListAtom.ts';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { Header } from '@/components/Header/Header.tsx';
+import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { OptionsNavigation } from '@/components/OptionsNavigation/OptionsNavigation.tsx';
-import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
-import { RestaurantPreviewSkeletonList } from '@/components/RestaurantPreview/RestaurantPreviewSkeleton.tsx';
+import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.tsx';
 import { BookingReminder } from '@/components/BookingReminder/BookingReminder.tsx';
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { Stories } from '@/components/Stories/Stories.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
@@ -21,51 +19,28 @@ import { useIndexPageData } from '@/hooks/useIndexPageData.ts';
 // Styles
 import css from '@/pages/IndexPage/IndexPage.module.css';
 
-export const transformToConfirmationFormat = (v: ICity): IConfirmationType => {
-    return {
-        id: v.name_english,
-        text: v.name,
-    };
-};
-
-export const IndexPage: React.FC = () => {
+/**
+ * Главная страница приложения.
+ *
+ * Показывает истории, города, бронирования, опции и рестораны.
+ * Также отображает кнопку бронирования в городах, кроме Екатеринбурга.
+ *
+ * @component
+ * @returns {JSX.Element} Компонент главной страницы
+ */
+export const IndexPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
 
-    // Atoms
-    const [currentCityA] = useAtom(currentCityAtom);
-    const [user] = useAtom(userAtom);
-    const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
-    const [cityListA] = useAtom(cityListAtom);
-
-    // Состояния для города
-    const [cityListConfirm] = useState<IConfirmationType[]>(
-        cityListA.map((v: ICity) => transformToConfirmationFormat(v))
-    );
-    const [currentCityS, setCurrentCityS] = useState<IConfirmationType>(
-        cityListConfirm.find((v) => v.id == currentCityA) ?? {
-            id: 'moscow',
-            text: 'Москва',
-        }
-    );
-
-    // Вычисляем cityId
-    const cityId = cityListA.find((item) => item.name_english === currentCityS.id)?.id ?? 1;
+    // Атомы (только чтение)
+    const user = useAtomValue(userAtom);
+    const currentCity = useAtomValue(getCurrentCity);
+    const currentCityId = useAtomValue(getCurrentCityId);
 
     // Оптимизированная загрузка данных через хук
-    const { currentBookings, storiesBlocks, restaurantsList, restaurantsLoading } = useIndexPageData({
-        currentCity: currentCityA,
-        cityId,
+    const { currentBookings, storiesBlocks } = useIndexPageData({
+        currentCity: currentCity.name_english,
+        cityId: currentCityId,
     });
-
-    // Синхронизация локального состояния города с атомом
-    useEffect(() => {
-        setCurrentCityS(
-            cityListConfirm.find((v) => v.id == currentCityA) ?? {
-                id: 'moscow',
-                text: 'Москва',
-            }
-        );
-    }, [cityListA, currentCityA, cityListConfirm]);
 
     // Устнавливаем счетчик посещений, чтобы на третьем посещении пользователь попал на страницу предпочтений
     useEffect(() => {
@@ -92,37 +67,22 @@ export const IndexPage: React.FC = () => {
         }
     }, [navigate, user?.complete_onboarding, user?.phone_number]);
 
-    const updateCurrentCity = (city: IConfirmationType) => {
-        setCurrentCityS(city);
-        setCurrentCityA(city.id);
+    // Переход на страницу бронирования
+    const goToBooking = () => {
+        navigate('/booking/');
     };
-
-    const cityOptions = useMemo(
-        () => cityListConfirm.filter((v) => v.id !== currentCityS.id),
-        [cityListConfirm, currentCityS.id]
-    );
 
     return (
         <Page back={false}>
-            <div className={css.pageContainer}>
+            <PageContainer className={css.indexPageContainer}>
                 <Header />
                 <Stories storiesBlocks={storiesBlocks} />
-                {/* <div style={{ marginRight: 15 }}> */}
-                <CitySelect options={cityOptions} currentValue={currentCityS} onChange={updateCurrentCity} />
-                {/* </div> */}
+                <CitySelect />
                 <BookingReminder bookings={currentBookings} />
-                <OptionsNavigation cityId={cityId} isLoading={restaurantsLoading} />
-                <div className={css.restaurants}>
-                    {restaurantsLoading ? (
-                        <RestaurantPreviewSkeletonList count={3} />
-                    ) : (
-                        restaurantsList.map((rest) => (
-                            <RestaurantPreview restaurant={rest} key={`rest-${rest.id}`} clickable />
-                        ))
-                    )}
-                </div>
-            </div>
-            {currentCityA !== 'ekb' && <BottomButtonWrapper onClick={() => navigate('/booking/')} />}
+                <OptionsNavigation />
+                <RestaurantsList clickable />
+                {currentCity.name_english !== 'ekb' && <BottomButtonWrapper onClick={goToBooking} />}
+            </PageContainer>
         </Page>
     );
 };

@@ -1,22 +1,39 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 // Components
 import { MoneyIcon } from '@/components/Icons/MoneyIcon.tsx';
 import { TimeCircleIcon } from '@/components/Icons/TimeCircleIcon.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-// Types
-import { IRestaurant } from '@/types/restaurant.types.ts';
+// Atoms
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 // Utils
 import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatusTyped } from '@/utils.ts';
 // Styles
 import css from '@/components/RestaurantTopPreview/RestaurantTopPreview.module.css';
 
+/**
+ * Пропсы компонента RestaurantTopPreview.
+ *
+ * @interface IRestaurantTopPreviewProps
+ */
 interface IRestaurantTopPreviewProps {
-    restaurant?: IRestaurant;
+    /**
+     * ID ресторана.
+     */
+    restaurantId: string;
 }
 
-export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ restaurant }) => {
-    if (restaurant === undefined) {
+/**
+ * Компонент для отображения верхнего превью ресторана.
+ *
+ * @component
+ * @example
+ * <RestaurantTopPreview restaurantId="1" />
+ */
+export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ restaurantId }): JSX.Element => {
+    const restaurant = useGetRestaurantById(restaurantId);
+    const avgCheque = useMemo(() => restaurant?.avg_cheque || 0, [restaurant?.avg_cheque]);
+    if (!restaurant) {
         return (
             <div className={css.previewContainer}>
                 <PlaceholderBlock width="100%" height="100%" rounded="0 0 20px 20px" />
@@ -38,7 +55,7 @@ export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ res
                         <div className={css.extraItem}>
                             <MoneyIcon color={'white'} size={24} />
                             <div className={css.extraItemContent}>
-                                <span className={css.extraTop}>{restaurant?.avg_cheque} ₽</span>
+                                <span className={css.extraTop}>{avgCheque} ₽</span>
                                 <span className={css.extraBottom}>Средний чек</span>
                             </div>
                         </div>

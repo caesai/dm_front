@@ -1,6 +1,4 @@
 import React, { SetStateAction, useCallback, useMemo } from 'react';
-import Popup from 'reactjs-popup';
-import Picker from '@/lib/react-mobile-picker';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { useAtom } from 'jotai/index';
@@ -11,6 +9,8 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 // Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import Popup from 'reactjs-popup';
+import Picker from '@/lib/react-mobile-picker';
 // Styles
 import css from '@/components/RestaurantsListSelector/RestaurantsListSelector.module.css';
 

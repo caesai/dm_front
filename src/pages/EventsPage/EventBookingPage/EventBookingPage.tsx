@@ -68,8 +68,8 @@ export const EventBookingPage: React.FC = () => {
         ) {
             setLoading(true);
             APICreateInvoice(
-                eventBookingInfo?.restaurant?.id,
-                eventBookingInfo?.id,
+                String(eventBookingInfo?.restaurant?.id),
+                String(eventBookingInfo?.id),
                 {
                     start_datetime: eventBookingInfo?.date_start,
                     end_datetime: eventBookingInfo?.date_start,

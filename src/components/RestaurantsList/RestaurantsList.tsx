@@ -1,52 +1,76 @@
-import React, { CSSProperties, useEffect, useMemo, useState } from 'react';
-import { useAtom } from 'jotai/index';
+import React, { useEffect, useRef, useState } from 'react';
+import { useAtomValue } from 'jotai/index';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
 // Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
-import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { cityListAtom, getCurrentCity } from '@/atoms/cityListAtom.ts';
 // Components
-import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
 import { RestaurantPreview } from '@/components/RestaurantPreview/RestrauntPreview.tsx';
+import { RestaurantPreviewSkeletonList } from '@/components/RestaurantPreview/RestaurantPreviewSkeleton.tsx';
 // Mocks
 import { R } from '@/__mocks__/restaurant.mock.ts';
-// Utils
-import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
 // Styles
 import css from '@/components/RestaurantsList/RestaurantsList.module.css';
 
+/**
+ * Пропсы компонента RestaurantsList.
+ *
+ * @interface IRestaurantsListProps
+ */
 interface IRestaurantsListProps {
-    titleStyle?: CSSProperties;
+    /**
+     * Флаг, определяющий, являются ли карточки ресторанов кликабельными.
+     * При `true` карточки становятся ссылками на страницы ресторанов.
+     *
+     * @default false
+     */
+    clickable?: boolean;
 }
 
-export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle }) => {
-    const [cityListA] = useAtom(cityListAtom);
-    const [currentCityA] = useAtom(currentCityAtom);
-    const [restaurants] = useAtom(restaurantsListAtom);
-    const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
-    const [cityListConfirm] = useState<IConfirmationType[]>(
-        cityListA.map((v: ICity) => transformToConfirmationFormat(v))
-    );
-
+/**
+ * Компонент для отображения списка ресторанов с фильтрацией по текущему городу.
+ *
+ * Особенности:
+ * - Отображает skeleton только во время первоначальной загрузки данных
+ * - Не показывает skeleton для городов с пустым списком ресторанов
+ * - Фильтрует рестораны по выбранному городу из глобального состояния
+ * - Реагирует на изменение текущего города
+ *
+ * @component
+ * @example
+ * // Базовое использование (некликабельный список)
+ * <RestaurantsList />
+ *
+ * @example
+ * // Кликабельный список с переходом на страницы ресторанов
+ * <RestaurantsList clickable={true} />
+ *
+ * @param {IRestaurantsListProps} props - Пропсы компонента
+ * @returns {JSX.Element} Список карточек ресторанов или skeleton при загрузке
+ */
+export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ clickable = false }: IRestaurantsListProps): JSX.Element => {
+    const cityList = useAtomValue(cityListAtom);
+    const currentCity = useAtomValue(getCurrentCity);
+    const restaurants = useAtomValue(restaurantsListAtom);
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
-
-    const [currentCityS, setCurrentCityS] = useState<IConfirmationType>(
-        cityListConfirm.find((v) => v.id == currentCityA) ?? {
-            id: 'moscow',
-            text: 'Москва',
-        }
-    );
+    
+    // Отслеживаем, были ли данные загружены хотя бы раз
+    const hasInitializedRef = useRef(false);
 
     useEffect(() => {
+        // Отмечаем, что данные были загружены, если список не пуст
+        if (restaurants.length > 0) {
+            hasInitializedRef.current = true;
+        }
+
         let result: IRestaurant[] = [];
         let movableValue = null;
-
+        // Помещаем ресторан Self Edge SPB Chinois (id: 13) в начало списка
         restaurants.map((e) => {
-            if (e.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
+            if (e.id !== R.SELF_EDGE_SPB_CHINOIS_ID) {
                 result.push(e);
-            } else if (e.id === Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
+            } else if (e.id === R.SELF_EDGE_SPB_CHINOIS_ID) {
                 movableValue = e;
             }
         });
@@ -55,43 +79,23 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ titleStyle })
             result.unshift(movableValue);
         }
         // Фильтруем рестораны по городу
-        result = result.filter((v) => v.city.name_english == currentCityA);
+        result = result.filter((v) => v.city.name_english == currentCity.name_english);
         setRestaurantsList(result);
-    }, [currentCityA, cityListA]);
+    }, [currentCity, cityList, restaurants]);
 
-    const updateCurrentCity = (city: IConfirmationType) => {
-        setCurrentCityS(city);
-        setCurrentCityA(city.id);
-    };
-
-    const cityOptions = useMemo(
-        () => cityListConfirm.filter((v) => v.id !== currentCityS.id),
-        [cityListConfirm, currentCityS.id]
-    );
-
-    useEffect(() => {
-        setCurrentCityS(
-            cityListConfirm.find((v) => v.id == currentCityA) ?? {
-                id: 'moscow',
-                text: 'Москва',
-            }
-        );
-    }, [cityListA]);
+    // Показываем skeleton только если данные ещё не были загружены
+    const isLoading = !hasInitializedRef.current && restaurants.length === 0;
 
     return (
         <div className={css.container}>
-            <div style={{ marginRight: 15 }}>
-                <CitySelect
-                    options={cityOptions}
-                    currentValue={currentCityS}
-                    onChange={updateCurrentCity}
-                    titleStyle={titleStyle}
-                />
-            </div>
             <div className={css.restaurants}>
-                {restaurantsList.map((rest) => (
-                    <RestaurantPreview restaurant={rest} key={`rest-${rest.id}`} />
-                ))}
+                {isLoading ? (
+                    <RestaurantPreviewSkeletonList count={3} />
+                ) : (
+                    restaurantsList.map((rest) => (
+                        <RestaurantPreview restaurant={rest} key={`rest-${rest.id}`} clickable={clickable} />
+                    ))
+                )}
             </div>
         </div>
     );

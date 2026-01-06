@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import moment from 'moment';
 // API
 import { APIGetCurrentBookings } from '@/api/restaurants.api.ts';
@@ -22,15 +22,10 @@ interface UseIndexPageDataOptions {
 interface UseIndexPageDataReturn {
     // Бронирования
     currentBookings: IBookingInfo[] | null;
-    bookingsLoading: boolean;
     // Истории
     storiesBlocks: IStoryBlock[] | null;
-    storiesLoading: boolean;
     // Рестораны (отфильтрованные по городу)
     restaurantsList: IRestaurant[];
-    restaurantsLoading: boolean;
-    // Общее состояние
-    isInitialLoading: boolean;
 }
 
 // Кэш для историй по городу (в памяти)
@@ -50,14 +45,12 @@ export const useIndexPageData = ({
     currentCity,
     cityId,
 }: UseIndexPageDataOptions): UseIndexPageDataReturn => {
-    const [auth] = useAtom(authAtom);
-    const [restaurants] = useAtom(restaurantsListAtom);
+    const auth = useAtomValue(authAtom);
+    const restaurants = useAtomValue(restaurantsListAtom);
 
     // Состояния
     const [currentBookings, setCurrentBookings] = useState<IBookingInfo[] | null>(null);
-    const [bookingsLoading, setBookingsLoading] = useState(true);
     const [storiesBlocks, setStoriesBlocks] = useState<IStoryBlock[] | null>(null);
-    const [storiesLoading, setStoriesLoading] = useState(true);
 
     // Refs для отмены запросов
     const abortControllerRef = useRef<{ bookings?: AbortController; stories?: AbortController }>({});
@@ -101,7 +94,7 @@ export const useIndexPageData = ({
 
             // Преобразуем билеты в формат бронирований
             const events: IBookingInfo[] = ticketsResponse.data.map((event) => ({
-                id: event.id,
+                id: String(event.id),
                 booking_type: 'event',
                 booking_date: moment(event.date_start).format('YYYY-MM-DD'),
                 time: moment(event.date_start).format('HH:mm'),
@@ -125,10 +118,6 @@ export const useIndexPageData = ({
                 console.error('[useIndexPageData] Bookings error:', error);
                 setCurrentBookings([]);
             }
-        } finally {
-            if (!controller.signal.aborted) {
-                setBookingsLoading(false);
-            }
         }
     }, [auth?.access_token]);
 
@@ -148,7 +137,6 @@ export const useIndexPageData = ({
         const cached = getCachedStories(cityId);
         if (cached) {
             setStoriesBlocks(cached);
-            setStoriesLoading(false);
             
             // Обновляем в фоне если кэш старше 1 минуты
             const cacheEntry = storiesCache.get(cityId);
@@ -167,8 +155,6 @@ export const useIndexPageData = ({
             return;
         }
 
-        setStoriesLoading(true);
-
         try {
             const response = await ApiGetStoriesBlocks(auth.access_token, cityId);
             
@@ -181,10 +167,6 @@ export const useIndexPageData = ({
             if (!controller.signal.aborted) {
                 console.error('[useIndexPageData] Stories error:', error);
                 setStoriesBlocks([]);
-            }
-        } finally {
-            if (!controller.signal.aborted) {
-                setStoriesLoading(false);
             }
         }
     }, [auth?.access_token, cityId, getCachedStories, cacheStories]);
@@ -199,7 +181,7 @@ export const useIndexPageData = ({
         let movableValue: IRestaurant | null = null;
 
         restaurants.forEach((e) => {
-            if (e.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID)) {
+            if (String(e.id) !== String(R.SELF_EDGE_SPB_CHINOIS_ID)) {
                 result.push(e);
             } else {
                 movableValue = e;
@@ -232,20 +214,10 @@ export const useIndexPageData = ({
         };
     }, [loadStories]);
 
-    // Определяем состояние загрузки ресторанов
-    const restaurantsLoading = restaurants.length === 0;
-    
-    // Общее состояние начальной загрузки
-    const isInitialLoading = bookingsLoading && storiesLoading && restaurantsLoading;
-
     return {
         currentBookings,
-        bookingsLoading,
         storiesBlocks,
-        storiesLoading,
         restaurantsList,
-        restaurantsLoading,
-        isInitialLoading,
     };
 };
 

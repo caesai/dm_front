@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import moment from 'moment';
-import { useAtom } from 'jotai/index';
+import { useAtom, WritableAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { BASE_BOT } from '@/api/base.ts';
@@ -67,7 +67,8 @@ export const shareCertificate = async (certificate: ICertificate, certificateRef
 };
 
 export const CertificatesListPage: React.FC = () => {
-    const [certificates, setCertificates] = useAtom(certificatesListAtom);
+
+    const [certificates, setCertificates] = useAtom(certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>);
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
 

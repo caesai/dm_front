@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import { useAtom, WritableAtom } from 'jotai';
 import classNames from 'classnames';
 // API's
 import { APICreateBooking, APIGetAvailableDays, APIGetAvailableTimeSlots } from '@/api/restaurants.api.ts';
@@ -45,6 +45,7 @@ import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/ut
 import css from '@/pages/BookingPage/BookingPage.module.css';
 // Mocks
 import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
+import { ICertificate } from '@/types/certificates.types';
 
 const confirmationList: IConfirmationType[] = [
     {
@@ -84,7 +85,7 @@ export const BookingPage: React.FC = () => {
         title: 'unset',
         value: 'unset',
     });
-    const [certificates, setCertificates] = useAtom(certificatesListAtom);
+    const [certificates, setCertificates] = useAtom(certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>);
 
     const [userName, setUserName] = useState<string>(user?.first_name ? user.first_name : '');
     const [userPhone, setUserPhone] = useState<string>(user?.phone_number ? user.phone_number : '');
@@ -110,7 +111,7 @@ export const BookingPage: React.FC = () => {
 
     useEffect(() => {
         auth?.access_token && restaurant.value !== 'unset'
-            ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1)
+            ? APIGetAvailableDays(auth?.access_token, String(restaurant.value), 1)
                   .then((res) =>
                       setAvailableDates(
                           res.data.map((v: string) => ({
@@ -150,7 +151,7 @@ export const BookingPage: React.FC = () => {
             setRequestLoading(true);
             APICreateBooking(
                 auth.access_token,
-                Number(restaurant.value),
+                String(restaurant.value),
                 date.value,
                 getTimeShort(currentSelectedTime.start_datetime),
                 guestCount,
@@ -186,7 +187,7 @@ export const BookingPage: React.FC = () => {
         if (restaurant.value === 'unset' || !auth?.access_token || date.value === 'unset' || !guestCount) return;
         setTimeslotsLoading(true);
         setTimeslotsError(false);
-        APIGetAvailableTimeSlots(auth.access_token, parseInt(String(restaurant.value)), date.value, guestCount)
+        APIGetAvailableTimeSlots(auth.access_token, String(restaurant.value), date.value, guestCount)
             .then((res) => {
                 setAvailableTimeslots(res.data);
             })

@@ -1,5 +1,6 @@
-import { backButton } from '@telegram-apps/sdk-react';
 import { PropsWithChildren, useEffect } from 'react';
+import { backButton } from '@telegram-apps/sdk-react';
+// Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export function Page({

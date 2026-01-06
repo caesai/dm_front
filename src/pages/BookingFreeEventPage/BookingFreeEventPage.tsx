@@ -98,7 +98,7 @@ export const BookingFreeEventPage: React.FC = () => {
     // Update bookingDates when guestCount changes
     useEffect(() => {
         auth?.access_token
-            ? APIGetAvailableDays(auth?.access_token, Number(id), 1).then((res) =>
+            ? APIGetAvailableDays(auth?.access_token, String(id), 1).then((res) =>
                   setAvailableDates(
                       res.data.map((v) => ({
                           title: formatDate(v),
@@ -153,7 +153,7 @@ export const BookingFreeEventPage: React.FC = () => {
             setRequestLoading(true);
             APICreateBooking(
                 auth.access_token,
-                Number(id),
+                String(id),
                 date.value,
                 getTimeShort(currentSelectedTime.start_datetime),
                 guestCount,

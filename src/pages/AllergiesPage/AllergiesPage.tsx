@@ -25,7 +25,7 @@ import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
  * Принимает текущий список аллергенов через `location.state.allergies`.
  * При сохранении возвращает обновленный список аллергенов на страницу профиля (`/me`).
  */
-export const AllergiesPage: React.FC = () => {
+export const AllergiesPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const location = useLocation();
     const { goBack } = useNavigationHistory();

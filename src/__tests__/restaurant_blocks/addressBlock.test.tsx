@@ -17,23 +17,15 @@ jest.mock('ymap3-components', () => ({
     ),
 }));
 
-const mockProps = {
-    longitude: 37.6173,
-    latitude: 55.7558,
-    logo_url: 'restaurant-logo.jpg',
-    address: 'Test Address 123',
-    address_station_color: '#FF0000'
-};
-
 describe('AddressBlock', () => {
     it('renders address block with title', () => {
-        render(<AddressBlock {...mockProps} />);
+        render(<AddressBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('Адрес')).toBeInTheDocument();
     });
 
     it('renders Yandex map components', () => {
-        render(<AddressBlock {...mockProps} />);
+        render(<AddressBlock restaurantId={String(1)} />);
 
         expect(screen.getByTestId('ymap-provider')).toBeInTheDocument();
         expect(screen.getByTestId('ymap')).toBeInTheDocument();
@@ -43,14 +35,14 @@ describe('AddressBlock', () => {
     });
 
     it('displays restaurant logo in map marker', () => {
-        render(<AddressBlock {...mockProps} />);
+        render(<AddressBlock restaurantId={String(1)} />);
 
         const logo = screen.getByAltText('Логотип ресторана');
         expect(logo).toHaveAttribute('src', 'restaurant-logo.jpg');
     });
 
     it('passes correct coordinates to map components', () => {
-        render(<AddressBlock {...mockProps} />);
+        render(<AddressBlock restaurantId={String(1)} />);
 
         const map = screen.getByTestId('ymap');
         const marker = screen.getByTestId('ymap-marker');
@@ -63,12 +55,7 @@ describe('AddressBlock', () => {
     });
 
     it('renders without metro info when no station color', () => {
-        const propsWithoutColor = {
-            ...mockProps,
-            address_station_color: undefined
-        };
-
-        render(<AddressBlock {...propsWithoutColor} />);
+        render(<AddressBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('Адрес')).toBeInTheDocument();
     });

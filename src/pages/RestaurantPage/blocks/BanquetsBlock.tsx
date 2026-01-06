@@ -1,5 +1,5 @@
-import { IRestaurant, IWorkTime } from '@/types/restaurant.types.ts';
-import React from 'react';
+import { IWorkTime } from '@/types/restaurant.types.ts';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { workdayIndexMap } from '@/utils.ts';
@@ -9,29 +9,47 @@ import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/Heade
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom';
 
-interface BanquetsBlockProps {
-    image: string;
-    description: string;
-    restaurant: IRestaurant
-    workTime: IWorkTime[] | undefined;
+/**
+ * Пропсы компонента BanquetsBlock.
+ *
+ * @interface IBanquetsBlockProps
+ */
+interface IBanquetsBlockProps {
+    /**
+     * ID ресторана.
+     */
+    restaurantId: string;
 }
 
-export const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
-                                                                description,
-                                                                image,
-                                                                restaurant,
-                                                                workTime,
-                                                            }) => {
+/**
+ * Компонент для отображения банкетных блоков.
+ *
+ * @component
+ * @example
+ * <BanquetsBlock restaurantId="1" />
+ */
+export const BanquetsBlock: React.FC<IBanquetsBlockProps> = ({ restaurantId }): JSX.Element => {
+    /**
+     * Навигация.
+     */
     const navigate = useNavigate();
-
+    /**
+     * Ресторан.
+     */
+    const restaurant = useGetRestaurantById(restaurantId);
+    /**
+     * Банкеты ресторана.
+     */
+    const restaurantBanquets = useMemo(() => restaurant?.banquets.banquet_options || [], [restaurant]);
     /**
      * Сортирует время работы ресторана по дням недели
      * @returns {IWorkTime[] | undefined} Отсортированный массив времени работы
      */
     const getSortedWorkTime = (): IWorkTime[] | undefined => {
-        if (!workTime) return undefined;
-        return workTime.sort((a, b) => workdayIndexMap[a.weekday] - workdayIndexMap[b.weekday]);
+        if (!restaurant?.worktime) return undefined;
+        return restaurant?.worktime.sort((a, b) => workdayIndexMap[a.weekday] - workdayIndexMap[b.weekday]);
     };
 
     /**
@@ -40,7 +58,7 @@ export const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
      */
     const handleNavigateToBanquet = () => {
         const sortedWorkTime = getSortedWorkTime();
-        navigate(`/banquets/${restaurant.id}/address`, {
+        navigate(`/banquets/${restaurantId}/address`, {
             state: {
                 restaurant,
                 workTime: sortedWorkTime
@@ -58,10 +76,10 @@ export const BanquetsBlock: React.FC<BanquetsBlockProps> = ({
                     <div className={css.blockImage}>
                         <div
                             className={classNames(css.blockImage, css.bgImage)}
-                            style={{ backgroundImage: `url(${image})` }}
+                            style={{ backgroundImage: `url(${restaurantBanquets[0]?.images?.[0]})` }}
                         />
                     </div>
-                    <span className={css.blockDescription}>{description}</span>
+                    <span className={css.blockDescription}>{restaurantBanquets[0]?.description}</span>
                     <UniversalButton
                         width="full"
                         title="Подробнее"

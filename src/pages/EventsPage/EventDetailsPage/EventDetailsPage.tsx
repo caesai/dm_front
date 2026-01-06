@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
-import { useAtom } from 'jotai/index';
+import { Atom, useAtom, useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
 import moment from 'moment';
 import classNames from 'classnames';
 // Types
@@ -18,9 +18,10 @@ export const EventDetailsPage: React.FC = () => {
     const navigate = useNavigate();
     const { eventId } = useParams();
     const [eventBookingInfo, setEventBookingInfo] = useOutletContext<IEventBookingContext>();
-    const [events] = useAtom<IEvent[] | null>(eventsListAtom);
+    const events = useAtomValue(eventsListAtom as Atom<IEvent[] | null>);
     const [hideAbout, setHideAbout] = useState(true);
-    const [guestCount, setGuestCount] = useAtom(guestCountAtom);
+    const setGuestCount = useSetAtom(guestCountAtom as WritableAtom<number, [number], void>);
+    const guestCount = useAtomValue(guestCountAtom);
     const [user] = useAtom(userAtom);
 
     // Получаем информацию о мероприятии
@@ -35,12 +36,15 @@ export const EventDetailsPage: React.FC = () => {
 
     // Увеличиваем количество гостей
     const incCounter = () => {
-        if (guestCount !== eventBookingInfo?.tickets_left)
-            setGuestCount((prev: number) => (prev < Number(eventBookingInfo?.tickets_left) ? prev + 1 : prev));
+        if (guestCount < Number(eventBookingInfo?.tickets_left)) {
+            setGuestCount(guestCount + 1);
+        }
     };
     // Уменьшаем количество гостей
     const decCounter = () => {
-        setGuestCount((prev: number) => (prev - 1 >= 1 ? prev - 1 : prev));
+        if (guestCount > 0) {
+            setGuestCount(guestCount - 1);
+        }
     };
 
     // Переход на страницу бронирования

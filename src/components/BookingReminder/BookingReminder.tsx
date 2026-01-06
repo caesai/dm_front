@@ -10,11 +10,11 @@ import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
 import { TicketIcon } from '@/components/Icons/TicketIcon.tsx';
+import { StarPrivilegeIcon } from '@/components/Icons/StarPrivilege.tsx';
 // Utils
 import { weekdaysMap } from '@/utils.ts';
 // Styles
 import css from '@/components/BookingReminder/BookingReminder.module.css';
-import { StarPrivilegeIcon } from '../Icons/StarPrivilege';
 
 /**
  * Пропсы компонента BookingReminder.
@@ -54,10 +54,10 @@ const formatDate = (dateStr: string): string => {
  * @example
  * <BookingReminder bookings={userBookings} />
  */
-export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }) => {
+export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): JSX.Element[] => {
     const navigate = useNavigate();
     const navigateToBooking = useCallback(
-        (id: number, booking_type: string) => {
+        (id: string, booking_type: string) => {
             if (booking_type === 'event') {
                 navigate(`/tickets/${id}`);
             } else {
@@ -67,13 +67,18 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }) =
         [navigate]
     );
     
+    /**
+     * Если список бронирований не найден, то возвращаем плейсхолдер загрузки.
+     */
     if (!bookings) {
-        return (
-            <div style={{ marginRight: '15px' }}>
+        return [<div style={{ marginRight: '15px' }}>
                 <PlaceholderBlock width={'100%'} height={'108px'} rounded={'16px'} />
-            </div>
-        );
+            </div>] as JSX.Element[];
     }
+
+    /**
+     * Возвращаем список бронирований.
+     */
     return bookings
         .filter((book) => {
             return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime();

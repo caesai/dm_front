@@ -1,51 +1,40 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 // Types
 import { IEvent, IEventBooking, IEventBookingContext } from '@/types/events.types.ts';
 // Atoms
-import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
-import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { eventsListAtom } from '@/atoms/eventListAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { cityListAtom, getCurrentCity, setCurrentCityAtom } from '@/atoms/cityListAtom.ts';
 // Components
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { IConfirmationType } from '@/components/CitySelect/CitySelect.types.ts';
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 // Styles
 import css from '@/pages/EventsPage/EventsPage.module.css';
-// Utils
-import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
     value: 'unset',
 };
 
-export const EventsListPage: React.FC = () => {
+export const EventsListPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const [params] = useSearchParams();
     const [, setEventBookingInfo] = useOutletContext<IEventBookingContext>();
-    // Atoms
-    const [events] = useAtom<IEvent[] | null>(eventsListAtom);
-    const [cityListA] = useAtom(cityListAtom);
-    const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
-    const [currentCityA] = useAtom(currentCityAtom);
-    const [restaurants] = useAtom(restaurantsListAtom);
-    // States
-    const [cityListConfirm] = useState<IConfirmationType[]>(
-        cityListA.map((v: ICity) => transformToConfirmationFormat(v))
-    );
-    const [currentCityS, setCurrentCityS] = useState<IConfirmationType>(
-        cityListConfirm.find((v) => v.id === currentCityA) ?? {
-            id: 'moscow',
-            text: 'Москва',
-        }
-    );
+
+    // Атомы (только чтение)
+    const events = useAtomValue<IEvent[] | null>(eventsListAtom);
+    const cities = useAtomValue(cityListAtom);
+    const currentCity = useAtomValue(getCurrentCity);
+    const restaurants = useAtomValue(restaurantsListAtom);
+    const setCurrentCity = useSetAtom(setCurrentCityAtom);
+
+    // Локальные состояния
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
     const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
 
@@ -56,19 +45,63 @@ export const EventsListPage: React.FC = () => {
         },
         [navigate]
     );
-
-    // Обновление текущего города
-    const updateCurrentCity = useCallback(
-        (city: IConfirmationType) => {
-            setCurrentCityS(city);
-            setCurrentCityA(city.id);
-            setCurrentRestaurant(initialRestaurant);
-        },
-        [setCurrentCityA]
+    // Фильтруем города по наличию мероприятий
+    const citiesList = useMemo(() => {
+        return cities.filter((city) => restaurants.some((restaurant) => restaurant.city.id === city.id));
+    }, [cities, restaurants]);
+    
+    // Фильтруем рестораны по текущему городу и наличию мероприятий
+    const restaurantsList = useMemo(
+        () =>
+            restaurants.filter(
+                (restaurant) =>
+                    restaurant.city.name_english === currentCity.name_english &&
+                    events?.some((event) => event.restaurant.id === restaurant.id)
+            ),
+        [restaurants, currentCity]
     );
 
-    // Обновляем ресторан
+    // Фильтруем мероприятия по выбранному ресторану и городу
+    const filteredEvents = useMemo(() => {
+        return events?.filter((event) => {
+            // Если выбран конкретный ресторан — показываем только его мероприятия
+            if (currentRestaurant.value !== 'unset') {
+                return String(event.restaurant.id) === String(currentRestaurant.value);
+            }
+            // Иначе показываем мероприятия всех ресторанов текущего города
+            return restaurantsList.some((restaurant) => String(restaurant.id) === String(event.restaurant.id));
+        });
+    }, [events, currentRestaurant, restaurantsList]);
+
+    // Обработка URL-параметров: установка города и ресторана из ссылки (например, из бота)
     useEffect(() => {
+        const cityParam = params.get('city');
+        const restaurantParam = params.get('restaurant');
+
+        if (cityParam) {
+            setCurrentCity(cityParam);
+        }
+
+        if (restaurantParam) {
+            const foundRestaurant = restaurants.find((restaurant) => String(restaurant.id) === String(restaurantParam));
+            if (foundRestaurant) {
+                setCurrentRestaurant({
+                    title: foundRestaurant.title,
+                    address: foundRestaurant.address,
+                    value: String(foundRestaurant.id),
+                });
+                // Устанавливаем город по найденному ресторану
+                setCurrentCity(foundRestaurant.city.name_english);
+            }
+        }
+    }, [params, restaurants, setCurrentCity]);
+
+    // Обновляем информацию о бронировании при смене ресторана и города
+    useEffect(() => {
+        if (currentRestaurant.value === 'unset' || currentCity.name_english === 'unset') {
+            setEventBookingInfo(null);
+            return;
+        }
         setEventBookingInfo(
             (prev) =>
                 ({
@@ -76,60 +109,13 @@ export const EventsListPage: React.FC = () => {
                     restaurantId: String(currentRestaurant.value),
                 }) as IEventBooking
         );
-    }, [currentRestaurant, currentCityS, setEventBookingInfo]);
+    }, [currentRestaurant, setEventBookingInfo, currentCity]);
 
-    // Фильтруем рестораны по выбранному городу
-    const restaurantsList = useMemo(() => {
-        return restaurants.filter((restaurant) => restaurant.city.name_english === currentCityS.id);
-    }, [restaurants, currentCityS]);
-
-    // Фильтруем мероприятия по выбранному ресторану и городу
-    const filteredEvents = useMemo(() => {
-        return events?.filter((event) => {
-            if (currentRestaurant.value !== 'unset' && event.restaurant.id === Number(currentRestaurant.value)) {
-                return true;
-            } else if (
-                currentRestaurant.value === 'unset' &&
-                restaurantsList.find((restaurant) => restaurant.id === event.restaurant.id)
-            ) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-    }, [events, currentCityS, currentRestaurant, restaurantsList]);
-
-    // Если перешли по ссылке из бота на страницу списка мероприятий в выбранном городе, то устанавливаем текущий город
-    // или из бота на страницу списка мероприятий в выбранном ресторане, то устанавливаем текущий ресторан
+    // Сбрасываем выбранный ресторан при смене города
     useEffect(() => {
-        if (params.get('city')) {
-            // Устанавливаем текущий город
-            setCurrentCityS(
-                cityListConfirm.find((v) => v.id === params.get('city')) ?? {
-                    id: 'moscow',
-                    text: 'Москва',
-                }
-            );
-        }
-        if (params.get('restaurant')) {
-            const foundRestaurant = restaurants.find((restaurant) => restaurant.id === Number(params.get('restaurant')));
-            if (foundRestaurant) {
-                // Устанавливаем текущий ресторан
-                setCurrentRestaurant({
-                    title: foundRestaurant.title,
-                    address: foundRestaurant.address,
-                    value: String(foundRestaurant.id),
-                });
-                // Устанавливаем текущий город по выбранному ресторану
-                setCurrentCityS(
-                    cityListConfirm.find((v) => v.id === foundRestaurant.city.name_english) ?? {
-                        id: 'moscow',
-                        text: 'Москва',
-                    }
-                );
-            }
-        }
-    }, [params, restaurants]);
+        setCurrentRestaurant(initialRestaurant);
+    }, [currentCity]);
+
     return (
         <div className={css.cards}>
             <RestaurantsListSelector
@@ -139,12 +125,7 @@ export const EventsListPage: React.FC = () => {
                 selectRestaurant={setCurrentRestaurant}
                 filteredRestaurants={restaurantsList}
             />
-            <CitySelect
-                options={cityListConfirm}
-                currentValue={currentCityS}
-                onChange={updateCurrentCity}
-                titleStyle={{ fontWeight: '600' }}
-            />
+            <CitySelect titleStyle={{ fontWeight: '600' }} filteredCitiesList={citiesList}/>
             <DropDownSelect
                 title={
                     currentRestaurant.value !== 'unset'

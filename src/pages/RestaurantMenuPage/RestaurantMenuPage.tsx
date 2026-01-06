@@ -40,10 +40,10 @@ export const RestaurantMenuPage: React.FC = () => {
     const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
 
     const restaurant = useMemo(() => {
-        return restaurants.find((r) => r.id === Number(id));
+        return restaurants.find((r) => r.id === String(id));
     }, [restaurants, id]);
 
-    const { menuData, loading, error, refetch } = useRestaurantMenu(Number(id));
+    const { menuData, loading, error, refetch } = useRestaurantMenu(String(id));
 
     const visibleCategories = useMemo(() => {
         if (!menuData) return [];

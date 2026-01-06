@@ -4,6 +4,8 @@ import { CertificatesSelector, CertificatesSelectorProps } from '@/components/Ce
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { certificatesListMock } from '@/__mocks__/certificates.mock.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
+import { WritableAtom } from 'jotai';
+import { ICertificate } from '@/types/certificates.types.ts';
 
 // Mock the react-router-dom module to control navigation
 const mockedUsedNavigate = jest.fn();
@@ -24,7 +26,7 @@ describe('CertificatesSelector', () => {
 
         return render(
             // Используем Provider и передаем наши специальные моки через initialValues
-            <TestProvider initialValues={[[certificatesListAtom, certificatesListMock]]}>
+            <TestProvider initialValues={[[certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>, certificatesListMock]]}>
                 <CertificatesSelector {...initialProps} {...props} />
             </TestProvider>
         );
