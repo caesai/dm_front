@@ -1,4 +1,4 @@
-import { Atom, atom, WritableAtom } from 'jotai';
+import { Atom, atom } from 'jotai';
 
 /**
  * Интерфейс для представления города.
@@ -39,13 +39,12 @@ export type TCityList = ICity[];
 export const cityListAtom: Atom<TCityList> = atom<TCityList>([]);
 
 /**
- * Атом для представления текущего города.
+ * Примитивный атом для хранения текущего города.
+ * Инициализируется значением из localStorage.
  *
  * @constant currentCityAtom
  */
-export const currentCityAtom: Atom<string> = atom(() => {
-    return localStorage.getItem('currentCity') ?? DEFAULT_CITY.name_english;
-});
+export const currentCityAtom = atom(localStorage.getItem('currentCity') ?? DEFAULT_CITY.name_english);
 
 /**
  * Атом для получения текущего города.
@@ -60,26 +59,24 @@ export const getCurrentCity = atom((get) => {
 
 /**
  * Атом для получения ID текущего города.
+ * Использует getCurrentCity для избежания дублирования поиска.
  *
  * @constant getCurrentCityId
  */
 export const getCurrentCityId = atom((get) => {
-    const current = get(currentCityAtom);
-    const list = get(cityListAtom);
-    return list.find((c) => c.name_english === current)?.id ?? DEFAULT_CITY.id;
+    return get(getCurrentCity).id;
 });
 
 /**
  * Атом для установки текущего города.
+ * Обновляет атом и синхронизирует с localStorage.
  *
  * @constant setCurrentCityAtom
  */
 export const setCurrentCityAtom = atom(
-    (get) => {
-        get(currentCityAtom);
-    },
+    (get) => get(currentCityAtom),
     (_get, set, newVal: string) => {
-        set(currentCityAtom as WritableAtom<string, [string], string>, newVal);
+        set(currentCityAtom, newVal);
         localStorage.setItem('currentCity', newVal);
     }
 );

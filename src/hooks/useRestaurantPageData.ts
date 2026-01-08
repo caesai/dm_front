@@ -14,7 +14,7 @@ import { authAtom } from '@/atoms/userAtom.ts';
 import { bookingDateAtom, timeslotAtom } from '@/atoms/bookingInfoAtom.ts';
 // Utils
 import { formatDate } from '@/utils.ts';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { PickerValue } from '@/lib/react-mobile-picker/components/Picker.tsx';
 
 interface UseRestaurantPageDataOptions {
     restaurantId: string;
@@ -26,9 +26,9 @@ interface UseRestaurantPageDataReturn {
     events: IEvent[] | null;
     eventsLoading: boolean;
     // Даты бронирования
-    bookingDates: PickerValueObj[];
-    bookingDate: PickerValueObj;
-    setBookingDate: Dispatch<SetStateAction<PickerValueObj>>;
+    dates: PickerValue[];
+    date: PickerValue;
+    setDate: Dispatch<SetStateAction<PickerValue>>;
     datesLoading: boolean;
     // Таймслоты
     availableTimeslots: ITimeSlot[];
@@ -41,8 +41,11 @@ interface UseRestaurantPageDataReturn {
 }
 
 // Кэш для доступных дней (в памяти, сбрасывается при перезагрузке)
-const daysCache = new Map<string, { data: PickerValueObj[]; timestamp: number }>();
+const daysCache = new Map<string, { data: PickerValue[]; timestamp: number }>();
 const DAYS_CACHE_TTL = 5 * 60 * 1000; // 5 минут
+
+// Глобальное отслеживание инициализированных ресторанов (общее для всех вызовов хука)
+let globalInitializedRestaurantId: string | null = null;
 
 /**
  * Хук для оптимизированной загрузки данных страницы ресторана.
@@ -73,26 +76,25 @@ export const useRestaurantPageData = ({
     onError,
 }: UseRestaurantPageDataOptions): UseRestaurantPageDataReturn => {
     const [auth] = useAtom(authAtom);
-    const [bookingDate, setBookingDateAtom] = useAtom(bookingDateAtom);
+    const [date, setDate] = useAtom(bookingDateAtom);
     const [currentSelectedTime, setCurrentSelectedTimeAtom] = useAtom(timeslotAtom);
 
     // Состояния
     const [events, setEvents] = useState<IEvent[] | null>(null);
     const [eventsLoading, setEventsLoading] = useState(true);
-    const [bookingDates, setBookingDates] = useState<PickerValueObj[]>([]);
+    const [dates, setDates] = useState<PickerValue[]>([]);
     const [datesLoading, setDatesLoading] = useState(true);
     const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
     const [timeslotLoading, setTimeslotLoading] = useState(true);
     const [timeslotsError, setTimeslotsError] = useState(false);
 
-    // Refs для отслеживания состояния
-    const initializedRestaurantRef = useRef<string | null>(null);
+    // Refs для отслеживания текущих запросов
     const currentRequestRef = useRef<{ events?: AbortController; days?: AbortController; timeslots?: AbortController }>({});
 
     /**
      * Получает закэшированные дни или null
      */
-    const getCachedDays = useCallback((id: string): PickerValueObj[] | null => {
+    const getCachedDays = useCallback((id: string): PickerValue[] | null => {
         const cacheKey = `restaurant_${id}`;
         const cached = daysCache.get(cacheKey);
         
@@ -106,7 +108,7 @@ export const useRestaurantPageData = ({
     /**
      * Сохраняет дни в кэш
      */
-    const cacheDays = useCallback((id: string, days: PickerValueObj[]) => {
+    const cacheDays = useCallback((id: string, days: PickerValue[]) => {
         const cacheKey = `restaurant_${id}`;
         daysCache.set(cacheKey, { data: days, timestamp: Date.now() });
     }, []);
@@ -118,7 +120,7 @@ export const useRestaurantPageData = ({
         if (!auth?.access_token || !restaurantId) return;
 
         // Проверяем, нужно ли сбрасывать состояние при смене ресторана
-        const isNewRestaurant = initializedRestaurantRef.current !== restaurantId;
+        const isNewRestaurant = globalInitializedRestaurantId !== restaurantId;
         
         if (isNewRestaurant) {
             // Отменяем предыдущие запросы
@@ -128,7 +130,7 @@ export const useRestaurantPageData = ({
 
             // Сбрасываем состояние для нового ресторана
             setCurrentSelectedTimeAtom(null);
-            setBookingDateAtom({ value: 'unset', title: 'unset' });
+            setDate({ value: 'unset', title: 'unset' });
             setEvents(null);
             setEventsLoading(true);
             setDatesLoading(true);
@@ -138,12 +140,12 @@ export const useRestaurantPageData = ({
         // Проверяем кэш для дней
         const cachedDays = getCachedDays(restaurantId);
         if (cachedDays && cachedDays.length > 0) {
-            setBookingDates(cachedDays);
+            setDates(cachedDays);
             setDatesLoading(false);
             
             // Устанавливаем первую дату только для нового ресторана
             if (isNewRestaurant) {
-                setBookingDateAtom(cachedDays[0]);
+                setDate(cachedDays[0]);
             }
         }
 
@@ -184,12 +186,12 @@ export const useRestaurantPageData = ({
                             value: date,
                         }));
                         
-                        setBookingDates(formattedDates);
+                        setDates(formattedDates);
                         cacheDays(restaurantId, formattedDates);
 
                         // Устанавливаем первую дату для нового ресторана
                         if (formattedDates.length > 0 && isNewRestaurant) {
-                            setBookingDateAtom(formattedDates[0]);
+                            setDate(formattedDates[0]);
                         }
                     }
                 })
@@ -208,14 +210,14 @@ export const useRestaurantPageData = ({
         await Promise.all([eventsPromise, daysPromise]);
         
         if (isNewRestaurant) {
-            initializedRestaurantRef.current = restaurantId;
+            globalInitializedRestaurantId = restaurantId;
         }
     }, [
         auth?.access_token, 
         restaurantId, 
         getCachedDays, 
         cacheDays, 
-        setBookingDateAtom, 
+        setDate, 
         setCurrentSelectedTimeAtom,
         onError
     ]);
@@ -224,7 +226,7 @@ export const useRestaurantPageData = ({
      * Загружает таймслоты для выбранной даты
      */
     const loadTimeslots = useCallback(async () => {
-        if (!auth?.access_token || !restaurantId || bookingDate.value === 'unset') {
+        if (!auth?.access_token || !restaurantId || date.value === 'unset') {
             return;
         }
 
@@ -241,7 +243,7 @@ export const useRestaurantPageData = ({
             const res = await APIGetAvailableTimeSlots(
                 auth.access_token, 
                 restaurantId, 
-                bookingDate.value, 
+                date.value.toString(), 
                 1
             );
             
@@ -260,7 +262,7 @@ export const useRestaurantPageData = ({
                 setTimeslotLoading(false);
             }
         }
-    }, [auth?.access_token, restaurantId, bookingDate.value, onError]);
+    }, [auth?.access_token, restaurantId, date.value, onError]);
 
     // Загружаем начальные данные при смене ресторана
     useEffect(() => {
@@ -285,9 +287,9 @@ export const useRestaurantPageData = ({
     return {
         events,
         eventsLoading,
-        bookingDates,
-        bookingDate,
-        setBookingDate: setBookingDateAtom,
+        dates,
+        date,
+        setDate,
         datesLoading,
         availableTimeslots,
         timeslotLoading,

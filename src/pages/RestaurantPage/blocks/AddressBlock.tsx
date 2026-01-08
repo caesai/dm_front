@@ -85,14 +85,13 @@ export const AddressBlock: React.FC<IAddressBlockProps> = ({ restaurantId }): JS
     };
 
     return (
-        <ContentContainer>
-            <ContentBlock>
-                <HeaderContainer>
-                    <HeaderContent title="Адрес" />
-                </HeaderContainer>
+        <ContentContainer id="address">
+            <HeaderContainer>
+                <HeaderContent title="Адрес" />
+            </HeaderContainer>
 
-                <div className={css.mapContainer}>
-                    <div className={css.map}>
+            <ContentBlock className={css.mapContainer}>
+                <div className={css.map}>
                         <YMapComponentsProvider
                             apiKey={String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}
                             lang={String(import.meta.env.VITE_YANDEX_MAPS_API_LANG)}
@@ -102,7 +101,8 @@ export const AddressBlock: React.FC<IAddressBlockProps> = ({ restaurantId }): JS
                                 <YMapDefaultFeaturesLayer />
                                 <YMapMarker coordinates={[coordinates.longitude, coordinates.latitude]} draggable={false}>
                                     <div className={css.mapPoint}>
-                                        <img width={50} src={logoUrl} alt="Логотип ресторана" />
+                                        {/** Логотип ресторана */}
+                                        <img width={50} src={logoUrl} alt={restaurant?.title || ''} />
                                     </div>
                                 </YMapMarker>
                             </YMap>
@@ -111,12 +111,11 @@ export const AddressBlock: React.FC<IAddressBlockProps> = ({ restaurantId }): JS
                                 <div className={css.RestInfo}>
                                     <div className={css.mapInfo}>
                                         {renderMetroInfo()}
-                                        <div className={css.mapInfoAddress}>{address}</div>
+                                        <address className={css.mapInfoAddress}>{address}</address>
                                     </div>
                                 </div>
                             </section>
                         </YMapComponentsProvider>
-                    </div>
                 </div>
             </ContentBlock>
         </ContentContainer>

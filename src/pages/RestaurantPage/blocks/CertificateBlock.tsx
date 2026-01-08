@@ -13,7 +13,7 @@ import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
 
 /**
- * 
+ *
  * @returns {JSX.Element} Блок сертификата
  */
 export const CertificateBlock: React.FC = (): JSX.Element => {
@@ -27,25 +27,19 @@ export const CertificateBlock: React.FC = (): JSX.Element => {
     };
 
     return (
-        <ContentContainer>
-            <ContentBlock id="certificates">
-                <HeaderContainer id="certificate">
-                    <HeaderContent title="Подарочные сертификаты" />
-                </HeaderContainer>
-                <div className={css.blockContainer}>
-                    <div className={css.blockImage}>
-                        <div
-                            className={classNames(css.blockImage, css.bgImage)}
-                            style={{ backgroundImage: `url(${certificateBlock.image})` }}
-                        />
-                    </div>
-                    <span className={css.blockDescription}>{certificateBlock.description}</span>
-                    <UniversalButton
-                        width="full"
-                        title="Подробнее"
-                        action={handleNavigateToCertificates}
+        <ContentContainer id="certificates">
+            <HeaderContainer id="certificate">
+                <HeaderContent title="Подарочные сертификаты" />
+            </HeaderContainer>
+            <ContentBlock className={css.blockContainer}>
+                <figure className={css.blockImage}>
+                    <div
+                        className={classNames(css.blockImage, css.bgImage)}
+                        style={{ backgroundImage: `url(${certificateBlock.image})` }}
                     />
-                </div>
+                </figure>
+                <span className={css.blockDescription}>{certificateBlock.description}</span>
+                <UniversalButton width="full" title="Подробнее" action={handleNavigateToCertificates} />
             </ContentBlock>
         </ContentContainer>
     );

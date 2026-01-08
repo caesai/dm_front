@@ -11,6 +11,7 @@ import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/Restaura
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 // Page Blocks
 import { BookingBlock } from '@/pages/RestaurantPage/blocks/BookingsBlock.tsx';
 import { GalleryBlock } from '@/pages/RestaurantPage/blocks/GalleryBlock.tsx';
@@ -23,8 +24,6 @@ import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock.tsx';
 import { AddressBlock } from '@/pages/RestaurantPage/blocks/AddressBlock.tsx';
 import { NavigationBlock } from '@/pages/RestaurantPage/blocks/NavigationBlock.tsx';
 import { YandexTaxiBlock } from '@/pages/RestaurantPage/blocks/YandexTaxiBlock.tsx';
-// Styles
-import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 // Hooks
 import useToastState from '@/hooks/useToastState.ts';
 import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
@@ -47,7 +46,7 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
     const { showToast } = useToastState();
 
     // Оптимизированная загрузка данных через хук
-    const { currentSelectedTime, bookingDate } = useRestaurantPageData({
+    const { currentSelectedTime, date } = useRestaurantPageData({
         restaurantId: restaurantId || '',
         onError: showToast,
     });
@@ -62,7 +61,7 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
             navigate('/onboarding/3', {
                 state: {
                     id: restaurantId,
-                    bookedDate: bookingDate,
+                    bookedDate: date.value.toString(),
                     bookedTime: currentSelectedTime,
                     sharedRestaurant: true,
                 },
@@ -70,7 +69,7 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
         } else {
             navigate(`/restaurant/${restaurantId}/booking`, {
                 state: {
-                    bookedDate: bookingDate,
+                    bookedDate: date.value.toString(),
                     bookedTime: currentSelectedTime,
                 },
             });
@@ -94,19 +93,7 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
 
             <NavigationBlock restaurantId={restaurantId || ''} />
 
-            <div className={css.floatingFooter}>
-                <BottomButtonWrapper
-                    onClick={handleNextButtonClick}
-                    additionalBtns={
-                        <RoundedButton
-                            icon={<GoToPathIcon size={24} color="var(--dark-grey)" />}
-                            action={handleOpenYandexMaps}
-                        />
-                    }
-                />
-            </div>
-
-            <div className={css.pageContainer}>
+            <PageContainer>
                 <RestaurantTopPreview restaurantId={restaurantId || ''} />
 
                 {/* Яндекс Такси виджет */}
@@ -136,7 +123,16 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
 
                 {/* Адрес */}
                 <AddressBlock restaurantId={restaurantId || ''} />
-            </div>
+                <BottomButtonWrapper
+                    onClick={handleNextButtonClick}
+                    additionalBtns={
+                        <RoundedButton
+                            icon={<GoToPathIcon size={24} color="var(--dark-grey)" />}
+                            action={handleOpenYandexMaps}
+                        />
+                    }
+                />
+            </PageContainer>
         </Page>
     );
 };

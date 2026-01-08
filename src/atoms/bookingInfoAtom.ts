@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { PickerValue } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 
 interface IBookingInfo {
@@ -13,11 +13,11 @@ interface IBookingInfo {
 }
 
 export const bookingAtom = atom<IBookingInfo | null>(null);
-export const guestCountAtom = atom<PickerValueObj>({
+export const guestCountAtom = atom<PickerValue>({
     title: 'unset',
     value: 'unset',
 });
-export const bookingDateAtom = atom<PickerValueObj>({
+export const bookingDateAtom = atom<PickerValue>({
     title: 'unset',
     value: 'unset',
 });

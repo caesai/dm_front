@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAtomValue } from 'jotai/index';
+import { useAtom, useAtomValue } from 'jotai/index';
 import classNames from 'classnames';
 // APIs
 import { BASE_BOT } from '@/api/base.ts';
 // Atoms
 import { userAtom } from '@/atoms/userAtom.ts';
+import { headerScrolledAtom } from '@/atoms/restaurantPageAtom.ts';
 // Components
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
@@ -37,8 +38,8 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
     const user = useAtomValue(userAtom);
     const navigate = useNavigate();
     const { goBack } = useNavigationHistory();
-
-    const [headerScrolled, setHeaderScrolled] = useState(false);
+    /** Состояние скролла страницы и его установка */
+    const [headerScrolled, setHeaderScrolled] = useAtom(headerScrolledAtom);
 
     const handleGoBack = () => {
         if (!user?.complete_onboarding) {
@@ -88,13 +89,15 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
     };
 
     useEffect(() => {
-        // TODO: Refactor two Navigation Blocks on Restaurant Page
         const handleScroll = () => {
             setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 190px – меняем состояние
         };
         window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            setHeaderScrolled(false); // Сброс при размонтировании
+        };
+    }, [setHeaderScrolled]);
 
     return (
         <header className={classNames(css.header, headerScrolled ? css.scrolled : null)}>

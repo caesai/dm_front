@@ -34,7 +34,7 @@ import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 // Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
-import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
+import { useLegacyBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
 // Utils
 import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
 // Styles
@@ -137,7 +137,7 @@ export const BookingFreeEventPage: React.FC = () => {
     const [dateValidatedDisplay, setDateValidated] = useState(true);
     const [, setSelectedTimeValidated] = useState(true);
     const [guestsValidatedDisplay, setGuestsValidated] = useState(true);
-    const { isFormValid, validateForm } = useBookingFormValidation(
+    const { isFormValid, validateForm } = useLegacyBookingFormValidation(
         // Pass the raw values
         { userName, userPhone, currentSelectedTime, guestCount, date },
         // Pass the setters for the *display* states

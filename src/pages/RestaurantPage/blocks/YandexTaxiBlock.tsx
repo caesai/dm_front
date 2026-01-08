@@ -1,6 +1,11 @@
 import React from 'react';
-import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+// Hooks
 import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
+// Components
+import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
+// Styles
+import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+
 
 /**
  * Пропсы компонента YandexTaxiBlock.
@@ -35,7 +40,7 @@ export const YandexTaxiBlock: React.FC<IYandexTaxiBlockProps> = ({ restaurantId 
      * Возвращаем блок Яндекс Такси.
      */
     return (
-        <div className={css.yaTaxi}>
+        <ContentContainer className={css.yaTaxi}>
             <div
                 key="taxi1"
                 className="ya-taxi-widget"
@@ -53,6 +58,6 @@ export const YandexTaxiBlock: React.FC<IYandexTaxiBlockProps> = ({ restaurantId 
                 data-point-a=""
                 data-point-b={restaurant?.address_lonlng}
             />
-        </div>
+        </ContentContainer>
     );
 };

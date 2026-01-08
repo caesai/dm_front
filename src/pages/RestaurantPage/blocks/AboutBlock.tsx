@@ -70,70 +70,64 @@ export const AboutBlock: React.FC<IAboutBlockProps> = ({ restaurantId }): JSX.El
     };
 
     return (
-        <ContentContainer>
+        <ContentContainer id="about">
             {/* Блок "О месте" */}
-            <ContentBlock>
-                <HeaderContainer>
-                    <HeaderContent id="about" title="О месте" />
-                </HeaderContainer>
-                <div className={css.aboutContainer}>
-                    <span
-                        className={classNames(css.aboutText, isAboutCollapsed && css.trimLines)}
-                        dangerouslySetInnerHTML={{ __html: aboutText.replace(/\\n/g, '\n') }}
-                    ></span>
-                    <div
-                        className={css.trimLinesButton}
-                        onClick={toggleAbout}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => e.key === 'Enter' && toggleAbout()}
-                    >
-                        <span className={css.text}>{isAboutCollapsed ? 'Читать больше' : 'Скрыть'}</span>
-                    </div>
-                </div>
+            <HeaderContainer>
+                <HeaderContent title="О месте" />
+            </HeaderContainer>
+            <ContentBlock className={css.aboutContainer}>
+                <span
+                    className={classNames(css.aboutText, isAboutCollapsed && css.trimLines)}
+                    dangerouslySetInnerHTML={{ __html: aboutText.replace(/\\n/g, '\n') }}
+                />
+                <button
+                    className={css.trimLinesButton}
+                    onClick={toggleAbout}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && toggleAbout()}
+                >
+                    <span className={css.text}>{isAboutCollapsed ? 'Читать больше' : 'Скрыть'}</span>
+                </button>
             </ContentBlock>
 
             {/* Блок графика работы */}
-            <ContentBlock>
-                <div className={css.infoBlock}>
-                    <div className={css.top}>
-                        <span className={css.title}>{getRestaurantStatusText()}</span>
-                        <div
-                            className={css.right}
-                            onClick={toggleWorkHours}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => e.key === 'Enter' && toggleWorkHours()}
-                        >
-                            <span className={css.expandButton}>График</span>
-                            <div className={classNames(css.right, css.opened, { [css.closed]: isWorkHoursCollapsed })}>
-                                <DownArrow size={20} color="var(--grey)" />
-                            </div>
+            <ContentBlock className={css.infoBlock}>
+                <div className={css.top}>
+                    <span className={css.title}>{getRestaurantStatusText()}</span>
+                    <div
+                        className={css.right}
+                        onClick={toggleWorkHours}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && toggleWorkHours()}
+                    >
+                        <span className={css.expandButton}>График</span>
+                        <div className={classNames(css.right, css.opened, { [css.closed]: isWorkHoursCollapsed })}>
+                            <DownArrow size={20} color="var(--grey)" />
                         </div>
                     </div>
-                    {renderWorkHours()}
                 </div>
+                {renderWorkHours()}
             </ContentBlock>
 
             {/* Блок деталей */}
-            <ContentBlock>
+            <ContentBlock className={css.infoBlock}>
+                <div className={css.top}>
+                    <span className={css.title}>Детали</span>
+                </div>
                 <div className={css.infoBlock}>
-                    <div className={css.top}>
-                        <span className={css.title}>Детали</span>
+                    <div className={css.textRow}>
+                        <span className={css.title}>Кухня:</span>
+                        <span className={css.value}>{aboutKitchen}</span>
                     </div>
-                    <div className={css.infoBlock}>
-                        <div className={css.textRow}>
-                            <span className={css.title}>Кухня:</span>
-                            <span className={css.value}>{aboutKitchen}</span>
-                        </div>
-                        <div className={css.textRow}>
-                            <span className={css.title}>Особенности:</span>
-                            <span className={css.value}>{aboutFeatures}</span>
-                        </div>
-                        <div className={css.textRow}>
-                            <span className={css.title}>Средний чек:</span>
-                            <span className={css.value}>{avgCheque} ₽</span>
-                        </div>
+                    <div className={css.textRow}>
+                        <span className={css.title}>Особенности:</span>
+                        <span className={css.value}>{aboutFeatures}</span>
+                    </div>
+                    <div className={css.textRow}>
+                        <span className={css.title}>Средний чек:</span>
+                        <span className={css.value}>{avgCheque} ₽</span>
                     </div>
                 </div>
             </ContentBlock>

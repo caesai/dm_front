@@ -1,11 +1,11 @@
-import { FC } from 'react';
-import css from '../../ContentBlock.module.css';
+import React from 'react';
+import css from '@/components/ContentBlock/ContentBlock.module.css';
 
-interface IProps {
+interface IHeaderSubTextProps {
     text: React.ReactNode;
     id?: string;
 }
 
-export const HeaderSubText: FC<IProps> = (p) => {
-    return <span className={css.headerSubText}>{p.text}</span>;
+export const HeaderSubText: React.FC<IHeaderSubTextProps> = ({ text, id }): JSX.Element => {
+    return <span className={css.headerSubText} id={id}>{text}</span>;
 };

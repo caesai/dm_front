@@ -1,109 +1,43 @@
-.page {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
-.absoluteBottom {
-    position: fixed;
-    bottom: 30px;
-    width: 100%;
-    left: 0;
-    z-index: 2;
-}
-
-.absoluteBottom_wrapper {
-    display: flex;
-    padding: 0 15px;
-}
-
-.redButton {
-    cursor: pointer;
-    display: flex;
-    padding: 15px 0;
-    background-color: var(--red);
-    border-radius: 15px;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-
-    .text {
-        font-family: 'Mont', sans-serif;
-        font-weight: 700;
-        font-size: 16px;
-        color: var(--primary-background);
-    }
-
-    &.loadingButton {
-        pointer-events: none;
-
-        .text {
-            opacity: 0;
-        }
-    }
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-.disabledButton {
-    background-color: var(--medium-grey) !important;
-    color: white !important;
-}
-
-.headerContainer {
+.header {
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
-.headerNav {
+.nav {
     display: flex;
     gap: 20px;
     align-items: center;
     justify-content: space-between;
+    flex-direction: row!important;
 }
 
-.headerInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-    /*width: 100%;*/
+.separator {
+    width: 44px;
+}
 
-    h3, p {
-        padding: 0;
-        margin: 0;
+.headerTitle {
+    font-family: 'Mont', sans-serif!important;
+    text-transform: capitalize!important;
+    font-weight: 400!important;
+    font-size: 14px!important;
+    text-align: center!important;
+    padding: 0!important;
+    margin: 0!important;
+}
+
+.selectors {
+    gap: 8px!important;
+}
+
+.selectorsRow {
+    flex-direction: row!important;
+    align-items: stretch;
+    gap: 8px!important;
+
+    &>div {
+        flex: 1;
     }
-}
-
-.headerInfo__title {
-    font-family: 'Mont', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    text-align: center;
-}
-
-.headerInfo__subtitle {
-    font-family: 'Mont', sans-serif;
-    font-weight: 400;
-    font-size: 12px;
-    color: var(--grey);
-    padding: 0;
-    margin: 0;
-    text-align: center;
-}
-
-.header_bottom {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
 }
 
 .bookingInfo {
@@ -123,6 +57,7 @@
 .header__selector {
     display: flex;
     gap: 8px;
+    flex-direction: row;
 }
 
 .header__select {
@@ -237,6 +172,7 @@
     gap: 5px;
     font-family: 'Mont', sans-serif;
     font-size: 14px;
+
     label {
         width: 100%;
         padding: 12px;

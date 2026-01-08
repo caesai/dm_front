@@ -10,6 +10,7 @@ import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { TCertificate, CERTIFICATION_TYPES, ICertificate } from '@/types/certificates.types.ts';
 import css from '@/components/CertificatesSelector/CertificatesSelector.module.css';
+import { ContentBlock } from '../ContentBlock/ContentBlock';
 
 
 interface CertificateOptionProps {
@@ -153,7 +154,7 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
     }
 
     return (
-        <div className={css.certificatesSelector}>
+        <ContentBlock className={css.certificatesSelector}>
             <CertificateTypeSelector
                 type={CERTIFICATION_TYPES.ONLINE}
                 currentType={selectedType}
@@ -184,6 +185,6 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
             {/*        placeholder={'Введите ID оффлайн-сертификата'}*/}
             {/*    />*/}
             {/*</CertificateTypeSelector>*/}
-        </div>
+        </ContentBlock>
     );
 };

@@ -1,25 +1,13 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import classNames from 'classnames';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-// API's
-import { APICreateBooking, APIGetAvailableDays, APIGetAvailableTimeSlots } from '@/api/restaurants.api.ts';
-// Types
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-// Atoms
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { commAtom } from '@/atoms/bookingCommAtom.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
-import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import { GuestCountSelector } from '@/components/GuestCountSelector/GuestCountSelector.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
@@ -28,329 +16,213 @@ import { ConfirmationSelect } from '@/components/ConfirmationSelect/Confirmation
 import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 // Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
-import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
-// Utils
-import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
+import { useBookingForm } from '@/hooks/useBookingForm.ts';
+// Atoms
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { CONFIRMATION_OPTIONS } from '@/atoms/bookingFormAtom.ts';
 // Styles
 import css from '@/pages/BookingPage/BookingPage.module.css';
 // Mocks
-import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
+import { getServiceFeeData } from '@/mockData.ts';
 
-const confirmationList: IConfirmationType[] = [
-    {
-        id: 'telegram',
-        text: 'В Telegram',
-    },
-    {
-        id: 'phone',
-        text: 'По телефону',
-    },
-    {
-        id: 'none',
-        text: 'Без подтверждения',
-    },
-];
-
-export const BookingRestaurantPage: React.FC = () => {
+/**
+ * Страница бронирования для конкретного ресторана
+ * Пользователь попадает сюда со страницы ресторана
+ * @returns {JSX.Element}
+ */
+export const BookingRestaurantPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { restaurantId } = useParams();
+    const { restaurantId } = useParams<{ restaurantId: string }>();
     const { goBack } = useNavigationHistory();
     const state = location?.state;
-    // Global state atoms
-    const [auth] = useAtom(authAtom);
-    const [user] = useAtom(userAtom);
-    const [comms] = useAtom(commAtom);
-    const [restaurants] = useAtom(restaurantsListAtom);
-    const [guestCount, setGuestCount] = useState(0);
-    const [childrenCount, setChildrenCount] = useState(0);
-    const [date, setDate] = useState<PickerValueObj>({
-        title: 'unset',
-        value: 'unset',
-    });
-    const [currentSelectedTime, setCurrentSelectedTime] = useState<ITimeSlot | null>(null);
-    const [restaurant, setRestaurant] = useState<PickerValueObj>({
-        title: 'unset',
-        value: 'unset',
-    });
-    const [userName, setUserName] = useState<string>(user?.first_name ? user.first_name : '');
-    const [userPhone, setUserPhone] = useState<string>(user?.phone_number ? user.phone_number : '');
-    const [userEmail] = useState<string>(user?.email ? user.email : '');
-    const [commentary, setCommentary] = useState('');
-    const [confirmation, setConfirmation] = useState<IConfirmationType>(confirmationList[0]);
-    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
-    const [availableDates, setAvailableDates] = useState<PickerValueObj[]>([]);
-    const [guestCountPopup, setGuestCountPopup] = useState(false);
-    const [bookingDatePopup, setBookingDatePopup] = useState(false);
-    const [timeslotsLoading, setTimeslotsLoading] = useState(true);
-    const [requestLoading, setRequestLoading] = useState(false);
-    const [errorPopup, setErrorPopup] = useState(false);
-    const [botError, setBotError] = useState(false);
-    const [timeslotsError, setTimeslotsError] = useState(false);
-    const [errorPopupCount, setErrorPopupCount] = useState(0);
-    const [preOrder, setPreOrder] = useState(false);
-    const [certificate_id, setCertificateId] = useState<string | null>(null);
     const bookingBtn = useRef<HTMLDivElement>(null);
-    // Update bookingDates when guestCount changes
-    useEffect(() => {
-        auth?.access_token && restaurant.value !== 'unset'
-            ? APIGetAvailableDays(auth?.access_token, String(restaurantId), 1).then((res) =>
-                  setAvailableDates(
-                      res.data.map((v: string) => ({
-                          title: formatDate(v),
-                          value: v,
-                      }))
-                  )
-              )
-            : null;
-    }, [guestCount, restaurant]);
 
-    useEffect(() => {
-        if (restaurant.value === 'unset' || !auth?.access_token || date.value === 'unset' || !guestCount) {
-            return;
-        }
-        setTimeslotsLoading(true);
-        setTimeslotsError(false);
-        APIGetAvailableTimeSlots(auth.access_token, String(restaurantId), date.value, guestCount)
-            .then((res) => setAvailableTimeslots(res.data))
-            .catch((err) => {
-                console.error('err: ', err);
-                setTimeslotsError(true);
-            })
-            .finally(() => setTimeslotsLoading(false));
-    }, [date, guestCount, restaurant]);
+    // Получаем данные о ресторанах для отображения
+    const restaurants = useAtomValue(restaurantsListAtom);
 
-    useEffect(() => {
-        if (state) {
-            const { bookedDate, bookedTime } = state;
-            setDate(bookedDate);
-            setCurrentSelectedTime(bookedTime);
-            setGuestCount(1);
-            setChildrenCount(0);
-        }
-    }, [state]);
+    // Находим текущий ресторан
+    const currentRestaurant = useMemo(() => {
+        return restaurants.find((r) => String(r.id) === restaurantId);
+    }, [restaurants, restaurantId]);
 
-    const restaurantList: PickerValueObj[] = useMemo(
-        () =>
-            restaurants.map(({ title, address, id }) => ({
-                title,
-                address,
-                value: String(id),
-            })),
-        [restaurants]
-    );
+    // Booking form hook с предвыбранным рестораном
+    const {
+        form,
+        isFormValid,
+        validationDisplay,
+        availableDates,
+        availableTimeslots,
+        canShowTimeSlots,
+        loading,
+        errors,
+        setErrorPopup,
+        handlers,
+        createBooking,
+    } = useBookingForm({
+        preSelectedRestaurant: currentRestaurant
+            ? {
+                  id: String(currentRestaurant.id),
+                  title: currentRestaurant.title,
+                  address: currentRestaurant.address,
+              }
+            : undefined,
+        initialBookingData: state
+            ? {
+                  bookedDate: state.bookedDate,
+                  bookedTime: state.bookedTime,
+                  guestCount: state.bookedDate ? 1 : undefined,
+                  childrenCount: state.bookedDate ? 0 : undefined,
+              }
+            : undefined,
+        isSharedRestaurant: state?.sharedRestaurant,
+    });
 
-    useEffect(() => {
-        const currentRestaurant = restaurantList.find((r) => r.value === restaurantId);
-        if (currentRestaurant) {
-            setRestaurant(currentRestaurant);
-        }
-    }, []);
-
-    // Validation methods
-    const [nameValidatedDisplay, setNameValidated] = useState(true);
-    const [phoneValidatedDisplay, setPhoneValidated] = useState(true);
-    const [dateValidatedDisplay, setDateValidated] = useState(true);
-    const [, setSelectedTimeValidated] = useState(true);
-    const [guestsValidatedDisplay, setGuestsValidated] = useState(true);
-    const { isFormValid, validateForm } = useBookingFormValidation(
-        // Pass the raw values
-        { userName, userPhone, currentSelectedTime, guestCount, date },
-        // Pass the setters for the *display* states
-        { setNameValidated, setPhoneValidated, setDateValidated, setGuestsValidated, setSelectedTimeValidated }
-    );
-
-    const createBooking = () => {
-        if (!user?.complete_onboarding) {
-            navigate('/onboarding/3', { state: { id: restaurantId, date, time: currentSelectedTime, sharedRestaurant: true } });
-            return;
-        }
-        if (validateForm() && auth?.access_token && currentSelectedTime) {
-            setRequestLoading(true);
-            APICreateBooking(
-                auth.access_token,
-                String(restaurantId),
-                date.value,
-                getTimeShort(currentSelectedTime.start_datetime),
-                guestCount,
-                childrenCount,
-                userName,
-                userPhone,
-                userEmail,
-                commentary,
-                comms,
-                confirmation.text,
-                guestCount + childrenCount < 8 ? false : preOrder,
-                null,
-                certificate_id
-            )
-                .then((res) => {
-                    if (res.data?.error) {
-                        setErrorPopup(true);
-                        setBotError(true);
-                        return;
-                    }
-
-                    navigate(`/myBookings/${res.data.id}`);
-                })
-                .catch((err) => {
-                    console.error('err: ', err);
-                    setErrorPopup(true);
-                    setErrorPopupCount((prev) => prev + 1);
-                })
-                .finally(() => setRequestLoading(false));
+    /**
+     * Обработка кнопки "Назад"
+     */
+    const handleGoBack = () => {
+        if (state?.sharedRestaurant) {
+            navigate('/');
+        } else {
+            goBack();
         }
     };
 
     return (
         <Page back={true}>
-            <BookingErrorPopup
-                isOpen={errorPopup}
-                setOpen={setErrorPopup}
-                resId={Number(restaurantId)}
-                count={errorPopupCount}
-                botError={botError}
-            />
-            <GuestCountSelector
-                guestCount={guestCount}
-                childrenCount={childrenCount}
-                setGuestCount={setGuestCount}
-                setChildrenCount={setChildrenCount}
-                isOpen={guestCountPopup}
-                setOpen={setGuestCountPopup}
-                maxGuestsNumber={getGuestMaxNumber(String(restaurant.value))}
-                serviceFeeMessage={getServiceFeeData(String(restaurant.value))}
-            />
-            <DateListSelector
-                isOpen={bookingDatePopup}
-                setOpen={setBookingDatePopup}
-                date={date}
-                setDate={setDate}
-                values={availableDates}
-            />
-            <div className={css.page}>
-                <PageContainer>
-                    <ContentContainer>
-                        <div className={css.headerContainer}>
-                            <div className={css.headerNav}>
-                                <div style={{ width: '44px' }}></div>
-                                <div className={css.headerInfo}>
-                                    <h3 className={css.headerInfo__title}>{'Бронирование'}</h3>
+            <PageContainer>
+                <BookingErrorPopup
+                    isOpen={errors.popup}
+                    setOpen={setErrorPopup}
+                    resId={Number(restaurantId)}
+                    count={errors.popupCount}
+                    botError={errors.botError}
+                />
+
+                {/* Заголовок с информацией о ресторане */}
+                <ContentContainer>
+                    <div className={css.headerContainer}>
+                        <div className={css.headerNav}>
+                            <div style={{ width: '44px' }} />
+                            <div className={css.headerInfo}>
+                                <h3 className={css.headerInfo__title}>Бронирование</h3>
+                                {currentRestaurant && (
                                     <>
                                         <h3 className={css.headerInfo__title}>
-                                            <b>{String(restaurant.title)}</b>
+                                            <b>{currentRestaurant.title}</b>
                                         </h3>
-                                        <h4 className={css.headerInfo__subtitle}>{String(restaurant.address)}</h4>
+                                        <h4 className={css.headerInfo__subtitle}>{currentRestaurant.address}</h4>
                                     </>
-                                </div>
-                                <div>
-                                    <RoundedButton
-                                        icon={<CrossIcon size={44} />}
-                                        action={() => {
-                                            if (state.sharedRestaurant) {
-                                                navigate('/');
-                                            } else {
-                                                goBack();
-                                            }
-                                        }}
-                                    />
-                                </div>
+                                )}
                             </div>
-                            <div className={css.header_bottom}>
-                                <div className={classNames(css.header__selector)}>
-                                    <DropDownSelect
-                                        title={date.value !== 'unset' ? formatDateShort(date.value) : 'Дата'}
-                                        isValid={dateValidatedDisplay}
-                                        icon={<CalendarIcon size={24} />}
-                                        onClick={() => setBookingDatePopup(true)}
-                                    />
-                                    <DropDownSelect
-                                        title={guestCount ? getGuestsString(guestCount + childrenCount) : 'Гости'}
-                                        isValid={guestsValidatedDisplay}
-                                        icon={<UsersIcon size={24} />}
-                                        onClick={() => setGuestCountPopup(!guestCountPopup)}
-                                    />
-                                </div>
-                            </div>
+                            <RoundedButton icon={<CrossIcon size={44} />} action={handleGoBack} />
                         </div>
-                    </ContentContainer>
-                    {!guestCount || date.value === 'unset' ? (
-                        <ContentContainer>
-                            <div className={css.timeOfDayContainer}>
-                                <span className={css.noTimeSlotsText}>Выберите дату и количество гостей</span>
-                            </div>
-                        </ContentContainer>
-                    ) : !timeslotsError ? (
-                        <TimeSlots
-                            restaurantId={Number(restaurantId)}
-                            loading={timeslotsLoading}
-                            availableTimeslots={availableTimeslots}
-                            currentSelectedTime={currentSelectedTime}
-                            setCurrentSelectedTime={setCurrentSelectedTime}
-                        />
-                    ) : (
+
+                        {/* Дата и количество гостей */}
+                        <div className={css.header_bottom}>
+                            <ContentBlock className={classNames(css.header__selector)}>
+                                {/* Селекторы даты и гостей (скрытые popup) */}
+                                <DateListSelector datesList={availableDates} onSelect={handlers.selectDate} />
+                                <GuestCountSelector
+                                    guestCount={form.guestCount}
+                                    childrenCount={form.childrenCount}
+                                    setGuestCount={handlers.setGuestCount}
+                                    setChildrenCount={handlers.setChildrenCount}
+                                    serviceFeeMessage={getServiceFeeData(String(restaurantId))}
+                                />
+                            </ContentBlock>
+                        </div>
+                    </div>
+                </ContentContainer>
+
+                {/* Время бронирования */}
+                <ContentContainer>
+                    {!canShowTimeSlots ? (
+                        <ContentBlock className={css.timeOfDayContainer}>
+                            <span className={css.noTimeSlotsText}>Выберите дату и количество гостей</span>
+                        </ContentBlock>
+                    ) : errors.timeslots ? (
                         <p className={css.timeslotsError} role="alert" data-testid="timeslots-error">
                             Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.
                         </p>
-                    )}
-                    <CertificatesSelector
-                        setCertificateId={setCertificateId}
-                        isOpened={false}
-                        selectedCertificateId={null}
-                    />
-                    <BookingWish
-                        restaurantId={Number(restaurantId)}
-                        guestCount={guestCount}
-                        childrenCount={childrenCount}
-                        preOrder={preOrder}
-                        setPreOrder={setPreOrder}
-                        restaurant={String(restaurantId)}
-                        commentary={commentary}
-                        setCommentary={setCommentary}
-                    />
-                    <ContentContainer>
-                        <HeaderContainer>
-                            <HeaderContent title={'Контакты'} />
-                        </HeaderContainer>
-                        <div className={css.form}>
-                            <TextInput
-                                value={userName}
-                                onChange={setUserName}
-                                placeholder={'Имя'}
-                                validation_failed={!nameValidatedDisplay}
-                            />
-                            <TextInput
-                                value={userPhone}
-                                onChange={setUserPhone}
-                                placeholder={'Телефон'}
-                                validation_failed={!phoneValidatedDisplay}
-                            />
-                        </div>
-                    </ContentContainer>
-                    <ContentContainer>
-                        <HeaderContainer>
-                            <HeaderContent title={'Способ подтверждения'} />
-                        </HeaderContainer>
-                        <ConfirmationSelect
-                            options={confirmationList}
-                            currentValue={confirmation}
-                            onChange={setConfirmation}
+                    ) : (
+                        <TimeSlots
+                            loading={loading.timeslots}
+                            availableTimeslots={availableTimeslots}
+                            currentSelectedTime={form.selectedTimeSlot}
+                            setCurrentSelectedTime={handlers.selectTimeSlot}
                         />
-                    </ContentContainer>
-                </PageContainer>
-            </div>
-            <BottomButtonWrapper
-                forwardedRef={bookingBtn}
-                isDisabled={!isFormValid}
-                isLoading={requestLoading}
-                onClick={createBooking}
-            />
+                    )}
+                </ContentContainer>
+
+                {/* Сертификаты */}
+                <CertificatesSelector
+                    setCertificateId={(id) => handlers.updateField({ certificateId: id })}
+                    isOpened={false}
+                    selectedCertificateId={null}
+                />
+
+                {/* Пожелания при бронировании */}
+                <BookingWish
+                    restaurantId={Number(restaurantId)}
+                    guestCount={form.guestCount}
+                    childrenCount={form.childrenCount}
+                    preOrder={form.preOrder}
+                    setPreOrder={(preOrder) => handlers.updateField({ preOrder })}
+                    restaurant={String(restaurantId)}
+                    commentary={form.commentary}
+                    setCommentary={(commentary) => handlers.updateField({ commentary })}
+                />
+
+                {/* Контактная информация */}
+                <ContentContainer>
+                    <HeaderContainer>
+                        <HeaderContent title="Контакты" />
+                    </HeaderContainer>
+                    <ContentBlock className={css.form}>
+                        <TextInput
+                            value={form.userName}
+                            onChange={(value) => handlers.updateField({ userName: value })}
+                            placeholder="Имя"
+                            validation_failed={!validationDisplay.nameValid}
+                        />
+                        <TextInput
+                            value={form.userPhone}
+                            onChange={(value) => handlers.updateField({ userPhone: value })}
+                            placeholder="Телефон"
+                            validation_failed={!validationDisplay.phoneValid}
+                            type="tel"
+                        />
+                    </ContentBlock>
+                </ContentContainer>
+
+                {/* Способ подтверждения */}
+                <ContentContainer>
+                    <HeaderContainer>
+                        <HeaderContent title="Способ подтверждения" />
+                    </HeaderContainer>
+                    <ConfirmationSelect
+                        options={CONFIRMATION_OPTIONS}
+                        currentValue={form.confirmation}
+                        onChange={handlers.setConfirmation}
+                    />
+                </ContentContainer>
+
+                {/* Кнопка бронирования */}
+                <BottomButtonWrapper
+                    forwardedRef={bookingBtn}
+                    isDisabled={!isFormValid}
+                    isLoading={loading.submit}
+                    onClick={createBooking}
+                />
+            </PageContainer>
         </Page>
     );
 };

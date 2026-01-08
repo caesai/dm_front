@@ -8,6 +8,7 @@ import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
+// Hooks
 import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
 
 /**
@@ -56,24 +57,26 @@ export const EventsBlock: React.FC<IEventsBlockProps> = ({ restaurantId }): JSX.
      * Обрабатывает клик по карточке мероприятия для навигации на страницу деталей мероприятия
      * @param {number} eventId - ID мероприятия для навигации
      */
-    const handleEventClick = useCallback((eventId: number) => {
-        navigate(`/events/${eventId}/details`);
-    }, [navigate]);
+    const handleEventClick = useCallback(
+        (eventId: number) => {
+            navigate(`/events/${eventId}/details`);
+        },
+        [navigate]
+    );
 
+    /**
+     * Если нет событий, то не отображаем блок
+     */
     if (!filteredEvents || filteredEvents.length === 0) {
-        return <></> as JSX.Element;
+        return (<></>) as JSX.Element;
     }
 
     return (
-        <ContentContainer>
-            <ContentBlock>
-                <HeaderContainer>
-                    <HeaderContent title="Мероприятия" id="events" />
-                </HeaderContainer>
-                {filteredEvents?.map((event) => (
-                    <EventCard key={event.id} onClick={handleEventClick} {...event} />
-                ))}
-            </ContentBlock>
+        <ContentContainer id="events">
+            <HeaderContainer>
+                <HeaderContent title="Мероприятия" />
+            </HeaderContainer>
+            {filteredEvents?.map((event) => <EventCard key={event.id} onClick={handleEventClick} {...event} />)}
         </ContentContainer>
     );
 };
