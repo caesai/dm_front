@@ -46,7 +46,7 @@ interface IBookingBlockProps {
  * @example
  * <BookingBlock restaurantId="123" />
  */
-export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }): JSX.Element => {
+export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBookingBlockProps): JSX.Element => {
     /** Состояние скролла страницы */
     const headerScrolled = useAtomValue(headerScrolledAtom);
 
@@ -138,5 +138,3 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }): JS
         </ContentContainer>
     );
 };
-
-BookingBlock.displayName = 'BookingBlock';

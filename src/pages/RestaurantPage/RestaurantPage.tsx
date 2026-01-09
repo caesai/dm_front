@@ -61,7 +61,7 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
             navigate('/onboarding/3', {
                 state: {
                     id: restaurantId,
-                    bookedDate: date.value.toString(),
+                    bookedDate: date, // Передаём полный PickerValue объект
                     bookedTime: currentSelectedTime,
                     sharedRestaurant: true,
                 },
@@ -69,7 +69,7 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
         } else {
             navigate(`/restaurant/${restaurantId}/booking`, {
                 state: {
-                    bookedDate: date.value.toString(),
+                    bookedDate: date, // Передаём полный PickerValue объект
                     bookedTime: currentSelectedTime,
                 },
             });

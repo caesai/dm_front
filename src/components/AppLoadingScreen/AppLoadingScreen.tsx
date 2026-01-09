@@ -8,16 +8,28 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 // Styles
 import css from '@/components/AppLoadingScreen/AppLoadingScreen.module.css';
 
-export const Loader = () => {
-    return <div className={css.loader} data-testid="loader"></div>;
+/**
+ * Компонент загрузки.
+ *
+ * @component
+ * @returns {JSX.Element} Компонент загрузки
+ */
+export const Loader: React.FC = (): JSX.Element => {
+    return <div className={css.loader} data-testid="loader" />;
 };
-
-export const AppLoadingScreen: React.FC = () => {
+/**
+ * Экран загрузки приложения.
+ *
+ * @component
+ * @returns {JSX.Element} Компонент экрана загрузки
+ */
+export const AppLoadingScreen: React.FC = (): JSX.Element => {
     const auth = useAtomValue(authAtom);
     const setUser = useSetAtom(userAtom);
     const setAuth = useSetAtom(authAtom);
     const lp = useLaunchParams();
     const rawLp = useRawInitData();
+    // Авторизация пользователя
     useEffect(() => {
         if (!auth?.access_token) {
             APIUserAuth(rawLp, lp.tgWebAppStartParam)

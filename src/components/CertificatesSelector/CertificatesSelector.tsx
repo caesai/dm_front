@@ -1,26 +1,32 @@
-/**
- * @fileoverview React-компонент для выбора сертификатов.
- */
 
 import React, { useState, useMemo, useEffect } from 'react';
 import classnames from 'classnames';
 import moment from 'moment/moment';
 import { useAtom } from 'jotai/index';
-import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
+// Atoms
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
+// Types
 import { TCertificate, CERTIFICATION_TYPES, ICertificate } from '@/types/certificates.types.ts';
+// Components
+import { CheckBoxInput } from '@/components/CheckBoxInput/CheckBoxInput.tsx';
+import { ContentContainer } from '@/components/ContentContainer/ContentContainer';
+// Styles
 import css from '@/components/CertificatesSelector/CertificatesSelector.module.css';
-import { ContentBlock } from '../ContentBlock/ContentBlock';
 
 
-interface CertificateOptionProps {
+interface ICertificateOptionProps {
     onClick: () => void;
     isSelected: boolean;
     value: string;
     date: string;
 }
 
-const CertificateOption: React.FC<CertificateOptionProps> = ({ onClick, value, date, isSelected }) => (
+/**
+ * Компонент опции сертификата
+ * @param {ICertificateOptionProps} props
+ * @returns {JSX.Element}
+ */
+const CertificateOption: React.FC<ICertificateOptionProps> = ({ onClick, value, date, isSelected }: ICertificateOptionProps): JSX.Element => (
     <div className={classnames(css.optionRow, { [css.optionSelected]: isSelected })} onClick={onClick}>
         <div className={css.optionColumn}>
             <span>Номинал:</span>
@@ -33,7 +39,7 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ onClick, value, d
     </div>
 );
 
-interface CertificateTypeSelectorProps {
+interface ICertificateTypeSelectorProps {
     type: TCertificate;
     currentType: TCertificate | null;
     toggleType: (type: TCertificate) => void;
@@ -41,7 +47,12 @@ interface CertificateTypeSelectorProps {
     children?: React.ReactNode;
 }
 
-const CertificateTypeSelector: React.FC<CertificateTypeSelectorProps> = ({ type, currentType, toggleType, label, children }) => (
+/**
+ * Компонент селектора типа сертификата
+ * @param {ICertificateTypeSelectorProps} props
+ * @returns {JSX.Element}
+ */
+const CertificateTypeSelector: React.FC<ICertificateTypeSelectorProps> = ({ type, currentType, toggleType, label, children }: ICertificateTypeSelectorProps): JSX.Element => (
     <div className={css.certificateOption} data-testid="certificates-selector">
         <CheckBoxInput
             checked={currentType === type}
@@ -57,7 +68,7 @@ const CertificateTypeSelector: React.FC<CertificateTypeSelectorProps> = ({ type,
  * Свойства (Props) компонента CertificatesSelector.
  * @interface
  */
-export interface CertificatesSelectorProps {
+export interface ICertificatesSelectorProps {
     /** Функция для установки ID выбранного сертификата в родительском компоненте. */
     setCertificateId: (id: string | null) => void;
     /** Булево значение, указывающее, открыт ли (виден) в данный момент селектор. */
@@ -72,10 +83,10 @@ export interface CertificatesSelectorProps {
  *
  * Использует Jotai для глобального управления состоянием списка сертификатов и хуки useState/useEffect React для локальной логики пользовательского интерфейса и побочных эффектов.
  *
- * @param {CertificatesSelectorProps} { setCertificateId, isOpened, selectedCertificateId }
- * @returns {React.FC | null} Функциональный компонент React или null, если сертификаты отсутствуют.
+ * @param {ICertificatesSelectorProps} { setCertificateId, isOpened, selectedCertificateId }
+ * @returns {JSX.Element} Функциональный компонент React или <></>, если сертификаты отсутствуют.
  */
-export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setCertificateId, isOpened, selectedCertificateId }) => {
+export const CertificatesSelector: React.FC<ICertificatesSelectorProps> = ({ setCertificateId, isOpened, selectedCertificateId }: ICertificatesSelectorProps): JSX.Element => {
     const [certificates] = useAtom(certificatesListAtom);
     const [selectedType, setSelectedType] = useState<TCertificate | null>(null);
     // const [offlineCertificateId, setOfflineCertificateId] = useState<string>('');
@@ -150,11 +161,11 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
     }, [isOpened, selectedCertificateId, setCertificateId, certificates]);
 
     if (certificates.length === 0) {
-        return null;
+        return <></>;
     }
 
     return (
-        <ContentBlock className={css.certificatesSelector}>
+        <ContentContainer className={css.certificatesSelector}>
             <CertificateTypeSelector
                 type={CERTIFICATION_TYPES.ONLINE}
                 currentType={selectedType}
@@ -185,6 +196,6 @@ export const CertificatesSelector: React.FC<CertificatesSelectorProps> = ({ setC
             {/*        placeholder={'Введите ID оффлайн-сертификата'}*/}
             {/*    />*/}
             {/*</CertificateTypeSelector>*/}
-        </ContentBlock>
+        </ContentContainer>
     );
 };

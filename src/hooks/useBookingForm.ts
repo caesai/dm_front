@@ -226,50 +226,63 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
     // ============================================
     
     const isInitialized = useRef(false);
-    const prevRestaurantId = useRef<string | undefined>(preSelectedRestaurant?.id);
+    const initialBookingDataApplied = useRef(false);
+    const preSelectedRestaurantApplied = useRef(false);
+
+    // Мемоизируем начальные данные бронирования, чтобы избежать лишних ререндеров
+    const initialDateValue = initialBookingData?.bookedDate?.value;
+    const initialTimeSlotStart = initialBookingData?.bookedTime?.start_datetime;
 
     useEffect(() => {
-        // Prevent re-initialization on every render
-        // Only initialize once, or when restaurant ID actually changes
-        const restaurantIdChanged = prevRestaurantId.current !== preSelectedRestaurant?.id;
+        if (!user) return;
         
-        if (isInitialized.current && !restaurantIdChanged) {
-            return;
+        const initialState = getInitialBookingFormState(user);
+        let shouldUpdate = false;
+        
+        // Если есть предвыбранный ресторан (применяем только один раз)
+        if (!preSelectedRestaurantApplied.current && preSelectedRestaurant) {
+            initialState.restaurant = {
+                title: preSelectedRestaurant.title,
+                value: preSelectedRestaurant.id,
+                ...(preSelectedRestaurant.address && { address: preSelectedRestaurant.address }),
+            };
+            preSelectedRestaurantApplied.current = true;
+            shouldUpdate = true;
         }
         
-        if (user) {
-            const initialState = getInitialBookingFormState(user);
-            
-            // Если есть предвыбранный ресторан
-            if (preSelectedRestaurant) {
-                initialState.restaurant = {
-                    title: preSelectedRestaurant.title,
-                    value: preSelectedRestaurant.id,
-                    ...(preSelectedRestaurant.address && { address: preSelectedRestaurant.address }),
-                };
+        // Если есть начальные данные бронирования (применяем только один раз)
+        if (!initialBookingDataApplied.current && initialBookingData) {
+            if (initialBookingData.bookedDate) {
+                initialState.date = initialBookingData.bookedDate;
             }
-            
-            // Если есть начальные данные бронирования (только при первой инициализации)
-            if (!isInitialized.current && initialBookingData) {
-                if (initialBookingData.bookedDate) {
-                    initialState.date = initialBookingData.bookedDate;
-                }
-                if (initialBookingData.bookedTime) {
-                    initialState.selectedTimeSlot = initialBookingData.bookedTime;
-                }
-                if (initialBookingData.guestCount !== undefined) {
-                    initialState.guestCount = initialBookingData.guestCount;
-                }
-                if (initialBookingData.childrenCount !== undefined) {
-                    initialState.childrenCount = initialBookingData.childrenCount;
-                }
+            if (initialBookingData.bookedTime) {
+                initialState.selectedTimeSlot = initialBookingData.bookedTime;
             }
-            
+            if (initialBookingData.guestCount !== undefined) {
+                initialState.guestCount = initialBookingData.guestCount;
+            }
+            if (initialBookingData.childrenCount !== undefined) {
+                initialState.childrenCount = initialBookingData.childrenCount;
+            }
+            initialBookingDataApplied.current = true;
+            shouldUpdate = true;
+        }
+        
+        // Первая инициализация или есть что обновить
+        if (!isInitialized.current || shouldUpdate) {
             setForm(initialState);
             isInitialized.current = true;
-            prevRestaurantId.current = preSelectedRestaurant?.id;
         }
-    }, [user, setForm, preSelectedRestaurant?.id, preSelectedRestaurant?.title, preSelectedRestaurant?.address]);
+    }, [
+        user, 
+        setForm, 
+        preSelectedRestaurant?.id, 
+        preSelectedRestaurant?.title, 
+        preSelectedRestaurant?.address,
+        initialDateValue,
+        initialTimeSlotStart,
+        initialBookingData,
+    ]);
 
     // ============================================
     // Load Available Dates
@@ -382,7 +395,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
 
     const handleGuestCountChange = useCallback((value: number | ((prev: number) => number)) => {
         if (typeof value === 'function') {
-            updateForm({ guestCount: value(form.guestCount) });
+            updateForm({ guestCount: value(form.guestCount ?? 0) });
         } else {
             updateForm({ guestCount: value });
         }
@@ -390,7 +403,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
 
     const handleChildrenCountChange = useCallback((value: number | ((prev: number) => number)) => {
         if (typeof value === 'function') {
-            updateForm({ childrenCount: value(form.childrenCount) });
+            updateForm({ childrenCount: value(form.childrenCount ?? 0) });
         } else {
             updateForm({ childrenCount: value });
         }

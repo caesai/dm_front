@@ -9,9 +9,11 @@ import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import { WheelPicker } from '@/components/WheelPicker/WheelPicker.tsx';
 // Styles
 import { PickerValue } from '@/lib/react-mobile-picker/components/Picker';
+import { IRestaurant } from '@/types/restaurant.types';
 
 interface IRestaurantsListSelectorProps {
     onSelect: (value: PickerValue) => void;
+    filteredRestaurants?: IRestaurant[];
 }
 /**
  * Компонент выбора ресторана из списка
@@ -20,16 +22,22 @@ interface IRestaurantsListSelectorProps {
  */
 export const RestaurantsListSelector: React.FC<IRestaurantsListSelectorProps> = ({
     onSelect,
+    filteredRestaurants,
 }: IRestaurantsListSelectorProps): JSX.Element => {
     const restaurants = useAtomValue(restaurantsListAtom);
     const [selectedRestaurant, setSelectedRestaurant] = useState<PickerValue | null>(null);
     const [isPickerOpen, setIsPickerOpen] = useState(false);
     const restaurantList = useMemo(() => {
-        return restaurants.map((r) => ({
+        return filteredRestaurants ? filteredRestaurants.map((r) => ({
             title: r.title,
-            value: r.id,
-            subtitle: r.address,
-        }));
+                value: r.id,
+                subtitle: r.address,
+            }))
+          : restaurants.map((r) => ({
+                title: r.title,
+                value: r.id,
+                subtitle: r.address,
+            }));
     }, [restaurants]);
     // Открытие/закрытие пикера
     const togglePicker = useCallback(() => {

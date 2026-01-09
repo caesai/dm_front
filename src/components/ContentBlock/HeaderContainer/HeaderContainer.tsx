@@ -1,14 +1,25 @@
 import React from 'react';
+import classNames from 'classnames';
 import css from '@/components/ContentBlock/ContentBlock.module.css';
 
-interface IHeaderContainerProps {
+/**
+ * Свойства (Props) компонента HeaderContainer.
+ * @interface
+ */
+export interface IHeaderContainerProps {
     children: React.ReactNode;
     id?: string;
+    className?: string;
 }
 
-export const HeaderContainer: React.FC<IHeaderContainerProps> = ({ children, id }): JSX.Element => {
+/**
+ * Компонент контейнера заголовка
+ * @param {IHeaderContainerProps} props
+ * @returns {JSX.Element}
+ */
+export const HeaderContainer: React.FC<IHeaderContainerProps> = ({ children, id, className }: IHeaderContainerProps): JSX.Element => {
     return (
-        <div className={css.headerContainer} id={id}>
+        <div className={classNames(css.headerContainer, className)} id={id}>
             {children}
         </div>
     );

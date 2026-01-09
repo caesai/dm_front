@@ -1,7 +1,7 @@
 import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route, Outlet } from 'react-router-dom';
-import { EventDetailsPage } from '@/pages/EventsPage/EventDetailsPage/EventDetailsPage.tsx';
+import { EventDetailsPage } from '@/pages/EventsPage/EventDetailsPage';
 import { userAtom } from '@/atoms/userAtom.ts';
 import { eventsListAtom, guestCountAtom } from '@/atoms/eventListAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';

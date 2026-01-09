@@ -29,11 +29,12 @@ interface IRestaurantTopPreviewProps {
  * @component
  * @example
  * <RestaurantTopPreview restaurantId="1" />
+ * @param {IRestaurantTopPreviewProps} props
+ * @returns {JSX.Element}
  */
-export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ restaurantId }): JSX.Element => {
-    /**
-     * Ресторан.
-     */
+export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({
+    restaurantId,
+}: IRestaurantTopPreviewProps): JSX.Element => {
     const restaurant = useGetRestaurantById(restaurantId);
     const avgCheque = useMemo(() => restaurant?.avg_cheque || 0, [restaurant?.avg_cheque]);
     /**
@@ -50,7 +51,7 @@ export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ res
      * Возвращаем верхнее превью ресторана.
      */
     return (
-        <figure     
+        <figure
             className={classNames(css.previewContainer, css.bgImage)}
             style={{ backgroundImage: `url(${restaurant?.thumbnail_photo})` }}
         >

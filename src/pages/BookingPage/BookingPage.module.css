@@ -26,6 +26,23 @@
     margin: 0!important;
 }
 
+.headerInfo {
+    gap: 4px!important;
+    &>h3 {
+        padding: 0!important;
+        margin: 0!important;
+        height: 20px!important;
+        line-height: 20px!important;
+    }
+}
+
+.headerAddress {
+    font-weight: 400!important;
+    font-size: 12px!important;
+    color: var(--grey)!important;
+    text-align: center!important;
+}
+
 .selectors {
     gap: 8px!important;
 }
@@ -89,10 +106,6 @@
     font-size: 14px;
 }
 
-.header__select__arrow {
-    /*transform: rotate(180deg);*/
-}
-
 .timeOfDayContainer {
     display: flex;
     flex-direction: column;
@@ -101,8 +114,8 @@
 }
 
 .select_timeOfDay {
-    display: flex;
-    gap: 0;
+    gap: 0!important;
+    flex-direction: row!important;
 }
 
 .noTimeSlotsText {

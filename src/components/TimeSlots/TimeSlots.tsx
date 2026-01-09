@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { getTimeShort } from '@/utils.ts';
 // Components
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 // Types
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 // Styles
@@ -250,7 +251,7 @@ const DayPartSelector: React.FC<IDayPartSelectorProps> = React.memo(
         const counts = { morningCount, dayCount, eveningCount };
 
         return (
-            <div className={css.select_timeOfDay}>
+            <ContentBlock className={css.select_timeOfDay}>
                 {DAY_PARTS_CONFIG.map(({ part, countKey }) =>
                     counts[countKey] > 0 ? (
                         <div
@@ -262,7 +263,7 @@ const DayPartSelector: React.FC<IDayPartSelectorProps> = React.memo(
                         </div>
                     ) : null
                 )}
-            </div>
+            </ContentBlock>
         );
     }
 );
@@ -424,7 +425,7 @@ export const TimeSlots: React.FC<ITimeSlotsProps> = React.memo(({
     }
 
     return (
-        <div className={classNames(css.timeOfDayContainer, className)} style={style}>
+        <ContentBlock className={classNames(css.timeOfDayContainer, className)} style={style}>
             {!hasAnyTimeSlots ? (
                 <span className={css.noTimeSlotsText}>К сожалению, свободных столов не осталось</span>
             ) : (
@@ -440,7 +441,7 @@ export const TimeSlots: React.FC<ITimeSlotsProps> = React.memo(({
             )}
 
             {hasAnyTimeSlots && (
-                <div className={css.timeList}>
+                <ContentBlock className={css.timeList}>
                     {displayedTimeslots.length > 0 ? (
                         <Swiper
                             slidesPerView="auto"
@@ -467,9 +468,9 @@ export const TimeSlots: React.FC<ITimeSlotsProps> = React.memo(({
                             К сожалению, доступных столов на выбранную часть дня не осталось
                         </span>
                     )}
-                </div>
+                </ContentBlock>
             )}
-        </div>
+        </ContentBlock>
     );
 });
 

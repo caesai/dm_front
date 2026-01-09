@@ -34,7 +34,12 @@ interface IMenuBlockProps {
 // Блок меню
 // TODO: новая версия меню доступна пользователям с разрешением menu_tester
 // как только будет реализована новая версия меню, нужно будет удалить старый блок меню
-export const MenuBlock: React.FC<IMenuBlockProps> = ({ restaurantId }): JSX.Element => {
+/**
+ * Компонент MenuBlock.
+ * @param {IMenuBlockProps} props
+ * @returns {JSX.Element}
+ */
+export const MenuBlock: React.FC<IMenuBlockProps> = ({ restaurantId }: IMenuBlockProps): JSX.Element => {
     /**
      * Ресторан.
      */
@@ -82,12 +87,12 @@ export const MenuBlock: React.FC<IMenuBlockProps> = ({ restaurantId }): JSX.Elem
     };
 
     return (
-        <ContentContainer>
+        <ContentContainer id="menu">
             {/* Открываем popup с меню (старая версия меню) */}
             {restaurantMenuImgs && <MenuPopup isOpen={isMenuPopupOpen} setOpen={setIsMenuPopupOpen} menuItems={menuImageUrls} />}
             {/* Блок контента */}
             <ContentBlock>
-                <HeaderContainer id="menu">
+                <HeaderContainer>
                     <HeaderContent title="Меню" />
                 </HeaderContainer>
 

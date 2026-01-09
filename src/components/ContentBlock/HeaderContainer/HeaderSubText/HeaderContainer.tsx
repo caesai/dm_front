@@ -1,11 +1,21 @@
 import React from 'react';
+import classNames from 'classnames';
 import css from '@/components/ContentBlock/ContentBlock.module.css';
 
-interface IHeaderSubTextProps {
+/**
+ * Свойства (Props) компонента HeaderSubText.
+ * @interface
+ */
+export interface IHeaderSubTextProps {
     text: React.ReactNode;
     id?: string;
+    className?: string;
 }
-
-export const HeaderSubText: React.FC<IHeaderSubTextProps> = ({ text, id }): JSX.Element => {
-    return <span className={css.headerSubText} id={id}>{text}</span>;
+/**
+ * Компонент подтекста заголовка
+ * @param {IHeaderSubTextProps} props
+ * @returns {JSX.Element}
+ */
+export const HeaderSubText: React.FC<IHeaderSubTextProps> = ({ text, id, className }: IHeaderSubTextProps): JSX.Element => {
+    return <span className={classNames(css.headerSubText, className)} id={id}>{text}</span>;
 };
