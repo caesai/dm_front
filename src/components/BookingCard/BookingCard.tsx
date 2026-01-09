@@ -5,13 +5,13 @@ import bookingCard from '/img/bookingCard.png';
 import { weekdaysMap } from '@/utils.ts';
 
 interface BookingCardProps {
-    booking_id: number;
+    booking_id: string;
     active: boolean;
     title: string;
     address: string;
     date: string;
     time: string;
-    click_callback: (id: number) => void;
+    click_callback: (id: string) => void;
     image: string;
 }
 

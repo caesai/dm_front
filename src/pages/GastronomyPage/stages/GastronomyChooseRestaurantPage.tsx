@@ -1,27 +1,31 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAtomValue } from 'jotai';
+// Components
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
-import GastronomyImg from '/img/gastronomy-choose.png';
-import GastronomyMoscowImg from '/img/gastronomy-choose-moscow.jpeg';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 import { CitySelect } from '@/components/CitySelect/CitySelect.tsx';
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
-import { transformToConfirmationFormat } from '@/pages/IndexPage/IndexPage.tsx';
-import { useAtom } from 'jotai/index';
-import { currentCityAtom, setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
-import { IRestaurant } from '@/types/restaurant.types.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
+// Atoms
+// import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
+// Types
+import { IRestaurant } from '@/types/restaurant.types.ts';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { useGastronomyCart } from '@/hooks/useGastronomyCart';
-import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom';
-import { R } from '@/__mocks__/restaurant.mock';
-import { useDataLoader } from '@/hooks/useDataLoader';
+// Hooks
+import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
+import { useDataLoader } from '@/hooks/useDataLoader.ts';
+// Mocks
+import { R } from '@/__mocks__/restaurant.mock.ts';
+// Styles
+import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
+import GastronomyImg from '/img/gastronomy-choose.png';
+import GastronomyMoscowImg from '/img/gastronomy-choose-moscow.jpeg';
+import { getCurrentCity } from '@/atoms/cityListAtom';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
@@ -29,15 +33,18 @@ const initialRestaurant: PickerValueObj = {
 };
 
 export const GastronomyChooseRestaurantPage: React.FC = () => {
-    const [cityListA] = useAtom(cityListAtom);
-    const [currentCityA] = useAtom(currentCityAtom);
-    const [restaurants] = useAtom(restaurantsListAtom);
-    const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
-    const [allGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
+    // Атомы (только чтение)
+    const currentCity = useAtomValue(getCurrentCity);
+    const restaurants = useAtomValue(restaurantsListAtom);
+    const allGastronomyDishesList = useAtomValue(allGastronomyDishesListAtom);
+
+    // Локальные состояния
     const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
-    const [isDisabledButton, setDisabledButton] = useState(true);
+    const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
+
     const { clearCart } = useGastronomyCart();
     const { loadGastronomyDishes } = useDataLoader();
 
@@ -46,79 +53,44 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         loadGastronomyDishes();
     }, [loadGastronomyDishes]);
 
-    const [cityListConfirm] = useState<IConfirmationType[]>(
-        cityListA.map((v: ICity) => transformToConfirmationFormat(v))
-    );
-
-    const [currentCityS, setCurrentCityS] = useState<IConfirmationType>(
-        cityListConfirm.find((v) => v.id == currentCityA) ?? {
-            id: 'moscow',
-            text: 'Москва',
-        }
-    );
-
-    const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
-
-    const navigate = useNavigate();
-    const location = useLocation();
-
     /**
-     * Эффект фильтрации и сортировки списка ресторанов.
+     * Список ресторанов, отфильтрованный по городу и наличию блюд.
      *
-     * @remarks
-     * Логика обработки:
-     * 1. **Сортировка**: Ресторан с `id === 11` перемещается в начало списка.
-     * 2. **Фильтрация по городу**: Отбираются рестораны, соответствующие текущему городу (`currentCityA`).
-     * 3. **Фильтрация по блюдам**: Исключаются рестораны, для которых нет блюд в `dishesList`.
-     *
-     * Результат сохраняется в стейт `restaurantsList`.
+     * Логика:
+     * 1. Ресторан Smoke BBQ Лодейнопольская перемещается в начало списка
+     * 2. Фильтрация по текущему городу
+     * 3. Фильтрация по наличию блюд гастрономии
      */
-    useEffect(() => {
+    const restaurantsList = useMemo(() => {
         let result: IRestaurant[] = [];
-        let movableValue = null;
+        let movableValue: IRestaurant | null = null;
 
-        restaurants.map((e) => {
-            if (String(e.id) !== R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
-                result.push(e);
-            } else if (String(e.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
-                movableValue = e;
+        restaurants.forEach((restaurant) => {
+            if (String(restaurant.id) === R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) {
+                movableValue = restaurant;
+            } else {
+                result.push(restaurant);
             }
         });
 
         if (movableValue !== null) {
             result.unshift(movableValue);
         }
-        const filteredRestaurantsByCity = result.filter((v) => v.city.name_english == currentCityA);
-        const filteredRestaurantsByDishes = filteredRestaurantsByCity.filter((v) =>
-            allGastronomyDishesList.some((dish) => dish.restaurant_id === v.id)
-        );
-        setRestaurantsList(filteredRestaurantsByDishes);
-    }, [currentCityA, cityListA, allGastronomyDishesList]);
 
-    const updateCurrentCity = (city: IConfirmationType) => {
-        setCurrentCityS(city);
-        setCurrentCityA(city.id);
+        return result
+            .filter((restaurant) => restaurant.city.name_english === currentCity.name_english)
+            .filter((restaurant) =>
+                allGastronomyDishesList.some((dish) => String(dish.restaurant_id) === String(restaurant.id))
+            );
+    }, [restaurants, currentCity, allGastronomyDishesList]);
+
+    // Сбрасываем выбранный ресторан при смене города
+    useEffect(() => {
         setCurrentRestaurant(initialRestaurant);
-    };
+    }, [currentCity]);
 
-    const cityOptions = useMemo(
-        () => cityListConfirm.filter((v) => v.id === 'moscow' || v.id === 'spb'),
-        // () => cityListConfirm.filter((v) => v.id !== currentCityS.id), TODO: Вернуть нормальную логику
-        [cityListConfirm, currentCityS.id]
-    );
-
-    useEffect(() => {
-        setCurrentCityS(
-            cityListConfirm.find((v) => v.id == currentCityA) ?? {
-                id: 'moscow',
-                text: 'Москва',
-            }
-        );
-    }, [cityListA]);
-
-    useEffect(() => {
-        currentRestaurant.value === 'unset' ? setDisabledButton(true) : setDisabledButton(false);
-    }, [currentRestaurant]);
+    // Кнопка активна только при выбранном ресторане
+    const isDisabledButton = currentRestaurant.value === 'unset';
 
     useEffect(() => {
         const restaurant = location.state?.restaurant;
@@ -161,7 +133,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                         <h2>
                             Закажите праздничные <br /> блюда заранее и встретьте <br /> Новый год дома без хлопот
                         </h2>
-                        {currentCityS.id === 'moscow' ? (
+                        {currentCity.name_english === 'moscow' ? (
                             <img
                                 src={GastronomyMoscowImg}
                                 alt={'New Year Gastronomy'}
@@ -174,7 +146,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                             <li>Оформите заказ до 29 декабря.</li>
                             <li>Оплатите заказ (100% предоплата).</li>
                             <li>
-                                Заберите блюда из ресторана или оформим для вас доставку {currentCityA !== 'moscow' ? 'в период \n с 25 по' : ''} 31
+                                Заберите блюда из ресторана или оформим для вас доставку {currentCity.name_english !== 'moscow' ? 'в период \n с 25 по' : ''} 31
                                 декабря.
                             </li>
                         </ul>
@@ -183,12 +155,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                 <ContentBlock>
                     <div className={css.restaurantChoose}>
                         <HeaderContent title={'Выбор ресторана'}></HeaderContent>
-                        <CitySelect
-                            options={cityOptions}
-                            currentValue={currentCityS}
-                            onChange={updateCurrentCity}
-                            titleStyle={{ fontWeight: '600' }}
-                        />
+                        <CitySelect titleStyle={{ fontWeight: '600' }} />
                         <DropDownSelect
                             title={
                                 currentRestaurant.value !== 'unset'

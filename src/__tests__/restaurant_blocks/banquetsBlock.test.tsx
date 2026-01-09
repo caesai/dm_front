@@ -108,11 +108,6 @@ const mockProps = {
             image: '',
         },
     },
-    workTime: [
-        { weekday: '1', time_start: '10:00', time_end: '22:00' },
-        { weekday: '2', time_start: '10:00', time_end: '22:00' }
-    ],
-    openTime: ''
 };
 
 describe('BanquetsBlock', () => {
@@ -127,7 +122,7 @@ describe('BanquetsBlock', () => {
     });
 
     it('renders banquets block with title and description', () => {
-        render(<BanquetsBlock {...mockProps} />);
+        render(<BanquetsBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('Банкеты')).toBeInTheDocument();
         expect(screen.getByText('banquet description')).toBeInTheDocument();
@@ -135,27 +130,27 @@ describe('BanquetsBlock', () => {
     });
 
     it('navigates to banquet page when button is clicked', () => {
-        render(<BanquetsBlock {...mockProps} />);
+        render(<BanquetsBlock restaurantId={String(1)} />);
 
         fireEvent.click(screen.getByText('Подробнее'));
 
         expect(mockNavigate).toHaveBeenCalledWith('/banquets/1/address', {
             state: {
                 restaurant: mockProps.restaurant,
-                workTime: mockProps.workTime
+                workTime: mockProps.restaurant.worktime
             }
         });
     });
 
     it('displays banquet image', () => {
-        render(<BanquetsBlock {...mockProps} />);
+        render(<BanquetsBlock restaurantId={String(1)} />);
 
         const image = document.querySelector('[style*="background-image"]');
         expect(image).toBeInTheDocument();
     });
 
     it('renders without workTime', () => {
-        render(<BanquetsBlock {...mockProps} workTime={undefined} />);
+        render(<BanquetsBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('Банкеты')).toBeInTheDocument();
         expect(screen.getByText('Подробнее')).toBeInTheDocument();

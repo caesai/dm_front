@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -11,11 +11,21 @@ import { ImageViewerPopup } from '@/components/ImageViewerPopup/ImageViewerPopup
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
+// Atoms
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
-interface GalleryBlockProps {
-    restaurant_gallery: IPhotoCard[] | undefined;
+/**
+ * Пропсы компонента GalleryBlock.
+ *
+ * @interface IGalleryBlockProps
+ */
+interface IGalleryBlockProps {
+    /**
+     * ID ресторана.
+     */
+    restaurantId: string;
 }
 
 /**
@@ -39,26 +49,63 @@ export const transformGallery = (gallery: IPhotoCard[]): GalleryCollection[] => 
     }));
 };
 
-export const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }) => {
+/**
+ * Компонент для отображения галереи фотографий.
+ *
+ * @component
+ * @example
+ * <GalleryBlock restaurantId="1" />
+ */
+export const GalleryBlock: React.FC<IGalleryBlockProps> = ({ restaurantId }): JSX.Element => {
+    /**
+     * Ресторан.
+     */
+    const restaurant = useGetRestaurantById(restaurantId);
+    /**
+     * Состояние открытия просмотрщика фотографий.
+     */
     const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
+    /**
+     * Фотография для просмотра.
+     */
     const [currentImageViewerPhoto, setCurrentImageViewerPhoto] = useState('');
+    /**
+     * Галерея.
+     */
     const [gallery, setGallery] = useState<GalleryCollection[]>([]);
+    /**
+     * Категория фотографий.
+     */
     const [currentGalleryCategory, setCurrentGalleryCategory] = useState('Все фото');
+    /**
+     * Фотографии для отображения в галерее.
+     */
     const [currentGalleryPhotos, setCurrentGalleryPhotos] = useState<(string | string[])[]>([]);
+    /**
+     * Фотографии ресторана.
+     */
+    const restaurantGallery = useMemo(() => restaurant?.photo_cards || [], [restaurant]);
 
     /**
-     * Группирует фотографии для отображения в галерее
-     * Чередует одиночные фото и пары маленьких фото для визуального разнообразия
+     * Получает фотографии для отображения в галерее
      * @returns {Array<string | string[]>} Массив сгруппированных фотографий
      */
     const getGalleryPhotos = (): (string | string[])[] => {
+        /**
+         * Список фотографий.
+         */
         let photoList: string[] = [];
-
+        /**
+         * Если выбрана категория "Все фото", то добавляем все фотографии из всех категорий.
+         */
         if (currentGalleryCategory === 'Все фото') {
             // Собираем все уникальные фото из всех категорий
             gallery.forEach((category) => {
                 category.photos.forEach((photo) => photoList.push(photo.link));
             });
+            /**
+             * Убираем дубликаты фотографий.
+             */
             photoList = [...new Set(photoList)];
         } else {
             // Собираем фото только из выбранной категории
@@ -66,7 +113,13 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }
             selectedCategory?.photos.forEach((photo) => photoList.push(photo.link));
         }
 
+        /**
+         * Группируем фотографии для отображения в галерее.
+         */
         const groupedPhotos: (string | string[])[] = [];
+        /**
+         * Индекс фотографии.
+         */
         let index = 0;
 
         while (index < photoList.length) {
@@ -93,26 +146,30 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({ restaurant_gallery }
         setIsImageViewerOpen(true);
     };
 
-    // Инициализация галереи при получении данных
+    /**
+     * Инициализация галереи при получении данных
+     */
     useEffect(() => {
-        if (restaurant_gallery) {
-            setGallery(transformGallery(restaurant_gallery));
+        if (restaurantGallery) {
+            setGallery(transformGallery(restaurantGallery));
         }
-    }, [restaurant_gallery]);
+    }, [restaurantGallery]);
 
-    // Обновление отображаемых фото при изменении категории или галереи
+    /**
+     * Обновление отображаемых фото при изменении категории или галереи
+     */
     useEffect(() => {
         setCurrentGalleryPhotos(getGalleryPhotos());
     }, [currentGalleryCategory, gallery]);
 
-    if (!restaurant_gallery) return null;
+    if (!restaurantGallery) return <></> as JSX.Element;
 
     return (
         <ContentContainer>
             <ImageViewerPopup
                 isOpen={isImageViewerOpen}
                 setOpen={setIsImageViewerOpen}
-                items={restaurant_gallery}
+                items={restaurantGallery}
                 currentItem={currentImageViewerPhoto}
                 setCurrentItem={setCurrentImageViewerPhoto}
             />

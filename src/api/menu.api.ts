@@ -6,7 +6,7 @@ import { IMenu } from '@/types/menu.types.ts';
  * @param token - Bearer токен для авторизации
  * @param restaurantId - ID ресторана (опционально, если не указан - вернутся меню всех ресторанов)
  */
-export const APIGetRestaurantMenu = (token: string, restaurantId?: number) => {
+export const APIGetRestaurantMenu = (token: string, restaurantId?: string) => {
     const params = restaurantId ? { restaurant_id: restaurantId } : {};
 
     return axios.get<IMenu[]>(`${BASE_URL}/maitred/menus`, {

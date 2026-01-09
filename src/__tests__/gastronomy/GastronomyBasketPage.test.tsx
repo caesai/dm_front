@@ -9,8 +9,7 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { mockDish } from '@/__mocks__/gastronomy.mock.ts';
 import { R } from '@/__mocks__/restaurant.mock.ts';
 import { APIPostUserOrder, APIPostCreateGastronomyPayment } from '@/api/gastronomy.api.ts';
-import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
-import { cityListAtom } from '@/atoms/cityListAtom.ts';
+import { cityListAtom, getCurrentCity } from '@/atoms/cityListAtom.ts';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
 
 // Mock API
@@ -76,8 +75,8 @@ describe('GastronomyBasketPage', () => {
             [gastronomyCartAtom, cart],
             [restaurantsListAtom, [mockRestaurantSmoke, mockRestaurantBlackChops]],
             [authAtom, { access_token: 'token' }],
-            [currentCityAtom, 'spb'],
-            [cityListAtom, [{ name: 'Санкт-Петербург', name_english: 'spb' }]],
+            [getCurrentCity, 'spb'],
+            [cityListAtom, [{ id: 2, name: 'Санкт-Петербург', name_english: 'spb', name_dative: 'Санкт-Петербурге' }]],
             [userAtom, user],
         ];
 

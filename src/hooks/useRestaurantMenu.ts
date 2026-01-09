@@ -10,7 +10,7 @@ import { IMenu } from '@/types/menu.types.ts';
 // Mocks
 import { mockCocktailCategory } from '@/__mocks__/cocktails.mock.ts';
 
-export const useRestaurantMenu = (restaurantId: number | undefined) => {
+export const useRestaurantMenu = (restaurantId: string) => {
     const [auth] = useAtom(authAtom);
     const [restaurantMenus, setRestaurantMenus] = useAtom(restaurantMenusAtom);
     const [menuData, setMenuData] = useState<IMenu | null>(null);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom';
 import { swipeBehavior, useLaunchParams } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { ScrollToTop } from '@/navigation/utills.tsx';
 // API's
 import { DEV_MODE } from '@/api/base.ts';
@@ -27,10 +27,9 @@ import { RestaurantPage } from '@/pages/RestaurantPage/RestaurantPage.tsx';
 import { BookingPage } from '@/pages/BookingPage/BookingPage.tsx';
 import { BookingConfirmationPage } from '@/pages/BookingConfirmationPage/BookingConfirmationPage.tsx';
 import { RestaurantMapPage } from '@/pages/RestaurantMapPage/RestaurantMapPage.tsx';
-import { EventsListPage } from '@/pages/EventsPage/EventsListPage/EventsListPage.tsx';
-import { EventsPage } from '@/pages/EventsPage/EventsPage.tsx';
-import { EventDetailsPage } from '@/pages/EventsPage/EventDetailsPage/EventDetailsPage.tsx';
-import { EventBookingPage } from '@/pages/EventsPage/EventBookingPage/EventBookingPage.tsx';
+import { EventsListPage } from '@/pages/EventsPage/EventsListPage.tsx';
+import { EventDetailsPage } from '@/pages/EventsPage/EventDetailsPage.tsx';
+import { EventPurchasePage } from '@/pages/EventsPage/EventPurchasePage.tsx';
 import { PaymentReturnPage } from '@/pages/PaymentReturnPage/PaymentReturnPage.tsx';
 import { TicketInfoPage } from '@/pages/TicketInfoPage/TicketInfoPage.tsx';
 import { UserPhoneConfirmationPage } from '@/pages/UserPhoneConfirmation/UserPhoneConfirmationPage.tsx';
@@ -55,8 +54,8 @@ import { CertificatesCreateTwoPage } from '@/pages/CertificatesCreatePage/stages
 import { CertificatesCreateOnlinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOnlinePage.tsx';
 import { CertificatesListPage } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
 import { CertificatesCreateOfflinePage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateOfflinePage.tsx';
-import { BookingRestaurantPage } from '@/pages/BookingRestaurantPage/BookingRestaurantPage.tsx';
-import { BookingFreeEventPage } from '@/pages/BookingFreeEventPage/BookingFreeEventPage.tsx';
+import { RestaurantBookingPage } from '@/pages/BookingPage/RestaurantBookingPage.tsx';
+import { EventBookingPage } from '@/pages/BookingPage/EventBookingPage.tsx';
 import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/CertificatesPaymentPage.tsx';
 import { CertificateLandingPage } from '@/pages/CertificateLanding/CertificateLandingPage.tsx';
 import { CertificatesCreateErrorPage } from '@/pages/CertificatesCreatePage/stages/CertificatesCreateErrorPage.tsx';
@@ -75,10 +74,18 @@ import { HospitalityHeroesPage } from '@/pages/HospitalityHeroesPage/Hospitality
 import { HospitalityHeroesApplicationFormPage } from '@/pages/HospitalityHeroesPage/HospitalityHeroesApplicationFormPage.tsx';
 import { PrivilegePage } from '@/pages/PrivilegePage/PrivilegePage.tsx';
 
-const AppRouter: React.FC = () => {
-    const [auth] = useAtom(authAtom);
+/**
+ * Компонент маршрутизации приложения.
+ *
+ * Обеспечивает маршрутизацию между страницами приложения.
+ *
+ * @component
+ * @returns {JSX.Element} Компонент маршрутизации приложения
+ */
+const AppRouter: React.FC = (): JSX.Element => {
+    const auth = useAtomValue(authAtom);
     const [loadingComplete, setLoadingComplete] = useState<boolean>(false);
-    
+
     const { loadCriticalData, loadBackgroundData } = useDataLoader();
 
     /**
@@ -104,10 +111,10 @@ const AppRouter: React.FC = () => {
         const loadData = async () => {
             // Загружаем критичные данные (с кэшированием)
             await loadCriticalData();
-            
+
             // Скрываем экран загрузки
             setLoadingComplete(true);
-            
+
             // Загружаем фоновые данные
             loadBackgroundData();
         };
@@ -134,24 +141,28 @@ const AppRouter: React.FC = () => {
                         <Route path={'/me'} element={<UserProfilePage />} />
                         {/* Страница аллергий */}
                         <Route path={'/me/allergies'} element={<AllergiesPage />} />
+
                         {/* Мероприятия */}
-                        <Route path={'/events'} element={<EventsPage />}>
-                            {/* Страница списка мероприятий */}
-                            <Route path={'/events'} element={<EventsListPage />} />
-                            {/* Страница деталей мероприятия */}
-                            <Route path={'/events/:eventId/details'} element={<EventDetailsPage />} />
-                            {/* Страница бронирования мероприятия */}
-                            <Route path={'/events/:eventId/confirm'} element={<EventBookingPage />} />
-                            {/* Страница успешной оплаты мероприятия */}
-                            <Route path={'/events/payment-success/:orderId'} element={<EventPaymentSuccessPage />} />
-                            {/* Страница ошибки оплаты мероприятия */}
-                            {/* <Route path={'/events/payment-error/:orderId'} element={<EventPaymentErrorPage />} /> */}
-                        </Route>
+                        {/* Страница списка мероприятий */}
+                        <Route path={'/events'} element={<EventsListPage />} />
+                        {/* Страница деталей мероприятия */}
+                        <Route path={'/events/:eventId/details'} element={<EventDetailsPage />} />
+                        {/* Страница покупки билета на мероприятие */}
+                        <Route path={'/events/:eventId/purchase'} element={<EventPurchasePage />} />
+                        {/* Страница успешной оплаты билета на мероприятие */}
+                        <Route path={'/events/payment-success/:orderId'} element={<EventPaymentSuccessPage />} />
                         {/* Бронирование мероприятия */}
-                        <Route path={'/events/:id/booking'} element={<BookingFreeEventPage />} />
+                        <Route path={'/events/:eventId/booking'} element={<EventBookingPage />} />
+                        {/* Страница ошибки оплаты мероприятия */}
+                        {/* <Route path={'/events/payment-error/:orderId'} element={<EventPaymentErrorPage />} /> */}
+                        
+
                         {/* Страница Hospitality Heroes */}
                         <Route path={'/hospitality-heroes'} element={<HospitalityHeroesPage />} />
-                        <Route path={'/hospitality-heroes/application'} element={<HospitalityHeroesApplicationFormPage />} />
+                        <Route
+                            path={'/hospitality-heroes/application'}
+                            element={<HospitalityHeroesApplicationFormPage />}
+                        />
                         {/* Страница привилегий */}
                         <Route path={'/privilege'} element={<PrivilegePage />} />
                         {/* Мои билеты */}
@@ -162,26 +173,30 @@ const AppRouter: React.FC = () => {
                         <Route path={'/myBookings'} element={<MyBookingsPage />} />
                         {/* Информация о бронировании */}
                         <Route path={'/myBookings/:id'} element={<BookingInfoPage />} />
+
                         {/* Страница ресторана */}
-                        <Route path={'/restaurant/:id'} element={<RestaurantPage />} />
+                        <Route path={'/restaurant/:restaurantId'} element={<RestaurantPage />} />
                         {/* Бронирование ресторана */}
-                        <Route path={'/restaurant/:id/booking'} element={<BookingRestaurantPage />} />
+                        <Route path={'/restaurant/:restaurantId/booking'} element={<RestaurantBookingPage />} />
                         {/* Меню ресторана */}
                         <Route path={'/restaurant/:id/menu'} element={<RestaurantMenuPage />} />
                         {/* Страница деталей блюда */}
                         <Route path={'/restaurant/:id/menu/dish/:dishId'} element={<RestaurantDishDetailsPage />} />
-                        {/* Бронирование столика */}
+
+                        {/* Бронирование */}
                         <Route path={'/booking'} element={<BookingPage />} />
                         {/* Подтверждение бронирования */}
                         <Route path={'/bookingConfirmation'} element={<BookingConfirmationPage />} />
+
                         {/* Неподдерживаемая среда */}
                         <Route path={'/unsupported'} element={<EnvUnsupported />} />
+
                         {/* Возврат платежа */}
                         <Route path={'/paymentReturn'} element={<PaymentReturnPage />} />
-                        {/* Подтверждение телефона */}
-                        <Route path={'/phoneConfirmation'} element={<UserPhoneConfirmationPage />} />
+                        
                         {/* Сканнер */}
                         <Route path={'/scanner'} element={<AdminScannerPage />} />
+
                         {/* Онбординг */}
                         <Route path={'/onboarding'} element={<OnboardingPage />}>
                             <Route path={'/onboarding/1'} element={<StageOne />} />
@@ -189,12 +204,16 @@ const AppRouter: React.FC = () => {
                             <Route path={'/onboarding/3'} element={<StageThree />} />
                             <Route path={'/onboarding/4'} element={<StageFour />} />
                         </Route>
+                        {/* Подтверждение телефона */}
+                        <Route path={'/phoneConfirmation'} element={<UserPhoneConfirmationPage />} />
+
                         {/* Предпочтения */}
                         <Route path={'/preferences'} element={<PreferencesPage />}>
                             <Route path={'/preferences/1'} element={<PreferencesOne />} />
                             <Route path={'/preferences/2'} element={<PreferencesTwo />} />
                             <Route path={'/preferences/3'} element={<PreferencesThree />} />
                         </Route>
+
                         {/* Банкеты */}
                         {/* Страница выбора ресторана для банкета */}
                         <Route path={'banquets/:id/address'} element={<BanquetAddressPage />} />
@@ -251,15 +270,27 @@ const AppRouter: React.FC = () => {
     );
 };
 
-export function App() {
+/**
+ * Компонент приложения.
+ *
+ * Обеспечивает запуск приложения в Telegram WebApp.
+ *
+ * @component
+ * @returns {JSX.Element} Компонент приложения
+ */
+export const App: React.FC = (): JSX.Element => {
+    // Получаем параметры запуска приложения
     const lp = useLaunchParams();
+    // Монтируем поведение свайпа
     useEffect(() => {
         swipeBehavior.mount();
     }, []);
-    const [userState] = useAtom(userAtom);
+    // Получаем состояние пользователя
+    const userState = useAtomValue(userAtom);
+    // Возвращаем компонент приложения
     return (
         <AppRoot appearance={'light'} platform={['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'}>
             {!userState ? <AppLoadingScreen /> : <AppRouter />}
         </AppRoot>
     );
-}
+};

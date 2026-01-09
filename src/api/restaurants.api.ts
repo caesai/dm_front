@@ -17,8 +17,8 @@ export const APIGetRestaurantsList = (token: string) => {
     });
 };
 
-export const APIGetAvailableDays = (token: string, restaurant_id: number, guests: number) => {
-    return axios.get<string[]>(`${BASE_URL}/restaurant/${restaurant_id}/availableDays`, {
+export const APIGetAvailableDays = (token: string, restaurantId: string, guests: number) => {
+    return axios.get<string[]>(`${BASE_URL}/restaurant/${restaurantId}/availableDays`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -28,8 +28,8 @@ export const APIGetAvailableDays = (token: string, restaurant_id: number, guests
     });
 };
 
-export const APIGetAvailableTimeSlots = (token: string, restaurant_id: number, d: string, guests: number) => {
-    return axios.get(`${BASE_URL}/restaurant/${restaurant_id}/availableTimeslots`, {
+export const APIGetAvailableTimeSlots = (token: string, restaurantId: string, d: string, guests: number) => {
+    return axios.get(`${BASE_URL}/restaurant/${restaurantId}/availableTimeslots`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -42,7 +42,7 @@ export const APIGetAvailableTimeSlots = (token: string, restaurant_id: number, d
 
 export const APICreateBooking = (
     token: string,
-    restaurant_id: number,
+    restaurantId: string,
     date: string,
     time: string,
     guests_count: number,
@@ -58,7 +58,7 @@ export const APICreateBooking = (
     certificate_id: string | null
 ) => {
     return axios.post<IBookingCreate>(
-        `${BASE_URL}/restaurant/${restaurant_id}/booking`,
+        `${BASE_URL}/restaurant/${restaurantId}/booking`,
         {
             date,
             time,
@@ -142,8 +142,8 @@ export const APISendReview = (token: string, rate: number, features: string[], c
     );
 };
 
-export const APIGetEventsInRestaurant = async (restaurant_id: number, token: string) => {
-    return await axios.get<IEvent[]>(`${BASE_URL}/restaurant/${restaurant_id}/events`, {
+export const APIGetEventsInRestaurant = async (restaurantId: string, token: string) => {
+    return await axios.get<IEvent[]>(`${BASE_URL}/restaurant/${restaurantId}/events`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },

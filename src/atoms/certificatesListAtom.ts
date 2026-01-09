@@ -1,4 +1,8 @@
-import { atom } from 'jotai';
+import { Atom, atom } from 'jotai';
 import { ICertificate } from '@/types/certificates.types.ts';
 
-export const certificatesListAtom = atom<ICertificate[]>([]);
+/**
+ * Атом для хранения списка сертификатов
+ * @type {Atom<ICertificate[]>}
+ */
+export const certificatesListAtom: Atom<ICertificate[]> = atom<ICertificate[]>([]);

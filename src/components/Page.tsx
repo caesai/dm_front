@@ -1,16 +1,21 @@
+import React, { useEffect } from 'react';
 import { backButton } from '@telegram-apps/sdk-react';
-import { PropsWithChildren, useEffect } from 'react';
+// Hooks
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
-export function Page({
-    children,
-    back = true,
-}: PropsWithChildren<{
-    /**
-     * True if it is allowed to go back from this page.
-     */
+interface IPageProps {
+    children: React.ReactNode;
     back?: boolean;
-}>) {
+    className?: string;
+    id?: string;
+}
+/**
+ * Компонент страницы.
+ *
+ * @param {IPageProps} props - Пропсы компонента.
+ * @returns {JSX.Element} Компонент страницы.
+ */
+export const Page: React.FC<IPageProps> = ({ children, back = true, className, id }: IPageProps): JSX.Element => {
     const { goBack } = useNavigationHistory();
 
     useEffect(() => {
@@ -23,5 +28,9 @@ export function Page({
         backButton.hide();
     }, [back]);
 
-    return <section>{children}</section>;
-}
+    return (
+        <section className={className} id={id}>
+            {children}
+        </section>
+    );
+};

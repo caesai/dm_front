@@ -16,7 +16,7 @@ const DEFAULT_WHEEL_MODE = 'off';
 export type PickerValueData =
     | string
     | number
-    | { title: string; value: string };
+    | { title: string; value: string; subtitle?: string };
 
 export type PickerValueObj = { address?: string; title: string; value: string };
 

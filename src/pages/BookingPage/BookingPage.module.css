@@ -1,121 +1,60 @@
-.page {
-    /*padding-bottom: 30px;*/
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
-.absoluteBottom {
-    position: fixed;
-    bottom: 30px;
-    width: 100%;
-    left: 0;
-    z-index: 2;
-}
-
-.absoluteBottom_wrapper {
-    display: flex;
-    padding: 0 15px;
-}
-
-.redButton {
-    cursor: pointer;
-    display: flex;
-    padding: 15px 0;
-    background-color: var(--red);
-    border-radius: 15px;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-
-    .text {
-        font-family: 'Mont', sans-serif;
-        font-weight: 700;
-        font-size: 16px;
-        color: var(--primary-background);
-    }
-
-    &.loadingButton {
-        pointer-events: none;
-
-        .text {
-            opacity: 0;
-        }
-
-        /*&::after {*/
-        /*    content: "";*/
-        /*    position: absolute;*/
-        /*    width: 1em;*/
-        /*    height: 1em;*/
-        /*    border: 2px solid #fff;*/
-        /*    border-top: 2px solid transparent; !* Прозрачная часть для анимации *!*/
-        /*    border-radius: 50%;*/
-        /*    animation: spin 0.6s linear infinite;*/
-        /*}*/
-    }
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-.disabledButton {
-    background-color: var(--medium-grey) !important;
-    color: white !important;
-}
-
-.headerContainer {
+.header {
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
-.headerNav {
+.nav {
     display: flex;
     gap: 20px;
     align-items: center;
     justify-content: space-between;
+    flex-direction: row!important;
+}
+
+.separator {
+    width: 44px;
+}
+
+.headerTitle {
+    font-family: 'Mont', sans-serif!important;
+    text-transform: capitalize!important;
+    font-weight: 400!important;
+    font-size: 14px!important;
+    text-align: center!important;
+    padding: 0!important;
+    margin: 0!important;
 }
 
 .headerInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-    /*width: 100%;*/
-
-    h3, p {
-        padding: 0;
-        margin: 0;
+    gap: 4px!important;
+    &>h3 {
+        padding: 0!important;
+        margin: 0!important;
+        height: 20px!important;
+        line-height: 20px!important;
     }
 }
 
-.headerInfo__title {
-    font-family: 'Mont', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    text-align: center;
+.headerAddress {
+    font-weight: 400!important;
+    font-size: 12px!important;
+    color: var(--grey)!important;
+    text-align: center!important;
 }
 
-.headerInfo__subtitle {
-    font-family: 'Mont', sans-serif;
-    font-weight: 400;
-    font-size: 12px;
-    color: var(--grey);
-    padding: 0;
-    margin: 0;
-    text-align: center;
+.selectors {
+    gap: 8px!important;
 }
 
-.header_bottom {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.selectorsRow {
+    flex-direction: row!important;
+    align-items: stretch;
+    gap: 8px!important;
+
+    &>div {
+        flex: 1;
+    }
 }
 
 .bookingInfo {
@@ -135,6 +74,7 @@
 .header__selector {
     display: flex;
     gap: 8px;
+    flex-direction: row;
 }
 
 .header__select {
@@ -166,10 +106,6 @@
     font-size: 14px;
 }
 
-.header__select__arrow {
-    /*transform: rotate(180deg);*/
-}
-
 .timeOfDayContainer {
     display: flex;
     flex-direction: column;
@@ -178,8 +114,8 @@
 }
 
 .select_timeOfDay {
-    display: flex;
-    gap: 0;
+    gap: 0!important;
+    flex-direction: row!important;
 }
 
 .noTimeSlotsText {
@@ -249,6 +185,7 @@
     gap: 5px;
     font-family: 'Mont', sans-serif;
     font-size: 14px;
+
     label {
         width: 100%;
         padding: 12px;

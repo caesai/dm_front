@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import { useAtom, WritableAtom } from 'jotai';
 // Types
 import { IDish } from '@/types/gastronomy.types.ts';
 // APIs
@@ -22,7 +22,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart, getItemQuantity } = useGastronomyCart();
 
-    const [dishesList, setDishesList] = useAtom(gastronomyDishesListAtom);
+    const [dishesList, setDishesList] = useAtom(gastronomyDishesListAtom as WritableAtom<IDish[], [IDish[]], void>);
 
     const handleCartClick = () => {
         navigate(`/gastronomy/${res_id}/basket`);
@@ -50,7 +50,7 @@ export const GastronomyChooseDishesPage: React.FC = () => {
     return (
         <>
             <div className={css.items}>
-                {dishesList.map((dish) => (
+                {dishesList.map((dish: IDish) => (
                     <DishCard
                         key={dish.id}
                         {...dish}

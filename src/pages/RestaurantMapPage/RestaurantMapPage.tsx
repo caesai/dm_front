@@ -17,8 +17,8 @@ import {
 } from 'ymap3-components';
 import * as YMaps from '@yandex/ymaps3-types';
 import { Feature } from '@yandex/ymaps3-types/packages/clusterer';
-import { useAtom } from 'jotai';
-import { cityListAtom, getCurrentCity, ICity } from '@/atoms/cityListAtom.ts';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { cityListAtom, getCurrentCity, ICity, setCurrentCityAtom } from '@/atoms/cityListAtom.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 import { IconlyLocation } from '@/components/Icons/Location.tsx';
 import { TimeCircle } from '@/components/Icons/TimeCircle.tsx';
@@ -37,7 +37,6 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { Taxi } from '@/components/YandexTaxi/Taxi.tsx';
 import { Discovery } from 'react-iconly';
 import { openLink } from '@telegram-apps/sdk-react';
-import { setCurrentCityAtom } from '@/atoms/currentCityAtom.ts';
 import { DownArrow } from '@/components/Icons/DownArrow.tsx';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
@@ -223,11 +222,11 @@ export const RestaurantMapPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const { goBack } = useNavigationHistory();
 
-    const [city] = useAtom(getCurrentCity);
-    const [, setBackButton] = useAtom(backButtonAtom);
-    const [restaurants] = useAtom(restaurantsListAtom);
-    const [cityListA] = useAtom(cityListAtom);
-    const [, setCurrentCityA] = useAtom(setCurrentCityAtom);
+    const city = useAtomValue(getCurrentCity);
+    const setBackButton = useSetAtom(backButtonAtom);
+    const restaurants = useAtomValue(restaurantsListAtom);
+    const cityList = useAtomValue(cityListAtom);
+    const setCurrentCity = useSetAtom(setCurrentCityAtom);
 
     useEffect(() => {
         const search_id = searchParams.get('restaurant');
@@ -235,7 +234,7 @@ export const RestaurantMapPage = () => {
             return;
         }
 
-        const res = restaurants.find((v) => v.id == Number(search_id));
+        const res = restaurants.find((v) => v.id == String(search_id));
         if (res) {
             setSelectedRest(res);
         }
@@ -293,7 +292,7 @@ export const RestaurantMapPage = () => {
     }, [city]);
 
     useEffect(() => {
-        const rest = restaurants.find((v) => v.id == Number(selectedPoint));
+        const rest = restaurants.find((v) => v.id == String(selectedPoint));
         if (rest) {
             setSelectedRest(rest);
         } else {
@@ -314,7 +313,7 @@ export const RestaurantMapPage = () => {
         };
     }, []);
 
-    const navigateToRestaurant = (id: number) => {
+    const navigateToRestaurant = (id: string) => {
         setBackButton('/map');
         navigate(`/restaurant/${id}`);
     };
@@ -363,7 +362,7 @@ export const RestaurantMapPage = () => {
                 ) : (
                     <div className={css.mapPoint}>
                         {/*<RestaurantOnMapIcon size={24} />*/}
-                        <img width={50} src={restaurants.find((v) => v.id == Number(feature.id))?.logo_url} alt={''} />
+                        <img width={50} src={restaurants.find((v) => v.id == String(feature.id))?.logo_url} alt={''} />
                     </div>
                 )}
             </YMapMarker>
@@ -380,7 +379,7 @@ export const RestaurantMapPage = () => {
     }
 
     const changeCity = (id: string) => {
-        setCurrentCityA(id);
+        setCurrentCity(id);
         closeCityList();
     }
     return (
@@ -405,7 +404,7 @@ export const RestaurantMapPage = () => {
                             Рестораны в{' '}
                             <span className={css.red} onClick={openCityList}> {city?.name_dative} <DownArrow size={16} /></span>
                             <div className={classNames(css.dropdown_content, isCityListOpen ? css.dropdown_active : null)}>
-                                {cityListA.map((v: ICity, i) => (
+                                {cityList.map((v: ICity, i: number) => (
                                     <span key={i} onClick={() => changeCity(String(v.name_english))}>{v.name_dative}</span>
                                 ))}
                             </div>

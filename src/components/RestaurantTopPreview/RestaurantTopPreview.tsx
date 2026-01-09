@@ -1,30 +1,57 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 // Components
 import { MoneyIcon } from '@/components/Icons/MoneyIcon.tsx';
 import { TimeCircleIcon } from '@/components/Icons/TimeCircleIcon.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
-// Types
-import { IRestaurant } from '@/types/restaurant.types.ts';
+// Atoms
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 // Utils
 import { getCurrentTimeShort, getCurrentWeekdayShort, getRestaurantStatusTyped } from '@/utils.ts';
 // Styles
 import css from '@/components/RestaurantTopPreview/RestaurantTopPreview.module.css';
 
+/**
+ * Пропсы компонента RestaurantTopPreview.
+ *
+ * @interface IRestaurantTopPreviewProps
+ */
 interface IRestaurantTopPreviewProps {
-    restaurant?: IRestaurant;
+    /**
+     * ID ресторана.
+     */
+    restaurantId: string;
 }
 
-export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ restaurant }) => {
-    if (restaurant === undefined) {
+/**
+ * Компонент для отображения верхнего превью ресторана.
+ *
+ * @component
+ * @example
+ * <RestaurantTopPreview restaurantId="1" />
+ * @param {IRestaurantTopPreviewProps} props
+ * @returns {JSX.Element}
+ */
+export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({
+    restaurantId,
+}: IRestaurantTopPreviewProps): JSX.Element => {
+    const restaurant = useGetRestaurantById(restaurantId);
+    const avgCheque = useMemo(() => restaurant?.avg_cheque || 0, [restaurant?.avg_cheque]);
+    /**
+     * Если ресторан не найден, то возвращаем placeholder.
+     */
+    if (!restaurant) {
         return (
             <div className={css.previewContainer}>
                 <PlaceholderBlock width="100%" height="100%" rounded="0 0 20px 20px" />
             </div>
         );
     }
+    /**
+     * Возвращаем верхнее превью ресторана.
+     */
     return (
-        <div
+        <figure
             className={classNames(css.previewContainer, css.bgImage)}
             style={{ backgroundImage: `url(${restaurant?.thumbnail_photo})` }}
         >
@@ -32,18 +59,18 @@ export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ res
                 <div className={css.previewContainerContent}>
                     <div className={css.previewMainInfo}>
                         <h1 className={css.title}>{restaurant?.title}</h1>
-                        <span className={css.location}>{restaurant?.address}</span>
+                        <address className={css.location}>{restaurant?.address}</address>
                     </div>
-                    <div className={css.previewExtra}>
+                    <figcaption className={css.previewExtra}>
                         <div className={css.extraItem}>
                             <MoneyIcon color={'white'} size={24} />
                             <div className={css.extraItemContent}>
-                                <span className={css.extraTop}>{restaurant?.avg_cheque} ₽</span>
+                                <span className={css.extraTop}>{avgCheque} ₽</span>
                                 <span className={css.extraBottom}>Средний чек</span>
                             </div>
                         </div>
                         <div className={css.splitter}></div>
-                        <div className={css.extraItem}>
+                        <time className={css.extraItem}>
                             <TimeCircleIcon color={'white'} size={24} />
                             {restaurant?.worktime ? (
                                 getRestaurantStatusTyped(
@@ -80,10 +107,10 @@ export const RestaurantTopPreview: React.FC<IRestaurantTopPreviewProps> = ({ res
                                     </div>
                                 )
                             ) : null}
-                        </div>
-                    </div>
+                        </time>
+                    </figcaption>
                 </div>
             </div>
-        </div>
+        </figure>
     );
 };

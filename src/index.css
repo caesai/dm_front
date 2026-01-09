@@ -36,6 +36,17 @@ body::-webkit-scrollbar {
     text-decoration: none;
 }
 
+button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: 'Mont', sans-serif;
+    outline: none;
+    text-align: left;
+}
+
 .ReactCollapse--collapse {
     transition: height 500ms;
 }

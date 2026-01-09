@@ -65,6 +65,7 @@ jest.mock('@/utils', () => ({
 }));
 
 const mockProps = {
+    restaurantId: String(1),
     currentSelectedTime: null,
     workTime: [{ weekday: '1', time_start: '11:00', time_end: '23:00' }],
     bookingDate: { value: '2024-01-01', title: '1 января' },
@@ -93,24 +94,24 @@ describe('BookingBlock', () => {
     });
 
     it('renders component without errors', () => {
-        render(<BookingBlock {...mockProps} />);
+        render(<BookingBlock restaurantId={String(1)} />);
         expect(screen.getByText(/Formatted: 2024-01-01/)).toBeInTheDocument();
     });
 
     it('displays timeslots when not loading', () => {
-        render(<BookingBlock {...mockProps} />);
+        render(<BookingBlock restaurantId={String(1)} />);
         expect(screen.getByText('18:00')).toBeInTheDocument();
         expect(screen.getByText('20:00')).toBeInTheDocument();
     });
 
     it('shows placeholders when timeslots are loading', () => {
-        render(<BookingBlock {...mockProps} timeslotLoading={true} />);
+        render(<BookingBlock restaurantId={String(1)} />);
         const placeholders = screen.getAllByTestId('placeholder-block');
         expect(placeholders.length).toBeGreaterThan(0);
     });
 
     it('opens date selector when date is clicked', () => {
-        render(<BookingBlock {...mockProps} />);
+        render(<BookingBlock restaurantId={String(1)} />);
 
         fireEvent.click(screen.getByText(/Formatted: 2024-01-01/));
 
@@ -118,7 +119,7 @@ describe('BookingBlock', () => {
     });
 
     it('selects timeslot when clicked', () => {
-        render(<BookingBlock {...mockProps} />);
+        render(<BookingBlock restaurantId={String(1)}/>);
 
         fireEvent.click(screen.getByText('18:00'));
 
@@ -128,7 +129,7 @@ describe('BookingBlock', () => {
     });
 
     it('renders navigation component', () => {
-        render(<BookingBlock {...mockProps} />);
+        render(<BookingBlock restaurantId={String(1)} />);
         expect(screen.getByTestId('restaurant-navigation')).toBeInTheDocument();
     });
 });

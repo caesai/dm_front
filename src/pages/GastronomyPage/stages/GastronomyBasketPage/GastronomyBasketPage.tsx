@@ -1,14 +1,13 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 // APIs
 import { APIPostCreateGastronomyPayment, APIPostUserOrder } from '@/api/gastronomy.api.ts';
 // Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { cityListAtom } from '@/atoms/cityListAtom.ts';
+import { cityListAtom, getCurrentCity } from '@/atoms/cityListAtom.ts';
 // Components
 import { CartItem } from '@/components/CartItem/CartItem.tsx';
 import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
@@ -45,11 +44,11 @@ export const GastronomyBasketPage: React.FC = () => {
     const navigate = useNavigate();
     const { res_id } = useParams();
     const { cart, addToCart, removeFromCart } = useGastronomyCart();
-    const [restaurants] = useAtom(restaurantsListAtom);
-    const [currentCity] = useAtom(currentCityAtom);
-    const [cityList] = useAtom(cityListAtom);
-    const [auth] = useAtom(authAtom);
-    const [user] = useAtom(userAtom);
+    const restaurants = useAtomValue(restaurantsListAtom);
+    const currentCity = useAtomValue(getCurrentCity);
+    const cityList = useAtomValue(cityListAtom);
+    const auth = useAtomValue(authAtom);
+    const user = useAtomValue(userAtom);
 
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('pickup');
     const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(false);
@@ -70,7 +69,7 @@ export const GastronomyBasketPage: React.FC = () => {
     // Получаем информацию о ресторане
     const restaurant = useMemo(() => {
         if (!res_id) return null;
-        return restaurants.find((r) => r.id === Number(res_id));
+        return restaurants.find((r) => String(r.id) === String(res_id));
     }, [res_id, restaurants]);
 
     const restaurantAddress = restaurant?.address || 'Адрес не указан';
@@ -506,14 +505,14 @@ export const GastronomyBasketPage: React.FC = () => {
             try {
                 // Используем Geocoder API для поиска адресов
                 // Определяем город
-                const cityName = cityList.find((city) => city.name_english === currentCity)?.name || 'Москва';
+                const cityName = cityList.find((city) => city.name_english === currentCity.name_english)?.name || 'Москва';
                 const searchQuery = `${cityName}, ${trimmedQuery}`;
 
                 // Разные bbox для разных городов
                 let bbox = '';
-                if (currentCity === 'moscow') {
+                if (currentCity.name_english === 'moscow') {
                     bbox = '&bbox=37.319,55.489~37.967,55.958'; // Москва
-                } else if (currentCity === 'spb') {
+                } else if (currentCity.name_english === 'spb') {
                     bbox = '&bbox=30.1,59.8~30.6,60.1'; // Санкт-Петербург
                 }
 
@@ -601,9 +600,9 @@ export const GastronomyBasketPage: React.FC = () => {
     };
 
     const checkDeliveryZone = (coords: [number, number]): boolean => {
-        if (currentCity === 'moscow') {
+        if (currentCity.name_english === 'moscow') {
             return isPointInPolygon(coords, MKAD_COORDS);
-        } else if (currentCity === 'spb') {
+        } else if (currentCity.name_english === 'spb') {
             // Для ресторана Smoke BBQ Санкт-Петербург (Лодейнопольская улица, ID 11) требуется особая зона доставки,
             // так как он находится вне стандартной зоны КАД. Используем PETROGRADKA_ZONE для проверки доставки.
             if (String(res_id) === String(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID)) {
@@ -695,7 +694,7 @@ export const GastronomyBasketPage: React.FC = () => {
         APIPostUserOrder(
             {
                 items: cart.items,
-                restaurant_id: Number(res_id),
+                restaurant_id: String(res_id),
                 delivery_cost: deliveryMethod === 'pickup' ? 0 : Number(deliveryFee),
                 delivery_method: deliveryMethod,
                 total_amount: cart.totalAmount,
@@ -827,7 +826,7 @@ export const GastronomyBasketPage: React.FC = () => {
                                             image_url: item.image,
                                             description: '',
                                             allergens: [],
-                                            restaurant_id: restaurant?.id || 0,
+                                            restaurant_id: Number(restaurant?.id) || 0,
                                         },
                                         0
                                     );
@@ -915,7 +914,7 @@ export const GastronomyBasketPage: React.FC = () => {
                     <div className={css.section}>
                         <h2 className={css.sectionTitle}>Адрес доставки</h2>
                         <div className={css.deliveryInfo}>
-                            {restaurant?.id === 11 ? (
+                            {String(restaurant?.id) === String(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) ? (
                                 <span className={css.deliveryLabelFull}>{deliveryText}</span>
                             ) : (
                                 <>

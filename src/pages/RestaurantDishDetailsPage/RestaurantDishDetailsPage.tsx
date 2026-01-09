@@ -54,7 +54,7 @@ export const RestaurantDishDetailsPage: React.FC = () => {
         isCocktail?: boolean;
     };
 
-    const { menuData } = useRestaurantMenu(Number(id));
+    const { menuData } = useRestaurantMenu(String(id));
     const [selectedWeightIndex, setSelectedWeightIndex] = useState(0);
 
     // Найти первое блюдо с изображением из меню для использования в коктейлях

@@ -6,6 +6,7 @@
     margin-bottom: 160px;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
+    overflow: hidden;
 }
 
 .pageContainer::-webkit-scrollbar {

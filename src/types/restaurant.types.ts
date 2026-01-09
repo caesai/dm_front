@@ -61,7 +61,7 @@ export interface IMenuImg {
 }
 
 export interface IRestaurantShort {
-    id: number;
+    id: string;
     title: string;
     slogan: string;
     address: string;
@@ -76,7 +76,7 @@ export interface IRestaurantShort {
 }
 
 export interface IRestaurantShortBooking {
-    id: number;
+    id: string;
     title: string;
     address: string;
     address_lonlng?: string;
@@ -105,7 +105,7 @@ export interface IBookingCreate {
 }
 
 export interface IBookingInfo {
-    id: number;
+    id: string;
     restaurant: IRestaurantShortBooking;
     booking_date: string;
     time: string;

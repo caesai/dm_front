@@ -169,17 +169,14 @@
     gap: 26px;
 }
 
-
 .navSliderAndBookingContainer {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.bookingContaner {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
+.bookingContainer {
+    margin: 0;
 }
 
 .bookingButton {
@@ -348,6 +345,12 @@
 }
 
 .trimLinesButton {
+    background: none;
+    border: 0;
+    padding: 0;
+    outline: none;
+    text-align: left;
+    
     .text {
         font-size: 14px;
         font-family: 'Mont', sans-serif;
@@ -474,6 +477,8 @@
     width: 100%;
     aspect-ratio: 100/60;
     border-radius: 12px;
+    border: 0;
+    margin: 0;
 }
 
 .blockDescription {

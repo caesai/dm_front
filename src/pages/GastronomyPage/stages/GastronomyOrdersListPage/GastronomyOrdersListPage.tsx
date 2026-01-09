@@ -51,7 +51,7 @@ export const GastronomyOrdersListPage: React.FC = () => {
                             <div className={css.order}>
                                 <span className={css.order_title}>Заказ {order.order_id}</span>
                                 <span className={css.order_text}>
-                                    {order.delivery_address ? order.delivery_address : getRestaurantAddressById(order.restaurant_id, restaurantsList)}
+                                    {order.delivery_address ? order.delivery_address : getRestaurantAddressById(String(order.restaurant_id), restaurantsList)}
                                 </span>
                             </div>
                             <button

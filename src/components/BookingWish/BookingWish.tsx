@@ -10,6 +10,7 @@ import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { BookingInfoPopup } from '@/components/BookingInfoPopup/BookingInfoPopup.tsx';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 // Mocks
 import { getBookingCommentMock } from '@/mockData.ts';
 // Styles
@@ -45,7 +46,7 @@ export const BookingWish: React.FC<BookingWishProps> = ({
                 <HeaderContent title={'Пожелания к брони'} />
             </HeaderContainer>
             {guestCount + childrenCount >= 8 && (
-                <div className={css.preorder}>
+                <ContentBlock className={css.preorder}>
                     <CheckBoxInput
                         checked={preOrder}
                         toggle={() => setPreOrder(!preOrder)}
@@ -54,10 +55,10 @@ export const BookingWish: React.FC<BookingWishProps> = ({
                     <span onClick={() => setInfoPopup(true)}>
                         <InfoIcon size={14} />
                     </span>
-                </div>
+                </ContentBlock>
             )}
             <TextInput value={commentary} onChange={(e) => setCommentary(e)} placeholder={'Комментарий к брони'} />
-            <div className={css.commentary_options}>
+            <ContentBlock className={css.commentary_options}>
                 <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
                     {restaurant !== 'unset' &&
                         getBookingCommentMock(String(restaurant))
@@ -74,7 +75,7 @@ export const BookingWish: React.FC<BookingWishProps> = ({
                                 </SwiperSlide>
                             ))}
                 </Swiper>
-            </div>
+            </ContentBlock>
         </ContentContainer>
     );
 };

@@ -1,31 +1,36 @@
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useAtomValue } from 'jotai/index';
+// Types
+import { IBanquet } from '@/types/banquets.types.ts';
+import { IRestaurant } from '@/types/restaurant.types.ts';
+// Atoms
+import { userAtom } from '@/atoms/userAtom.ts';
+import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+
+// Components
 import { Page } from '@/components/Page.tsx';
-import css from './BanquetAddressPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import BanquetImg from '/img/banquet_img.png';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
-import React, { useEffect, useState } from 'react';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
-import { useAtom } from 'jotai/index';
-import { userAtom } from '@/atoms/userAtom.ts';
-import { IRestaurant } from '@/types/restaurant.types.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { IBanquet } from '@/types/banquets.types.ts';
+// Styles
+import css from '@/pages/BanquetAddressPage/BanquetAddressPage.module.css';
+import BanquetImg from '/img/banquet_img.png';
 
 const initialRestaurant: PickerValueObj = {
     title: 'unset',
     value: 'unset',
 };
 
-export const BanquetAddressPage: React.FC = () => {
+export const BanquetAddressPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
-    const [user] = useAtom(userAtom);
-    const [restaurants] = useAtom(restaurantsListAtom);
+    const user = useAtomValue(userAtom);
+    const restaurants = useAtomValue(restaurantsListAtom);
 
     const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
     const [restaurantPopup, setRestaurantPopup] = useState<boolean>(false);
@@ -49,7 +54,7 @@ export const BanquetAddressPage: React.FC = () => {
 
     const goNextPage = () => {
         if (!isDisabledButton) {
-            const workTime = restaurantsList.find(item => item.id === Number(currentRestaurant.value))?.worktime;
+            const workTime = restaurantsList.find(item => item.id === currentRestaurant.value)?.worktime;
             if (user?.complete_onboarding) {
                 navigate(`/banquets/${currentRestaurant.value}/choose`, {
                     state: {
@@ -95,7 +100,7 @@ export const BanquetAddressPage: React.FC = () => {
     // Загрузка данных о банкетах в конкретном ресторане
     useEffect(() => {
         if (currentRestaurant.value !== 'unset') {
-            const currentBanquets = restaurantsList.find((item) => item.id === Number(currentRestaurant.value))?.banquets;
+            const currentBanquets = restaurantsList.find((item) => item.id === currentRestaurant.value)?.banquets;
             if (currentBanquets) {
                 setBanquets(currentBanquets);
             }

@@ -16,7 +16,7 @@ jest.mock('@/components/Buttons/UniversalButton/UniversalButton', () => ({
 }));
 
 const mockRestaurant: IRestaurant = {
-    id: 12,
+    id: String(12),
     title: 'Self Edge Chinois',
     slogan: 'Современная Азия с акцентом на Китай и культовый raw bar',
     address: 'Санкт-Перербург, ул. Добролюбова, 11',

@@ -18,25 +18,19 @@ jest.mock('@/components/Icons/DownArrow', () => ({
 
 const mockProps = {
     about_text: 'Test restaurant description text',
-    workTime: [
-        { weekday: '1', time_start: '10:00', time_end: '22:00' },
-        { weekday: '2', time_start: '10:00', time_end: '22:00' }
-    ],
-    about_kitchen: 'Kitchen',
-    about_features: 'Features test',
-    avg_cheque: '1500'
+    restaurantId: String(1),
 };
 
 describe('AboutBlock', () => {
     it('renders about block with title', () => {
-        render(<AboutBlock {...mockProps} />);
+        render(<AboutBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('О месте')).toBeInTheDocument();
         expect(screen.getByText('Читать больше')).toBeInTheDocument();
     });
 
     it('displays restaurant details', () => {
-        render(<AboutBlock {...mockProps} />);
+        render(<AboutBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('Кухня:')).toBeInTheDocument();
         expect(screen.getByText('Kitchen')).toBeInTheDocument();
@@ -47,14 +41,14 @@ describe('AboutBlock', () => {
     });
 
     it('shows restaurant status and schedule button', () => {
-        render(<AboutBlock {...mockProps} />);
+        render(<AboutBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('Открыто')).toBeInTheDocument();
         expect(screen.getByText('График')).toBeInTheDocument();
     });
 
     it('toggles about text when read more button is clicked', () => {
-        render(<AboutBlock {...mockProps} />);
+        render(<AboutBlock restaurantId={String(1)} />);
 
         fireEvent.click(screen.getByText('Читать больше'));
 
@@ -62,7 +56,7 @@ describe('AboutBlock', () => {
     });
 
     it('toggles work hours when schedule button is clicked', () => {
-        render(<AboutBlock {...mockProps} />);
+        render(<AboutBlock restaurantId={String(1)} />);
 
         fireEvent.click(screen.getByText('График'));
 
@@ -70,7 +64,7 @@ describe('AboutBlock', () => {
     });
 
     it('renders without work time', () => {
-        render(<AboutBlock {...mockProps} workTime={undefined} />);
+        render(<AboutBlock restaurantId={String(1)} />);
 
         expect(screen.getByText('О месте')).toBeInTheDocument();
         expect(screen.getByText('Кухня:')).toBeInTheDocument();

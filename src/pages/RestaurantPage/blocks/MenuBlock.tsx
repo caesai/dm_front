@@ -4,10 +4,9 @@ import { useAtomValue } from 'jotai';
 import classNames from 'classnames';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
-// Types
-import { IMenuImg, IMenuItem } from '@/types/restaurant.types.ts';
 // Atoms
 import { permissionsAtom } from '@/atoms/userAtom.ts';
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 // Utils
 import { extractPrice, getDefaultSize } from '@/utils/menu.utils.ts';
 // Hooks
@@ -21,18 +20,37 @@ import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderC
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
-interface MenuBlockProps {
-    // Старая версия меню
-    menu: IMenuItem[] | undefined;
-    // Старая версия меню
-    menu_imgs: IMenuImg[] | undefined;
-    // ID ресторана
-    restaurant_id: number;
+/**
+ * Пропсы компонента MenuBlock.
+ *
+ * @interface IMenuBlockProps
+ */
+interface IMenuBlockProps {
+    /**
+     * ID ресторана.
+     */
+    restaurantId: string;
 }
 // Блок меню
 // TODO: новая версия меню доступна пользователям с разрешением menu_tester
 // как только будет реализована новая версия меню, нужно будет удалить старый блок меню
-export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id, menu }) => {
+/**
+ * Компонент MenuBlock.
+ * @param {IMenuBlockProps} props
+ * @returns {JSX.Element}
+ */
+export const MenuBlock: React.FC<IMenuBlockProps> = ({ restaurantId }: IMenuBlockProps): JSX.Element => {
+    /**
+     * Ресторан.
+     */
+    const restaurant = useGetRestaurantById(restaurantId);
+    /**
+     * Меню ресторана.
+     */
+    // Получаем меню ресторана
+    const restaurantMenu = useMemo(() => restaurant?.menu || [], [restaurant]);
+    // Получаем изображения меню ресторана
+    const restaurantMenuImgs = useMemo(() => restaurant?.menu_imgs || [], [restaurant]);
     // Получаем разрешения пользователя
     const permissions = useAtomValue(permissionsAtom);
     // Навигация
@@ -40,7 +58,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id, 
     // Открываем popup с меню (старая версия меню)
     const [isMenuPopupOpen, setIsMenuPopupOpen] = useState(false);
     // Новая версия меню берет данные из базы данных, а не из menu_imgs
-    const { menuData } = useRestaurantMenu(restaurant_id);
+    const { menuData } = useRestaurantMenu(restaurantId);
     // Получаем блюда из базы данных
     const menuItems = useMemo(() => {
         if (!menuData) return [];
@@ -52,15 +70,15 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id, 
 
     // Сортируем блюда по id (старая версия меню) 
     // slice() - создаем копию массива, чтобы не изменять исходный массив
-    const sortedMenuItems = menu?.slice().sort((a, b) => a.id - b.id) || [];
+    const sortedMenuItems = restaurantMenu?.slice().sort((a, b) => a.id - b.id) || [];
     // Получаем URL изображений блюд из menu_imgs (старая версия меню)
     const menuImageUrls = useMemo(() => {
-        if (!menu_imgs) return [];
-        return menu_imgs.sort((a, b) => a.order - b.order).map((item) => item.image_url);
-    }, [menu_imgs]);
+        if (!restaurantMenuImgs) return [];
+        return restaurantMenuImgs.sort((a, b) => a.order - b.order).map((item) => item.image_url);
+    }, [restaurantMenuImgs]);
     // Открываем интерактивное меню (новая версия меню)
     const handleOpenInteractiveMenu = () => {
-        navigate(`/restaurant/${restaurant_id}/menu`);
+        navigate(`/restaurant/${restaurantId}/menu`);
     };
 
     // Открываем popup с меню (старая версия меню)
@@ -69,12 +87,12 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({ menu_imgs, restaurant_id, 
     };
 
     return (
-        <ContentContainer>
+        <ContentContainer id="menu">
             {/* Открываем popup с меню (старая версия меню) */}
-            {menu_imgs && <MenuPopup isOpen={isMenuPopupOpen} setOpen={setIsMenuPopupOpen} menuItems={menuImageUrls} />}
+            {restaurantMenuImgs && <MenuPopup isOpen={isMenuPopupOpen} setOpen={setIsMenuPopupOpen} menuItems={menuImageUrls} />}
             {/* Блок контента */}
             <ContentBlock>
-                <HeaderContainer id="menu">
+                <HeaderContainer>
                     <HeaderContent title="Меню" />
                 </HeaderContainer>
 

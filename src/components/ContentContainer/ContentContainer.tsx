@@ -1,15 +1,30 @@
-import css from './ContentContainer.module.css';
-import { FC } from 'react';
+import React from 'react';
+import classNames from 'classnames';
+// Styles
+import css from '@/components/ContentContainer/ContentContainer.module.css';
 
-interface IProps {
+interface IContentContainerProps {
+    /**
+     * Дочерние элементы.
+     */
     children: React.ReactNode;
+    /**
+     * ID блока.
+     */
     id?: string;
+    /**
+     * Классы.
+     */
+    className?: string;
 }
 
-export const ContentContainer: FC<IProps> = (p) => {
+export const ContentContainer: React.FC<IContentContainerProps> = ({ children, id, className }): JSX.Element => {
+    /**
+     * Возвращаем контейнер контента.
+     */
     return (
-        <div className={css.contentContainer} id={p.id}>
-            {p.children}
-        </div>
+        <article className={classNames(css.contentContainer, className)} id={id}>
+            {children}
+        </article>
     );
 };

@@ -7,6 +7,7 @@ import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 import newres from '/img/chinois_app.png';
+import { R } from '@/__mocks__/restaurant.mock';
 
 export const NewRestaurant: React.FC = () => {
     const navigate = useNavigate();
@@ -45,7 +46,7 @@ export const NewRestaurant: React.FC = () => {
                 <RestaurantPreview
                     // @ts-ignore
                     restaurant={{
-                        "id": 12,
+                        "id": String(R.SELF_EDGE_SPB_CHINOIS_ID),
                         "title": "Self Edge Chinois",
                         "slogan": "Современная Азия с акцентом на Китай и культовый raw bar",
                         "address": "Санкт-Перербург, ул. Добролюбова, 11",

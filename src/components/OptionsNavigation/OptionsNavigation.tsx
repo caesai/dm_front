@@ -9,12 +9,9 @@ import neweventBg from '/img/gastro_btn.png';
 import gastroBtn2 from '/img/gastro_btn2.png';
 import gastroBtn3 from '/img/gastro_btn3.png';
 
-interface IOptionsNavigationProps {
-    cityId: number;
-    isLoading: boolean;
-}
+interface IOptionsNavigationProps {}
 
-export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ isLoading }) => {
+export const OptionsNavigation: React.FC<IOptionsNavigationProps> = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -22,14 +19,12 @@ export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ isLoading
             <PrivelegiesPopup isOpen={isOpen} setOpen={setIsOpen} />
             <div style={{ display: 'flex', gap: 8 }}>
                 <OptionsNavigationElement
-                    isLoading={isLoading}
                     title={'Подарочные сертификаты'}
                     img={gastroBtn2}
                     className={css.certificateCTAbtn}
                     link={'/certificates/1'}
                 />
                 <OptionsNavigationElement
-                    isLoading={isLoading}
                     title={'Организовать праздник'}
                     img={gastroBtn3}
                     className={css.banquetsCTAbtn}
@@ -37,7 +32,6 @@ export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ isLoading
                 />
             </div>
             <OptionsNavigationElement
-                isLoading={isLoading}
                 title={'Гастро-события'}
                 subtitle={'От уютных ужинов до шумных вечеринок'}
                 img={neweventBg}
@@ -45,16 +39,6 @@ export const OptionsNavigation: React.FC<IOptionsNavigationProps> = ({ isLoading
                 textWrapperClassName={css.eventsTextWrapper}
                 link={'/events'}
             />
-
-            {/*{user?.username && ['w0esofwit','egormk', 'iliathoughts', 'Sushkazzlo'].includes(user?.username) && (*/}
-            {/*    <div style={{ display: 'flex', width: '50%'}}>*/}
-            {/*        <OptionsNavigationElement*/}
-            {/*            icon={<StarPrivelegyIcon size={23} color={'var(--light-grey)'}  />}*/}
-            {/*            title={'Привилегии'}*/}
-            {/*            onClick={() => setIsOpen(!isOpen)}*/}
-            {/*        />*/}
-            {/*    </div>*/}
-            {/*)}*/}
         </div>
     );
 };
