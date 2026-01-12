@@ -119,8 +119,8 @@ export const EventsListPage: React.FC = (): JSX.Element => {
     }, [currentCity]);
 
     return (
-        <Page back={true} className={css.eventsListPage}>
-            <PageContainer>
+        <Page back={true}>
+            <PageContainer className={css.eventsListPage}>
                 <ContentBlock className={css.header}>
                     <RoundedButton icon={<BackIcon color={'var(--dark-grey)'} />} action={handleGoBack} />
                     <HeaderContent className={css.headerTitle} title="Мероприятия" />

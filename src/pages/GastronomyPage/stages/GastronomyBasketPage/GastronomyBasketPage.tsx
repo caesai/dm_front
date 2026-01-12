@@ -10,7 +10,7 @@ import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { cityListAtom, getCurrentCity } from '@/atoms/cityListAtom.ts';
 // Components
 import { CartItem } from '@/components/CartItem/CartItem.tsx';
-import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
+// import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { Loader } from '@/components/AppLoadingScreen/AppLoadingScreen.tsx';
 // Hooks
 import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
@@ -60,7 +60,7 @@ export const GastronomyBasketPage: React.FC = () => {
         value: 'unset',
     });
     const [selectedTime, setSelectedTime] = useState('');
-    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [, setShowDatePicker] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
     const addressInputRef = useRef<HTMLInputElement>(null);
     const suggestionsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -195,113 +195,113 @@ export const GastronomyBasketPage: React.FC = () => {
      *
      * @returns {PickerValueObj[]} Массив объектов дат для выбора, где `value` - строка формата YYYY-MM-DD.
      */
-    const availableDates = useMemo((): PickerValueObj[] => {
-        const dates: PickerValueObj[] = [];
+    // const availableDates = useMemo((): PickerValueObj[] => {
+    //     const dates: PickerValueObj[] = [];
 
-        // По умолчанию: 25-30 декабря для доставки, 25-31 для самовывоза
-        let baseStartDay = 25;
-        let endDay = deliveryMethod === 'delivery' ? 30 : 31;
+    //     // По умолчанию: 25-30 декабря для доставки, 25-31 для самовывоза
+    //     let baseStartDay = 25;
+    //     let endDay = deliveryMethod === 'delivery' ? 30 : 31;
 
-        // Особые условия для некоторых ресторанов
-        switch (String(res_id)) {
-            // Smoke Лодейнопольская доставка 25 - 31 декабря, самовывоз 30, 31 декабря
-            case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
-                if (deliveryMethod === 'delivery') {
-                    baseStartDay = 25;
-                    endDay = 31;
-                } else {
-                    baseStartDay = 30;
-                    endDay = 31;
-                }
-                break;
+    //     // Особые условия для некоторых ресторанов
+    //     switch (String(res_id)) {
+    //         // Smoke Лодейнопольская доставка 25 - 31 декабря, самовывоз 30, 31 декабря
+    //         case R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID:
+    //             if (deliveryMethod === 'delivery') {
+    //                 baseStartDay = 25;
+    //                 endDay = 31;
+    //             } else {
+    //                 baseStartDay = 30;
+    //                 endDay = 31;
+    //             }
+    //             break;
 
-            // Smoke Рубинштейна доставка 30, 31 декабря
-            case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
-                if (deliveryMethod === 'delivery') {
-                    baseStartDay = 30;
-                    endDay = 31;
-                }
-                break;
+    //         // Smoke Рубинштейна доставка 30, 31 декабря
+    //         case R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID:
+    //             if (deliveryMethod === 'delivery') {
+    //                 baseStartDay = 30;
+    //                 endDay = 31;
+    //             }
+    //             break;
 
-            // Smoke Трубная доставка только 31 декабря
-            case R.SMOKE_BBQ_MSC_TRUBNAYA_ID:
-                if (deliveryMethod === 'delivery') {
-                    baseStartDay = 31;
-                    endDay = 31;
-                }
-                break;
+    //         // Smoke Трубная доставка только 31 декабря
+    //         case R.SMOKE_BBQ_MSC_TRUBNAYA_ID:
+    //             if (deliveryMethod === 'delivery') {
+    //                 baseStartDay = 31;
+    //                 endDay = 31;
+    //             }
+    //             break;
 
-            // BlackChops самовывоз только 25 - 31 декабря, доставки 30 - 31 декабря
-            case R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID:
-                if (deliveryMethod === 'pickup') {
-                    baseStartDay = 25;
-                    endDay = 31;
-                } else {
-                    // Доставка 30 - 31 декабря
-                    baseStartDay = 30;
-                    endDay = 31;
-                }
-                break;
+    //         // BlackChops самовывоз только 25 - 31 декабря, доставки 30 - 31 декабря
+    //         case R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID:
+    //             if (deliveryMethod === 'pickup') {
+    //                 baseStartDay = 25;
+    //                 endDay = 31;
+    //             } else {
+    //                 // Доставка 30 - 31 декабря
+    //                 baseStartDay = 30;
+    //                 endDay = 31;
+    //             }
+    //             break;
 
-            // Poly самовывоз 25-31, доставка только 31 декабря
-            case R.POLY_SPB_BELINSKOGO_ID:
-                if (deliveryMethod === 'pickup') {
-                    baseStartDay = 25;
-                    endDay = 31;
-                } else {
-                    baseStartDay = 31;
-                    endDay = 31;
-                }
-                break;
+    //         // Poly самовывоз 25-31, доставка только 31 декабря
+    //         case R.POLY_SPB_BELINSKOGO_ID:
+    //             if (deliveryMethod === 'pickup') {
+    //                 baseStartDay = 25;
+    //                 endDay = 31;
+    //             } else {
+    //                 baseStartDay = 31;
+    //                 endDay = 31;
+    //             }
+    //             break;
 
-            // Pame самовывоз 25-31, доставка только 31 декабря
-            case R.PAME_SPB_MOIKA_RIVER_ID:
-                if (deliveryMethod === 'pickup') {
-                    baseStartDay = 25;
-                    endDay = 31;
-                } else {
-                    baseStartDay = 31;
-                    endDay = 31;
-                }
-                break;
+    //         // Pame самовывоз 25-31, доставка только 31 декабря
+    //         case R.PAME_SPB_MOIKA_RIVER_ID:
+    //             if (deliveryMethod === 'pickup') {
+    //                 baseStartDay = 25;
+    //                 endDay = 31;
+    //             } else {
+    //                 baseStartDay = 31;
+    //                 endDay = 31;
+    //             }
+    //             break;
 
-            // Trappist самовывоз 25-31, доставка только 31 декабря
-            case R.TRAPPIST_SPB_RADISHEVA_ID:
-                if (deliveryMethod === 'pickup') {
-                    baseStartDay = 25;
-                    endDay = 31;
-                } else {
-                    baseStartDay = 31;
-                    endDay = 31;
-                }
-                break;
-        }
+    //         // Trappist самовывоз 25-31, доставка только 31 декабря
+    //         case R.TRAPPIST_SPB_RADISHEVA_ID:
+    //             if (deliveryMethod === 'pickup') {
+    //                 baseStartDay = 25;
+    //                 endDay = 31;
+    //             } else {
+    //                 baseStartDay = 31;
+    //                 endDay = 31;
+    //             }
+    //             break;
+    //     }
 
-        let actualStartDay = baseStartDay;
+    //     let actualStartDay = baseStartDay;
 
-        // Если текущая дата совпадает с целевым периодом (Декабрь 2025)
-        const targetYear = 2025;
-        const targetMonth = 11; // Декабрь (0-indexed)
-        const today = new Date();
-        const currentYear = today.getFullYear();
-        const currentMonth = today.getMonth();
-        const currentDay = today.getDate();
-        if (currentYear === targetYear && currentMonth === targetMonth) {
-            // Начинаем как минимум с завтрашнего дня
-            actualStartDay = Math.max(baseStartDay, currentDay + 1);
-        }
+    //     // Если текущая дата совпадает с целевым периодом (Декабрь 2025)
+    //     const targetYear = 2025;
+    //     const targetMonth = 11; // Декабрь (0-indexed)
+    //     const today = new Date();
+    //     const currentYear = today.getFullYear();
+    //     const currentMonth = today.getMonth();
+    //     const currentDay = today.getDate();
+    //     if (currentYear === targetYear && currentMonth === targetMonth) {
+    //         // Начинаем как минимум с завтрашнего дня
+    //         actualStartDay = Math.max(baseStartDay, currentDay + 1);
+    //     }
 
-        // Генерируем даты
-        for (let day = actualStartDay; day <= endDay; day++) {
-            const dateStr = `${targetYear}-${String(targetMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            dates.push({
-                title: formatDate(dateStr),
-                value: dateStr,
-            });
-        }
+    //     // Генерируем даты
+    //     for (let day = actualStartDay; day <= endDay; day++) {
+    //         const dateStr = `${targetYear}-${String(targetMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    //         dates.push({
+    //             title: formatDate(dateStr),
+    //             value: dateStr,
+    //         });
+    //     }
 
-        return dates;
-    }, [deliveryMethod, res_id]);
+    //     return dates;
+    // }, [deliveryMethod, res_id]);
 
     /**
      * Генерирует список доступных временных слотов для получения заказа.
@@ -963,13 +963,13 @@ export const GastronomyBasketPage: React.FC = () => {
                 {/* Выбор даты и времени */}
                 <div className={css.section}>
                     <h2 className={css.sectionTitle}>Выбор даты и времени</h2>
-                    <DateListSelector
+                    {/* <DateListSelector
                         isOpen={showDatePicker}
                         setOpen={setShowDatePicker}
                         date={selectedDate}
                         setDate={setSelectedDate}
                         values={availableDates}
-                    />
+                    /> */}
                     <div className={css.datePickerWrapper}>
                         <div data-testid="date-picker" className={css.datePicker} onClick={handleDatePickerClick}>
                             <div className={css.datePickerContent}>

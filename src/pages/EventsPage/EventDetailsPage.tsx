@@ -1,3 +1,26 @@
+/**
+ * @fileoverview Страница деталей мероприятия.
+ * 
+ * Отображает подробную информацию о мероприятии:
+ * - Изображение мероприятия
+ * - Название и описание
+ * - Дата и время проведения
+ * - Цена билета (для платных мероприятий)
+ * - Количество оставшихся мест
+ * - Счётчик выбора количества гостей
+ * - Кнопка перехода к бронированию/покупке
+ * 
+ * @module pages/EventsPage/EventDetailsPage
+ * 
+ * @example
+ * // Роут для страницы
+ * <Route path="/events/:eventId" element={<EventDetailsPage />} />
+ * 
+ * @see {@link EventBookingPage} - страница бронирования бесплатного мероприятия
+ * @see {@link EventPurchasePage} - страница покупки билета на платное мероприятие
+ * @see {@link guestCountAtom} - атом для хранения количества гостей
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Atom, useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
@@ -23,7 +46,20 @@ import css from '@/pages/EventsPage/EventsPage.module.css';
 
 /**
  * Страница деталей мероприятия.
- *
+ * 
+ * Получает eventId из URL параметров и отображает информацию о мероприятии.
+ * Позволяет выбрать количество гостей и перейти к бронированию/покупке.
+ * 
+ * ## Логика навигации:
+ * - **Платное мероприятие** + onboarding пройден → `/events/{id}/purchase`
+ * - **Бесплатное мероприятие** + onboarding пройден → `/events/{id}/booking`
+ * - **Onboarding не пройден** → `/onboarding/3` с state `{ id, sharedEvent: true }`
+ * 
+ * ## Условия отображения skeleton:
+ * - Нет `selectedEvent.id`
+ * - Нет `selectedEvent.tickets_left`
+ * - Нет `selectedEvent.image_url`
+ * 
  * @component
  * @returns {JSX.Element} Компонент страницы деталей мероприятия
  */
@@ -31,12 +67,26 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const { eventId } = useParams();
     const events = useAtomValue(eventsListAtom as Atom<IEvent[] | null>);
+    
+    /** Состояние для скрытия/показа полного описания */
     const [hideAbout, setHideAbout] = useState(true);
+    
+    /** Сеттер для атома количества гостей */
     const setGuestCount = useSetAtom(guestCountAtom as WritableAtom<number, [number], void>);
+    
+    /** Текущее количество гостей из атома */
     const guestCount = useAtomValue(guestCountAtom);
+    
+    /** Данные текущего пользователя */
     const user = useAtomValue(userAtom);
+    
+    /** Выбранное мероприятие */
     const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
-    // Получаем информацию о мероприятии
+
+    /**
+     * Эффект для получения информации о мероприятии из списка.
+     * Срабатывает при изменении eventId или списка мероприятий.
+     */
     useEffect(() => {
         if (eventId) {
             const event = events?.find((e) => e.id === Number(eventId));
@@ -46,20 +96,35 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
         }
     }, [eventId, events, setSelectedEvent]);
 
-    // Увеличиваем количество гостей
+    /**
+     * Увеличивает количество гостей на 1.
+     * Ограничение: не больше tickets_left.
+     */
     const incCounter = () => {
         if (guestCount < Number(selectedEvent?.tickets_left)) {
             setGuestCount(guestCount + 1);
         }
     };
-    // Уменьшаем количество гостей
+
+    /**
+     * Уменьшает количество гостей на 1.
+     * Ограничение: не меньше 0.
+     */
     const decCounter = () => {
         if (guestCount > 0) {
             setGuestCount(guestCount - 1);
         }
     };
 
-    // Переход на страницу бронирования
+    /**
+     * Обрабатывает переход на страницу бронирования/покупки.
+     * 
+     * Логика:
+     * 1. Если guestCount === 0 или нет selectedEvent → ничего не делать
+     * 2. Если пользователь не прошёл onboarding → редирект на /onboarding/3
+     * 3. Если бесплатное мероприятие → переход на /events/{id}/booking
+     * 4. Если платное мероприятие → переход на /events/{id}/purchase
+     */
     const next = () => {
         if (guestCount === 0 || !selectedEvent) return;
         
@@ -72,10 +137,33 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
             // Переход на страницу покупки билета на мероприятие
             navigate(`/events/${selectedEvent?.id}/purchase`);
         } else {
-            navigate(`/onboarding/3`, { state: { id: selectedEvent?.id, sharedEvent: true} });
+            navigate(`/onboarding/3`, { state: { id: selectedEvent?.id, sharedEvent: true } });
         }
     };
-    // Если данные не загружены, то показываем skeleton из placeholder блоков
+
+    /**
+     * Возврат на предыдущую страницу.
+     */
+    const handleGoBack = () => {
+        navigate(-1);
+    };
+
+    /**
+     * Обработчик шаринга мероприятия.
+     * @todo Реализовать функционал шаринга
+     */
+    const shareEvent = () => {
+        console.log('shareEvent');
+    };
+
+    // ============================================
+    // Состояние загрузки (Skeleton)
+    // ============================================
+
+    /**
+     * Показываем skeleton пока данные не загружены.
+     * Условия: нет id, нет tickets_left, нет image_url.
+     */
     if (!selectedEvent?.id || !selectedEvent?.tickets_left || !selectedEvent?.image_url) {
         return (
             <Page back={true}>
@@ -88,28 +176,29 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
         );
     }
 
-    const handleGoBack = () => {
-        navigate(-1);
-    };
-
-    const shareEvent = () => {
-        console.log('shareEvent');
-    };
+    // ============================================
+    // Основной рендер
+    // ============================================
 
     return (
         <Page back={true}>
             <PageContainer className={css.detailsPage}>
+                {/* Шапка с навигацией */}
                 <ContentBlock className={css.header}>
                     <RoundedButton icon={<BackIcon color={'var(--dark-grey)'} />} action={handleGoBack} />
                     <HeaderContent className={css.headerTitle} title="Мероприятия" />
                     <RoundedButton icon={<Share color={'var(--dark-grey)'} />} action={shareEvent} />
                 </ContentBlock>
+
+                {/* Изображение мероприятия */}
                 <div
                     className={css.detailsPageThumbnail}
                     style={{
                         backgroundImage: `url(${selectedEvent?.image_url ? selectedEvent?.image_url : 'https://storage.yandexcloud.net/dreamteam-storage/67f296fadfab49a1a9bfd98a291821d5.png'}`,
                     }}
                 />
+
+                {/* Название и описание */}
                 <ContentBlock className={css.detailsPageDescription}>
                     <HeaderContent className={css.detailsPageDescriptionTitle} title={selectedEvent?.name} />
 
@@ -123,6 +212,8 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
                             .split(/\n|\r\n/)
                             .map((segment, index) => <p key={index}>{segment}</p>)}
                     </ContentBlock>
+
+                    {/* Кнопка "Читать больше" для длинного описания (>100 символов) */}
                     {selectedEvent?.description && selectedEvent?.description.length > 100 && (
                         <button
                             className={css.detailsPageDescriptionTrimLinesButton}
@@ -134,7 +225,10 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
                         </button>
                     )}
                 </ContentBlock>
+
+                {/* Дата, время и цена */}
                 <ContentBlock className={css.detailsPageDataRow}>
+                    {/* Дата */}
                     <ContentBlock className={css.detailsPageDataCol}>
                         <span className={css.detailsPageDataColTitle}>Дата</span>
                         <span className={css.detailsPageDataColData}>
@@ -142,6 +236,7 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
                         </span>
                     </ContentBlock>
 
+                    {/* Время (для бесплатных показывает диапазон) */}
                     <ContentBlock className={css.detailsPageDataCol}>
                         <span className={css.detailsPageDataColTitle}>Время</span>
                         <span className={css.detailsPageDataColData}>
@@ -151,6 +246,7 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
                         </span>
                     </ContentBlock>
 
+                    {/* Цена (только для платных мероприятий) */}
                     {!isNaN(Number(selectedEvent?.ticket_price)) && Number(selectedEvent?.ticket_price) > 0 && (
                         <ContentBlock className={css.detailsPageDataCol}>
                             <span className={css.detailsPageDataColTitle}>Цена</span>
@@ -162,7 +258,10 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
                         </ContentBlock>
                     )}
                 </ContentBlock>
+
+                {/* Оставшиеся места и метка "предоплата" */}
                 <ContentBlock className={css.detailsPageDataRow} style={{ justifyContent: 'space-between' }}>
+                    {/* Оставшиеся места (только для платных) */}
                     {Number(selectedEvent?.ticket_price) !== 0 && Number(selectedEvent?.tickets_left) >= 0 && (
                         <ContentBlock className={css.detailsPageDataCol}>
                             <span className={css.detailsPageDataColTitle}>Осталось мест</span>
@@ -170,6 +269,7 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
                         </ContentBlock>
                     )}
 
+                    {/* Метка "предоплата" (только для платных) */}
                     {!isNaN(Number(selectedEvent?.ticket_price)) && Number(selectedEvent?.ticket_price) !== 0 && (
                         <ContentBlock className={css.detailsPageDataCol}>
                             <div className={css.detailsPageRoundedText}>
@@ -179,6 +279,7 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
                     )}
                 </ContentBlock>
 
+                {/* Счётчик количества гостей */}
                 {Number(selectedEvent?.tickets_left) >= 0 && (
                     <ContentBlock className={css.detailsPageGuestCounterContainer}>
                         <span className={css.detailsPageGuestCounterTitle}>Количество мест</span>
@@ -193,6 +294,8 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
                         </ContentBlock>
                     </ContentBlock>
                 )}
+
+                {/* Кнопка бронирования/покупки (скрыта если tickets_left <= 0) */}
                 {selectedEvent && Number(selectedEvent?.tickets_left) > 0 && (
                     <BottomButtonWrapper
                         onClick={next}

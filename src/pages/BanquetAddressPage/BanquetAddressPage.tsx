@@ -15,7 +15,7 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
+// import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 // Styles
 import css from '@/pages/BanquetAddressPage/BanquetAddressPage.module.css';
 import BanquetImg from '/img/banquet_img.png';
@@ -33,7 +33,7 @@ export const BanquetAddressPage: React.FC = (): JSX.Element => {
     const restaurants = useAtomValue(restaurantsListAtom);
 
     const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
-    const [restaurantPopup, setRestaurantPopup] = useState<boolean>(false);
+    const [, setRestaurantPopup] = useState<boolean>(false);
     const [isDisabledButton, setDisabledButton] = useState(true);
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
     const [banquets, setBanquets] = useState<IBanquet | null>(null);
@@ -114,13 +114,13 @@ export const BanquetAddressPage: React.FC = (): JSX.Element => {
 
     return (
         <Page back={true}>
-            <RestaurantsListSelector
+            {/* <RestaurantsListSelector
                 isOpen={restaurantPopup}
                 setOpen={setRestaurantPopup}
                 restaurant={currentRestaurant}
                 selectRestaurant={setCurrentRestaurant}
                 filteredRestaurants={restaurantsList}
-            />
+            /> */}
             <div className={css.page}>
                 <div className={css.pageWrapper}>
                     <div className={css.header}>

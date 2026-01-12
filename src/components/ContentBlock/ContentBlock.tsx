@@ -3,7 +3,7 @@ import classNames from 'classnames';
 // Styles
 import css from '@/components/ContentBlock/ContentBlock.module.css';
 
-interface IContentBlockProps {
+interface IContentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
     /**
      * Дочерние элементы.
      */
@@ -32,9 +32,9 @@ interface IContentBlockProps {
  * </ContentBlock>
  * @returns {JSX.Element} - Компонент блока контента.
  */
-export const ContentBlock: React.FC<IContentBlockProps> = ({ children, id, className, style }): JSX.Element => {
+export const ContentBlock: React.FC<IContentBlockProps> = ({ children, id, className, style, ...rest }): JSX.Element => {
     return (
-        <div className={classNames(css.contentBlock, className)} id={id} style={style}>
+        <div className={classNames(css.contentBlock, className)} id={id} style={style} {...rest}>
             {children}
         </div>
     );

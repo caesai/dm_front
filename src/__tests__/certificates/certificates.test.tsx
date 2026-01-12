@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CertificatesSelector, CertificatesSelectorProps } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
+import { CertificatesSelector, ICertificatesSelectorProps } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { certificatesListMock } from '@/__mocks__/certificates.mock.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
@@ -17,11 +17,11 @@ jest.mock('react-router-dom', () => ({
 describe('CertificatesSelector', () => {
     const mockSetCertificateId = jest.fn();
     // Вспомогательная функция для рендера компонента
-    const renderComponent = (props: Partial<CertificatesSelectorProps> = {}) => {
-        const initialProps: CertificatesSelectorProps = {
+    const renderComponent = (props: Partial<ICertificatesSelectorProps> = {}) => {
+        const initialProps: ICertificatesSelectorProps = {
             setCertificateId: mockSetCertificateId,
             isOpened: true,
-            selectedCertificateId: null,
+            selectedCertificateId: 'SUGNS0AG',
         };
 
         return render(

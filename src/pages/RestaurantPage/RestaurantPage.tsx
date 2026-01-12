@@ -1,3 +1,24 @@
+/**
+ * @fileoverview Страница детальной информации о ресторане.
+ * 
+ * Отображает полную информацию о ресторане с возможностью:
+ * - Просмотра фотогалереи ресторана
+ * - Просмотра меню и блюд
+ * - Просмотра информации о банкетах
+ * - Просмотра предстоящих мероприятий
+ * - Покупки сертификатов
+ * - Чтения о ресторане и шеф-поваре
+ * - Бронирования столика
+ * - Открытия местоположения в Яндекс Картах
+ * - Вызова такси через Яндекс
+ * - Звонка в ресторан
+ * 
+ * @module pages/RestaurantPage/RestaurantPage
+ * 
+ * @see {@link useRestaurantPageData} - хук загрузки данных страницы
+ * @see {@link useGetRestaurantById} - хук получения ресторана по ID
+ */
+
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
@@ -29,32 +50,76 @@ import useToastState from '@/hooks/useToastState.ts';
 import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
 
 /**
- * Страница ресторана.
+ * Страница детальной информации о ресторане.
  *
- * Позволяет просматривать информацию о ресторане, его меню, банкетах, событиях, гастрономии и других данных.
+ * Отображает полную информацию о ресторане, включая:
+ * - Превью с основной информацией (название, адрес, рейтинг)
+ * - Блок бронирования с выбором даты и времени
+ * - Фотогалерею ресторана
+ * - Меню с возможностью перехода к детальному просмотру
+ * - Информацию о банкетных предложениях
+ * - Список предстоящих мероприятий
+ * - Блок покупки сертификатов
+ * - Описание ресторана и его особенностей
+ * - Информацию о шеф-поваре
+ * - Адрес с возможностью открытия в картах
+ * - Виджет вызова Яндекс Такси
+ * 
+ * Навигация на страницу бронирования происходит с учётом статуса онбординга пользователя:
+ * - Если онбординг не завершён — переход на `/onboarding/3` с передачей данных ресторана
+ * - Если онбординг завершён — переход на `/restaurant/:id/booking` с выбранной датой и временем
  *
  * @component
  * @returns {JSX.Element} Компонент страницы ресторана
+ * 
+ * @example
+ * // Роутинг
+ * <Route path="/restaurant/:restaurantId" element={<RestaurantPage />} />
  */
 export const RestaurantPage: React.FC = (): JSX.Element => {
+    /** Функция навигации из react-router-dom */
     const navigate = useNavigate();
+    
+    /** ID ресторана из URL-параметров */
     const { restaurantId } = useParams<{ restaurantId: string }>();
-    // Atoms
+    
+    /** 
+     * Данные текущего пользователя из глобального состояния.
+     * Используется для проверки статуса онбординга.
+     */
     const user = useAtomValue(userAtom);
+    
+    /** 
+     * Данные ресторана по ID.
+     * Получается через мемоизированный атом restaurantByIdAtom.
+     */
     const restaurant = useGetRestaurantById(restaurantId || '');
-    // Toast для ошибок
+    
+    /** Функция показа уведомлений об ошибках */
     const { showToast } = useToastState();
 
-    // Оптимизированная загрузка данных через хук
+    /**
+     * Данные страницы ресторана, загружаемые через оптимизированный хук.
+     * Включает: события, доступные даты, таймслоты для бронирования.
+     * 
+     * @see {@link useRestaurantPageData}
+     */
     const { currentSelectedTime, date } = useRestaurantPageData({
         restaurantId: restaurantId || '',
         onError: showToast,
     });
 
-    // Локальные состояния
+    /** Состояние открытия попапа звонка в ресторан */
     const [isCallPopupOpen, setIsCallPopupOpen] = useState(false);
+
     /**
-     * Обрабатывает переход к бронированию столика
+     * Обрабатывает переход к бронированию столика.
+     * 
+     * Если пользователь не завершил онбординг — переход на `/onboarding/3`
+     * с передачей данных ресторана и выбранной даты/времени.
+     * 
+     * Если онбординг завершён — переход на страницу бронирования
+     * `/restaurant/:restaurantId/booking` с выбранной датой и временем.
      */
     const handleNextButtonClick = () => {
         if (!user?.complete_onboarding) {
@@ -77,7 +142,12 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
     };
 
     /**
-     * Открывает Яндекс Карты с местоположением ресторана
+     * Открывает Яндекс Карты с местоположением ресторана в новой вкладке.
+     * 
+     * Формирует URL с параметрами:
+     * - ll: координаты ресторана (longitude,latitude)
+     * - text: название ресторана для отображения на карте
+     * - z: уровень зума (17 — масштаб здания)
      */
     const handleOpenYandexMaps = () => {
         window.open(`https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`);

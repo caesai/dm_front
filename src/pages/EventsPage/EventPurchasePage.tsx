@@ -1,3 +1,27 @@
+/**
+ * @fileoverview Страница покупки билета на платное мероприятие.
+ * 
+ * Пользователь попадает на эту страницу со страницы деталей мероприятия
+ * ({@link EventDetailsPage}) после нажатия кнопки "Купить билет".
+ * 
+ * Страница предоставляет функционал:
+ * - Отображение деталей заказа (название, дата, время, место проведения)
+ * - Отображение количества билетов и общей стоимости (из {@link guestCountAtom})
+ * - Ввод контактных данных (предзаполнено из данных пользователя)
+ * - Политика возврата билетов
+ * - Создание счёта на оплату через {@link APICreateInvoice}
+ * 
+ * При успешном создании счёта:
+ * - Если есть payment_url - редирект на страницу оплаты
+ * - Если payment_url отсутствует - навигация на страницу билета `/tickets/{booking_id}`
+ * 
+ * @module pages/EventsPage/EventPurchasePage
+ * 
+ * @see {@link EventDetailsPage} - страница деталей мероприятия (точка входа)
+ * @see {@link APICreateInvoice} - API для создания счёта на оплату
+ * @see {@link guestCountAtom} - атом с количеством билетов
+ */
+
 import React, { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtom, useAtomValue } from 'jotai';
@@ -28,39 +52,96 @@ import css from '@/pages/EventsPage/EventsPage.module.css';
 import { PageContainer } from '@/components/PageContainer/PageContainer';
 
 /**
- * Страница покупки билета на мероприятие.
- *
+ * Страница покупки билета на платное мероприятие.
+ * 
+ * Отображает детали заказа, позволяет ввести контактные данные
+ * и создать счёт на оплату.
+ * 
+ * Количество билетов берётся из атома {@link guestCountAtom},
+ * который устанавливается на странице {@link EventDetailsPage}.
+ * 
  * @component
- * @returns {JSX.Element} Компонент страницы покупки билета на мероприятие
+ * @returns {JSX.Element} Страница покупки билета
+ * 
+ * @example
+ * // Роут в App.tsx
+ * <Route path="/events/:eventId/purchase" element={<EventPurchasePage />} />
+ * 
+ * @example
+ * // Навигация с EventDetailsPage
+ * navigate(`/events/${event.id}/purchase`);
  */
 export const EventPurchasePage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
+    /** ID мероприятия из URL параметров */
     const { eventId } = useParams();
+    /** Список всех мероприятий из глобального стейта */
     const events = useAtomValue(eventsListAtom);
-    const selectedEvent = useMemo(() => events?.find((event) => event.id === Number(eventId)), [events, eventId]);
+    
+    /**
+     * Выбранное мероприятие из списка событий.
+     * Определяется по eventId из URL.
+     */
+    const selectedEvent = useMemo(
+        () => events?.find((event) => event.id === Number(eventId)),
+        [events, eventId]
+    );
+    
+    /**
+     * Количество билетов из атома.
+     * Устанавливается на странице {@link EventDetailsPage}.
+     */
     const guestCount = useAtomValue(guestCountAtom);
 
+    /** Данные авторизации для API запросов */
     const [auth] = useAtom(authAtom);
+    /** Данные пользователя для предзаполнения контактов */
     const [user] = useAtom(userAtom);
+    
+    /**
+     * Состояние формы контактных данных.
+     * Предзаполняется из данных пользователя.
+     */
     const [userInfo, setUserInfo] = useState({
         name: `${user?.first_name}`,
         phone: `${user?.phone_number}`,
         commentary: '',
     });
+    
+    /** Состояние загрузки (создание счёта) */
     const [loading, setLoading] = useState(false);
 
+    /**
+     * Расчёт общей стоимости заказа.
+     * Формула: количество билетов × цена билета
+     */
     const calculateTotal = useMemo(() => {
         const ticketPrice = selectedEvent?.ticket_price;
         if (ticketPrice === undefined) {
             return null;
         }
         return guestCount * ticketPrice;
-    }, [selectedEvent]);
+    }, [selectedEvent, guestCount]);
 
+    /**
+     * Валидация формы.
+     * Форма валидна если заполнены имя, телефон и есть токен авторизации.
+     */
     const validate = useMemo(() => {
         return userInfo.name && userInfo.phone && auth?.access_token;
     }, [userInfo, auth]);
 
+    /**
+     * Создание счёта на оплату.
+     * 
+     * При успехе:
+     * - Если есть payment_url - редирект на страницу оплаты
+     * - Если нет payment_url - навигация на страницу билета
+     * 
+     * При ошибке:
+     * - Сбрасывает состояние загрузки
+     * - Логирует ошибку в консоль
+     */
     const createInvoice = () => {
         if (selectedEvent?.date_start && userInfo.name && userInfo.phone && auth?.access_token && guestCount) {
             setLoading(true);
@@ -84,9 +165,19 @@ export const EventPurchasePage: React.FC = (): JSX.Element => {
                 });
         }
     };
+    
+    /**
+     * Обработчик кнопки "Назад".
+     * Возвращает на предыдущую страницу (EventDetailsPage).
+     */
     const handleGoBack = () => {
         navigate(-1);
     };
+    
+    /**
+     * Обработчик кнопки "Поделиться".
+     * TODO: Реализовать функционал шаринга.
+     */
     const shareEvent = () => {
         console.log('shareEvent');
     };

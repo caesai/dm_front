@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { IEvent } from '@/types/events.types.ts';
 // Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
 import { EventCard } from '@/components/EventCard/EventCard.tsx';

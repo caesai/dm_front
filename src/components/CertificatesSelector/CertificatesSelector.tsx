@@ -39,7 +39,7 @@ const CertificateOption: React.FC<ICertificateOptionProps> = ({ onClick, value, 
     </div>
 );
 
-interface ICertificateTypeSelectorProps {
+export interface ICertificateTypeSelectorProps {
     type: TCertificate;
     currentType: TCertificate | null;
     toggleType: (type: TCertificate) => void;

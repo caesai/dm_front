@@ -1,3 +1,59 @@
+/**
+ * @fileoverview Комплексный хук для управления формой бронирования столиков в ресторане.
+ * 
+ * Хук инкапсулирует всю логику формы бронирования:
+ * - Управление состоянием формы через Jotai atoms
+ * - Валидация полей формы
+ * - API-запросы для загрузки доступных дат и временных слотов
+ * - Обработка сертификатов
+ * - Создание бронирования
+ * 
+ * @module hooks/useBookingForm
+ * 
+ * @example
+ * // Пример 1: Общая страница бронирования (BookingPage)
+ * // Пользователь сам выбирает ресторан из списка
+ * const { form, handlers, createBooking } = useBookingForm({
+ *     certificateParams: {
+ *         certificate: state?.certificate,
+ *         certificateId: state?.certificateId,
+ *     },
+ * });
+ * 
+ * @example
+ * // Пример 2: Бронирование с предвыбранным рестораном (RestaurantBookingPage)
+ * // Пользователь переходит со страницы ресторана
+ * const { form, handlers, createBooking } = useBookingForm({
+ *     preSelectedRestaurant: {
+ *         id: String(currentRestaurant.id),
+ *         title: currentRestaurant.title,
+ *         address: currentRestaurant.address,
+ *     },
+ *     initialBookingData: {
+ *         bookedDate: state.bookedDate,
+ *         bookedTime: state.bookedTime,
+ *         guestCount: 1,
+ *         childrenCount: 0,
+ *     },
+ *     isSharedRestaurant: state?.sharedRestaurant,
+ * });
+ * 
+ * @example
+ * // Пример 3: Бронирование на мероприятие (EventBookingPage)
+ * // Ресторан и дата берутся из данных мероприятия
+ * const { form, handlers, createBooking } = useBookingForm({
+ *     eventData: {
+ *         id: selectedEvent.id,
+ *         name: selectedEvent.name,
+ *         dateStart: selectedEvent.date_start,
+ *         dateEnd: selectedEvent.date_end,
+ *         restaurantId: String(selectedEvent.restaurant.id),
+ *         restaurantTitle: selectedEvent.restaurant.title,
+ *         restaurantAddress: selectedEvent.restaurant.address,
+ *     },
+ * });
+ */
+
 import { useEffect, useMemo, useCallback, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAtom, useAtomValue, useSetAtom, WritableAtom } from 'jotai';
@@ -24,94 +80,218 @@ import useToastState from '@/hooks/useToastState.ts';
 // Utils
 import { formatDate, getTimeShort } from '@/utils.ts';
 
+// ============================================
+// Константы
+// ============================================
+
 /**
- * Регулярное выражение для валидации телефона
+ * Регулярное выражение для валидации российского телефона.
+ * Поддерживает форматы: +7XXXXXXXXXX, 8XXXXXXXXXX, +7 XXX XXX XX XX и т.д.
+ * @constant
  */
 const PHONE_REGEX = /^\+?([87])[- ]?(\d{3})[- ]?(\d{3})[- ]?(\d{2})[- ]?(\d{2})$/;
 
 /**
- * Длительность отображения ошибки валидации (мс)
+ * Длительность отображения ошибки валидации в миллисекундах.
+ * После этого времени ошибки сбрасываются.
+ * @constant
  */
 const VALIDATION_ERROR_DURATION = 5000;
 
+// ============================================
+// Интерфейсы
+// ============================================
+
 /**
- * Интерфейс для отображения ошибок валидации в UI
+ * Интерфейс для отображения ошибок валидации в UI.
+ * Все поля имеют значение `true` когда поле валидно, `false` когда есть ошибка.
+ * @interface
  */
 export interface IValidationDisplay {
+    /** Имя пользователя заполнено */
     nameValid: boolean;
+    /** Телефон соответствует формату */
     phoneValid: boolean;
+    /** Дата бронирования выбрана */
     dateValid: boolean;
+    /** Временной слот выбран */
     timeSlotValid: boolean;
+    /** Количество гостей больше 0 */
     guestsValid: boolean;
 }
 
 /**
- * Состояние загрузки данных
+ * Состояние загрузки различных данных.
+ * @interface
  */
 export interface ILoadingState {
+    /** Загрузка доступных временных слотов */
     timeslots: boolean;
+    /** Загрузка доступных дат */
     dates: boolean;
+    /** Отправка формы бронирования */
     submit: boolean;
 }
 
 /**
- * Состояние ошибок
+ * Состояние ошибок формы и API.
+ * @interface
  */
 export interface IErrorState {
+    /** Ошибка загрузки временных слотов */
     timeslots: boolean;
+    /** Показывать popup с ошибкой */
     popup: boolean;
+    /** Ошибка от бота (специфичная ошибка бэкенда) */
     botError: boolean;
+    /** Счётчик попыток для отображения разных сообщений об ошибках */
     popupCount: number;
 }
 
 /**
- * Интерфейс параметров для certificate claim
+ * Параметры для активации подарочного сертификата.
+ * Используется при переходе на страницу бронирования со страницы сертификата.
+ * @interface
  */
 interface ICertificateClaimParams {
+    /** Данные сертификата с именем получателя */
     certificate?: {
         recipient_name: string;
     };
+    /** ID сертификата для активации */
     certificateId?: string;
 }
 
 /**
- * Интерфейс предвыбранного ресторана
+ * Данные предвыбранного ресторана.
+ * Используется в {@link RestaurantBookingPage} когда пользователь переходит
+ * со страницы конкретного ресторана.
+ * @interface
  */
 interface IPreSelectedRestaurant {
+    /** ID ресторана */
     id: string;
+    /** Название ресторана */
     title: string;
+    /** Адрес ресторана (опционально) */
     address?: string;
 }
 
 /**
- * Интерфейс начальных данных бронирования (из state)
+ * Начальные данные бронирования из navigation state.
+ * Позволяет предзаполнить форму данными, переданными с предыдущей страницы.
+ * @interface
  */
 interface IInitialBookingData {
+    /** Предвыбранная дата бронирования */
     bookedDate?: PickerValue;
+    /** Предвыбранный временной слот */
     bookedTime?: ITimeSlot;
+    /** Начальное количество гостей */
     guestCount?: number;
+    /** Начальное количество детей */
     childrenCount?: number;
 }
 
 /**
- * Опции хука useBookingForm
+ * Данные мероприятия для бронирования на event.
+ * Используется в {@link EventBookingPage} для автоматической установки
+ * ресторана и даты из данных мероприятия.
+ * @interface
  */
-export interface IUseBookingFormOptions {
-    /** Параметры для сертификата */
-    certificateParams?: ICertificateClaimParams;
-    /** Предвыбранный ресторан (когда переход со страницы ресторана) */
-    preSelectedRestaurant?: IPreSelectedRestaurant;
-    /** Начальные данные бронирования из location.state */
-    initialBookingData?: IInitialBookingData;
-    /** Флаг, что пользователь пришёл по shared ссылке */
-    isSharedRestaurant?: boolean;
+interface IEventData {
+    /** ID мероприятия - передаётся в API для связи бронирования с событием */
+    id: number;
+    /** Название мероприятия (для отображения) */
+    name: string;
+    /** Дата и время начала мероприятия (ISO string) */
+    dateStart: string;
+    /** Дата и время окончания мероприятия (ISO string, опционально) */
+    dateEnd?: string;
+    /** ID ресторана, в котором проходит мероприятие */
+    restaurantId: string;
+    /** Название ресторана (для отображения) */
+    restaurantTitle?: string;
+    /** Адрес ресторана (для отображения) */
+    restaurantAddress?: string;
 }
 
 /**
- * Комплексный хук для управления формой бронирования
- * Включает: state management, validation, API calls
+ * Опции хука useBookingForm.
+ * Позволяют настроить поведение хука для разных сценариев использования.
  * 
- * @param options - Опции хука
+ * @interface
+ * @see {@link BookingPage} - общая страница бронирования (без опций или с certificateParams)
+ * @see {@link RestaurantBookingPage} - бронирование с preSelectedRestaurant
+ * @see {@link EventBookingPage} - бронирование с eventData
+ */
+export interface IUseBookingFormOptions {
+    /** 
+     * Параметры для активации сертификата.
+     * Используется когда пользователь переходит на бронирование со страницы сертификата.
+     */
+    certificateParams?: ICertificateClaimParams;
+    
+    /** 
+     * Предвыбранный ресторан.
+     * Устанавливается автоматически при переходе со страницы ресторана.
+     * Ресторан нельзя будет изменить в форме.
+     */
+    preSelectedRestaurant?: IPreSelectedRestaurant;
+    
+    /** 
+     * Начальные данные бронирования из location.state.
+     * Позволяет предзаполнить дату, время и количество гостей.
+     */
+    initialBookingData?: IInitialBookingData;
+    
+    /** 
+     * Флаг, что пользователь пришёл по shared ссылке.
+     * Влияет на навигацию - при нажатии "Назад" перейдёт на главную.
+     */
+    isSharedRestaurant?: boolean;
+    
+    /** 
+     * Данные мероприятия для бронирования на event.
+     * При наличии автоматически устанавливает ресторан и дату из события.
+     * При успешном бронировании переходит на страницу билета.
+     */
+    eventData?: IEventData;
+}
+
+/**
+ * Комплексный хук для управления формой бронирования столика.
+ * 
+ * Включает:
+ * - **State management** - управление состоянием формы через Jotai
+ * - **Validation** - валидация полей с визуальной обратной связью
+ * - **API calls** - загрузка дат, слотов, создание бронирования
+ * - **Certificate handling** - активация подарочных сертификатов
+ * 
+ * @param options - Опции конфигурации хука
+ * @param options.certificateParams - Параметры сертификата для активации
+ * @param options.preSelectedRestaurant - Предвыбранный ресторан (для RestaurantBookingPage)
+ * @param options.initialBookingData - Начальные данные формы из navigation state
+ * @param options.isSharedRestaurant - Флаг перехода по shared-ссылке
+ * @param options.eventData - Данные мероприятия (для EventBookingPage)
+ * 
+ * @returns Объект с состоянием формы, обработчиками и методами
+ * @returns form - Текущее состояние формы бронирования
+ * @returns isFormValid - Форма полностью валидна и готова к отправке
+ * @returns validationDisplay - Состояние валидации для отображения ошибок в UI
+ * @returns triggerValidation - Функция для ручного запуска валидации
+ * @returns availableDates - Список доступных дат для бронирования
+ * @returns availableTimeslots - Список доступных временных слотов
+ * @returns canShowTimeSlots - Флаг: можно показывать временные слоты
+ * @returns loading - Состояние загрузки (dates, timeslots, submit)
+ * @returns errors - Состояние ошибок
+ * @returns setErrorPopup - Управление popup с ошибкой
+ * @returns handlers - Объект с обработчиками изменений полей формы
+ * @returns createBooking - Функция создания бронирования
+ * @returns preSelectedRestaurant - Предвыбранный ресторан (если передан)
+ * @returns isSharedRestaurant - Флаг shared-ссылки
+ * @returns isEventBooking - Это бронирование на мероприятие
+ * @returns eventData - Данные мероприятия (если переданы)
  */
 export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
     const {
@@ -119,7 +299,11 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
         preSelectedRestaurant,
         initialBookingData,
         isSharedRestaurant = false,
+        eventData,
     } = options;
+    
+    // Флаг - это бронирование на мероприятие
+    const isEventBooking = !!eventData;
     const navigate = useNavigate();
     const { showToast } = useToastState();
 
@@ -228,6 +412,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
     const isInitialized = useRef(false);
     const initialBookingDataApplied = useRef(false);
     const preSelectedRestaurantApplied = useRef(false);
+    const eventDataApplied = useRef(false);
 
     // Мемоизируем начальные данные бронирования, чтобы избежать лишних ререндеров
     const initialDateValue = initialBookingData?.bookedDate?.value;
@@ -239,8 +424,24 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
         const initialState = getInitialBookingFormState(user);
         let shouldUpdate = false;
         
+        // Если есть данные мероприятия (применяем только один раз)
+        if (!eventDataApplied.current && eventData) {
+            initialState.restaurant = {
+                title: eventData.restaurantTitle || '',
+                value: eventData.restaurantId,
+                ...(eventData.restaurantAddress && { address: eventData.restaurantAddress }),
+            };
+            // Устанавливаем дату мероприятия
+            initialState.date = {
+                title: formatDate(eventData.dateStart),
+                value: eventData.dateStart.split('T')[0], // берём только дату
+            };
+            eventDataApplied.current = true;
+            shouldUpdate = true;
+        }
+        
         // Если есть предвыбранный ресторан (применяем только один раз)
-        if (!preSelectedRestaurantApplied.current && preSelectedRestaurant) {
+        if (!preSelectedRestaurantApplied.current && preSelectedRestaurant && !eventData) {
             initialState.restaurant = {
                 title: preSelectedRestaurant.title,
                 value: preSelectedRestaurant.id,
@@ -282,6 +483,9 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
         initialDateValue,
         initialTimeSlotStart,
         initialBookingData,
+        eventData?.id,
+        eventData?.restaurantId,
+        eventData?.dateStart,
     ]);
 
     // ============================================
@@ -443,6 +647,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
                     date: form.date,
                     time: form.selectedTimeSlot,
                     sharedRestaurant: isSharedRestaurant || !!preSelectedRestaurant,
+                    eventId: eventData?.id,
                 },
             });
             return;
@@ -471,7 +676,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
             comms,
             form.confirmation?.text ?? '',
             totalGuests < 8 ? false : form.preOrder,
-            null,
+            eventData?.id ?? null,
             form.certificateId
         )
             .then((res) => {
@@ -479,7 +684,12 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
                     setErrors(prev => ({ ...prev, popup: true, botError: true }));
                     return;
                 }
-                navigate(`/myBookings/${res.data.id}`);
+                // Если это бронирование на мероприятие - переходим на страницу билета
+                if (isEventBooking && res.data.ticket_id) {
+                    navigate(`/tickets/${res.data.ticket_id}`);
+                } else {
+                    navigate(`/myBookings/${res.data.id}`);
+                }
             })
             .catch((err) => {
                 console.error('Booking creation error:', err);
@@ -501,28 +711,65 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
         comms,
         isSharedRestaurant,
         preSelectedRestaurant,
+        eventData?.id,
+        isEventBooking,
     ]);
 
     return {
-        // Form state
+        // ============================================
+        // Состояние формы
+        // ============================================
+        
+        /** Текущее состояние всех полей формы бронирования */
         form,
         
-        // Validation
+        // ============================================
+        // Валидация
+        // ============================================
+        
+        /** `true` если все обязательные поля заполнены корректно */
         isFormValid,
+        /** Состояние валидации для отображения ошибок в UI */
         validationDisplay,
+        /** Функция для ручного запуска валидации (возвращает isFormValid) */
         triggerValidation,
         
-        // Data from API
+        // ============================================
+        // Данные из API
+        // ============================================
+        
+        /** Список доступных дат для бронирования (загружается по ресторану) */
         availableDates,
+        /** Список доступных временных слотов (загружается по дате и количеству гостей) */
         availableTimeslots,
+        /** `true` когда можно показывать временные слоты (выбрана дата и количество гостей > 0) */
         canShowTimeSlots,
         
-        // Loading & Error states
+        // ============================================
+        // Состояния загрузки и ошибок
+        // ============================================
+        
+        /** Состояние загрузки: { timeslots, dates, submit } */
         loading,
+        /** Состояние ошибок: { timeslots, popup, botError, popupCount } */
         errors,
+        /** Функция для управления отображением popup с ошибкой */
         setErrorPopup,
         
-        // Form handlers
+        // ============================================
+        // Обработчики изменений формы
+        // ============================================
+        
+        /**
+         * Объект с обработчиками для компонентов формы.
+         * @property selectRestaurant - Выбор ресторана (для CommonBookingHeader)
+         * @property selectDate - Выбор даты (для DateListSelector)
+         * @property setGuestCount - Изменение количества гостей
+         * @property setChildrenCount - Изменение количества детей
+         * @property selectTimeSlot - Выбор временного слота
+         * @property setConfirmation - Выбор способа подтверждения
+         * @property updateField - Универсальный метод для обновления любого поля
+         */
         handlers: {
             selectRestaurant: handleRestaurantSelect,
             selectDate: handleDateSelect,
@@ -533,11 +780,30 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
             updateField: handleFieldUpdate,
         },
         
-        // Actions
+        // ============================================
+        // Действия
+        // ============================================
+        
+        /** 
+         * Создаёт бронирование.
+         * - Проверяет onboarding (редирект если не пройден)
+         * - Запускает валидацию
+         * - Отправляет API-запрос
+         * - При успехе: навигация на страницу бронирования или билета (для events)
+         */
         createBooking,
         
-        // Info
+        // ============================================
+        // Информация о контексте
+        // ============================================
+        
+        /** Предвыбранный ресторан (если передан в options) */
         preSelectedRestaurant,
+        /** `true` если пользователь пришёл по shared-ссылке */
         isSharedRestaurant,
+        /** `true` если это бронирование на мероприятие */
+        isEventBooking,
+        /** Данные мероприятия (если переданы в options) */
+        eventData,
     };
 };
