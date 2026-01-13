@@ -69,11 +69,25 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
     
     /**
      * Если список бронирований не найден, то возвращаем плейсхолдер загрузки.
+     * Skeleton соответствует размерам и стилям реальной карточки бронирования.
      */
     if (!bookings) {
-        return [<div style={{ marginRight: '15px' }}>
-                <PlaceholderBlock width={'100%'} height={'108px'} rounded={'16px'} />
-            </div>] as JSX.Element[];
+        return [
+            <div key="booking-skeleton" className={css.bookingReminder} style={{ pointerEvents: 'none' }}>
+                <div className={css.inner}>
+                    {/* Название ресторана */}
+                    <PlaceholderBlock width="160px" height="20px" rounded="8px" />
+                    {/* Адрес */}
+                    <PlaceholderBlock width="200px" height="14px" rounded="6px" />
+                    {/* Время, дата, гости */}
+                    <div className={css.sub}>
+                        <PlaceholderBlock width="50px" height="14px" rounded="6px" />
+                        <PlaceholderBlock width="100px" height="14px" rounded="6px" />
+                        <PlaceholderBlock width="30px" height="14px" rounded="6px" />
+                    </div>
+                </div>
+            </div>
+        ] as JSX.Element[];
     }
 
     /**

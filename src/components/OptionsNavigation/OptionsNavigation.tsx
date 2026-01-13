@@ -28,7 +28,7 @@ export const OptionsNavigation: React.FC<IOptionsNavigationProps> = () => {
                     title={'Организовать праздник'}
                     img={gastroBtn3}
                     className={css.banquetsCTAbtn}
-                    link={'/banquets/:id/address'}
+                    link={'/banquets/:restaurantId/address'}
                 />
             </div>
             <OptionsNavigationElement

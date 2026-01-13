@@ -35,8 +35,8 @@ const generateTimeOptions = (start: string, end: string): PickerValueObj[] => {
     return options;
 };
 
-const getFullDayOptions = (): PickerValueObj[] => {
-    const options: PickerValueObj[] = [];
+const getFullDayOptions = (): PickerValue[] => {
+    const options: PickerValue[] = [];
     let current = moment('08:00', 'HH:mm');
     for (let i = 0; i < 24; i++) {
         options.push({
@@ -52,7 +52,7 @@ interface Props {
     isOpen: boolean;
     closePopup: () => void;
     time: PickerValue;
-    setTimeOption: Dispatch<SetStateAction<PickerValueObj>>;
+    setTimeOption: Dispatch<SetStateAction<PickerValue>>;
     minTime?: string;
     maxTime?: string;
 }
@@ -69,6 +69,7 @@ const StyledPopup = styled(Popup)`
         width: 100vw;
         margin: 0 !important;
         padding: 0;
+        width: 100vw!important;
     }
 `;
 
@@ -110,7 +111,7 @@ export const TimeSelectorPopup: FC<Props> = (
             >
                 <Picker.Column name={'value'}>
                     {timeOptions.map((option) => (
-                        <Picker.Item key={option.value} value={option}>
+                        <Picker.Item key={option.value as string} value={option.value}>
                             {({ selected }) => (
                                 <div className={css.selectorItem}>
                                     <span
@@ -119,7 +120,7 @@ export const TimeSelectorPopup: FC<Props> = (
                                             selected ? css.item__selected : null,
                                         )}
                                     >
-                                        {option.title}
+                                        {option.title as string}
                                     </span>
                                 </div>
                             )}

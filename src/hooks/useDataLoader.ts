@@ -191,6 +191,33 @@ export const useDataLoader = () => {
         };
     }, []);
 
+    /**
+     * Проверяет наличие кэшированных критичных данных.
+     * Используется для мгновенного показа UI при наличии кэша.
+     * 
+     * @returns true если есть кэш городов И ресторанов
+     */
+    const hasCachedCriticalData = useCallback((): boolean => {
+        const cachedCities = getCachedData<ICity[]>(CACHE_KEYS.cities);
+        const cachedRestaurants = getCachedData<IRestaurant[]>(CACHE_KEYS.restaurants);
+        
+        // Проверяем что кэш не пустой
+        const hasValidCache = !!(
+            cachedCities && 
+            cachedCities.length > 0 && 
+            cachedRestaurants && 
+            cachedRestaurants.length > 0
+        );
+        
+        // Если есть валидный кэш — сразу устанавливаем данные в атомы
+        if (hasValidCache) {
+            setCitiesList(cachedCities);
+            setRestaurantsList(cachedRestaurants);
+        }
+        
+        return hasValidCache;
+    }, [setCitiesList, setRestaurantsList]);
+
     return {
         loadCriticalData,
         loadEvents,
@@ -198,6 +225,7 @@ export const useDataLoader = () => {
         // loadGastronomyDishes,
         loadBackgroundData,
         resetLoadFlags,
+        hasCachedCriticalData,
     };
 };
 

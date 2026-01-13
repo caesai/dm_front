@@ -15,7 +15,7 @@ import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory';
+// import { useNavigationHistory } from '@/hooks/useNavigationHistory';
 import { useGetRestaurantById } from '@/atoms/restaurantsListAtom';
 
 interface INavigationBlockProps {
@@ -37,7 +37,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
     const restaurant = useGetRestaurantById(restaurantId);
     const user = useAtomValue(userAtom);
     const navigate = useNavigate();
-    const { goBack } = useNavigationHistory();
+    // const { goBack } = useNavigationHistory();
     /** Состояние скролла страницы и его установка */
     const [headerScrolled, setHeaderScrolled] = useAtom(headerScrolledAtom);
 
@@ -45,7 +45,7 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
         if (!user?.complete_onboarding) {
             navigate('/onboarding');
         } else {
-            goBack();
+            navigate('/');
         }
     };
 

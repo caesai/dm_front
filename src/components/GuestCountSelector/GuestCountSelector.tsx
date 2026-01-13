@@ -20,7 +20,7 @@ const StyledPopup = styled(Popup)`
     // use your custom style for ".popup-content"
 
     &-content {
-        width: 100vw;
+        width: 100vw!important;
         margin: 0 !important;
         padding: 0;
     }
@@ -167,7 +167,7 @@ export const GuestCountSelector: React.FC<IGuestCountSelectorProps> = ({
             />
             <DropDownSelect
                 title={guestCount ? getGuestsString(guestCount + childrenCount) : 'Гости'}
-                // isValid={guestsValidatedDisplay} // TODO: Добавить валидацию
+                isValid={true}
                 icon={<UsersIcon size={24} />}
                 onClick={toggleGuestCountPopup}
             />

@@ -55,6 +55,7 @@ export const CommonBookingHeader: React.FC<ICommonBookingHeaderProps> = ({
                 <RestaurantsListSelector onSelect={selectRestaurant} />
                 <ContentBlock className={css.selectorsRow}>
                     <DateListSelector 
+                        defaultTitle='Дата'
                         datesList={availableDates} 
                         onSelect={selectDate}
                         value={selectedDate}

@@ -76,7 +76,7 @@ export const DateListSelector: React.FC<IDateListSelectorProps> = ({
                     ? formatDateShort(selectedDate.value.toString()) 
                     : defaultTitle
                 }
-                // isValid={true} // TODO: Добавить валидацию
+                isValid={true}
                 icon={<CalendarIcon size={24} />}
                 onClick={togglePicker}
                 disabled={disabled}

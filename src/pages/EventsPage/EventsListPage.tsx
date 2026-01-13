@@ -1,3 +1,6 @@
+/**
+ * @fileoverview Страница списка мероприятий.
+ */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -29,6 +32,15 @@ const initialRestaurant: PickerValue = {
     value: 'unset',
 };
 
+/**
+ * Страница списка мероприятий.
+ *
+ * Позволяет просматривать список мероприятий и детали конкретного мероприятия.
+ * Также предоставляет возможность шэринга мероприятия.
+ *
+ * @component
+ * @returns {JSX.Element} - Компонент страницы списка мероприятий
+ */
 export const EventsListPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const [params] = useSearchParams();
@@ -60,7 +72,7 @@ export const EventsListPage: React.FC = (): JSX.Element => {
                     restaurant.city.name_english === currentCity.name_english &&
                     events?.some((event) => event.restaurant.id === restaurant.id)
             ),
-        [restaurants, currentCity]
+        [restaurants, currentCity, events]
     );
 
     // Фильтруем мероприятия по выбранному ресторану и городу

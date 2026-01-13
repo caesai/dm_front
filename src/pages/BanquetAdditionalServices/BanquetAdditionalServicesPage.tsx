@@ -1,59 +1,102 @@
+/**
+ * @fileoverview Страница выбора дополнительных услуг для банкета.
+ * 
+ * Четвёртый (опциональный) шаг в процессе бронирования банкета:
+ * 1. BanquetAddressPage (выбор ресторана)
+ * 2. ChooseBanquetOptionsPage (выбор опции банкета)
+ * 3. BanquetOptionPage (настройка банкета)
+ * 4. BanquetAdditionalServicesPage (дополнительные услуги) <- текущая страница
+ * 5. BanquetReservationPage (подтверждение)
+ * 
+ * Функциональность страницы:
+ * - Отображение списка доступных дополнительных услуг в виде чекбоксов
+ * - Выбор/отмена услуг через toggle
+ * - Сохранение выбранных услуг в banquetFormAtom
+ * - Переход на страницу подтверждения бронирования
+ * 
+ * Особенности логики:
+ * - Данные загружаются из banquetFormAtom через useBanquetForm hook
+ * - При отсутствии дополнительных услуг автоматический редирект на резервацию
+ * - При переходе далее устанавливается withAdditionalPage: true
+ * - Услуги не входят в стоимость и оплачиваются отдельно
+ * 
+ * @module pages/BanquetAdditionalServicesPage
+ * 
+ * @see {@link BanquetOptionPage} - предыдущий шаг (настройка банкета)
+ * @see {@link BanquetReservationPage} - следующий шаг (подтверждение)
+ * @see {@link useBanquetForm} - хук управления данными банкета
+ */
+import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+// Types
+import { IBanquetAdditionalOptions } from '@/types/banquets.types.ts';
+// Hooks
+import { useBanquetForm } from '@/hooks/useBanquetForm.ts';
+// Components
 import { Page } from '@/components/Page.tsx';
-import css from './BanquetAdditionalServicesPage.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
-import { useEffect, useState } from 'react';
 import { BanquetCheckbox } from '@/components/BanquetCheckbox/BanquetCheckbox.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { IBanquetAdditionalOptions } from '@/types/banquets.types.ts';
+// Styles
+import css from '@/pages/BanquetAdditionalServices/BanquetAdditionalServicesPage.module.css';
 
-export const BanquetAdditionalServicesPage = () => {
-    const location = useLocation();
+/**
+ * Страница выбора дополнительных услуг для банкета.
+ * 
+ * Отображает список дополнительных услуг в виде чекбоксов.
+ * Пользователь может выбрать любое количество услуг.
+ * При отсутствии доступных услуг происходит автоматический редирект
+ * на страницу бронирования.
+ * 
+ * @returns {JSX.Element} - Компонент страницы выбора дополнительных услуг
+ * 
+ * @example
+ * // URL: /banquets/:restaurantId/additional-services/:optionId
+ * // Данные загружаются из banquetFormAtom через useBanquetForm
+ */
+export const BanquetAdditionalServicesPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
-    const {id} = useParams();
-    const banquetData = location.state.banquetData;
-    const services = location.state.selectedServices;
-    const options: IBanquetAdditionalOptions[] = banquetData.additionalOptions;
-    const currentRestaurant = location.state.currentRestaurant;
+    const { restaurantId, optionId } = useParams();
+    const { form, handlers, navigateToReservation } = useBanquetForm();
+    
+    /** Список доступных дополнительных услуг из формы */
+    const additionalOptions: IBanquetAdditionalOptions[] = form.additionalOptions || [];
+    /** Список названий выбранных услуг */
+    const selectedServices = form.selectedServices;
 
-    const [selectedServices, setSelectedServices] = useState<string[]>(services || []);
-
-    const toggleService = (serviceName: string) => {
-        setSelectedServices(prev => {
-            if (prev.includes(serviceName)) {
-                return prev.filter(name => name !== serviceName);
-            } else {
-                return [...prev, serviceName];
-            }
-        });
+    /**
+     * Навигация назад на страницу настройки банкета.
+     */
+    const goBack = () => {
+        navigate(`/banquets/${restaurantId}/option/${optionId}`);
     };
 
-    const goBack = () => {
-        navigate(`/banquets/${id}/option`, { state: { ...location.state, selectedServices } });
-    }
-
+    /**
+     * Обработка перехода на страницу бронирования.
+     * 
+     * Действия:
+     * 1. Устанавливает withAdditionalPage: true в форме
+     * 2. Навигирует на страницу BanquetReservationPage
+     */
     const goNext = () => {
-        const reservationData = {
-            ...banquetData,
-            selectedServices,
-            withAdditionalPage: true,
-            currentRestaurant,
-        };
+        handlers.updateField({ withAdditionalPage: true });
+        navigateToReservation();
+    };
 
-        navigate(`/banquets/${id}/reservation`, {state: { ...location.state, reservationData}});
-    }
-
+    /**
+     * Эффект автоматического редиректа при отсутствии услуг.
+     * 
+     * Если дополнительные услуги отсутствуют (пустой массив или undefined),
+     * пользователь автоматически перенаправляется на страницу бронирования.
+     */
     useEffect(() => {
-        if (!options) {
-            navigate(`/banquets/${id}/reservation`, {
-                state: banquetData
-            });
+        if (!additionalOptions || additionalOptions.length === 0) {
+            navigateToReservation();
         }
-    }, [options, banquetData]);
-
+    }, [additionalOptions, navigateToReservation]);
     return (
         <Page back={true}>
             <div className={css.page}>
@@ -69,12 +112,12 @@ export const BanquetAdditionalServicesPage = () => {
                     <ContentContainer >
                         <ContentBlock>
                             <div className={css.checkbox}>
-                                {options && (
-                                    options.map((option: IBanquetAdditionalOptions) => (
+                                {additionalOptions && additionalOptions.length > 0 && (
+                                    additionalOptions.map((option: IBanquetAdditionalOptions) => (
                                         <BanquetCheckbox
                                             key={option.id}
                                             checked={selectedServices.includes(option.name)}
-                                            toggle={() => toggleService(option.name)}
+                                            toggle={() => handlers.toggleService(option.name)}
                                             label={option.name}
                                         />
                                     ))

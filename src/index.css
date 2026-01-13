@@ -302,8 +302,18 @@ button {
     font-style: normal;
 }
 
+/* ============================================================================
+   Критические стили для reactjs-popup (загружаются сразу, без задержки)
+   Это решает проблему "мигания" при lazy loading компонентов с popup
+   ============================================================================ */
 .popup-overlay {
     z-index: 100000 !important;
+    background: var(--popup-background);
+}
+
+/* Базовые стили для стандартных модальных окон */
+.popup-content {
+    background-color: var(--primary-background);
 }
 
 @keyframes slideUp {

@@ -1,30 +1,79 @@
+/**
+ * @fileoverview Страница подтверждения бронирования банкета.
+ * 
+ * Пятый (финальный) шаг в процессе бронирования банкета:
+ * 1. BanquetAddressPage (выбор ресторана)
+ * 2. ChooseBanquetOptionsPage (выбор опции банкета)
+ * 3. BanquetOptionPage (настройка банкета)
+ * 4. BanquetAdditionalServicesPage (дополнительные услуги) - опционально
+ * 5. BanquetReservationPage (подтверждение) <- текущая страница
+ * 
+ * Функциональность страницы:
+ * - Отображение сводки всех введённых данных о бронировании
+ * - Информация о пользователе (имя, телефон)
+ * - Ввод комментария к бронированию
+ * - Выбор способа связи (Telegram/телефон)
+ * - Отображение предварительной стоимости
+ * - Отправка запроса на бронирование
+ * 
+ * Особенности логики:
+ * - Данные загружаются из banquetFormAtom через useBanquetForm hook
+ * - Навигация назад зависит от withAdditionalPage флага
+ * - При успешном бронировании: показ toast, сброс формы, редирект на главную
+ * - Блок стоимости скрывается при отсутствии price или deposit
+ * 
+ * @module pages/BanquetReservationPage
+ * 
+ * @see {@link BanquetAdditionalServicesPage} - предыдущий шаг (опционально)
+ * @see {@link BanquetOptionPage} - предыдущий шаг (если нет доп. услуг)
+ * @see {@link useBanquetForm} - хук управления данными банкета
+ */
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAtomValue } from 'jotai';
+// Types
+import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+// Atoms
+import { userAtom } from '@/atoms/userAtom.ts';
+// Hooks
+import { useBanquetForm } from '@/hooks/useBanquetForm.ts';
+// Components
 import { Page } from '@/components/Page.tsx';
-import css from './BanquetReservation.module.css';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
-import { useState } from 'react';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { useAtom } from 'jotai';
-import { APIPostBanquetRequest } from '@/api/banquet.api.ts';
-import moment from 'moment';
 import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
-import useToastState from '@/hooks/useToastState.ts';
+// Styles
+import css from '@/pages/BanquetReservationPage/BanquetReservation.module.css';
 
-export const BanquetReservationPage = () => {
+/**
+ * Страница подтверждения бронирования банкета.
+ * 
+ * Отображает полную сводку данных бронирования и позволяет
+ * пользователю добавить комментарий, выбрать способ связи
+ * и отправить запрос на бронирование.
+ * 
+ * @returns {JSX.Element} - Компонент страницы подтверждения бронирования
+ * 
+ * @example
+ * // URL: /banquets/:restaurantId/reservation
+ * // Данные (включая optionId) загружаются из banquetFormAtom через useBanquetForm
+ * 
+ * @remarks
+ * optionId не передаётся через URL, а берётся из формы (banquetFormAtom),
+ * куда он был сохранён на этапе BanquetOptionPage. Это обеспечивает
+ * корректную навигацию назад независимо от URL.
+ */
+export const BanquetReservationPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const {id} = useParams();
-    const [user] = useAtom(userAtom)
-    const [auth] = useAtom(authAtom);
-    const { showToast } = useToastState();
-    const reservationData = location.state?.reservationData || location.state;
+    const { restaurantId } = useParams();
+    const user = useAtomValue(userAtom);
+    const { form, createBanquetRequest } = useBanquetForm();
 
+    /** Доступные способы связи для подтверждения бронирования */
     const confirmationList = [
         {
             id: 'telegram',
@@ -34,8 +83,13 @@ export const BanquetReservationPage = () => {
             id: 'phone',
             text: 'По телефону',
         },
-    ]
+    ];
 
+    /** 
+     * Деструктуризация данных формы бронирования.
+     * optionId берётся из формы, а не из useParams(),
+     * так как URL /banquets/:restaurantId/reservation не содержит optionId.
+     */
     const {
         date,
         timeFrom,
@@ -43,56 +97,70 @@ export const BanquetReservationPage = () => {
         guestCount,
         currentRestaurant,
         reason,
-        selectedServices = [],
+        selectedServices,
         price,
         withAdditionalPage,
-    } = reservationData;
+        optionId,
+    } = form;
     
+    /** Комментарий пользователя к бронированию */
     const [commentary, setCommentary] = useState<string>('');
+    /** Выбранный способ связи */
     const [confirmation, setConfirmation] = useState<IConfirmationType>({
         id: 'telegram',
         text: 'В Telegram',
     });
 
+    /**
+     * Навигация назад.
+     * 
+     * Логика:
+     * - При withAdditionalPage=true -> на страницу дополнительных услуг
+     * - При withAdditionalPage=false -> на страницу настройки банкета
+     */
     const goBack = () => {
         if (withAdditionalPage) {
-            navigate(`/banquets/${id}/additional-services`, { state: { ...location.state, selectedServices } });
+            navigate(`/banquets/${restaurantId}/additional-services/${optionId}`);
+        } else {
+            navigate(`/banquets/${restaurantId}/option/${optionId}`);
         }
-        else {
-            navigate(`/banquets/${id}/option`, { state: { ...location.state } });
-        }
-    }
-    const formattedDate = new Date(date).toLocaleDateString('ru-RU')
+    };
+    
+    /** Форматированная дата в формате DD.MM.YYYY */
+    const formattedDate = date ? new Date(date).toLocaleDateString('ru-RU') : '';
+    
+    /**
+     * Форматирует номер телефона для отображения.
+     * Добавляет "+ " перед номерами, начинающимися с 7.
+     * 
+     * @param number - Номер телефона
+     * @returns Отформатированный номер
+     */
     const formatNumber = (number: string) => {
-        return number[0] === '7' ?  `+ ${number}` : number
-    }
+        return number[0] === '7' ? `+ ${number}` : number;
+    };
 
+    /**
+     * Форматированный список выбранных услуг.
+     * Первая услуга с заглавной буквы, остальные - строчными.
+     * При отсутствии услуг - "Не выбраны".
+     */
     const services = selectedServices.length > 0
         ? selectedServices.map((service: string, index: number) => index !== 0 ? service.toLowerCase() : service).join(', ')
         : 'Не выбраны';
 
+    /**
+     * Создаёт запрос на бронирование банкета.
+     * 
+     * Вызывает createBanquetRequest из useBanquetForm с:
+     * - Комментарием пользователя
+     * - Выбранным способом связи
+     * 
+     * При успехе: toast с подтверждением, сброс формы, редирект на главную.
+     */
     const createBooking = () => {
-        if (!auth?.access_token) return;
-        APIPostBanquetRequest(auth?.access_token, {
-            restaurant_id: Number(id),
-            banquet_option: reservationData.name,
-            date: moment(date).toISOString(),
-            start_time: timeFrom,
-            end_time: timeTo,
-            guests_count: guestCount.value,
-            occasion: reason,
-            additional_services: selectedServices,
-            comment: commentary,
-            contact_method: confirmation.id,
-            estimated_cost: price.total,
-        }).then(res => {
-            //
-            if (res.data.status === 'success') {
-                showToast('Ваш запрос на бронирование банкета принят. Наш менеджер скоро свяжется с вами.');
-                navigate('/');
-            }
-        })
-    }
+        createBanquetRequest(commentary, confirmation.id);
+    };
 
     return (
         <Page back={true}>
@@ -102,7 +170,7 @@ export const BanquetReservationPage = () => {
                         icon={<BackIcon color={'var(--dark-grey)'} />}
                         action={goBack}
                     ></RoundedButton>
-                    <span className={css.header_title}>{currentRestaurant.title}</span>
+                    <span className={css.header_title}>{currentRestaurant?.title}</span>
                     <div />
                 </div>
                 <ContentContainer>
@@ -120,7 +188,7 @@ export const BanquetReservationPage = () => {
                                     </div>
                                     <div>
                                         <span>Гости</span>
-                                        <span>{guestCount?.title}</span>
+                                        <span>{guestCount?.title as string}</span>
                                     </div>
                                 </div>
                                 <div className={css.info__right}>
@@ -171,7 +239,7 @@ export const BanquetReservationPage = () => {
                             />
                         </div>
                     </ContentBlock>
-                    {price.deposit !== null && (
+                    {price && price.deposit !== null && (
                         <ContentBlock>
                             <span className={css.price_title}>Предварительная стоимость*:</span>
                             <div className={css.price}>
