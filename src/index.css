@@ -36,6 +36,17 @@ body::-webkit-scrollbar {
     text-decoration: none;
 }
 
+button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: 'Mont', sans-serif;
+    outline: none;
+    text-align: left;
+}
+
 .ReactCollapse--collapse {
     transition: height 500ms;
 }
@@ -291,8 +302,18 @@ body::-webkit-scrollbar {
     font-style: normal;
 }
 
+/* ============================================================================
+   Критические стили для reactjs-popup (загружаются сразу, без задержки)
+   Это решает проблему "мигания" при lazy loading компонентов с popup
+   ============================================================================ */
 .popup-overlay {
     z-index: 100000 !important;
+    background: var(--popup-background);
+}
+
+/* Базовые стили для стандартных модальных окон */
+.popup-content {
+    background-color: var(--primary-background);
 }
 
 @keyframes slideUp {

@@ -40,7 +40,7 @@ export interface IOrderItem {
 
 export interface ISendOrder {
     items: IOrderItem[];
-    restaurant_id: number;
+    restaurant_id: string;
     total_amount: number;
     delivery_method: TDeliveryMethod;
     delivery_address?: string;

@@ -2,7 +2,7 @@ import { IRestaurant } from "@/types/restaurant.types";
 import newSelfEdgeChinoisThumbnail from '/img/chinois_app.png';
 
 export const mockNewSelfEdgeChinoisRestaurant: IRestaurant = {
-    'id': 99,
+    'id': String(99),
     'title': 'Self Edge Chinois',
     'slogan': 'Современная Азия с акцентом на Китай и культовый raw bar',
     'address': 'Санкт-Петербург, ул. Добролюбова, 11',
@@ -17,7 +17,7 @@ export const mockNewSelfEdgeChinoisRestaurant: IRestaurant = {
     'address_station': '',
     'address_station_color': '',
     'city': {
-        'id': 2,
+        'id': Number(2),
         'name': 'Санкт-Петербург',
         'name_english': 'spb',
         'name_dative': 'Санкт-Петербурге',

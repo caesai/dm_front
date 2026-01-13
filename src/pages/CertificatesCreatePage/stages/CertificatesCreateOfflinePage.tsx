@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from 'react';
 // import { TextInput } from '@/components/TextInput/TextInput.tsx';
 // import { useNavigate } from 'react-router-dom';
-import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
-import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
-import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
-import { formatDateShort } from '@/utils.ts';
-import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
+// import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
+// import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
+// import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
+// import { formatDateShort } from '@/utils.ts';
+// import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
+// import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+// import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { Certificate } from '@/components/Certificate/Certificate.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
@@ -19,19 +19,19 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
     // const navigate = useNavigate();
     // const [name, setName] = useState<string>('');
 
-    const [restaurant, setRestaurant] = useState<PickerValueObj>({
-        title: 'unset',
-        value: 'unset',
-    });
-    const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
-    const [date, setDate] = useState<PickerValueObj>({
-        title: 'unset',
-        value: 'unset',
-    });
+    // const [restaurant, setRestaurant] = useState<PickerValueObj>({
+    //     title: 'unset',
+    //     value: 'unset',
+    // });
+    // const [restaurantListSelectorIsOpen, setRestaurantListSelectorIsOpen] = useState(false);
+    // const [date, setDate] = useState<PickerValueObj>({
+    //     title: 'unset',
+    //     value: 'unset',
+    // });
     // const [compliment, setCompliment] = useState<string>('');
     const [rating, setRating] = useState<string>('****');
     const [isReady, setIsReady] = useState(false);
-    const [datePopup, setDatePopup] = useState(false);
+    // const [datePopup, setDatePopup] = useState(false);
     // Use state to manage the button's position style declaratively
     // const [isInputFocused, setIsInputFocused] = useState(false);
 
@@ -87,7 +87,7 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
 
     return (
         <div className={css.content}>
-            <DateListSelector
+            {/* <DateListSelector
                 isOpen={datePopup}
                 setOpen={setDatePopup}
                 date={date}
@@ -99,7 +99,7 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
                 setOpen={setRestaurantListSelectorIsOpen}
                 restaurant={restaurant}
                 selectRestaurant={setRestaurant}
-            />
+            /> */}
             <Certificate
                 placeholder={rating === '****' ? 'Введите сумму' : rating + ' ₽'}
                 date={'20.11.2025'}
@@ -120,7 +120,7 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
                 </div>
             )}
             <div className={css.fields}>
-                <DropDownSelect
+                {/* <DropDownSelect
                     title={restaurant.value !== 'unset' ? restaurant?.title : 'Откуда заберете сертификат?'}
                     // isValid={dateValidated}
                     icon={<KitchenIcon size={24} />}
@@ -138,7 +138,7 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
                     onClick={() =>
                         setDatePopup(true)
                     }
-                />
+                /> */}
                 {/*<TextInput*/}
                 {/*    value={name}*/}
                 {/*    onChange={handleNameChange}*/}

@@ -1,12 +1,30 @@
-import React, { useEffect, useMemo, useState } from 'react';
+/**
+ * @fileoverview Страница детальной информации о ресторане.
+ * 
+ * Отображает полную информацию о ресторане с возможностью:
+ * - Просмотра фотогалереи ресторана
+ * - Просмотра меню и блюд
+ * - Просмотра информации о банкетах
+ * - Просмотра предстоящих мероприятий
+ * - Покупки сертификатов
+ * - Чтения о ресторане и шеф-поваре
+ * - Бронирования столика
+ * - Открытия местоположения в Яндекс Картах
+ * - Вызова такси через Яндекс
+ * - Звонка в ресторан
+ * 
+ * @module pages/RestaurantPage/RestaurantPage
+ * 
+ * @see {@link useRestaurantPageData} - хук загрузки данных страницы
+ * @see {@link useGetRestaurantById} - хук получения ресторана по ID
+ */
+
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAtom } from 'jotai';
-// Types
-import { IRestaurant } from '@/types/restaurant.types.ts';
+import { useAtomValue } from 'jotai';
 // Atoms
 import { userAtom } from '@/atoms/userAtom.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
@@ -14,7 +32,7 @@ import { RestaurantTopPreview } from '@/components/RestaurantTopPreview/Restaura
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { CallRestaurantPopup } from '@/components/CallRestaurantPopup/CallRestaurantPopup.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import { OptionsNavigationElement } from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.tsx';
+import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 // Page Blocks
 import { BookingBlock } from '@/pages/RestaurantPage/blocks/BookingsBlock.tsx';
 import { GalleryBlock } from '@/pages/RestaurantPage/blocks/GalleryBlock.tsx';
@@ -26,78 +44,97 @@ import { AboutBlock } from '@/pages/RestaurantPage/blocks/AboutBlock.tsx';
 import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock.tsx';
 import { AddressBlock } from '@/pages/RestaurantPage/blocks/AddressBlock.tsx';
 import { NavigationBlock } from '@/pages/RestaurantPage/blocks/NavigationBlock.tsx';
-import { GastronomyBlock } from '@/pages/RestaurantPage/blocks/GastronomyBlock.tsx';
-import { 
-    GalleryBlockSkeleton, 
-    MenuBlockSkeleton, 
-    AboutBlockSkeleton, 
-    ChefBlockSkeleton, 
-    AddressBlockSkeleton,
-    EventsBlockSkeleton,
-} from '@/pages/RestaurantPage/blocks/RestaurantPageSkeletons.tsx';
-// Types
-import { IEvent } from '@/types/events.types.ts';
-// Styles
-import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
-// Mocks
-import gastroBtn from '/img/gastro_btn1.png';
-import { certificateBlock } from '@/__mocks__/certificates.mock.ts';
-import { NewYearCookingData } from '@/__mocks__/gastronomy.mock.ts';
+import { YandexTaxiBlock } from '@/pages/RestaurantPage/blocks/YandexTaxiBlock.tsx';
 // Hooks
 import useToastState from '@/hooks/useToastState.ts';
 import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
 
-export const RestaurantPage: React.FC = () => {
+/**
+ * Страница детальной информации о ресторане.
+ *
+ * Отображает полную информацию о ресторане, включая:
+ * - Превью с основной информацией (название, адрес, рейтинг)
+ * - Блок бронирования с выбором даты и времени
+ * - Фотогалерею ресторана
+ * - Меню с возможностью перехода к детальному просмотру
+ * - Информацию о банкетных предложениях
+ * - Список предстоящих мероприятий
+ * - Блок покупки сертификатов
+ * - Описание ресторана и его особенностей
+ * - Информацию о шеф-поваре
+ * - Адрес с возможностью открытия в картах
+ * - Виджет вызова Яндекс Такси
+ * 
+ * Навигация на страницу бронирования происходит с учётом статуса онбординга пользователя:
+ * - Если онбординг не завершён — переход на `/onboarding/3` с передачей данных ресторана
+ * - Если онбординг завершён — переход на `/restaurant/:id/booking` с выбранной датой и временем
+ *
+ * @component
+ * @returns {JSX.Element} Компонент страницы ресторана
+ * 
+ * @example
+ * // Роутинг
+ * <Route path="/restaurant/:restaurantId" element={<RestaurantPage />} />
+ */
+export const RestaurantPage: React.FC = (): JSX.Element => {
+    /** Функция навигации из react-router-dom */
     const navigate = useNavigate();
-    const { id } = useParams();
-    const restaurantId = Number(id);
-
-    // Atoms
-    const [user] = useAtom(userAtom);
-    const [restaurants] = useAtom(restaurantsListAtom);
-    const [allGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
-
-    // Toast для ошибок
+    
+    /** ID ресторана из URL-параметров */
+    const { restaurantId } = useParams<{ restaurantId: string }>();
+    
+    /** 
+     * Данные текущего пользователя из глобального состояния.
+     * Используется для проверки статуса онбординга.
+     */
+    const user = useAtomValue(userAtom);
+    
+    /** 
+     * Данные ресторана по ID.
+     * Получается через мемоизированный атом restaurantByIdAtom.
+     */
+    const restaurant = useGetRestaurantById(restaurantId || '');
+    
+    /** Функция показа уведомлений об ошибках */
     const { showToast } = useToastState();
 
-    // Оптимизированная загрузка данных через хук
-    const {
-        events,
-        bookingDates,
-        bookingDate,
-        setBookingDate,
-        availableTimeslots,
-        timeslotLoading,
-        timeslotsError,
-        currentSelectedTime,
-        setCurrentSelectedTime,
-        isInitialLoading,
-    } = useRestaurantPageData({
-        restaurantId,
+    /**
+     * Данные страницы ресторана, загружаемые через оптимизированный хук.
+     * Включает: события, доступные даты, таймслоты для бронирования.
+     * 
+     * @see {@link useRestaurantPageData}
+     */
+    const { currentSelectedTime, date } = useRestaurantPageData({
+        restaurantId: restaurantId || '',
         onError: showToast,
     });
 
-    // Локальные состояния
-    const [restaurant, setRestaurant] = useState<IRestaurant>();
+    /** Состояние открытия попапа звонка в ресторан */
     const [isCallPopupOpen, setIsCallPopupOpen] = useState(false);
-    const [nyCookings] = useState(NewYearCookingData);
+
     /**
-     * Обрабатывает переход к бронированию столика
+     * Обрабатывает переход к бронированию столика.
+     * 
+     * Если пользователь не завершил онбординг — переход на `/onboarding/3`
+     * с передачей данных ресторана и выбранной даты/времени.
+     * 
+     * Если онбординг завершён — переход на страницу бронирования
+     * `/restaurant/:restaurantId/booking` с выбранной датой и временем.
      */
     const handleNextButtonClick = () => {
         if (!user?.complete_onboarding) {
             navigate('/onboarding/3', {
                 state: {
-                    id,
-                    bookedDate: bookingDate,
+                    id: restaurantId,
+                    bookedDate: date, // Передаём полный PickerValue объект
                     bookedTime: currentSelectedTime,
                     sharedRestaurant: true,
                 },
             });
         } else {
-            navigate(`/restaurant/${id}/booking`, {
+            navigate(`/restaurant/${restaurantId}/booking`, {
                 state: {
-                    bookedDate: bookingDate,
+                    bookedDate: date, // Передаём полный PickerValue объект
                     bookedTime: currentSelectedTime,
                 },
             });
@@ -105,53 +142,16 @@ export const RestaurantPage: React.FC = () => {
     };
 
     /**
-     * Открывает Яндекс Карты с местоположением ресторана
+     * Открывает Яндекс Карты с местоположением ресторана в новой вкладке.
+     * 
+     * Формирует URL с параметрами:
+     * - ll: координаты ресторана (longitude,latitude)
+     * - text: название ресторана для отображения на карте
+     * - z: уровень зума (17 — масштаб здания)
      */
     const handleOpenYandexMaps = () => {
         window.open(`https://maps.yandex.ru/?ll=${restaurant?.address_lonlng}&text=${restaurant?.title}&z=17`);
     };
-
-    /**
-     * Фильтрует события без билетов
-     * @returns {IEvent[] | undefined} Отфильтрованный список событий
-     */
-    const getFilteredEvents = (): IEvent[] | undefined => {
-        if (!events) return undefined;
-
-        return events.filter((event) => {
-            return event.tickets_left > 0;
-        });
-    };
-
-    /**
-     * Извлекает координаты из строки адреса
-     * @returns {{longitude: number, latitude: number}} Объект с координатами
-     */
-    const getRestaurantCoordinates = () => {
-        if (!restaurant?.address_lonlng) {
-            return { longitude: 0, latitude: 0 };
-        }
-
-        const [longitude, latitude] = restaurant.address_lonlng.split(',').map(Number);
-        return {
-            longitude,
-            latitude: latitude - 0.0003, // Корректировка для смещения маркера
-        };
-    };
-
-    // Инициализация ресторана из списка
-    useEffect(() => {
-        setRestaurant(restaurants.find((rest) => rest.id === restaurantId));
-    }, [restaurantId, restaurants]);
-    // Вычисляемые значения
-    const filteredEvents = useMemo(() => getFilteredEvents(), [events]);
-    const coordinates = useMemo(() => getRestaurantCoordinates(), [restaurant?.address_lonlng]);
-    const hasBanquets = restaurant?.banquets && restaurant?.banquets.banquet_options.length > 0;
-    const hasEvents = useMemo(() => Boolean(filteredEvents && filteredEvents.length > 0), [filteredEvents]);
-    const hasGastronomy = useMemo(
-        () => allGastronomyDishesList.some((dish) => dish.restaurant_id === Number(id)),
-        [allGastronomyDishesList, id]
-    );
 
     return (
         <Page back={true}>
@@ -161,17 +161,38 @@ export const RestaurantPage: React.FC = () => {
                 phone={restaurant?.phone_number || ''}
             />
 
-            <NavigationBlock
-                restaurant_id={Number(id)}
-                title={restaurant?.title}
-                isBanquets={Boolean(hasBanquets)}
-                isLoading={isInitialLoading}
-                isGastronomy={hasGastronomy}
-                isEvents={hasEvents}
-                isMenu={Boolean(restaurant?.menu.length) || Boolean(restaurant?.menu_imgs.length)}
-            />
+            <NavigationBlock restaurantId={restaurantId || ''} />
 
-            <div className={css.floatingFooter}>
+            <PageContainer>
+                <RestaurantTopPreview restaurantId={restaurantId || ''} />
+
+                {/* Яндекс Такси виджет */}
+                <YandexTaxiBlock restaurantId={restaurantId || ''} />
+
+                <BookingBlock restaurantId={restaurantId || ''} />
+
+                {/* Галерея */}
+                <GalleryBlock restaurantId={restaurantId || ''} />
+
+                {/* Меню */}
+                <MenuBlock restaurantId={restaurantId || ''} />
+
+                {/* Банкеты */}
+                <BanquetsBlock restaurantId={restaurantId || ''} />
+
+                {/* События */}
+                <EventsBlock restaurantId={restaurantId || ''} />
+
+                <CertificateBlock />
+
+                {/* О месте */}
+                <AboutBlock restaurantId={restaurantId || ''} />
+
+                {/* О шефе */}
+                <ChefBlock restaurantId={restaurantId || ''} />
+
+                {/* Адрес */}
+                <AddressBlock restaurantId={restaurantId || ''} />
                 <BottomButtonWrapper
                     onClick={handleNextButtonClick}
                     additionalBtns={
@@ -181,143 +202,7 @@ export const RestaurantPage: React.FC = () => {
                         />
                     }
                 />
-            </div>
-
-            <div className={css.pageContainer}>
-                <RestaurantTopPreview restaurant={restaurant} />
-
-                {/* Яндекс Такси виджет */}
-                <div className={css.yaTaxi}>
-                    <div
-                        key="taxi1"
-                        className="ya-taxi-widget"
-                        data-ref="https%3A%2F%2Fdemo.efinskiy.ru%2F"
-                        data-proxy-url="https://{app}.redirect.appmetrica.yandex.com/route?end-lat={end-lat}&amp;end-lon={end-lon}&amp;tariffClass={tariff}&amp;ref={ref}&amp;appmetrica_tracking_id={redirect}&amp;lang={lang}&amp;erid={erid}"
-                        data-tariff="econom"
-                        data-app="3"
-                        data-lang="ru"
-                        data-redirect="1178268795219780156"
-                        data-description={restaurant?.address}
-                        data-size="s"
-                        data-theme="normal"
-                        data-title="Вызвать такси"
-                        data-use-location="false"
-                        data-point-a=""
-                        data-point-b={restaurant?.address_lonlng}
-                    />
-                </div>
-
-                <div className={css.gastronomyBanner}>
-                    {hasGastronomy && (
-                        <OptionsNavigationElement
-                            isLoading={false}
-                            title={'Новогодняя кулинария'}
-                            subtitle={'Оформите предзаказ блюд для всей семьи к новогоднему столу'}
-                            img={gastroBtn}
-                            className={css.gastronomyBannerButton}
-                            textWrapperClassName={css.gastronomyBannerText}
-                            link={'/gastronomy/choose'}
-                            locationState={{ restaurant }}
-                        />
-                    )}
-                </div>
-
-                <BookingBlock
-                    currentSelectedTime={currentSelectedTime}
-                    workTime={restaurant?.worktime}
-                    bookingDate={bookingDate}
-                    bookingDates={bookingDates}
-                    setBookingDate={setBookingDate}
-                    timeslotLoading={timeslotLoading}
-                    availableTimeslots={availableTimeslots}
-                    setCurrentSelectedTime={setCurrentSelectedTime}
-                    isNavigationLoading={isInitialLoading}
-                    isGastronomy={hasGastronomy}
-                    isBanquets={Boolean(hasBanquets)}
-                    isEvents={hasEvents}
-                    isMenu={Boolean(restaurant?.menu.length) || Boolean(restaurant?.menu_imgs.length)}
-                    timeslotsError={timeslotsError}
-                />
-
-                {/* Галерея */}
-                {restaurant?.gallery ? (
-                    <GalleryBlock restaurant_gallery={restaurant.gallery} />
-                ) : (
-                    <GalleryBlockSkeleton />
-                )}
-
-                {/* Меню */}
-                {restaurant?.menu_imgs ? (
-                    <MenuBlock restaurant_id={restaurant.id} menu_imgs={restaurant.menu_imgs} menu={restaurant.menu} />
-                ) : (
-                    <MenuBlockSkeleton />
-                )}
-
-                {/* Банкеты */}
-                {restaurant && hasBanquets && (
-                    <BanquetsBlock
-                        image={restaurant.banquets.image}
-                        description={restaurant.banquets.description}
-                        restaurant={restaurant}
-                        workTime={restaurant.worktime}
-                    />
-                )}
-
-                {/* События */}
-                {isInitialLoading ? (
-                    <EventsBlockSkeleton />
-                ) : (
-                    hasEvents && <EventsBlock events={events} />
-                )}
-
-                <CertificateBlock image={certificateBlock.image} description={certificateBlock.description} />
-
-                {/* Гастрономия */}
-                {restaurant && hasGastronomy && (
-                    <GastronomyBlock
-                        description={nyCookings.description}
-                        image={nyCookings.image}
-                        currentRestaurant={restaurant}
-                    />
-                )}
-
-                {/* О месте */}
-                {restaurant ? (
-                    <AboutBlock
-                        about_text={String(restaurant.about_text)}
-                        about_kitchen={String(restaurant.about_kitchen)}
-                        about_features={String(restaurant.about_features)}
-                        avg_cheque={String(restaurant.avg_cheque)}
-                        workTime={restaurant.worktime}
-                    />
-                ) : (
-                    <AboutBlockSkeleton />
-                )}
-
-                {/* О шефе */}
-                {restaurant?.brand_chef ? (
-                    <ChefBlock
-                        about={String(restaurant.brand_chef.about)}
-                        photo_url={String(restaurant.brand_chef.photo_url)}
-                        chef_names={restaurant.brand_chef.names || []}
-                    />
-                ) : (
-                    <ChefBlockSkeleton />
-                )}
-
-                {/* Адрес */}
-                {restaurant ? (
-                    <AddressBlock
-                        longitude={coordinates.longitude}
-                        latitude={coordinates.latitude}
-                        address={String(restaurant.address)}
-                        logo_url={String(restaurant.logo_url)}
-                        address_station_color={String(restaurant.address_station_color)}
-                    />
-                ) : (
-                    <AddressBlockSkeleton />
-                )}
-            </div>
+            </PageContainer>
         </Page>
     );
 };

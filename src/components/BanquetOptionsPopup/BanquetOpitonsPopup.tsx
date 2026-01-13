@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Popup from 'reactjs-popup';
 import { Dispatch, FC, SetStateAction, useEffect } from 'react';
 import Picker, { PickerValue } from '@/lib/react-mobile-picker';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import classNames from 'classnames';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 
@@ -12,7 +11,7 @@ interface Props {
     isOpen: boolean;
     closePopup: () => void;
     guestCount: PickerValue;
-    setGuestCount: Dispatch<SetStateAction<PickerValueObj>>;
+    setGuestCount: Dispatch<SetStateAction<PickerValue>>;
     minGuests: number;
     maxGuests: number;
 }
@@ -29,27 +28,25 @@ const StyledPopup = styled(Popup)`
         width: 100vw;
         margin: 0 !important;
         padding: 0;
+        width: 100vw!important;
     }
 `;
 
 export const BanquetOptionsPopup: FC<Props> = ({
-                                                   isOpen,
-                                                   closePopup,
-                                                   guestCount,
-                                                   setGuestCount,
-                                                   minGuests,
-                                                   maxGuests
-                                               }) => {
-    const guestOptions: PickerValueObj[] = Array.from(
-        { length: maxGuests - minGuests + 1 },
-        (_, i) => {
-            const count = i + minGuests;
-            return {
-                title: count.toString(),
-                value: count.toString()
-            };
-        }
-    );
+    isOpen,
+    closePopup,
+    guestCount,
+    setGuestCount,
+    minGuests,
+    maxGuests,
+}) => {
+    const guestOptions: PickerValue[] = Array.from({ length: maxGuests - minGuests + 1 }, (_, i) => {
+        const count = i + minGuests;
+        return {
+            title: count.toString(),
+            value: count.toString(),
+        };
+    });
 
     useEffect(() => {
         if (isOpen && guestCount.value === 'unset') {
@@ -57,17 +54,16 @@ export const BanquetOptionsPopup: FC<Props> = ({
         }
     }, [isOpen]);
 
-    const onChange = (val: PickerValueObj) => {
+    const onChange = (val: PickerValue) => {
         setGuestCount({
             title: `${val.value} гостей`,
-            value: val.value
+            value: val.value,
         });
     };
 
     const picker = (
         <>
             <Picker
-                // @ts-expect-error broken-lib
                 value={guestCount}
                 onChange={onChange}
                 wheelMode="natural"
@@ -75,16 +71,11 @@ export const BanquetOptionsPopup: FC<Props> = ({
             >
                 <Picker.Column name={'value'}>
                     {guestOptions.map((option) => (
-                        <Picker.Item key={option.value} value={option}>
+                        <Picker.Item key={option.value as string} value={option.value as string}>
                             {({ selected }) => (
                                 <div className={css.selectorItem}>
-                                    <span
-                                        className={classNames(
-                                            css.item,
-                                            selected ? css.item__selected : null
-                                        )}
-                                    >
-                                        {option.title}
+                                    <span className={classNames(css.item, selected ? css.item__selected : null)}>
+                                        {option.title as string}
                                     </span>
                                 </div>
                             )}

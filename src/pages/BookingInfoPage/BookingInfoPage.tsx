@@ -285,7 +285,7 @@ export const BookingInfoPage: React.FC = () => {
                                     <>
                                         {/** TODO: Убрать условие после 21.12.2025 */}
                                         {/* Если ресторан не SELF_EDGE_SPB_CHINOIS_ID, то показываем кнопку "Смотреть меню" */}
-                                        {booking.restaurant.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID) && (
+                                        {String(booking.restaurant.id) !== String(R.SELF_EDGE_SPB_CHINOIS_ID) && (
                                             <div
                                                 className={css.redButton}
                                                 onClick={() =>
