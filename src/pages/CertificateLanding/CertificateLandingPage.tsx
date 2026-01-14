@@ -271,7 +271,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
      *
      * @returns {void}
      */
-    const goHome = () => {
+    const goHome = (): void => {
         navigate('/');
     };
 
@@ -280,7 +280,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
      *
      * @returns {void}
      */
-    const goToOnboarding = () => {
+    const goToOnboarding = (): void => {
         navigate('/onboarding/3', { state: { certificateId: id, sharedCertificate: true, certificate: true } });
     };
 
@@ -294,7 +294,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
      * @fires navigate - Перенаправляет на страницу бронирования для авторизованных пользователей
      * @returns {void}
      */
-    const goToBooking = () => {
+    const goToBooking = (): void => {
         if (!user?.complete_onboarding) {
             setIsShowing(true);
             return;
