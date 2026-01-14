@@ -27,6 +27,9 @@ import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { BanquetReservationPage } from '@/pages/BanquetReservationPage/BanquetReservationPage.tsx';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
+import { mockBanquetFormData } from '@/__mocks__/banquets.mock';
+import { mockUserData } from '@/__mocks__/user.mock';
+import { IBanquetFormState } from '@/atoms/banquetFormAtom.ts';
 
 // ============================================
 // Моки внешних зависимостей
@@ -44,12 +47,13 @@ jest.mock('react-router-dom', () => ({
 
 /**
  * Мок Jotai useAtomValue для userAtom.
+ * Используем mockUserData с переопределёнными полями для теста.
  */
 const mockUser = {
+    ...mockUserData,
     first_name: 'Иван',
     last_name: 'Петров',
     phone_number: '79001234567',
-    complete_onboarding: true,
 };
 
 jest.mock('jotai', () => ({
@@ -66,56 +70,7 @@ jest.mock('jotai', () => ({
  */
 const mockCreateBanquetRequest = jest.fn().mockResolvedValue(true);
 
-/**
- * Интерфейс для моковых данных формы.
- * Соответствует IBanquetFormState из banquetFormAtom.
- */
-interface IMockFormData {
-    name: string | undefined;
-    date: Date | null;
-    timeFrom: string;
-    timeTo: string;
-    guestCount: { value: string; title: string };
-    currentRestaurant: { id: number; title: string; address: string } | undefined;
-    restaurantId: string;
-    optionId: string;
-    reason: string;
-    additionalOptions: { id: number; name: string }[];
-    selectedServices: string[];
-    withAdditionalPage: boolean;
-    price: {
-        deposit: number | null;
-        totalDeposit: number;
-        serviceFee: number;
-        total: number;
-    } | null;
-}
-
-const mockFormData: IMockFormData = {
-    name: 'Банкетный зал "Премиум"',
-    date: new Date('2026-02-15'),
-    timeFrom: '18:00',
-    timeTo: '22:00',
-    guestCount: { value: '25', title: '25 человек' },
-    currentRestaurant: { id: 1, title: 'Ресторан "Гурман"', address: 'ул. Ленина, 1' },
-    restaurantId: '1',
-    optionId: '14',
-    reason: 'День рождения',
-    additionalOptions: [
-        { id: 1, name: 'Цветочное оформление' },
-        { id: 2, name: 'Фотограф' },
-    ],
-    selectedServices: ['Цветочное оформление', 'Фотограф'],
-    withAdditionalPage: true,
-    price: {
-        deposit: 3000,
-        totalDeposit: 75000,
-        serviceFee: 10,
-        total: 82500,
-    },
-};
-
-let mockForm: IMockFormData = { ...mockFormData };
+let mockForm: IBanquetFormState = { ...mockBanquetFormData };
 
 jest.mock('@/hooks/useBanquetForm.ts', () => ({
     useBanquetForm: () => ({
@@ -328,7 +283,7 @@ describe('BanquetReservationPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         // Reset mock form to default state
-        mockForm = { ...mockFormData };
+        mockForm = { ...mockBanquetFormData };
 
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -506,7 +461,7 @@ describe('BanquetReservationPage', () => {
          * Проверяет отображение "Не выбраны" при отсутствии услуг.
          */
         it('должен отображать "Не выбраны" при пустом списке услуг', () => {
-            mockForm = { ...mockFormData, selectedServices: [] };
+            mockForm = { ...mockBanquetFormData, selectedServices: [] };
             
             renderComponent();
 
@@ -581,7 +536,7 @@ describe('BanquetReservationPage', () => {
          * Проверяет скрытие блока стоимости при отсутствии price.
          */
         it('не должен отображать блок стоимости при отсутствии price', () => {
-            mockForm = { ...mockFormData, price: null };
+            mockForm = { ...mockBanquetFormData, price: null };
             
             renderComponent();
 
@@ -593,8 +548,8 @@ describe('BanquetReservationPage', () => {
          */
         it('не должен отображать блок стоимости при deposit = null', () => {
             mockForm = { 
-                ...mockFormData, 
-                price: { ...mockFormData.price!, deposit: null } 
+                ...mockBanquetFormData, 
+                price: { ...mockBanquetFormData.price!, deposit: null } 
             };
             
             renderComponent();
@@ -700,7 +655,7 @@ describe('BanquetReservationPage', () => {
          * Проверяет навигацию назад на страницу дополнительных услуг.
          */
         it('должен навигировать на страницу дополнительных услуг при withAdditionalPage=true', async () => {
-            mockForm = { ...mockFormData, withAdditionalPage: true };
+            mockForm = { ...mockBanquetFormData, withAdditionalPage: true };
             
             renderComponent();
 
@@ -716,7 +671,7 @@ describe('BanquetReservationPage', () => {
          * Проверяет навигацию назад на страницу опции.
          */
         it('должен навигировать на страницу опции при withAdditionalPage=false', async () => {
-            mockForm = { ...mockFormData, withAdditionalPage: false };
+            mockForm = { ...mockBanquetFormData, withAdditionalPage: false };
             
             renderComponent();
 
@@ -792,7 +747,7 @@ describe('BanquetReservationPage', () => {
          * Проверяет работу при undefined currentRestaurant.
          */
         it('должен корректно работать при undefined currentRestaurant', () => {
-            mockForm = { ...mockFormData, currentRestaurant: undefined };
+            mockForm = { ...mockBanquetFormData, currentRestaurant: undefined };
             
             renderComponent();
 
@@ -820,7 +775,7 @@ describe('BanquetReservationPage', () => {
          * Проверяет работу с одной услугой.
          */
         it('должен корректно форматировать одну услугу', () => {
-            mockForm = { ...mockFormData, selectedServices: ['Фотограф'] };
+            mockForm = { ...mockBanquetFormData, selectedServices: ['Фотограф'] };
             
             renderComponent();
 
@@ -832,7 +787,7 @@ describe('BanquetReservationPage', () => {
          */
         it('должен корректно форматировать несколько услуг', () => {
             mockForm = { 
-                ...mockFormData, 
+                ...mockBanquetFormData, 
                 selectedServices: ['Цветочное оформление', 'Фотограф', 'DJ'] 
             };
             
@@ -845,7 +800,7 @@ describe('BanquetReservationPage', () => {
          * Проверяет работу при null date.
          */
         it('должен отображать пустую дату при null', () => {
-            mockForm = { ...mockFormData, date: null };
+            mockForm = { ...mockBanquetFormData, date: null };
             
             renderComponent();
 
@@ -897,7 +852,7 @@ describe('BanquetReservationPage', () => {
          * Проверяет использование restaurantId из URL и optionId из формы.
          */
         it('должен использовать restaurantId из URL и optionId из формы', async () => {
-            mockForm = { ...mockFormData, optionId: '15', withAdditionalPage: true };
+            mockForm = { ...mockBanquetFormData, optionId: '15', withAdditionalPage: true };
             
             renderComponent({ restaurantId: '42' });
 
@@ -913,7 +868,7 @@ describe('BanquetReservationPage', () => {
          * Проверяет что optionId берётся из формы, а не из URL.
          */
         it('должен использовать optionId из формы для навигации', async () => {
-            mockForm = { ...mockFormData, optionId: '99', withAdditionalPage: false };
+            mockForm = { ...mockBanquetFormData, optionId: '99', withAdditionalPage: false };
             
             renderComponent({ restaurantId: '1' });
 

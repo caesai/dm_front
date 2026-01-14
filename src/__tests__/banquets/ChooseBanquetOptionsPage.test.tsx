@@ -27,9 +27,15 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.tsx';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { banquetData } from '@/__mocks__/banquets.mock';
+import { 
+    banquetData, 
+    mockBanquetOptionLongDescription, 
+    mockBanquetOptionShortDescription, 
+    mockBanquetOptionNoDeposit, 
+    mockBanquetOptionFreeDeposit 
+} from '@/__mocks__/banquets.mock';
+import { mockRestaurantWithoutBanquets } from '@/__mocks__/restaurant.mock';
 import { IRestaurant } from '@/types/restaurant.types.ts';
-import { IBanquetOptions } from '@/types/banquets.types.ts';
 
 // ============================================
 // Моки внешних зависимостей
@@ -66,38 +72,6 @@ jest.mock('@telegram-apps/sdk-react', () => ({
         },
         unmount: jest.fn(),
     },
-}));
-
-/**
- * Мок Swiper и SwiperSlide.
- * Упрощённая версия для тестирования без реальной карусели.
- */
-jest.mock('swiper/react', () => ({
-    Swiper: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-        <div data-testid="swiper" className={className}>
-            {children}
-        </div>
-    ),
-    SwiperSlide: ({ 
-        children, 
-        onClick, 
-        className 
-    }: { 
-        children: React.ReactNode; 
-        onClick?: () => void; 
-        className?: string 
-    }) => (
-        <div data-testid="swiper-slide" onClick={onClick} className={className}>
-            {children}
-        </div>
-    ),
-}));
-
-/**
- * Мок модулей Swiper.
- */
-jest.mock('swiper/modules', () => ({
-    Pagination: jest.fn(),
 }));
 
 /**
@@ -201,84 +175,7 @@ jest.mock('@/components/BanquetGallery/BanquetGallery.tsx', () => ({
 // ============================================
 
 /**
- * Моковая банкетная опция с полным описанием.
- * Описание > 60 символов для тестирования "Читать больше".
- */
-const mockBanquetOptionLongDescription: IBanquetOptions = {
-    id: 1,
-    name: 'Банкетный зал "Премиум"',
-    guests_min: 10,
-    guests_max: 50,
-    deposit: 5000,
-    deposit_message: null,
-    description: 'Роскошный банкетный зал для проведения свадеб, юбилеев и корпоративных мероприятий. Панорамные окна с видом на город.',
-    service_fee: 10,
-    max_duration: null,
-    images: [
-        'https://example.com/image1.jpg',
-        'https://example.com/image2.jpg',
-    ],
-};
-
-/**
- * Моковая банкетная опция с коротким описанием.
- * Описание < 60 символов - кнопка "Читать больше" не отображается.
- */
-const mockBanquetOptionShortDescription: IBanquetOptions = {
-    id: 2,
-    name: 'Зал "Камерный"',
-    guests_min: 5,
-    guests_max: 15,
-    deposit: 3000,
-    deposit_message: null,
-    description: 'Уютный зал для небольших компаний.',
-    service_fee: 10,
-    max_duration: null,
-    images: [
-        'https://example.com/image3.jpg',
-    ],
-};
-
-/**
- * Моковая банкетная опция без депозита.
- * Отображает deposit_message вместо суммы.
- */
-const mockBanquetOptionNoDeposit: IBanquetOptions = {
-    id: 3,
-    name: 'Летняя терраса',
-    guests_min: 8,
-    guests_max: 30,
-    deposit: null,
-    deposit_message: 'Депозит обсуждается индивидуально',
-    description: null,
-    service_fee: 0,
-    max_duration: null,
-    images: [
-        'https://example.com/image4.jpg',
-    ],
-};
-
-/**
- * Моковая банкетная опция без депозита и без сообщения.
- * Отображает "Без депозита".
- */
-const mockBanquetOptionFreeDeposit: IBanquetOptions = {
-    id: 4,
-    name: 'VIP-комната',
-    guests_min: 2,
-    guests_max: 8,
-    deposit: null,
-    deposit_message: null,
-    description: null,
-    service_fee: 0,
-    max_duration: null,
-    images: [
-        'https://example.com/image5.jpg',
-    ],
-};
-
-/**
- * Моковый ресторан с банкетными опциями.
+ * Моковый ресторан с кастомными банкетными опциями для тестов.
  */
 const mockRestaurantWithBanquets: IRestaurant = {
     id: '1',
@@ -325,20 +222,6 @@ const mockRestaurantWithBanquets: IRestaurant = {
     menu_imgs: [],
     worktime: [{ weekday: 'пн-вс', time_start: '12:00', time_end: '23:00' }],
     socials: [],
-};
-
-/**
- * Моковый ресторан без банкетных опций.
- */
-const mockRestaurantWithoutBanquets: IRestaurant = {
-    ...mockRestaurantWithBanquets,
-    id: '2',
-    banquets: {
-        banquet_options: [],
-        additional_options: [],
-        description: '',
-        image: '',
-    },
 };
 
 // ============================================

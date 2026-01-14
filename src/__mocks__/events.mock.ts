@@ -1,5 +1,8 @@
 import { IEvent } from '@/types/events.types.ts';
 
+/**
+ * Список мероприятий для тестов.
+ */
 export const mockEventsList: IEvent[] = [
     {
         id: Number(122),
@@ -73,3 +76,28 @@ export const mockEventsList: IEvent[] = [
         date_end: '',
     },
 ];
+
+/**
+ * Список мероприятий с заполненными image_url.
+ * Без image_url карточки могут отображаться некорректно.
+ */
+export const mockEventsWithImages: IEvent[] = mockEventsList.map(e => ({
+    ...e,
+    image_url: e.image_url || 'https://example.com/default-event-image.jpg',
+}));
+
+/**
+ * Бесплатное мероприятие для тестов.
+ */
+export const freeEvent: IEvent = {
+    ...mockEventsList[0],
+    ticket_price: 0,
+};
+
+/**
+ * Платное мероприятие для тестов.
+ */
+export const paidEvent: IEvent = {
+    ...mockEventsList[1],
+    ticket_price: 3000,
+};

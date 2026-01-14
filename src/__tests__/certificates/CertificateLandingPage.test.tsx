@@ -63,17 +63,6 @@ jest.mock('@/api/base', () => ({
     EGIFT_API_TOKEN: 'MOCK_EGIFT_API_TOKEN',
 }));
 
-jest.mock('swiper/react', () => ({
-    Swiper: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    SwiperSlide: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-}));
-
-jest.mock('swiper/modules', () => ({
-    Navigation: jest.fn(),
-    Pagination: jest.fn(),
-    Autoplay: jest.fn(),
-}));
-jest.mock('swiper/css/bundle', () => 'mock-css-bundle');
 // Mock react-router-dom
 const mockedNavigate = jest.fn();
 const mockUseParams = jest.fn();

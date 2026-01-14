@@ -27,7 +27,8 @@ import { cityListAtom, currentCityAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock';
-import { mockEventsList } from '@/__mocks__/events.mock';
+import { mockEventsWithImages } from '@/__mocks__/events.mock';
+import { mockCityList } from '@/__mocks__/city.mock';
 import { IUser } from '@/types/user.types.ts';
 import { IEvent } from '@/types/events.types.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
@@ -35,25 +36,6 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 // ============================================
 // Моки внешних зависимостей
 // ============================================
-
-/**
- * Мок Swiper для карусели.
- * Заменяет реальные компоненты Swiper на простые div-обёртки.
- */
-jest.mock('swiper/react', () => {
-    const React = require('react');
-    return {
-        Swiper: ({ children }: any) => React.createElement('div', { 'data-testid': 'swiper' }, children),
-        SwiperSlide: ({ children }: any) => React.createElement('div', { 'data-testid': 'swiper-slide' }, children),
-    };
-});
-
-/**
- * Мок модулей Swiper.
- */
-jest.mock('swiper/modules', () => ({
-    FreeMode: jest.fn(),
-}));
 
 /**
  * Мок Telegram SDK.
@@ -124,20 +106,11 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 // ============================================
-// Тестовые данные
+// Тестовые данные - импортируются из __mocks__
 // ============================================
 
 /**
- * Список городов для тестов.
- * Содержит Москву и Санкт-Петербург.
- */
-const mockCityList: ICity[] = [
-    { id: 1, name: 'Москва', name_english: 'moscow', name_dative: 'Москве' },
-    { id: 2, name: 'Санкт-Петербург', name_english: 'spb', name_dative: 'Санкт-Петербурге' },
-];
-
-/**
- * Список ресторанов для тестов.
+ * Список ресторанов для тестов событий.
  * - Self Edge Japanese (id: 4) - СПб
  * - Self Edge Moscow (id: 10) - Москва
  */
@@ -195,15 +168,6 @@ const mockRestaurants: IRestaurant[] = [
         socials: [],
     },
 ];
-
-/**
- * Список мероприятий с заполненными image_url.
- * Без image_url карточки могут отображаться некорректно.
- */
-const mockEventsWithImages: IEvent[] = mockEventsList.map(e => ({
-    ...e,
-    image_url: e.image_url || 'https://example.com/default-event-image.jpg',
-}));
 
 // ============================================
 // Тестовый набор

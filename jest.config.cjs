@@ -37,10 +37,12 @@ module.exports = {
     "^@/(.*)$": "<rootDir>/src/$1",
     '^/img/(.*)$': '<rootDir>/public/img/$1',
     '^swiper/react$': '<rootDir>/src/__mocks__/swiper/react.js',
+    '^swiper/modules$': '<rootDir>/src/__mocks__/swiper/modules.js',
     'swiper/css': '<rootDir>/src/__mocks__/styleMock.js',
     '^swiper/css/bundle$': '<rootDir>/src/__mocks__/styleMock.js',
     'swiper/css/pagination': '<rootDir>/src/__mocks__/styleMock.js',
     'swiper/react': '<rootDir>/src/__mocks__/swiper/react.js',
+    'swiper/modules': '<rootDir>/src/__mocks__/swiper/modules.js',
   },
   setupFilesAfterEnv: [
     "<rootDir>/setupTests.ts"

@@ -47,64 +47,6 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 // ============================================
 
 /**
- * Список пропсов Swiper, которые не должны передаваться в DOM.
- */
-const SWIPER_PROPS = [
-    'initialSlide', 'spaceBetween', 'freeMode', 'slidesPerView', 'modules',
-    'pagination', 'navigation', 'scrollbar', 'autoplay', 'loop', 'centeredSlides',
-    'grabCursor', 'breakpoints', 'onSwiper', 'onSlideChange', 'direction', 'effect',
-    'speed', 'thumbs', 'zoom', 'virtual', 'watchOverflow', 'allowTouchMove',
-];
-
-/**
- * Фильтрует пропсы Swiper, оставляя только валидные DOM-атрибуты.
- */
-const filterSwiperProps = (props: Record<string, any>) => {
-    const filtered: Record<string, any> = {};
-    Object.keys(props).forEach((key) => {
-        if (!SWIPER_PROPS.includes(key) && (!key.startsWith('on') || key === 'onClick')) {
-            filtered[key] = props[key];
-        }
-    });
-    return filtered;
-};
-
-/**
- * Мок Swiper для React.
- * Swiper используется в некоторых компонентах приложения.
- * Фильтрует специфичные для Swiper пропсы, чтобы избежать React warnings.
- */
-jest.mock('swiper/react', () => {
-    const React = require('react');
-    return {
-        Swiper: ({ children, ...props }: any) => {
-            const filtered = filterSwiperProps(props);
-            return React.createElement('div', { 'data-testid': 'swiper-mock', ...filtered }, children);
-        },
-        SwiperSlide: ({ children, ...props }: any) => {
-            const filtered = filterSwiperProps(props);
-            return React.createElement('div', { 'data-testid': 'swiper-slide-mock', ...filtered }, children);
-        },
-        useSwiper: () => ({
-            slideNext: jest.fn(),
-            slidePrev: jest.fn(),
-            slideTo: jest.fn(),
-            activeIndex: 0,
-        }),
-    };
-});
-
-/**
- * Мок модулей Swiper (FreeMode, Pagination и др.).
- */
-jest.mock('swiper/modules', () => ({
-    FreeMode: jest.fn(),
-    Pagination: jest.fn(),
-    Zoom: jest.fn(),
-    Thumbs: jest.fn(),
-}));
-
-/**
  * Мок Telegram SDK.
  * Имитирует backButton, mainButton и locationManager для работы компонента.
  */

@@ -45,70 +45,14 @@ import { userAtom, authAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock';
+import { mockRestaurantsList } from '@/__mocks__/restaurant.mock';
+import { mockTimeSlots, mockAvailableDates } from '@/__mocks__/booking.mock';
 import { IUser } from '@/types/user.types.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 
 // ============================================
 // Моки внешних зависимостей
 // ============================================
-
-/**
- * Список пропсов Swiper, которые не должны передаваться в DOM.
- */
-const SWIPER_PROPS = [
-    'initialSlide', 'spaceBetween', 'freeMode', 'slidesPerView', 'modules',
-    'pagination', 'navigation', 'scrollbar', 'autoplay', 'loop', 'centeredSlides',
-    'grabCursor', 'breakpoints', 'onSwiper', 'onSlideChange', 'direction', 'effect',
-    'speed', 'thumbs', 'zoom', 'virtual', 'watchOverflow', 'allowTouchMove',
-];
-
-/**
- * Фильтрует пропсы Swiper, оставляя только валидные DOM-атрибуты.
- */
-const filterSwiperProps = (props: Record<string, any>) => {
-    const filtered: Record<string, any> = {};
-    Object.keys(props).forEach((key) => {
-        if (!SWIPER_PROPS.includes(key) && (!key.startsWith('on') || key === 'onClick')) {
-            filtered[key] = props[key];
-        }
-    });
-    return filtered;
-};
-
-/**
- * Мок Swiper для React.
- * Swiper используется в некоторых компонентах приложения.
- * Фильтрует специфичные для Swiper пропсы, чтобы избежать React warnings.
- */
-jest.mock('swiper/react', () => {
-    const React = require('react');
-    return {
-        Swiper: ({ children, ...props }: any) => {
-            const filtered = filterSwiperProps(props);
-            return React.createElement('div', { 'data-testid': 'swiper-mock', ...filtered }, children);
-        },
-        SwiperSlide: ({ children, ...props }: any) => {
-            const filtered = filterSwiperProps(props);
-            return React.createElement('div', { 'data-testid': 'swiper-slide-mock', ...filtered }, children);
-        },
-        useSwiper: () => ({
-            slideNext: jest.fn(),
-            slidePrev: jest.fn(),
-            slideTo: jest.fn(),
-            activeIndex: 0,
-        }),
-    };
-});
-
-/**
- * Мок модулей Swiper (FreeMode, Pagination и др.).
- */
-jest.mock('swiper/modules', () => ({
-    FreeMode: jest.fn(),
-    Pagination: jest.fn(),
-    Zoom: jest.fn(),
-    Thumbs: jest.fn(),
-}));
 
 /**
  * Мок Telegram SDK.
@@ -238,114 +182,6 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
  */
 describe('BookingPage', () => {
     // ============================================
-    // Тестовые данные
-    // ============================================
-
-    /**
-     * Моковые рестораны для тестов.
-     * Используются в RestaurantsListSelector.
-     */
-    const mockRestaurants: IRestaurant[] = [
-        {
-            id: '1',
-            title: 'Test Restaurant 1',
-            slogan: 'Test Slogan 1',
-            address: 'Test Address 1, 123',
-            address_lonlng: '30.3158,59.9386',
-            address_station: 'Невский проспект',
-            address_station_color: '#0066cc',
-            logo_url: 'https://example.com/logo1.jpg',
-            thumbnail_photo: 'https://example.com/thumbnail1.jpg',
-            openTime: '12:00',
-            avg_cheque: 2500,
-            photo_cards: [],
-            brand_chef: {
-                names: ['Шеф Повар 1'],
-                avatars: ['https://example.com/chef1.jpg'],
-                about: 'Описание шефа 1',
-                photo_url: 'https://example.com/chef1.jpg',
-            },
-            city: {
-                id: 2,
-                name: 'Санкт-Петербург',
-                name_english: 'spb',
-                name_dative: 'Санкт-Петербурге',
-            },
-            banquets: {
-                banquet_options: [],
-                additional_options: [],
-                description: 'Описание банкетов',
-                image: 'https://example.com/banquet.jpg',
-            },
-            about_text: 'О ресторане 1',
-            about_kitchen: 'О кухне 1',
-            about_features: 'Особенности 1',
-            phone_number: '+7 (999) 123-45-67',
-            gallery: [],
-            menu: [],
-            menu_imgs: [],
-            worktime: [{ weekday: 'пн-вс', time_start: '12:00', time_end: '23:00' }],
-            socials: [],
-        },
-        {
-            id: '2',
-            title: 'Test Restaurant 2',
-            slogan: 'Test Slogan 2',
-            address: 'Test Address 2, 456',
-            address_lonlng: '30.3200,59.9400',
-            address_station: 'Маяковская',
-            address_station_color: '#ff0000',
-            logo_url: 'https://example.com/logo2.jpg',
-            thumbnail_photo: 'https://example.com/thumbnail2.jpg',
-            openTime: '11:00',
-            avg_cheque: 3000,
-            photo_cards: [],
-            brand_chef: {
-                names: ['Шеф Повар 2'],
-                avatars: ['https://example.com/chef2.jpg'],
-                about: 'Описание шефа 2',
-                photo_url: 'https://example.com/chef2.jpg',
-            },
-            city: {
-                id: 2,
-                name: 'Санкт-Петербург',
-                name_english: 'spb',
-                name_dative: 'Санкт-Петербурге',
-            },
-            banquets: {
-                banquet_options: [],
-                additional_options: [],
-                description: 'Описание банкетов 2',
-                image: 'https://example.com/banquet2.jpg',
-            },
-            about_text: 'О ресторане 2',
-            about_kitchen: 'О кухне 2',
-            about_features: 'Особенности 2',
-            phone_number: '+7 (999) 987-65-43',
-            gallery: [],
-            menu: [],
-            menu_imgs: [],
-            worktime: [{ weekday: 'пн-вс', time_start: '11:00', time_end: '22:00' }],
-            socials: [],
-        },
-    ];
-
-    /**
-     * Моковые временные слоты для бронирования.
-     * Аналогично {@link RestaurantBookingPage.test.tsx} и {@link EventBookingPage.test.tsx}.
-     */
-    const mockTimeSlots = [
-        { start_datetime: '2025-08-23 15:00:00', end_datetime: '2025-08-23 15:30:00' },
-        { start_datetime: '2025-08-23 15:30:00', end_datetime: '2025-08-23 16:00:00' },
-        { start_datetime: '2025-08-23 16:00:00', end_datetime: '2025-08-23 16:30:00' },
-    ];
-
-    /**
-     * Моковые доступные даты для бронирования.
-     */
-    const mockAvailableDates = ['2025-08-23', '2025-08-24', '2025-08-25'];
-
-    // ============================================
     // Вспомогательные функции
     // ============================================
 
@@ -353,7 +189,7 @@ describe('BookingPage', () => {
      * Рендерит компонент BookingPage с необходимыми провайдерами.
      * 
      * @param user - Данные пользователя (по умолчанию mockUserData)
-     * @param restaurants - Список ресторанов (по умолчанию mockRestaurants)
+     * @param restaurants - Список ресторанов (по умолчанию mockRestaurantsList)
      * @param locationState - State из location (для передачи certificate, certificateId, shared)
      * @returns Результат render() из @testing-library/react
      * 
@@ -363,18 +199,18 @@ describe('BookingPage', () => {
      * 
      * @example
      * // Рендер с сертификатом
-     * renderComponent(mockUserData, mockRestaurants, {
+     * renderComponent(mockUserData, mockRestaurantsList, {
      *     certificate: { recipient_name: 'Test Name' },
      *     certificateId: 'cert-123',
      * });
      * 
      * @example
      * // Рендер для shared-ссылки
-     * renderComponent(mockUserData, mockRestaurants, { shared: true });
+     * renderComponent(mockUserData, mockRestaurantsList, { shared: true });
      */
     const renderComponent = (
         user: IUser | undefined = mockUserData,
-        restaurants: IRestaurant[] = mockRestaurants,
+        restaurants: IRestaurant[] = mockRestaurantsList,
         locationState: Record<string, any> | null = null
     ) => {
         mockUseLocation.mockReturnValue({
@@ -697,7 +533,7 @@ describe('BookingPage', () => {
          * Проверяет что страница корректно рендерится при shared = true.
          */
         test('должен корректно рендерить страницу при shared', async () => {
-            renderComponent(mockUserData, mockRestaurants, { shared: true });
+            renderComponent(mockUserData, mockRestaurantsList, { shared: true });
 
             await waitFor(() => {
                 expect(screen.getByText('Бронирование')).toBeInTheDocument();
@@ -735,7 +571,7 @@ describe('BookingPage', () => {
                 certificateId: 'cert-123',
             };
 
-            renderComponent(mockUserData, mockRestaurants, certificateState);
+            renderComponent(mockUserData, mockRestaurantsList, certificateState);
 
             await waitFor(() => {
                 expect(screen.getByText('Бронирование')).toBeInTheDocument();

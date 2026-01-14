@@ -25,6 +25,7 @@ import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { BanquetAdditionalServicesPage } from '@/pages/BanquetAdditionalServices/BanquetAdditionalServicesPage.tsx';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
+import { mockBanquetFormWithOptions } from '@/__mocks__/banquets.mock.ts';
 
 // ============================================
 // Моки внешних зависимостей
@@ -48,20 +49,7 @@ const mockToggleService = jest.fn();
 const mockUpdateField = jest.fn();
 const mockNavigateToReservation = jest.fn();
 
-const mockFormWithOptions = {
-    additionalOptions: [
-        { id: 1, name: 'Цветочное оформление' },
-        { id: 2, name: 'Разработка персонального меню' },
-        { id: 3, name: 'Торт по индивидуальному заказу' },
-        { id: 4, name: 'Медиаоборудование (проектор / плазма)' },
-        { id: 5, name: 'Фотограф' },
-    ],
-    selectedServices: [] as string[],
-    restaurantId: '1',
-    optionId: '14',
-};
-
-let mockForm = { ...mockFormWithOptions };
+let mockForm = { ...mockBanquetFormWithOptions };
 
 jest.mock('@/hooks/useBanquetForm.ts', () => ({
     useBanquetForm: () => ({
@@ -241,7 +229,7 @@ describe('BanquetAdditionalServicesPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         // Reset mock form to default state with options
-        mockForm = { ...mockFormWithOptions, selectedServices: [] };
+        mockForm = { ...mockBanquetFormWithOptions, selectedServices: [] };
 
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -374,7 +362,7 @@ describe('BanquetAdditionalServicesPage', () => {
          */
         it('должен показывать выбранные услуги как отмеченные', () => {
             mockForm = { 
-                ...mockFormWithOptions, 
+                ...mockBanquetFormWithOptions, 
                 selectedServices: ['Цветочное оформление', 'Фотограф'] 
             };
             
@@ -505,7 +493,7 @@ describe('BanquetAdditionalServicesPage', () => {
          */
         it('должен редиректить на резервацию при пустом списке услуг', async () => {
             mockForm = { 
-                ...mockFormWithOptions, 
+                ...mockBanquetFormWithOptions, 
                 additionalOptions: [],
                 selectedServices: [] 
             };
@@ -522,7 +510,7 @@ describe('BanquetAdditionalServicesPage', () => {
          */
         it('должен редиректить при undefined additionalOptions', async () => {
             mockForm = { 
-                ...mockFormWithOptions, 
+                ...mockBanquetFormWithOptions, 
                 additionalOptions: undefined as any,
                 selectedServices: [] 
             };
@@ -568,7 +556,7 @@ describe('BanquetAdditionalServicesPage', () => {
 
             // Проверяем что все услуги из mock отображаются
             const checkboxes = screen.getAllByTestId('banquet-checkbox');
-            expect(checkboxes).toHaveLength(mockFormWithOptions.additionalOptions.length);
+            expect(checkboxes).toHaveLength(mockBanquetFormWithOptions.additionalOptions!.length);
         });
 
         /**
@@ -576,7 +564,7 @@ describe('BanquetAdditionalServicesPage', () => {
          */
         it('должен использовать form.selectedServices для отметки выбранных', () => {
             mockForm = { 
-                ...mockFormWithOptions, 
+                ...mockBanquetFormWithOptions, 
                 selectedServices: ['Фотограф'] 
             };
             
@@ -626,7 +614,7 @@ describe('BanquetAdditionalServicesPage', () => {
          */
         it('должен корректно работать с одной услугой', () => {
             mockForm = { 
-                ...mockFormWithOptions, 
+                ...mockBanquetFormWithOptions, 
                 additionalOptions: [{ id: 1, name: 'Единственная услуга' }],
                 selectedServices: [] 
             };
@@ -643,7 +631,7 @@ describe('BanquetAdditionalServicesPage', () => {
          */
         it('должен корректно отображать когда все услуги выбраны', () => {
             mockForm = { 
-                ...mockFormWithOptions, 
+                ...mockBanquetFormWithOptions, 
                 selectedServices: [
                     'Цветочное оформление',
                     'Разработка персонального меню',

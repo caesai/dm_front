@@ -26,8 +26,8 @@ import { BanquetAddressPage } from '@/pages/BanquetAddressPage/BanquetAddressPag
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { userAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { mockUserData } from '@/__mocks__/user.mock';
-import { banquetData } from '@/__mocks__/banquets.mock';
+import { mockUserData, mockUserNotOnboarded } from '@/__mocks__/user.mock';
+import { mockRestaurantWithBanquets, mockRestaurantWithoutBanquets, mockRestaurantWithBanquets2 } from '@/__mocks__/restaurant.mock';
 import { IUser } from '@/types/user.types.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 
@@ -157,86 +157,6 @@ jest.mock('@/components/RestaurantsListSelector/RestaurantsListSelector.tsx', ()
         </div>
     ),
 }));
-
-// ============================================
-// Тестовые данные
-// ============================================
-
-/**
- * Моковый ресторан с банкетными опциями.
- * Содержит все необходимые поля для отображения и навигации.
- */
-const mockRestaurantWithBanquets: IRestaurant = {
-    id: '1',
-    title: 'Test Restaurant',
-    slogan: 'Test Slogan',
-    address: 'Test Address, 123',
-    address_lonlng: '30.3158,59.9386',
-    address_station: 'Невский проспект',
-    address_station_color: '#0066cc',
-    logo_url: 'https://example.com/logo.jpg',
-    thumbnail_photo: 'https://example.com/thumbnail.jpg',
-    openTime: '12:00',
-    avg_cheque: 2500,
-    photo_cards: [],
-    brand_chef: {
-        names: ['Шеф Повар'],
-        avatars: ['https://example.com/chef.jpg'],
-        about: 'Описание шефа',
-        photo_url: 'https://example.com/chef.jpg',
-    },
-    city: {
-        id: 2,
-        name: 'Санкт-Петербург',
-        name_english: 'spb',
-        name_dative: 'Санкт-Петербурге',
-    },
-    banquets: banquetData,
-    about_text: 'О ресторане',
-    about_kitchen: 'О кухне',
-    about_features: 'Особенности',
-    phone_number: '+7 (999) 123-45-67',
-    gallery: [],
-    menu: [],
-    menu_imgs: [],
-    worktime: [{ weekday: 'пн-вс', time_start: '12:00', time_end: '23:00' }],
-    socials: [],
-};
-
-/**
- * Моковый ресторан без банкетных опций.
- * Не должен отображаться в списке выбора ресторанов.
- */
-const mockRestaurantWithoutBanquets: IRestaurant = {
-    ...mockRestaurantWithBanquets,
-    id: '2',
-    title: 'Restaurant Without Banquets',
-    banquets: {
-        banquet_options: [],
-        additional_options: [],
-        description: '',
-        image: '',
-    },
-};
-
-/**
- * Второй моковый ресторан с банкетными опциями.
- * Для тестирования списка ресторанов.
- */
-const mockRestaurantWithBanquets2: IRestaurant = {
-    ...mockRestaurantWithBanquets,
-    id: '3',
-    title: 'Second Restaurant',
-    address: 'Second Address, 456',
-};
-
-/**
- * Моковый пользователь без завершённого онбординга.
- */
-const mockUserNotOnboarded: IUser = {
-    ...mockUserData,
-    complete_onboarding: false,
-};
 
 // ============================================
 // Тестовый набор
