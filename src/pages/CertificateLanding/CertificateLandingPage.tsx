@@ -101,6 +101,8 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
     const { isShowing, toggle, setIsShowing } = useModal()
     // Необходимо для предотвращения повторного вызова функции acceptCertificate при одновременном монтировании и размонтировании компонента
     const isAcceptingRef = useRef(false);
+    // Ref для хранения актуальной версии acceptCertificate без добавления в зависимости useEffect
+    const acceptCertificateRef = useRef<(() => Promise<void>) | null>(null);
 
     /**
      * Мемоизированная функция для отображения toast-уведомлений.
@@ -247,6 +249,9 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
         }
     }, [auth?.access_token, certificate, id, user?.id, setCertificates, showToast, fetchCertificateBalance]);
 
+    // Обновляем ref при каждом изменении acceptCertificate для доступа к актуальной версии без добавления в зависимости
+    acceptCertificateRef.current = acceptCertificate;
+
     /**
      * Проверяет, использован ли сертификат.
      *
@@ -259,39 +264,32 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
     }, [certificate]);
 
     /**
-     * Проверяет, истек ли срок действия сертификата.
-     *
-     * @callback
-     * @returns {boolean} `true` если сертификат отсутствует или срок его действия истек, иначе `false`
-     */
-    const isCertificateExpired = useCallback(() => {
-        if (!certificate) return true;
-        return moment().isAfter(moment(certificate.expired_at));
-    }, [certificate]);
-
-    /**
      * Мемоизированное значение, указывающее истек ли срок действия сертификата.
-     * Используется для оптимизации производительности и избежания лишних вычислений.
+     * Зависит только от `expired_at` для предотвращения ненужных перерендеров.
      *
      * @memo
-     * @returns {boolean} Результат проверки истечения срока действия сертификата
+     * @returns {boolean} `true` если сертификат отсутствует или срок его действия истек, иначе `false`
      */
-    const certificateExpired = useMemo(() => isCertificateExpired(), [isCertificateExpired]);
+    const certificateExpired = useMemo(() => {
+        if (!certificate?.expired_at) return true;
+        return moment().isAfter(moment(certificate.expired_at));
+    }, [certificate?.expired_at]);
     /**
-     * Проверяет, активен ли сертификат для использования.
+     * Мемоизированное значение, указывающее неактивен ли сертификат.
+     * Зависит только от `status` и `certificateExpired` для предотвращения ненужных перерендеров.
      *
      * Сертификат считается активным, если:
      * - Его статус равен 'paid' (оплачен) или 'shared' (подарен)
      * - И срок его действия не истек
      *
-     * @callback
+     * @memo
      * @returns {boolean} `true` если сертификат неактивен (отсутствует, использован, истек или имеет неактивный статус),
      *                    `false` если сертификат активен и может быть использован
      */
-    const isCertificateDisabled = useCallback(() => {
-        if (!certificate) return true;
+    const isCertificateDisabled = useMemo(() => {
+        if (!certificate?.status) return true;
         return !((certificate.status === 'paid' || certificate.status === 'shared') && !certificateExpired);
-    }, [certificate, certificateExpired]);
+    }, [certificate?.status, certificateExpired]);
     /**
      * Эффект для управления логикой работы с сертификатом в зависимости от статуса пользователя и сертификата.
      *
@@ -307,17 +305,19 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
      *    - Если сертификат был подарен - перенаправляет на онбординг
      *
      * @effect
-     * @dependencies certificate, user, isCertificateDisabled, acceptCertificate, navigate, id
+     * @dependencies Зависит только от примитивных значений свойств certificate и user для предотвращения лишних перерендеров.
+     *               acceptCertificate доступен через ref для стабильности зависимостей.
      *
      * @modifies loading - Устанавливает состояние загрузки в `false` при завершении проверок
-     * @fires acceptCertificate - Автоматически активирует сертификат при соответствующих условиях
+     * @fires acceptCertificateRef.current - Автоматически активирует сертификат при соответствующих условиях
      * @fires navigate - Перенаправляет пользователя на другие страницы при необходимости
      */
     useEffect(() => {
         // 1. Предварительные проверки и выход
         if (!user || !certificate) return;
 
-        if (isCertificateDisabled()) {
+        // isCertificateDisabled теперь мемоизированное значение (не функция)
+        if (isCertificateDisabled) {
             setLoading(false);
             return;
         }
@@ -331,10 +331,10 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                     return;
             } else {
                 // Сертификат куплен другим пользователем, но еще не принят этим
-                if (!isAcceptingRef.current) {
+                if (!isAcceptingRef.current && acceptCertificateRef.current) {
                     isAcceptingRef.current = true;
                     (async () => {
-                        await acceptCertificate();
+                        await acceptCertificateRef.current!();
                         setLoading(false);
                     })();
                 }
@@ -362,7 +362,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                 navigate('/onboarding/1');
             }
         }
-    }, [certificate?.id, certificate?.customer_id, certificate?.recipient_id, certificate?.shared_at, user?.id, user?.complete_onboarding, isCertificateDisabled, acceptCertificate, navigate, id]);
+    }, [certificate?.id, certificate?.customer_id, certificate?.recipient_id, certificate?.shared_at, user?.id, user?.complete_onboarding, isCertificateDisabled, navigate, id]);
 
     // Сбрасываем флаг при изменении ID сертификата
     useEffect(() => {
@@ -432,7 +432,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                 <div className={css.content}>
                     <div className={css.header}>
                         <DTHospitalityIcon />
-                        {isCertificateDisabled() ? (
+                        {isCertificateDisabled ? (
                             certificateExpired ? (
                                 <h1>У данного сертификата истек срок действия</h1>
                             ) : (
@@ -538,7 +538,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                         <span className={css.pageTitle}>Доступно в ресторанах</span>
                         <RestaurantsList />
                     </div>
-                    {!isCertificateDisabled() && (
+                    {!isCertificateDisabled && (
                         <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />
                     )}
                 </div>

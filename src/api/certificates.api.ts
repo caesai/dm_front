@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ADMIN_URL, BASE_URL } from '@/api/base.ts';
+import { ADMIN_URL, BASE_URL, CLIENT_URL } from '@/api/base.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
 
 export const APIGetCertificates = async (token: string, user_id: number) => {
@@ -39,10 +39,10 @@ export const APIPostCreateWithPayment = async (
         value,
         recipient_name,
         message,
-        // return_url: `${CLIENT_URL}/certificates/payment`,
-        return_url: `https://dt-mini-app.local/dm_front/certificates/payment`,
-        // fail_url: `${CLIENT_URL}/certificates/error`,
-        fail_url: `https://dt-mini-app.local/dm_front/certificates/error`,
+        return_url: `${CLIENT_URL}/certificates/payment`,
+        // return_url: `https://dt-mini-app.local/dm_front/certificates/payment`,
+        fail_url: `${CLIENT_URL}/certificates/error`,
+        // fail_url: `https://dt-mini-app.local/dm_front/certificates/error`,
 
     }, {
         headers: {
