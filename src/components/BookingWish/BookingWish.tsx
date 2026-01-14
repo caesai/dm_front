@@ -14,20 +14,39 @@ import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 // Mocks
 import { getBookingCommentMock } from '@/mockData.ts';
 // Styles
+import 'swiper/css';
+import 'swiper/css/free-mode';
 import css from '@/pages/BookingPage/BookingPage.module.css';
-import { R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock.ts';
 
+/**
+ * Пропсы компонента BookingWish
+ * @interface BookingWishProps
+ */
 interface BookingWishProps {
+    /** Количество гостей */
     guestCount: number;
+    /** Количество детей */
     childrenCount: number;
+    /** Флаг предварительного заказа */
     preOrder: boolean;
+    /** Функция установки флага предварительного заказа */
     setPreOrder: (preOrder: boolean) => void;
+    /** Название ресторана */
     restaurant: string;
+    /** ID ресторана */
     restaurantId: number;
+    /** Комментарий к бронированию */
     commentary: string;
+    /** Функция установки комментария к бронированию */
     setCommentary: (commentary: string) => void;
 }
 
+/**
+ * Компонент пожеланий к бронированию
+ * @param {BookingWishProps} props - свойства компонента
+ * @returns {JSX.Element} компонент пожеланий к бронированию
+ */
 export const BookingWish: React.FC<BookingWishProps> = ({
     guestCount,
     childrenCount,
@@ -37,7 +56,7 @@ export const BookingWish: React.FC<BookingWishProps> = ({
     restaurantId,
     commentary,
     setCommentary,
-}) => {
+}: BookingWishProps): JSX.Element => {
     const [infoPopup, setInfoPopup] = useState(false);
     return (
         <ContentContainer>
@@ -59,7 +78,7 @@ export const BookingWish: React.FC<BookingWishProps> = ({
             )}
             <TextInput value={commentary} onChange={(e) => setCommentary(e)} placeholder={'Комментарий к брони'} />
             <ContentBlock className={css.commentary_options}>
-                <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
+                <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8} slidesOffsetAfter={15}>
                     {restaurant !== 'unset' &&
                         getBookingCommentMock(String(restaurant))
                             .filter((obj) => {

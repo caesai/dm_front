@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 // Atoms
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 
@@ -88,8 +88,8 @@ interface UseRedirectLogicResult {
 export const useRedirectLogic = (): UseRedirectLogicResult => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [user] = useAtom(userAtom);
-    const [auth] = useAtom(authAtom);
+    const user = useAtomValue(userAtom);
+    const auth = useAtomValue(authAtom);
     const [params] = useSearchParams();
     const state = location?.state;
     const tgWebAppStartParam = params.get('tgWebAppStartParam');
@@ -113,27 +113,39 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
      */
     const handleNavigation = useCallback(
         (param: string) => {
+            // массив путей, которые могут быть переданы в параметре tgWebAppStartParam
             const paths = ['restaurant', 'event', 'ticket', 'certificate', 'event_city', 'event_restaurant'];
+            // получаем путь из параметра
             const path = param.substring(0, param.indexOf('Id_'));
+            // если путь в массиве путей, то переходим на соответствующую страницу
             if (paths.includes(path)) {
+                // получаем id из параметра
                 const id = param.replace(`${path}Id_`, '');
+                // получаем id из параметра и удаляем из параметра
+                // переход на страницу в зависимости от пути
                 switch (path) {
                     case 'restaurant':
+                        // переход на страницу ресторана
                         navigate(`/${path}/${id}?shared=true`, { replace: true });
                         break;
                     case 'event':
+                        // переход на страницу деталей мероприятия
                         navigate(`/events/${id}/details?shared=true`, { replace: true });
                         break;
                     case 'ticket':
+                        // переход на страницу билета
                         navigate(`/tickets/${id}?shared=true`, { replace: true });
                         break;
                     case 'certificate':
+                        // переход на страницу сертификата
                         navigate(`/certificates/landing/${id}?shared=true`, { replace: true });
                         break;
                     case 'event_city':
+                        // переход на страницу списка мероприятий в выбранном городе
                         navigate(`/events/?city=${id}&shared=true`, { replace: true });
                         break;
                     case 'event_restaurant':
+                        // переход на страницу списка мероприятий в выбранном ресторане
                         navigate(`/events/?restaurant=${id}&shared=true`, { replace: true });
                         break;
                 }
@@ -177,21 +189,28 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
             initialCheckDoneRef.current = true;
             switch (tgWebAppStartParam) {
                 case 'hospitality_heroes':
-                    navigate(`/hospitality-heroes?shared=true`, { replace: true });
+                    // переход на страницу Hospitality Heroes
+                    navigate(`/hospitality-heroes`, { replace: true });
                     break;
                 case 'banquet':
-                    navigate('/banquets/:id/address', { replace: true });
+                    // переход на страницу выбора ресторана для банкета
+                    navigate('/banquets/:restaurantId/address', { replace: true });
                     break;
                 case 'gastronomy':
-                    navigate('/gastronomy/choose?shared=true', { replace: true });
+                    // переход на страницу выбора блюд кулинарии
+                    navigate('/gastronomy/choose', { replace: true });
                     break;
                 case 'certificates':
-                    navigate('/certificates/1?shared=true', { replace: true });
+                    // переход на страницу создания сертификата
+                    navigate('/certificates/1', { replace: true });
                     break;
                 case 'booking':
-                    navigate('/booking?shared=true', { replace: true });
+                    // переход на страницу бронирования
+                    navigate('/booking', { replace: true });
                     break;
                 default:
+                    // переход на страницу в зависимости от параметра tgWebAppStartParam
+                    // если параметр не соответствует ни одному из известных, то переход на страницу в зависимости от параметра
                     handleNavigation(tgWebAppStartParam);
                     break;
             }
@@ -206,6 +225,8 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
                 if (!initialCheckDoneRef.current) {
                     initialCheckDoneRef.current = true;
                 }
+                // переход на страницу подтверждения телефона
+                // передаем state в параметры перехода
                 navigate('/phoneConfirmation', { state });
                 setIsInitialRedirectComplete(true);
                 return;
@@ -220,6 +241,7 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
                     initialCheckDoneRef.current = true;
                 }
                 // Перенаправляем на страницу онбординга
+                // переход на страницу онбординга
                 navigate('/onboarding/1', { replace: true });
                 setIsInitialRedirectComplete(true);
                 return;

@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+// Styles
 import css from '@/components/ContentBlock/ContentBlock.module.css';
 
 /**
@@ -19,8 +20,8 @@ export interface IHeaderContainerProps {
  */
 export const HeaderContainer: React.FC<IHeaderContainerProps> = ({ children, id, className }: IHeaderContainerProps): JSX.Element => {
     return (
-        <div className={classNames(css.headerContainer, className)} id={id}>
+        <header className={classNames(css.headerContainer, className)} id={id}>
             {children}
-        </div>
+        </header>
     );
 };

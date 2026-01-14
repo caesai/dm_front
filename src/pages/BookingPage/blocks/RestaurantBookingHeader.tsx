@@ -70,6 +70,7 @@ export const RestaurantBookingHeader: React.FC<IRestaurantBookingHeaderProps> = 
                     datesList={availableDates} 
                     onSelect={selectDate}
                     value={selectedDate}
+                    defaultTitle={'Дата'}
                 />
                 <GuestCountSelector
                     guestCount={guestCount}
