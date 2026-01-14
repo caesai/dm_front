@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAtom } from 'jotai/index';
+import { useAtom, useSetAtom, WritableAtom } from 'jotai/index';
 import moment from 'moment/moment';
 import classnames from 'classnames';
 // APIs
@@ -25,7 +25,7 @@ export const CertificatesPaymentPage: React.FC = () => {
     const [params] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
-    const [, setCertificates] = useAtom(certificatesListAtom);
+    const setCertificates = useSetAtom(certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>);
     const paramsObject = Object.fromEntries(params.entries());
     // State
     const [certificate, setCertificate] = useState<ICertificate | null>(null);

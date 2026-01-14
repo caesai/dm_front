@@ -6,13 +6,14 @@ import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-
 import { Page } from '@/components/Page.tsx';
 import css from '@/pages/GastronomyPage/GastronomyPage.module.css';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom, WritableAtom } from 'jotai';
 import { gastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 import { userAtom } from '@/atoms/userAtom';
+import { IDish } from '@/types/gastronomy.types';
 
 export const GastronomyPage: React.FC = () => {
     const [user] = useAtom(userAtom);
-    const [, setDishesList] = useAtom(gastronomyDishesListAtom);
+    const setDishesList = useSetAtom(gastronomyDishesListAtom as WritableAtom<IDish[], [IDish[]], void>);
 
     const { goBack } = useNavigationHistory();
     const navigate = useNavigate();

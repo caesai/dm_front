@@ -1,48 +1,36 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, user-scalable=no"/>
-    <meta name="theme-color" content="#FFFFFF"/>
-    <title>DREAMTEAM</title>
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap"
-            rel="stylesheet">
-    <meta
-            http-equiv="Content-Security-Policy"
-            content="upgrade-insecure-requests"/>
-    <script type="text/javascript">
-      (function (l) {
-        if (l.search[1] === "/") {
-          var decoded = l.search
-                  .slice(1)
-                  .split("&")
-                  .map(function (s) {
-                    return s.replace(/~and~/g, "&");
-                  })
-                  .join("?");
-          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
-        }
-      })(window.location);
-    </script>
-    <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
-    <base href="%BASE_URL%" />
-    <style>
-      .app_mode {
-        visibility: hidden;
-        position: fixed;
-        z-index: -1;
-        color: transparent;
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <title>DREAMTEAM</title>
+  <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap"
+    rel="stylesheet"> -->
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+  <script type="text/javascript">
+    (function (l) {
+      if (l.search[1] === "/") {
+        var decoded = l.search
+          .slice(1)
+          .split("&")
+          .map(function (s) {
+            return s.replace(/~and~/g, "&");
+          })
+          .join("?");
+        window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
       }
-    </style>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <div class="app_mode">
-      %MODE%
-    </div>
-    <script src="/src/index.tsx" type="module"></script>
-  </body>
+    })(window.location);
+  </script>
+  <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
+  <base href="%BASE_URL%" />
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <main id="root"></main>
+  <script src="/src/index.tsx" type="module"></script>
+</body>
 </html>

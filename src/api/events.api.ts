@@ -34,32 +34,32 @@ export const APIGetAvailableEventTimeslots = async (
 
 interface Invoice {
     payment_url: string | null;
-    booking_id: number;
+    booking_id: string;
 }
 
 export const APICreateInvoice = async (
-    restaurant_id: number,
-    event_id: number,
-    timeslot: ITimeSlot,
+    selectedEvent: IEvent,
     name: string,
     phone: string,
-    email: string,
     commentary: string,
-    confirmation: string,
     guest_count: number,
     token: string
 ) => {
     return await axios.post<Invoice>(
         `${BASE_URL}/events/invoice`,
         {
-            restaurant_id,
-            event_id,
-            timeslot,
+            restaurant_id: selectedEvent?.restaurant?.id,
+            event_id: selectedEvent?.id,
+            timeslot: {
+                start_datetime: selectedEvent?.date_start,
+                end_datetime: selectedEvent?.date_end,
+                is_free: false,
+            },
             name,
             phone,
-            email,
+            email: '',
             commentary,
-            confirmation,
+            confirmation: 'В Telegram',
             guest_count,
             // success_url: `https://dt-mini-app.local/dm_front/events/payment`,
             success_url: `${CLIENT_URL}/events/payment-success`,
@@ -74,7 +74,7 @@ export const APICreateInvoice = async (
 };
 
 interface IValidatePayment {
-    event_id?: number;
+    event_id?: string;
     paid: boolean;
 }
 

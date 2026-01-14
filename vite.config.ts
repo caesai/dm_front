@@ -47,6 +47,25 @@ export default defineConfig(({mode, command}) => ({
                     main: resolve(__dirname, "index.html"),
                     404: resolve(__dirname, "public/404.html"),
                 },
+                output: {
+                    // Chunk splitting для оптимизации загрузки
+                    manualChunks: {
+                        // React и роутинг — критичные зависимости
+                        'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+                        // Telegram SDK — используется везде
+                        'vendor-telegram': ['@telegram-apps/sdk-react', '@telegram-apps/telegram-ui'],
+                        // UI компоненты — часто используются
+                        'vendor-ui': ['swiper', 'react-calendar', 'reactjs-popup', 'react-collapse'],
+                        // Утилиты состояния
+                        'vendor-state': ['jotai', 'zustand'],
+                        // HTTP клиент
+                        'vendor-http': ['axios'],
+                        // Тяжёлые библиотеки — загружаются по требованию
+                        'vendor-pdf': ['jspdf', 'html2canvas', 'html2pdf.js'],
+                        // Карты Яндекс
+                        'vendor-maps': ['ymap3-components', '@yandex/ymaps3-clusterer'],
+                    },
+                },
             },
         },
     })

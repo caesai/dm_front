@@ -1,4 +1,4 @@
-.page {
+.eventsListPage {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -14,15 +14,11 @@
     align-items: center;
 }
 
-.header_title {
+.headerTitle {
     font-family: 'Mont', sans-serif;
     font-weight: bold;
     font-size: 14px;
-}
-
-.header_spacer {
-    width: 44px;
-    height: 44px;
+    text-transform: capitalize;
 }
 
 .cards {
@@ -31,8 +27,212 @@
     gap: 8px;
 }
 
-.span_title {
-    font-family: 'Mont', sans-serif;
+.detailsPage, .eventPurchasePage {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 15px 90px;
+    min-height: 100vh;
+    background-color: white;
+}
+
+.detailsPageThumbnail {
+    width: 100%;
+    aspect-ratio: 3/2;
+    background-color: var(--secondary-background);
+    border-radius: 16px;
+    background-size: cover;
+    background-position: center;
+}
+
+.detailsPageDescription {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detailsPageDescriptionTitle {
+    margin: 0;
+    padding: 0;
+    font-family: "Mont", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    text-transform: none;
+}
+
+.detailsPageDescriptionText {
+    font-family: "Mont", sans-serif;
     font-weight: 400;
     font-size: 14px;
+    line-height: 150%;
+
+    p {
+        color: var(--grey);
+    }
+}
+
+.detailsPageDataRow {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.detailsPageDataCol {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: "Mont", sans-serif;
+    font-size: 14px;
+}
+
+.detailsPageDataColTitle {
+    color: var(--grey);
+    font-weight: 400;
+}
+
+.detailsPageDataColData {
+    color: var(--black);
+    font-weight: 800
+}
+
+.detailsPageRoundedText {
+    padding: 6px 8px;
+    display: flex;
+    border-radius: 8px;
+    border: 1px solid var(--light-grey);
+    width: max-content;
+    align-items: center;
+    height: min-content;
+
+    span {
+        color: var(--grey);
+        font-family: "Mont", sans-serif;
+        font-weight: 400;
+        font-size: 12px;
+        letter-spacing: 0;
+        padding: 0;
+        margin: 0;
+    }
+}
+
+.detailsPageGuestCounterContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detailsPageGuestCounterTitle {
+    font-family: "Mont", sans-serif;
+    font-size: 14px;
+    color: var(--black);
+    font-weight: 400
+}
+
+.detailsPageGuestCounter {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    padding: 11px;
+    border-radius: 8px;
+    border: 1px solid var(--light-grey);
+    height: min-content;
+
+    span {
+        font-family: "Mont", sans-serif;
+        font-weight: 400;
+        font-size: 12px;
+        letter-spacing: 0;
+    }
+}
+
+.detailsPageGuestCounterButton {
+    padding: 0 4px;
+    cursor: pointer;
+}
+
+.detailsPageDescriptionTrimLines {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+.detailsPageDescriptionTrimLinesButtonText {
+    font-size: 14px;
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    color: var(--red);
+}
+
+.eventPurchasePageTitle {
+    font-family: "Heading Pro Ultracompressed", sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    text-transform: uppercase;
+    padding: 0;
+    margin: 0;
+}
+
+.eventPurchasePageSubtitle {
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    vertical-align: bottom;
+    text-transform: none;
+}
+
+.eventPurchasePageDates {
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+}
+
+.eventPurchasePageDataRow {
+    flex-direction: row;
+    font-family: "Mont", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--black);
+    span, time {
+        color: #989898;
+    }
+}
+
+.hr {
+    width: 100%;
+    height: 1px;
+    background-color: var(--light-grey);
+    margin: 0;
+}
+
+.justifyBetween {
+    justify-content: space-between;
+}
+
+.eventPurchasePageDataRowSmall {
+    max-width: 70%;
+    font-family: "Mont", sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--grey);
+}
+
+.eventPurchasePageDataRowBold {
+    font-family: "Mont", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--black)!important;
+}
+
+.eventPurchaseCancellationPolicy {
+    font-family: "Mont", sans-serif;
+    font-weight: 400;
+    font-size: 10px;
+    color: var(--grey);
 }

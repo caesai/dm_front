@@ -1,156 +1,175 @@
+/**
+ * @fileoverview Страница выбора ресторана для банкета.
+ * 
+ * Первый шаг в процессе бронирования банкета:
+ * 1. BanquetAddressPage (выбор ресторана) <- текущая страница
+ * 2. ChooseBanquetOptionsPage (выбор опции банкета)
+ * 3. BanquetOptionPage (настройка банкета)
+ * 4. BanquetAdditionalServicesPage (дополнительные услуги) - опционально
+ * 5. BanquetReservationPage (подтверждение)
+ * 
+ * Особенности логики:
+ * - Показываются только рестораны с banquet_options.length > 0
+ * - При переходе со страницы ресторана ресторан предвыбирается из URL
+ * - Навигация назад зависит от статуса онбординга пользователя
+ * - Не прошедшие онбординг пользователи перенаправляются на /onboarding/3
+ * 
+ * @module pages/BanquetAddressPage
+ * 
+ * @see {@link ChooseBanquetOptionsPage} - следующий шаг в процессе
+ * @see {@link RestaurantsListSelector} - компонент выбора ресторана
+ */
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAtomValue } from 'jotai/index';
+// Atoms
+import { userAtom } from '@/atoms/userAtom.ts';
+import { restaurantsListAtom, useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
+// Components
 import { Page } from '@/components/Page.tsx';
-import css from './BanquetAddressPage.module.css';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
+import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
+import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import BanquetImg from '/img/banquet_img.png';
-import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
-import React, { useEffect, useState } from 'react';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { PickerValue } from '@/lib/react-mobile-picker/components/Picker.tsx';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
-import { useAtom } from 'jotai/index';
-import { userAtom } from '@/atoms/userAtom.ts';
-import { IRestaurant } from '@/types/restaurant.types.ts';
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { IBanquet } from '@/types/banquets.types.ts';
+// Styles
+import css from '@/pages/BanquetAddressPage/BanquetAddressPage.module.css';
+import BanquetImg from '/img/banquet_img.png';
 
-const initialRestaurant: PickerValueObj = {
+/**
+ * Начальное значение для селектора ресторана.
+ * Используется когда ресторан ещё не выбран.
+ * @constant
+ */
+const initialRestaurant: PickerValue = {
     title: 'unset',
     value: 'unset',
 };
 
-export const BanquetAddressPage: React.FC = () => {
+/**
+ * Страница выбора ресторана для банкета.
+ * 
+ * Отображает информационный блок о банкетах и селектор ресторанов.
+ * Фильтрует рестораны, показывая только те, у которых есть банкетные опции.
+ * 
+ * @returns {JSX.Element} - Компонент страницы выбора ресторана для банкета
+ * 
+ * @example
+ * // URL: /banquets/:restaurantId
+ * // Если restaurantId - конкретный ID, ресторан будет предвыбран
+ * // Если restaurantId - :restaurantId (placeholder), пользователь выбирает сам
+ */
+export const BanquetAddressPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const { id } = useParams();
-    const [user] = useAtom(userAtom);
-    const [restaurants] = useAtom(restaurantsListAtom);
+    const { restaurantId } = useParams();
+    const user = useAtomValue(userAtom);
+    const restaurants = useAtomValue(restaurantsListAtom);
+    const [currentRestaurant, setCurrentRestaurant] = useState<PickerValue>(initialRestaurant);
+    const restaurant = useGetRestaurantById(restaurantId || '');
+    
+    /**
+     * Отфильтрованный список ресторанов с банкетными опциями.
+     * Рестораны без banquet_options не отображаются в селекторе.
+     */
+    const restaurantsList = useMemo(() => {
+        return restaurants.filter((item) => item.banquets?.banquet_options?.length > 0);
+    }, [restaurants]);
+    
+    /** Флаг, указывающий что кнопка "Продолжить" заблокирована */
+    const isDisabled = currentRestaurant.value === 'unset';
 
-    const [currentRestaurant, setCurrentRestaurant] = useState<PickerValueObj>(initialRestaurant);
-    const [restaurantPopup, setRestaurantPopup] = useState<boolean>(false);
-    const [isDisabledButton, setDisabledButton] = useState(true);
-    const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
-    const [banquets, setBanquets] = useState<IBanquet | null>(null);
-
-    const restaurant = location.state?.restaurant;
-
-    const goBack = () => {
+    /**
+     * Обрабатывает нажатие кнопки "Назад".
+     * 
+     * Логика навигации:
+     * - Если пользователь прошёл онбординг:
+     *   - При :restaurantId (placeholder) -> главная страница
+     *   - При конкретном restaurantId -> страница ресторана
+     * - Если пользователь не прошёл онбординг -> /onboarding/3
+     */
+    const handleGoBack = () => {
         if (user?.complete_onboarding) {
-            if (id === ':id') {
+            if (restaurantId === ':restaurantId') {
                 navigate('/');
             } else {
-                navigate(`/restaurant/${id}`);
+                navigate(`/restaurant/${restaurantId}`);
             }
         } else {
             navigate('/onboarding/3');
         }
     };
 
+    /**
+     * Обрабатывает нажатие кнопки "Продолжить".
+     * 
+     * Логика навигации:
+     * - Если пользователь прошёл онбординг -> страница выбора опций банкета
+     * - Если пользователь не прошёл онбординг -> /onboarding/3 с данными банкета
+     * 
+     * @remarks
+     * Функция не выполняется если ресторан не выбран (isDisabled = true)
+     */
     const goNextPage = () => {
-        if (!isDisabledButton) {
-            const workTime = restaurantsList.find(item => item.id === Number(currentRestaurant.value))?.worktime;
+        if (!isDisabled) {
             if (user?.complete_onboarding) {
-                navigate(`/banquets/${currentRestaurant.value}/choose`, {
-                    state: {
-                        ...location.state,
-                        banquets,
-                        currentRestaurant,
-                        workTime
-                    },
-                });
+                navigate(`/banquets/${currentRestaurant.value}/choose`);
             } else {
                 navigate('/onboarding/3', {
                     state: {
-                        ...location.state,
                         id: currentRestaurant.value,
-                        banquets,
-                        workTime,
                         sharedBanquet: true,
-                        currentRestaurant,
                     },
                 });
             }
         }
     };
 
+    /**
+     * Эффект для предвыбора ресторана из URL параметров.
+     * 
+     * Если restaurantId в URL соответствует существующему ресторану,
+     * автоматически устанавливает его как выбранный.
+     */
     useEffect(() => {
-        currentRestaurant.value === 'unset' ? setDisabledButton(true) : setDisabledButton(false);
-    }, [currentRestaurant]);
-
-    useEffect(() => {
-        if (location.state && location.state.currentRestaurant) {
-            setCurrentRestaurant(() => ({
-                value: String(location.state.currentRestaurant.id),
-                ...location.state.currentRestaurant,
-            }));
-        } else if (restaurant) {
-            setCurrentRestaurant(() => ({
+        if (restaurant) {
+            setCurrentRestaurant({
                 value: String(restaurant.id),
-                ...restaurant,
-            }));
+                title: restaurant.title,
+                subtitle: restaurant.address,
+            });
         }
-    }, [location.state]);
-
-    // Загрузка данных о банкетах в конкретном ресторане
-    useEffect(() => {
-        if (currentRestaurant.value !== 'unset') {
-            const currentBanquets = restaurantsList.find((item) => item.id === Number(currentRestaurant.value))?.banquets;
-            if (currentBanquets) {
-                setBanquets(currentBanquets);
-            }
-        }
-    }, [currentRestaurant.value]);
-
-    useEffect(() => {
-        const filteredRestaurantsWithBanquetOptions = restaurants.filter((item) => item.banquets?.banquet_options?.length > 0);
-        setRestaurantsList(filteredRestaurantsWithBanquetOptions);
-    }, [restaurants]);
+    }, [restaurant]);
 
     return (
-        <Page back={true}>
-            <RestaurantsListSelector
-                isOpen={restaurantPopup}
-                setOpen={setRestaurantPopup}
-                restaurant={currentRestaurant}
-                selectRestaurant={setCurrentRestaurant}
-                filteredRestaurants={restaurantsList}
-            />
-            <div className={css.page}>
-                <div className={css.pageWrapper}>
-                    <div className={css.header}>
-                        <RoundedButton
-                            icon={<BackIcon color={'var(--dark-grey)'} />}
-                            action={goBack}
-                        ></RoundedButton>
-                        <span className={css.header_title}>
-                            Банкеты
+        <Page back={true} className={css.page}>
+            <ContentContainer className={css.pageWrapper}>
+                <ContentBlock className={css.header}>
+                    <RoundedButton icon={<BackIcon color={'var(--dark-grey)'} />} action={handleGoBack}></RoundedButton>
+                    <HeaderContent title="Банкеты" className={css.header_title} />
+                    <div style={{ width: 40 }} />
+                </ContentBlock>
+                <ContentBlock className={css.container}>
+                    <ContentBlock className={css.banquet_content}>
+                        <img src={BanquetImg} alt={'Банкет'} className={css.banquet_img} />
+                        <span className={css.banquet_text}>
+                            Для тех, кто планирует важное событие. Здесь можно собрать частный ужин, семейный праздник
+                            или деловую встречу — мы предложим пространство, меню и сопровождение под ваш формат.
                         </span>
-                        <div style={{ width: 40 }} />
-                    </div>
-                    <div className={css.container}>
-                        <div className={css.banquet_content}>
-                            {/* <span
-                                className={css.banquet_title}>Подарите приятный вечер в <br /> ресторанах Dreamteam</span> */}
-                            <img src={BanquetImg} alt={'Банкет'} className={css.banquet_img} />
-                            <span className={css.banquet_text}>Для тех, кто планирует важное событие. Здесь можно собрать частный ужин, семейный праздник или деловую встречу — мы предложим пространство, меню и сопровождение под ваш формат.</span>
-                        </div>
-                        <div className={css.address_content}>
-                            <h3 className={css.content_title}>Адрес ресторана</h3>
-                            <DropDownSelect
-                                title={currentRestaurant.value !== 'unset' ? `${currentRestaurant?.title}, ${currentRestaurant.address}` : 'Выберите ресторан'}
-                                isValid={true}
-                                onClick={() => setRestaurantPopup(true)}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <BottomButtonWrapper
-                    content={'Продолжить'}
-                    onClick={goNextPage}
-                    theme={isDisabledButton ? 'primary' : 'red'}
-                />
-            </div>
+                    </ContentBlock>
+                    <ContentBlock className={css.address_content}>
+                        <h3 className={css.content_title}>Адрес ресторана</h3>
+                        <RestaurantsListSelector
+                            onSelect={(value: PickerValue) => setCurrentRestaurant(value)}
+                            filteredRestaurants={restaurantsList}
+                            selectedRestaurant={currentRestaurant}
+                        />
+                    </ContentBlock>
+                </ContentBlock>
+                <BottomButtonWrapper content={'Продолжить'} onClick={goNextPage} isDisabled={isDisabled} />
+            </ContentContainer>
         </Page>
     );
 };

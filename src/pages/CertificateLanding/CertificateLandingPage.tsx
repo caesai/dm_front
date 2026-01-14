@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAtom, useSetAtom } from 'jotai/index';
+import { useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
 import moment from 'moment';
 // API
 import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim, APIPostEGiftCertificateInfo } from '@/api/certificates.api.ts';
@@ -41,20 +41,22 @@ import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
  * @component
  * @returns {JSX.Element} Компонент страницы сертификата
  */
-export const CertificateLandingPage: React.FC = () => {
+export const CertificateLandingPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [auth] = useAtom(authAtom);
-    const [user] = useAtom(userAtom);
-    const [, setCertificates] = useAtom(certificatesListAtom);
+    const auth = useAtomValue(authAtom);
+    const user = useAtomValue(userAtom);
+    const setCertificates = useSetAtom(certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>);
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const setShowToast = useSetAtom(showToastAtom);
     const [loading, setLoading] = useState<boolean>(true);
     const [balance, setBalance] = useState<number | null>(null);
     const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
-    const { isShowing, toggle, setIsShowing } = useModal();
     // Флаг для предотвращения повторного вызова acceptCertificate
     const hasAcceptedCertificateRef = useRef<boolean>(false);
+    const { isShowing, toggle, setIsShowing } = useModal()
+    // Необходимо для предотвращения повторного вызова функции acceptCertificate при одновременном монтировании и размонтировании компонента
+    const isAcceptingRef = useRef(false);
 
     /**
      * Мемоизированная функция для отображения toast-уведомлений.
@@ -283,21 +285,17 @@ export const CertificateLandingPage: React.FC = () => {
                     // Пользователь — владелец. Ничего не делаем.
                     setLoading(false);
                     return;
-                } else {
-                    // Сертификат куплен другим пользователем, но еще не принят этим
-                    // Проверяем, не был ли уже вызван acceptCertificate для этого сертификата
-                    // Также проверяем, что сертификат еще не был принят (recipient_id не равен user.id)
-                    if (!hasAcceptedCertificateRef.current && certificate.recipient_id !== user.id) {
-                        hasAcceptedCertificateRef.current = true;
-                        (async () => {
-                            await acceptCertificate();
-                            setLoading(false);
-                        })();
-                    } else {
+            } else {
+                // Сертификат куплен другим пользователем, но еще не принят этим
+                if (!isAcceptingRef.current) {
+                    isAcceptingRef.current = true;
+                    (async () => {
+                        await acceptCertificate();
                         setLoading(false);
-                    }
-                    return;
+                    })();
                 }
+                return;
+            }
             } else {
                 // Сертификат уже был передан (shared_at существует)
                 if (certificate.recipient_id === user.id) {
@@ -332,7 +330,7 @@ export const CertificateLandingPage: React.FC = () => {
      *
      * @returns {void}
      */
-    const goHome = () => {
+    const goHome = (): void => {
         navigate('/');
     };
 
@@ -341,7 +339,7 @@ export const CertificateLandingPage: React.FC = () => {
      *
      * @returns {void}
      */
-    const goToOnboarding = () => {
+    const goToOnboarding = (): void => {
         navigate('/onboarding/3', { state: { certificateId: id, sharedCertificate: true, certificate: true } });
     };
 
@@ -355,7 +353,7 @@ export const CertificateLandingPage: React.FC = () => {
      * @fires navigate - Перенаправляет на страницу бронирования для авторизованных пользователей
      * @returns {void}
      */
-    const goToBooking = () => {
+    const goToBooking = (): void => {
         if (!user?.complete_onboarding) {
             setIsShowing(true);
             return;
@@ -494,7 +492,7 @@ export const CertificateLandingPage: React.FC = () => {
                     </AccordionComponent>
                     <div className={css.restaurantsList}>
                         <span className={css.pageTitle}>Доступно в ресторанах</span>
-                        <RestaurantsList titleStyle={{ fontSize: '14px', fontWeight: '600' }} />
+                        <RestaurantsList />
                     </div>
                     {!isCertificateDisabled() && (
                         <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />

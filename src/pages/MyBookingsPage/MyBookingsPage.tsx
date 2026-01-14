@@ -23,7 +23,7 @@ export const MyBookingsPage: React.FC = () => {
     const [bookings, setBookings] = useState<IBookingInfo[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const clickOnActiveBooking = (id: number) => {
+    const clickOnActiveBooking = (id: string) => {
         navigate(`/myBookings/${id}`);
     };
 
@@ -73,7 +73,7 @@ export const MyBookingsPage: React.FC = () => {
                                         active={['new', 'waiting', 'confirmed'].some(
                                             (v) => v == booking.booking_status
                                         )}
-                                        booking_id={booking.id}
+                                        booking_id={String(booking.id)}
                                         title={booking.restaurant.title}
                                         address={booking.restaurant.address}
                                         click_callback={clickOnActiveBooking}

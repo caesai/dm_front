@@ -188,6 +188,9 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
                 case 'certificates':
                     navigate('/certificates/1?shared=true', { replace: true });
                     break;
+                case 'booking':
+                    navigate('/booking?shared=true', { replace: true });
+                    break;
                 default:
                     handleNavigation(tgWebAppStartParam);
                     break;

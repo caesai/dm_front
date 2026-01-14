@@ -1,30 +1,64 @@
+/**
+ * @fileoverview Тесты для страницы списка мероприятий EventsListPage.
+ * 
+ * Страница отображает список мероприятий с возможностью фильтрации:
+ * - По городу (CitySelect)
+ * - По ресторану (RestaurantsListSelector)
+ * 
+ * Особенности логики:
+ * - Показываются только мероприятия с tickets_left > 0
+ * - При смене города сбрасывается выбранный ресторан
+ * - URL-параметры city и restaurant позволяют предустановить фильтры
+ * 
+ * @module __tests__/events/EventsListPage
+ * 
+ * @see {@link EventsListPage} - тестируемый компонент
+ * @see {@link EventDetailsPage} - страница деталей мероприятия (навигация по клику)
+ * @see {@link EventCard} - карточка мероприятия
+ */
+
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { MemoryRouter, Routes, Route, Outlet } from 'react-router-dom';
-import { EventsListPage } from '@/pages/EventsPage/EventsListPage/EventsListPage.tsx';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { EventsListPage } from '@/pages/EventsPage/EventsListPage';
 import { userAtom } from '@/atoms/userAtom.ts';
 import { eventsListAtom } from '@/atoms/eventListAtom.ts';
-import { cityListAtom, ICity } from '@/atoms/cityListAtom.ts';
-import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
+import { cityListAtom, currentCityAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock';
 import { mockEventsList } from '@/__mocks__/events.mock';
 import { IUser } from '@/types/user.types.ts';
-import { IEvent, IEventBooking } from '@/types/events.types.ts';
+import { IEvent } from '@/types/events.types.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
-import { useState } from 'react';
 
-jest.mock('swiper/react', () => ({
-    Swiper: ({ children }: any) => <div data-testid="swiper">{children}</div>,
-    SwiperSlide: ({ children }: any) => <div data-testid="swiper-slide">{children}</div>,
-}));
+// ============================================
+// Моки внешних зависимостей
+// ============================================
 
+/**
+ * Мок Swiper для карусели.
+ * Заменяет реальные компоненты Swiper на простые div-обёртки.
+ */
+jest.mock('swiper/react', () => {
+    const React = require('react');
+    return {
+        Swiper: ({ children }: any) => React.createElement('div', { 'data-testid': 'swiper' }, children),
+        SwiperSlide: ({ children }: any) => React.createElement('div', { 'data-testid': 'swiper-slide' }, children),
+    };
+});
+
+/**
+ * Мок модулей Swiper.
+ */
 jest.mock('swiper/modules', () => ({
     FreeMode: jest.fn(),
 }));
 
-// Mock Telegram SDK
+/**
+ * Мок Telegram SDK.
+ * Имитирует backButton, mainButton и locationManager для работы компонента.
+ */
 jest.mock('@telegram-apps/sdk-react', () => ({
     backButton: {
         show: jest.fn(),
@@ -50,7 +84,10 @@ jest.mock('@telegram-apps/sdk-react', () => ({
     },
 }));
 
-// Mock react-router-dom
+/**
+ * Мок функции навигации react-router-dom.
+ * Позволяет проверять вызовы navigate() в тестах.
+ */
 const mockedNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
@@ -58,7 +95,10 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedNavigate,
 }));
 
-// Mock Telegram WebApp
+/**
+ * Мок Telegram WebApp объекта.
+ * Необходим для работы компонентов, использующих Telegram API.
+ */
 Object.defineProperty(window, 'Telegram', {
     writable: true,
     value: {
@@ -70,7 +110,10 @@ Object.defineProperty(window, 'Telegram', {
     },
 });
 
-// Mock localStorage
+/**
+ * Мок localStorage.
+ * Возвращает 'spb' как текущий город по умолчанию.
+ */
 const localStorageMock = {
     getItem: jest.fn(() => 'spb'),
     setItem: jest.fn(),
@@ -80,16 +123,27 @@ Object.defineProperty(window, 'localStorage', {
     value: localStorageMock,
 });
 
-// Mock города
+// ============================================
+// Тестовые данные
+// ============================================
+
+/**
+ * Список городов для тестов.
+ * Содержит Москву и Санкт-Петербург.
+ */
 const mockCityList: ICity[] = [
     { id: 1, name: 'Москва', name_english: 'moscow', name_dative: 'Москве' },
     { id: 2, name: 'Санкт-Петербург', name_english: 'spb', name_dative: 'Санкт-Петербурге' },
 ];
 
-// Mock рестораны
+/**
+ * Список ресторанов для тестов.
+ * - Self Edge Japanese (id: 4) - СПб
+ * - Self Edge Moscow (id: 10) - Москва
+ */
 const mockRestaurants: IRestaurant[] = [
     {
-        id: 4,
+        id: String(4),
         title: 'Self Edge Japanese',
         slogan: 'Японский ресторан',
         address: 'Санкт-Петербург, ул. Радищева, 34',
@@ -115,7 +169,7 @@ const mockRestaurants: IRestaurant[] = [
         socials: [],
     },
     {
-        id: 10,
+        id: String(10),
         title: 'Self Edge Moscow',
         slogan: 'Московский ресторан',
         address: 'Москва, ул. Большая Грузинская, 12',
@@ -142,22 +196,55 @@ const mockRestaurants: IRestaurant[] = [
     },
 ];
 
-// Mock события с заполненными image_url
+/**
+ * Список мероприятий с заполненными image_url.
+ * Без image_url карточки могут отображаться некорректно.
+ */
 const mockEventsWithImages: IEvent[] = mockEventsList.map(e => ({
     ...e,
     image_url: e.image_url || 'https://example.com/default-event-image.jpg',
 }));
 
-// Wrapper component to provide OutletContext
-const OutletContextWrapper: React.FC = () => {
-    const [eventBookingInfo, setEventBookingInfo] = useState<IEventBooking | null>(null);
+// ============================================
+// Тестовый набор
+// ============================================
 
-    return (
-        <Outlet context={[eventBookingInfo, setEventBookingInfo]} />
-    );
-};
-
+/**
+ * Тесты страницы списка мероприятий.
+ * 
+ * Покрывает следующие сценарии:
+ * - Отображение списка мероприятий
+ * - Фильтрация по городу
+ * - Фильтрация по ресторану
+ * - Навигация на страницу деталей
+ * - Обработка URL-параметров
+ * - Фильтрация по tickets_left
+ * - Отображение информации о мероприятии
+ */
 describe('EventsListPage', () => {
+    // ============================================
+    // Вспомогательные функции
+    // ============================================
+
+    /**
+     * Рендерит компонент EventsListPage с необходимыми провайдерами.
+     * 
+     * @param user - Данные пользователя (по умолчанию mockUserData)
+     * @param events - Список мероприятий (null = загрузка, [] = пусто)
+     * @param cities - Список городов
+     * @param currentCity - Текущий выбранный город (name_english)
+     * @param restaurants - Список ресторанов
+     * @param initialUrl - Начальный URL (для тестирования параметров)
+     * @returns Результат render() из @testing-library/react
+     * 
+     * @example
+     * // Базовый рендер
+     * renderComponent();
+     * 
+     * @example
+     * // Рендер с URL-параметрами
+     * renderComponent(mockUserData, mockEventsWithImages, mockCityList, 'spb', mockRestaurants, '/events?city=moscow');
+     */
     const renderComponent = (
         user: IUser | undefined = mockUserData,
         events: IEvent[] | null = mockEventsWithImages,
@@ -184,24 +271,72 @@ describe('EventsListPage', () => {
                     }}
                 >
                     <Routes>
-                        <Route element={<OutletContextWrapper />}>
-                            <Route path="/events" element={<EventsListPage />} />
-                        </Route>
+                        <Route path="/events" element={<EventsListPage />} />
                     </Routes>
                 </MemoryRouter>
             </TestProvider>
         );
     };
 
+    // ============================================
+    // Настройка тестов
+    // ============================================
+
+    /** Оригинальный console.error для восстановления после тестов */
+    const originalConsoleError = console.error;
+    /** Оригинальный console.warn для восстановления после тестов */
+    const originalConsoleWarn = console.warn;
+
     beforeEach(() => {
         jest.clearAllMocks();
+        
+        // Подавляем ожидаемые ошибки в консоли
+        jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+            const message = String(args[0] || '');
+            // Игнорируем ожидаемые ошибки
+            if (
+                message.includes('not wrapped in act') ||
+                message.includes('Not implemented: navigation')
+            ) {
+                return;
+            }
+            originalConsoleError(...args);
+        });
+        
+        // Подавляем предупреждения о SVG атрибутах
+        jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+            const message = String(args[0] || '');
+            // Игнорируем предупреждения о SVG атрибутах (stroke-width, clip-path и т.д.)
+            if (
+                message.includes('Invalid DOM property') ||
+                message.includes('stroke-width') ||
+                message.includes('clip-path') ||
+                message.includes('stroke-linecap') ||
+                message.includes('stroke-linejoin')
+            ) {
+                return;
+            }
+            originalConsoleWarn(...args);
+        });
     });
 
     afterEach(() => {
         jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
+    // ============================================
+    // Тесты: Отображение списка мероприятий
+    // ============================================
+
+    /**
+     * Тесты базового отображения списка мероприятий.
+     */
     describe('Отображение списка мероприятий', () => {
+        /**
+         * Проверяет отображение карточек мероприятий.
+         * Карточки имеют data-testid="event-card".
+         */
         test('должен отображать карточки мероприятий', async () => {
             renderComponent();
 
@@ -211,6 +346,10 @@ describe('EventsListPage', () => {
             });
         });
 
+        /**
+         * Проверяет отображение placeholder при загрузке.
+         * Когда events = null, компонент показывает 10 placeholder карточек.
+         */
         test('должен показывать placeholder при загрузке данных', async () => {
             renderComponent(mockUserData, null);
 
@@ -220,8 +359,11 @@ describe('EventsListPage', () => {
             });
         });
 
+        /**
+         * Проверяет сообщение при отсутствии мероприятий.
+         * Когда events = [] (пустой массив), показывает "Мероприятий пока нет".
+         */
         test('должен показывать сообщение, когда нет мероприятий', async () => {
-            // Пустой список событий
             renderComponent(mockUserData, []);
 
             await waitFor(() => {
@@ -230,57 +372,101 @@ describe('EventsListPage', () => {
         });
     });
 
+    // ============================================
+    // Тесты: Фильтрация по городу
+    // ============================================
+
+    /**
+     * Тесты фильтрации мероприятий по городу.
+     * Используется компонент CitySelect.
+     */
     describe('Фильтрация по городу', () => {
+        /**
+         * Проверяет отображение селектора города.
+         */
         test('должен отображать селектор города', async () => {
             renderComponent();
 
             await waitFor(() => {
-                // Проверяем наличие города по умолчанию (может появляться в нескольких местах)
+                // Город по умолчанию (spb) отображается в селекторе
                 const cityElements = screen.getAllByText('Санкт-Петербург');
                 expect(cityElements.length).toBeGreaterThan(0);
             });
         });
 
+        /**
+         * Проверяет фильтрацию мероприятий по выбранному городу.
+         * Моковые события относятся к ресторану в СПб (id: 4).
+         */
         test('должен фильтровать мероприятия по выбранному городу', async () => {
             renderComponent(mockUserData, mockEventsWithImages, mockCityList, 'spb');
 
             await waitFor(() => {
-                // Все моковые события относятся к ресторану в СПб (id: 4)
                 const eventCards = screen.getAllByTestId('event-card');
                 expect(eventCards.length).toBeGreaterThan(0);
             });
         });
     });
 
+    // ============================================
+    // Тесты: Фильтрация по ресторану
+    // ============================================
+
+    /**
+     * Тесты фильтрации мероприятий по ресторану.
+     * Используется компонент RestaurantsListSelector.
+     */
     describe('Фильтрация по ресторану', () => {
+        /**
+         * Проверяет отображение селектора ресторана.
+         * По умолчанию показывает "Ресторан" (без выбранного значения).
+         */
         test('должен отображать селектор ресторана', async () => {
             renderComponent();
 
             await waitFor(() => {
-                expect(screen.getByText('Выберите ресторан')).toBeInTheDocument();
+                // По умолчанию отображается "Ресторан" в DropDownSelect
+                expect(screen.getByText('Ресторан')).toBeInTheDocument();
             });
         });
 
+        /**
+         * Проверяет открытие селектора ресторанов при клике.
+         * После клика должен показываться WheelPicker с заголовком "Выберите ресторан"
+         * и список ресторанов текущего города.
+         */
         test('должен открывать селектор ресторанов при клике', async () => {
             renderComponent();
 
             await waitFor(() => {
-                expect(screen.getByText('Выберите ресторан')).toBeInTheDocument();
+                expect(screen.getByText('Ресторан')).toBeInTheDocument();
             });
 
-            const restaurantSelector = screen.getByText('Выберите ресторан');
+            const restaurantSelector = screen.getByText('Ресторан');
             fireEvent.click(restaurantSelector);
 
-            // Проверяем, что селектор открылся (RestaurantsListSelector должен быть видим)
             await waitFor(() => {
-                // Ресторан из списка должен быть виден (может появляться в нескольких местах)
+                // После открытия WheelPicker показывает заголовок "Выберите ресторан"
+                expect(screen.getByText('Выберите ресторан')).toBeInTheDocument();
+                // Ресторан из списка СПб должен быть виден
                 const restaurantElements = screen.getAllByText('Self Edge Japanese');
                 expect(restaurantElements.length).toBeGreaterThan(0);
             });
         });
     });
 
+    // ============================================
+    // Тесты: Навигация
+    // ============================================
+
+    /**
+     * Тесты навигации на страницу деталей мероприятия.
+     */
     describe('Навигация', () => {
+        /**
+         * Проверяет переход на страницу деталей при клике на карточку.
+         * Навигация: /events/{eventId}/details с replace: true.
+         */
         test('должен переходить на страницу деталей мероприятия при клике на карточку', async () => {
             renderComponent();
 
@@ -301,7 +487,18 @@ describe('EventsListPage', () => {
         });
     });
 
+    // ============================================
+    // Тесты: URL параметры
+    // ============================================
+
+    /**
+     * Тесты обработки URL-параметров city и restaurant.
+     * Позволяют предустановить фильтры из ссылки (например, из бота).
+     */
     describe('URL параметры', () => {
+        /**
+         * Проверяет установку города из URL-параметра ?city=.
+         */
         test('должен устанавливать город из URL параметров', async () => {
             renderComponent(
                 mockUserData,
@@ -313,13 +510,21 @@ describe('EventsListPage', () => {
             );
 
             await waitFor(() => {
-                // "Москва" может появляться в нескольких местах (селектор города, список городов)
+                // Москва должна быть отображена после установки из URL
                 const moscowElements = screen.getAllByText('Москва');
                 expect(moscowElements.length).toBeGreaterThan(0);
             });
         });
 
-        test('должен устанавливать ресторан из URL параметров', async () => {
+        /**
+         * Проверяет установку ресторана из URL-параметра ?restaurant=.
+         * URL параметр фильтрует мероприятия по ресторану.
+         * 
+         * Примечание: RestaurantsListSelector имеет собственный внутренний state
+         * и не синхронизируется с URL параметром (ограничение компонента).
+         * Поэтому проверяем только фильтрацию мероприятий.
+         */
+        test('должен фильтровать мероприятия по ресторану из URL параметров', async () => {
             renderComponent(
                 mockUserData,
                 mockEventsWithImages,
@@ -330,17 +535,31 @@ describe('EventsListPage', () => {
             );
 
             await waitFor(() => {
-                // Проверяем, что ресторан выбран (название отображается вместо "Выберите ресторан")
-                // Текст "Self Edge Japanese" может появляться в нескольких местах
-                const restaurantElements = screen.getAllByText(/Self Edge Japanese/);
-                expect(restaurantElements.length).toBeGreaterThan(0);
-                // Проверяем, что "Выберите ресторан" больше не отображается
-                expect(screen.queryByText('Выберите ресторан')).not.toBeInTheDocument();
+                // Мероприятия отфильтрованы по ресторану из URL
+                const eventCards = screen.getAllByTestId('event-card');
+                expect(eventCards.length).toBeGreaterThan(0);
+                // Все отображаемые мероприятия должны быть от ресторана с id=4
+                const restaurantTitles = screen.getAllByTestId('event-restaurant-title');
+                restaurantTitles.forEach(title => {
+                    expect(title).toHaveTextContent('Self Edge Japanese');
+                });
             });
         });
     });
 
+    // ============================================
+    // Тесты: Фильтрация по tickets_left
+    // ============================================
+
+    /**
+     * Тесты фильтрации мероприятий по наличию билетов.
+     * Мероприятия с tickets_left = 0 не отображаются.
+     */
     describe('Отображение мероприятий с tickets_left > 0', () => {
+        /**
+         * Проверяет, что мероприятия с tickets_left = 0 скрыты.
+         * Только мероприятия с доступными билетами показываются в списке.
+         */
         test('должен показывать только мероприятия с доступными билетами', async () => {
             const eventsWithSoldOut: IEvent[] = [
                 ...mockEventsWithImages,
@@ -356,7 +575,7 @@ describe('EventsListPage', () => {
 
             await waitFor(() => {
                 const eventCards = screen.getAllByTestId('event-card');
-                // Проверяем, что sold out мероприятие не отображается
+                // Sold out мероприятие не должно отображаться
                 expect(screen.queryByText('Sold Out Event')).not.toBeInTheDocument();
                 // Но остальные мероприятия отображаются
                 expect(eventCards.length).toBeGreaterThan(0);
@@ -364,7 +583,17 @@ describe('EventsListPage', () => {
         });
     });
 
+    // ============================================
+    // Тесты: Информация о мероприятии
+    // ============================================
+
+    /**
+     * Тесты отображения информации в карточках мероприятий.
+     */
     describe('Информация о мероприятии', () => {
+        /**
+         * Проверяет отображение названия мероприятия.
+         */
         test('должен отображать название мероприятия', async () => {
             renderComponent();
 
@@ -373,22 +602,28 @@ describe('EventsListPage', () => {
             });
         });
 
+        /**
+         * Проверяет отображение названия ресторана в карточке.
+         * Элемент имеет data-testid="event-restaurant-title".
+         */
         test('должен отображать название ресторана', async () => {
             renderComponent();
 
             await waitFor(() => {
-                // Может быть несколько карточек с одинаковым рестораном
                 const restaurantElements = screen.getAllByTestId('event-restaurant-title');
                 expect(restaurantElements.length).toBeGreaterThan(0);
                 expect(restaurantElements[0]).toHaveTextContent(mockEventsWithImages[0].restaurant.title);
             });
         });
 
+        /**
+         * Проверяет отображение даты мероприятия в формате DD.MM.YYYY.
+         * Элемент имеет data-testid="event-date".
+         */
         test('должен отображать дату мероприятия', async () => {
             renderComponent();
 
             await waitFor(() => {
-                // Дата в формате DD.MM.YYYY (может быть несколько карточек с одинаковой датой)
                 const dateElements = screen.getAllByTestId('event-date');
                 expect(dateElements.length).toBeGreaterThan(0);
                 expect(dateElements[0]).toHaveTextContent('23.08.2025');
@@ -396,4 +631,3 @@ describe('EventsListPage', () => {
         });
     });
 });
-

@@ -1,24 +1,27 @@
 import { useCallback, useRef, useEffect } from 'react';
-import { useAtom } from 'jotai';
+import { useAtomValue, useSetAtom, WritableAtom } from 'jotai';
 // API
 import { APIGetCityList } from '@/api/city.api.ts';
 import { APIGetRestaurantsList } from '@/api/restaurants.api.ts';
 import { APIGetCertificates } from '@/api/certificates.api.ts';
-import { APIGetGastronomyDishesList } from '@/api/gastronomy.api.ts';
+// import { APIGetGastronomyDishesList } from '@/api/gastronomy.api.ts';
 import { APIGetEventsList } from '@/api/events.api.ts';
 // Atoms
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { cityListAtom } from '@/atoms/cityListAtom.ts';
+import { cityListAtom, TCityList } from '@/atoms/cityListAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
-import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
+// import { allGastronomyDishesListAtom } from '@/atoms/dishesListAtom.ts';
 import { eventsListAtom } from '@/atoms/eventListAtom.ts';
 // Types
 import { IRestaurant } from '@/types/restaurant.types.ts';
 import { ICity } from '@/atoms/cityListAtom.ts';
 // Utils
 import { getCachedData, setCachedData } from '@/hooks/useCachedData.ts';
-import { R } from '@/__mocks__/restaurant.mock';
+// import { R } from '@/__mocks__/restaurant.mock.ts';
+import { ICertificate } from '@/types/certificates.types';
+// import { IDish } from '@/types/gastronomy.types';
+import { IEvent } from '@/types/events.types';
 
 const CACHE_KEYS = {
     cities: 'app_cities',
@@ -34,20 +37,20 @@ const CACHE_KEYS = {
  * - Ленивую загрузку некритичных данных
  */
 export const useDataLoader = () => {
-    const [auth] = useAtom(authAtom);
-    const [user] = useAtom(userAtom);
-    const [, setCitiesList] = useAtom(cityListAtom);
-    const [, setRestaurantsList] = useAtom(restaurantsListAtom);
-    const [, setCertificatesList] = useAtom(certificatesListAtom);
-    const [, setAllGastronomyDishesList] = useAtom(allGastronomyDishesListAtom);
-    const [, setEventsList] = useAtom(eventsListAtom);
+    const auth = useAtomValue(authAtom);
+    const user = useAtomValue(userAtom);
+    const setCitiesList = useSetAtom(cityListAtom as WritableAtom<TCityList, [TCityList], void>);
+    const setRestaurantsList = useSetAtom(restaurantsListAtom as WritableAtom<IRestaurant[], [IRestaurant[]], void>);
+    const setCertificatesList = useSetAtom(certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>);
+    // const setAllGastronomyDishesList = useSetAtom(allGastronomyDishesListAtom as WritableAtom<IDish[], [IDish[]], void>);
+    const setEventsList = useSetAtom(eventsListAtom as WritableAtom<IEvent[] | null, [IEvent[] | null], void>);
 
     // Флаги для предотвращения повторной загрузки
     const loadedRef = useRef({
         critical: false,
         events: false,
         certificates: false,
-        gastronomy: false,
+        // gastronomy: false,
     });
 
     /**
@@ -139,31 +142,32 @@ export const useDataLoader = () => {
 
     /**
      * Загружает блюда гастрономии (ленивая загрузка)
+     * TODO: Выключаем кулинарию 
      */
-    const loadGastronomyDishes = useCallback(async (): Promise<void> => {
-        if (!auth?.access_token || loadedRef.current.gastronomy) {
-            return;
-        }
+    // const loadGastronomyDishes = useCallback(async (): Promise<void> => {
+    //     if (!auth?.access_token || loadedRef.current.gastronomy) {
+    //         return;
+    //     }
 
-        loadedRef.current.gastronomy = true;
+    //     loadedRef.current.gastronomy = true;
 
-        try {
-            const response = await APIGetGastronomyDishesList(auth.access_token);
-            setAllGastronomyDishesList(
-                // TODO: Выключаем кулинарию для списка ресторанов
-                response.data.filter(
-                    (dish) =>
-                        dish.restaurant_id !== Number(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) &&
-                        dish.restaurant_id !== Number(R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID) &&
-                        dish.restaurant_id !== Number(R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID) &&
-                        dish.restaurant_id !== Number(R.TRAPPIST_SPB_RADISHEVA_ID)
-                )
-            );
-        } catch (error) {
-            console.error('[useDataLoader] Failed to load gastronomy dishes:', error);
-            loadedRef.current.gastronomy = false;
-        }
-    }, [auth?.access_token, setAllGastronomyDishesList]);
+    //     try {
+    //         const response = await APIGetGastronomyDishesList(auth.access_token);
+    //         setAllGastronomyDishesList(
+    //             // TODO: Выключаем кулинарию для списка ресторанов
+    //             response.data.filter(
+    //                 (dish) =>
+    //                     dish.restaurant_id !== Number(R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID) &&
+    //                     dish.restaurant_id !== Number(R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID) &&
+    //                     dish.restaurant_id !== Number(R.BLACKCHOPS_SPB_FONTANKA_RIVER_ID) &&
+    //                     dish.restaurant_id !== Number(R.TRAPPIST_SPB_RADISHEVA_ID)
+    //             )
+    //         );
+    //     } catch (error) {
+    //         console.error('[useDataLoader] Failed to load gastronomy dishes:', error);
+    //         loadedRef.current.gastronomy = false;
+    //     }
+    // }, [auth?.access_token, setAllGastronomyDishesList]);
 
     /**
      * Загружает все фоновые данные
@@ -183,17 +187,45 @@ export const useDataLoader = () => {
             critical: false,
             events: false,
             certificates: false,
-            gastronomy: false,
+            // gastronomy: false,
         };
     }, []);
+
+    /**
+     * Проверяет наличие кэшированных критичных данных.
+     * Используется для мгновенного показа UI при наличии кэша.
+     * 
+     * @returns true если есть кэш городов И ресторанов
+     */
+    const hasCachedCriticalData = useCallback((): boolean => {
+        const cachedCities = getCachedData<ICity[]>(CACHE_KEYS.cities);
+        const cachedRestaurants = getCachedData<IRestaurant[]>(CACHE_KEYS.restaurants);
+        
+        // Проверяем что кэш не пустой
+        const hasValidCache = !!(
+            cachedCities && 
+            cachedCities.length > 0 && 
+            cachedRestaurants && 
+            cachedRestaurants.length > 0
+        );
+        
+        // Если есть валидный кэш — сразу устанавливаем данные в атомы
+        if (hasValidCache) {
+            setCitiesList(cachedCities);
+            setRestaurantsList(cachedRestaurants);
+        }
+        
+        return hasValidCache;
+    }, [setCitiesList, setRestaurantsList]);
 
     return {
         loadCriticalData,
         loadEvents,
         loadCertificates,
-        loadGastronomyDishes,
+        // loadGastronomyDishes,
         loadBackgroundData,
         resetLoadFlags,
+        hasCachedCriticalData,
     };
 };
 

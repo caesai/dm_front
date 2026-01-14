@@ -1,17 +1,17 @@
 .page {
-    background-color: var(--third-background);
-    height: 100vh;
+    background-color: var(--third-background)!important;
+    height: 100vh!important;
 }
 
 .pageWrapper {
-    display: flex;
-    flex-direction: column;
     padding: 20px 0;
+    background-color: var(--third-background)!important;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
+    flex-direction: row;
     align-items: center;
     padding: 0 15px;
     text-align: center;
@@ -21,13 +21,14 @@
     font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 14px;
+    text-transform: none;
 }
 
 .container {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin: 20px 14px 80px;
+    margin: 0 14px 80px;
 }
 
 .banquet_content {

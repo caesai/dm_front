@@ -2,14 +2,14 @@ import css from './Header.module.css';
 import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { useNavigate } from 'react-router-dom';
-import { useAtom } from 'jotai/index';
+import { useSetAtom } from 'jotai/index';
 import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
 import logoNew from "/img/DT_concierge_logo_color1.svg";
 import { IconlyLocation } from '@/components/Icons/Location.tsx';
 
 export const Header = () => {
     const navigate = useNavigate();
-    const [, setBackUrlAtom] = useAtom(backButtonAtom);
+    const setBackUrlAtom = useSetAtom(backButtonAtom);
 
     const goToProfile = () => {
         setBackUrlAtom('/');
@@ -17,7 +17,7 @@ export const Header = () => {
     };
 
     return (
-        <div className={css.header}>
+        <header className={css.header}>
             <img
                 className={css.logo}
                 src={logoNew}
@@ -34,6 +34,6 @@ export const Header = () => {
                     action={() => goToProfile()}
                 />
             </div>
-        </div>
+        </header>
     );
 };

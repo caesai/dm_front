@@ -1,17 +1,40 @@
+/**
+ * @fileoverview Тесты для страницы деталей мероприятия EventDetailsPage.
+ * 
+ * Страница отображает подробную информацию о мероприятии:
+ * - Название, описание, дата и время
+ * - Цена билета (для платных мероприятий)
+ * - Количество оставшихся мест
+ * - Счётчик выбора количества гостей
+ * - Кнопка перехода к бронированию/покупке
+ * 
+ * @module __tests__/events/EventDetailsPage
+ * 
+ * @see {@link EventDetailsPage} - тестируемый компонент
+ * @see {@link EventBookingPage} - страница бронирования бесплатного мероприятия
+ * @see {@link EventPurchasePage} - страница покупки билета на платное мероприятие
+ */
+
 import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { MemoryRouter, Routes, Route, Outlet } from 'react-router-dom';
-import { EventDetailsPage } from '@/pages/EventsPage/EventDetailsPage/EventDetailsPage.tsx';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { EventDetailsPage } from '@/pages/EventsPage/EventDetailsPage';
 import { userAtom } from '@/atoms/userAtom.ts';
 import { eventsListAtom, guestCountAtom } from '@/atoms/eventListAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock';
 import { mockEventsList } from '@/__mocks__/events.mock';
 import { IUser } from '@/types/user.types.ts';
-import { IEvent, IEventBooking } from '@/types/events.types.ts';
-import { useState } from 'react';
+import { IEvent } from '@/types/events.types.ts';
 
-// Mock Telegram SDK
+// ============================================
+// Моки внешних зависимостей
+// ============================================
+
+/**
+ * Мок Telegram SDK.
+ * Имитирует backButton, mainButton и locationManager для работы компонента.
+ */
 jest.mock('@telegram-apps/sdk-react', () => ({
     backButton: {
         show: jest.fn(),
@@ -37,8 +60,15 @@ jest.mock('@telegram-apps/sdk-react', () => ({
     },
 }));
 
-// Mock react-router-dom
+/**
+ * Мок функции навигации react-router-dom.
+ * Позволяет проверять вызовы navigate() в тестах.
+ */
 const mockedNavigate = jest.fn();
+
+/**
+ * Мок функции useParams для получения eventId из URL.
+ */
 const mockUseParams = jest.fn();
 
 jest.mock('react-router-dom', () => ({
@@ -47,7 +77,10 @@ jest.mock('react-router-dom', () => ({
     useParams: () => mockUseParams(),
 }));
 
-// Mock Telegram WebApp
+/**
+ * Мок Telegram WebApp объекта.
+ * Необходим для работы компонентов, использующих Telegram API.
+ */
 Object.defineProperty(window, 'Telegram', {
     writable: true,
     value: {
@@ -59,34 +92,79 @@ Object.defineProperty(window, 'Telegram', {
     },
 });
 
-// Wrapper component to provide OutletContext
-const OutletContextWrapper: React.FC = () => {
-    const [eventBookingInfo, setEventBookingInfo] = useState<IEventBooking | null>(null);
+// ============================================
+// Тестовый набор
+// ============================================
 
-    return (
-        <Outlet context={[eventBookingInfo, setEventBookingInfo]} />
-    );
-};
-
+/**
+ * Тесты страницы деталей мероприятия.
+ * 
+ * Покрывает следующие сценарии:
+ * - Состояние загрузки (skeleton)
+ * - Отображение информации о платных мероприятиях
+ * - Отображение информации о бесплатных мероприятиях
+ * - Работа счётчика гостей
+ * - Функционал "Читать больше"
+ * - Навигация на страницы бронирования/покупки
+ * - Скрытие кнопки при отсутствии мест
+ * - Форматирование даты и времени
+ */
 describe('EventDetailsPage', () => {
-    // Мероприятие с платным билетом (ticket_price > 0) и заполненным image_url
-    // Важно: компонент показывает skeleton если нет image_url
+    // ============================================
+    // Тестовые данные
+    // ============================================
+
+    /**
+     * Платное мероприятие для тестов.
+     * Важно: компонент показывает skeleton если нет image_url.
+     */
     const paidEvent: IEvent = {
         ...mockEventsList.find(e => e.ticket_price > 0)!,
         image_url: 'https://example.com/event-image.jpg',
     };
-    // Бесплатное мероприятие (ticket_price === 0) с заполненным image_url
+
+    /**
+     * Бесплатное мероприятие для тестов (ticket_price === 0).
+     */
     const freeEvent: IEvent = {
         ...mockEventsList.find(e => e.ticket_price === 0)!,
         image_url: 'https://example.com/free-event-image.jpg',
     };
     
-    // Список событий с заполненными image_url для тестов
+    /**
+     * Список мероприятий с заполненными image_url для тестов.
+     * Без image_url компонент показывает skeleton.
+     */
     const mockEventsWithImages: IEvent[] = mockEventsList.map(e => ({
         ...e,
         image_url: e.image_url || 'https://example.com/default-event-image.jpg',
     }));
 
+    // ============================================
+    // Вспомогательные функции
+    // ============================================
+
+    /**
+     * Рендерит компонент EventDetailsPage с необходимыми провайдерами.
+     * 
+     * @param user - Данные пользователя (по умолчанию mockUserData)
+     * @param events - Список мероприятий (по умолчанию mockEventsWithImages)
+     * @param eventId - ID мероприятия для отображения
+     * @param initialGuestCount - Начальное количество гостей в атоме
+     * @returns Результат render() из @testing-library/react
+     * 
+     * @example
+     * // Рендер с платным мероприятием
+     * renderComponent(mockUserData, mockEventsWithImages, String(paidEvent.id), 1);
+     * 
+     * @example
+     * // Рендер с бесплатным мероприятием
+     * renderComponent(mockUserData, mockEventsWithImages, String(freeEvent.id), 2);
+     * 
+     * @example
+     * // Рендер без onboarding
+     * renderComponent({ ...mockUserData, complete_onboarding: false });
+     */
     const renderComponent = (
         user: IUser | undefined = mockUserData,
         events: IEvent[] | null = mockEventsWithImages,
@@ -111,35 +189,85 @@ describe('EventDetailsPage', () => {
                     }}
                 >
                     <Routes>
-                        <Route element={<OutletContextWrapper />}>
-                            <Route path="/events/:eventId" element={<EventDetailsPage />} />
-                        </Route>
+                        <Route path="/events/:eventId" element={<EventDetailsPage />} />
                     </Routes>
                 </MemoryRouter>
             </TestProvider>
         );
     };
 
+    // ============================================
+    // Настройка тестов
+    // ============================================
+
+    /** Оригинальный console.error для восстановления после тестов */
+    const originalConsoleError = console.error;
+    /** Оригинальный console.warn для восстановления после тестов */
+    const originalConsoleWarn = console.warn;
+
     beforeEach(() => {
         jest.clearAllMocks();
         mockUseParams.mockReturnValue({ eventId: String(paidEvent.id) });
+        
+        // Подавляем ожидаемые ошибки в консоли
+        jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+            const message = String(args[0] || '');
+            // Игнорируем ожидаемые ошибки
+            if (
+                message.includes('not wrapped in act') ||
+                message.includes('Not implemented: navigation')
+            ) {
+                return;
+            }
+            originalConsoleError(...args);
+        });
+        
+        // Подавляем предупреждения о SVG атрибутах
+        jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+            const message = String(args[0] || '');
+            // Игнорируем предупреждения о SVG атрибутах (stroke-width, clip-path и т.д.)
+            if (
+                message.includes('Invalid DOM property') ||
+                message.includes('stroke-width') ||
+                message.includes('clip-path') ||
+                message.includes('stroke-linecap') ||
+                message.includes('stroke-linejoin')
+            ) {
+                return;
+            }
+            originalConsoleWarn(...args);
+        });
     });
 
     afterEach(() => {
         jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
+    // ============================================
+    // Тесты: Состояние загрузки
+    // ============================================
+
+    /**
+     * Тесты отображения skeleton-placeholder при загрузке данных.
+     */
     describe('Состояние загрузки', () => {
+        /**
+         * Проверяет отображение placeholder при отсутствии данных о мероприятии.
+         * Компонент должен показывать skeleton, пока данные не загружены.
+         */
         test('должен показывать placeholder при отсутствии данных о мероприятии', async () => {
-            // Рендерим без данных о мероприятии (пустой список)
             renderComponent(mockUserData, [], '999');
 
-            // Проверяем наличие placeholder блоков
             const placeholders = screen.getAllByTestId('placeholder-block');
             expect(placeholders.length).toBeGreaterThan(0);
         });
 
-        test('должен показывать placeholder при отсутствии tickets_left', async () => {
+        /**
+         * Проверяет скрытие кнопки при tickets_left = 0.
+         * Кнопка "Купить билет" не должна отображаться, если места закончились.
+         */
+        test('не должен показывать кнопку покупки при tickets_left = 0', async () => {
             const eventWithoutTickets: IEvent[] = [{
                 ...paidEvent,
                 tickets_left: 0,
@@ -148,15 +276,23 @@ describe('EventDetailsPage', () => {
 
             renderComponent(mockUserData, eventWithoutTickets, String(paidEvent.id));
 
-            // Компонент должен показывать placeholder, так как tickets_left = 0
             await waitFor(() => {
-                // Кнопка "Купить билет" не должна отображаться, если tickets_left === 0
                 expect(screen.queryByText('Купить билет')).not.toBeInTheDocument();
             });
         });
     });
 
+    // ============================================
+    // Тесты: Отображение платного мероприятия
+    // ============================================
+
+    /**
+     * Тесты отображения информации о платном мероприятии (ticket_price > 0).
+     */
     describe('Отображение информации о платном мероприятии', () => {
+        /**
+         * Проверяет отображение названия мероприятия.
+         */
         test('должен отображать название мероприятия', async () => {
             renderComponent();
 
@@ -165,6 +301,9 @@ describe('EventDetailsPage', () => {
             });
         });
 
+        /**
+         * Проверяет отображение цены билета в формате "X ₽".
+         */
         test('должен отображать цену билета для платного мероприятия', async () => {
             renderComponent();
 
@@ -173,6 +312,9 @@ describe('EventDetailsPage', () => {
             });
         });
 
+        /**
+         * Проверяет отображение количества оставшихся мест.
+         */
         test('должен отображать количество оставшихся мест', async () => {
             renderComponent();
 
@@ -181,6 +323,9 @@ describe('EventDetailsPage', () => {
             });
         });
 
+        /**
+         * Проверяет наличие метки "предоплата" для платного мероприятия.
+         */
         test('должен отображать метку "предоплата" для платного мероприятия', async () => {
             renderComponent();
 
@@ -189,6 +334,9 @@ describe('EventDetailsPage', () => {
             });
         });
 
+        /**
+         * Проверяет отображение кнопки "Купить билет" для платного мероприятия.
+         */
         test('должен показывать кнопку "Купить билет" для платного мероприятия', async () => {
             renderComponent();
 
@@ -198,7 +346,17 @@ describe('EventDetailsPage', () => {
         });
     });
 
+    // ============================================
+    // Тесты: Отображение бесплатного мероприятия
+    // ============================================
+
+    /**
+     * Тесты отображения информации о бесплатном мероприятии (ticket_price === 0).
+     */
     describe('Отображение информации о бесплатном мероприятии', () => {
+        /**
+         * Проверяет отображение кнопки "Забронировать" для бесплатного мероприятия.
+         */
         test('должен показывать кнопку "Забронировать" для бесплатного мероприятия', async () => {
             renderComponent(mockUserData, mockEventsWithImages, String(freeEvent.id));
 
@@ -207,6 +365,10 @@ describe('EventDetailsPage', () => {
             });
         });
 
+        /**
+         * Проверяет отсутствие цены для бесплатного мероприятия.
+         * Блок с ценой не должен отображаться когда ticket_price === 0.
+         */
         test('не должен отображать цену для бесплатного мероприятия', async () => {
             renderComponent(mockUserData, mockEventsWithImages, String(freeEvent.id));
 
@@ -218,6 +380,9 @@ describe('EventDetailsPage', () => {
             expect(screen.queryByText('₽')).not.toBeInTheDocument();
         });
 
+        /**
+         * Проверяет отсутствие метки "предоплата" для бесплатного мероприятия.
+         */
         test('не должен отображать метку "предоплата" для бесплатного мероприятия', async () => {
             renderComponent(mockUserData, mockEventsWithImages, String(freeEvent.id));
 
@@ -229,7 +394,22 @@ describe('EventDetailsPage', () => {
         });
     });
 
+    // ============================================
+    // Тесты: Счётчик гостей
+    // ============================================
+
+    /**
+     * Тесты работы счётчика количества гостей.
+     * 
+     * Логика счётчика:
+     * - Минимальное значение: 0
+     * - Максимальное значение: tickets_left
+     * - Значение хранится в guestCountAtom
+     */
     describe('Счетчик гостей', () => {
+        /**
+         * Проверяет увеличение счётчика при нажатии на "+".
+         */
         test('должен увеличивать количество гостей при нажатии на +', async () => {
             renderComponent(mockUserData, mockEventsWithImages, String(paidEvent.id), 1);
 
@@ -237,16 +417,17 @@ describe('EventDetailsPage', () => {
                 expect(screen.getByText(paidEvent.name)).toBeInTheDocument();
             });
 
-            // Находим кнопку + и кликаем
             const incrementButton = screen.getByText('+');
             fireEvent.click(incrementButton);
 
             await waitFor(() => {
-                // Проверяем, что счетчик увеличился до 2
                 expect(screen.getByTestId('guest-count')).toHaveTextContent('2');
             });
         });
 
+        /**
+         * Проверяет уменьшение счётчика при нажатии на "-".
+         */
         test('должен уменьшать количество гостей при нажатии на -', async () => {
             renderComponent(mockUserData, mockEventsWithImages, String(paidEvent.id), 2);
 
@@ -254,33 +435,38 @@ describe('EventDetailsPage', () => {
                 expect(screen.getByText(paidEvent.name)).toBeInTheDocument();
             });
 
-            // Находим кнопку - и кликаем
             const decrementButton = screen.getByText('-');
             fireEvent.click(decrementButton);
 
             await waitFor(() => {
-                // Проверяем, что счетчик уменьшился до 1
                 expect(screen.getByTestId('guest-count')).toHaveTextContent('1');
             });
         });
 
-        test('не должен уменьшать количество гостей ниже 1', async () => {
-            renderComponent(mockUserData, mockEventsWithImages, String(paidEvent.id), 1);
+        /**
+         * Проверяет, что счётчик не опускается ниже 0.
+         * Логика компонента: if (guestCount > 0) setGuestCount(guestCount - 1)
+         */
+        test('не должен уменьшать количество гостей ниже 0', async () => {
+            renderComponent(mockUserData, mockEventsWithImages, String(paidEvent.id), 0);
 
             await waitFor(() => {
                 expect(screen.getByText(paidEvent.name)).toBeInTheDocument();
             });
 
-            // Находим кнопку - и кликаем
             const decrementButton = screen.getByText('-');
             fireEvent.click(decrementButton);
 
             await waitFor(() => {
-                // Счетчик должен остаться на 1
-                expect(screen.getByTestId('guest-count')).toHaveTextContent('1');
+                // Счётчик должен остаться на 0
+                expect(screen.getByTestId('guest-count')).toHaveTextContent('0');
             });
         });
 
+        /**
+         * Проверяет, что счётчик не превышает tickets_left.
+         * Ограничение на максимум предотвращает бронирование больше доступных мест.
+         */
         test('не должен увеличивать количество гостей выше tickets_left', async () => {
             const limitedEvent: IEvent[] = [{
                 ...paidEvent,
@@ -294,13 +480,11 @@ describe('EventDetailsPage', () => {
                 expect(screen.getByText(paidEvent.name)).toBeInTheDocument();
             });
 
-            // Находим кнопку + и кликаем несколько раз
             const incrementButton = screen.getByText('+');
             fireEvent.click(incrementButton);
             fireEvent.click(incrementButton);
             fireEvent.click(incrementButton);
 
-            // Счетчик должен остаться на максимуме (2)
             await waitFor(() => {
                 const countElement = screen.getByTestId('guest-count');
                 expect(countElement).toHaveTextContent('2');
@@ -308,7 +492,18 @@ describe('EventDetailsPage', () => {
         });
     });
 
+    // ============================================
+    // Тесты: Функция "Читать больше"
+    // ============================================
+
+    /**
+     * Тесты функционала раскрытия/скрытия длинного описания.
+     */
     describe('Функция "Читать больше"', () => {
+        /**
+         * Проверяет наличие кнопки "Читать больше" для длинного описания.
+         * Кнопка показывается если description.length > 100.
+         */
         test('должен показывать кнопку "Читать больше" для длинного описания', async () => {
             renderComponent(mockUserData, mockEventsWithImages, String(freeEvent.id));
 
@@ -316,10 +511,12 @@ describe('EventDetailsPage', () => {
                 expect(screen.getByText(freeEvent.name)).toBeInTheDocument();
             });
 
-            // Проверяем наличие кнопки "Читать больше"
             expect(screen.getByText('Читать больше')).toBeInTheDocument();
         });
 
+        /**
+         * Проверяет изменение текста кнопки на "Скрыть" при клике.
+         */
         test('должен менять текст кнопки на "Скрыть" при клике', async () => {
             renderComponent(mockUserData, mockEventsWithImages, String(freeEvent.id));
 
@@ -327,7 +524,6 @@ describe('EventDetailsPage', () => {
                 expect(screen.getByText(freeEvent.name)).toBeInTheDocument();
             });
 
-            // Кликаем на кнопку "Читать больше"
             const readMoreButton = screen.getByText('Читать больше');
             fireEvent.click(readMoreButton);
 
@@ -337,8 +533,25 @@ describe('EventDetailsPage', () => {
         });
     });
 
+    // ============================================
+    // Тесты: Навигация
+    // ============================================
+
+    /**
+     * Тесты навигации на страницы бронирования и покупки.
+     * 
+     * Логика навигации:
+     * - Платное мероприятие + onboarding пройден → /events/{id}/purchase
+     * - Бесплатное мероприятие + onboarding пройден → /events/{id}/booking
+     * - Onboarding не пройден → /onboarding/3 с state
+     * - guestCount === 0 → навигация блокируется
+     */
     describe('Навигация', () => {
-        test('должен перенаправлять на страницу подтверждения для платного мероприятия', async () => {
+        /**
+         * Проверяет переход на страницу покупки для платного мероприятия.
+         * Пользователь с complete_onboarding должен перейти на /events/{id}/purchase.
+         */
+        test('должен перенаправлять на страницу покупки для платного мероприятия', async () => {
             renderComponent(mockUserData, mockEventsWithImages, String(paidEvent.id), 1);
 
             await waitFor(() => {
@@ -349,10 +562,14 @@ describe('EventDetailsPage', () => {
             fireEvent.click(buyButton);
 
             await waitFor(() => {
-                expect(mockedNavigate).toHaveBeenCalledWith(`/events/${paidEvent.id}/confirm`);
+                expect(mockedNavigate).toHaveBeenCalledWith(`/events/${paidEvent.id}/purchase`);
             });
         });
 
+        /**
+         * Проверяет редирект на онбординг для пользователя без complete_onboarding.
+         * State должен содержать id мероприятия и флаг sharedEvent.
+         */
         test('должен перенаправлять на онбординг для пользователя без complete_onboarding', async () => {
             const userWithoutOnboarding: IUser = {
                 ...mockUserData,
@@ -381,6 +598,10 @@ describe('EventDetailsPage', () => {
             });
         });
 
+        /**
+         * Проверяет переход на страницу бронирования для бесплатного мероприятия.
+         * Навигация на /events/{id}/booking без дополнительного state.
+         */
         test('должен перенаправлять на страницу бронирования для бесплатного мероприятия', async () => {
             renderComponent(mockUserData, mockEventsWithImages, String(freeEvent.id), 1);
 
@@ -392,19 +613,14 @@ describe('EventDetailsPage', () => {
             fireEvent.click(bookButton);
 
             await waitFor(() => {
-                expect(mockedNavigate).toHaveBeenCalledWith(
-                    `/events/${freeEvent.restaurant?.id}/booking`,
-                    expect.objectContaining({
-                        state: expect.objectContaining({
-                            eventName: freeEvent.name,
-                            eventId: freeEvent.id,
-                            eventGuestCount: 1,
-                        }),
-                    })
-                );
+                expect(mockedNavigate).toHaveBeenCalledWith(`/events/${freeEvent.id}/booking`);
             });
         });
 
+        /**
+         * Проверяет блокировку навигации при guestCount = 0.
+         * Кнопка должна быть disabled, navigate() не вызывается.
+         */
         test('не должен выполнять навигацию при guestCount = 0', async () => {
             renderComponent(mockUserData, mockEventsWithImages, String(paidEvent.id), 0);
 
@@ -420,7 +636,18 @@ describe('EventDetailsPage', () => {
         });
     });
 
+    // ============================================
+    // Тесты: Скрытие кнопки при отсутствии мест
+    // ============================================
+
+    /**
+     * Тесты отображения/скрытия кнопки бронирования в зависимости от tickets_left.
+     */
     describe('Скрытие кнопки при отсутствии мест', () => {
+        /**
+         * Проверяет скрытие кнопки, когда tickets_left = 0.
+         * Если мест нет, кнопка бронирования/покупки не должна отображаться.
+         */
         test('не должен показывать кнопку бронирования, если tickets_left = 0', async () => {
             const soldOutEvent: IEvent[] = [{
                 ...paidEvent,
@@ -430,17 +657,26 @@ describe('EventDetailsPage', () => {
 
             renderComponent(mockUserData, soldOutEvent, String(paidEvent.id));
 
-            // Ждем рендеринга
             await act(async () => {
                 await new Promise(resolve => setTimeout(resolve, 100));
             });
 
-            // Кнопка "Купить билет" не должна отображаться
             expect(screen.queryByText('Купить билет')).not.toBeInTheDocument();
         });
     });
 
+    // ============================================
+    // Тесты: Форматирование даты и времени
+    // ============================================
+
+    /**
+     * Тесты правильного форматирования даты и времени мероприятия.
+     * Использует moment.js для форматирования.
+     */
     describe('Форматирование даты и времени', () => {
+        /**
+         * Проверяет отображение даты в формате DD.MM.YYYY.
+         */
         test('должен отображать дату мероприятия', async () => {
             renderComponent();
 
@@ -450,6 +686,9 @@ describe('EventDetailsPage', () => {
             });
         });
 
+        /**
+         * Проверяет отображение времени в формате HH:mm.
+         */
         test('должен отображать время мероприятия', async () => {
             renderComponent();
 
@@ -460,4 +699,3 @@ describe('EventDetailsPage', () => {
         });
     });
 });
-
