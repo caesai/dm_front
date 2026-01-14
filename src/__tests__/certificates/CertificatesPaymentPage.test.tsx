@@ -38,6 +38,7 @@ import { APIGetCertificateById, APIGetCertificates, APIPostCertificateCheckPayme
 import { shareCertificate } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
 import { ICertificate } from '@/types/certificates.types.ts';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
+import { mockCertificateWithDreamteamId } from '@/__mocks__/certificates.mock.ts';
 
 // Mock react-router-dom
 const mockedNavigate = jest.fn();
@@ -86,28 +87,8 @@ jest.mock('@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx', () =
  * - Jotai atoms (auth, user, certificates)
  */
 describe('CertificatesPaymentPage', () => {
-    /**
-     * Мок данных сертификата для тестов
-     * @constant
-     */
-    const mockCertificate: ICertificate = {
-        id: '123',
-        customer_id: 1,
-        payment_id: 1,
-        recipient_id: 1,
-        certificate_type: 'online',
-        status: 'new',
-        value: '1000',
-        recipient_name: 'Test User',
-        dreamteam_id: '1234567890',
-        receipt_point: 1,
-        receipt_date: '2025-01-01',
-        created_at: '2025-01-01',
-        updated_at: '2025-01-01',
-        shared_at: null,
-        expired_at: '2026-01-01',
-        message: 'Test Message',
-    };
+    // Используем мок из __mocks__/certificates.mock.ts
+    const mockCertificate = mockCertificateWithDreamteamId;
 
     /**
      * Рендерит компонент CertificatesPaymentPage с заданными параметрами

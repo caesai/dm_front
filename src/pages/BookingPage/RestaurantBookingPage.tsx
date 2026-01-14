@@ -1,3 +1,42 @@
+/**
+ * @fileoverview Страница бронирования столика для конкретного ресторана.
+ * 
+ * Пользователь попадает на эту страницу со страницы ресторана
+ * ({@link RestaurantPage}) после нажатия кнопки "Забронировать".
+ * 
+ * Страница предоставляет функционал:
+ * - Отображение информации о ресторане (название, адрес)
+ * - Выбор даты бронирования из доступных дат
+ * - Выбор количества гостей и детей
+ * - Выбор времени бронирования из доступных слотов
+ * - Ввод контактных данных (предзаполнено из данных пользователя)
+ * - Дополнительные пожелания к бронированию
+ * - Выбор сертификата для применения
+ * - Выбор способа подтверждения бронирования
+ * - Создание бронирования через API
+ * 
+ * При успешном бронировании пользователь перенаправляется на
+ * страницу деталей бронирования `/myBookings/{booking_id}`.
+ * 
+ * Отличия от {@link BookingPage} (общей страницы бронирования):
+ * - Ресторан предвыбран и не может быть изменён
+ * - Поддерживает sharedRestaurant для навигации "назад"
+ * - Начальные данные (дата, время, гости) из location.state
+ * 
+ * Отличия от {@link EventBookingPage}:
+ * - Дата не фиксирована, выбирается пользователем
+ * - Не передаёт event_id в API
+ * - Навигация после бронирования на /myBookings/{id}
+ * - Содержит CertificatesSelector
+ * 
+ * @module pages/BookingPage/RestaurantBookingPage
+ * 
+ * @see {@link RestaurantPage} - страница ресторана (точка входа)
+ * @see {@link BookingPage} - общая страница бронирования
+ * @see {@link EventBookingPage} - страница бронирования мероприятия
+ * @see {@link useBookingForm} - хук управления формой бронирования
+ */
+
 import React, { useRef, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
@@ -20,27 +59,80 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { CONFIRMATION_OPTIONS } from '@/atoms/bookingFormAtom.ts';
 
 /**
- * Страница бронирования для конкретного ресторана
- * Пользователь попадает сюда со страницы ресторана
- * @returns {JSX.Element}
+ * Страница бронирования столика для конкретного ресторана.
+ * 
+ * Использует хук {@link useBookingForm} для управления состоянием формы,
+ * валидации и взаимодействия с API.
+ * 
+ * Ресторан предзаполняется из URL параметра `restaurantId` и не может
+ * быть изменён пользователем (в отличие от {@link BookingPage}).
+ * 
+ * При успешном бронировании выполняется навигация на страницу бронирования:
+ * `/myBookings/{booking_id}`
+ * 
+ * @component
+ * @returns {JSX.Element} Страница бронирования ресторана
+ * 
+ * @example
+ * // Роут в App.tsx
+ * <Route path="/restaurant/:restaurantId/booking" element={<RestaurantBookingPage />} />
+ * 
+ * @example
+ * // Навигация с RestaurantPage с начальными данными
+ * navigate(`/restaurant/${restaurantId}/booking`, {
+ *     state: {
+ *         bookedDate: selectedDate,
+ *         bookedTime: selectedTimeSlot,
+ *     }
+ * });
+ * 
+ * @example
+ * // Навигация по shared-ссылке
+ * navigate(`/restaurant/${restaurantId}/booking`, {
+ *     state: { sharedRestaurant: true }
+ * });
  */
 export const RestaurantBookingPage: React.FC = (): JSX.Element => {
+    /** Хук навигации для перехода после бронирования */
     const navigate = useNavigate();
+    /** Получение location.state с начальными данными */
     const location = useLocation();
+    /** ID ресторана из URL параметров */
     const { restaurantId } = useParams<{ restaurantId: string }>();
+    /** Хук для навигации назад */
     const { goBack } = useNavigationHistory();
+    /**
+     * State из navigation.
+     * Может содержать:
+     * - bookedDate: предвыбранная дата
+     * - bookedTime: предвыбранный временной слот
+     * - sharedRestaurant: флаг перехода по shared-ссылке
+     */
     const state = location?.state;
+    /** Ref для кнопки бронирования (используется BottomButtonWrapper) */
     const bookingBtn = useRef<HTMLDivElement>(null);
 
-    // Получаем данные о ресторанах для отображения
+    /** Список всех ресторанов из глобального стейта */
     const restaurants = useAtomValue(restaurantsListAtom);
 
-    // Находим текущий ресторан
+    /**
+     * Выбранный ресторан из списка.
+     * Определяется по restaurantId из URL.
+     */
     const currentRestaurant = useMemo(() => {
         return restaurants.find((r) => String(r.id) === restaurantId);
     }, [restaurants, restaurantId]);
 
-    // Booking form hook с предвыбранным рестораном
+    /**
+     * Хук управления формой бронирования.
+     * 
+     * Конфигурация для бронирования в конкретном ресторане:
+     * - preSelectedRestaurant: данные ресторана (нельзя изменить в форме)
+     * - initialBookingData: начальные дата, время и количество гостей из state
+     * - isSharedRestaurant: флаг для особой навигации "назад"
+     * 
+     * При успешном бронировании переходит на /myBookings/{booking_id}
+     */
     const {
         form,
         isFormValid,
@@ -73,7 +165,11 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
     });
 
     /**
-     * Обработка кнопки "Назад"
+     * Обработчик кнопки "Назад".
+     * 
+     * При переходе по shared-ссылке (state.sharedRestaurant = true)
+     * перенаправляет на главную страницу, иначе возвращает на
+     * предыдущую страницу (обычно {@link RestaurantPage}).
      */
     const handleGoBack = () => {
         if (state?.sharedRestaurant) {

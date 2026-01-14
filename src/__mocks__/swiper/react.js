@@ -40,6 +40,73 @@ const SWIPER_PROPS = [
     'threshold',
     'resistance',
     'resistanceRatio',
+    'slidesOffsetAfter',
+    'slidesOffsetBefore',
+    'cssMode',
+    'observer',
+    'observeParents',
+    'keyboard',
+    'mousewheel',
+    'lazy',
+    'preloadImages',
+    'a11y',
+    'history',
+    'hashNavigation',
+    'controller',
+    'coverflowEffect',
+    'flipEffect',
+    'creativeEffect',
+    'fadeEffect',
+    'cubeEffect',
+    'cardsEffect',
+    'grid',
+    'parallax',
+    'edgeSwipeDetection',
+    'edgeSwipeThreshold',
+    'preventClicks',
+    'preventClicksPropagation',
+    'slideToClickedSlide',
+    'touchEventsTarget',
+    'touchReleaseOnEdges',
+    'noSwiping',
+    'noSwipingClass',
+    'noSwipingSelector',
+    'passiveListeners',
+    'nested',
+    'enabled',
+    'autoHeight',
+    'slidesPerGroup',
+    'slidesPerGroupSkip',
+    'rewind',
+    'roundLengths',
+    'loopedSlides',
+    'loopAdditionalSlides',
+    'width',
+    'height',
+    'runCallbacksOnInit',
+    'init',
+    'onInit',
+    'onBeforeInit',
+    'onAfterInit',
+    'onDestroy',
+    'onUpdate',
+    'onResize',
+    'onProgress',
+    'onSetTranslate',
+    'onSetTransition',
+    'onSlideChangeTransitionStart',
+    'onSlideChangeTransitionEnd',
+    'onTransitionStart',
+    'onTransitionEnd',
+    'onTouchStart',
+    'onTouchMove',
+    'onTouchEnd',
+    'onClick',
+    'onTap',
+    'onDoubleTap',
+    'onImagesReady',
+    'onLock',
+    'onUnlock',
 ];
 
 /**
@@ -57,12 +124,12 @@ const filterSwiperProps = (props) => {
 
 const Swiper = ({ children, ...props }) => {
     const filteredProps = filterSwiperProps(props);
-    return React.createElement('div', { 'data-testid': 'swiper-mock', ...filteredProps }, children);
+    return React.createElement('div', { 'data-testid': 'swiper', ...filteredProps }, children);
 };
 
 const SwiperSlide = ({ children, ...props }) => {
     const filteredProps = filterSwiperProps(props);
-    return React.createElement('div', { 'data-testid': 'swiper-slide-mock', ...filteredProps }, children);
+    return React.createElement('div', { 'data-testid': 'swiper-slide', ...filteredProps }, children);
 };
 
 const useSwiper = () => ({

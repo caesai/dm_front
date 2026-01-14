@@ -23,7 +23,7 @@ import { userAtom } from '@/atoms/userAtom.ts';
 import { eventsListAtom, guestCountAtom } from '@/atoms/eventListAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock';
-import { mockEventsList } from '@/__mocks__/events.mock';
+import { mockEventsWithImages, freeEvent as baseFreeEvent, paidEvent as basePaidEvent } from '@/__mocks__/events.mock';
 import { IUser } from '@/types/user.types.ts';
 import { IEvent } from '@/types/events.types.ts';
 
@@ -119,7 +119,7 @@ describe('EventDetailsPage', () => {
      * Важно: компонент показывает skeleton если нет image_url.
      */
     const paidEvent: IEvent = {
-        ...mockEventsList.find(e => e.ticket_price > 0)!,
+        ...basePaidEvent,
         image_url: 'https://example.com/event-image.jpg',
     };
 
@@ -127,18 +127,9 @@ describe('EventDetailsPage', () => {
      * Бесплатное мероприятие для тестов (ticket_price === 0).
      */
     const freeEvent: IEvent = {
-        ...mockEventsList.find(e => e.ticket_price === 0)!,
+        ...baseFreeEvent,
         image_url: 'https://example.com/free-event-image.jpg',
     };
-    
-    /**
-     * Список мероприятий с заполненными image_url для тестов.
-     * Без image_url компонент показывает skeleton.
-     */
-    const mockEventsWithImages: IEvent[] = mockEventsList.map(e => ({
-        ...e,
-        image_url: e.image_url || 'https://example.com/default-event-image.jpg',
-    }));
 
     // ============================================
     // Вспомогательные функции

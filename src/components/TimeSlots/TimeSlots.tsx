@@ -1,3 +1,15 @@
+/**
+ * @fileoverview Компонент выбора временного слота для бронирования.
+ * 
+ * Отображает временные слоты для выбора времени бронирования.
+ * 
+ * @module components/TimeSlots/TimeSlots
+ * @exports TimeSlots
+ * @see {@link BookingPage} - страница бронирования
+ * @see {@link RestaurantBookingPage} - страница бронирования для конкретного ресторана
+ * @see {@link EventBookingPage} - страница бронирования для мероприятия
+ * @see {@link RestaurantPage} - страница ресторана
+ */
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
@@ -448,6 +460,7 @@ export const TimeSlots: React.FC<ITimeSlotsProps> = React.memo(({
                             modules={[FreeMode]}
                             freeMode
                             spaceBetween={8}
+                            slidesOffsetAfter={15}
                             style={{ width: '100%' }}
                             initialSlide={initialSlideIndex}
                         >

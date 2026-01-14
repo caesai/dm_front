@@ -8,7 +8,12 @@ import { PickerValue } from '@/lib/react-mobile-picker/components/Picker.tsx';
 // Utils
 import { formatDate, formatDateShort } from '@/utils.ts';
 
+/**
+ * Пропсы компонента DateListSelector
+ * @interface IDateListSelectorProps
+ */
 interface IDateListSelectorProps {
+    /** Список дат */
     datesList?: PickerValue[];
     /** Функция выбора даты */
     onSelect?: (value: PickerValue) => void;
@@ -18,12 +23,12 @@ interface IDateListSelectorProps {
     disabled?: boolean;
     /** Заголовок по умолчанию */
     defaultTitle?: string;
+    /** Сообщение при пустом списке дат */
+    emptyMessage?: string;
 }
 /**
  * Компонент выбора даты из списка
- * @param {PickerValue[]} datesList - Список дат
- * @param {function} onSelect - Функция выбора даты
- * @param {PickerValue | null} value - Текущее выбранное значение
+ * @param {IDateListSelectorProps} props - свойства компонента
  * @returns {JSX.Element} - Компонент выбора даты из списка
  */
 export const DateListSelector: React.FC<IDateListSelectorProps> = ({
@@ -32,9 +37,16 @@ export const DateListSelector: React.FC<IDateListSelectorProps> = ({
     value,
     disabled = false,
     defaultTitle = 'Выберите дату',
+    emptyMessage = 'Нет доступных дат',
 }: IDateListSelectorProps): JSX.Element => {
     const [selectedDate, setSelectedDate] = useState<PickerValue | null>(value ?? null);
     const [isPickerOpen, setIsPickerOpen] = useState(false);
+    
+    /** Проверка, пустой ли список дат */
+    const isListEmpty = !datesList || datesList.length === 0;
+    
+    /** Селектор заблокирован, если disabled или список пуст */
+    const isDisabled = disabled || isListEmpty;
     
     // Синхронизация с внешним value
     useEffect(() => {
@@ -45,21 +57,38 @@ export const DateListSelector: React.FC<IDateListSelectorProps> = ({
 
     // Открытие/закрытие пикера
     const togglePicker = useCallback(() => {
+        if (isDisabled) return;
         setIsPickerOpen(!isPickerOpen);
-    }, [setIsPickerOpen]);
+    }, [setIsPickerOpen, isDisabled, isPickerOpen]);
 
     // Выбор даты из списка
     const handleDateChange = useCallback(
         (value: PickerValue) => {
-            if (disabled) return;
+            if (isDisabled) return;
             setSelectedDate({
                 title: formatDate(value.value.toString()),
                 value: value.value,
             });
             onSelect?.(value);
         },
-        [setSelectedDate, onSelect, disabled]
+        [setSelectedDate, onSelect, isDisabled]
     );
+
+    /**
+     * Определяет заголовок для отображения:
+     * - Если есть выбранная дата → отформатированная дата
+     * - Если список пуст и не disabled → сообщение о пустом списке
+     * - Иначе → заголовок по умолчанию
+     */
+    const getDisplayTitle = (): string => {
+        if (selectedDate && selectedDate.value !== 'unset') {
+            return formatDateShort(selectedDate.value.toString());
+        }
+        if (!disabled && isListEmpty) {
+            return emptyMessage;
+        }
+        return defaultTitle;
+    };
 
     return (
         <ContentBlock>
@@ -72,14 +101,11 @@ export const DateListSelector: React.FC<IDateListSelectorProps> = ({
                 title={defaultTitle}
             />
             <DropDownSelect
-                title={selectedDate && selectedDate.value !== 'unset' 
-                    ? formatDateShort(selectedDate.value.toString()) 
-                    : defaultTitle
-                }
+                title={getDisplayTitle()}
                 isValid={true}
                 icon={<CalendarIcon size={24} />}
                 onClick={togglePicker}
-                disabled={disabled}
+                disabled={isDisabled}
             />
         </ContentBlock>
     );

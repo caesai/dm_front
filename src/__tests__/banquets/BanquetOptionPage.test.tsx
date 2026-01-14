@@ -30,7 +30,8 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { BanquetOptionPage } from '@/pages/BanquetOptionPage/BanquetOptionPage.tsx';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { banquetData } from '@/__mocks__/banquets.mock';
+import { banquetTypes } from '@/__mocks__/banquets.mock';
+import { mockRestaurantWithBanquets } from '@/__mocks__/restaurant.mock';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 
 // ============================================
@@ -336,63 +337,6 @@ jest.mock('@/components/Icons/UsersIcon.tsx', () => ({
 jest.mock('@/components/Icons/CakeIcon.tsx', () => ({
     CakeIcon: () => <span data-testid="cake-icon">🎂</span>,
 }));
-
-// ============================================
-// Тестовые данные
-// ============================================
-
-/**
- * Моковый ресторан с банкетными опциями.
- */
-const mockRestaurantWithBanquets: IRestaurant = {
-    id: '1',
-    title: 'Test Restaurant',
-    slogan: 'Test Slogan',
-    address: 'Test Address, 123',
-    address_lonlng: '30.3158,59.9386',
-    address_station: 'Невский проспект',
-    address_station_color: '#0066cc',
-    logo_url: 'https://example.com/logo.jpg',
-    thumbnail_photo: 'https://example.com/thumbnail.jpg',
-    openTime: '12:00',
-    avg_cheque: 2500,
-    photo_cards: [],
-    brand_chef: {
-        names: ['Шеф Повар'],
-        avatars: ['https://example.com/chef.jpg'],
-        about: 'Описание шефа',
-        photo_url: 'https://example.com/chef.jpg',
-    },
-    city: {
-        id: 2,
-        name: 'Санкт-Петербург',
-        name_english: 'spb',
-        name_dative: 'Санкт-Петербурге',
-    },
-    banquets: banquetData,
-    about_text: 'О ресторане',
-    about_kitchen: 'О кухне',
-    about_features: 'Особенности',
-    phone_number: '+7 (999) 123-45-67',
-    gallery: [],
-    menu: [],
-    menu_imgs: [],
-    worktime: [
-        { weekday: 'пн', time_start: '12:00', time_end: '23:00' },
-        { weekday: 'вт', time_start: '12:00', time_end: '23:00' },
-        { weekday: 'ср', time_start: '12:00', time_end: '23:00' },
-        { weekday: 'чт', time_start: '12:00', time_end: '23:00' },
-        { weekday: 'пт', time_start: '12:00', time_end: '00:00' },
-        { weekday: 'сб', time_start: '12:00', time_end: '00:00' },
-        { weekday: 'вс', time_start: '12:00', time_end: '23:00' },
-    ],
-    socials: [],
-};
-
-/**
- * Типы банкета для тестирования dropdown.
- */
-const banquetTypes = ['День рождения', 'Свадьба', 'Корпоратив', 'Другое'];
 
 // ============================================
 // Тестовый набор

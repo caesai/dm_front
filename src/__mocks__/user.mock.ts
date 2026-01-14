@@ -15,6 +15,14 @@ export const mockUserData: IUser = {
     permissions: [],
 };
 
+/**
+ * Моковый пользователь без завершённого онбординга.
+ */
+export const mockUserNotOnboarded: IUser = {
+    ...mockUserData,
+    complete_onboarding: false,
+};
+
 export const testUsersList = [
     153495524, //w0esofwit
     163811519, // martyad

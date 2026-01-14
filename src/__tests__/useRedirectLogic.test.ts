@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { useRedirectLogic } from '@/hooks/useRedirectLogic.ts';
 import { mockUserData as defaultMockUser } from '@/__mocks__/user.mock.ts';
@@ -10,6 +10,7 @@ import type { IUser } from '@/types/user.types.ts';
 jest.mock('jotai', () => ({
     ...jest.requireActual('jotai'),
     useAtom: jest.fn(),
+    useAtomValue: jest.fn(),
 }));
 
 const mockNavigate = jest.fn();
@@ -31,6 +32,11 @@ describe('useRedirectLogic', () => {
             if (atom === authAtom) return [{ access_token: 'valid_token' }];
             if (atom === userAtom) return [{ ...defaultMockUser, complete_onboarding: true, phone_number: '123456789' }];
             return [null];
+        });
+        (useAtomValue as jest.Mock).mockImplementation((atom) => {
+            if (atom === authAtom) return { access_token: 'valid_token' };
+            if (atom === userAtom) return { ...defaultMockUser, complete_onboarding: true, phone_number: '123456789' };
+            return null;
         });
         (useLocation as jest.Mock).mockReturnValue({ pathname: '/', search: '', state: undefined });
         (useSearchParams as jest.Mock).mockReturnValue([new URLSearchParams({})]);
@@ -56,6 +62,11 @@ describe('useRedirectLogic', () => {
             if (atom === authAtom) return [auth];
             if (atom === userAtom) return [user];
             return [null];
+        });
+        (useAtomValue as jest.Mock).mockImplementation((atom) => {
+            if (atom === authAtom) return auth;
+            if (atom === userAtom) return user;
+            return null;
         });
         (useLocation as jest.Mock).mockReturnValue({ pathname, search, state });
         (useSearchParams as jest.Mock).mockReturnValue([new URLSearchParams(params)]);
@@ -88,7 +99,7 @@ describe('useRedirectLogic', () => {
     it('должно быть перенаправление на страницу супер-мероприятия, если параметр tgWebAppStartParam равен hospitality_heroes', () => {
         setup({ params: { tgWebAppStartParam: 'hospitality_heroes' } });
         renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/hospitality-heroes?shared=true', { replace: true });
+        expect(mockNavigate).toHaveBeenCalledWith('/hospitality-heroes', { replace: true });
     });
 
     it('должно быть перенаправление на страницу деталей мероприятия, если параметр tgWebAppStartParam равен eventId_111', () => {

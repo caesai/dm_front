@@ -23,6 +23,8 @@ interface ICommonBookingHeaderProps {
     guestCount: number;
     childrenCount: number;
     availableDates: PickerValue[];
+    /** Флаг, выбран ли ресторан (для блокировки выбора даты) */
+    isRestaurantSelected: boolean;
 }
 
 /**
@@ -41,6 +43,7 @@ export const CommonBookingHeader: React.FC<ICommonBookingHeaderProps> = ({
     guestCount,
     childrenCount,
     availableDates,
+    isRestaurantSelected,
 }: ICommonBookingHeaderProps): JSX.Element => {
     return (
         <ContentContainer className={css.header}>
@@ -59,6 +62,7 @@ export const CommonBookingHeader: React.FC<ICommonBookingHeaderProps> = ({
                         datesList={availableDates} 
                         onSelect={selectDate}
                         value={selectedDate}
+                        disabled={!isRestaurantSelected}
                     />
                     <GuestCountSelector
                         guestCount={guestCount}
