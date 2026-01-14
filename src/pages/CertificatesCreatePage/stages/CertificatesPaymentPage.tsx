@@ -1,3 +1,33 @@
+/**
+ * @fileoverview Страница оплаты подарочного сертификата
+ *
+ * Компонент отвечает за обработку результата оплаты сертификата и интеграцию с eGift.
+ *
+ * ## Основные функции:
+ * - Загрузка данных сертификата по ID из URL параметра `certificate_id`
+ * - Проверка статуса оплаты через Альфа-Банк API (параметр `order_number`)
+ * - Создание сертификата в eGift после успешной оплаты
+ * - Функция "Поделиться" сертификатом
+ *
+ * ## URL параметры:
+ * - `certificate_id` - ID сертификата для загрузки
+ * - `order_number` - Номер заказа для проверки статуса оплаты
+ *
+ * ## Состояния страницы:
+ * - Загрузка (Loader)
+ * - Платёж обрабатывается (isPaid: false)
+ * - Сертификат оплачен (isPaid: true) - показывает кнопки "Поделиться" и "Позже"
+ * - Сертификат не найден - при ошибке загрузки
+ *
+ * ## API интеграции:
+ * - `APIGetCertificateById` - Получение данных сертификата
+ * - `APIPostCertificateCheckPayment` - Проверка статуса оплаты (Альфа-Банк)
+ * - `APIGetCertificates` - Обновление списка сертификатов пользователя
+ * - `APIPostEGiftCertificateOffline` - Создание сертификата в eGift
+ *
+ * @module pages/CertificatesCreatePage/stages/CertificatesPaymentPage
+ * @see {@link ICertificate} - Тип данных сертификата
+ */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtom, useSetAtom, WritableAtom } from 'jotai/index';
@@ -20,7 +50,33 @@ import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.cs
 // Utils
 import { shareCertificate } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
 
-export const CertificatesPaymentPage: React.FC = () => {
+/**
+ * Компонент страницы оплаты подарочного сертификата.
+ *
+ * Обрабатывает результат оплаты сертификата, отображает его статус и позволяет
+ * поделиться сертификатом после успешной оплаты.
+ *
+ * ## Жизненный цикл:
+ * 1. Загрузка сертификата по `certificate_id` из URL
+ * 2. Проверка статуса оплаты по `order_number` из URL
+ * 3. При успешной оплате (`isPaid: true`):
+ *    - Обновляет данные сертификата
+ *    - Создаёт сертификат в eGift (если есть `dreamteam_id`)
+ *    - Показывает кнопки "Поделиться" и "Позже"
+ *
+ * ## Локальное состояние:
+ * - `certificate` - Данные сертификата
+ * - `loading` - Флаг загрузки
+ * - `isPaid` - Статус оплаты (true/false)
+ *
+ * @component
+ * @returns {JSX.Element} Компонент страницы оплаты сертификата
+ *
+ * @example
+ * // URL для страницы
+ * /certificates/payment/?certificate_id=123&order_number=777
+ */
+export const CertificatesPaymentPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const [params] = useSearchParams();
     const [auth] = useAtom(authAtom);
@@ -34,11 +90,28 @@ export const CertificatesPaymentPage: React.FC = () => {
     // Refs
     const certificateRef = useRef(null);
 
-    const backToHome = () => {
+    /**
+     * Перенаправляет пользователя на главную страницу.
+     *
+     * @returns {void}
+     */
+    const backToHome = (): void => {
         navigate('/');
     };
 
-    // Получение данных сертификата при монтировании компонента
+    /**
+     * Эффект для загрузки данных сертификата при монтировании компонента.
+     *
+     * Отправляет запрос на получение данных сертификата по ID из URL параметра `certificate_id`.
+     * При ошибке загрузки логирует ошибку и снимает флаг загрузки.
+     *
+     * @effect
+     * @dependencies auth?.access_token, paramsObject.certificate_id
+     *
+     * @fires APIGetCertificateById - Выполняет запрос к API для получения данных сертификата
+     * @modifies certificate - Обновляет состояние сертификата
+     * @modifies loading - Снимает флаг загрузки при ошибке
+     */
     useEffect(() => {
         if (auth?.access_token && paramsObject.certificate_id) {
             // Получение данных сертификата

@@ -1,3 +1,32 @@
+/**
+ * @fileoverview Тесты для компонента CertificatesPaymentPage
+ *
+ * Данный тестовый файл покрывает функциональность страницы оплаты сертификата:
+ *
+ * ## Тестируемые сценарии:
+ *
+ * ### 1. Загрузка сертификата
+ * - Загрузка данных сертификата по ID из URL параметра `certificate_id`
+ * - Отображение информации о сертификате (сообщение, номинал, получатель)
+ * - Обработка ошибок при загрузке сертификата
+ *
+ * ### 2. Проверка статуса оплаты
+ * - Проверка оплаты через API при наличии `order_number` в URL
+ * - Отображение статуса "Ваш платёж обрабатывается" до подтверждения
+ * - Отображение статуса "Ваш сертификат оплачен!" после подтверждения
+ *
+ * ### 3. Интеграция с eGift API
+ * - Создание сертификата в eGift после успешной оплаты
+ * - Проверка наличия `dreamteam_id` перед вызовом eGift API
+ * - Обработка ошибок при создании сертификата в eGift
+ *
+ * ### 4. Интерактивность
+ * - Функция "Поделиться" через `shareCertificate`
+ * - Навигация на главную через кнопку "Позже"
+ *
+ * @module __tests__/certificates/CertificatesPaymentPage.test
+ * @see {@link CertificatesPaymentPage} - Тестируемый компонент
+ */
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -10,7 +39,7 @@ import { shareCertificate } from '@/pages/CertificatesCreatePage/stages/Certific
 import { ICertificate } from '@/types/certificates.types.ts';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
 
-// Mock API
+// Mock react-router-dom
 const mockedNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
@@ -18,6 +47,7 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedNavigate,
 }));
 
+// Mock API functions
 jest.mock('@/api/certificates.api.ts', () => ({
     APIGetCertificateById: jest.fn(),
     APIGetCertificates: jest.fn(),
@@ -25,12 +55,41 @@ jest.mock('@/api/certificates.api.ts', () => ({
     APIPostEGiftCertificateOffline: jest.fn(),
 }));
 
+// Mock EGIFT_API_TOKEN и EGIFT_CLIENT_ID из base.ts (в тестовой среде import.meta.env = undefined)
+jest.mock('@/api/base', () => ({
+    ...jest.requireActual('@/api/base'),
+    EGIFT_API_TOKEN: 'MOCK_EGIFT_API_TOKEN',
+    EGIFT_CLIENT_ID: 'MOCK_EGIFT_CLIENT_ID',
+}));
+
 // Mock share utility
 jest.mock('@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx', () => ({
     shareCertificate: jest.fn(),
 }));
 
+/**
+ * Тестовый набор для компонента CertificatesPaymentPage
+ *
+ * @description
+ * Тестирует полный жизненный цикл страницы оплаты сертификата:
+ * - Загрузка и отображение данных сертификата
+ * - Проверка статуса оплаты через Альфа-Банк API
+ * - Создание сертификата в eGift после успешной оплаты
+ * - Функции шаринга и навигации
+ *
+ * @remarks
+ * Тесты используют моки для:
+ * - API запросов (certificates.api.ts)
+ * - React Router (useNavigate)
+ * - eGift credentials (@/api/base)
+ * - Функции shareCertificate
+ * - Jotai atoms (auth, user, certificates)
+ */
 describe('CertificatesPaymentPage', () => {
+    /**
+     * Мок данных сертификата для тестов
+     * @constant
+     */
     const mockCertificate: ICertificate = {
         id: '123',
         customer_id: 1,
@@ -50,6 +109,30 @@ describe('CertificatesPaymentPage', () => {
         message: 'Test Message',
     };
 
+    /**
+     * Рендерит компонент CertificatesPaymentPage с заданными параметрами
+     *
+     * @description
+     * Хелпер-функция для рендеринга компонента в тестовом окружении.
+     * Настраивает провайдеры, роутинг и начальные значения атомов.
+     *
+     * @param {string} initialPath - Начальный путь URL с query параметрами
+     *        (по умолчанию: '/certificates/payment/?certificate_id=123&order_number=777')
+     * @param {object} auth - Данные авторизации для authAtom
+     *        (по умолчанию: { access_token: 'token' })
+     * @param {IUser} user - Данные пользователя для userAtom
+     *        (по умолчанию: mockUserData)
+     *
+     * @returns {RenderResult} Результат рендеринга из @testing-library/react
+     *
+     * @example
+     * // Рендер с настройками по умолчанию
+     * renderComponent();
+     *
+     * @example
+     * // Рендер без order_number (не будет проверки оплаты)
+     * renderComponent('/certificates/payment/?certificate_id=123');
+     */
     const renderComponent = (
         initialPath = '/certificates/payment/?certificate_id=123&order_number=777',
         auth = { access_token: 'token' },
@@ -88,6 +171,16 @@ describe('CertificatesPaymentPage', () => {
         (APIPostEGiftCertificateOffline as jest.Mock).mockResolvedValue({ data: {} });
     });
 
+    /**
+     * Тест: Загрузка и отображение сертификата
+     *
+     * @description
+     * Проверяет, что при монтировании компонента:
+     * 1. Вызывается APIGetCertificateById с токеном и certificate_id из URL
+     * 2. Вызывается APIPostCertificateCheckPayment с order_number из URL
+     * 3. Обновляется список сертификатов через APIGetCertificates
+     * 4. Отображается сообщение сертификата и статус обработки платежа
+     */
     it('должен загружать и отображать сертификат по ID из URL', async () => {
         renderComponent();
 
@@ -101,6 +194,15 @@ describe('CertificatesPaymentPage', () => {
         expect(screen.getByText('Ваш платёж обрабатывается')).toBeInTheDocument();
     });
 
+    /**
+     * Тест: Проверка статуса оплаты
+     *
+     * @description
+     * Проверяет обработку успешной оплаты:
+     * 1. APIPostCertificateCheckPayment возвращает { is_paid: true }
+     * 2. Отображается сообщение "Ваш сертификат оплачен!"
+     * 3. Обновляется список сертификатов пользователя
+     */
     it('должен проверять статус оплаты, если передан order_number', async () => {
         (APIPostCertificateCheckPayment as jest.Mock).mockResolvedValue({
             data: { is_paid: true },
@@ -190,11 +292,11 @@ describe('CertificatesPaymentPage', () => {
                 expect(APIGetCertificateById).toHaveBeenCalledTimes(2); // Первый раз при загрузке, второй раз после оплаты
             });
 
-            // Проверяем, что был вызван метод создания сертификата в eGift
+            // Проверяем, что был вызван метод создания сертификата в eGift с мокированными токенами
             await waitFor(() => {
                 expect(APIPostEGiftCertificateOffline).toHaveBeenCalledWith(
-                    expect.any(String), // EGIFT_API_TOKEN
-                    expect.any(String), // EGIFT_CLIENT_ID
+                    'MOCK_EGIFT_API_TOKEN', // Мокированный EGIFT_API_TOKEN
+                    'MOCK_EGIFT_CLIENT_ID', // Мокированный EGIFT_CLIENT_ID
                     'TEST_DREAMTEAM_ID',
                     1000, // Number(certificate.value)
                     'tma'

@@ -10,7 +10,7 @@ export const CLIENT_URL = DEV_MODE ? 'https://caesai.github.io/dm_front' : 'http
  * API токен для аутентификации в eGift API
  * Используется для всех запросов к eGift (Certificate:Offline, Certificate:Info)
  */
-export const EGIFT_API_TOKEN = 'a5dbf73e46136a1ce6bccea82f4f11532480c97ef70dfb5c82376fc522a1f0cb7350f198fa8c3e42';
+export const EGIFT_API_TOKEN = import.meta.env.VITE_EGIFT_API_TOKEN;
 /**
  * ID клиента в системе eGift
  * 

@@ -1,3 +1,28 @@
+/**
+ * @fileoverview Страница подарочного сертификата
+ *
+ * Компонент отвечает за отображение детальной информации о сертификате и управление им.
+ *
+ * ## Основные функции:
+ * - Загрузка и отображение данных сертификата по ID
+ * - Интеграция с eGift API для получения актуального баланса
+ * - Автоматическая активация (клейм) сертификата для авторизованных пользователей
+ * - Навигация в зависимости от статуса пользователя и сертификата
+ *
+ * ## Статусы сертификата:
+ * - `paid` - Оплачен, доступен для использования
+ * - `shared` - Подарен, доступен получателю
+ * - `used` - Использован
+ * - `new` - Создан, ожидает оплаты
+ *
+ * ## API интеграции:
+ * - `APIGetCertificateById` - Получение данных сертификата
+ * - `APIPostCertificateClaim` - Активация сертификата
+ * - `APIPostEGiftCertificateInfo` - Получение баланса из eGift
+ *
+ * @module pages/CertificateLanding/CertificateLandingPage
+ * @see {@link ICertificate} - Тип данных сертификата
+ */
 import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
@@ -32,14 +57,33 @@ import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
  * Отображает информацию о сертификате, позволяет активировать его, перейти к бронированию стола
  * или пройти онбординг для неавторизованных пользователей.
  *
- * Автоматически обрабатывает различные сценарии:
+ * ## Автоматические сценарии:
  * - Загрузка данных сертификата по ID из URL
- * - Автоматическая активация сертификата для авторизованных пользователей
+ * - Загрузка актуального баланса из eGift API (при наличии dreamteam_id)
+ * - Автоматическая активация сертификата для авторизованных пользователей (не владельцев)
  * - Перенаправление неавторизованных пользователей на онбординг
  * - Проверка статуса и срока действия сертификата
  *
+ * ## Логика навигации:
+ * | Условие | Действие |
+ * |---------|----------|
+ * | `!complete_onboarding && shared_at` | Перенаправление на /onboarding/1 |
+ * | `complete_onboarding && shared_at && recipient_id !== user.id` | Перенаправление на /certificates/1 |
+ * | `complete_onboarding && !shared_at && customer_id !== user.id` | Автоматическая активация |
+ * | `complete_onboarding && customer_id === user.id` | Отображение страницы (владелец) |
+ *
+ * ## Локальное состояние:
+ * - `certificate` - Данные сертификата
+ * - `loading` - Флаг загрузки
+ * - `balance` - Актуальный баланс из eGift (null если не загружен)
+ * - `balanceLoading` - Флаг загрузки баланса
+ *
  * @component
  * @returns {JSX.Element} Компонент страницы сертификата
+ *
+ * @example
+ * // Роут для страницы
+ * <Route path="/certificates/:id" element={<CertificateLandingPage />} />
  */
 export const CertificateLandingPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
