@@ -1,9 +1,35 @@
+/**
+ * @fileoverview Страница подарочного сертификата
+ *
+ * Компонент отвечает за отображение детальной информации о сертификате и управление им.
+ *
+ * ## Основные функции:
+ * - Загрузка и отображение данных сертификата по ID
+ * - Интеграция с eGift API для получения актуального баланса
+ * - Автоматическая активация (клейм) сертификата для авторизованных пользователей
+ * - Навигация в зависимости от статуса пользователя и сертификата
+ *
+ * ## Статусы сертификата:
+ * - `paid` - Оплачен, доступен для использования
+ * - `shared` - Подарен, доступен получателю
+ * - `used` - Использован
+ * - `new` - Создан, ожидает оплаты
+ *
+ * ## API интеграции:
+ * - `APIGetCertificateById` - Получение данных сертификата
+ * - `APIPostCertificateClaim` - Активация сертификата
+ * - `APIPostEGiftCertificateInfo` - Получение баланса из eGift
+ *
+ * @module pages/CertificateLanding/CertificateLandingPage
+ * @see {@link ICertificate} - Тип данных сертификата
+ */
 import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
 import moment from 'moment';
 // API
-import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
+import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim, APIPostEGiftCertificateInfo } from '@/api/certificates.api.ts';
+import { EGIFT_API_TOKEN } from '@/api/base';
 // Types
 import { ICertificate } from '@/types/certificates.types.ts';
 // Atoms
@@ -31,14 +57,33 @@ import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
  * Отображает информацию о сертификате, позволяет активировать его, перейти к бронированию стола
  * или пройти онбординг для неавторизованных пользователей.
  *
- * Автоматически обрабатывает различные сценарии:
+ * ## Автоматические сценарии:
  * - Загрузка данных сертификата по ID из URL
- * - Автоматическая активация сертификата для авторизованных пользователей
+ * - Загрузка актуального баланса из eGift API (при наличии dreamteam_id)
+ * - Автоматическая активация сертификата для авторизованных пользователей (не владельцев)
  * - Перенаправление неавторизованных пользователей на онбординг
  * - Проверка статуса и срока действия сертификата
  *
+ * ## Логика навигации:
+ * | Условие | Действие |
+ * |---------|----------|
+ * | `!complete_onboarding && shared_at` | Перенаправление на /onboarding/1 |
+ * | `complete_onboarding && shared_at && recipient_id !== user.id` | Перенаправление на /certificates/1 |
+ * | `complete_onboarding && !shared_at && customer_id !== user.id` | Автоматическая активация |
+ * | `complete_onboarding && customer_id === user.id` | Отображение страницы (владелец) |
+ *
+ * ## Локальное состояние:
+ * - `certificate` - Данные сертификата
+ * - `loading` - Флаг загрузки
+ * - `balance` - Актуальный баланс из eGift (null если не загружен)
+ * - `balanceLoading` - Флаг загрузки баланса
+ *
  * @component
  * @returns {JSX.Element} Компонент страницы сертификата
+ *
+ * @example
+ * // Роут для страницы
+ * <Route path="/certificates/:id" element={<CertificateLandingPage />} />
  */
 export const CertificateLandingPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
@@ -49,9 +94,15 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
     const [certificate, setCertificate] = useState<ICertificate | null>(null);
     const setShowToast = useSetAtom(showToastAtom);
     const [loading, setLoading] = useState<boolean>(true);
+    const [balance, setBalance] = useState<number | null>(null);
+    const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
+    // Флаг для предотвращения повторного вызова acceptCertificate
+    const hasAcceptedCertificateRef = useRef<boolean>(false);
     const { isShowing, toggle, setIsShowing } = useModal()
     // Необходимо для предотвращения повторного вызова функции acceptCertificate при одновременном монтировании и размонтировании компонента
     const isAcceptingRef = useRef(false);
+    // Ref для хранения актуальной версии acceptCertificate без добавления в зависимости useEffect
+    const acceptCertificateRef = useRef<(() => Promise<void>) | null>(null);
 
     /**
      * Мемоизированная функция для отображения toast-уведомлений.
@@ -68,18 +119,43 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
     );
 
     /**
+     * Получает баланс сертификата из eGift по dreamteam_id
+     * @param dreamteamId - Промокод сертификата (dreamteam_id)
+     */
+    const fetchCertificateBalance = useCallback(async (dreamteamId: string) => {
+        if (!dreamteamId || dreamteamId.trim() === '') {
+            return;
+        }
+
+        setBalanceLoading(true);
+        try {
+            const response = await APIPostEGiftCertificateInfo(EGIFT_API_TOKEN, dreamteamId);
+            // Из ответа берем поле balance
+            if (response.data?.balance !== undefined) {
+                setBalance(response.data.balance);
+            }
+        } catch (error) {
+            console.error('Ошибка при получении баланса сертификата из eGift:', error);
+            // Не показываем ошибку пользователю, просто не обновляем баланс
+        } finally {
+            setBalanceLoading(false);
+        }
+    }, []);
+
+    /**
      * Эффект для загрузки данных сертификата при монтировании компонента или изменении зависимостей.
      *
      * Отправляет запрос на получение данных сертификата по его ID из параметров URL.
-     * В случае успеха обновляет локальное состояние сертификата.
+     * В случае успеха обновляет локальное состояние сертификата и загружает баланс из eGift.
      * В случае ошибки показывает toast-уведомление и через 7 секунд перенаправляет
      * пользователя на страницу списка сертификатов.
      *
      * @effect
-     * @dependencies auth?.access_token, id, showToast, navigate
+     * @dependencies auth?.access_token, id, showToast, navigate, fetchCertificateBalance
      *
      * @fires APIGetCertificateById - Выполняет асинхронный запрос к API для получения данных сертификата
      * @modifies certificate - Обновляет локальное состояние сертификата через setCertificate
+     * @fires fetchCertificateBalance - Загружает баланс сертификата из eGift
      * @fires showToast - Показывает уведомление об ошибке загрузки
      * @fires navigate - Перенаправляет пользователя на страницу списка сертификатов при ошибке
      */
@@ -87,7 +163,14 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
         if (auth?.access_token) {
             if (id) {
                 APIGetCertificateById(auth.access_token, id)
-                    .then((response) => setCertificate(response.data))
+                    .then((response) => {
+                        const certData = response.data;
+                        setCertificate(certData);
+                        // После загрузки данных о сертификате загружаем баланс из eGift
+                        if (certData?.dreamteam_id && certData.dreamteam_id.trim() !== '') {
+                            fetchCertificateBalance(certData.dreamteam_id);
+                        }
+                    })
                     .catch(() => {
                         showToast('Не удалось загрузить сертификат. Попробуйте еще раз.');
                         setTimeout(() => {
@@ -96,7 +179,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                     });
             }
         }
-    }, [auth?.access_token, id, showToast, navigate]);
+    }, [auth?.access_token, id, showToast, navigate, fetchCertificateBalance]);
     /**
      * Мемоизированная функция для активации (клейма) сертификата текущим пользователем.
      *
@@ -123,31 +206,51 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
         const accessToken = auth?.access_token;
         const userId = Number(user?.id);
         const certId = id;
+        const currentCertificate = certificate;
 
-        if (!accessToken || !certificate || !certId || !userId) {
+        if (!accessToken || !currentCertificate || !certId || !userId) {
             // Ранний выход, если данные неполны
             console.warn('Недостаточно данных для клейма сертификата.');
             return;
         }
 
+        // Проверяем, не был ли сертификат уже принят этим пользователем
+        // Если recipient_id уже равен user.id, значит сертификат уже принят, не нужно вызывать API снова
+        if (currentCertificate.recipient_id === userId) {
+            console.log('Сертификат уже принят этим пользователем');
+            return;
+        }
+
         try {
             // 1. Клейм сертификата (основное действие)
-            await APIPostCertificateClaim(String(accessToken), userId, certId, certificate?.recipient_name);
+            await APIPostCertificateClaim(String(accessToken), userId, certId, currentCertificate?.recipient_name);
             const results = await Promise.all([
                 APIGetCertificates(accessToken, userId),
                 APIGetCertificateById(auth.access_token, id),
             ]);
             // 2. Если клейм успешен, получаем обновленный список сертификатов
             setCertificates(results[0].data);
-            // // 3. Обновляем сертификат на странице
-            setCertificate(results[1].data);
-            showToast('Сертификат успешно активирован!'); // Можно добавить тост успеха
+            // 3. Обновляем сертификат на странице
+            const updatedCert = results[1].data;
+            setCertificate(updatedCert);
+            
+            // Если у обновленного сертификата есть dreamteam_id, загружаем баланс
+            if (updatedCert?.dreamteam_id && updatedCert.dreamteam_id.trim() !== '') {
+                fetchCertificateBalance(updatedCert.dreamteam_id);
+            }
+            
+            showToast('Сертификат успешно активирован!');
         } catch (err) {
             // Обработка ошибок как первого, так и второго запроса
             console.error('Ошибка при работе с сертификатом:', err);
             showToast('Произошла ошибка. Попробуйте перезагрузить страницу');
+            // Сбрасываем флаг при ошибке, чтобы можно было попробовать снова
+            hasAcceptedCertificateRef.current = false;
         }
-    }, [auth?.access_token, certificate, id, user?.id, setCertificates, showToast]);
+    }, [auth?.access_token, certificate, id, user?.id, setCertificates, showToast, fetchCertificateBalance]);
+
+    // Обновляем ref при каждом изменении acceptCertificate для доступа к актуальной версии без добавления в зависимости
+    acceptCertificateRef.current = acceptCertificate;
 
     /**
      * Проверяет, использован ли сертификат.
@@ -161,39 +264,32 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
     }, [certificate]);
 
     /**
-     * Проверяет, истек ли срок действия сертификата.
-     *
-     * @callback
-     * @returns {boolean} `true` если сертификат отсутствует или срок его действия истек, иначе `false`
-     */
-    const isCertificateExpired = useCallback(() => {
-        if (!certificate) return true;
-        return moment().isAfter(moment(certificate.expired_at));
-    }, [certificate]);
-
-    /**
      * Мемоизированное значение, указывающее истек ли срок действия сертификата.
-     * Используется для оптимизации производительности и избежания лишних вычислений.
+     * Зависит только от `expired_at` для предотвращения ненужных перерендеров.
      *
      * @memo
-     * @returns {boolean} Результат проверки истечения срока действия сертификата
+     * @returns {boolean} `true` если сертификат отсутствует или срок его действия истек, иначе `false`
      */
-    const certificateExpired = useMemo(() => isCertificateExpired(), [isCertificateExpired]);
+    const certificateExpired = useMemo(() => {
+        if (!certificate?.expired_at) return true;
+        return moment().isAfter(moment(certificate.expired_at));
+    }, [certificate?.expired_at]);
     /**
-     * Проверяет, активен ли сертификат для использования.
+     * Мемоизированное значение, указывающее неактивен ли сертификат.
+     * Зависит только от `status` и `certificateExpired` для предотвращения ненужных перерендеров.
      *
      * Сертификат считается активным, если:
      * - Его статус равен 'paid' (оплачен) или 'shared' (подарен)
      * - И срок его действия не истек
      *
-     * @callback
+     * @memo
      * @returns {boolean} `true` если сертификат неактивен (отсутствует, использован, истек или имеет неактивный статус),
      *                    `false` если сертификат активен и может быть использован
      */
-    const isCertificateDisabled = useCallback(() => {
-        if (!certificate) return true;
+    const isCertificateDisabled = useMemo(() => {
+        if (!certificate?.status) return true;
         return !((certificate.status === 'paid' || certificate.status === 'shared') && !certificateExpired);
-    }, [certificate, certificateExpired]);
+    }, [certificate?.status, certificateExpired]);
     /**
      * Эффект для управления логикой работы с сертификатом в зависимости от статуса пользователя и сертификата.
      *
@@ -209,17 +305,19 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
      *    - Если сертификат был подарен - перенаправляет на онбординг
      *
      * @effect
-     * @dependencies certificate, user, isCertificateDisabled, acceptCertificate, navigate
+     * @dependencies Зависит только от примитивных значений свойств certificate и user для предотвращения лишних перерендеров.
+     *               acceptCertificate доступен через ref для стабильности зависимостей.
      *
      * @modifies loading - Устанавливает состояние загрузки в `false` при завершении проверок
-     * @fires acceptCertificate - Автоматически активирует сертификат при соответствующих условиях
+     * @fires acceptCertificateRef.current - Автоматически активирует сертификат при соответствующих условиях
      * @fires navigate - Перенаправляет пользователя на другие страницы при необходимости
      */
     useEffect(() => {
         // 1. Предварительные проверки и выход
         if (!user || !certificate) return;
 
-        if (isCertificateDisabled()) {
+        // isCertificateDisabled теперь мемоизированное значение (не функция)
+        if (isCertificateDisabled) {
             setLoading(false);
             return;
         }
@@ -233,10 +331,10 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                     return;
             } else {
                 // Сертификат куплен другим пользователем, но еще не принят этим
-                if (!isAcceptingRef.current) {
+                if (!isAcceptingRef.current && acceptCertificateRef.current) {
                     isAcceptingRef.current = true;
                     (async () => {
-                        await acceptCertificate();
+                        await acceptCertificateRef.current!();
                         setLoading(false);
                     })();
                 }
@@ -264,14 +362,19 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                 navigate('/onboarding/1');
             }
         }
-    }, [certificate, user, isCertificateDisabled, acceptCertificate, navigate]);
+    }, [certificate?.id, certificate?.customer_id, certificate?.recipient_id, certificate?.shared_at, user?.id, user?.complete_onboarding, isCertificateDisabled, navigate, id]);
+
+    // Сбрасываем флаг при изменении ID сертификата
+    useEffect(() => {
+        hasAcceptedCertificateRef.current = false;
+    }, [id]);
 
     /**
      * Перенаправляет пользователя на главную страницу.
      *
      * @returns {void}
      */
-    const goHome = () => {
+    const goHome = (): void => {
         navigate('/');
     };
 
@@ -280,7 +383,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
      *
      * @returns {void}
      */
-    const goToOnboarding = () => {
+    const goToOnboarding = (): void => {
         navigate('/onboarding/3', { state: { certificateId: id, sharedCertificate: true, certificate: true } });
     };
 
@@ -294,7 +397,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
      * @fires navigate - Перенаправляет на страницу бронирования для авторизованных пользователей
      * @returns {void}
      */
-    const goToBooking = () => {
+    const goToBooking = (): void => {
         if (!user?.complete_onboarding) {
             setIsShowing(true);
             return;
@@ -329,7 +432,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                 <div className={css.content}>
                     <div className={css.header}>
                         <DTHospitalityIcon />
-                        {isCertificateDisabled() ? (
+                        {isCertificateDisabled ? (
                             certificateExpired ? (
                                 <h1>У данного сертификата истек срок действия</h1>
                             ) : (
@@ -353,6 +456,21 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                                 <b>{Number(certificate?.value).toFixed()}</b>
                             </span>
                         </div>
+                        {/** Отображаем баланс сертификата из eGift */}
+                        {certificate?.dreamteam_id && (
+                            <div className={css.row}>
+                                <span>Баланс:</span>
+                                <span>
+                                    <b>
+                                        {balanceLoading
+                                            ? 'Загрузка...'
+                                            : balance !== null
+                                            ? `${balance.toFixed()} ₽`
+                                            : Number(certificate?.value).toFixed() + ' ₽'}
+                                    </b>
+                                </span>
+                            </div>
+                        )}
                         <div className={css.row}>
                             <span>Для кого:</span>
                             <span>
@@ -420,7 +538,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                         <span className={css.pageTitle}>Доступно в ресторанах</span>
                         <RestaurantsList />
                     </div>
-                    {!isCertificateDisabled() && (
+                    {!isCertificateDisabled && (
                         <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />
                     )}
                 </div>
