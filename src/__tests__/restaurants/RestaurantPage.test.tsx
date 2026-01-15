@@ -29,9 +29,11 @@ import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { userAtom, authAtom } from '@/atoms/userAtom.ts';
 import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
+// Типы
 import { IRestaurant } from '@/types/restaurant.types.ts';
-import { PickerValue } from '@/lib/react-mobile-picker/components/Picker.tsx';
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+// Моки из src/__mocks__/
+import { mockRestaurantWithBanquets } from '@/__mocks__/restaurant.mock.ts';
+import { mockUserData, mockUserNotOnboarded } from '@/__mocks__/user.mock.ts';
 
 // ============================================
 // Моки внешних зависимостей
@@ -244,89 +246,19 @@ describe('RestaurantPage', () => {
 
     /**
      * Моковый ресторан для тестов.
-     * Содержит все необходимые поля для рендеринга страницы.
+     * Используется mockRestaurantWithBanquets из @/__mocks__/restaurant.mock.ts
      */
-    const mockRestaurant: IRestaurant = {
-        id: '1',
-        title: 'Test Restaurant',
-        slogan: 'Test Slogan',
-        address: 'Test Address, 123',
-        address_lonlng: '30.3158,59.9386',
-        address_station: 'Невский проспект',
-        address_station_color: '#0066cc',
-        logo_url: 'https://example.com/logo.jpg',
-        thumbnail_photo: 'https://example.com/thumbnail.jpg',
-        openTime: '12:00',
-        avg_cheque: 2500,
-        photo_cards: [],
-        brand_chef: {
-            names: ['Шеф Повар'],
-            avatars: ['https://example.com/chef.jpg'],
-            about: 'Описание шефа',
-            photo_url: 'https://example.com/chef.jpg',
-        },
-        city: {
-            id: 2,
-            name: 'Санкт-Петербург',
-            name_english: 'spb',
-            name_dative: 'Санкт-Петербурге',
-        },
-        banquets: {
-            banquet_options: [],
-            additional_options: [],
-            description: 'Описание банкетов',
-            image: 'https://example.com/banquet.jpg',
-        },
-        about_text: 'О ресторане',
-        about_kitchen: 'О кухне',
-        about_features: 'Особенности',
-        phone_number: '+7 (999) 123-45-67',
-        gallery: [],
-        menu: [],
-        menu_imgs: [],
-        worktime: [{ weekday: 'пн-вс', time_start: '12:00', time_end: '23:00' }],
-        socials: [],
-    };
+    const mockRestaurant = mockRestaurantWithBanquets;
 
     /**
      * Моковый пользователь с завершённым онбордингом.
+     * Используется mockUserData из @/__mocks__/user.mock.ts
      */
-    const mockUserOnboarded = {
-        id: 1,
-        name: 'Test User',
-        phone: '+79991234567',
-        complete_onboarding: true,
-    };
-
-    /**
-     * Моковый пользователь без завершённого онбординга.
-     */
-    const mockUserNotOnboarded = {
-        id: 1,
-        name: 'Test User',
-        phone: '+79991234567',
-        complete_onboarding: false,
-    };
-
-    /**
-     * Моковая выбранная дата.
-     */
-    const mockDate: PickerValue = {
-        value: '2025-01-15',
-        title: '15 января',
-    };
-
-    /**
-     * Моковый выбранный таймслот.
-     */
-    const mockTimeSlot: ITimeSlot = {
-        start_datetime: '2025-01-15T19:00:00',
-        end_datetime: '2025-01-15T21:00:00',
-        is_free: true,
-    };
+    const mockUserOnboarded = mockUserData;
 
     /**
      * Создаёт моковые данные для useRestaurantPageData.
+     * Хук теперь возвращает только события (даты и слоты управляются через useBookingForm).
      * 
      * @param overrides - Переопределения полей по умолчанию
      * @returns Объект данных страницы
@@ -334,16 +266,7 @@ describe('RestaurantPage', () => {
     const createMockPageData = (overrides: Partial<ReturnType<typeof useRestaurantPageData>> = {}) => ({
         events: [],
         eventsLoading: false,
-        dates: [mockDate],
-        date: mockDate,
-        setDate: jest.fn(),
-        datesLoading: false,
-        availableTimeslots: [mockTimeSlot],
-        timeslotLoading: false,
-        timeslotsError: false,
-        currentSelectedTime: mockTimeSlot,
-        setCurrentSelectedTime: jest.fn(),
-        isInitialLoading: false,
+        eventsError: false,
         ...overrides,
     });
 
@@ -526,7 +449,7 @@ describe('RestaurantPage', () => {
     describe('Навигация на бронирование', () => {
         /**
          * Проверяет навигацию на страницу бронирования для пользователя с онбордингом.
-         * Должен передавать выбранные дату и время.
+         * Данные формы сохранены в bookingFormAtom через BookingsBlock.
          */
         it('должен навигировать на страницу бронирования для онбордированного пользователя', async () => {
             renderComponent({ user: mockUserOnboarded });
@@ -535,21 +458,13 @@ describe('RestaurantPage', () => {
             fireEvent.click(bookButton);
 
             await waitFor(() => {
-                expect(mockedNavigate).toHaveBeenCalledWith(
-                    '/restaurant/1/booking',
-                    expect.objectContaining({
-                        state: expect.objectContaining({
-                            bookedDate: mockDate,
-                            bookedTime: mockTimeSlot,
-                        }),
-                    })
-                );
+                expect(mockedNavigate).toHaveBeenCalledWith('/restaurant/1/booking');
             });
         });
 
         /**
          * Проверяет навигацию на онбординг для пользователя без завершённого онбординга.
-         * Должен передавать данные о ресторане и дате.
+         * Передаёт только ID ресторана и флаг sharedRestaurant.
          */
         it('должен навигировать на онбординг для не онбордированного пользователя', async () => {
             renderComponent({ user: mockUserNotOnboarded });
@@ -563,8 +478,6 @@ describe('RestaurantPage', () => {
                     expect.objectContaining({
                         state: expect.objectContaining({
                             id: '1',
-                            bookedDate: mockDate,
-                            bookedTime: mockTimeSlot,
                             sharedRestaurant: true,
                         }),
                     })
@@ -641,34 +554,9 @@ describe('RestaurantPage', () => {
     // ============================================
     // Тесты: Передача данных в хуки
     // ============================================
-
-    describe('Передача данных в хуки', () => {
-        /**
-         * Проверяет вызов useRestaurantPageData с корректными параметрами.
-         */
-        it('должен вызывать useRestaurantPageData с ID ресторана', () => {
-            renderComponent({ restaurantId: '42' });
-
-            expect(mockUseRestaurantPageData).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    restaurantId: '42',
-                })
-            );
-        });
-
-        /**
-         * Проверяет передачу onError callback в useRestaurantPageData.
-         */
-        it('должен передавать onError callback в useRestaurantPageData', () => {
-            renderComponent();
-
-            expect(mockUseRestaurantPageData).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    onError: expect.any(Function),
-                })
-            );
-        });
-    });
+    // Примечание: useRestaurantPageData теперь используется в EventsBlock,
+    // а не в RestaurantPage напрямую. Тесты на вызов хука перенесены
+    // в тесты EventsBlock или useRestaurantPageData.test.tsx.
 
     // ============================================
     // Тесты: Состояние загрузки
@@ -679,14 +567,7 @@ describe('RestaurantPage', () => {
          * Проверяет корректный рендеринг при начальной загрузке.
          */
         it('должен корректно рендерить при начальной загрузке', () => {
-            renderComponent({
-                pageData: {
-                    isInitialLoading: true,
-                    eventsLoading: true,
-                    datesLoading: true,
-                    timeslotLoading: true,
-                },
-            });
+            renderComponent();
 
             // Страница должна рендериться даже при загрузке
             expect(screen.getByTestId('page')).toBeInTheDocument();
@@ -697,12 +578,7 @@ describe('RestaurantPage', () => {
          * Проверяет корректный рендеринг при ошибке загрузки таймслотов.
          */
         it('должен корректно рендерить при ошибке загрузки таймслотов', () => {
-            renderComponent({
-                pageData: {
-                    timeslotsError: true,
-                    availableTimeslots: [],
-                },
-            });
+            renderComponent();
 
             expect(screen.getByTestId('page')).toBeInTheDocument();
         });
@@ -731,38 +607,23 @@ describe('RestaurantPage', () => {
          * Проверяет рендеринг при отсутствии доступных таймслотов.
          */
         it('должен корректно рендерить при пустом списке таймслотов', () => {
-            renderComponent({
-                pageData: {
-                    availableTimeslots: [],
-                    currentSelectedTime: null,
-                },
-            });
+            renderComponent();
 
             expect(screen.getByTestId('booking-block')).toBeInTheDocument();
         });
 
         /**
-         * Проверяет рендеринг при отсутствии выбранного времени.
+         * Проверяет навигацию на страницу бронирования.
+         * State не передаётся - данные сохранены в bookingFormAtom.
          */
-        it('должен навигировать с null таймслотом, если не выбран', async () => {
-            renderComponent({
-                pageData: {
-                    currentSelectedTime: null,
-                },
-            });
+        it('должен навигировать на страницу бронирования без state', async () => {
+            renderComponent();
 
             const bookButton = screen.getByTestId('book-button');
             fireEvent.click(bookButton);
 
             await waitFor(() => {
-                expect(mockedNavigate).toHaveBeenCalledWith(
-                    '/restaurant/1/booking',
-                    expect.objectContaining({
-                        state: expect.objectContaining({
-                            bookedTime: null,
-                        }),
-                    })
-                );
+                expect(mockedNavigate).toHaveBeenCalledWith('/restaurant/1/booking');
             });
         });
     });

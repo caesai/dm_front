@@ -123,14 +123,15 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
                 const id = param.replace(`${path}Id_`, '');
                 // получаем id из параметра и удаляем из параметра
                 // переход на страницу в зависимости от пути
+                console.log('path and id: ', path, id);
                 switch (path) {
                     case 'restaurant':
                         // переход на страницу ресторана
-                        navigate(`/${path}/${id}?shared=true`, { replace: true });
+                        navigate(`/${path}/${id}`, { replace: true, state: { shared: true } });
                         break;
                     case 'event':
                         // переход на страницу деталей мероприятия
-                        navigate(`/events/${id}/details?shared=true`, { replace: true });
+                        navigate(`/events/${id}/details`, { replace: true, state: { shared: true } });
                         break;
                     case 'ticket':
                         // переход на страницу билета
@@ -142,11 +143,11 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
                         break;
                     case 'event_city':
                         // переход на страницу списка мероприятий в выбранном городе
-                        navigate(`/events/?city=${id}&shared=true`, { replace: true });
+                        navigate(`/events`, { replace: true, state: { shared: true, cityId: id } });
                         break;
                     case 'event_restaurant':
                         // переход на страницу списка мероприятий в выбранном ресторане
-                        navigate(`/events/?restaurant=${id}&shared=true`, { replace: true });
+                        navigate(`/events`, { replace: true, state: { shared: true, restaurantId: id } });
                         break;
                 }
             } else {
@@ -187,6 +188,7 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
         const { pathname } = location;
         if (tgWebAppStartParam && !initialCheckDoneRef.current) {
             initialCheckDoneRef.current = true;
+            console.log('tgWebAppStartParam: ', tgWebAppStartParam);
             switch (tgWebAppStartParam) {
                 case 'hospitality_heroes':
                     // переход на страницу Hospitality Heroes
@@ -206,7 +208,7 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
                     break;
                 case 'booking':
                     // переход на страницу бронирования
-                    navigate('/booking', { replace: true });
+                    navigate('/booking', { replace: true, state: { shared: true } });
                     break;
                 default:
                     // переход на страницу в зависимости от параметра tgWebAppStartParam

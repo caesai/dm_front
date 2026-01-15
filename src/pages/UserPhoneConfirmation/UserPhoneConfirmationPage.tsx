@@ -61,8 +61,12 @@ export const UserPhoneConfirmationPage: React.FC = (): JSX.Element => {
             // если пользователь подтвердил номер телефона, то перенаправляем на соответствующую страницу в зависимости от state
             if (state) {
                 // переход на страницу бронирования бесплатного мероприятия
-                if (state.sharedEvent) {
+                if (state.sharedFreeEvent) {
                     navigate(`/events/${state.id}/booking`, { state });
+                }
+                // переход на страницу бронирования платного мероприятия
+                if (state.sharedPaidEvent) {
+                    navigate(`/events/${state.id}/purchase`, { state });
                 }
                 // переход на страницу бронирования ресторана
                 if (state.sharedRestaurant) {
@@ -77,10 +81,12 @@ export const UserPhoneConfirmationPage: React.FC = (): JSX.Element => {
                     navigate(`/banquets/${state.id}/choose`, { state });
                 }
                 // переход на страницу выбора блюд кулинарии
+                // TODO: проверить работу и логику этой страницы
                 if (state.sharedGastronomy) {
                     navigate(`/gastronomy/${state.id}/basket`, { state });
                 }
                 // переход на страницу создания сертификата
+                // TODO: проверить работу и логику этой страницы
                 if (state.sharedCertificateCreate) {
                     navigate('/certificates/online', { state });
                 }

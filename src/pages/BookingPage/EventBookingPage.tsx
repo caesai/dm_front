@@ -24,26 +24,25 @@
  */
 
 import React, { useMemo, useRef } from 'react';
-// Components
-import { Page } from '@/components/Page.tsx';
-import { PageContainer } from '@/components/PageContainer/PageContainer';
-import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper';
-import { BookingTimeSlotsBlock } from './blocks/BookingTimeSlotsBlock';
-import { BookingContactsBlock } from './blocks/BookingContactsBlock';
-import { EventBookingHeader } from './blocks/EventBookingHeader';
-import { BookingWish } from '@/components/BookingWish/BookingWish';
-import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect';
-import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup';
-// Hooks
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
-import { useBookingForm } from '@/hooks/useBookingForm';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
 // Atoms
-import { eventsListAtom, guestCountAtom, childrenCountAtom } from '@/atoms/eventListAtom';
-import { CONFIRMATION_OPTIONS } from '@/atoms/bookingFormAtom';
+import { eventsListAtom, guestCountAtom, childrenCountAtom } from '@/atoms/eventListAtom.ts';
+import { CONFIRMATION_OPTIONS } from '@/atoms/bookingFormAtom.ts';
+// Components
+import { Page } from '@/components/Page.tsx';
+import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
+import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
+import { BookingTimeSlotsBlock } from './blocks/BookingTimeSlotsBlock.tsx';
+import { BookingContactsBlock } from './blocks/BookingContactsBlock.tsx';
+import { EventBookingHeader } from './blocks/EventBookingHeader.tsx';
+import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
+import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
+import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
+// Hooks
+import { useBookingForm } from '@/hooks/useBookingForm.ts';
 // Utils
-import { getServiceFeeData } from '@/mockData';
+import { getServiceFeeData } from '@/mockData.ts';
 
 /**
  * Страница бронирования столика для бесплатного мероприятия.
@@ -70,15 +69,17 @@ import { getServiceFeeData } from '@/mockData';
  * navigate(`/events/${event.id}/booking`);
  */
 export const EventBookingPage: React.FC = (): JSX.Element => {
+    /** Хук для навигации */
+    const navigate = useNavigate();
+    /** State из URL параметров */
+    const location = useLocation();
+    const state = location.state;
     /** ID мероприятия из URL параметров */
     const { eventId } = useParams();
     /** Список всех мероприятий из глобального стейта */
     const events = useAtomValue(eventsListAtom);
-    /** Хук для навигации назад */
-    const { goBack } = useNavigationHistory();
     /** Ref для кнопки бронирования (используется BottomButtonWrapper) */
     const bookingBtn = useRef<HTMLDivElement>(null);
-
     /**
      * Начальное количество гостей из атома.
      * Устанавливается на странице {@link EventDetailsPage}.
@@ -151,11 +152,15 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
      * Возвращает пользователя на предыдущую страницу (EventDetailsPage).
      */
     const handleGoBack = () => {
-        goBack();
+        if (state?.sharedFreeEvent) {
+            navigate('/');
+        } else {
+            navigate('/events/' + eventId + '/details');
+        }
     };
 
     return (
-        <Page back={true}>
+        <Page back={!state?.sharedFreeEvent}>
             <PageContainer>
                 <BookingErrorPopup
                     isOpen={errors.popup}

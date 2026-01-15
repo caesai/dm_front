@@ -1,24 +1,24 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai/index';
+import { useAtomValue } from 'jotai';
 import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
 // Types
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 // Atoms
-import { guestCountAtom } from '@/atoms/bookingInfoAtom.ts';
 import { headerScrolledAtom } from '@/atoms/restaurantPageAtom.ts';
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 // Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
+import { WheelPicker } from '@/components/WheelPicker/WheelPicker';
 // Utils
 import { formatDateAlt } from '@/utils.ts';
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 // Hooks
-import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
-import { WheelPicker } from '@/components/WheelPicker/WheelPicker';
+import { useBookingForm } from '@/hooks/useBookingForm.ts';
 
 /**
  * Пропсы компонента BookingBlock.
@@ -37,7 +37,7 @@ interface IBookingBlockProps {
  * - Отображает навигацию по ресторану
  * - Позволяет выбрать дату бронирования
  * - Использует компонент TimeSlots для выбора времени
- * - Автоматически устанавливает количество гостей при выборе времени
+ * - Использует {@link useBookingForm} для управления датами и таймслотами
  *
  * @component
  * @param {IBookingBlockProps} props - Пропсы компонента
@@ -45,46 +45,57 @@ interface IBookingBlockProps {
  *
  * @example
  * <BookingBlock restaurantId="123" />
+ * 
+ * @see {@link useBookingForm} - хук для управления формой бронирования
  */
 export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBookingBlockProps): JSX.Element => {
     /** Состояние скролла страницы */
     const headerScrolled = useAtomValue(headerScrolledAtom);
 
-    /** Устанавливает количество гостей */
-    const setGuestCount = useSetAtom(guestCountAtom);
+    /** Текущий ресторан по ID */
+    const currentRestaurant = useGetRestaurantById(restaurantId);
 
-    /** Данные бронирования из хука */
+    /**
+     * Данные бронирования из хука useBookingForm.
+     * Используем preSelectedRestaurant для загрузки дат и таймслотов.
+     * Устанавливаем начальное количество гостей = 1 для загрузки таймслотов.
+     */
     const {
-        date,
-        currentSelectedTime,
-        setCurrentSelectedTime,
-        dates,
-        timeslotLoading,
+        form,
+        availableDates,
         availableTimeslots,
-        timeslotsError,
-        setDate,
-    } = useRestaurantPageData({ restaurantId });
+        loading,
+        errors,
+        handlers,
+    } = useBookingForm({
+        preSelectedRestaurant: currentRestaurant
+            ? {
+                  id: String(currentRestaurant.id),
+                  title: currentRestaurant.title,
+                  address: currentRestaurant.address,
+              }
+            : undefined,
+        initialBookingData: {
+            guestCount: 1,
+            childrenCount: 0,
+        },
+    });
 
     /** Состояние открытия popup с датой бронирования */
     const [isPickerOpen, setIsPickerOpen] = useState(false);
 
     /**
      * Обработчик выбора таймслота.
-     * Устанавливает выбранное время и дефолтное количество гостей.
      */
     const handleTimeSlotSelect = useCallback(
         (slot: ITimeSlot | null) => {
-            setCurrentSelectedTime(slot);
-            if (slot) {
-                setGuestCount({ title: '1 гость', value: '1' });
-            }
+            handlers.selectTimeSlot(slot);
         },
-        [setCurrentSelectedTime, setGuestCount]
+        [handlers]
     );
 
     /** Флаг загрузки даты */
-    const isDateLoading = date.value === 'unset' || !dates.length;
-
+    const isDateLoading = form.date?.value === 'unset' || !availableDates.length;
     /** Открывает popup выбора даты */
     const openDatePopup = useCallback(() => setIsPickerOpen(true), []);
 
@@ -96,11 +107,11 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
         return (
             <div className={css.timeItem} onClick={openDatePopup}>
                 <Calendar size={18} />
-                {formatDateAlt(date.value.toString())}
+                {formatDateAlt(form.date.value.toString())}
                 <FaAngleRight size={16} />
             </div>
         );
-    }, [isDateLoading, date.value, openDatePopup]);
+    }, [isDateLoading, form.date?.value, openDatePopup]);
 
     /** Стили для TimeSlots (мемоизированы) */
     const timeSlotsStyle = useMemo(() => ({ gap: 0 }), []);
@@ -108,9 +119,9 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
     return (
         <ContentContainer id="booking" className={css.navSliderAndBookingContainer}>
             <WheelPicker
-                value={date}
-                onChange={setDate}
-                items={dates}
+                value={form.date}
+                onChange={handlers.selectDate}
+                items={availableDates}
                 isOpen={isPickerOpen}
                 setOpen={setIsPickerOpen}
                 title={'Выберите дату'}
@@ -121,16 +132,16 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
 
             {/* Компонент выбора даты и времени (в один ряд) */}
             <TimeSlots
-                loading={timeslotLoading}
+                loading={loading.timeslots}
                 availableTimeslots={availableTimeslots}
-                currentSelectedTime={currentSelectedTime}
+                currentSelectedTime={form.selectedTimeSlot}
                 setCurrentSelectedTime={handleTimeSlotSelect}
                 showDayPartSelector={false}
                 startElement={dateElement}
                 style={timeSlotsStyle}
             />
 
-            {timeslotsError && (
+            {errors.timeslots && (
                 <p className={css.timeslotsError} role="alert" data-testid="timeslots-error">
                     Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.
                 </p>

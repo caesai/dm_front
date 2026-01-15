@@ -582,7 +582,7 @@ describe('EventDetailsPage', () => {
                     expect.objectContaining({
                         state: expect.objectContaining({
                             id: paidEvent.id,
-                            sharedEvent: true,
+                            sharedPaidEvent: true,
                         }),
                     })
                 );

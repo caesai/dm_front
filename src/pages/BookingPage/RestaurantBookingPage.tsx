@@ -52,7 +52,6 @@ import { RestaurantBookingHeader } from '@/pages/BookingPage/blocks/RestaurantBo
 import { BookingTimeSlotsBlock } from '@/pages/BookingPage/blocks/BookingTimeSlotsBlock.tsx';
 import { BookingContactsBlock } from '@/pages/BookingPage/blocks/BookingContactsBlock.tsx';
 // Hooks
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 import { useBookingForm } from '@/hooks/useBookingForm.ts';
 // Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
@@ -99,8 +98,6 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
     const location = useLocation();
     /** ID ресторана из URL параметров */
     const { restaurantId } = useParams<{ restaurantId: string }>();
-    /** Хук для навигации назад */
-    const { goBack } = useNavigationHistory();
     /**
      * State из navigation.
      * Может содержать:
@@ -153,15 +150,13 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
                   address: currentRestaurant.address,
               }
             : undefined,
-        initialBookingData: state
-            ? {
-                  bookedDate: state.bookedDate,
-                  bookedTime: state.bookedTime,
-                  guestCount: state.bookedDate ? 1 : undefined,
-                  childrenCount: state.bookedDate ? 0 : undefined,
-              }
-            : undefined,
-        isSharedRestaurant: state?.sharedRestaurant,
+        // Устанавливаем guestCount: 1 по умолчанию для загрузки временных слотов.
+        // Дата и время берутся из bookingFormAtom (сохранены в BookingsBlock).
+        initialBookingData: {
+            guestCount: 1,
+            childrenCount: 0,
+        },
+        isShared: state?.sharedRestaurant,
     });
 
     /**
@@ -175,12 +170,12 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
         if (state?.sharedRestaurant) {
             navigate('/');
         } else {
-            goBack();
+            navigate('/restaurant/' + restaurantId);
         }
     };
 
     return (
-        <Page back={true}>
+        <Page back={!state?.sharedRestaurant}>
             <PageContainer>
                 <BookingErrorPopup
                     isOpen={errors.popup}
