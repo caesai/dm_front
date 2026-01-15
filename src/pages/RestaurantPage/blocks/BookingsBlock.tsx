@@ -1,3 +1,21 @@
+/**
+ * @fileoverview Блок бронирования столика в ресторане.
+ *
+ * Особенности:
+ * - Отображает навигацию по ресторану
+ * - Позволяет выбрать дату бронирования
+ * - Использует компонент TimeSlots для выбора времени
+ * - Использует {@link useBookingForm} для управления датами и таймслотами
+ *
+ * @component
+ * @param {IBookingBlockProps} props - Пропсы компонента
+ * @returns {JSX.Element} Компонент блока бронирования
+ *
+ * @example
+ * <BookingBlock restaurantId="123" />
+ * 
+ * @see {@link useBookingForm} - хук для управления формой бронирования
+ */
 import React, { useCallback, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { Calendar } from 'react-iconly';

@@ -37,9 +37,8 @@
  * @see {@link useBookingForm} - хук управления формой бронирования
  */
 
-import React, { useRef, useMemo } from 'react';
+import React, { useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useAtomValue } from 'jotai';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
@@ -54,7 +53,7 @@ import { BookingContactsBlock } from '@/pages/BookingPage/blocks/BookingContacts
 // Hooks
 import { useBookingForm } from '@/hooks/useBookingForm.ts';
 // Atoms
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 import { CONFIRMATION_OPTIONS } from '@/atoms/bookingFormAtom.ts';
 
 /**
@@ -109,16 +108,11 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
     /** Ref для кнопки бронирования (используется BottomButtonWrapper) */
     const bookingBtn = useRef<HTMLDivElement>(null);
 
-    /** Список всех ресторанов из глобального стейта */
-    const restaurants = useAtomValue(restaurantsListAtom);
-
     /**
      * Выбранный ресторан из списка.
      * Определяется по restaurantId из URL.
      */
-    const currentRestaurant = useMemo(() => {
-        return restaurants.find((r) => String(r.id) === restaurantId);
-    }, [restaurants, restaurantId]);
+    const currentRestaurant = useGetRestaurantById(restaurantId || '');
 
     /**
      * Хук управления формой бронирования.

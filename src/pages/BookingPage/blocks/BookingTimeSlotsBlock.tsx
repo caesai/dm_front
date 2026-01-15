@@ -1,12 +1,23 @@
-import React from "react";
+/**
+ * @fileoverview Компонент блока времени бронирования
+ * @module pages/BookingPage/blocks/BookingTimeSlotsBlock
+ * @exports BookingTimeSlotsBlock
+ * @see {@link BookingPage} - страница бронирования
+ * @see {@link RestaurantBookingPage} - страница бронирования для конкретного ресторана
+ * @see {@link EventBookingPage} - страница бронирования для мероприятия
+ * @see {@link RestaurantPage} - страница ресторана
+ */
+import React from 'react';
 // Components
-import { ContentBlock } from "@/components/ContentBlock/ContentBlock";
-import { ContentContainer } from "@/components/ContentContainer/ContentContainer";
-import { TimeSlots } from "@/components/TimeSlots/TimeSlots";
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock';
+import { ContentContainer } from '@/components/ContentContainer/ContentContainer';
+import { TimeSlots } from '@/components/TimeSlots/TimeSlots';
 // Types
-import { ITimeSlot } from "@/pages/BookingPage/BookingPage.types";
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types';
 // Styles
-import css from "@/pages/BookingPage/BookingPage.module.css";
+import css from '@/pages/BookingPage/BookingPage.module.css';
+import { useAtomValue } from 'jotai';
+import { permissionsAtom } from '@/atoms/userAtom';
 
 interface IBookingTimeSlotsBlockProps {
     canShowTimeSlots: boolean;
@@ -22,7 +33,17 @@ interface IBookingTimeSlotsBlockProps {
  * @param {IBookingTimeSlotsBlockProps} props
  * @returns {JSX.Element}
  */
-export const BookingTimeSlotsBlock: React.FC<IBookingTimeSlotsBlockProps> = ({ canShowTimeSlots, loading, availableTimeslots, selectedTimeSlot, selectTimeSlot, isError }: IBookingTimeSlotsBlockProps): JSX.Element => {
+export const BookingTimeSlotsBlock: React.FC<IBookingTimeSlotsBlockProps> = ({
+    canShowTimeSlots,
+    loading,
+    availableTimeslots,
+    selectedTimeSlot,
+    selectTimeSlot,
+    isError,
+}: IBookingTimeSlotsBlockProps): JSX.Element => {
+    const permissions = useAtomValue(permissionsAtom);
+    /** Флаг наличия скидки для Hospitality Heroes */
+    const isHospitalityHeroesDiscount = permissions.includes('hospitality_heroes') && availableTimeslots.some(slot => slot.is_hh_slot);
     return (
         <ContentContainer>
             {!canShowTimeSlots ? (
@@ -40,6 +61,11 @@ export const BookingTimeSlotsBlock: React.FC<IBookingTimeSlotsBlockProps> = ({ c
                     currentSelectedTime={selectedTimeSlot}
                     setCurrentSelectedTime={selectTimeSlot}
                 />
+            )}
+            {isHospitalityHeroesDiscount && (
+                <p className={css.hospitalityHeroesDiscount}>
+                    Вам доступна скидка 40% на бронирования с 15:00 до 19:00
+                </p>
             )}
         </ContentContainer>
     );
