@@ -1,6 +1,6 @@
 /**
  * @fileoverview Страница деталей мероприятия.
- * 
+ *
  * Отображает подробную информацию о мероприятии:
  * - Изображение мероприятия
  * - Название и описание
@@ -9,25 +9,27 @@
  * - Количество оставшихся мест
  * - Счётчик выбора количества гостей
  * - Кнопка перехода к бронированию/покупке
- * 
+ *
  * @module pages/EventsPage/EventDetailsPage
- * 
+ *
  * @example
  * // Роут для страницы
  * <Route path="/events/:eventId" element={<EventDetailsPage />} />
- * 
+ *
  * @see {@link EventBookingPage} - страница бронирования бесплатного мероприятия
  * @see {@link EventPurchasePage} - страница покупки билета на платное мероприятие
  * @see {@link guestCountAtom} - атом для хранения количества гостей
  */
 
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Atom, useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
 import moment from 'moment';
 import classNames from 'classnames';
+// APIs
+import { BASE_BOT } from '@/api/base.ts';
 // Types
-import { IEvent, IEventBooking } from '@/types/events.types.ts';
+import { IEvent } from '@/types/events.types.ts';
 // Atoms
 import { userAtom } from '@/atoms/userAtom.ts';
 import { eventsListAtom, guestCountAtom } from '@/atoms/eventListAtom.ts';
@@ -46,55 +48,46 @@ import css from '@/pages/EventsPage/EventsPage.module.css';
 
 /**
  * Страница деталей мероприятия.
- * 
+ *
  * Получает eventId из URL параметров и отображает информацию о мероприятии.
  * Позволяет выбрать количество гостей и перейти к бронированию/покупке.
- * 
+ *
  * ## Логика навигации:
  * - **Платное мероприятие** + onboarding пройден → `/events/{id}/purchase`
  * - **Бесплатное мероприятие** + onboarding пройден → `/events/{id}/booking`
  * - **Onboarding не пройден** → `/onboarding/3` с state `{ id, sharedEvent: true }`
- * 
+ *
  * ## Условия отображения skeleton:
  * - Нет `selectedEvent.id`
  * - Нет `selectedEvent.tickets_left`
  * - Нет `selectedEvent.image_url`
- * 
+ *
  * @component
  * @returns {JSX.Element} Компонент страницы деталей мероприятия
  */
 export const EventDetailsPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
+    const location = useLocation();
+    /** State из URL параметров */
+    const state = location.state;
+    /** ID мероприятия из URL параметров */
     const { eventId } = useParams();
+    /** Список всех мероприятий из глобального стейта */
     const events = useAtomValue(eventsListAtom as Atom<IEvent[] | null>);
-    
-    /** Состояние для скрытия/показа полного описания */
-    const [hideAbout, setHideAbout] = useState(true);
-    
+    /** Выбранное мероприятие */
+    const selectedEvent = useMemo(() => {
+        return events?.find((event) => event.id === Number(eventId));
+    }, [events, eventId]);
     /** Сеттер для атома количества гостей */
     const setGuestCount = useSetAtom(guestCountAtom as WritableAtom<number, [number], void>);
-    
+
     /** Текущее количество гостей из атома */
     const guestCount = useAtomValue(guestCountAtom);
-    
+
     /** Данные текущего пользователя */
     const user = useAtomValue(userAtom);
-    
-    /** Выбранное мероприятие */
-    const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
-
-    /**
-     * Эффект для получения информации о мероприятии из списка.
-     * Срабатывает при изменении eventId или списка мероприятий.
-     */
-    useEffect(() => {
-        if (eventId) {
-            const event = events?.find((e) => e.id === Number(eventId));
-            if (event) {
-                setSelectedEvent(event as IEventBooking);
-            }
-        }
-    }, [eventId, events, setSelectedEvent]);
+    /** Состояние для скрытия/показа полного описания */
+    const [hideAbout, setHideAbout] = useState(true);
 
     /**
      * Увеличивает количество гостей на 1.
@@ -118,7 +111,7 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
 
     /**
      * Обрабатывает переход на страницу бронирования/покупки.
-     * 
+     *
      * Логика:
      * 1. Если guestCount === 0 или нет selectedEvent → ничего не делать
      * 2. Если пользователь не прошёл onboarding → редирект на /onboarding/3
@@ -127,7 +120,7 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
      */
     const next = () => {
         if (guestCount === 0 || !selectedEvent) return;
-        
+
         if (user?.complete_onboarding) {
             if (selectedEvent?.ticket_price === 0) {
                 // Переход на страницу бронирования бесплатного мероприятия
@@ -137,7 +130,17 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
             // Переход на страницу покупки билета на мероприятие
             navigate(`/events/${selectedEvent?.id}/purchase`);
         } else {
-            navigate(`/onboarding/3`, { state: { id: selectedEvent?.id, sharedEvent: true } });
+            /**
+             * Создаем state для перехода на страницу онбординга
+             * id: id мероприятия
+             * Если мероприятие бесплатное, то добавляем sharedFreeEvent: true
+             * Если мероприятие платное, то добавляем sharedPaidEvent: true
+             */
+            const state = {
+                id: selectedEvent?.id,
+                ...(selectedEvent?.ticket_price === 0 ? { sharedFreeEvent: true } : { sharedPaidEvent: true }),
+            };
+            navigate(`/onboarding/3`, { state });
         }
     };
 
@@ -145,16 +148,37 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
      * Возврат на предыдущую страницу.
      */
     const handleGoBack = () => {
-        navigate(-1);
+        if (state?.shared) {
+            navigate('/');
+        } else {
+            navigate('/events/');
+        }
     };
 
     /**
      * Обработчик шаринга мероприятия.
      * @todo Реализовать функционал шаринга
      */
-    const shareEvent = () => {
-        console.log('shareEvent');
-    };
+    const shareEvent = useCallback(() => {
+        const title = '';
+        const url = encodeURI(`https://t.me/${BASE_BOT}?startapp=eventId_${eventId}`);
+        const shareData = {
+            title,
+            url,
+        };
+        try {
+            if (navigator && navigator.canShare(shareData)) {
+                navigator
+                    .share(shareData)
+                    .then()
+                    .catch((err) => {
+                        console.error(JSON.stringify(err));
+                    });
+            }
+        } catch (e) {
+            window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
+        }
+    }, [eventId]);
 
     // ============================================
     // Состояние загрузки (Skeleton)
@@ -166,7 +190,7 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
      */
     if (!selectedEvent?.id || !selectedEvent?.tickets_left || !selectedEvent?.image_url) {
         return (
-            <Page back={true}>
+            <Page back={!state?.shared}>
                 <PageContainer className={css.detailsPage}>
                     <PlaceholderBlock width={'100%'} rounded={'20px'} aspectRatio={'3/2'} />
                     <PlaceholderBlock width={'100%'} height={'40px'} rounded={'20px'} />
@@ -181,7 +205,7 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
     // ============================================
 
     return (
-        <Page back={true}>
+        <Page back={!state?.shared}>
             <PageContainer className={css.detailsPage}>
                 {/* Шапка с навигацией */}
                 <ContentBlock className={css.header}>
@@ -208,9 +232,9 @@ export const EventDetailsPage: React.FC = (): JSX.Element => {
                             hideAbout ? css.detailsPageDescriptionTrimLines : null
                         )}
                     >
-                        {selectedEvent?.description
-                            .split(/\n|\r\n/)
-                            .map((segment, index) => <p key={index}>{segment}</p>)}
+                        {selectedEvent?.description.split(/\n|\r\n/).map((segment, index) => (
+                            <p key={index}>{segment}</p>
+                        ))}
                     </ContentBlock>
 
                     {/* Кнопка "Читать больше" для длинного описания (>100 символов) */}

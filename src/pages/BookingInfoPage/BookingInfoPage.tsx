@@ -92,7 +92,7 @@ export const BookingInfoPage: React.FC = () => {
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`;
         }
     };
-
+    console.log('booking.tags: ', booking)
     return (
         <Page back={true}>
             <CancelBookingPopup

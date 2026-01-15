@@ -1305,7 +1305,7 @@ describe('useBookingForm', () => {
          */
         test('должен передавать sharedRestaurant в state при редиректе', async () => {
             const { result } = renderHook(
-                () => useBookingForm({ isSharedRestaurant: true }),
+                () => useBookingForm({ isShared: true }),
                 { wrapper: createWrapper({ user: mockUserNotOnboarded }) }
             );
 
@@ -1377,7 +1377,7 @@ describe('useBookingForm', () => {
                 wrapper: createWrapper(),
             });
 
-            expect(result.current.isSharedRestaurant).toBe(false);
+            expect(result.current.isShared).toBe(false);
         });
 
         /**
@@ -1385,11 +1385,11 @@ describe('useBookingForm', () => {
          */
         test('должен возвращать переданное значение', async () => {
             const { result } = renderHook(
-                () => useBookingForm({ isSharedRestaurant: true }),
+                () => useBookingForm({ isShared: true }),
                 { wrapper: createWrapper() }
             );
 
-            expect(result.current.isSharedRestaurant).toBe(true);
+            expect(result.current.isShared).toBe(true);
         });
     });
 
@@ -1441,7 +1441,7 @@ describe('useBookingForm', () => {
 
             // Контекст
             expect(result.current).toHaveProperty('preSelectedRestaurant');
-            expect(result.current).toHaveProperty('isSharedRestaurant');
+            expect(result.current).toHaveProperty('isShared');
             expect(result.current).toHaveProperty('isEventBooking');
             expect(result.current).toHaveProperty('eventData');
         });

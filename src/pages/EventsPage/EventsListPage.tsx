@@ -1,9 +1,11 @@
 /**
  * @fileoverview Страница списка мероприятий.
  */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
+// APIs
+import { BASE_BOT } from '@/api/base.ts';
 // Types
 import { IEvent } from '@/types/events.types.ts';
 // Atoms
@@ -12,6 +14,7 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { cityListAtom, getCurrentCity, setCurrentCityAtom } from '@/atoms/cityListAtom.ts';
 // Components
 import { Page } from '@/components/Page.tsx';
+import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 import { EventCard } from '@/components/EventCard/EventCard.tsx';
 import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
 import { PickerValue } from '@/lib/react-mobile-picker/components/Picker.tsx';
@@ -23,9 +26,6 @@ import { Share } from '@/components/Icons/Share.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 // Styles
 import css from '@/pages/EventsPage/EventsPage.module.css';
-// Hooks
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
-import { PageContainer } from '@/components/PageContainer/PageContainer';
 
 const initialRestaurant: PickerValue = {
     title: 'unset',
@@ -43,8 +43,9 @@ const initialRestaurant: PickerValue = {
  */
 export const EventsListPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
-    const [params] = useSearchParams();
-    const { goBack } = useNavigationHistory();
+    /** State из URL параметров */
+    const location = useLocation();
+    const state = location.state;
     // Атомы (только чтение)
     const events = useAtomValue<IEvent[] | null>(eventsListAtom);
     const cities = useAtomValue(cityListAtom);
@@ -52,6 +53,8 @@ export const EventsListPage: React.FC = (): JSX.Element => {
     const restaurants = useAtomValue(restaurantsListAtom);
     const setCurrentCity = useSetAtom(setCurrentCityAtom);
     const [selectedRestaurant, setSelectedRestaurant] = useState<PickerValue>(initialRestaurant);
+    /** Флаг для пропуска сброса ресторана при смене города из shared-ссылки */
+    const skipResetOnCityChange = useRef(false);
     // Переход на страницу деталей мероприятия
     const goToEventDetails = useCallback(
         (eventId: number) => {
@@ -87,34 +90,71 @@ export const EventsListPage: React.FC = (): JSX.Element => {
         });
     }, [events, selectedRestaurant, restaurantsList]);
 
-    // Обработка URL-параметров: установка города и ресторана из ссылки (например, из бота)
+    /**
+     * Обработка state из URL параметров: установка города и ресторана из ссылки (например, из бота)
+     * @param state - state из URL параметров
+     * @param restaurants - список ресторанов
+     * @param setCurrentCity - функция установки текущего города
+     */
     useEffect(() => {
-        const cityParam = params.get('city');
-        const restaurantParam = params.get('restaurant');
-
-        if (cityParam) {
-            setCurrentCity(cityParam);
-        }
-
-        if (restaurantParam) {
-            const foundRestaurant = restaurants.find((restaurant) => String(restaurant.id) === String(restaurantParam));
-            if (foundRestaurant) {
-                setSelectedRestaurant({
-                    title: foundRestaurant.title,
-                    address: foundRestaurant.address,
-                    value: String(foundRestaurant.id),
-                });
-                // Устанавливаем город по найденному ресторану
-                setCurrentCity(foundRestaurant.city.name_english);
+        const sharedRestaurantId = state?.restaurantId;
+        const sharedCityId = state?.cityId;
+        if (state?.shared) {
+            if (sharedRestaurantId) {
+                // Поиск ресторана по id
+                const foundRestaurant = restaurants.find(
+                    (restaurant) => String(restaurant.id) === String(sharedRestaurantId)
+                );
+                if (foundRestaurant) {
+                    // Пропускаем сброс ресторана при смене города из shared-ссылки
+                    skipResetOnCityChange.current = true;
+                    // Установка текущего города (делаем до установки ресторана)
+                    setCurrentCity(foundRestaurant.city.name_english);
+                    // Установка выбранного ресторана
+                    setSelectedRestaurant({
+                        title: foundRestaurant.title,
+                        address: foundRestaurant.address,
+                        value: String(foundRestaurant.id),
+                    });
+                }
+            }
+            if (sharedCityId) {
+                // Установка текущего города
+                setCurrentCity(sharedCityId);
             }
         }
-    }, [params, restaurants, setCurrentCity]);
+    }, [state, restaurants, setCurrentCity]);
 
-    const handleGoBack = useCallback(() => {
-        goBack();
-    }, [goBack]);
+    const handleGoBack = () => {
+        navigate('/');
+    };
 
-    const shareEvent = () => {};
+    const shareEvent = useCallback(() => {
+        let url = '';
+        const title = '';
+        // Если выбран конкретный ресторан, то шэрим ссылку на мероприятия в выбранном ресторане, иначе шэрим ссылку на мероприятия в выбранном городе
+        if (selectedRestaurant.value !== 'unset') {
+            url = encodeURI(`https://t.me/${BASE_BOT}?startapp=event_restaurantId_${selectedRestaurant.value}`);
+        } else {
+            url = encodeURI(`https://t.me/${BASE_BOT}?startapp=event_cityId_${currentCity.name_english}`);
+        }
+        const shareData = {
+            title,
+            url,
+        };
+        try {
+            if (navigator && navigator.canShare(shareData)) {
+                navigator
+                    .share(shareData)
+                    .then()
+                    .catch((err) => {
+                        console.error(JSON.stringify(err));
+                    });
+            }
+        } catch (e) {
+            window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
+        }
+    }, [selectedRestaurant.value, currentCity.name_english]);
 
     const handleSelectRestaurant = useCallback(
         (value: PickerValue) => {
@@ -125,13 +165,18 @@ export const EventsListPage: React.FC = (): JSX.Element => {
 
     // Сбрасываем выбранный ресторан при смене города
     useEffect(() => {
+        // Пропускаем сброс если город был изменён из shared-ссылки
+        if (skipResetOnCityChange.current) {
+            skipResetOnCityChange.current = false;
+            return;
+        }
         if (currentCity.name_english !== 'unset') {
             setSelectedRestaurant(initialRestaurant);
         }
     }, [currentCity]);
 
     return (
-        <Page back={true}>
+        <Page back={!state?.shared}>
             <PageContainer className={css.eventsListPage}>
                 <ContentBlock className={css.header}>
                     <RoundedButton icon={<BackIcon color={'var(--dark-grey)'} />} action={handleGoBack} />
@@ -139,7 +184,11 @@ export const EventsListPage: React.FC = (): JSX.Element => {
                     <RoundedButton icon={<Share color={'var(--dark-grey)'} />} action={shareEvent} />
                 </ContentBlock>
                 <CitySelect titleStyle={{ fontWeight: '600' }} filteredCitiesList={citiesList} />
-                <RestaurantsListSelector onSelect={handleSelectRestaurant} filteredRestaurants={restaurantsList} />
+                <RestaurantsListSelector
+                    onSelect={handleSelectRestaurant}
+                    filteredRestaurants={restaurantsList}
+                    selectedRestaurant={selectedRestaurant}
+                />
                 <ContentBlock className={css.cards}>
                     {/** Если данные загружены, то показываем список мероприятий, иначе показываем 10 placeholder блоков */}
                     {filteredEvents

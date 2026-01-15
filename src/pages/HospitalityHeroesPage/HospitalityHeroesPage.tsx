@@ -48,7 +48,7 @@ export const HospitalityHeroesPage: React.FC = (): JSX.Element => {
     };
 
     return (
-        <Page className={css.page}>
+        <Page className={css.page} back={false}>
             <HeaderContainer className={css.header}>
                 <RoundedButton
                     bgColor={'var(--primary-background)'}
