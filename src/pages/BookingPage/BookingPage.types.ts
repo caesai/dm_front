@@ -8,4 +8,5 @@ export interface ITimeSlot {
     start_datetime: string;
     end_datetime: string;
     is_free: boolean;
+    is_hh_slot?: boolean;
 }

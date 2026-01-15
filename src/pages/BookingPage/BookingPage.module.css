@@ -113,11 +113,6 @@
     gap: 16px;
 }
 
-.select_timeOfDay {
-    gap: 0!important;
-    flex-direction: row!important;
-}
-
 .noTimeSlotsText {
     font-family: 'Mont', sans-serif;
     font-weight: 400;
@@ -134,58 +129,13 @@
     text-align: center;
 }
 
-.timeOfDay {
-    border-radius: 20px;
-    padding: 11px 16px;
-
-    span {
-        font-family: 'Mont', sans-serif;
-        font-size: 14px;
-        font-weight: 400;
-        color: var(--grey);
-    }
-}
-
-.timeOfDay__active {
-    background-color: var(--secondary-background);
-
-    span {
-        color: var(--black);
-    }
-}
-
-.timeList {
-    display: flex;
-    flex-direction: row;
-    gap: 6px;
-    width: calc(100% + 30px);
-    margin-left: -15px;
-    margin-right: -15px;
-    padding-left: 15px;
-    overflow: hidden;
-}
-
-.timeList :global(.swiper) {
-    overflow: visible;
-    width: 100%;
-}
-
-.timeList_button {
-    padding: 11px 30px;
-    border: 2px solid var(--secondary-background, #F4F4F4);
-    border-radius: 20px;
-    width: max-content;
-    cursor: pointer;
-
-    span {
-        font-family: 'Mont', sans-serif;
-        font-size: 14px;
-        font-weight: 400;
-    }
-}
-
-.timeList_button__active {
-    border-color: var(--black);
+.hospitalityHeroesDiscount {
+    font-family: 'Mont', sans-serif;
+    font-weight: 400;
+    font-size: 10px;
+    text-align: center;
+    color: #E9622C;
+    padding: 0;
 }
 
 .preorder {

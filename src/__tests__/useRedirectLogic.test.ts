@@ -105,13 +105,13 @@ describe('useRedirectLogic', () => {
     it('должно быть перенаправление на страницу деталей мероприятия, если параметр tgWebAppStartParam равен eventId_111', () => {
         setup({ params: { tgWebAppStartParam : 'eventId_111' } });
         renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/events/111/details?shared=true', { replace: true });
+        expect(mockNavigate).toHaveBeenCalledWith('/events/111/details', { replace: true, state: { shared: true } });
     });
 
     it('должно быть перенаправление на страницу ресторана, если параметр tgWebAppStartParam равен restaurantId_222', () => {
         setup({ params: { tgWebAppStartParam : 'restaurantId_222' } });
         renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/restaurant/222?shared=true', { replace: true });
+        expect(mockNavigate).toHaveBeenCalledWith('/restaurant/222', { replace: true, state: { shared: true} });
     });
 
     it('не должно быть перенаправления, если пользователь находится на странице онбординга', () => {

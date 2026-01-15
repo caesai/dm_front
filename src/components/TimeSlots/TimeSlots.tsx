@@ -1,8 +1,8 @@
 /**
  * @fileoverview Компонент выбора временного слота для бронирования.
- * 
+ *
  * Отображает временные слоты для выбора времени бронирования.
- * 
+ *
  * @module components/TimeSlots/TimeSlots
  * @exports TimeSlots
  * @see {@link BookingPage} - страница бронирования
@@ -22,7 +22,7 @@ import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 // Types
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 // Styles
-import css from '@/pages/BookingPage/BookingPage.module.css';
+import css from '@/components/TimeSlots/TimeSlots.module.css';
 
 /**
  * Константы.
@@ -194,16 +194,19 @@ const TimeSlotButton: React.FC<ITimeSlotButtonProps> = React.memo(({ slot, isSel
         : getTimeShort(slot.start_datetime);
 
     return (
-        <div
-            className={classNames(css.timeList_button, isSelected && css.timeList_button__active)}
+        <button
+            type="button"
+            role="button"
+            className={classNames(css.timeList_button, {
+                [css.timeList_button__active]: isSelected,
+                [css.timeList_button__highlighted]: slot.is_hh_slot,
+            })}
             onClick={handleClick}
         >
             <span>{timeLabel}</span>
-        </div>
+        </button>
     );
 });
-
-TimeSlotButton.displayName = 'TimeSlotButton';
 
 /**
  * Компонент DayPartSelector.
@@ -266,21 +269,23 @@ const DayPartSelector: React.FC<IDayPartSelectorProps> = React.memo(
             <ContentBlock className={css.select_timeOfDay}>
                 {DAY_PARTS_CONFIG.map(({ part, countKey }) =>
                     counts[countKey] > 0 ? (
-                        <div
+                        <button
+                            type="button"
+                            role="button"
                             key={part}
-                            className={classNames(css.timeOfDay, currentPartOfDay === part && css.timeOfDay__active)}
+                            className={classNames(css.timeOfDay, {
+                                [css.timeOfDay__active]: currentPartOfDay === part,
+                            })}
                             onClick={() => onPartOfDayChange(part)}
                         >
                             <span>{PART_OF_DAY_LABELS[part]}</span>
-                        </div>
+                        </button>
                     ) : null
                 )}
             </ContentBlock>
         );
     }
 );
-
-DayPartSelector.displayName = 'DayPartSelector';
 
 /**
  * Компонент TimeSlots.
@@ -353,138 +358,142 @@ interface ITimeSlotsProps {
  *     startElement={<DateSelector />}
  * />
  */
-export const TimeSlots: React.FC<ITimeSlotsProps> = React.memo(({
-    loading,
-    availableTimeslots,
-    currentSelectedTime,
-    setCurrentSelectedTime,
-    showDayPartSelector = true,
-    startElement,
-    className,
-    style,
-}) => {
-    // Мемоизированные вычисления
+export const TimeSlots: React.FC<ITimeSlotsProps> = React.memo(
+    ({
+        loading,
+        availableTimeslots,
+        currentSelectedTime,
+        setCurrentSelectedTime,
+        showDayPartSelector = true,
+        startElement,
+        className,
+        style,
+    }) => {
+        // Мемоизированные вычисления
 
-    /** Отфильтрованные валидные слоты */
-    const validTimeslots = useMemo(() => availableTimeslots.filter(isValidTimeSlot), [availableTimeslots]);
+        /** Отфильтрованные валидные слоты */
+        const validTimeslots = useMemo(() => availableTimeslots.filter(isValidTimeSlot), [availableTimeslots]);
 
-    /** Слоты, сгруппированные по частям дня */
-    const groupedSlots = useMemo(
-        () => ({
-            morning: filterByPartOfDay(validTimeslots, 'morning'),
-            day: filterByPartOfDay(validTimeslots, 'day'),
-            evening: filterByPartOfDay(validTimeslots, 'evening'),
-        }),
-        [validTimeslots]
-    );
-
-    /** Флаг наличия хотя бы одного слота */
-    const hasAnyTimeSlots = validTimeslots.length > 0;
-
-    // Состояние
-
-    /** Текущая выбранная часть дня */
-    const [currentPartOfDay, setCurrentPartOfDay] = useState<PartOfDay | null>(null);
-
-    // Эффекты
-
-    /**
-     * Устанавливает часть дня на основе выбранного слота или первой доступной.
-     * Работает только при включенном селекторе части дня.
-     */
-    useEffect(() => {
-        if (!showDayPartSelector) return;
-
-        if (currentSelectedTime) {
-            // Синхронизируем с выбранным слотом
-            const part = getPartOfDay(new Date(currentSelectedTime.start_datetime));
-            setCurrentPartOfDay(part);
-        } else {
-            // Выбираем первую доступную часть дня
-            const firstAvailable = getFirstAvailablePartOfDay(
-                groupedSlots.morning,
-                groupedSlots.day,
-                groupedSlots.evening
-            );
-            setCurrentPartOfDay(firstAvailable);
-        }
-    }, [currentSelectedTime, groupedSlots, showDayPartSelector]);
-
-    // Вычисляемые значения
-
-    /** Слоты для отображения (все или по части дня) */
-    const displayedTimeslots = useMemo(() => {
-        if (!showDayPartSelector) {
-            return validTimeslots;
-        }
-        if (!currentPartOfDay) return [];
-        return groupedSlots[currentPartOfDay];
-    }, [showDayPartSelector, validTimeslots, currentPartOfDay, groupedSlots]);
-
-    /** Индекс начального слайда для Swiper */
-    const initialSlideIndex = useMemo(() => {
-        if (!currentSelectedTime) return 0;
-        const index = displayedTimeslots.findIndex(
-            (slot) => slot.start_datetime === currentSelectedTime.start_datetime
+        /** Слоты, сгруппированные по частям дня */
+        const groupedSlots = useMemo(
+            () => ({
+                morning: filterByPartOfDay(validTimeslots, 'morning'),
+                day: filterByPartOfDay(validTimeslots, 'day'),
+                evening: filterByPartOfDay(validTimeslots, 'evening'),
+            }),
+            [validTimeslots]
         );
-        return Math.max(0, index);
-    }, [currentSelectedTime, displayedTimeslots]);
 
-    // Рендеринг
+        /** Флаг наличия хотя бы одного слота */
+        const hasAnyTimeSlots = validTimeslots.length > 0;
 
-    if (loading) {
-        return <PlaceholderBlock width="100%" height={showDayPartSelector ? '115px' : '41px'} rounded="20px" />;
+        // Состояние
+
+        /** Текущая выбранная часть дня */
+        const [currentPartOfDay, setCurrentPartOfDay] = useState<PartOfDay | null>(null);
+
+        // Эффекты
+
+        /**
+         * Устанавливает часть дня на основе выбранного слота или первой доступной.
+         * Работает только при включенном селекторе части дня.
+         */
+        useEffect(() => {
+            if (!showDayPartSelector) return;
+
+            if (currentSelectedTime) {
+                // Синхронизируем с выбранным слотом
+                const part = getPartOfDay(new Date(currentSelectedTime.start_datetime));
+                setCurrentPartOfDay(part);
+            } else {
+                // Выбираем первую доступную часть дня
+                const firstAvailable = getFirstAvailablePartOfDay(
+                    groupedSlots.morning,
+                    groupedSlots.day,
+                    groupedSlots.evening
+                );
+                setCurrentPartOfDay(firstAvailable);
+            }
+        }, [currentSelectedTime, groupedSlots, showDayPartSelector]);
+
+        // Вычисляемые значения
+
+        /** Слоты для отображения (все или по части дня) */
+        const displayedTimeslots = useMemo(() => {
+            if (!showDayPartSelector) {
+                return validTimeslots;
+            }
+            if (!currentPartOfDay) return [];
+            return groupedSlots[currentPartOfDay];
+        }, [showDayPartSelector, validTimeslots, currentPartOfDay, groupedSlots]);
+
+        /** Индекс начального слайда для Swiper */
+        const initialSlideIndex = useMemo(() => {
+            if (!currentSelectedTime) return 0;
+            const index = displayedTimeslots.findIndex(
+                (slot) => slot.start_datetime === currentSelectedTime.start_datetime
+            );
+            return Math.max(0, index);
+        }, [currentSelectedTime, displayedTimeslots]);
+
+        // Рендеринг
+
+        if (loading) {
+            return <PlaceholderBlock width="100%" height={showDayPartSelector ? '115px' : '41px'} rounded="20px" />;
+        }
+
+        return (
+            <ContentBlock className={classNames(css.timeOfDayContainer, className)} style={style}>
+                {!hasAnyTimeSlots ? (
+                    <span className={css.noTimeSlotsText}>К сожалению, свободных столов не осталось</span>
+                ) : (
+                    showDayPartSelector && (
+                        <DayPartSelector
+                            morningCount={groupedSlots.morning.length}
+                            dayCount={groupedSlots.day.length}
+                            eveningCount={groupedSlots.evening.length}
+                            currentPartOfDay={currentPartOfDay}
+                            onPartOfDayChange={setCurrentPartOfDay}
+                        />
+                    )
+                )}
+
+                {hasAnyTimeSlots && (
+                    <ContentBlock className={css.timeList}>
+                        {displayedTimeslots.length > 0 ? (
+                            <Swiper
+                                slidesPerView="auto"
+                                modules={[FreeMode]}
+                                freeMode
+                                spaceBetween={8}
+                                slidesOffsetAfter={15}
+                                style={{ width: '100%' }}
+                                initialSlide={initialSlideIndex}
+                            >
+                                {/* Опциональный элемент в начале (например, дата) */}
+                                {startElement && (
+                                    <SwiperSlide style={{ width: 'max-content' }}>{startElement}</SwiperSlide>
+                                )}
+                                {displayedTimeslots.map((slot) => (
+                                    <SwiperSlide key={`time_${slot.start_datetime}`} style={{ width: 'max-content' }}>
+                                        <TimeSlotButton
+                                            slot={slot}
+                                            isSelected={currentSelectedTime?.start_datetime === slot.start_datetime}
+                                            onClick={setCurrentSelectedTime}
+                                        />
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                        ) : (
+                            <span className={css.noTimeSlotsText}>
+                                К сожалению, доступных столов на выбранную часть дня не осталось
+                            </span>
+                        )}
+                    </ContentBlock>
+                )}
+            </ContentBlock>
+        );
     }
-
-    return (
-        <ContentBlock className={classNames(css.timeOfDayContainer, className)} style={style}>
-            {!hasAnyTimeSlots ? (
-                <span className={css.noTimeSlotsText}>К сожалению, свободных столов не осталось</span>
-            ) : (
-                showDayPartSelector && (
-                    <DayPartSelector
-                        morningCount={groupedSlots.morning.length}
-                        dayCount={groupedSlots.day.length}
-                        eveningCount={groupedSlots.evening.length}
-                        currentPartOfDay={currentPartOfDay}
-                        onPartOfDayChange={setCurrentPartOfDay}
-                    />
-                )
-            )}
-
-            {hasAnyTimeSlots && (
-                <ContentBlock className={css.timeList}>
-                    {displayedTimeslots.length > 0 ? (
-                        <Swiper
-                            slidesPerView="auto"
-                            modules={[FreeMode]}
-                            freeMode
-                            spaceBetween={8}
-                            slidesOffsetAfter={15}
-                            style={{ width: '100%' }}
-                            initialSlide={initialSlideIndex}
-                        >
-                            {/* Опциональный элемент в начале (например, дата) */}
-                            {startElement && <SwiperSlide style={{ width: 'max-content' }}>{startElement}</SwiperSlide>}
-                            {displayedTimeslots.map((slot) => (
-                                <SwiperSlide key={`time_${slot.start_datetime}`} style={{ width: 'max-content' }}>
-                                    <TimeSlotButton
-                                        slot={slot}
-                                        isSelected={currentSelectedTime?.start_datetime === slot.start_datetime}
-                                        onClick={setCurrentSelectedTime}
-                                    />
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
-                    ) : (
-                        <span className={css.noTimeSlotsText}>
-                            К сожалению, доступных столов на выбранную часть дня не осталось
-                        </span>
-                    )}
-                </ContentBlock>
-            )}
-        </ContentBlock>
-    );
-});
+);
 
 TimeSlots.displayName = 'TimeSlots';

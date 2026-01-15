@@ -35,7 +35,7 @@
  *         guestCount: 1,
  *         childrenCount: 0,
  *     },
- *     isSharedRestaurant: state?.sharedRestaurant,
+ *     isShared: state?.sharedRestaurant,
  * });
  * 
  * @example
@@ -249,7 +249,7 @@ export interface IUseBookingFormOptions {
      * Флаг, что пользователь пришёл по shared ссылке.
      * Влияет на навигацию - при нажатии "Назад" перейдёт на главную.
      */
-    isSharedRestaurant?: boolean;
+    isShared?: boolean;
     
     /** 
      * Данные мероприятия для бронирования на event.
@@ -272,7 +272,7 @@ export interface IUseBookingFormOptions {
  * @param options.certificateParams - Параметры сертификата для активации
  * @param options.preSelectedRestaurant - Предвыбранный ресторан (для RestaurantBookingPage)
  * @param options.initialBookingData - Начальные данные формы из navigation state
- * @param options.isSharedRestaurant - Флаг перехода по shared-ссылке
+ * @param options.isShared - Флаг перехода по shared-ссылке
  * @param options.eventData - Данные мероприятия (для EventBookingPage)
  * 
  * @returns Объект с состоянием формы, обработчиками и методами
@@ -289,7 +289,7 @@ export interface IUseBookingFormOptions {
  * @returns handlers - Объект с обработчиками изменений полей формы
  * @returns createBooking - Функция создания бронирования
  * @returns preSelectedRestaurant - Предвыбранный ресторан (если передан)
- * @returns isSharedRestaurant - Флаг shared-ссылки
+ * @returns isShared - Флаг shared-ссылки
  * @returns isEventBooking - Это бронирование на мероприятие
  * @returns eventData - Данные мероприятия (если переданы)
  */
@@ -298,7 +298,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
         certificateParams,
         preSelectedRestaurant,
         initialBookingData,
-        isSharedRestaurant = false,
+        isShared = false,
         eventData,
     } = options;
     
@@ -376,10 +376,28 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
         guests: form.guestCount > 0,
     }), [form.userName, form.userPhone, form.date?.value, form.selectedTimeSlot, form.guestCount]);
 
-    const isFormValid = useMemo(
-        () => validation.name && validation.phone && validation.timeSlot && validation.guests,
-        [validation]
-    );
+    /**
+     * Проверка валидности формы.
+     * 
+     * Для пользователей без complete_onboarding (незарегистрированные или не прошедшие онбординг):
+     * - Проверяется только timeSlot и guests
+     * - Имя и телефон не требуются, так как пользователь будет перенаправлен на онбординг
+     * 
+     * Для пользователей с complete_onboarding:
+     * - Полная валидация: name, phone, timeSlot, guests
+     */
+    const isFormValid = useMemo(() => {
+        // Базовая валидация для всех пользователей
+        const baseValidation = validation.timeSlot && validation.guests;
+        
+        // Для незарегистрированных пользователей или без онбординга - достаточно базовой валидации
+        if (!user?.complete_onboarding) {
+            return baseValidation;
+        }
+        
+        // Для зарегистрированных пользователей - полная валидация
+        return baseValidation && validation.name && validation.phone;
+    }, [validation, user?.complete_onboarding]);
 
     const triggerValidation = useCallback((): boolean => {
         setValidationDisplay({
@@ -413,98 +431,215 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
     const initialBookingDataApplied = useRef(false);
     const preSelectedRestaurantApplied = useRef(false);
     const eventDataApplied = useRef(false);
+    const userDataApplied = useRef(false);
+    /** Флаг автоматического выбора первого временного слота для мероприятий */
+    const autoTimeSlotSelected = useRef(false);
 
     // Мемоизируем начальные данные бронирования, чтобы избежать лишних ререндеров
     const initialDateValue = initialBookingData?.bookedDate?.value;
     const initialTimeSlotStart = initialBookingData?.bookedTime?.start_datetime;
+    const initialGuestCount = initialBookingData?.guestCount;
+    const initialChildrenCount = initialBookingData?.childrenCount;
 
+    // Инициализация формы (ресторан, дата, гости) - НЕ зависит от user
     useEffect(() => {
-        if (!user) return;
+        // Первая инициализация - устанавливаем состояние без данных пользователя
+        if (!isInitialized.current) {
+            const initialState = getInitialBookingFormState(); // без user
+            
+            // Сохраняем существующие данные из bookingFormAtom, если они уже установлены
+            // (например, дата и время выбраны в BookingsBlock на странице ресторана)
+            const existingDate = formState?.date?.value !== 'unset' ? formState.date : null;
+            const existingTimeSlot = formState?.selectedTimeSlot || null;
+            const existingGuestCount = formState?.guestCount > 0 ? formState.guestCount : 0;
+            const existingChildrenCount = formState?.childrenCount ?? 0;
+            
+            // Если есть данные мероприятия
+            if (eventData) {
+                initialState.restaurant = {
+                    title: eventData.restaurantTitle || '',
+                    value: eventData.restaurantId,
+                    ...(eventData.restaurantAddress && { address: eventData.restaurantAddress }),
+                };
+                initialState.date = {
+                    title: formatDate(eventData.dateStart),
+                    value: eventData.dateStart.split('T')[0],
+                };
+                // Для мероприятий устанавливаем минимум 1 гостя, если не задано в initialBookingData
+                if (initialGuestCount === undefined && initialState.guestCount === 0) {
+                    initialState.guestCount = 1;
+                }
+                eventDataApplied.current = true;
+            }
+            
+            // Если есть предвыбранный ресторан (и нет eventData)
+            if (preSelectedRestaurant && !eventData) {
+                initialState.restaurant = {
+                    title: preSelectedRestaurant.title,
+                    value: preSelectedRestaurant.id,
+                    ...(preSelectedRestaurant.address && { address: preSelectedRestaurant.address }),
+                };
+                preSelectedRestaurantApplied.current = true;
+            }
+            
+            // Если есть начальные данные бронирования из props
+            if (initialBookingData) {
+                if (initialBookingData.bookedDate) {
+                    initialState.date = initialBookingData.bookedDate;
+                }
+                if (initialBookingData.bookedTime) {
+                    initialState.selectedTimeSlot = initialBookingData.bookedTime;
+                }
+                if (initialGuestCount !== undefined) {
+                    initialState.guestCount = initialGuestCount;
+                }
+                if (initialChildrenCount !== undefined) {
+                    initialState.childrenCount = initialChildrenCount;
+                }
+                initialBookingDataApplied.current = true;
+            }
+            
+            // Применяем существующие данные из атома (приоритет над initialBookingData)
+            // но только если нет eventData (для мероприятий используем данные мероприятия)
+            if (!eventData) {
+                if (existingDate) {
+                    initialState.date = existingDate;
+                }
+                if (existingTimeSlot) {
+                    initialState.selectedTimeSlot = existingTimeSlot;
+                }
+                if (existingGuestCount > 0) {
+                    initialState.guestCount = existingGuestCount;
+                }
+                if (existingChildrenCount > 0) {
+                    initialState.childrenCount = existingChildrenCount;
+                }
+            }
+            
+            setForm(initialState);
+            isInitialized.current = true;
+            return;
+        }
         
-        const initialState = getInitialBookingFormState(user);
-        let shouldUpdate = false;
+        // После инициализации - используем updateForm для частичных обновлений
+        const partialUpdate: Partial<IBookingFormState> = {};
         
-        // Если есть данные мероприятия (применяем только один раз)
+        // Применяем данные мероприятия (один раз)
         if (!eventDataApplied.current && eventData) {
-            initialState.restaurant = {
+            partialUpdate.restaurant = {
                 title: eventData.restaurantTitle || '',
                 value: eventData.restaurantId,
                 ...(eventData.restaurantAddress && { address: eventData.restaurantAddress }),
             };
-            // Устанавливаем дату мероприятия
-            initialState.date = {
+            partialUpdate.date = {
                 title: formatDate(eventData.dateStart),
-                value: eventData.dateStart.split('T')[0], // берём только дату
+                value: eventData.dateStart.split('T')[0],
             };
+            // Для мероприятий устанавливаем минимум 1 гостя, если не задано
+            if (initialGuestCount === undefined && form.guestCount === 0) {
+                partialUpdate.guestCount = 1;
+            }
             eventDataApplied.current = true;
-            shouldUpdate = true;
         }
         
-        // Если есть предвыбранный ресторан (применяем только один раз)
+        // Применяем предвыбранный ресторан (один раз)
         if (!preSelectedRestaurantApplied.current && preSelectedRestaurant && !eventData) {
-            initialState.restaurant = {
+            partialUpdate.restaurant = {
                 title: preSelectedRestaurant.title,
                 value: preSelectedRestaurant.id,
                 ...(preSelectedRestaurant.address && { address: preSelectedRestaurant.address }),
             };
             preSelectedRestaurantApplied.current = true;
-            shouldUpdate = true;
         }
         
-        // Если есть начальные данные бронирования (применяем только один раз)
+        // Применяем начальные данные бронирования (один раз)
         if (!initialBookingDataApplied.current && initialBookingData) {
             if (initialBookingData.bookedDate) {
-                initialState.date = initialBookingData.bookedDate;
+                partialUpdate.date = initialBookingData.bookedDate;
             }
             if (initialBookingData.bookedTime) {
-                initialState.selectedTimeSlot = initialBookingData.bookedTime;
+                partialUpdate.selectedTimeSlot = initialBookingData.bookedTime;
             }
-            if (initialBookingData.guestCount !== undefined) {
-                initialState.guestCount = initialBookingData.guestCount;
+            if (initialGuestCount !== undefined) {
+                partialUpdate.guestCount = initialGuestCount;
             }
-            if (initialBookingData.childrenCount !== undefined) {
-                initialState.childrenCount = initialBookingData.childrenCount;
+            if (initialChildrenCount !== undefined) {
+                partialUpdate.childrenCount = initialChildrenCount;
             }
             initialBookingDataApplied.current = true;
-            shouldUpdate = true;
         }
         
-        // Первая инициализация или есть что обновить
-        if (!isInitialized.current || shouldUpdate) {
-            setForm(initialState);
-            isInitialized.current = true;
+        // Обновляем только если есть что обновлять
+        if (Object.keys(partialUpdate).length > 0) {
+            updateForm(partialUpdate);
         }
     }, [
-        user, 
-        setForm, 
+        setForm,
+        updateForm,
         preSelectedRestaurant?.id, 
         preSelectedRestaurant?.title, 
         preSelectedRestaurant?.address,
         initialDateValue,
         initialTimeSlotStart,
-        initialBookingData,
+        initialGuestCount,
+        initialChildrenCount,
         eventData?.id,
         eventData?.restaurantId,
         eventData?.dateStart,
     ]);
 
+    // Обновление контактных данных пользователя - когда user появляется
+    useEffect(() => {
+        if (!user || userDataApplied.current) return;
+        
+        // Обновляем контактные данные из профиля пользователя
+        updateForm({
+            userName: user.first_name ?? '',
+            userPhone: user.phone_number ?? '',
+            userEmail: user.email ?? '',
+        });
+        userDataApplied.current = true;
+    }, [user, updateForm]);
+
     // ============================================
     // Load Available Dates
     // ============================================
+    
+    // Ref для отслеживания, была ли уже установлена дата для текущего ресторана
+    const dateInitializedForRestaurantRef = useRef<string | null>(null);
 
     useEffect(() => {
         if (!auth?.access_token || !form.restaurant?.value || form.restaurant.value === 'unset') return;
 
+        const restaurantId = String(form.restaurant.value);
+
         setLoading(prev => ({ ...prev, dates: true }));
 
-        APIGetAvailableDays(auth.access_token, String(form.restaurant.value), 1)
+        APIGetAvailableDays(auth.access_token, restaurantId, 1)
             .then((res) => {
-                setAvailableDates(
-                    res.data.map((v: string) => ({
-                        title: formatDate(v),
-                        value: v,
-                    }))
-                );
+                const formattedDates = res.data.map((v: string) => ({
+                    title: formatDate(v),
+                    value: v,
+                }));
+                setAvailableDates(formattedDates);
+                
+                // Автоматически устанавливаем первую дату только если:
+                // 1. Есть доступные даты
+                // 2. Дата для этого ресторана ещё не была инициализирована
+                // 3. Текущая дата = 'unset' (не была установлена из initialBookingData или eventData)
+                // НЕ перезаписываем дату из initialBookingData.bookedDate или eventData.dateStart
+                if (
+                    formattedDates.length > 0 && 
+                    dateInitializedForRestaurantRef.current !== restaurantId
+                ) {
+                    // Проверяем текущее значение даты в форме через getter атома
+                    // Если дата 'unset', устанавливаем первую доступную дату
+                    if (form.date?.value === 'unset') {
+                        updateForm({ date: formattedDates[0] });
+                    }
+                    // Помечаем ресторан как обработанный в любом случае
+                    dateInitializedForRestaurantRef.current = restaurantId;
+                }
             })
             .catch((err) => {
                 console.error('Error fetching available days:', err);
@@ -512,7 +647,8 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
             .finally(() => {
                 setLoading(prev => ({ ...prev, dates: false }));
             });
-    }, [auth?.access_token, form.restaurant?.value, form.guestCount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [auth?.access_token, form.restaurant?.value, form.guestCount, updateForm]);
 
     // ============================================
     // Load Available Time Slots
@@ -538,7 +674,23 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
             String(form.date.value),
             form.guestCount
         )
-            .then((res) => setAvailableTimeslots(res.data))
+            .then((res) => {
+                setAvailableTimeslots(res.data);
+                // Для мероприятий автоматически выбираем слот, соответствующий времени начала мероприятия
+                if (isEventBooking && res.data.length > 0 && !autoTimeSlotSelected.current && eventData?.dateStart) {
+                    // Извлекаем время начала мероприятия (HH:mm) напрямую из строки
+                    // Формат: 'YYYY-MM-DD HH:mm:ss' -> берём 'HH:mm' (позиции 11-16)
+                    const eventStartTime = eventData.dateStart.split(' ')[1]?.slice(0, 5);
+                    // Ищем слот с matching временем
+                    const matchingSlot = res.data.find((slot: ITimeSlot) => {
+                        const slotTime = slot.start_datetime.split(' ')[1]?.slice(0, 5);
+                        return slotTime === eventStartTime;
+                    });
+                    // Если найден - выбираем его, иначе первый доступный
+                    updateForm({ selectedTimeSlot: matchingSlot || res.data[0] });
+                    autoTimeSlotSelected.current = true;
+                }
+            })
             .catch((err) => {
                 console.error('Error fetching timeslots:', err);
                 setErrors(prev => ({ ...prev, timeslots: true }));
@@ -546,7 +698,8 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
             .finally(() => {
                 setLoading(prev => ({ ...prev, timeslots: false }));
             });
-    }, [auth?.access_token, form.date?.value, form.guestCount, form.restaurant?.value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [auth?.access_token, form.date?.value, form.guestCount, form.restaurant?.value, isEventBooking]);
 
     // ============================================
     // Certificate Claim (after onboarding)
@@ -644,9 +797,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
             navigate('/onboarding/3', {
                 state: {
                     id: Number(form.restaurant?.value ?? 0),
-                    date: form.date,
-                    time: form.selectedTimeSlot,
-                    sharedRestaurant: isSharedRestaurant || !!preSelectedRestaurant,
+                    sharedRestaurant: isShared || !!preSelectedRestaurant,
                     eventId: eventData?.id,
                 },
             });
@@ -709,7 +860,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
         triggerValidation,
         auth?.access_token,
         comms,
-        isSharedRestaurant,
+        isShared,
         preSelectedRestaurant,
         eventData?.id,
         isEventBooking,
@@ -800,7 +951,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
         /** Предвыбранный ресторан (если передан в options) */
         preSelectedRestaurant,
         /** `true` если пользователь пришёл по shared-ссылке */
-        isSharedRestaurant,
+        isShared,
         /** `true` если это бронирование на мероприятие */
         isEventBooking,
         /** Данные мероприятия (если переданы в options) */
