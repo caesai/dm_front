@@ -37,9 +37,8 @@
  * @see {@link useBookingForm} - хук управления формой бронирования
  */
 
-import React, { useRef, useMemo } from 'react';
+import React, { useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useAtomValue } from 'jotai';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
@@ -52,10 +51,9 @@ import { RestaurantBookingHeader } from '@/pages/BookingPage/blocks/RestaurantBo
 import { BookingTimeSlotsBlock } from '@/pages/BookingPage/blocks/BookingTimeSlotsBlock.tsx';
 import { BookingContactsBlock } from '@/pages/BookingPage/blocks/BookingContactsBlock.tsx';
 // Hooks
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 import { useBookingForm } from '@/hooks/useBookingForm.ts';
 // Atoms
-import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 import { CONFIRMATION_OPTIONS } from '@/atoms/bookingFormAtom.ts';
 
 /**
@@ -99,8 +97,6 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
     const location = useLocation();
     /** ID ресторана из URL параметров */
     const { restaurantId } = useParams<{ restaurantId: string }>();
-    /** Хук для навигации назад */
-    const { goBack } = useNavigationHistory();
     /**
      * State из navigation.
      * Может содержать:
@@ -112,16 +108,11 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
     /** Ref для кнопки бронирования (используется BottomButtonWrapper) */
     const bookingBtn = useRef<HTMLDivElement>(null);
 
-    /** Список всех ресторанов из глобального стейта */
-    const restaurants = useAtomValue(restaurantsListAtom);
-
     /**
      * Выбранный ресторан из списка.
      * Определяется по restaurantId из URL.
      */
-    const currentRestaurant = useMemo(() => {
-        return restaurants.find((r) => String(r.id) === restaurantId);
-    }, [restaurants, restaurantId]);
+    const currentRestaurant = useGetRestaurantById(restaurantId || '');
 
     /**
      * Хук управления формой бронирования.
@@ -153,15 +144,13 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
                   address: currentRestaurant.address,
               }
             : undefined,
-        initialBookingData: state
-            ? {
-                  bookedDate: state.bookedDate,
-                  bookedTime: state.bookedTime,
-                  guestCount: state.bookedDate ? 1 : undefined,
-                  childrenCount: state.bookedDate ? 0 : undefined,
-              }
-            : undefined,
-        isSharedRestaurant: state?.sharedRestaurant,
+        // Устанавливаем guestCount: 1 по умолчанию для загрузки временных слотов.
+        // Дата и время берутся из bookingFormAtom (сохранены в BookingsBlock).
+        initialBookingData: {
+            guestCount: 1,
+            childrenCount: 0,
+        },
+        isShared: state?.sharedRestaurant,
     });
 
     /**
@@ -175,12 +164,12 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
         if (state?.sharedRestaurant) {
             navigate('/');
         } else {
-            goBack();
+            navigate('/restaurant/' + restaurantId);
         }
     };
 
     return (
-        <Page back={true}>
+        <Page back={!state?.sharedRestaurant}>
             <PageContainer>
                 <BookingErrorPopup
                     isOpen={errors.popup}

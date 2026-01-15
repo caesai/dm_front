@@ -1,9 +1,9 @@
 /**
  * @fileoverview Страница общего бронирования столика для любого ресторана.
- * 
+ *
  * Пользователь попадает на эту страницу с главной страницы приложения
  * ({@link IndexPage}) после нажатия кнопки "Забронировать".
- * 
+ *
  * Страница предоставляет функционал:
  * - Выбор ресторана из полного списка (RestaurantsListSelector)
  * - Выбор даты бронирования из доступных дат
@@ -14,24 +14,24 @@
  * - Выбор/активация подарочного сертификата
  * - Выбор способа подтверждения бронирования
  * - Создание бронирования через API
- * 
+ *
  * При успешном бронировании пользователь перенаправляется на
  * страницу деталей бронирования `/myBookings/{booking_id}`.
- * 
+ *
  * Отличия от {@link RestaurantBookingPage}:
  * - Ресторан выбирается пользователем (не предзадан в URL)
  * - Использует CommonBookingHeader вместо RestaurantBookingHeader
  * - Поддерживает передачу certificate и certificateId через state
  * - Использует `shared` вместо `sharedRestaurant` для навигации
- * 
+ *
  * Отличия от {@link EventBookingPage}:
  * - Не привязан к мероприятию (нет eventData)
  * - Дата не фиксирована, выбирается пользователем
  * - Не передаёт event_id в API
  * - Навигация после бронирования на /myBookings/{id}
- * 
+ *
  * @module pages/BookingPage/BookingPage
- * 
+ *
  * @see {@link IndexPage} - главная страница (точка входа)
  * @see {@link RestaurantBookingPage} - страница бронирования конкретного ресторана
  * @see {@link EventBookingPage} - страница бронирования мероприятия
@@ -52,7 +52,6 @@ import { CertificatesSelector } from '@/components/CertificatesSelector/Certific
 import { BookingContactsBlock } from '@/pages/BookingPage/blocks/BookingContactsBlock.tsx';
 import { BookingTimeSlotsBlock } from '@/pages/BookingPage/blocks/BookingTimeSlotsBlock.tsx';
 // Hooks
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 import { useBookingForm } from '@/hooks/useBookingForm.ts';
 // Atoms
 import { CONFIRMATION_OPTIONS } from '@/atoms/bookingFormAtom.ts';
@@ -61,27 +60,27 @@ import { getServiceFeeData } from '@/mockData.ts';
 
 /**
  * Страница общего бронирования столика для любого ресторана.
- * 
+ *
  * Использует хук {@link useBookingForm} для управления состоянием формы,
  * валидации и взаимодействия с API.
- * 
+ *
  * Ресторан выбирается пользователем из списка (в отличие от
  * {@link RestaurantBookingPage}, где ресторан предзадан).
- * 
+ *
  * При успешном бронировании выполняется навигация на страницу бронирования:
  * `/myBookings/{booking_id}`
- * 
+ *
  * @component
  * @returns {JSX.Element} Страница общего бронирования
- * 
+ *
  * @example
  * // Роут в App.tsx
  * <Route path="/booking" element={<BookingPage />} />
- * 
+ *
  * @example
  * // Навигация с главной страницы
  * navigate('/booking');
- * 
+ *
  * @example
  * // Навигация с сертификатом
  * navigate('/booking', {
@@ -90,7 +89,7 @@ import { getServiceFeeData } from '@/mockData.ts';
  *         certificateId: 'cert-123',
  *     }
  * });
- * 
+ *
  * @example
  * // Навигация по shared-ссылке
  * navigate('/booking', { state: { shared: true } });
@@ -111,15 +110,12 @@ export const BookingPage: React.FC = (): JSX.Element => {
     /** Ref для кнопки бронирования (используется BottomButtonWrapper) */
     const bookingBtn = useRef<HTMLDivElement>(null);
 
-    /** Хук для навигации назад */
-    const { goBack } = useNavigationHistory();
-
     /**
      * Хук управления формой бронирования.
-     * 
+     *
      * Конфигурация для общего бронирования:
      * - certificateParams: данные сертификата из state для активации
-     * 
+     *
      * Ресторан и дата выбираются пользователем в форме.
      * При успешном бронировании переходит на /myBookings/{booking_id}
      */
@@ -140,21 +136,18 @@ export const BookingPage: React.FC = (): JSX.Element => {
             certificate: state?.certificate,
             certificateId: state?.certificateId,
         },
+        isShared: state?.shared,
     });
 
     /**
      * Обработчик кнопки "Назад".
-     * 
+     *
      * При переходе по shared-ссылке (state.shared = true)
      * перенаправляет на главную страницу, иначе возвращает на
      * предыдущую страницу (обычно {@link IndexPage}).
      */
     const handleGoBack = () => {
-        if (state?.shared) {
-            navigate('/');
-        } else {
-            goBack();
-        }
+        navigate('/');
     };
 
     /**
@@ -164,7 +157,7 @@ export const BookingPage: React.FC = (): JSX.Element => {
     const serviceFeeMessage = getServiceFeeData(String(form.restaurant.value));
 
     return (
-        <Page back={true}>
+        <Page back={!state?.shared}>
             <PageContainer>
                 <BookingErrorPopup
                     isOpen={errors.popup}

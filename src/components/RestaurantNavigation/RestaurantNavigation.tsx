@@ -1,15 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import AnchorLink from 'react-anchor-link-smooth-scroll';
 import classNames from 'classnames';
+// Atoms
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
+// Swiper
 import { Swiper as SwiperCore } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
-// Components
-import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 // Styles
 import css from '@/components/RestaurantNavigation/RestaurantNavigation.module.css';
-import { useRestaurantPageData } from '@/hooks/useRestaurantPageData';
-import { useGetRestaurantById } from '@/atoms/restaurantsListAtom';
+// Hooks
+import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
+
 
 interface IRestaurantNavigationProps {
     restaurantId: string;
@@ -27,7 +29,7 @@ interface IRestaurantNavigationProps {
 export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({
     restaurantId,
 }: IRestaurantNavigationProps): JSX.Element => {
-    const { isInitialLoading, events } = useRestaurantPageData({ restaurantId });
+    const { events } = useRestaurantPageData({ restaurantId });
     const restaurant = useGetRestaurantById(restaurantId);
     const [hash, setHash] = useState<string>('booking');
     const [swiperInstance, setSwiperInstance] = useState<SwiperCore | null>(null);
@@ -86,112 +88,108 @@ export const RestaurantNavigation: React.FC<IRestaurantNavigationProps> = ({
 
     return (
         <nav className={css.navigationSlider}>
-            {isInitialLoading ? (
-                <PlaceholderBlock width={'100%'} height={'41px'} rounded={'20px'} />
-            ) : (
-                <Swiper
-                    modules={[FreeMode]}
-                    freeMode={true}
-                    slidesPerView={'auto'}
-                    spaceBetween={8}
-                    onSwiper={setSwiperInstance}
-                >
+            <Swiper
+                modules={[FreeMode]}
+                freeMode={true}
+                slidesPerView={'auto'}
+                spaceBetween={8}
+                onSwiper={setSwiperInstance}
+            >
+                <SwiperSlide style={{ width: 'fit-content' }}>
+                    <AnchorLink href="#booking" offset={250}>
+                        <div
+                            className={classNames(css.navigationLink, {
+                                [css.navigationLinkActive]: hash === 'booking',
+                            })}
+                        >
+                            Бронь
+                        </div>
+                    </AnchorLink>
+                </SwiperSlide>
+                <SwiperSlide style={{ width: 'fit-content' }}>
+                    <AnchorLink href="#gallery" offset={160}>
+                        <div
+                            className={classNames(css.navigationLink, {
+                                [css.navigationLinkActive]: hash === 'gallery',
+                            })}
+                        >
+                            Галерея
+                        </div>
+                    </AnchorLink>
+                </SwiperSlide>
+                {hasMenu && (
                     <SwiperSlide style={{ width: 'fit-content' }}>
-                        <AnchorLink href="#booking" offset={250}>
+                        <AnchorLink href="#menu" offset={160}>
                             <div
                                 className={classNames(css.navigationLink, {
-                                    [css.navigationLinkActive]: hash === 'booking',
+                                    [css.navigationLinkActive]: hash === 'menu',
                                 })}
                             >
-                                Бронь
+                                Меню
                             </div>
                         </AnchorLink>
                     </SwiperSlide>
+                )}
+                {hasBanquets && (
                     <SwiperSlide style={{ width: 'fit-content' }}>
-                        <AnchorLink href="#gallery" offset={160}>
+                        <AnchorLink href="#banquet" offset={160}>
                             <div
                                 className={classNames(css.navigationLink, {
-                                    [css.navigationLinkActive]: hash === 'gallery',
+                                    [css.navigationLinkActive]: hash === 'banquet',
                                 })}
                             >
-                                Галерея
+                                Банкеты
                             </div>
                         </AnchorLink>
                     </SwiperSlide>
-                    {hasMenu && (
-                        <SwiperSlide style={{ width: 'fit-content' }}>
-                            <AnchorLink href="#menu" offset={160}>
-                                <div
-                                    className={classNames(css.navigationLink, {
-                                        [css.navigationLinkActive]: hash === 'menu',
-                                    })}
-                                >
-                                    Меню
-                                </div>
-                            </AnchorLink>
-                        </SwiperSlide>
-                    )}
-                    {hasBanquets && (
-                        <SwiperSlide style={{ width: 'fit-content' }}>
-                            <AnchorLink href="#banquet" offset={160}>
-                                <div
-                                    className={classNames(css.navigationLink, {
-                                        [css.navigationLinkActive]: hash === 'banquet',
-                                    })}
-                                >
-                                    Банкеты
-                                </div>
-                            </AnchorLink>
-                        </SwiperSlide>
-                    )}
-                    {hasEvents && (
-                        <SwiperSlide style={{ width: 'fit-content' }}>
-                            <AnchorLink href="#events" offset={160}>
-                                <div
-                                    className={classNames(css.navigationLink, {
-                                        [css.navigationLinkActive]: hash === 'events',
-                                    })}
-                                >
-                                    Мероприятия
-                                </div>
-                            </AnchorLink>
-                        </SwiperSlide>
-                    )}
+                )}
+                {hasEvents && (
                     <SwiperSlide style={{ width: 'fit-content' }}>
-                        <AnchorLink href="#certificates" offset={160}>
+                        <AnchorLink href="#events" offset={160}>
                             <div
                                 className={classNames(css.navigationLink, {
-                                    [css.navigationLinkActive]: hash === 'certificates',
+                                    [css.navigationLinkActive]: hash === 'events',
                                 })}
                             >
-                                Сертификаты
+                                Мероприятия
                             </div>
                         </AnchorLink>
                     </SwiperSlide>
-                    <SwiperSlide style={{ width: 'fit-content' }}>
-                        <AnchorLink href="#about" offset={160}>
-                            <div
-                                className={classNames(css.navigationLink, {
-                                    [css.navigationLinkActive]: hash === 'about',
-                                })}
-                            >
-                                О месте
-                            </div>
-                        </AnchorLink>
-                    </SwiperSlide>
-                    <SwiperSlide style={{ width: 'fit-content' }}>
-                        <AnchorLink href="#chef" offset={160}>
-                            <div
-                                className={classNames(css.navigationLink, {
-                                    [css.navigationLinkActive]: hash === 'chef',
-                                })}
-                            >
-                                О шефе
-                            </div>
-                        </AnchorLink>
-                    </SwiperSlide>
-                </Swiper>
-            )}
+                )}
+                <SwiperSlide style={{ width: 'fit-content' }}>
+                    <AnchorLink href="#certificates" offset={160}>
+                        <div
+                            className={classNames(css.navigationLink, {
+                                [css.navigationLinkActive]: hash === 'certificates',
+                            })}
+                        >
+                            Сертификаты
+                        </div>
+                    </AnchorLink>
+                </SwiperSlide>
+                <SwiperSlide style={{ width: 'fit-content' }}>
+                    <AnchorLink href="#about" offset={160}>
+                        <div
+                            className={classNames(css.navigationLink, {
+                                [css.navigationLinkActive]: hash === 'about',
+                            })}
+                        >
+                            О месте
+                        </div>
+                    </AnchorLink>
+                </SwiperSlide>
+                <SwiperSlide style={{ width: 'fit-content' }}>
+                    <AnchorLink href="#chef" offset={160}>
+                        <div
+                            className={classNames(css.navigationLink, {
+                                [css.navigationLinkActive]: hash === 'chef',
+                            })}
+                        >
+                            О шефе
+                        </div>
+                    </AnchorLink>
+                </SwiperSlide>
+            </Swiper>
         </nav>
     );
 };

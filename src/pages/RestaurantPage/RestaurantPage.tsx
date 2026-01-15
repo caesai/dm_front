@@ -1,6 +1,6 @@
 /**
  * @fileoverview Страница детальной информации о ресторане.
- * 
+ *
  * Отображает полную информацию о ресторане с возможностью:
  * - Просмотра фотогалереи ресторана
  * - Просмотра меню и блюд
@@ -12,10 +12,10 @@
  * - Открытия местоположения в Яндекс Картах
  * - Вызова такси через Яндекс
  * - Звонка в ресторан
- * 
+ *
  * @module pages/RestaurantPage/RestaurantPage
- * 
- * @see {@link useRestaurantPageData} - хук загрузки данных страницы
+ *
+ * @see {@link useBookingForm} - хук для работы с формой бронирования
  * @see {@link useGetRestaurantById} - хук получения ресторана по ID
  */
 
@@ -45,9 +45,6 @@ import { ChefBlock } from '@/pages/RestaurantPage/blocks/ChefBlock.tsx';
 import { AddressBlock } from '@/pages/RestaurantPage/blocks/AddressBlock.tsx';
 import { NavigationBlock } from '@/pages/RestaurantPage/blocks/NavigationBlock.tsx';
 import { YandexTaxiBlock } from '@/pages/RestaurantPage/blocks/YandexTaxiBlock.tsx';
-// Hooks
-import useToastState from '@/hooks/useToastState.ts';
-import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
 
 /**
  * Страница детальной информации о ресторане.
@@ -64,14 +61,14 @@ import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
  * - Информацию о шеф-поваре
  * - Адрес с возможностью открытия в картах
  * - Виджет вызова Яндекс Такси
- * 
+ *
  * Навигация на страницу бронирования происходит с учётом статуса онбординга пользователя:
  * - Если онбординг не завершён — переход на `/onboarding/3` с передачей данных ресторана
  * - Если онбординг завершён — переход на `/restaurant/:id/booking` с выбранной датой и временем
  *
  * @component
  * @returns {JSX.Element} Компонент страницы ресторана
- * 
+ *
  * @example
  * // Роутинг
  * <Route path="/restaurant/:restaurantId" element={<RestaurantPage />} />
@@ -79,71 +76,51 @@ import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
 export const RestaurantPage: React.FC = (): JSX.Element => {
     /** Функция навигации из react-router-dom */
     const navigate = useNavigate();
-    
+
     /** ID ресторана из URL-параметров */
     const { restaurantId } = useParams<{ restaurantId: string }>();
-    
-    /** 
+
+    /**
      * Данные текущего пользователя из глобального состояния.
      * Используется для проверки статуса онбординга.
      */
     const user = useAtomValue(userAtom);
-    
-    /** 
+
+    /**
      * Данные ресторана по ID.
      * Получается через мемоизированный атом restaurantByIdAtom.
      */
     const restaurant = useGetRestaurantById(restaurantId || '');
-    
-    /** Функция показа уведомлений об ошибках */
-    const { showToast } = useToastState();
-
-    /**
-     * Данные страницы ресторана, загружаемые через оптимизированный хук.
-     * Включает: события, доступные даты, таймслоты для бронирования.
-     * 
-     * @see {@link useRestaurantPageData}
-     */
-    const { currentSelectedTime, date } = useRestaurantPageData({
-        restaurantId: restaurantId || '',
-        onError: showToast,
-    });
 
     /** Состояние открытия попапа звонка в ресторан */
     const [isCallPopupOpen, setIsCallPopupOpen] = useState(false);
 
     /**
      * Обрабатывает переход к бронированию столика.
-     * 
+     *
      * Если пользователь не завершил онбординг — переход на `/onboarding/3`
-     * с передачей данных ресторана и выбранной даты/времени.
-     * 
+     * с передачей данных ресторана.
+     *
      * Если онбординг завершён — переход на страницу бронирования
-     * `/restaurant/:restaurantId/booking` с выбранной датой и временем.
+     * `/restaurant/:restaurantId/booking`.
+     * Данные формы (дата, время, гости) сохранены в bookingFormAtom через BookingBlock.
      */
     const handleNextButtonClick = () => {
         if (!user?.complete_onboarding) {
             navigate('/onboarding/3', {
                 state: {
                     id: restaurantId,
-                    bookedDate: date, // Передаём полный PickerValue объект
-                    bookedTime: currentSelectedTime,
                     sharedRestaurant: true,
                 },
             });
         } else {
-            navigate(`/restaurant/${restaurantId}/booking`, {
-                state: {
-                    bookedDate: date, // Передаём полный PickerValue объект
-                    bookedTime: currentSelectedTime,
-                },
-            });
+            navigate(`/restaurant/${restaurantId}/booking`);
         }
     };
 
     /**
      * Открывает Яндекс Карты с местоположением ресторана в новой вкладке.
-     * 
+     *
      * Формирует URL с параметрами:
      * - ll: координаты ресторана (longitude,latitude)
      * - text: название ресторана для отображения на карте
