@@ -12,6 +12,7 @@
     --black: #000;
     --popup-background: #58585869;
     --certificate-background: #F8C831;
+    --button-grey: #BBB3A0;
 }
 
 *,
@@ -298,6 +299,34 @@ button {
 @font-face {
     font-family: 'Heading Pro Ultracompressed';
     src: url('/fonts/headingpro/Heading-Pro-Compressed-Heavy-trial.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Object Sans';
+    src: url('/fonts/ObjectSans/ObjectSans-Slanted.otf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Object Sans';
+    src: url('/fonts/ObjectSans/ObjectSans-Regular.otf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Object Sans';
+    src: url('/fonts/ObjectSans/ObjectSans-HeavySlanted.otf') format('truetype');
+    font-weight: 900;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Object Sans';
+    src: url('/fonts/ObjectSans/ObjectSans-Heavy.otf') format('truetype');
     font-weight: 900;
     font-style: normal;
 }
