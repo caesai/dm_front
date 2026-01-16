@@ -57,6 +57,18 @@
     color: var(--black);
 }
 
+.left {
+    text-align: left;
+}
+
+.center {
+    text-align: center;
+}
+
+.right {
+    text-align: right;
+}
+
 .button {
     cursor: pointer;
     display: flex;

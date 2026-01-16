@@ -16,11 +16,17 @@
  * При успешном бронировании бэкенд возвращает ticket_id,
  * и пользователь перенаправляется на страницу билета `/tickets/{ticket_id}`.
  * 
+ * ## Разделение состояния
+ * 
+ * Использует `formType: 'event'` для изолированного атома {@link eventBookingFormAtom},
+ * что предотвращает конфликты с другими страницами бронирования.
+ * 
  * @module pages/BookingPage/EventBookingPage
  * 
  * @see {@link EventDetailsPage} - страница деталей мероприятия (точка входа)
  * @see {@link useBookingForm} - хук управления формой бронирования
  * @see {@link EventBookingHeader} - компонент заголовка страницы
+ * @see {@link eventBookingFormAtom} - изолированный атом состояния формы
  */
 
 import React, { useMemo, useRef } from 'react';
@@ -115,6 +121,7 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
      * Конфигурация для бронирования на мероприятие:
      * - eventData: данные мероприятия (ресторан и дата автоматически устанавливаются)
      * - initialBookingData: начальное количество гостей из атомов
+     * - resetOnMount: true для сброса формы при каждом посещении страницы
      * 
      * При успешном бронировании переходит на /tickets/{ticket_id}
      */
@@ -130,6 +137,7 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
         handlers,
         createBooking,
     } = useBookingForm({
+        formType: 'event',
         eventData: selectedEvent
             ? {
                   id: selectedEvent.id,
@@ -145,6 +153,7 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
             guestCount: initialGuestCount > 0 ? initialGuestCount : undefined,
             childrenCount: initialChildrenCount > 0 ? initialChildrenCount : undefined,
         },
+        resetOnMount: true,
     });
 
     /**

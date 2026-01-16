@@ -136,6 +136,24 @@ export const mockRestaurantWithBanquets2: IRestaurant = {
 };
 
 /**
+ * Моковый ресторан для тестирования бронирования.
+ * Alias для mockRestaurantWithBanquets с упрощённым worktime.
+ * 
+ * @see {@link RestaurantBookingPage.test.tsx}
+ * @see {@link RestaurantPage.test.tsx}
+ */
+export const mockRestaurant: IRestaurant = {
+    ...mockRestaurantWithBanquets,
+    banquets: {
+        banquet_options: [],
+        additional_options: [],
+        description: 'Описание банкетов',
+        image: 'https://example.com/banquet.jpg',
+    },
+    worktime: [{ weekday: 'пн-вс', time_start: '12:00', time_end: '23:00' }],
+};
+
+/**
  * Список моковых ресторанов для тестирования.
  * Используется в тестах бронирования.
  */

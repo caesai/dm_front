@@ -449,7 +449,7 @@ describe('RestaurantPage', () => {
     describe('Навигация на бронирование', () => {
         /**
          * Проверяет навигацию на страницу бронирования для пользователя с онбордингом.
-         * Данные формы сохранены в bookingFormAtom через BookingsBlock.
+         * Данные синхронизируются через restaurantBookingFormAtom (без location.state).
          */
         it('должен навигировать на страницу бронирования для онбордированного пользователя', async () => {
             renderComponent({ user: mockUserOnboarded });
@@ -614,9 +614,9 @@ describe('RestaurantPage', () => {
 
         /**
          * Проверяет навигацию на страницу бронирования.
-         * State не передаётся - данные сохранены в bookingFormAtom.
+         * Данные синхронизируются через restaurantBookingFormAtom (без location.state).
          */
-        it('должен навигировать на страницу бронирования без state', async () => {
+        it('должен навигировать на страницу бронирования', async () => {
             renderComponent();
 
             const bookButton = screen.getByTestId('book-button');

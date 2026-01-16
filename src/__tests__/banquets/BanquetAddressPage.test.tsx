@@ -26,8 +26,8 @@ import { BanquetAddressPage } from '@/pages/BanquetAddressPage/BanquetAddressPag
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { userAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { mockUserData, mockUserNotOnboarded } from '@/__mocks__/user.mock';
-import { mockRestaurantWithBanquets, mockRestaurantWithoutBanquets, mockRestaurantWithBanquets2 } from '@/__mocks__/restaurant.mock';
+import { mockUserData, mockUserNotOnboarded } from '@/__mocks__/user.mock.ts';
+import { mockRestaurantWithBanquets, mockRestaurantWithoutBanquets, mockRestaurantWithBanquets2 } from '@/__mocks__/restaurant.mock.ts';
 import { IUser } from '@/types/user.types.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 
