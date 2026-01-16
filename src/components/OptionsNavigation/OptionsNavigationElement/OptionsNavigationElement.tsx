@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 // Styles
 import css from '@/components/OptionsNavigation/OptionsNavigationElement/OptionsNavigationElement.module.css';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 
 interface OptionsNavigationElementProps {
     title: string;
@@ -25,9 +26,9 @@ export const OptionsNavigationElement: React.FC<OptionsNavigationElementProps> =
             className={classNames(css.wrapper, className)}
             state={locationState}
         >
-            <div className={css.icon}>
+            <ContentBlock className={css.icon}>
                 <img src={img} alt="" />
-            </div>
+            </ContentBlock>
             <span className={css.title}>{title}</span>
         </Link>
     );
