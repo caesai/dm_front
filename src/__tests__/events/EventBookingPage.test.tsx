@@ -26,7 +26,7 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { EventBookingPage } from '@/pages/BookingPage/EventBookingPage.tsx';
 import { userAtom, authAtom } from '@/atoms/userAtom.ts';
 import { eventsListAtom, guestCountAtom, childrenCountAtom } from '@/atoms/eventListAtom.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
 import { mockEventsList } from '@/__mocks__/events.mock.ts';
 import { IUser } from '@/types/user.types.ts';

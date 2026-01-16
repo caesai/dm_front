@@ -43,7 +43,7 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { BookingPage } from '@/pages/BookingPage/BookingPage.tsx';
 import { userAtom, authAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
 import { mockRestaurantsList } from '@/__mocks__/restaurant.mock.ts';
 import { mockTimeSlots, mockAvailableDates } from '@/__mocks__/booking.mock.ts';

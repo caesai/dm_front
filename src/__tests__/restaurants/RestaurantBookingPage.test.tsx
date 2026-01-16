@@ -38,7 +38,7 @@ import { RestaurantBookingPage } from '@/pages/BookingPage/RestaurantBookingPage
 import { userAtom, authAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { restaurantBookingFormAtom, getInitialBookingFormState, IBookingFormState } from '@/atoms/bookingFormAtom.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
 import { mockRestaurant } from '@/__mocks__/restaurant.mock.ts';
 import { mockTimeSlots, mockAvailableDates } from '@/__mocks__/booking.mock.ts';

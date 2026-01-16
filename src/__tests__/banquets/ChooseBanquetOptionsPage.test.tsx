@@ -25,7 +25,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.tsx';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { 
     banquetData, 

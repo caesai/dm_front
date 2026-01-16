@@ -5,7 +5,7 @@ import { APIUpdateUserInfo } from '@/api/user.api.ts';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
 import { Toast } from '@/components/Toast/Toast.tsx';
 import { authAtom } from '@/atoms/userAtom.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 
 // Mocking ENV Variables
 jest.mock('@/api/base.ts', () => ({

@@ -26,7 +26,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { BanquetReservationPage } from '@/pages/BanquetReservationPage/BanquetReservationPage.tsx';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockBanquetFormData } from '@/__mocks__/banquets.mock.ts';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
 import { IBanquetFormState } from '@/atoms/banquetFormAtom.ts';

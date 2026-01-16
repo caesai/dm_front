@@ -31,7 +31,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/CertificatesPaymentPage.tsx';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { APIGetCertificateById, APIGetCertificates, APIPostCertificateCheckPayment, APIPostEGiftCertificateOffline } from '@/api/certificates.api.ts';

@@ -23,7 +23,7 @@ import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { HospitalityHeroesApplicationFormPage } from '@/pages/HospitalityHeroesPage/HospitalityHeroesApplicationFormPage.tsx';
 import { userAtom, authAtom } from '@/atoms/userAtom.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
 import { IUser } from '@/types/user.types.ts';
 

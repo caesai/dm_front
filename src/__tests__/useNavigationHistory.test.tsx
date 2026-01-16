@@ -2,7 +2,7 @@ import React from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { navigationHistoryAtom } from '@/atoms/navigationHistoryAtom.ts';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { useLocation } from 'react-router-dom';
 
 // Mocking Telegram SDK to be able to run code outside

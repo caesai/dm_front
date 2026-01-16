@@ -42,7 +42,7 @@ import { CertificateLandingPage } from '@/pages/CertificateLanding/CertificateLa
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { showToastAtom } from '@/atoms/toastAtom.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim, APIPostEGiftCertificateInfo } from '@/api/certificates.api.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
 import { IUser, IAuthInfo } from '@/types/user.types.ts';

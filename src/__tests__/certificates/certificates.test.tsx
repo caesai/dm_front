@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { CertificatesSelector, ICertificatesSelectorProps } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { certificatesListMock } from '@/__mocks__/certificates.mock.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { WritableAtom } from 'jotai';
 import { ICertificate } from '@/types/certificates.types.ts';
 

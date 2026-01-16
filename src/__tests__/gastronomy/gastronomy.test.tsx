@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { gastronomyCartAtom, IGastronomyCart } from '@/atoms/gastronomyCartAtom.ts';
 import { useGastronomyCart } from '@/hooks/useGastronomyCart.ts';
 import { mockDish } from '@/__mocks__/gastronomy.mock.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import React from 'react';
 
 describe('useGastronomyCart', () => {

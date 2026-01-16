@@ -25,7 +25,7 @@ import { userAtom } from '@/atoms/userAtom.ts';
 import { eventsListAtom } from '@/atoms/eventListAtom.ts';
 import { cityListAtom, currentCityAtom, ICity } from '@/atoms/cityListAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
 import { mockEventsWithImages } from '@/__mocks__/events.mock.ts';
 import { mockCityList } from '@/__mocks__/city.mock.ts';
