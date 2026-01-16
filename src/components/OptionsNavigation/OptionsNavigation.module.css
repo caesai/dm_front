@@ -1,10 +1,6 @@
 .optionsNavigation {
     display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 8px;
-    padding-right: 15px;
-    box-sizing: border-box;
+    gap: 20px;
 }
 
 .smallFont {
