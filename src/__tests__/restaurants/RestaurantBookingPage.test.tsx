@@ -21,7 +21,7 @@
  * - Использует preSelectedRestaurant вместо eventData
  * - После успешного бронирования навигация на /myBookings/{id}
  * - Поддерживает sharedRestaurant для навигации "назад"
- * - Поддерживает начальные данные (дата, время) из location.state
+ * - Начальные данные (дата, время) из {@link previewBookingFormAtom}
  * 
  * @module __tests__/restaurants/RestaurantBookingPage
  * 
@@ -37,10 +37,12 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { RestaurantBookingPage } from '@/pages/BookingPage/RestaurantBookingPage';
 import { userAtom, authAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
+import { previewBookingFormAtom, getInitialBookingFormState, IBookingFormState } from '@/atoms/bookingFormAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock';
 import { IUser } from '@/types/user.types.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
+import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
 
 // ============================================
 // Моки внешних зависимостей
@@ -227,10 +229,10 @@ describe('RestaurantBookingPage', () => {
      * Моковые временные слоты для бронирования.
      * Аналогично {@link EventBookingPage.test.tsx} для согласованности.
      */
-    const mockTimeSlots = [
-        { start_datetime: '2025-08-23 15:00:00', end_datetime: '2025-08-23 15:30:00' },
-        { start_datetime: '2025-08-23 15:30:00', end_datetime: '2025-08-23 16:00:00' },
-        { start_datetime: '2025-08-23 16:00:00', end_datetime: '2025-08-23 16:30:00' },
+    const mockTimeSlots: ITimeSlot[] = [
+        { start_datetime: '2025-08-23 15:00:00', end_datetime: '2025-08-23 15:30:00', is_free: true },
+        { start_datetime: '2025-08-23 15:30:00', end_datetime: '2025-08-23 16:00:00', is_free: true },
+        { start_datetime: '2025-08-23 16:00:00', end_datetime: '2025-08-23 16:30:00', is_free: true },
     ];
 
     /**
@@ -243,12 +245,28 @@ describe('RestaurantBookingPage', () => {
     // ============================================
 
     /**
+     * Данные превью-формы для тестов.
+     * Используется для инициализации previewBookingFormAtom.
+     */
+    interface PreviewFormData {
+        /** Выбранная дата */
+        date?: { title: string; value: string };
+        /** Выбранный временной слот */
+        selectedTimeSlot?: ITimeSlot | null;
+        /** Количество гостей */
+        guestCount?: number;
+        /** Количество детей */
+        childrenCount?: number;
+    }
+
+    /**
      * Рендерит компонент RestaurantBookingPage с необходимыми провайдерами.
      * 
      * @param user - Данные пользователя (по умолчанию mockUserData)
      * @param restaurants - Список ресторанов (по умолчанию [mockRestaurant])
      * @param restaurantId - ID ресторана для бронирования
-     * @param locationState - State из location (для передачи bookedDate, bookedTime и т.д.)
+     * @param previewFormData - Данные из previewBookingFormAtom (дата, время, гости)
+     * @param isSharedRestaurant - Флаг shared-ссылки (передаётся через location.state)
      * @returns Результат render() из @testing-library/react
      * 
      * @example
@@ -258,30 +276,42 @@ describe('RestaurantBookingPage', () => {
      * @example
      * // Рендер с начальной датой и временем
      * renderComponent(mockUserData, [mockRestaurant], '1', {
-     *     bookedDate: { title: '23 авг', value: '2025-08-23' },
-     *     bookedTime: mockTimeSlots[0],
+     *     date: { title: '23 авг', value: '2025-08-23' },
+     *     selectedTimeSlot: mockTimeSlots[0],
+     *     guestCount: 2,
      * });
      * 
      * @example
      * // Рендер для shared-ссылки
-     * renderComponent(mockUserData, [mockRestaurant], '1', { sharedRestaurant: true });
+     * renderComponent(mockUserData, [mockRestaurant], '1', undefined, true);
      */
     const renderComponent = (
         user: IUser | undefined = mockUserData,
         restaurants: IRestaurant[] = [mockRestaurant],
         restaurantId: string = '1',
-        locationState: Record<string, any> | null = null
+        previewFormData?: PreviewFormData,
+        isSharedRestaurant: boolean = false
     ) => {
         mockUseParams.mockReturnValue({ restaurantId });
         mockUseLocation.mockReturnValue({
             pathname: `/restaurant/${restaurantId}/booking`,
-            state: locationState,
+            state: isSharedRestaurant ? { sharedRestaurant: true } : null,
         });
+
+        // Создаём начальное состояние previewBookingFormAtom
+        const previewFormState: IBookingFormState = {
+            ...getInitialBookingFormState(),
+            date: previewFormData?.date ?? { title: 'unset', value: 'unset' },
+            selectedTimeSlot: previewFormData?.selectedTimeSlot ?? null,
+            guestCount: previewFormData?.guestCount ?? 0,
+            childrenCount: previewFormData?.childrenCount ?? 0,
+        };
 
         const initialValues: Array<readonly [any, unknown]> = [
             [userAtom, user],
             [authAtom, { access_token: 'test-token' }],
             [restaurantsListAtom, restaurants],
+            [previewBookingFormAtom, previewFormState],
         ];
 
         return render(
@@ -420,12 +450,13 @@ describe('RestaurantBookingPage', () => {
         });
 
         /**
-         * Проверяет использование начальной даты из location.state.
+         * Проверяет использование начальной даты из previewBookingFormAtom.
          */
-        test('должен использовать начальную дату из location.state', async () => {
+        test('должен использовать начальную дату из previewBookingFormAtom', async () => {
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             renderComponent(mockUserData, [mockRestaurant], '1', {
-                bookedDate: initialDate,
+                date: initialDate,
+                guestCount: 1,
             });
 
             await waitFor(() => {
@@ -467,7 +498,7 @@ describe('RestaurantBookingPage', () => {
         test('должен загружать временные слоты при наличии даты и гостей', async () => {
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             renderComponent(mockUserData, [mockRestaurant], '1', {
-                bookedDate: initialDate,
+                date: initialDate,
                 guestCount: 2,
             });
 
@@ -482,7 +513,7 @@ describe('RestaurantBookingPage', () => {
         test('должен отображать загруженные временные слоты', async () => {
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             renderComponent(mockUserData, [mockRestaurant], '1', {
-                bookedDate: initialDate,
+                date: initialDate,
                 guestCount: 2,
             });
 
@@ -640,14 +671,14 @@ describe('RestaurantBookingPage', () => {
         /**
          * Проверяет вызов API без event_id при создании бронирования.
          * 
-         * Важно: RestaurantBookingPage устанавливает guestCount = 1 когда есть bookedDate,
-         * поэтому мы ожидаем guests_count = 1 в вызове API.
+         * Начальные данные берутся из previewBookingFormAtom.
+         * guestCount по умолчанию = 1 если не указан в previewFormData.
          */
         test('должен НЕ передавать event_id в API при создании бронирования', async () => {
             const initialDate = { title: '23 авг', value: '2025-08-23' };
-            // Компонент устанавливает guestCount = 1 когда bookedDate передан
             renderComponent(mockUserData, [mockRestaurant], '1', {
-                bookedDate: initialDate,
+                date: initialDate,
+                guestCount: 1,
             });
 
             await waitFor(() => {
@@ -669,13 +700,12 @@ describe('RestaurantBookingPage', () => {
 
             await waitFor(() => {
                 // Проверяем что API вызван с null для event_id
-                // guestCount = 1 (устанавливается компонентом когда bookedDate передан)
                 expect(mockAPICreateBooking).toHaveBeenCalledWith(
                     expect.any(String), // token
                     '1', // restaurantId
                     expect.any(String), // date
                     expect.any(String), // time
-                    1, // guests_count (компонент устанавливает 1 при наличии bookedDate)
+                    1, // guests_count
                     0, // children_count
                     expect.any(String), // name
                     expect.any(String), // phone
@@ -701,7 +731,7 @@ describe('RestaurantBookingPage', () => {
 
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             renderComponent(mockUserData, [mockRestaurant], '1', {
-                bookedDate: initialDate,
+                date: initialDate,
                 guestCount: 2,
             });
 
@@ -748,7 +778,7 @@ describe('RestaurantBookingPage', () => {
 
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             renderComponent(userWithoutOnboarding, [mockRestaurant], '1', {
-                bookedDate: initialDate,
+                date: initialDate,
                 guestCount: 2,
             });
 
@@ -795,9 +825,7 @@ describe('RestaurantBookingPage', () => {
          * Проверяет навигацию на главную при sharedRestaurant.
          */
         test('должен навигировать на главную при sharedRestaurant', async () => {
-            renderComponent(mockUserData, [mockRestaurant], '1', {
-                sharedRestaurant: true,
-            });
+            renderComponent(mockUserData, [mockRestaurant], '1', undefined, true);
 
             // Ожидаем рендеринг страницы
             await waitFor(() => {
@@ -861,7 +889,7 @@ describe('RestaurantBookingPage', () => {
 
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             renderComponent(mockUserData, [mockRestaurant], '1', {
-                bookedDate: initialDate,
+                date: initialDate,
                 guestCount: 2,
             });
 
@@ -878,7 +906,7 @@ describe('RestaurantBookingPage', () => {
 
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             renderComponent(mockUserData, [mockRestaurant], '1', {
-                bookedDate: initialDate,
+                date: initialDate,
                 guestCount: 2,
             });
 
@@ -929,25 +957,26 @@ describe('RestaurantBookingPage', () => {
     });
 
     // ============================================
-    // Тесты: Начальные данные из location.state
+    // Тесты: Начальные данные из previewBookingFormAtom
     // ============================================
 
     /**
-     * Тесты использования начальных данных из navigation state.
-     * Специфично для RestaurantBookingPage (передаётся с RestaurantPage).
+     * Тесты использования начальных данных из previewBookingFormAtom.
+     * Данные синхронизируются через атом, заполняемый в BookingsBlock на RestaurantPage.
      */
-    describe('Начальные данные из location.state', () => {
+    describe('Начальные данные из previewBookingFormAtom', () => {
         /**
-         * Проверяет использование bookedDate из state.
+         * Проверяет использование даты из previewBookingFormAtom.
          */
-        test('должен использовать bookedDate из location.state', async () => {
+        test('должен использовать дату из previewBookingFormAtom', async () => {
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             renderComponent(mockUserData, [mockRestaurant], '1', {
-                bookedDate: initialDate,
+                date: initialDate,
+                guestCount: 1,
             });
 
             await waitFor(() => {
-                // API таймслотов вызывается с датой из state
+                // API таймслотов вызывается с датой из previewBookingFormAtom
                 expect(mockAPIGetAvailableTimeSlots).toHaveBeenCalledWith(
                     expect.any(String),
                     expect.any(String),
@@ -958,15 +987,15 @@ describe('RestaurantBookingPage', () => {
         });
 
         /**
-         * Проверяет использование bookedTime из state.
+         * Проверяет использование временного слота из previewBookingFormAtom.
          */
-        test('должен использовать bookedTime из location.state', async () => {
+        test('должен использовать временной слот из previewBookingFormAtom', async () => {
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             const initialTime = mockTimeSlots[0];
             
             renderComponent(mockUserData, [mockRestaurant], '1', {
-                bookedDate: initialDate,
-                bookedTime: initialTime,
+                date: initialDate,
+                selectedTimeSlot: initialTime,
                 guestCount: 2,
             });
 

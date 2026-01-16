@@ -30,12 +30,18 @@
  * - Не передаёт event_id в API
  * - Навигация после бронирования на /myBookings/{id}
  *
+ * ## Разделение состояния
+ *
+ * Использует `formType: 'common'` для изолированного атома {@link commonBookingFormAtom},
+ * что предотвращает конфликты с другими страницами бронирования.
+ *
  * @module pages/BookingPage/BookingPage
  *
  * @see {@link IndexPage} - главная страница (точка входа)
  * @see {@link RestaurantBookingPage} - страница бронирования конкретного ресторана
  * @see {@link EventBookingPage} - страница бронирования мероприятия
  * @see {@link useBookingForm} - хук управления формой бронирования
+ * @see {@link commonBookingFormAtom} - изолированный атом состояния формы
  */
 
 import React, { useRef } from 'react';
@@ -115,6 +121,7 @@ export const BookingPage: React.FC = (): JSX.Element => {
      *
      * Конфигурация для общего бронирования:
      * - certificateParams: данные сертификата из state для активации
+     * - resetOnMount: true для сброса формы при каждом посещении страницы
      *
      * Ресторан и дата выбираются пользователем в форме.
      * При успешном бронировании переходит на /myBookings/{booking_id}
@@ -132,11 +139,13 @@ export const BookingPage: React.FC = (): JSX.Element => {
         handlers,
         createBooking,
     } = useBookingForm({
+        formType: 'common',
         certificateParams: {
             certificate: state?.certificate,
             certificateId: state?.certificateId,
         },
         isShared: state?.shared,
+        resetOnMount: true,
     });
 
     /**

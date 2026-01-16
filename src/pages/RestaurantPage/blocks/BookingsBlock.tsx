@@ -7,6 +7,17 @@
  * - Использует компонент TimeSlots для выбора времени
  * - Использует {@link useBookingForm} для управления датами и таймслотами
  *
+ * ## Разделение состояния
+ *
+ * Использует `formType: 'preview'` для изолированного атома {@link previewBookingFormAtom},
+ * что предотвращает конфликты с формами на страницах бронирования.
+ * При переходе на {@link RestaurantBookingPage} данные синхронизируются через атом.
+ *
+ * ## Сброс при смене ресторана
+ *
+ * При переходе на другой ресторан форма автоматически сбрасывается благодаря
+ * явной передаче `restaurantId` в {@link useBookingForm}.
+ *
  * @component
  * @param {IBookingBlockProps} props - Пропсы компонента
  * @returns {JSX.Element} Компонент блока бронирования
@@ -15,6 +26,7 @@
  * <BookingBlock restaurantId="123" />
  * 
  * @see {@link useBookingForm} - хук для управления формой бронирования
+ * @see {@link previewBookingFormAtom} - изолированный атом состояния формы
  */
 import React, { useCallback, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
@@ -77,6 +89,9 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
      * Данные бронирования из хука useBookingForm.
      * Используем preSelectedRestaurant для загрузки дат и таймслотов.
      * Устанавливаем начальное количество гостей = 1 для загрузки таймслотов.
+     * 
+     * restaurantId передаётся явно для надежного сброса формы при смене ресторана,
+     * даже если currentRestaurant ещё не загружен.
      */
     const {
         form,
@@ -86,6 +101,8 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
         errors,
         handlers,
     } = useBookingForm({
+        formType: 'preview',
+        restaurantId, // Явно передаём для надежного сброса при смене ресторана
         preSelectedRestaurant: currentRestaurant
             ? {
                   id: String(currentRestaurant.id),
