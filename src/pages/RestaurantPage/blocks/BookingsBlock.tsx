@@ -9,9 +9,8 @@
  *
  * ## Разделение состояния
  *
- * Использует `formType: 'preview'` для изолированного атома {@link previewBookingFormAtom},
- * что предотвращает конфликты с формами на страницах бронирования.
- * При переходе на {@link RestaurantBookingPage} данные синхронизируются через атом.
+ * Использует `formType: 'restaurant'` для изолированного атома {@link restaurantBookingFormAtom},
+ * что обеспечивает согласованность состояния с {@link RestaurantBookingPage}.
  *
  * ## Сброс при смене ресторана
  *
@@ -26,7 +25,7 @@
  * <BookingBlock restaurantId="123" />
  * 
  * @see {@link useBookingForm} - хук для управления формой бронирования
- * @see {@link previewBookingFormAtom} - изолированный атом состояния формы
+ * @see {@link restaurantBookingFormAtom} - изолированный атом состояния формы
  */
 import React, { useCallback, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
@@ -101,7 +100,7 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
         errors,
         handlers,
     } = useBookingForm({
-        formType: 'preview',
+        formType: 'restaurant',
         restaurantId, // Явно передаём для надежного сброса при смене ресторана
         preSelectedRestaurant: currentRestaurant
             ? {
