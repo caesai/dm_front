@@ -21,7 +21,7 @@
  * - Использует preSelectedRestaurant вместо eventData
  * - После успешного бронирования навигация на /myBookings/{id}
  * - Поддерживает sharedRestaurant для навигации "назад"
- * - Начальные данные (дата, время) из {@link previewBookingFormAtom}
+ * - Начальные данные (дата, время) из {@link restaurantBookingFormAtom}
  * 
  * @module __tests__/restaurants/RestaurantBookingPage
  * 
@@ -37,9 +37,11 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { RestaurantBookingPage } from '@/pages/BookingPage/RestaurantBookingPage';
 import { userAtom, authAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { previewBookingFormAtom, getInitialBookingFormState, IBookingFormState } from '@/atoms/bookingFormAtom.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.tsx';
-import { mockUserData } from '@/__mocks__/user.mock';
+import { restaurantBookingFormAtom, getInitialBookingFormState, IBookingFormState } from '@/atoms/bookingFormAtom.ts';
+import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { mockUserData } from '@/__mocks__/user.mock.ts';
+import { mockRestaurant } from '@/__mocks__/restaurant.mock.ts';
+import { mockTimeSlots, mockAvailableDates } from '@/__mocks__/booking.mock.ts';
 import { IUser } from '@/types/user.types.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
@@ -176,77 +178,12 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
  */
 describe('RestaurantBookingPage', () => {
     // ============================================
-    // Тестовые данные
-    // ============================================
-
-    /**
-     * Моковый ресторан для тестов.
-     * Содержит все необходимые поля для работы компонента.
-     */
-    const mockRestaurant: IRestaurant = {
-        id: '1',
-        title: 'Test Restaurant',
-        slogan: 'Test Slogan',
-        address: 'Test Address, 123',
-        address_lonlng: '30.3158,59.9386',
-        address_station: 'Невский проспект',
-        address_station_color: '#0066cc',
-        logo_url: 'https://example.com/logo.jpg',
-        thumbnail_photo: 'https://example.com/thumbnail.jpg',
-        openTime: '12:00',
-        avg_cheque: 2500,
-        photo_cards: [],
-        brand_chef: {
-            names: ['Шеф Повар'],
-            avatars: ['https://example.com/chef.jpg'],
-            about: 'Описание шефа',
-            photo_url: 'https://example.com/chef.jpg',
-        },
-        city: {
-            id: 2,
-            name: 'Санкт-Петербург',
-            name_english: 'spb',
-            name_dative: 'Санкт-Петербурге',
-        },
-        banquets: {
-            banquet_options: [],
-            additional_options: [],
-            description: 'Описание банкетов',
-            image: 'https://example.com/banquet.jpg',
-        },
-        about_text: 'О ресторане',
-        about_kitchen: 'О кухне',
-        about_features: 'Особенности',
-        phone_number: '+7 (999) 123-45-67',
-        gallery: [],
-        menu: [],
-        menu_imgs: [],
-        worktime: [{ weekday: 'пн-вс', time_start: '12:00', time_end: '23:00' }],
-        socials: [],
-    };
-
-    /**
-     * Моковые временные слоты для бронирования.
-     * Аналогично {@link EventBookingPage.test.tsx} для согласованности.
-     */
-    const mockTimeSlots: ITimeSlot[] = [
-        { start_datetime: '2025-08-23 15:00:00', end_datetime: '2025-08-23 15:30:00', is_free: true },
-        { start_datetime: '2025-08-23 15:30:00', end_datetime: '2025-08-23 16:00:00', is_free: true },
-        { start_datetime: '2025-08-23 16:00:00', end_datetime: '2025-08-23 16:30:00', is_free: true },
-    ];
-
-    /**
-     * Моковые доступные даты для бронирования.
-     */
-    const mockAvailableDates = ['2025-08-23', '2025-08-24', '2025-08-25'];
-
-    // ============================================
     // Вспомогательные функции
     // ============================================
 
     /**
      * Данные превью-формы для тестов.
-     * Используется для инициализации previewBookingFormAtom.
+     * Используется для инициализации restaurantBookingFormAtom.
      */
     interface PreviewFormData {
         /** Выбранная дата */
@@ -265,7 +202,7 @@ describe('RestaurantBookingPage', () => {
      * @param user - Данные пользователя (по умолчанию mockUserData)
      * @param restaurants - Список ресторанов (по умолчанию [mockRestaurant])
      * @param restaurantId - ID ресторана для бронирования
-     * @param previewFormData - Данные из previewBookingFormAtom (дата, время, гости)
+     * @param previewFormData - Данные из restaurantBookingFormAtom (дата, время, гости)
      * @param isSharedRestaurant - Флаг shared-ссылки (передаётся через location.state)
      * @returns Результат render() из @testing-library/react
      * 
@@ -298,7 +235,7 @@ describe('RestaurantBookingPage', () => {
             state: isSharedRestaurant ? { sharedRestaurant: true } : null,
         });
 
-        // Создаём начальное состояние previewBookingFormAtom
+        // Создаём начальное состояние restaurantBookingFormAtom
         const previewFormState: IBookingFormState = {
             ...getInitialBookingFormState(),
             date: previewFormData?.date ?? { title: 'unset', value: 'unset' },
@@ -311,7 +248,7 @@ describe('RestaurantBookingPage', () => {
             [userAtom, user],
             [authAtom, { access_token: 'test-token' }],
             [restaurantsListAtom, restaurants],
-            [previewBookingFormAtom, previewFormState],
+            [restaurantBookingFormAtom, previewFormState],
         ];
 
         return render(
@@ -450,9 +387,9 @@ describe('RestaurantBookingPage', () => {
         });
 
         /**
-         * Проверяет использование начальной даты из previewBookingFormAtom.
+         * Проверяет использование начальной даты из restaurantBookingFormAtom.
          */
-        test('должен использовать начальную дату из previewBookingFormAtom', async () => {
+        test('должен использовать начальную дату из restaurantBookingFormAtom', async () => {
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             renderComponent(mockUserData, [mockRestaurant], '1', {
                 date: initialDate,
@@ -671,7 +608,7 @@ describe('RestaurantBookingPage', () => {
         /**
          * Проверяет вызов API без event_id при создании бронирования.
          * 
-         * Начальные данные берутся из previewBookingFormAtom.
+         * Начальные данные берутся из restaurantBookingFormAtom.
          * guestCount по умолчанию = 1 если не указан в previewFormData.
          */
         test('должен НЕ передавать event_id в API при создании бронирования', async () => {
@@ -957,18 +894,18 @@ describe('RestaurantBookingPage', () => {
     });
 
     // ============================================
-    // Тесты: Начальные данные из previewBookingFormAtom
+    // Тесты: Начальные данные из restaurantBookingFormAtom
     // ============================================
 
     /**
-     * Тесты использования начальных данных из previewBookingFormAtom.
-     * Данные синхронизируются через атом, заполняемый в BookingsBlock на RestaurantPage.
+     * Тесты использования начальных данных из restaurantBookingFormAtom.
+     * Данные синхронизируются через общий атом между BookingsBlock и RestaurantBookingPage.
      */
-    describe('Начальные данные из previewBookingFormAtom', () => {
+    describe('Начальные данные из restaurantBookingFormAtom', () => {
         /**
-         * Проверяет использование даты из previewBookingFormAtom.
+         * Проверяет использование даты из restaurantBookingFormAtom.
          */
-        test('должен использовать дату из previewBookingFormAtom', async () => {
+        test('должен использовать дату из restaurantBookingFormAtom', async () => {
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             renderComponent(mockUserData, [mockRestaurant], '1', {
                 date: initialDate,
@@ -976,7 +913,7 @@ describe('RestaurantBookingPage', () => {
             });
 
             await waitFor(() => {
-                // API таймслотов вызывается с датой из previewBookingFormAtom
+                // API таймслотов вызывается с датой из restaurantBookingFormAtom
                 expect(mockAPIGetAvailableTimeSlots).toHaveBeenCalledWith(
                     expect.any(String),
                     expect.any(String),
@@ -987,9 +924,9 @@ describe('RestaurantBookingPage', () => {
         });
 
         /**
-         * Проверяет использование временного слота из previewBookingFormAtom.
+         * Проверяет использование временного слота из restaurantBookingFormAtom.
          */
-        test('должен использовать временной слот из previewBookingFormAtom', async () => {
+        test('должен использовать временной слот из restaurantBookingFormAtom', async () => {
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             const initialTime = mockTimeSlots[0];
             

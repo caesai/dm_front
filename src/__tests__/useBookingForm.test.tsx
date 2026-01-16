@@ -27,14 +27,14 @@ import React, { PropsWithChildren } from 'react';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-import { useBookingForm, IUseBookingFormOptions } from '@/hooks/useBookingForm';
-import { authAtom, userAtom } from '@/atoms/userAtom';
-import { certificatesListAtom } from '@/atoms/certificatesListAtom';
-import { bookingFormAtom, getInitialBookingFormState } from '@/atoms/bookingFormAtom';
-import { commAtom } from '@/atoms/bookingCommAtom';
-import { mockUserData, mockUserNotOnboarded } from '@/__mocks__/user.mock';
-import { mockTimeSlots, mockAvailableDates } from '@/__mocks__/booking.mock';
-import { IUser } from '@/types/user.types';
+import { useBookingForm, IUseBookingFormOptions } from '@/hooks/useBookingForm.ts';
+import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
+import { bookingFormAtom, getInitialBookingFormState } from '@/atoms/bookingFormAtom.ts';
+import { commAtom } from '@/atoms/bookingCommAtom.ts';
+import { mockUserData, mockUserNotOnboarded } from '@/__mocks__/user.mock.ts';
+import { mockTimeSlots, mockAvailableDates } from '@/__mocks__/booking.mock.ts';
+import { IUser } from '@/types/user.types.ts';
 
 // ============================================
 // Моки внешних зависимостей

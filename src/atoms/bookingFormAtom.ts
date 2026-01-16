@@ -7,22 +7,20 @@
  * используются отдельные атомы для каждого типа:
  * 
  * - {@link eventBookingFormAtom} - бронирование на мероприятие (EventBookingPage)
- * - {@link restaurantBookingFormAtom} - бронирование конкретного ресторана (RestaurantBookingPage)
+ * - {@link restaurantBookingFormAtom} - бронирование конкретного ресторана (RestaurantBookingPage, BookingsBlock)
  * - {@link commonBookingFormAtom} - общее бронирование с выбором ресторана (BookingPage)
- * - {@link previewBookingFormAtom} - превью бронирования на странице ресторана (BookingsBlock)
  * 
  * Каждый атом содержит полное состояние формы ({@link IBookingFormState}),
  * что обеспечивает изоляцию и предотвращает перезапись данных при навигации.
  * 
  * ## Синхронизация данных между страницами
  * 
- * {@link previewBookingFormAtom} используется для синхронизации данных между
- * {@link RestaurantPage} и {@link RestaurantBookingPage}:
+ * {@link restaurantBookingFormAtom} используется для синхронизации данных между
+ * {@link BookingsBlock} на {@link RestaurantPage} и {@link RestaurantBookingPage}:
  * 
  * 1. Пользователь выбирает дату и время в {@link BookingsBlock} на странице ресторана
- * 2. Данные сохраняются в {@link previewBookingFormAtom}
- * 3. При переходе на {@link RestaurantBookingPage}, начальные данные читаются из этого атома
- * 4. {@link RestaurantBookingPage} использует свой {@link restaurantBookingFormAtom} для работы
+ * 2. Данные сохраняются в {@link restaurantBookingFormAtom}
+ * 3. При переходе на {@link RestaurantBookingPage}, данные уже находятся в том же атоме
  * 
  * Это обеспечивает согласованность данных без использования location.state.
  * 
@@ -68,11 +66,10 @@ export const CONFIRMATION_OPTIONS: IConfirmationType[] = [
  * Каждый тип использует отдельный атом для предотвращения конфликтов состояния.
  * 
  * @type {'event'} - Бронирование на мероприятие (EventBookingPage)
- * @type {'restaurant'} - Бронирование конкретного ресторана (RestaurantBookingPage)
+ * @type {'restaurant'} - Бронирование конкретного ресторана (RestaurantBookingPage, BookingsBlock)
  * @type {'common'} - Общее бронирование с выбором ресторана (BookingPage)
- * @type {'preview'} - Превью бронирования на странице ресторана (BookingsBlock)
  */
-export type BookingFormType = 'event' | 'restaurant' | 'common' | 'preview';
+export type BookingFormType = 'event' | 'restaurant' | 'common';
 
 /**
  * Интерфейс состояния формы бронирования
@@ -143,14 +140,9 @@ export const restaurantBookingFormAtom = atomWithReset<IBookingFormState>(getIni
  */
 export const commonBookingFormAtom = atomWithReset<IBookingFormState>(getInitialBookingFormState());
 
-/**
- * Атом формы превью бронирования на странице ресторана.
- * Используется в {@link BookingsBlock} на {@link RestaurantPage}.
- */
-export const previewBookingFormAtom = atomWithReset<IBookingFormState>(getInitialBookingFormState());
 
 /**
- * @deprecated Используйте типизированные атомы: eventBookingFormAtom, restaurantBookingFormAtom, commonBookingFormAtom, previewBookingFormAtom
+ * @deprecated Используйте типизированные атомы: eventBookingFormAtom, restaurantBookingFormAtom, commonBookingFormAtom
  * Основной атом формы бронирования с возможностью сброса (для обратной совместимости)
  */
 export const bookingFormAtom = atomWithReset<IBookingFormState>(getInitialBookingFormState());
@@ -173,8 +165,6 @@ export const getBookingFormAtomByType = (formType: BookingFormType) => {
             return restaurantBookingFormAtom;
         case 'common':
             return commonBookingFormAtom;
-        case 'preview':
-            return previewBookingFormAtom;
         default:
             return bookingFormAtom;
     }

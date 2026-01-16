@@ -20,14 +20,14 @@
  * 
  * ## Синхронизация состояния
  * 
- * Начальные данные (дата, время, количество гостей) берутся из {@link previewBookingFormAtom},
- * который заполняется в {@link BookingsBlock} на странице ресторана.
- * Это обеспечивает согласованность данных без использования location.state.
+ * {@link BookingsBlock} и данная страница используют общий атом {@link restaurantBookingFormAtom}
+ * (formType: 'restaurant'), что обеспечивает автоматическую синхронизацию данных
+ * (дата, время, количество гостей) без использования location.state.
  * 
  * Отличия от {@link BookingPage} (общей страницы бронирования):
  * - Ресторан предвыбран и не может быть изменён
  * - Поддерживает sharedRestaurant для навигации "назад"
- * - Начальные данные из {@link previewBookingFormAtom}
+ * - Использует общий атом с {@link BookingsBlock}
  * 
  * Отличия от {@link EventBookingPage}:
  * - Дата не фиксирована, выбирается пользователем
@@ -43,7 +43,7 @@
  * @module pages/BookingPage/RestaurantBookingPage
  * 
  * @see {@link RestaurantPage} - страница ресторана (точка входа)
- * @see {@link previewBookingFormAtom} - атом с данными превью бронирования
+ * @see {@link BookingsBlock} - блок бронирования на странице ресторана
  * @see {@link BookingPage} - общая страница бронирования
  * @see {@link EventBookingPage} - страница бронирования мероприятия
  * @see {@link useBookingForm} - хук управления формой бронирования
@@ -52,7 +52,6 @@
 
 import React, { useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useAtomValue } from 'jotai';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
@@ -68,7 +67,7 @@ import { BookingContactsBlock } from '@/pages/BookingPage/blocks/BookingContacts
 import { useBookingForm } from '@/hooks/useBookingForm.ts';
 // Atoms
 import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
-import { CONFIRMATION_OPTIONS, previewBookingFormAtom } from '@/atoms/bookingFormAtom.ts';
+import { CONFIRMATION_OPTIONS } from '@/atoms/bookingFormAtom.ts';
 
 /**
  * Страница бронирования столика для конкретного ресторана.
@@ -90,7 +89,7 @@ import { CONFIRMATION_OPTIONS, previewBookingFormAtom } from '@/atoms/bookingFor
  * <Route path="/restaurant/:restaurantId/booking" element={<RestaurantBookingPage />} />
  * 
  * @example
- * // Навигация с RestaurantPage (данные берутся из previewBookingFormAtom)
+ * // Навигация с RestaurantPage (данные уже в общем restaurantBookingFormAtom)
  * navigate(`/restaurant/${restaurantId}/booking`);
  * 
  * @example
@@ -121,21 +120,15 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
     const currentRestaurant = useGetRestaurantById(restaurantId || '');
 
     /**
-     * Данные из превью бронирования на странице ресторана.
-     * Используется для инициализации формы с выбранными датой и временем.
-     * @see {@link previewBookingFormAtom}
-     * @see {@link BookingsBlock}
-     */
-    const previewForm = useAtomValue(previewBookingFormAtom);
-
-    /**
      * Хук управления формой бронирования.
      * 
      * Конфигурация для бронирования в конкретном ресторане:
      * - preSelectedRestaurant: данные ресторана (нельзя изменить в форме)
-     * - initialBookingData: начальные данные из {@link previewBookingFormAtom}
+     * - initialBookingData: fallback значения (данные уже в общем restaurantBookingFormAtom)
      * - isSharedRestaurant: флаг для особой навигации "назад"
-     * - resetOnMount: false - сохраняем данные из previewBookingFormAtom
+     * 
+     * Данные из {@link BookingsBlock} уже находятся в {@link restaurantBookingFormAtom},
+     * так как оба компонента используют одинаковый formType: 'restaurant'.
      * 
      * При успешном бронировании переходит на /myBookings/{booking_id}
      */
@@ -160,12 +153,10 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
                   address: currentRestaurant.address,
               }
             : undefined,
-        // Начальные данные берутся из previewBookingFormAtom (выбраны на странице ресторана)
+        // Fallback значения для случая прямого перехода (минуя BookingsBlock)
         initialBookingData: {
-            guestCount: previewForm.guestCount > 0 ? previewForm.guestCount : 1,
-            childrenCount: previewForm.childrenCount,
-            bookedDate: previewForm.date?.value !== 'unset' ? previewForm.date : undefined,
-            bookedTime: previewForm.selectedTimeSlot ?? undefined,
+            guestCount: 1,
+            childrenCount: 0,
         },
         isShared: state?.sharedRestaurant,
     });

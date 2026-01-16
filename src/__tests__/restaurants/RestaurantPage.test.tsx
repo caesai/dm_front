@@ -449,7 +449,7 @@ describe('RestaurantPage', () => {
     describe('Навигация на бронирование', () => {
         /**
          * Проверяет навигацию на страницу бронирования для пользователя с онбордингом.
-         * Данные синхронизируются через previewBookingFormAtom (без location.state).
+         * Данные синхронизируются через restaurantBookingFormAtom (без location.state).
          */
         it('должен навигировать на страницу бронирования для онбордированного пользователя', async () => {
             renderComponent({ user: mockUserOnboarded });
@@ -614,7 +614,7 @@ describe('RestaurantPage', () => {
 
         /**
          * Проверяет навигацию на страницу бронирования.
-         * Данные синхронизируются через previewBookingFormAtom (без location.state).
+         * Данные синхронизируются через restaurantBookingFormAtom (без location.state).
          */
         it('должен навигировать на страницу бронирования', async () => {
             renderComponent();

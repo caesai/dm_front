@@ -12,9 +12,8 @@
  * 
  * Каждый тип бронирования использует отдельный атом для предотвращения конфликтов:
  * - `formType: 'event'` → `eventBookingFormAtom` (EventBookingPage)
- * - `formType: 'restaurant'` → `restaurantBookingFormAtom` (RestaurantBookingPage)
+ * - `formType: 'restaurant'` → `restaurantBookingFormAtom` (RestaurantBookingPage, BookingsBlock)
  * - `formType: 'common'` → `commonBookingFormAtom` (BookingPage)
- * - `formType: 'preview'` → `previewBookingFormAtom` (BookingsBlock на RestaurantPage)
  * 
  * Это обеспечивает изоляцию состояния между страницами и предотвращает
  * перезапись данных при навигации между разными типами бронирования.
@@ -70,7 +69,7 @@
  * @example
  * // Пример 4: Превью бронирования на странице ресторана (BookingsBlock)
  * const { form, handlers } = useBookingForm({
- *     formType: 'preview',
+ *     formType: 'restaurant',
  *     preSelectedRestaurant: { id: '1', title: 'Restaurant' },
  *     initialBookingData: { guestCount: 1 },
  * });
@@ -247,7 +246,7 @@ interface IEventData {
  * @see {@link BookingPage} - общая страница бронирования (formType: 'common')
  * @see {@link RestaurantBookingPage} - бронирование с preSelectedRestaurant (formType: 'restaurant')
  * @see {@link EventBookingPage} - бронирование с eventData (formType: 'event')
- * @see {@link BookingsBlock} - превью бронирования на странице ресторана (formType: 'preview')
+ * @see {@link BookingsBlock} - превью бронирования на странице ресторана (formType: 'restaurant')
  */
 export interface IUseBookingFormOptions {
     /**
@@ -255,9 +254,8 @@ export interface IUseBookingFormOptions {
      * Каждый тип использует отдельный атом для предотвращения конфликтов.
      * 
      * - 'event' - бронирование на мероприятие (EventBookingPage)
-     * - 'restaurant' - бронирование конкретного ресторана (RestaurantBookingPage)
+     * - 'restaurant' - бронирование конкретного ресторана (RestaurantBookingPage, BookingsBlock)
      * - 'common' - общее бронирование с выбором ресторана (BookingPage)
-     * - 'preview' - превью бронирования на странице ресторана (BookingsBlock)
      * 
      * @default undefined (использует общий bookingFormAtom для обратной совместимости)
      * 
@@ -265,14 +263,11 @@ export interface IUseBookingFormOptions {
      * // EventBookingPage
      * useBookingForm({ formType: 'event', eventData: {...} });
      * 
-     * // RestaurantBookingPage
+     * // RestaurantBookingPage или BookingsBlock
      * useBookingForm({ formType: 'restaurant', preSelectedRestaurant: {...} });
      * 
      * // BookingPage
      * useBookingForm({ formType: 'common' });
-     * 
-     * // BookingsBlock (превью на странице ресторана)
-     * useBookingForm({ formType: 'preview', preSelectedRestaurant: {...} });
      */
     formType?: BookingFormType;
     
@@ -298,7 +293,7 @@ export interface IUseBookingFormOptions {
      * @example
      * // В BookingsBlock
      * useBookingForm({
-     *     formType: 'preview',
+     *     formType: 'restaurant',
      *     restaurantId: restaurantId, // ID из URL params
      *     preSelectedRestaurant: currentRestaurant ? {...} : undefined,
      * });
@@ -685,7 +680,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
             }
             
             // Применяем существующие данные из атома, НО только если нет initialBookingData с этими данными.
-            // initialBookingData (из props, например из previewBookingFormAtom) имеет приоритет,
+            // initialBookingData (из props) имеет приоритет,
             // так как он содержит актуальные данные, выбранные пользователем перед переходом.
             // Существующие данные из атома используются только как fallback.
             if (!eventData && !resetOnMount) {

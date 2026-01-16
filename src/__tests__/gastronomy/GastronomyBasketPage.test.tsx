@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { GastronomyBasketPage } from '@/pages/GastronomyPage/stages/GastronomyBasketPage/GastronomyBasketPage.tsx';
-import { TestProvider } from '@/__mocks__/atom.mock.tsx';
+import { TestProvider } from '@/__mocks__/atom.mock.ts';
 import { gastronomyCartAtom, ICartItem, IGastronomyCart } from '@/atoms/gastronomyCartAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';

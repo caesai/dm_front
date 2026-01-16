@@ -66,8 +66,8 @@ import { YandexTaxiBlock } from '@/pages/RestaurantPage/blocks/YandexTaxiBlock.t
  * - Если онбординг не завершён — переход на `/onboarding/3` с передачей данных ресторана
  * - Если онбординг завершён — переход на `/restaurant/:id/booking`
  * 
- * Данные формы бронирования (дата, время) синхронизируются через {@link previewBookingFormAtom},
- * который читается в {@link RestaurantBookingPage} для инициализации формы.
+ * Данные формы бронирования (дата, время) синхронизируются через {@link restaurantBookingFormAtom},
+ * который используется как в {@link BookingsBlock}, так и в {@link RestaurantBookingPage}.
  *
  * @component
  * @returns {JSX.Element} Компонент страницы ресторана
@@ -109,8 +109,7 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
      * Если онбординг завершён — переход на страницу бронирования
      * `/restaurant/:restaurantId/booking`.
      * 
-     * Данные формы (дата, время) синхронизируются через {@link previewBookingFormAtom},
-     * который читается в {@link RestaurantBookingPage}.
+     * Данные формы (дата, время) синхронизируются через общий атом {@link restaurantBookingFormAtom}.
      */
     const handleNextButtonClick = () => {
         if (!user?.complete_onboarding) {

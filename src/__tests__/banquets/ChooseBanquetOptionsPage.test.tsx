@@ -25,7 +25,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.tsx';
-import { TestProvider } from '@/__mocks__/atom.mock.tsx';
+import { TestProvider } from '@/__mocks__/atom.mock.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { 
     banquetData, 
@@ -33,8 +33,8 @@ import {
     mockBanquetOptionShortDescription, 
     mockBanquetOptionNoDeposit, 
     mockBanquetOptionFreeDeposit 
-} from '@/__mocks__/banquets.mock';
-import { mockRestaurantWithoutBanquets } from '@/__mocks__/restaurant.mock';
+} from '@/__mocks__/banquets.mock.ts';
+import { mockRestaurantWithoutBanquets } from '@/__mocks__/restaurant.mock.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 
 // ============================================

@@ -22,12 +22,12 @@
 import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { EventPurchasePage } from '@/pages/EventsPage/EventPurchasePage';
+import { EventPurchasePage } from '@/pages/EventsPage/EventPurchasePage.tsx';
 import { userAtom, authAtom } from '@/atoms/userAtom.ts';
 import { eventsListAtom, guestCountAtom } from '@/atoms/eventListAtom.ts';
-import { TestProvider } from '@/__mocks__/atom.mock.tsx';
-import { mockUserData } from '@/__mocks__/user.mock';
-import { mockEventsList } from '@/__mocks__/events.mock';
+import { TestProvider } from '@/__mocks__/atom.mock.ts';
+import { mockUserData } from '@/__mocks__/user.mock.ts';
+import { mockEventsList } from '@/__mocks__/events.mock.ts';
 import { IUser } from '@/types/user.types.ts';
 import { IEvent } from '@/types/events.types.ts';
 
