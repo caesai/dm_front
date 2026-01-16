@@ -80,8 +80,8 @@ export const IndexPage: React.FC = (): JSX.Element => {
                 <Stories storiesBlocks={storiesBlocks} />
                 <Banner />
                 <BookingReminder bookings={currentBookings} />
-                <CitySelect />
                 <OptionsNavigation />
+                <CitySelect />
                 <RestaurantsList clickable />
                 {currentCity.name_english !== 'ekb' &&
                     <BottomButtonWrapper
