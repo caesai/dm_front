@@ -81,7 +81,11 @@ export const IndexPage: React.FC = (): JSX.Element => {
                 <BookingReminder bookings={currentBookings} />
                 <OptionsNavigation />
                 <RestaurantsList clickable />
-                {currentCity.name_english !== 'ekb' && <BottomButtonWrapper onClick={goToBooking} />}
+                {currentCity.name_english !== 'ekb' &&
+                    <BottomButtonWrapper
+                        onClick={goToBooking}
+                    />
+                }
             </PageContainer>
         </Page>
     );
