@@ -79,8 +79,8 @@ export const IndexPage: React.FC = (): JSX.Element => {
                 <Header />
                 <Stories storiesBlocks={storiesBlocks} />
                 <Banner />
-                <CitySelect />
                 <BookingReminder bookings={currentBookings} />
+                <CitySelect />
                 <OptionsNavigation />
                 <RestaurantsList clickable />
                 {currentCity.name_english !== 'ekb' &&

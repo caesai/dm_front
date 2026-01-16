@@ -18,7 +18,6 @@ export const Banner = () => {
                     <SwiperSlide
                         key={`${index}-${banner}`}
                         style={{ width: 'max-content' }}
-                        className={css.photoBig }
                     >
                         <div
                             className={css.photo}
