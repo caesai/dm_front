@@ -1,0 +1,13 @@
+.banner {
+    width: 100%;
+}
+
+.photo {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-radius: 20px;
+
+    width: 345px;
+    height: 105px;
+}

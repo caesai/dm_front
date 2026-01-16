@@ -18,6 +18,7 @@ import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButt
 import { useIndexPageData } from '@/hooks/useIndexPageData.ts';
 // Styles
 import css from '@/pages/IndexPage/IndexPage.module.css';
+import { Banner } from '@/components/Banners/Banner.tsx';
 
 /**
  * Главная страница приложения.
@@ -77,6 +78,7 @@ export const IndexPage: React.FC = (): JSX.Element => {
             <PageContainer className={css.indexPageContainer}>
                 <Header />
                 <Stories storiesBlocks={storiesBlocks} />
+                <Banner />
                 <CitySelect />
                 <BookingReminder bookings={currentBookings} />
                 <OptionsNavigation />
