@@ -7,11 +7,18 @@
     display: flex;
     height: 44px;
     padding: 0 15px 0 0;
+    margin-top: 40px;
+    margin-bottom: 30px;
     align-items: center;
     justify-content: space-between;
 }
 
-.buttons {
-    display: flex;
-    gap: 4px;
+.offset {
+    width: 28px;
+    height: 28px;
+}
+
+.menu {
+    height: 28px;
+    width: 28px;
 }

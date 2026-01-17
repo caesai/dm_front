@@ -5,9 +5,11 @@ import { PrivelegiesPopup } from '@/components/PrivelegiesPopup/PrivelegiesPopup
 // Styles
 import css from '@/components/OptionsNavigation/OptionsNavigation.module.css';
 // Mocks
-import neweventBg from '/img/gastro_btn.png';
-import gastroBtn2 from '/img/gastro_btn2.png';
-import gastroBtn3 from '/img/gastro_btn3.png';
+import BookingsIcon from "/img/nav-btn1.png"
+import EventsIcon from "/img/nav-btn2.png"
+import CertificatesIcon from "/img/nav-btn3.png"
+import BanquetsIcon from "/img/nav-btn4.png"
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 
 interface IOptionsNavigationProps {}
 
@@ -15,30 +17,12 @@ export const OptionsNavigation: React.FC<IOptionsNavigationProps> = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className={css.optionsNavigation}>
+        <ContentBlock className={css.optionsNavigation}>
             <PrivelegiesPopup isOpen={isOpen} setOpen={setIsOpen} />
-            <div style={{ display: 'flex', gap: 8 }}>
-                <OptionsNavigationElement
-                    title={'Подарочные сертификаты'}
-                    img={gastroBtn2}
-                    className={css.certificateCTAbtn}
-                    link={'/certificates/1'}
-                />
-                <OptionsNavigationElement
-                    title={'Организовать праздник'}
-                    img={gastroBtn3}
-                    className={css.banquetsCTAbtn}
-                    link={'/banquets/:restaurantId/address'}
-                />
-            </div>
-            <OptionsNavigationElement
-                title={'Гастро-события'}
-                subtitle={'От уютных ужинов до шумных вечеринок'}
-                img={neweventBg}
-                className={css.eventsCTAbtn}
-                textWrapperClassName={css.eventsTextWrapper}
-                link={'/events'}
-            />
-        </div>
+            <OptionsNavigationElement title={'Бронирования'} link={'/myBookings'} img={BookingsIcon} />
+            <OptionsNavigationElement title={'Мероприятия'} link={'/events'} img={EventsIcon} />
+            <OptionsNavigationElement title={'Сертификаты'} link={'/certificates/1'} img={CertificatesIcon} />
+            <OptionsNavigationElement title={'Банкеты'} link={'/banquets/:restaurantId/address'} img={BanquetsIcon} />
+        </ContentBlock>
     );
 };
