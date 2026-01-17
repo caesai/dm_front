@@ -40,13 +40,13 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { BookingPage } from '@/pages/BookingPage/BookingPage';
+import { BookingPage } from '@/pages/BookingPage/BookingPage.tsx';
 import { userAtom, authAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
-import { mockUserData } from '@/__mocks__/user.mock';
-import { mockRestaurantsList } from '@/__mocks__/restaurant.mock';
-import { mockTimeSlots, mockAvailableDates } from '@/__mocks__/booking.mock';
+import { mockUserData } from '@/__mocks__/user.mock.ts';
+import { mockRestaurantsList } from '@/__mocks__/restaurant.mock.ts';
+import { mockTimeSlots, mockAvailableDates } from '@/__mocks__/booking.mock.ts';
 import { IUser } from '@/types/user.types.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 

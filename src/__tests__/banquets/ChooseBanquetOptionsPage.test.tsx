@@ -33,8 +33,8 @@ import {
     mockBanquetOptionShortDescription, 
     mockBanquetOptionNoDeposit, 
     mockBanquetOptionFreeDeposit 
-} from '@/__mocks__/banquets.mock';
-import { mockRestaurantWithoutBanquets } from '@/__mocks__/restaurant.mock';
+} from '@/__mocks__/banquets.mock.ts';
+import { mockRestaurantWithoutBanquets } from '@/__mocks__/restaurant.mock.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 
 // ============================================

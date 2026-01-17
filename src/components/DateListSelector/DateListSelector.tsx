@@ -99,6 +99,7 @@ export const DateListSelector: React.FC<IDateListSelectorProps> = ({
                 isOpen={isPickerOpen}
                 setOpen={setIsPickerOpen}
                 title={defaultTitle}
+                textAlign='center'
             />
             <DropDownSelect
                 title={getDisplayTitle()}

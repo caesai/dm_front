@@ -30,8 +30,8 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { BanquetOptionPage } from '@/pages/BanquetOptionPage/BanquetOptionPage.tsx';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { banquetTypes } from '@/__mocks__/banquets.mock';
-import { mockRestaurantWithBanquets } from '@/__mocks__/restaurant.mock';
+import { banquetTypes } from '@/__mocks__/banquets.mock.ts';
+import { mockRestaurantWithBanquets } from '@/__mocks__/restaurant.mock.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 
 // ============================================

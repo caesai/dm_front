@@ -20,7 +20,7 @@
  */
 
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
 // Atoms
 import { userAtom } from '@/atoms/userAtom.ts';
@@ -64,7 +64,10 @@ import { YandexTaxiBlock } from '@/pages/RestaurantPage/blocks/YandexTaxiBlock.t
  *
  * Навигация на страницу бронирования происходит с учётом статуса онбординга пользователя:
  * - Если онбординг не завершён — переход на `/onboarding/3` с передачей данных ресторана
- * - Если онбординг завершён — переход на `/restaurant/:id/booking` с выбранной датой и временем
+ * - Если онбординг завершён — переход на `/restaurant/:id/booking`
+ * 
+ * Данные формы бронирования (дата, время) синхронизируются через {@link restaurantBookingFormAtom},
+ * который используется как в {@link BookingsBlock}, так и в {@link RestaurantBookingPage}.
  *
  * @component
  * @returns {JSX.Element} Компонент страницы ресторана
@@ -74,6 +77,8 @@ import { YandexTaxiBlock } from '@/pages/RestaurantPage/blocks/YandexTaxiBlock.t
  * <Route path="/restaurant/:restaurantId" element={<RestaurantPage />} />
  */
 export const RestaurantPage: React.FC = (): JSX.Element => {
+    const location = useLocation();
+    const state = location.state;
     /** Функция навигации из react-router-dom */
     const navigate = useNavigate();
 
@@ -103,7 +108,8 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
      *
      * Если онбординг завершён — переход на страницу бронирования
      * `/restaurant/:restaurantId/booking`.
-     * Данные формы (дата, время, гости) сохранены в bookingFormAtom через BookingBlock.
+     * 
+     * Данные формы (дата, время) синхронизируются через общий атом {@link restaurantBookingFormAtom}.
      */
     const handleNextButtonClick = () => {
         if (!user?.complete_onboarding) {
@@ -131,7 +137,7 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
     };
 
     return (
-        <Page back={true}>
+        <Page back={!state?.shared}>
             <CallRestaurantPopup
                 isOpen={isCallPopupOpen}
                 setOpen={setIsCallPopupOpen}

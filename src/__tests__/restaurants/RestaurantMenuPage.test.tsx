@@ -30,8 +30,8 @@ import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { authAtom } from '@/atoms/userAtom.ts';
 import { IMenu, IMenuCategory, IMenuItem, IMenuItemSize } from '@/types/menu.types.ts';
-import { useRestaurantMenu } from '@/hooks/useRestaurantMenu';
-import { trigramMatch } from '@/utils/trigram.utils';
+import { useRestaurantMenu } from '@/hooks/useRestaurantMenu.ts';
+import { trigramMatch } from '@/utils/trigram.utils.ts';
 
 // ============================================
 // Моки внешних зависимостей
@@ -41,7 +41,7 @@ import { trigramMatch } from '@/utils/trigram.utils';
  * Мок хука useRestaurantMenu.
  * Позволяет контролировать состояние загрузки меню в тестах.
  */
-jest.mock('@/hooks/useRestaurantMenu');
+jest.mock('@/hooks/useRestaurantMenu.ts');
 const mockUseRestaurantMenu = useRestaurantMenu as jest.MockedFunction<typeof useRestaurantMenu>;
 
 /**
@@ -49,7 +49,7 @@ const mockUseRestaurantMenu = useRestaurantMenu as jest.MockedFunction<typeof us
  * По умолчанию использует простое включение подстроки.
  * Можно переопределить в отдельных тестах для проверки состояния "ничего не найдено".
  */
-jest.mock('@/utils/trigram.utils', () => ({
+jest.mock('@/utils/trigram.utils.ts', () => ({
     trigramMatch: jest.fn((text: string, query: string) => {
         return text.toLowerCase().includes(query.toLowerCase());
     }),

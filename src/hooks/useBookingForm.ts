@@ -2,11 +2,21 @@
  * @fileoverview Комплексный хук для управления формой бронирования столиков в ресторане.
  * 
  * Хук инкапсулирует всю логику формы бронирования:
- * - Управление состоянием формы через Jotai atoms
+ * - Управление состоянием формы через Jotai atoms (разделённые по типам)
  * - Валидация полей формы
  * - API-запросы для загрузки доступных дат и временных слотов
  * - Обработка сертификатов
  * - Создание бронирования
+ * 
+ * ## Разделение состояния формы
+ * 
+ * Каждый тип бронирования использует отдельный атом для предотвращения конфликтов:
+ * - `formType: 'event'` → `eventBookingFormAtom` (EventBookingPage)
+ * - `formType: 'restaurant'` → `restaurantBookingFormAtom` (RestaurantBookingPage, BookingsBlock)
+ * - `formType: 'common'` → `commonBookingFormAtom` (BookingPage)
+ * 
+ * Это обеспечивает изоляцию состояния между страницами и предотвращает
+ * перезапись данных при навигации между разными типами бронирования.
  * 
  * @module hooks/useBookingForm
  * 
@@ -14,6 +24,7 @@
  * // Пример 1: Общая страница бронирования (BookingPage)
  * // Пользователь сам выбирает ресторан из списка
  * const { form, handlers, createBooking } = useBookingForm({
+ *     formType: 'common',
  *     certificateParams: {
  *         certificate: state?.certificate,
  *         certificateId: state?.certificateId,
@@ -24,6 +35,7 @@
  * // Пример 2: Бронирование с предвыбранным рестораном (RestaurantBookingPage)
  * // Пользователь переходит со страницы ресторана
  * const { form, handlers, createBooking } = useBookingForm({
+ *     formType: 'restaurant',
  *     preSelectedRestaurant: {
  *         id: String(currentRestaurant.id),
  *         title: currentRestaurant.title,
@@ -42,6 +54,7 @@
  * // Пример 3: Бронирование на мероприятие (EventBookingPage)
  * // Ресторан и дата берутся из данных мероприятия
  * const { form, handlers, createBooking } = useBookingForm({
+ *     formType: 'event',
  *     eventData: {
  *         id: selectedEvent.id,
  *         name: selectedEvent.name,
@@ -52,11 +65,19 @@
  *         restaurantAddress: selectedEvent.restaurant.address,
  *     },
  * });
+ * 
+ * @example
+ * // Пример 4: Превью бронирования на странице ресторана (BookingsBlock)
+ * const { form, handlers } = useBookingForm({
+ *     formType: 'restaurant',
+ *     preSelectedRestaurant: { id: '1', title: 'Restaurant' },
+ *     initialBookingData: { guestCount: 1 },
+ * });
  */
 
-import { useEffect, useMemo, useCallback, useState, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useCallback, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAtom, useAtomValue, useSetAtom, WritableAtom } from 'jotai';
+import { useAtom, useAtomValue, WritableAtom } from 'jotai';
 // API
 import { APICreateBooking, APIGetAvailableDays, APIGetAvailableTimeSlots } from '@/api/restaurants.api.ts';
 import { APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
@@ -66,9 +87,10 @@ import { commAtom } from '@/atoms/bookingCommAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import {
     bookingFormAtom,
-    updateBookingFormAtom,
     getInitialBookingFormState,
+    getBookingFormAtomByType,
     IBookingFormState,
+    BookingFormType,
 } from '@/atoms/bookingFormAtom.ts';
 // Types
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
@@ -221,11 +243,34 @@ interface IEventData {
  * Позволяют настроить поведение хука для разных сценариев использования.
  * 
  * @interface
- * @see {@link BookingPage} - общая страница бронирования (без опций или с certificateParams)
- * @see {@link RestaurantBookingPage} - бронирование с preSelectedRestaurant
- * @see {@link EventBookingPage} - бронирование с eventData
+ * @see {@link BookingPage} - общая страница бронирования (formType: 'common')
+ * @see {@link RestaurantBookingPage} - бронирование с preSelectedRestaurant (formType: 'restaurant')
+ * @see {@link EventBookingPage} - бронирование с eventData (formType: 'event')
+ * @see {@link BookingsBlock} - превью бронирования на странице ресторана (formType: 'restaurant')
  */
 export interface IUseBookingFormOptions {
+    /**
+     * Тип формы бронирования для разделения состояния.
+     * Каждый тип использует отдельный атом для предотвращения конфликтов.
+     * 
+     * - 'event' - бронирование на мероприятие (EventBookingPage)
+     * - 'restaurant' - бронирование конкретного ресторана (RestaurantBookingPage, BookingsBlock)
+     * - 'common' - общее бронирование с выбором ресторана (BookingPage)
+     * 
+     * @default undefined (использует общий bookingFormAtom для обратной совместимости)
+     * 
+     * @example
+     * // EventBookingPage
+     * useBookingForm({ formType: 'event', eventData: {...} });
+     * 
+     * // RestaurantBookingPage или BookingsBlock
+     * useBookingForm({ formType: 'restaurant', preSelectedRestaurant: {...} });
+     * 
+     * // BookingPage
+     * useBookingForm({ formType: 'common' });
+     */
+    formType?: BookingFormType;
+    
     /** 
      * Параметры для активации сертификата.
      * Используется когда пользователь переходит на бронирование со страницы сертификата.
@@ -238,6 +283,22 @@ export interface IUseBookingFormOptions {
      * Ресторан нельзя будет изменить в форме.
      */
     preSelectedRestaurant?: IPreSelectedRestaurant;
+    
+    /**
+     * ID ресторана для отслеживания смены.
+     * Используется для сброса формы при переходе между ресторанами.
+     * Особенно важен когда preSelectedRestaurant может быть undefined
+     * на момент первого рендера (пока данные загружаются).
+     * 
+     * @example
+     * // В BookingsBlock
+     * useBookingForm({
+     *     formType: 'restaurant',
+     *     restaurantId: restaurantId, // ID из URL params
+     *     preSelectedRestaurant: currentRestaurant ? {...} : undefined,
+     * });
+     */
+    restaurantId?: string;
     
     /** 
      * Начальные данные бронирования из location.state.
@@ -257,6 +318,23 @@ export interface IUseBookingFormOptions {
      * При успешном бронировании переходит на страницу билета.
      */
     eventData?: IEventData;
+    
+    /**
+     * Флаг сброса формы при монтировании компонента.
+     * При true форма сбрасывается к начальному состоянию при каждом монтировании.
+     * Используется на страницах бронирования для предотвращения использования
+     * устаревшего состояния от предыдущих сессий.
+     * 
+     * @default false
+     * 
+     * @example
+     * // На страницах бронирования (BookingPage, RestaurantBookingPage, EventBookingPage)
+     * useBookingForm({ resetOnMount: true });
+     * 
+     * // В компонентах просмотра (BookingsBlock) - НЕ сбрасывать
+     * useBookingForm({ resetOnMount: false });
+     */
+    resetOnMount?: boolean;
 }
 
 /**
@@ -295,11 +373,14 @@ export interface IUseBookingFormOptions {
  */
 export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
     const {
+        formType,
         certificateParams,
         preSelectedRestaurant,
+        restaurantId: explicitRestaurantId,
         initialBookingData,
         isShared = false,
         eventData,
+        resetOnMount = false,
     } = options;
     
     // Флаг - это бронирование на мероприятие
@@ -315,9 +396,19 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
         certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>
     );
 
-    // Form state
-    const [formState, setForm] = useAtom(bookingFormAtom);
-    const updateForm = useSetAtom(updateBookingFormAtom);
+    // Выбираем атом формы в зависимости от типа
+    // Используем useMemo для стабильной ссылки на атом
+    const selectedFormAtom = useMemo(() => {
+        return formType ? getBookingFormAtomByType(formType) : bookingFormAtom;
+    }, [formType]);
+
+    // Form state - используем выбранный атом
+    const [formState, setForm] = useAtom(selectedFormAtom);
+    
+    // Создаём функцию обновления для конкретного атома
+    const updateForm = useCallback((update: Partial<IBookingFormState>) => {
+        setForm((current) => ({ ...current, ...update }));
+    }, [setForm]);
     
     // Ensure form is always a valid object (defensive coding)
     const defaultForm = useMemo(() => getInitialBookingFormState(), []);
@@ -434,12 +525,100 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
     const userDataApplied = useRef(false);
     /** Флаг автоматического выбора первого временного слота для мероприятий */
     const autoTimeSlotSelected = useRef(false);
+    /** Ref для отслеживания, была ли уже установлена дата для текущего ресторана */
+    const dateInitializedForRestaurantRef = useRef<string | null>(null);
 
     // Мемоизируем начальные данные бронирования, чтобы избежать лишних ререндеров
     const initialDateValue = initialBookingData?.bookedDate?.value;
     const initialTimeSlotStart = initialBookingData?.bookedTime?.start_datetime;
     const initialGuestCount = initialBookingData?.guestCount;
     const initialChildrenCount = initialBookingData?.childrenCount;
+    
+    // Определяем ID ресторана из props (explicitRestaurantId имеет приоритет)
+    const targetRestaurantId = explicitRestaurantId || preSelectedRestaurant?.id || eventData?.restaurantId;
+    
+    // Ref для отслеживания предыдущего restaurantId (для надежного сброса)
+    const previousRestaurantIdRef = useRef<string | undefined>(undefined);
+    
+    // Сброс формы при изменении ресторана (useLayoutEffect выполняется синхронно перед useEffect)
+    // Используем explicitRestaurantId для надежного сброса даже когда preSelectedRestaurant undefined
+    useLayoutEffect(() => {
+        const currentRestaurantIdInForm = formState?.restaurant?.value;
+        const previousRestaurantId = previousRestaurantIdRef.current;
+        
+        // Определяем новый restaurantId для сравнения
+        const newRestaurantId = explicitRestaurantId || targetRestaurantId;
+        
+        // Определяем, нужен ли сброс:
+        // 1. Если явно переданный restaurantId изменился (сравниваем с предыдущим через ref)
+        // 2. ИЛИ если targetRestaurantId отличается от того, что сохранено в форме
+        const restaurantChangedViaRef = (
+            newRestaurantId && 
+            previousRestaurantId && 
+            previousRestaurantId !== newRestaurantId
+        );
+        
+        const restaurantChangedViaForm = (
+            targetRestaurantId && 
+            currentRestaurantIdInForm && 
+            currentRestaurantIdInForm !== 'unset' &&
+            currentRestaurantIdInForm !== targetRestaurantId
+        );
+        
+        const needsReset = restaurantChangedViaRef || restaurantChangedViaForm;
+        
+        // Обновляем ref с текущим restaurantId (ПОСЛЕ проверки needsReset)
+        if (newRestaurantId) {
+            previousRestaurantIdRef.current = newRestaurantId;
+        }
+        
+        if (needsReset) {
+            // Сбрасываем форму к начальному состоянию
+            const initialState = getInitialBookingFormState();
+            
+            // Устанавливаем новый ресторан
+            if (preSelectedRestaurant) {
+                initialState.restaurant = {
+                    title: preSelectedRestaurant.title,
+                    value: preSelectedRestaurant.id,
+                    ...(preSelectedRestaurant.address && { address: preSelectedRestaurant.address }),
+                };
+            } else if (eventData) {
+                initialState.restaurant = {
+                    title: eventData.restaurantTitle || '',
+                    value: eventData.restaurantId,
+                    ...(eventData.restaurantAddress && { address: eventData.restaurantAddress }),
+                };
+            } else if (explicitRestaurantId) {
+                // Если есть только explicitRestaurantId, устанавливаем его
+                // (preSelectedRestaurant появится позже после загрузки)
+                initialState.restaurant = {
+                    title: '',
+                    value: explicitRestaurantId,
+                };
+            }
+            
+            // Устанавливаем начальное количество гостей из initialBookingData
+            if (initialGuestCount !== undefined) {
+                initialState.guestCount = initialGuestCount;
+            }
+            if (initialChildrenCount !== undefined) {
+                initialState.childrenCount = initialChildrenCount;
+            }
+            
+            setForm(initialState);
+            
+            // Сбрасываем все флаги инициализации для полной реинициализации
+            isInitialized.current = false;
+            initialBookingDataApplied.current = false;
+            preSelectedRestaurantApplied.current = false;
+            eventDataApplied.current = false;
+            autoTimeSlotSelected.current = false;
+            // Также сбрасываем флаг инициализации даты для нового ресторана
+            dateInitializedForRestaurantRef.current = null;
+        }
+    }, [explicitRestaurantId, targetRestaurantId, preSelectedRestaurant, eventData, 
+        formState?.restaurant?.value, setForm, initialGuestCount, initialChildrenCount]);
 
     // Инициализация формы (ресторан, дата, гости) - НЕ зависит от user
     useEffect(() => {
@@ -449,10 +628,11 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
             
             // Сохраняем существующие данные из bookingFormAtom, если они уже установлены
             // (например, дата и время выбраны в BookingsBlock на странице ресторана)
-            const existingDate = formState?.date?.value !== 'unset' ? formState.date : null;
-            const existingTimeSlot = formState?.selectedTimeSlot || null;
-            const existingGuestCount = formState?.guestCount > 0 ? formState.guestCount : 0;
-            const existingChildrenCount = formState?.childrenCount ?? 0;
+            // НО: если resetOnMount = true, игнорируем существующие данные для свежего старта
+            const existingDate = !resetOnMount && formState?.date?.value !== 'unset' ? formState.date : null;
+            const existingTimeSlot = !resetOnMount ? (formState?.selectedTimeSlot || null) : null;
+            const existingGuestCount = !resetOnMount && formState?.guestCount > 0 ? formState.guestCount : 0;
+            const existingChildrenCount = !resetOnMount ? (formState?.childrenCount ?? 0) : 0;
             
             // Если есть данные мероприятия
             if (eventData) {
@@ -499,19 +679,25 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
                 initialBookingDataApplied.current = true;
             }
             
-            // Применяем существующие данные из атома (приоритет над initialBookingData)
-            // но только если нет eventData (для мероприятий используем данные мероприятия)
-            if (!eventData) {
-                if (existingDate) {
+            // Применяем существующие данные из атома, НО только если нет initialBookingData с этими данными.
+            // initialBookingData (из props) имеет приоритет,
+            // так как он содержит актуальные данные, выбранные пользователем перед переходом.
+            // Существующие данные из атома используются только как fallback.
+            if (!eventData && !resetOnMount) {
+                // Применяем существующую дату только если НЕТ bookedDate в initialBookingData
+                if (existingDate && !initialBookingData?.bookedDate) {
                     initialState.date = existingDate;
                 }
-                if (existingTimeSlot) {
+                // Применяем существующий слот только если НЕТ bookedTime в initialBookingData
+                if (existingTimeSlot && !initialBookingData?.bookedTime) {
                     initialState.selectedTimeSlot = existingTimeSlot;
                 }
-                if (existingGuestCount > 0) {
+                // Применяем количество гостей только если НЕТ guestCount в initialBookingData
+                if (existingGuestCount > 0 && initialGuestCount === undefined) {
                     initialState.guestCount = existingGuestCount;
                 }
-                if (existingChildrenCount > 0) {
+                // Применяем количество детей только если НЕТ childrenCount в initialBookingData
+                if (existingChildrenCount > 0 && initialChildrenCount === undefined) {
                     initialState.childrenCount = existingChildrenCount;
                 }
             }
@@ -604,9 +790,6 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
     // ============================================
     // Load Available Dates
     // ============================================
-    
-    // Ref для отслеживания, была ли уже установлена дата для текущего ресторана
-    const dateInitializedForRestaurantRef = useRef<string | null>(null);
 
     useEffect(() => {
         if (!auth?.access_token || !form.restaurant?.value || form.restaurant.value === 'unset') return;
@@ -665,6 +848,9 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
             return;
         }
 
+        // Флаг для отмены обновления состояния после размонтирования
+        let isCancelled = false;
+
         setLoading(prev => ({ ...prev, timeslots: true }));
         setErrors(prev => ({ ...prev, timeslots: false }));
 
@@ -675,31 +861,66 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
             form.guestCount
         )
             .then((res) => {
-                setAvailableTimeslots(res.data);
-                // Для мероприятий автоматически выбираем слот, соответствующий времени начала мероприятия
-                if (isEventBooking && res.data.length > 0 && !autoTimeSlotSelected.current && eventData?.dateStart) {
-                    // Извлекаем время начала мероприятия (HH:mm) напрямую из строки
-                    // Формат: 'YYYY-MM-DD HH:mm:ss' -> берём 'HH:mm' (позиции 11-16)
-                    const eventStartTime = eventData.dateStart.split(' ')[1]?.slice(0, 5);
-                    // Ищем слот с matching временем
-                    const matchingSlot = res.data.find((slot: ITimeSlot) => {
-                        const slotTime = slot.start_datetime.split(' ')[1]?.slice(0, 5);
-                        return slotTime === eventStartTime;
-                    });
-                    // Если найден - выбираем его, иначе первый доступный
-                    updateForm({ selectedTimeSlot: matchingSlot || res.data[0] });
-                    autoTimeSlotSelected.current = true;
+                // Предотвращаем обновление состояния после размонтирования
+                if (isCancelled) return;
+                
+                const newTimeslots: ITimeSlot[] = res.data;
+                setAvailableTimeslots(newTimeslots);
+                
+                // Для мероприятий: автоматический выбор слота с улучшенной логикой
+                if (isEventBooking && newTimeslots.length > 0 && eventData?.dateStart) {
+                    // Извлекаем время начала мероприятия (HH:mm)
+                    // Поддерживаем форматы: 'YYYY-MM-DD HH:mm:ss' и 'YYYY-MM-DDTHH:mm:ss'
+                    const extractTime = (datetime: string): string | undefined => {
+                        // Разделяем по 'T' или пробелу
+                        const timePart = datetime.split(/[T\s]/)[1];
+                        return timePart?.slice(0, 5); // 'HH:mm'
+                    };
+                    
+                    const eventStartTime = extractTime(eventData.dateStart);
+                    
+                    // Проверяем, есть ли текущий выбранный слот в новом списке
+                    const currentSlotStillAvailable = form.selectedTimeSlot && newTimeslots.some(
+                        (slot: ITimeSlot) => slot.start_datetime === form.selectedTimeSlot?.start_datetime
+                    );
+                    
+                    // Если слот ещё не был автоматически выбран ИЛИ текущий слот больше недоступен
+                    if (!autoTimeSlotSelected.current || !currentSlotStillAvailable) {
+                        // Ищем слот с matching временем начала мероприятия
+                        const matchingSlot = eventStartTime 
+                            ? newTimeslots.find((slot: ITimeSlot) => {
+                                const slotTime = extractTime(slot.start_datetime);
+                                return slotTime === eventStartTime;
+                            })
+                            : undefined;
+                        
+                        // Выбираем: слот мероприятия > текущий доступный слот > первый доступный
+                        const slotToSelect = matchingSlot || 
+                            (currentSlotStillAvailable ? form.selectedTimeSlot : newTimeslots[0]);
+                        
+                        if (slotToSelect && slotToSelect !== form.selectedTimeSlot) {
+                            updateForm({ selectedTimeSlot: slotToSelect });
+                        }
+                        autoTimeSlotSelected.current = true;
+                    }
                 }
             })
             .catch((err) => {
+                if (isCancelled) return;
                 console.error('Error fetching timeslots:', err);
                 setErrors(prev => ({ ...prev, timeslots: true }));
             })
             .finally(() => {
+                if (isCancelled) return;
                 setLoading(prev => ({ ...prev, timeslots: false }));
             });
+        
+        // Cleanup function для отмены обновлений после размонтирования
+        return () => {
+            isCancelled = true;
+        };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [auth?.access_token, form.date?.value, form.guestCount, form.restaurant?.value, isEventBooking]);
+    }, [auth?.access_token, form.date?.value, form.guestCount, form.restaurant?.value, isEventBooking, eventData?.dateStart]);
 
     // ============================================
     // Certificate Claim (after onboarding)
@@ -743,10 +964,14 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
     // ============================================
 
     const handleRestaurantSelect = useCallback((restaurant: PickerValue) => {
+        // Сбрасываем флаг автовыбора при смене ресторана
+        autoTimeSlotSelected.current = false;
         updateForm({ restaurant, selectedTimeSlot: null });
     }, [updateForm]);
 
     const handleDateSelect = useCallback((date: PickerValue) => {
+        // Сбрасываем флаг автовыбора при смене даты
+        autoTimeSlotSelected.current = false;
         updateForm({ date, selectedTimeSlot: null });
     }, [updateForm]);
 

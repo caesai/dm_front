@@ -1,3 +1,8 @@
+/**
+ * Компонент WheelPicker для выбора даты и времени
+ * @fileoverview WheelPicker.tsx
+ * @description Компонент WheelPicker для выбора даты и времени
+ */
 import React, { useCallback, useMemo } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
@@ -30,19 +35,31 @@ const handleOpen = () => {
 const handleClose = () => {
     document.body.style.overflow = '';
 };
-
+/**
+ * Пропсы компонента WheelPicker
+ */
 export interface WheelPickerProps {
+    /** Флаг открытия пикера */
     isOpen: boolean;
+    /** Функция установки открытия пикера */
     setOpen: (isOpen: boolean) => void;
+    /** Значение пикера */
     value: PickerValue | null;
+    /** Функция изменения значения пикера */
     onChange: (value: PickerValue) => void;
+    /** Список элементов пикера */
     items: PickerValue[];
+    /** Заголовок пикера */
     title: string;
+    /** Высота пикера */
     popupHeight?: number;
+    /** Высота элемента пикера */
     itemHeight?: number;
+    /** Выравнивание текста элементов пикера */
+    textAlign?: 'left' | 'center' | 'right';
 }
 
-export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, items, isOpen, setOpen, title, popupHeight = 120, itemHeight = 36 }) => {
+export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, items, isOpen, setOpen, title, popupHeight = 120, itemHeight = 36, textAlign = 'center' }) => {
     const onClose = useCallback(() => {
         handleClose();
         setOpen(false);
@@ -56,7 +73,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, items
                         <Picker.Item key={item.value.toString()} value={item.value}>
                             {({ selected }) => (
                                 <div className={css.selectorItem}>
-                                    <span className={classNames(css.item, { [css.item__selected]: selected })}>
+                                    <span className={classNames(css.item, { [css.item__selected]: selected }, css[textAlign])}>
                                         {item.title.toString()}
                                     </span>
                                     {item.subtitle && (

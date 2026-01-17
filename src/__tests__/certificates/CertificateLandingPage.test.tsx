@@ -46,8 +46,8 @@ import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim, APIPostEGiftCertificateInfo } from '@/api/certificates.api.ts';
 import { ICertificate } from '@/types/certificates.types.ts';
 import { IUser, IAuthInfo } from '@/types/user.types.ts';
-import { mockUserData } from '@/__mocks__/user.mock';
-import { mockCertificate } from '@/__mocks__/certificates.mock';
+import { mockUserData } from '@/__mocks__/user.mock.ts';
+import { mockCertificate } from '@/__mocks__/certificates.mock.ts';
 
 // Mock API functions
 jest.mock('@/api/certificates.api.ts', () => ({
