@@ -14,7 +14,6 @@ import { StarPrivilegeIcon } from '@/components/Icons/StarPrivilege.tsx';
 import css from '@/components/BookingReminder/BookingReminder.module.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
-import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 
 /**
  * Пропсы компонента BookingReminder.
@@ -94,7 +93,7 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
      * Возвращаем список бронирований.
      */
     return [
-        <ContentBlock className={css.swiper}>
+        <div className={css.swiper}>
             <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
                 {bookings
                     .filter((book) => {
@@ -149,6 +148,6 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                         </SwiperSlide>
                     ))}
             </Swiper>
-        </ContentBlock>
+        </div>
     ]
 };
