@@ -53,3 +53,8 @@ export interface IHospitalityHeroesApplication {
     job_title: string;
     experience: string;
 }
+
+export interface IEventBanner {
+    img_url: string;
+    link: string
+}

@@ -3,9 +3,13 @@ import { FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useEffect, useState } from 'react';
 import { BannersMock } from '@/__mocks__/banners.mock.ts';
+import { IEventBanner } from '@/types/events.types.ts';
+import { useNavigate } from 'react-router-dom';
 
 export const Banner = () => {
-    const [banners, setBanners] = useState<string[]>([]);
+    const navigate = useNavigate();
+
+    const [banners, setBanners] = useState<IEventBanner[]>([]);
 
     useEffect(() => {
         setBanners(BannersMock);
@@ -18,10 +22,11 @@ export const Banner = () => {
                     <SwiperSlide
                         key={`${index}-${banner}`}
                         style={{ width: 'max-content' }}
+                        onClick={() => navigate(banner.link)}
                     >
                         <div
                             className={css.photo}
-                            style={{ backgroundImage: `url(${banner})` }}
+                            style={{ backgroundImage: `url(${banner.img_url})` }}
                         />
                     </SwiperSlide>
                 ))}

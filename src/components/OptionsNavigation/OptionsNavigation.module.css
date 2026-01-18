@@ -1,8 +1,10 @@
 .optionsNavigation {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     gap: 20px;
     margin-bottom: 15px;
+    margin-right: 15px;
 }
 
 .smallFont {
