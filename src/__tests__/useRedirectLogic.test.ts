@@ -114,6 +114,24 @@ describe('useRedirectLogic', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/restaurant/222', { replace: true, state: { shared: true} });
     });
 
+    it('должно быть перенаправление на страницу ресторана при комбинированном параметре с UTM-метками', () => {
+        setup({ params: { tgWebAppStartParam : 'restaurantId_333-utmSource_instagram-utmMedium_social' } });
+        renderHook(() => useRedirectLogic());
+        expect(mockNavigate).toHaveBeenCalledWith('/restaurant/333', { replace: true, state: { shared: true} });
+    });
+
+    it('должно быть перенаправление на страницу мероприятия при комбинированном параметре с UTM-метками', () => {
+        setup({ params: { tgWebAppStartParam : 'eventId_444-utmSource_telegram-utmCampaign_summer' } });
+        renderHook(() => useRedirectLogic());
+        expect(mockNavigate).toHaveBeenCalledWith('/events/444/details', { replace: true, state: { shared: true } });
+    });
+
+    it('должно быть перенаправление на главную страницу если переданы только UTM-метки', () => {
+        setup({ params: { tgWebAppStartParam : 'utmSource_instagram-utmMedium_social' } });
+        renderHook(() => useRedirectLogic());
+        expect(mockNavigate).toHaveBeenCalledWith('/', { replace: true });
+    });
+
     it('не должно быть перенаправления, если пользователь находится на странице онбординга', () => {
         setup({
             user: { ...defaultMockUser, complete_onboarding: false },

@@ -24,7 +24,7 @@
  * @see {@link ICertificate} - Тип данных сертификата
  */
 import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
 import moment from 'moment';
 // API
@@ -87,6 +87,8 @@ import css from '@/pages/CertificateLanding/CertificateLandingPage.module.css';
  */
 export const CertificateLandingPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location?.state;
     const { id } = useParams();
     const auth = useAtomValue(authAtom);
     const user = useAtomValue(userAtom);
@@ -414,7 +416,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
     }
 
     return (
-        <Page back={true}>
+        <Page back={!state?.shared}>
             <ModalPopup
                 isOpen={isShowing}
                 setOpen={toggle}

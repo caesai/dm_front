@@ -21,7 +21,8 @@ export const CertificatesCreatePage: React.FC = () => {
         if (isPaymentLocation || state?.sharedCertificateCreate) {
             navigate('/');
         } else {
-            navigate('/certificates/1');
+            // TODO: проверить работу этого перехода
+            navigate(-1);
         }
     };
 
