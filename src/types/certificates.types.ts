@@ -6,6 +6,7 @@ export interface ICertificate {
     certificate_type: TCertificate;
     status: TCertificateStatus;
     value: string;
+    balance: number;
     recipient_name: string;
     dreamteam_id: string;
     receipt_point: number | null;

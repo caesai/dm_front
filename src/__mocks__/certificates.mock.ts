@@ -19,6 +19,7 @@ export const certificatesListMock: ICertificate[] = [
         updated_at: '2025-11-10T14:15:53.614590Z',
         shared_at: null,
         dreamteam_id: '',
+        balance: 0
     },
     {
         certificate_type: 'online',
@@ -37,6 +38,7 @@ export const certificatesListMock: ICertificate[] = [
         updated_at: '2025-11-10T14:10:20.485914Z',
         shared_at: null,
         dreamteam_id: '',
+        balance: 0
     },
     {
         certificate_type: 'online',
@@ -55,6 +57,7 @@ export const certificatesListMock: ICertificate[] = [
         updated_at: '2025-11-10T13:42:47.125285Z',
         shared_at: null,
         dreamteam_id: '',
+        balance: 0
     },
 ];
 
@@ -81,6 +84,7 @@ export const mockCertificateWithDreamteamId: ICertificate = {
     shared_at: null,
     expired_at: '2026-01-01',
     message: 'Test Message',
+    balance: 0
 };
 
 export const certificateBlock = {

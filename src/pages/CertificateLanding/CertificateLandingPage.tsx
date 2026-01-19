@@ -468,7 +468,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                                             ? 'Загрузка...'
                                             : balance !== null
                                             ? `${balance.toFixed()} ₽`
-                                            : Number(certificate?.value).toFixed() + ' ₽'}
+                                            : Number(certificate?.balance).toFixed() + ' ₽'}
                                     </b>
                                 </span>
                             </div>
