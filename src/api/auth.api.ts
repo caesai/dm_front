@@ -8,12 +8,14 @@ interface AuthParams {
 }
 
 export const APIUserAuth = async (data: string | undefined, start: string | undefined) => {
+    console.log(start)
     const params = <AuthParams>{
         data: data,
     };
     if (start) {
         params.code = start;
     }
+    console.log('params.code:', params.code, start);
     return await axios.post<IAuthInfo>(
         `${BASE_URL}/auth/validate`,
         {},

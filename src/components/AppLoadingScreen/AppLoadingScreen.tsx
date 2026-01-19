@@ -30,6 +30,7 @@ export const AppLoadingScreen: React.FC = (): JSX.Element => {
     const lp = useLaunchParams();
     const rawLp = useRawInitData();
     // Авторизация пользователя
+    console.log('tgWebAppStartParam: ', lp.tgWebAppStartParam)
     useEffect(() => {
         if (!auth?.access_token) {
             APIUserAuth(rawLp, lp.tgWebAppStartParam)
