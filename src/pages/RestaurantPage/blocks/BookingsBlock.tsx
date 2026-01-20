@@ -6,6 +6,7 @@
  * - Позволяет выбрать дату бронирования
  * - Использует компонент TimeSlots для выбора времени
  * - Использует {@link useBookingForm} для управления датами и таймслотами
+ * - Показывает модальное окно для депозитных дат
  *
  * ## Разделение состояния
  *
@@ -26,6 +27,7 @@
  * 
  * @see {@link useBookingForm} - хук для управления формой бронирования
  * @see {@link restaurantBookingFormAtom} - изолированный атом состояния формы
+ * @see {@link DepositInfoModal} - модальное окно информации о депозите
  */
 import React, { useCallback, useMemo, useState } from 'react';
 import { useAtomValue } from 'jotai';
@@ -33,6 +35,7 @@ import { Calendar } from 'react-iconly';
 import { FaAngleRight } from 'react-icons/fa';
 // Types
 import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
+import { PickerValue } from '@/lib/react-mobile-picker/components/Picker.tsx';
 // Atoms
 import { headerScrolledAtom } from '@/atoms/restaurantPageAtom.ts';
 import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
@@ -42,6 +45,7 @@ import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock
 import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
 import { WheelPicker } from '@/components/WheelPicker/WheelPicker';
+import { DepositInfoModal } from '@/components/DepositInfoModal/DepositInfoModal.tsx';
 // Utils
 import { formatDateAlt } from '@/utils.ts';
 // Styles
@@ -117,6 +121,10 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
 
     /** Состояние открытия popup с датой бронирования */
     const [isPickerOpen, setIsPickerOpen] = useState(false);
+    /** Состояние для ожидающей подтверждения даты (депозит) */
+    const [pendingDate, setPendingDate] = useState<PickerValue | null>(null);
+    /** Состояние открытия модального окна депозита */
+    const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
 
     /**
      * Обработчик выбора таймслота.
@@ -127,6 +135,44 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
         },
         [handlers]
     );
+
+    /**
+     * Обработчик выбора даты при нажатии "Сохранить" в пикере.
+     * Проверяет, требуется ли депозит для выбранной даты.
+     */
+    const handleDateSave = useCallback(
+        (date: PickerValue) => {
+            // Находим полный объект из списка дат, чтобы получить все атрибуты
+            const fullDate = availableDates?.find(d => d.value === date.value) ?? date;
+            
+            if (fullDate.attributes?.includes('requires_deposit')) {
+                setPendingDate(fullDate);
+                setIsDepositModalOpen(true);
+            } else {
+                handlers.selectDate(fullDate);
+            }
+        },
+        [availableDates, handlers]
+    );
+
+    /**
+     * Подтверждение депозита — применяет выбранную дату.
+     */
+    const handleDepositConfirm = useCallback(() => {
+        if (pendingDate) {
+            handlers.selectDate(pendingDate);
+        }
+        setPendingDate(null);
+        setIsDepositModalOpen(false);
+    }, [pendingDate, handlers]);
+
+    /**
+     * Отмена депозита — сбрасывает ожидающую дату.
+     */
+    const handleDepositCancel = useCallback(() => {
+        setPendingDate(null);
+        setIsDepositModalOpen(false);
+    }, []);
 
     /** Флаг загрузки даты */
     const isDateLoading = form.date?.value === 'unset' || !availableDates.length;
@@ -152,9 +198,16 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
 
     return (
         <ContentContainer id="booking" className={css.navSliderAndBookingContainer}>
+            <DepositInfoModal
+                isOpen={isDepositModalOpen}
+                depositPerPerson={pendingDate?.deposit_per_person ?? 0}
+                onConfirm={handleDepositConfirm}
+                onCancel={handleDepositCancel}
+            />
             <WheelPicker
-                value={form.date}
-                onChange={handlers.selectDate}
+                value={pendingDate ?? form.date}
+                onChange={setPendingDate}
+                onSave={handleDateSave}
                 items={availableDates}
                 isOpen={isPickerOpen}
                 setOpen={setIsPickerOpen}
