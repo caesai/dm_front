@@ -22,7 +22,7 @@
 }
 
 .button {
-    background-color: var(--red);
+    background-color: var(--button-grey);
     border: none;
     outline: none;
     border-radius: 15px;

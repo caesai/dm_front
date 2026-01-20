@@ -170,7 +170,7 @@ const StepOne: React.FC<StepOneProps> = ({ popupText, onCancelConfirm, onCancelC
                 <UniversalButton
                     width={'full'}
                     title={'Да'}
-                    theme={'red'}
+                    theme={'secondary'}
                     action={onCancelConfirm}
                 />
             </div>

@@ -132,7 +132,7 @@ export const BanquetAdditionalServicesPage: React.FC = (): JSX.Element => {
                         <UniversalButton
                             width={'full'}
                             title={'Продолжить'}
-                            theme={'red'}
+                            theme={'secondary'}
                             action={goNext}
                         />
                     </div>

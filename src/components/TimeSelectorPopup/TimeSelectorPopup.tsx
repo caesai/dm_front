@@ -131,7 +131,7 @@ export const TimeSelectorPopup: FC<Props> = (
             <UniversalButton
                 width={'full'}
                 title={'Сохранить'}
-                theme={'red'}
+                theme={'secondary'}
                 action={closePopup}
             />
         </>

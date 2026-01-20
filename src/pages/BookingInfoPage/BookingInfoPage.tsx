@@ -286,14 +286,12 @@ export const BookingInfoPage: React.FC = () => {
                                         {/** TODO: Убрать условие после 21.12.2025 */}
                                         {/* Если ресторан не SELF_EDGE_SPB_CHINOIS_ID, то показываем кнопку "Смотреть меню" */}
                                         {String(booking.restaurant.id) !== String(R.SELF_EDGE_SPB_CHINOIS_ID) && (
-                                            <div
-                                                className={css.redButton}
-                                                onClick={() =>
-                                                    navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)
-                                                }
-                                            >
-                                                <span className={css.text}>Смотреть меню</span>
-                                            </div>
+                                            <UniversalButton
+                                                width={'full'}
+                                                title={'Смотреть меню'}
+                                                action={() => navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)}
+                                                theme={'secondary'}
+                                            />
                                         )}
                                         <RoundedButton
                                             radius={'50px'}

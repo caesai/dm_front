@@ -68,7 +68,7 @@ const GastronomyOrderPopup: React.FC<IGastronomyOrderProps> = ({ isOpen, setOpen
                 </div>
                 <span className={css.text}>Вы уверены, что хотите отменить заказ?</span>
                 <div className={css.buttons}>
-                    <UniversalButton width={'full'} title={'Нет, оставить'} theme={'red'} action={onClose} />
+                    <UniversalButton width={'full'} title={'Нет, оставить'} theme={'secondary'} action={onClose} />
                     <UniversalButton width={'full'} title={'Да, отменить'} action={cancelOrder} />
                 </div>
             </div>

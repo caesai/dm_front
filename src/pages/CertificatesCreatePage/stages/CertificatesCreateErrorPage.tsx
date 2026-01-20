@@ -73,7 +73,7 @@ export const CertificatesCreateErrorPage: React.FC = () => {
                         )}
                     >
                         <div className={css.bottomWrapper}>
-                            <UniversalButton width={'full'} title={'Оплатить'} theme={'red'} action={repeatPayment} />
+                            <UniversalButton width={'full'} title={'Оплатить'} theme={'secondary'} action={repeatPayment} />
                         </div>
                     </div>
                 </>

@@ -271,7 +271,7 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
                         <UniversalButton
                             width={'full'}
                             title={'Забронировать'}
-                            theme={'red'}
+                            theme={'secondary'}
                             action={createBooking}
                         />
                     </div>

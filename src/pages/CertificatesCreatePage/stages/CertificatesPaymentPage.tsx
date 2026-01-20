@@ -252,10 +252,14 @@ export const CertificatesPaymentPage: React.FC = (): JSX.Element => {
                                 <UniversalButton
                                     width={'full'}
                                     title={'Поделиться'}
-                                    theme={'red'}
+                                    theme={'secondary'}
                                     action={() => shareCertificate(certificate, certificateRef.current)}
                                 />
-                                <UniversalButton width={'full'} title={'Позже'} action={backToHome} />
+                                <UniversalButton
+                                    width={'full'}
+                                    title={'Позже'}
+                                    action={backToHome}
+                                />
                             </div>
                         )}
                     </div>
@@ -265,8 +269,17 @@ export const CertificatesPaymentPage: React.FC = (): JSX.Element => {
                     <h3 className={css.page_title}>
                         Сертификат не найден
                     </h3>
-                    <UniversalButton width={'full'} title={'Назад'} action={backToHome} />
-                    <UniversalButton width={'full'} title={'Попробовать ещё раз'} theme={'red'} action={checkPayment} />
+                    <UniversalButton
+                        width={'full'}
+                        title={'Назад'}
+                        action={backToHome}
+                    />
+                    <UniversalButton
+                        width={'full'}
+                        title={'Попробовать ещё раз'}
+                        theme={'secondary'}
+                        action={checkPayment}
+                    />
                 </>
             )}
         </div>

@@ -12,6 +12,7 @@ import Picker, { PickerValue } from '@/lib/react-mobile-picker';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 // Styles
 import css from '@/components/WheelPicker/WheelPicker.module.css';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 
 const StyledPopup = styled(Popup)`
     &-overlay {
@@ -95,9 +96,12 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, items
                 <div className={css.content}>
                     <h3>{title}</h3>
                     {picker}
-                    <button className={css.button} onClick={onClose}>
-                        <span className={css.text}>Сохранить</span>
-                    </button>
+                    <UniversalButton
+                        title={'Сохранить'}
+                        width={'full'}
+                        theme={'secondary'}
+                        action={onClose}
+                    />
                 </div>
             </ContentContainer>
         </StyledPopup>

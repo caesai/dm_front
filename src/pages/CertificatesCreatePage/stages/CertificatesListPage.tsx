@@ -110,8 +110,8 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) =>
                 dreamteam_id={certificate.dreamteam_id}
                 forwardRef={certificateRef}
             />
-            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} theme={'red'} action={() => shareCertificate(certificate, certificateRef.current)} />}
-            {certificate.status === 'shared' && <UniversalButton width={'full'} title={'Воспользоваться'} theme={'red'} action={useCertificate} />}
+            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} theme={'secondary'} action={() => shareCertificate(certificate, certificateRef.current)} />}
+            {certificate.status === 'shared' && <UniversalButton width={'full'} title={'Воспользоваться'} theme={'secondary'} action={useCertificate} />}
         </div>
     )
 }
