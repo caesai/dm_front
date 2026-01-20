@@ -208,7 +208,7 @@ describe('RestaurantMenuPage', () => {
      * Содержит три категории:
      * - Еда (с изображениями)
      * - Напитки (без изображений - табличный формат)
-     * - Замоканные коктейли (требуют возрастной верификации)
+     * - Коктейли (алкогольные, требуют возрастной верификации)
      */
     const menuDataFixture: IMenu = {
         id: 'menu-1',
@@ -228,7 +228,7 @@ describe('RestaurantMenuPage', () => {
                 createMockDish('drink-1', 'Кола', 'cat-2', 150, false),
                 createMockDish('drink-2', 'Сок', 'cat-2', 200, false),
             ]),
-            createMockCategory('cat-3', 'Замоканные коктейли', [
+            createMockCategory('cat-3', 'Коктейли', [
                 createMockDish('cocktail-1', 'Негрони', 'cat-3', 700, true),
                 createMockDish('cocktail-2', 'Маргарита', 'cat-3', 650, true),
             ]),
@@ -390,9 +390,12 @@ describe('RestaurantMenuPage', () => {
     });
 
     /**
-     * Проверяет сообщение при отсутствии ресторана в списке.
+     * Проверяет поведение при отсутствии ресторана в глобальном списке.
+     * В актуальной логике страница меню должна всё равно отображаться
+     * (меню загружается по ID независимо от списка ресторанов),
+     * при этом в заголовке используется запасной текст "Меню ресторана".
      */
-    it('должен отображать сообщение, если ресторан не найден', () => {
+    it('должен отображать меню, даже если ресторан отсутствует в глобальном списке', () => {
         const initialValues: Array<readonly [any, unknown]> = [
             [restaurantsListAtom, []], // Пустой список ресторанов
             [authAtom, { access_token: 'token' }],
@@ -415,7 +418,10 @@ describe('RestaurantMenuPage', () => {
             </TestProvider>
         );
 
-        expect(screen.getByText('Ресторан не найден')).toBeInTheDocument();
+        // Заголовок должен быть запасным, так как ресторан не найден в атоме
+        expect(screen.getByText('Меню ресторана')).toBeInTheDocument();
+        // Меню при этом должно корректно отображаться
+        expect(screen.getByRole('heading', { name: 'Еда' })).toBeInTheDocument();
     });
 
     // ============================================
@@ -431,7 +437,7 @@ describe('RestaurantMenuPage', () => {
         // Проверяем, что категории отображаются (используем заголовки категорий, а не вкладки)
         expect(screen.getByRole('heading', { name: 'Еда' })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: 'Напитки' })).toBeInTheDocument();
-        expect(screen.getByRole('heading', { name: 'Замоканные коктейли' })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Коктейли' })).toBeInTheDocument();
 
         // Проверяем, что блюда отображаются
         expect(screen.getByText('Паста')).toBeInTheDocument();
@@ -549,7 +555,7 @@ describe('RestaurantMenuPage', () => {
         renderComponent();
 
         // До поиска вкладки должны быть видны (проверяем через наличие кнопок вкладок)
-        const tabButtonsBefore = screen.getAllByRole('button', { name: /^(Еда|Напитки|Замоканные коктейли)$/ });
+        const tabButtonsBefore = screen.getAllByRole('button', { name: /^(Еда|Напитки|Коктейли)$/ });
         expect(tabButtonsBefore.length).toBeGreaterThan(0);
 
         // Вводим поисковый запрос
@@ -557,7 +563,7 @@ describe('RestaurantMenuPage', () => {
         fireEvent.change(searchInput, { target: { value: 'Паста' } });
 
         // Вкладки должны быть скрыты (проверяем через отсутствие кнопок вкладок)
-        const tabButtonsAfter = screen.queryAllByRole('button', { name: /^(Еда|Напитки|Замоканные коктейли)$/ });
+        const tabButtonsAfter = screen.queryAllByRole('button', { name: /^(Еда|Напитки|Коктейли)$/ });
         expect(tabButtonsAfter.length).toBe(0);
     });
 
