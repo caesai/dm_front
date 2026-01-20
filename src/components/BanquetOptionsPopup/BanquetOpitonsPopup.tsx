@@ -83,7 +83,7 @@ export const BanquetOptionsPopup: FC<Props> = ({
                     ))}
                 </Picker.Column>
             </Picker>
-            <UniversalButton width={'full'} title={'Сохранить'} theme={'red'} action={closePopup} />
+            <UniversalButton width={'full'} title={'Сохранить'} theme={'secondary'} action={closePopup} />
         </>
     );
 

@@ -11,7 +11,7 @@ interface UniversalButtonProps {
     target?: string;
     style?: CSSProperties;
     action?: () => void;
-    theme?: string;
+    theme?: 'red' | 'secondary';
 }
 
 export const UniversalButton: FC<UniversalButtonProps> = (p) => {
@@ -22,8 +22,7 @@ export const UniversalButton: FC<UniversalButtonProps> = (p) => {
                     target={p.target}
                     to={p.link}
                     className={classNames(
-                        css.universalButton,
-                        p.theme == 'red' ? css.redTheme : null,
+                        p.theme ? css[p.theme] : null,
                         p.width == 'full' ? css.fullWidth : null
                     )}
                 >
@@ -34,7 +33,7 @@ export const UniversalButton: FC<UniversalButtonProps> = (p) => {
                     role={'button'}
                     className={classNames(
                         css.universalButton,
-                        p.theme == 'red' ? css.redTheme : null,
+                        p.theme ? css[p.theme] : null,
                         p.width == 'full' ? css.fullWidth : null
                     )}
                     onClick={() => (p.action !== undefined ? p.action() : null)}

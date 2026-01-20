@@ -46,9 +46,9 @@ export const ConfirmationSelect: React.FC<IConfirmationSelectProps> = ({
     };
 
     return (
-        <ContentContainer>
+        <ContentContainer className={css.bookingSection}>
             <HeaderContainer>
-                <HeaderContent title="Способ подтверждения" />
+                <HeaderContent title="Способ подтверждения" fontSize={16} />
             </HeaderContainer>
             <ContentBlock className={classNames(css.selectWrapper)}>
                 <div className={css.select} onClick={() => setCollapse((prev) => !prev)}>

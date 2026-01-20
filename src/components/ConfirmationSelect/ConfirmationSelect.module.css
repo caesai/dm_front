@@ -1,3 +1,9 @@
+.bookingSection {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 .selectWrapper {
     display: flex;
     flex-direction: column;

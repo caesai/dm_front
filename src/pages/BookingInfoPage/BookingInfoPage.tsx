@@ -192,7 +192,7 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
                                     </>
                                 ) : (
                                     <>
-                                        <DoubleCheckIcon />
+                                        <DoubleCheckIcon color={'var(--dark-grey)'} />
                                         <h3>
                                             Ваше бронирование{' '}
                                             {booking?.booking_status == 'canceled' ? 'отменено' : 'подтверждено'}
@@ -204,7 +204,7 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
                         <div className={classNames(css.fc, css.bookingInfoDetails)}>
                             <div className={classNames(css.fr, css.bookingInfoDetails_container)}>
                                 <div className={classNames(css.fr, css.bookingInfoDetails_item)}>
-                                    <TimeCircle size={16} color={'var(--dark-grey)'} />
+                                    <TimeCircle size={16} />
                                     {booking ? (
                                         <span className={css.bookingInfoDetails_item__text}>
                                             {`${booking.time}-${getEndTime(booking.time, booking.duration)}`}
@@ -214,7 +214,7 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
                                     )}
                                 </div>
                                 <div className={classNames(css.fr, css.bookingInfoDetails_item)}>
-                                    <CalendarIcon size={16} color={'var(--dark-grey)'} />
+                                    <CalendarIcon size={16} />
                                     {booking ? (
                                         <span className={css.bookingInfoDetails_item__text}>
                                             {formatDateDayMonthLong(booking.booking_date)},{' '}
@@ -225,7 +225,7 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
                                     )}
                                 </div>
                                 <div className={classNames(css.fr, css.bookingInfoDetails_item)}>
-                                    <UsersIcon size={16} color={'var(--dark-grey)'} />
+                                    <UsersIcon size={16} />
                                     {booking ? (
                                         <>
                                             <span className={css.bookingInfoDetails_item__text}>
@@ -320,14 +320,12 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
                                         {/** TODO: Убрать условие после 21.12.2025 */}
                                         {/* Если ресторан не SELF_EDGE_SPB_CHINOIS_ID, то показываем кнопку "Смотреть меню" */}
                                         {String(booking.restaurant.id) !== String(R.SELF_EDGE_SPB_CHINOIS_ID) && (
-                                            <div
-                                                className={css.redButton}
-                                                onClick={() =>
-                                                    navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)
-                                                }
-                                            >
-                                                <span className={css.text}>Смотреть меню</span>
-                                            </div>
+                                            <UniversalButton
+                                                width={'full'}
+                                                title={'Смотреть меню'}
+                                                action={() => navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)}
+                                                theme={'secondary'}
+                                            />
                                         )}
                                         <RoundedButton
                                             radius={'50px'}

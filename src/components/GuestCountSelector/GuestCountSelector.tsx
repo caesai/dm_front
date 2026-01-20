@@ -8,6 +8,7 @@ import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import css from '@/components/GuestCountSelector/GuestCountSelector.module.css';
 import { getGuestsString } from '@/utils';
+import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 
 const StyledPopup = styled(Popup)`
     &-overlay {
@@ -120,9 +121,12 @@ const GuestCountPopup: React.FC<IGuestCountPopupProps> = ({
                     </div>
                 </div>
                 <div>
-                    <div className={css.redButton} onClick={onClose}>
-                        <span className={css.text}>Сохранить</span>
-                    </div>
+                    <UniversalButton
+                        width={'full'}
+                        title={'Сохранить'}
+                        action={onClose}
+                        theme={'secondary'}
+                    />
                 </div>
             </ContentContainer>
         </StyledPopup>

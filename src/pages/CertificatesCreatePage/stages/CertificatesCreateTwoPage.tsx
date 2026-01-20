@@ -21,7 +21,7 @@ export const CertificatesCreateTwoPage: React.FC = () => {
                 <UniversalButton
                     width={'full'}
                     title={'Выбрать'}
-                    theme={'red'}
+                    theme={'secondary'}
                     action={() =>
                         navigate('/certificates/online', { state: { title: 'Электронный подарочный сертификат' } })
                     }
@@ -33,7 +33,7 @@ export const CertificatesCreateTwoPage: React.FC = () => {
             {/*    <UniversalButton*/}
             {/*        width={'full'}*/}
             {/*        title={'Выбрать'}*/}
-            {/*        theme={'red'}*/}
+            {/*        theme={'secondary'}*/}
             {/*        action={() => navigate('/certificates/offline', { state: { title: 'Офлайн сертификат' }})}*/}
             {/*    />*/}
             {/*</div>*/}

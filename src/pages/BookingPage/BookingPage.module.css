@@ -138,6 +138,12 @@
     padding: 0;
 }
 
+.bookingSection {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 .preorder {
     display: flex;
     align-items: center;
