@@ -148,7 +148,11 @@ export const BanquetAddressPage: React.FC = (): JSX.Element => {
             <ContentContainer className={css.pageWrapper}>
                 <ContentBlock className={css.header}>
                     <RoundedButton icon={<BackIcon color={'var(--dark-grey)'} />} action={handleGoBack}></RoundedButton>
-                    <HeaderContent title="Банкеты" className={css.header_title} />
+                    <HeaderContent
+                        title="Банкеты"
+                        className={css.header_title}
+                        fontSize={14}
+                    />
                     <div style={{ width: 40 }} />
                 </ContentBlock>
                 <ContentBlock className={css.container}>

@@ -53,7 +53,7 @@ export const ConfirmationSelect: React.FC<IConfirmationSelectProps> = ({
             <ContentBlock className={classNames(css.selectWrapper)}>
                 <div className={css.select} onClick={() => setCollapse((prev) => !prev)}>
                     <div className={css.textWrap}>
-                        <span className={css.title}>{title ? title : 'Способ подтверждения'}</span>
+                        <span className={css.title}>{title}</span>
                         <span className={css.currentValue}>{currentValue.text}</span>
                     </div>
                     <div className={classNames(css.arrow, { [css.arrow__active]: !collapse })}>

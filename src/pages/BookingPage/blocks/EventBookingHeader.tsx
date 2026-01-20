@@ -48,7 +48,7 @@ export const EventBookingHeader: React.FC<IEventBookingHeaderProps> = ({
         <ContentContainer className={css.header}>
             <ContentBlock className={css.nav}>
                 <div className={css.separator} />
-                <HeaderContent className={css.headerTitle} title={eventName} />
+                <HeaderContent className={css.headerTitle} title={eventName} fontSize={14} />
                 <RoundedButton icon={<CrossIcon size={44} />} action={handleGoBack} />
             </ContentBlock>
             <ContentBlock className={css.selectors}>

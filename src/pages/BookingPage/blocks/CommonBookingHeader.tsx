@@ -49,7 +49,11 @@ export const CommonBookingHeader: React.FC<ICommonBookingHeaderProps> = ({
         <ContentContainer className={css.header}>
             <ContentBlock className={css.nav}>
                 <div className={css.separator} />
-                <HeaderContent className={css.headerTitle} title="Бронирование" />
+                <HeaderContent
+                    className={css.headerTitle}
+                    title="Бронирование"
+                    fontSize={14}
+                />
                 <RoundedButton icon={<CrossIcon size={44} />} action={handleGoBack} />
             </ContentBlock>
 
