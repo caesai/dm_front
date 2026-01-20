@@ -101,6 +101,7 @@ import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationS
 import useToastState from '@/hooks/useToastState.ts';
 // Utils
 import { formatDate, getTimeShort } from '@/utils.ts';
+import { IAvailableDay } from '@/types/restaurant.types';
 
 // ============================================
 // Константы
@@ -800,9 +801,11 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
 
         APIGetAvailableDays(auth.access_token, restaurantId, 1)
             .then((res) => {
-                const formattedDates = res.data.map((v: string) => ({
-                    title: formatDate(v),
-                    value: v,
+                const formattedDates = res.data.map((v: IAvailableDay) => ({
+                    title: formatDate(v.date),
+                    value: v.date,
+                    attributes: v.attributes as string[],
+                    deposit_per_person: v.deposit_per_person,
                 }));
                 setAvailableDates(formattedDates);
                 

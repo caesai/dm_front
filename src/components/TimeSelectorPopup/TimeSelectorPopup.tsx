@@ -103,7 +103,6 @@ export const TimeSelectorPopup: FC<Props> = (
     const picker = (
         <>
             <Picker
-                // @ts-expect-error broken-lib
                 value={time}
                 onChange={onChange}
                 wheelMode="natural"

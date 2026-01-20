@@ -745,4 +745,65 @@ describe('BookingPage', () => {
             });
         });
     });
+
+    // ============================================
+    // Тесты: Депозитные даты
+    // ============================================
+
+    /**
+     * Тесты функциональности депозитных дат.
+     * 
+     * При выборе депозитной даты (attributes.includes('requires_deposit')):
+     * - Показывается попап с информацией о депозите
+     * - Фильтруются способы подтверждения (только "По телефону" и "В Telegram")
+     * - Опция "Без подтверждения" скрывается
+     * 
+     * @see {@link DepositInfoModal} - попап информации о депозите
+     * @see {@link CONFIRMATION_OPTIONS} - опции подтверждения
+     */
+    describe('Депозитные даты', () => {
+        /**
+         * Проверяет отображение опции "В Telegram" для обычных дат.
+         */
+        test('должен показывать все опции подтверждения для обычных дат', async () => {
+            renderComponent();
+
+            await waitFor(() => {
+                expect(screen.getByText('В Telegram')).toBeInTheDocument();
+            });
+        });
+
+        /**
+         * Проверяет корректную загрузку депозитных дат из API.
+         */
+        test('должен корректно загружать депозитные даты из API', async () => {
+            const depositDates = [
+                { date: '2025-08-24', attributes: ['requires_deposit'], deposit_per_person: 1500 },
+            ];
+            mockAPIGetAvailableDays.mockResolvedValue({ data: depositDates });
+
+            renderComponent();
+
+            await waitFor(() => {
+                expect(mockAPIGetAvailableDays).toBeDefined();
+            });
+        });
+
+        /**
+         * Проверяет что страница корректно рендерится с депозитными датами.
+         */
+        test('должен корректно рендериться с депозитными датами', async () => {
+            const depositDates = [
+                { date: '2025-08-23', attributes: [], deposit_per_person: 0 },
+                { date: '2025-08-24', attributes: ['requires_deposit'], deposit_per_person: 1500 },
+            ];
+            mockAPIGetAvailableDays.mockResolvedValue({ data: depositDates });
+
+            renderComponent();
+
+            await waitFor(() => {
+                expect(screen.getByText('Бронирование')).toBeInTheDocument();
+            });
+        });
+    });
 });

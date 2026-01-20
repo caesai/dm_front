@@ -46,8 +46,10 @@ export interface WheelPickerProps {
     setOpen: (isOpen: boolean) => void;
     /** Значение пикера */
     value: PickerValue | null;
-    /** Функция изменения значения пикера */
+    /** Функция изменения значения пикера (вызывается при скролле) */
     onChange: (value: PickerValue) => void;
+    /** Функция сохранения значения (вызывается при нажатии "Сохранить"). Если не передана, вызывается onChange */
+    onSave?: (value: PickerValue) => void;
     /** Список элементов пикера */
     items: PickerValue[];
     /** Заголовок пикера */
@@ -60,25 +62,34 @@ export interface WheelPickerProps {
     textAlign?: 'left' | 'center' | 'right';
 }
 
-export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, items, isOpen, setOpen, title, popupHeight = 120, itemHeight = 36, textAlign = 'center' }) => {
+export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, onSave, items, isOpen, setOpen, title, popupHeight = 120, itemHeight = 36, textAlign = 'left' }) => {
     const onClose = useCallback(() => {
         handleClose();
         setOpen(false);
     }, [setOpen]);
 
+    const handleSave = useCallback(() => {
+        if (value && onSave) {
+            // Находим полный объект из items по выбранному значению
+            const selectedItem = items.find(item => item.value === value.value);
+            onSave(selectedItem ?? value);
+        }
+        onClose();
+    }, [value, onSave, onClose, items]);
+
     const picker = useMemo(
         () => (
-            <Picker value={value || {}} onChange={onChange} wheelMode="natural" height={popupHeight} itemHeight={itemHeight}>
+            <Picker value={value || { title: '', value: '' }} onChange={onChange} wheelMode="natural" height={popupHeight} itemHeight={itemHeight}>
                 <Picker.Column name={'value'}>
-                    {items.map((item) => (
-                        <Picker.Item key={item.value.toString()} value={item.value}>
+                    {items.filter(item => item && item.value !== undefined).map((item) => (
+                        <Picker.Item key={String(item.value)} value={item.value}>
                             {({ selected }) => (
                                 <div className={css.selectorItem}>
                                     <span className={classNames(css.item, { [css.item__selected]: selected }, css[textAlign])}>
-                                        {item.title.toString()}
+                                        {String(item.title || '')}
                                     </span>
                                     {item.subtitle && (
-                                        <span>{item.subtitle.toString()}</span>
+                                        <span>{String(item.subtitle)}</span>
                                     )}
                                 </div>
                             )}
@@ -100,7 +111,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, items
                         title={'Сохранить'}
                         width={'full'}
                         theme={'secondary'}
-                        action={onClose}
+                        action={handleSave}
                     />
                 </div>
             </ContentContainer>

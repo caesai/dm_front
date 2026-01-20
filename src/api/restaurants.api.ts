@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { BASE_URL } from '@/api/base.ts';
 import {
+    IAvailableDay,
     IBookingCreate,
     IBookingInfo,
     ICurrentBookings,
@@ -18,7 +19,7 @@ export const APIGetRestaurantsList = (token: string) => {
 };
 
 export const APIGetAvailableDays = (token: string, restaurantId: string, guests: number) => {
-    return axios.get<string[]>(`${BASE_URL}/restaurant/${restaurantId}/availableDays`, {
+    return axios.get<IAvailableDay[]>(`${BASE_URL}/restaurant/${restaurantId}/availableDays`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
