@@ -82,7 +82,7 @@ export const CitySelect: React.FC<ICitySelectProps> = ({ titleStyle, filteredCit
         setCurrentCity(city.name_english);
         setIsOpen(false);
     }, [setCurrentCity]);
-    
+
     return (
         <div className={css.selectWrapper}>
             <div className={css.select} onClick={toggleDropdown}>
@@ -104,6 +104,11 @@ export const CitySelect: React.FC<ICitySelectProps> = ({ titleStyle, filteredCit
                             onClick={() => handleCitySelect(city)}
                         >
                             <span className={css.option_title}>{city.name}</span>
+                            <div
+                                className={classNames(
+                                    css.option_checkbox,
+                                )}
+                            ></div>
                         </div>
                     ))}
                 </div>

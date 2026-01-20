@@ -6,6 +6,7 @@
 
 .optionWrapper {
     padding-top: 16px;
+    margin-right: 15px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -63,8 +64,4 @@
     height: 24px;
     border-radius: 100%;
     border: 1px solid var(--grey);
-}
-
-.option_checkbox__checked {
-    border: 6px solid var(--red);
 }
