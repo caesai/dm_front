@@ -1,5 +1,5 @@
 import { Atom, atom, useAtomValue } from 'jotai';
-import { atomFamily } from 'jotai/utils';
+import { atomFamily } from 'jotai-family';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 
 /**

@@ -372,7 +372,10 @@ describe('RestaurantMenuPage', () => {
 
         render(
             <TestProvider initialValues={initialValues}>
-                <MemoryRouter initialEntries={['/restaurant/1/menu']}>
+                <MemoryRouter initialEntries={['/restaurant/1/menu']} future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true,
+                }}>
                     <Routes>
                         <Route path="/restaurant/:id/menu" element={<RestaurantMenuPage />} />
                     </Routes>
