@@ -195,7 +195,7 @@ export const EventPurchasePage: React.FC = (): JSX.Element => {
             <PageContainer className={css.eventPurchasePage}>
                 <ContentBlock className={css.header}>
                     <RoundedButton icon={<BackIcon color={'var(--dark-grey)'} />} action={handleGoBack} />
-                    <HeaderContent className={css.headerTitle} title="Мероприятия" />
+                    <HeaderContent className={css.headerTitle} title="Мероприятия" fontSize={14} />
                     <RoundedButton icon={<Share color={'var(--dark-grey)'} />} action={shareEvent} />
                 </ContentBlock>
                 <HeaderContent className={css.eventPurchasePageTitle} title="Детали заказа" />

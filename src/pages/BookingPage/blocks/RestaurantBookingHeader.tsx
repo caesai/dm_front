@@ -57,7 +57,7 @@ export const RestaurantBookingHeader: React.FC<IRestaurantBookingHeaderProps> = 
             <ContentBlock className={css.nav}>
                 <div className={css.separator} />
                 <HeaderContainer className={css.headerInfo}>
-                    <HeaderContent className={css.headerTitle} title="Бронирование" />
+                    <HeaderContent className={css.headerTitle} title="Бронирование" fontSize={14} />
                     <HeaderContent className={css.headerTitle} title={<b>{restaurantTitle}</b>} />
                     <HeaderSubText className={css.headerAddress} text={restaurantAddress} />
                 </HeaderContainer>
