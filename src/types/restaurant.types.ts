@@ -121,6 +121,8 @@ export interface IBookingInfo {
     certificate_value: number;
     certificate_expired_at: string;
     features: TBookingFeature[];
+    /** Атрибуты даты бронирования (например, 'requires_deposit') */
+    attributes?: TAvailableDayAttributes[];
 }
 
 type TBookingFeature = 'hospitality_heroes';
@@ -131,3 +133,11 @@ export interface ICurrentBookings {
 export interface IIsReviewAvailable {
     available: boolean;
 }
+
+export interface IAvailableDay {
+    date: string;
+    attributes: TAvailableDayAttributes[];
+    deposit_per_person: number;
+}
+
+export type TAvailableDayAttributes = 'requires_deposit';

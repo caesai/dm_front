@@ -1488,4 +1488,116 @@ describe('useBookingForm', () => {
             expect(result.current.validationDisplay).toHaveProperty('guestsValid');
         });
     });
+
+    // ============================================
+    // Тесты: Депозитные даты
+    // ============================================
+
+    /**
+     * Тесты функциональности депозитных дат.
+     * 
+     * Депозитные даты имеют атрибут 'requires_deposit' и требуют:
+     * - Показ попапа с условиями депозита при выборе даты
+     * - Фильтрацию способов подтверждения (только телефон и Telegram)
+     * - Хранение deposit_per_person для отображения суммы
+     * 
+     * @see {@link DepositInfoModal} - попап информации о депозите
+     * @see {@link DateListSelector} - компонент выбора даты
+     */
+    describe('Депозитные даты', () => {
+        /**
+         * Проверяет что форматированные даты содержат атрибуты депозита.
+         */
+        test('должен сохранять attributes в availableDates', async () => {
+            const depositDates = [
+                { date: '2025-08-23', attributes: [], deposit_per_person: 0 },
+                { date: '2025-08-24', attributes: ['requires_deposit'], deposit_per_person: 1500 },
+            ];
+            mockAPIGetAvailableDays.mockResolvedValue({ data: depositDates });
+
+            const { result } = renderHook(() => useBookingForm(), {
+                wrapper: createWrapper(),
+            });
+
+            act(() => {
+                result.current.handlers.selectRestaurant({ title: 'Test', value: '1' });
+            });
+
+            await waitFor(() => {
+                expect(result.current.availableDates.length).toBeGreaterThan(0);
+            });
+
+            // Проверяем что даты содержат attributes
+            const depositDate = result.current.availableDates.find(d => d.value === '2025-08-24');
+            expect(depositDate?.attributes).toContain('requires_deposit');
+            expect(depositDate?.deposit_per_person).toBe(1500);
+        });
+
+        /**
+         * Проверяет что обычная дата не имеет атрибута requires_deposit.
+         */
+        test('должен корректно обрабатывать обычные даты без депозита', async () => {
+            const depositDates = [
+                { date: '2025-08-23', attributes: [], deposit_per_person: 0 },
+            ];
+            mockAPIGetAvailableDays.mockResolvedValue({ data: depositDates });
+
+            const { result } = renderHook(() => useBookingForm(), {
+                wrapper: createWrapper(),
+            });
+
+            act(() => {
+                result.current.handlers.selectRestaurant({ title: 'Test', value: '1' });
+            });
+
+            await waitFor(() => {
+                expect(result.current.availableDates.length).toBeGreaterThan(0);
+            });
+
+            const normalDate = result.current.availableDates.find(d => d.value === '2025-08-23');
+            expect(normalDate?.attributes).not.toContain('requires_deposit');
+            expect(normalDate?.deposit_per_person).toBe(0);
+        });
+
+        /**
+         * Проверяет что выбранная дата сохраняет атрибуты в форме.
+         */
+        test('должен сохранять атрибуты депозита при выборе даты', async () => {
+            const { result } = renderHook(() => useBookingForm(), {
+                wrapper: createWrapper(),
+            });
+
+            act(() => {
+                result.current.handlers.selectDate({
+                    title: '24 авг',
+                    value: '2025-08-24',
+                    attributes: ['requires_deposit'],
+                    deposit_per_person: 1500,
+                });
+            });
+
+            expect(result.current.form.date?.attributes).toContain('requires_deposit');
+            expect(result.current.form.date?.deposit_per_person).toBe(1500);
+        });
+
+        /**
+         * Проверяет что deposit_per_person сохраняется в форме.
+         */
+        test('должен сохранять deposit_per_person в форме', async () => {
+            const { result } = renderHook(() => useBookingForm(), {
+                wrapper: createWrapper(),
+            });
+
+            act(() => {
+                result.current.handlers.selectDate({
+                    title: '24 авг',
+                    value: '2025-08-24',
+                    attributes: ['requires_deposit'],
+                    deposit_per_person: 2000,
+                });
+            });
+
+            expect(result.current.form.date?.deposit_per_person).toBe(2000);
+        });
+    });
 });
