@@ -175,7 +175,6 @@ export const CertificatesPaymentPage: React.FC = (): JSX.Element => {
                 Number(cert.value),
                 'tma'
             );
-            console.log('Сертификат успешно создан в eGift');
         } catch (error) {
             console.error('Ошибка при создании сертификата в eGift:', error);
         }

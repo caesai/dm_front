@@ -116,7 +116,6 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
      */
     const handleEntityNavigation = useCallback(
         (entityType: EntityType, entityId: string) => {
-            console.log('entityType and entityId: ', entityType, entityId);
             switch (entityType) {
                 case 'restaurant':
                     // переход на страницу ресторана
@@ -212,11 +211,9 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
         const { pathname } = location;
         if (tgWebAppStartParam && !initialCheckDoneRef.current) {
             initialCheckDoneRef.current = true;
-            console.log('tgWebAppStartParam: ', tgWebAppStartParam);
 
             // Парсим параметр для извлечения сущностей и UTM-меток
             const parsedParam = parseStartParam(tgWebAppStartParam);
-            console.log('parsedParam: ', parsedParam);
 
             // Приоритет: специальное ключевое слово > сущность > главная страница
             if (parsedParam.specialKeyword) {
