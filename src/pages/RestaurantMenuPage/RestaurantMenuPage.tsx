@@ -97,10 +97,13 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     /** Рефы на кнопки вкладок */
     const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
 
-    /** Найденный ресторан по ID из URL */
+    /** Найденный ресторан по ID из глобального списка (если доступен) */
     const restaurant = useMemo(() => {
-        return restaurants.find((r) => r.id === String(id));
+        return restaurants.find((r) => String(r.id) === String(id));
     }, [restaurants, id]);
+
+    /** Заголовок для страницы меню (с запасным вариантом, если ресторан не найден в атоме) */
+    const restaurantTitle = restaurant?.title || 'Меню ресторана';
 
     /** Данные меню, состояние загрузки и функция повторного запроса */
     const { menuData, loading, error, refetch } = useRestaurantMenu(String(id));
@@ -155,19 +158,21 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
 
     const hasNoSearchResults = searchQuery.trim() && searchResultsCount === 0;
 
-    /** Ключевые слова для определения категорий коктейлей (требуют 18+) */
-    const COCKTAIL_CATEGORY_KEYWORDS = ['коктейл', 'коктейли', 'cocktail', 'cocktails', 'замоканные'];
-
     /**
-     * Проверяет, является ли категория категорией коктейлей.
-     * Коктейли требуют возрастной верификации (18+).
+     * Проверяет, относится ли категория к алкогольным коктейлям.
+     *
+     * ВАЖНО:
+     * - Возрастное ограничение (18+) применяется ТОЛЬКО к категории с точным названием «Коктейли».
+     * - Любые другие варианты названия (например, «Б/А коктейли», «Безалкогольные коктейли»)
+     *   НЕ считаются алкогольными и не должны блюриться и требовать подтверждения возраста.
      * 
      * @param categoryName - Название категории
-     * @returns true если категория содержит ключевые слова коктейлей
+     * @returns true, если категория — строго «Коктейли»
      */
     const isCocktailCategory = (categoryName: string): boolean => {
         const name = categoryName.toLowerCase().trim();
-        return COCKTAIL_CATEGORY_KEYWORDS.some((keyword) => name.includes(keyword));
+        // Применяем возрастное ограничение только к категории с точным названием «Коктейли»
+        return name === 'коктейли';
     };
 
     // Восстановление позиции скролла при возврате назад
@@ -606,20 +611,12 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
         );
     };
 
-    if (!restaurant) {
-        return (
-            <div className={css.errorContainer}>
-                <p>Ресторан не найден</p>
-            </div>
-        );
-    }
-
     if (loading) {
         return (
             <div className={css.page}>
                 <div className={css.header}>
                     <RoundedButton icon={<BackIcon />} action={handleBackClick} />
-                    <h1 className={css.title}>{restaurant.title}</h1>
+                    <h1 className={css.title}>{restaurantTitle}</h1>
                     <div className={css.spacer} />
                 </div>
                 <div className={css.loadingContainer}>
@@ -634,7 +631,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
             <div className={css.page}>
                 <div className={css.header}>
                     <RoundedButton icon={<BackIcon />} action={handleBackClick} />
-                    <h1 className={css.title}>{restaurant.title}</h1>
+                    <h1 className={css.title}>{restaurantTitle}</h1>
                     <div className={css.spacer} />
                 </div>
                 <div className={css.emptyStateContainer}>
@@ -652,7 +649,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
         <div className={css.page}>
             <div className={css.header}>
                 <RoundedButton icon={<BackIcon />} action={handleBackClick} />
-                <h1 className={css.title}>{restaurant.title}</h1>
+                <h1 className={css.title}>{restaurantTitle}</h1>
                 <div className={css.spacer} />
             </div>
 
