@@ -59,10 +59,10 @@ export const BookingWish: React.FC<BookingWishProps> = ({
 }: BookingWishProps): JSX.Element => {
     const [infoPopup, setInfoPopup] = useState(false);
     return (
-        <ContentContainer>
+        <ContentContainer className={css.bookingSection}>
             <BookingInfoPopup isOpen={infoPopup} setOpen={setInfoPopup} />
             <HeaderContainer>
-                <HeaderContent title={'Пожелания к брони'} />
+                <HeaderContent title={'Пожелания к брони'} fontSize={16} />
             </HeaderContainer>
             {guestCount + childrenCount >= 8 && (
                 <ContentBlock className={css.preorder}>

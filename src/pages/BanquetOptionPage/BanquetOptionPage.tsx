@@ -659,7 +659,7 @@ export const BanquetOptionPage: React.FC = (): JSX.Element => {
                     <UniversalButton
                         width={'full'}
                         title={'Продолжить'}
-                        theme={isFormValid ? 'red' : undefined}
+                        theme={isFormValid ? 'secondary' : undefined}
                         action={isFormValid ? handleContinue : undefined}
                     />
                 </div>

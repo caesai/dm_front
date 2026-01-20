@@ -304,7 +304,7 @@ describe('BanquetAdditionalServicesPage', () => {
             const continueButton = screen.getByTestId('continue-button');
             expect(continueButton).toBeInTheDocument();
             expect(continueButton).toHaveTextContent('Продолжить');
-            expect(continueButton).toHaveAttribute('data-theme', 'red');
+            expect(continueButton).toHaveAttribute('data-theme', 'secondary');
         });
 
         /**

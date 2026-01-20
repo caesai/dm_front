@@ -49,7 +49,7 @@ export const CallRestaurantPopup: FC<Props> = (p) => {
                         width={'full'}
                         title={'Позвонить'}
                         action={() => callPhone(p.phone)}
-                        theme={'red'}
+                        theme={'secondary'}
                     ></UniversalButton>
                 </div>
             </div>

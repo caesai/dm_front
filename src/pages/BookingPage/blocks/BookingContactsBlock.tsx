@@ -33,9 +33,9 @@ export const BookingContactsBlock: React.FC<IBookingContactsBlockProps> = ({
     validationPhoneValid,
 }: IBookingContactsBlockProps): JSX.Element => {
     return (
-        <ContentContainer>
+        <ContentContainer className={css.bookingSection}>
             <HeaderContainer>
-                <HeaderContent title="Контакты" />
+                <HeaderContent title="Контакты" fontSize={16} />
             </HeaderContainer>
             <ContentBlock className={css.form}>
                 <TextInput

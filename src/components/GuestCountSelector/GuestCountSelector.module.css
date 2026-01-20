@@ -53,25 +53,6 @@
     color: var(--black);
 }
 
-.redButton {
-    cursor: pointer;
-    display: flex;
-    padding: 15px 0;
-    background-color: var(--red);
-    border-radius: 15px;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-
-    .text {
-        font-family: 'Mont', sans-serif;
-        font-weight: 700;
-        font-size: 16px;
-        color: var(--primary-background);
-    }
-}
-
-
 .personsContainer {
     display: block;
     /*justify-content: space-between;*/

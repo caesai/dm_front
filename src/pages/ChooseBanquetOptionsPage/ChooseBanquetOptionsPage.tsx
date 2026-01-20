@@ -207,7 +207,7 @@ export const ChooseBanquetOptionsPage: React.FC = (): JSX.Element => {
                                         <UniversalButton
                                             width={'full'}
                                             title={'Выбрать'}
-                                            theme={'red'}
+                                            theme={'secondary'}
                                             action={() => navigate(`/banquets/${restaurantId}/option/${option.id}`)}
                                         />
                                     </div>

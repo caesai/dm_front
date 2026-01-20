@@ -358,7 +358,7 @@ describe('BanquetReservationPage', () => {
             const submitButton = screen.getByTestId('submit-button');
             expect(submitButton).toBeInTheDocument();
             expect(submitButton).toHaveTextContent('Забронировать');
-            expect(submitButton).toHaveAttribute('data-theme', 'red');
+            expect(submitButton).toHaveAttribute('data-theme', 'secondary');
         });
     });
 

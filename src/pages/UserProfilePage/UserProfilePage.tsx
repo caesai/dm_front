@@ -50,7 +50,7 @@ export const UserProfilePage: React.FC = () => {
         if (mainButton.mount.isAvailable()) {
             mainButton.mount();
             mainButton.setParams({
-                backgroundColor: '#F52A2D',
+                backgroundColor: '#BBB3A0',
                 hasShineEffect: false,
                 isEnabled: true,
                 isLoaderVisible: false,
