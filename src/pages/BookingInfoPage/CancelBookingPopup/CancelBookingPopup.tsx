@@ -209,7 +209,7 @@ const StepTwo: React.FC<StepTwoProps> = ({ onSendReason }) => {
             <UniversalButton
                 width={'full'}
                 title={'Подтвердить'}
-                theme={selectedReason ? 'red' : undefined}
+                theme={selectedReason ? 'secondary' : undefined}
                 action={() => selectedReason && onSendReason(selectedReason)}
             />
         </>
@@ -236,7 +236,10 @@ const ErrorStep: React.FC<ErrorStepProps> = ({ onRetry }) => (
     <>
         <span className={css.text}>{'Произошла ошибка'}</span>
         <div className={css.buttons}>
-            <UniversalButton width={'full'} title={'Попробовать снова'} action={onRetry} />
+            <UniversalButton
+                width={'full'}
+                title={'Попробовать снова'}
+                action={onRetry} />
         </div>
     </>
 );
