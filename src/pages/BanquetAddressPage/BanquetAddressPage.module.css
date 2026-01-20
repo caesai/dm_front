@@ -42,10 +42,9 @@
 
 .content_title {
     margin: 0;
-    font-family: "Heading Pro Ultracompressed", sans-serif;
-    font-weight: 400;
-    font-size: 30px;
-    text-transform: uppercase;
+    font-family: "Mont", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
 }
 
 .banquet_title {
