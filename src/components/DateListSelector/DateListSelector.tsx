@@ -5,6 +5,7 @@ import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
 import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { WheelPicker } from '@/components/WheelPicker/WheelPicker.tsx';
 import { PickerValue } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { DepositInfoModal } from '@/components/DepositInfoModal/DepositInfoModal.tsx';
 // Utils
 import { formatDate, formatDateShort } from '@/utils.ts';
 
@@ -26,6 +27,7 @@ interface IDateListSelectorProps {
     /** Сообщение при пустом списке дат */
     emptyMessage?: string;
 }
+
 /**
  * Компонент выбора даты из списка
  * @param {IDateListSelectorProps} props - свойства компонента
@@ -40,14 +42,16 @@ export const DateListSelector: React.FC<IDateListSelectorProps> = ({
     emptyMessage = 'Нет доступных дат',
 }: IDateListSelectorProps): JSX.Element => {
     const [selectedDate, setSelectedDate] = useState<PickerValue | null>(value ?? null);
+    const [pendingDate, setPendingDate] = useState<PickerValue | null>(null);
     const [isPickerOpen, setIsPickerOpen] = useState(false);
-    
+    const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+
     /** Проверка, пустой ли список дат */
     const isListEmpty = !datesList || datesList.length === 0;
-    
+
     /** Селектор заблокирован, если disabled или список пуст */
     const isDisabled = disabled || isListEmpty;
-    
+
     // Синхронизация с внешним value
     useEffect(() => {
         if (value && value.value !== 'unset') {
@@ -61,18 +65,58 @@ export const DateListSelector: React.FC<IDateListSelectorProps> = ({
         setIsPickerOpen(!isPickerOpen);
     }, [setIsPickerOpen, isDisabled, isPickerOpen]);
 
-    // Выбор даты из списка
-    const handleDateChange = useCallback(
-        (value: PickerValue) => {
+    // Обработка скролла в пикере (сохраняем как pending)
+    const handleDateScroll = useCallback(
+        (date: PickerValue) => {
             if (isDisabled) return;
-            setSelectedDate({
-                title: formatDate(value.value.toString()),
-                value: value.value,
-            });
-            onSelect?.(value);
+            setPendingDate(date);
         },
-        [setSelectedDate, onSelect, isDisabled]
+        [isDisabled]
     );
+
+    // Подтверждение выбора даты
+    const confirmDateSelection = useCallback(
+        (date: PickerValue) => {
+            const formattedDate = {
+                ...date,
+                title: formatDate(date.value.toString()),
+            };
+            setSelectedDate(formattedDate);
+            onSelect?.(date);
+            setPendingDate(null);
+        },
+        [onSelect]
+    );
+
+    // Обработка нажатия "Сохранить" в пикере
+    const handleDateSave = useCallback(
+        (date: PickerValue) => {
+            if (isDisabled) return;
+            
+            // Проверяем, требуется ли депозит для этой даты
+            if (date.attributes?.includes('requires_deposit')) {
+                setPendingDate(date);
+                setIsDepositModalOpen(true);
+            } else {
+                confirmDateSelection(date);
+            }
+        },
+        [isDisabled, confirmDateSelection]
+    );
+
+    // Подтверждение депозита в модальном окне
+    const handleDepositConfirm = useCallback(() => {
+        if (pendingDate) {
+            confirmDateSelection(pendingDate);
+        }
+        setIsDepositModalOpen(false);
+    }, [pendingDate, confirmDateSelection]);
+
+    // Закрытие модального окна без подтверждения
+    const handleDepositCancel = useCallback(() => {
+        setPendingDate(null);
+        setIsDepositModalOpen(false);
+    }, []);
 
     /**
      * Определяет заголовок для отображения:
@@ -81,8 +125,8 @@ export const DateListSelector: React.FC<IDateListSelectorProps> = ({
      * - Иначе → заголовок по умолчанию
      */
     const getDisplayTitle = (): string => {
-        if (selectedDate && selectedDate.value !== 'unset') {
-            return formatDateShort(selectedDate.value.toString());
+        if (selectedDate && selectedDate.value && selectedDate.value !== 'unset') {
+            return formatDateShort(String(selectedDate.value));
         }
         if (!disabled && isListEmpty) {
             return emptyMessage;
@@ -92,14 +136,21 @@ export const DateListSelector: React.FC<IDateListSelectorProps> = ({
 
     return (
         <ContentBlock>
+            <DepositInfoModal
+                isOpen={isDepositModalOpen}
+                depositPerPerson={pendingDate?.deposit_per_person ?? 0}
+                onConfirm={handleDepositConfirm}
+                onCancel={handleDepositCancel}
+            />
             <WheelPicker
-                value={selectedDate}
-                onChange={handleDateChange}
+                value={pendingDate ?? selectedDate}
+                onChange={handleDateScroll}
+                onSave={handleDateSave}
                 items={datesList ?? []}
                 isOpen={isPickerOpen}
                 setOpen={setIsPickerOpen}
                 title={defaultTitle}
-                textAlign='center'
+                textAlign="center"
             />
             <DropDownSelect
                 title={getDisplayTitle()}

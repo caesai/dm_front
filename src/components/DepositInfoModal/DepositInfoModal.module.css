@@ -1,0 +1,32 @@
+.content {
+    padding: 0 20px;
+    text-align: left;
+    font-family: "Mont", sans-serif;
+    font-weight: 400;
+}
+
+.description {
+    margin-bottom: 12px;
+}
+
+.depositAmount {
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+.conditionsTitle {
+    margin-bottom: 8px;
+}
+
+.conditionsList {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.conditionsList li {
+    margin-bottom: 4px;
+}
+
+.conditionsList li:last-child {
+    margin-bottom: 0;
+}

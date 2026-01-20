@@ -44,7 +44,7 @@
  * @see {@link commonBookingFormAtom} - изолированный атом состояния формы
  */
 
-import React, { useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 // Components
 import { Page } from '@/components/Page.tsx';
@@ -165,6 +165,29 @@ export const BookingPage: React.FC = (): JSX.Element => {
      */
     const serviceFeeMessage = getServiceFeeData(String(form.restaurant.value));
 
+    /**
+     * Фильтрация опций подтверждения для депозитных дат.
+     * Для дат с депозитом оставляем только "По телефону" и "В Telegram".
+     */
+    const confirmationOptions = useMemo(() => {
+        const requiresDeposit = form.date?.attributes?.includes('requires_deposit');
+        if (requiresDeposit) {
+            return CONFIRMATION_OPTIONS.filter(opt => opt.id === 'telegram' || opt.id === 'phone');
+        }
+        return CONFIRMATION_OPTIONS;
+    }, [form.date?.attributes]);
+
+    /**
+     * Сброс способа подтверждения при выборе депозитной даты.
+     * Если текущий способ недоступен для депозитных дат, сбрасываем на первый доступный.
+     */
+    useEffect(() => {
+        const isCurrentOptionValid = confirmationOptions.some(opt => opt.id === form.confirmation.id);
+        if (!isCurrentOptionValid && confirmationOptions.length > 0) {
+            handlers.setConfirmation(confirmationOptions[0]);
+        }
+    }, [confirmationOptions, form.confirmation.id, handlers]);
+
     return (
         <Page back={!state?.shared}>
             <PageContainer>
@@ -233,7 +256,7 @@ export const BookingPage: React.FC = (): JSX.Element => {
                 {/* Способ подтверждения */}
 
                 <ConfirmationSelect
-                    options={CONFIRMATION_OPTIONS}
+                    options={confirmationOptions}
                     currentValue={form.confirmation}
                     onChange={handlers.setConfirmation}
                 />
