@@ -23,6 +23,10 @@ export const Banner = () => {
                 modules={[Zoom]}
                 freeMode={true}
                 spaceBetween={8}
+                centeredSlides={true}
+                centeredSlidesBounds={true}
+                slidesOffsetBefore={2}
+                slidesOffsetAfter={8}
             >
                 {banners.map((banner, index) => (
                     <SwiperSlide
