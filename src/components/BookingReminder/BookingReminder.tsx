@@ -119,10 +119,11 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                             >
                                 <div className={css.inner}>
                                 <span className={css.title}>
-                                    {booking.booking_type === 'event' ? booking.event_title : `${booking.restaurant.title}, ${booking.restaurant.address}`}
+                                    {booking.booking_type === 'event' ? booking.event_title : `${booking.restaurant.title}`}
                                 </span>
                                     {booking.booking_type === 'event' ?
                                         <span className={css.subText}>{booking.restaurant.title}</span> : null}
+                                    <span className={css.subText}>{booking.restaurant.address}</span>
                                     <div className={css.sub}>
                                         <div className={css.subItem}>
                                             <TimeCircle size={16} color={'var(--dark-grey)'}></TimeCircle>

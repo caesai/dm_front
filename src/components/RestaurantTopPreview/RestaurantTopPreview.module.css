@@ -78,8 +78,8 @@
 .title {
     margin: 0;
     padding: 0;
-    font-family: "Heading Pro Ultracompressed", serif;
-    font-weight: 400;
+    font-family: "Object Sans", serif;
+    font-weight: 600;
     font-size: 48px;
     color: var(--primary-background);
     height: 58px;
