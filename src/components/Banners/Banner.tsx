@@ -1,5 +1,5 @@
 import css from "./Banner.module.css";
-import { FreeMode } from 'swiper/modules';
+import { Zoom } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useEffect, useState } from 'react';
 import { BannersMock } from '@/__mocks__/banners.mock.ts';
@@ -17,7 +17,13 @@ export const Banner = () => {
 
     return (
         <section className={css.banner}>
-            <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
+            <Swiper
+                zoom
+                slidesPerView="auto"
+                modules={[Zoom]}
+                freeMode={true}
+                spaceBetween={8}
+            >
                 {banners.map((banner, index) => (
                     <SwiperSlide
                         key={`${index}-${banner}`}
