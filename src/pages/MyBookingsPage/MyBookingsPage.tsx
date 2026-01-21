@@ -16,9 +16,12 @@ import { BookingCard } from '@/components/BookingCard/BookingCard.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 // Styles
 import css from './MyBookingsPage.module.css';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export const MyBookingsPage: React.FC = () => {
+    const { goBack } = useNavigationHistory()
     const navigate = useNavigate();
+
     const [auth] = useAtom(authAtom);
     const [bookings, setBookings] = useState<IBookingInfo[]>([]);
     const [loading, setLoading] = useState(true);
@@ -43,7 +46,7 @@ export const MyBookingsPage: React.FC = () => {
                     <RoundedButton
                         icon={<BackIcon size={24} />}
                         bgColor={'var(--primary-background)'}
-                        action={() => navigate('/profile')}
+                        action={goBack}
                     />
                     <span className={css.header__title}>Мои бронирования</span>
                     <div className={css.wh44}></div>
