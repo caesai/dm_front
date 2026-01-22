@@ -150,7 +150,6 @@ export const GalleryBlock: React.FC<IGalleryBlockProps> = ({ restaurantId }): JS
      * Инициализация галереи при получении данных
      */
     useEffect(() => {
-        console.log('restaurantGallery: ', restaurantGallery)
         if (restaurantGallery) {
             setGallery(transformGallery(restaurantGallery));
         }
