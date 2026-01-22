@@ -47,13 +47,13 @@ export const CustomStoryComponent: React.FC<CustomStoryComponentProps> = (
                     navigate('/restaurant/' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1));
                 }
                 if (slicedUrl.includes('eventId')) {
-                    navigate('/events/' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1));
+                    navigate('/events/' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1) + '/details');
                 }
                 if (slicedUrl.includes('bookingId')) {
-                    navigate('/booking/?id=' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1));
+                    navigate('/restaurant/' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1) + '/booking');
                 }
             }
-            window.open(button_url);
+            // window.open(button_url);
         }
     };
 
