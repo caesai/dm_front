@@ -16,9 +16,12 @@ import { BookingCard } from '@/components/BookingCard/BookingCard.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 // Styles
 import css from './MyBookingsPage.module.css';
+import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export const MyBookingsPage: React.FC = () => {
+    const { goBack, getPreviousPath } = useNavigationHistory()
     const navigate = useNavigate();
+
     const [auth] = useAtom(authAtom);
     const [bookings, setBookings] = useState<IBookingInfo[]>([]);
     const [loading, setLoading] = useState(true);
@@ -26,6 +29,12 @@ export const MyBookingsPage: React.FC = () => {
     const clickOnActiveBooking = (id: string) => {
         navigate(`/myBookings/${id}`);
     };
+
+    const handleGoBack = () => {
+        const prevPath = getPreviousPath();
+        prevPath?.includes('/myBookings/') ?
+            navigate('/') : goBack();
+    }
 
     useEffect(() => {
         if (!auth?.access_token) {
@@ -43,7 +52,7 @@ export const MyBookingsPage: React.FC = () => {
                     <RoundedButton
                         icon={<BackIcon size={24} />}
                         bgColor={'var(--primary-background)'}
-                        action={() => navigate('/profile')}
+                        action={handleGoBack}
                     />
                     <span className={css.header__title}>Мои бронирования</span>
                     <div className={css.wh44}></div>

@@ -168,10 +168,9 @@
 }
 
 .eventPurchasePageTitle {
-    font-family: "Heading Pro Ultracompressed", sans-serif;
-    font-weight: 800;
+    font-family: "Mont", sans-serif;
+    font-weight: 600;
     font-size: 30px;
-    text-transform: uppercase;
     padding: 0;
     margin: 0;
 }

@@ -30,20 +30,17 @@ export const DepositInfoModal: React.FC<IDepositInfoModalProps> = ({
         <ModalPopup
             isOpen={isOpen}
             setOpen={onCancel}
-            title="Требуется депозит"
             list={
                 <div className={css.content}>
                     <p className={css.description}>
-                        В этот день бронирование возможно только с предоплатой депозита.
+                        В этот день бронирование возможно при условии оплаты депозита
+                        в размере <span className={css.depositAmount}>{depositPerPerson}</span> ₽ за 1 гостя.
                     </p>
-                    <p className={css.depositAmount}>
-                        Сумма депозита: {depositPerPerson} ₽ за 1 человека.
-                    </p>
-                    <p className={css.conditionsTitle}>Условия возврата:</p>
+                    <p className={css.conditionsTitle}>Условия отмены бронирования:</p>
                     <ul className={css.conditionsList}>
-                        <li>Отмена за 3+ дня — 100% возврат</li>
-                        <li>Отмена менее чем за 3 дня — 50% возврат</li>
-                        <li>В день бронирования — возврат невозможен</li>
+                        <li>100% возврат депозита при отмене бронирования до 11.02 включительно</li>
+                        <li>50% возврат депозита при отмене бронирования до 13.02 включительно</li>
+                        <li>Депозит не возвращается при отмене 14.02</li>
                     </ul>
                 </div>
             }

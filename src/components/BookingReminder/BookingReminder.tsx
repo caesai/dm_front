@@ -13,7 +13,7 @@ import { StarPrivilegeIcon } from '@/components/Icons/StarPrivilege.tsx';
 // Styles
 import css from '@/components/BookingReminder/BookingReminder.module.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode } from 'swiper/modules';
+import { Zoom } from 'swiper/modules';
 
 /**
  * Пропсы компонента BookingReminder.
@@ -94,7 +94,16 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
      */
     return [
         <div className={css.swiper}>
-            <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
+            <Swiper
+                slidesPerView="auto"
+                modules={[Zoom]}
+                freeMode={true}
+                spaceBetween={8}
+                centeredSlides={true}
+                centeredSlidesBounds={true}
+                slidesOffsetBefore={2}
+                slidesOffsetAfter={8}
+            >
                 {bookings
                     .filter((book) => {
                         return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime();
@@ -110,10 +119,11 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                             >
                                 <div className={css.inner}>
                                 <span className={css.title}>
-                                    {booking.booking_type === 'event' ? booking.event_title : `${booking.restaurant.title}, ${booking.restaurant.address}`}
+                                    {booking.booking_type === 'event' ? booking.event_title : `${booking.restaurant.title}`}
                                 </span>
                                     {booking.booking_type === 'event' ?
                                         <span className={css.subText}>{booking.restaurant.title}</span> : null}
+                                    <span className={css.subText}>{booking.restaurant.address}</span>
                                     <div className={css.sub}>
                                         <div className={css.subItem}>
                                             <TimeCircle size={16} color={'var(--dark-grey)'}></TimeCircle>
