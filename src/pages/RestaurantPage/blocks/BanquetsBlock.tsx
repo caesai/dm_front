@@ -47,6 +47,7 @@ export const BanquetsBlock: React.FC<IBanquetsBlockProps> = ({ restaurantId }): 
      * Банкеты ресторана.
      */
     const restaurantBanquets = useMemo(() => restaurant?.banquets.banquet_options || [], [restaurant]);
+    console.log();
     /**
      * Сортирует время работы ресторана по дням недели
      * @returns {IWorkTime[] | undefined} Отсортированный массив времени работы
@@ -84,7 +85,7 @@ export const BanquetsBlock: React.FC<IBanquetsBlockProps> = ({ restaurantId }): 
                 <figure className={css.blockImage}>
                     <div
                         className={classNames(css.blockImage, css.bgImage)}
-                        style={{ backgroundImage: `url(${restaurantBanquets[0]?.images?.[0]})` }}
+                        style={{ backgroundImage: `url(${restaurant?.banquets.image})` }}
                     />
                 </figure>
                 <span className={css.blockDescription}>{restaurantBanquets[0]?.description}</span>

@@ -84,7 +84,7 @@ export const GalleryBlock: React.FC<IGalleryBlockProps> = ({ restaurantId }): JS
     /**
      * Фотографии ресторана.
      */
-    const restaurantGallery = useMemo(() => restaurant?.photo_cards || [], [restaurant]);
+    const restaurantGallery = useMemo(() => restaurant?.gallery || [], [restaurant]);
 
     /**
      * Получает фотографии для отображения в галерее
@@ -150,6 +150,7 @@ export const GalleryBlock: React.FC<IGalleryBlockProps> = ({ restaurantId }): JS
      * Инициализация галереи при получении данных
      */
     useEffect(() => {
+        console.log('restaurantGallery: ', restaurantGallery)
         if (restaurantGallery) {
             setGallery(transformGallery(restaurantGallery));
         }
