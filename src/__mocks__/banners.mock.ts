@@ -4,14 +4,14 @@ import { IEventBanner } from '@/types/events.types.ts';
 export const BannersMock: IEventBanner[] = [
     {
         img_url: BannerImg,
-        link: '/events/492/details'
+        link: '/events/512/details'
     },
     {
         img_url: BannerImg,
-        link: '/events/492/details'
+        link: '/events/512/details'
     },
     {
         img_url: BannerImg,
-        link: '/events/492/details'
+        link: '/events/512/details'
     }
 ]
