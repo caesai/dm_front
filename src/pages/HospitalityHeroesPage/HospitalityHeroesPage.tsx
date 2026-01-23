@@ -21,7 +21,6 @@ import css from '@/pages/HospitalityHeroesPage/HospitalityHeroesPage.module.css'
 import hospitalityHeroesLogo from '/img/hospitality_heroes.png';
 import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer';
 import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer';
-import { ContentBlock } from '@/components/ContentBlock/ContentBlock';
 
 /**
  * Страница Hospitality Heroes
@@ -59,10 +58,6 @@ export const HospitalityHeroesPage: React.FC = (): JSX.Element => {
                 <div className={css.header_spacer} />
             </HeaderContainer>
             <ContentContainer className={css.content}>
-                <ContentBlock className={css.content_block}>
-                    <HeaderContent title={'Только для участников'} className={css.content_title} />
-                    <HeaderContent title={'Hospitality Heroes'} className={css.content_title} />
-                </ContentBlock>
                 <img src={hospitalityHeroesLogo} alt="Hospitality Heroes" className={css.content_img} />
                 <p className={css.content_description}>
                     Мы создаём закрытое сообщество людей, которые делают индустрию гостеприимства сильнее каждый день —
