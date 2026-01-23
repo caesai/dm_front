@@ -147,7 +147,7 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                                             )}
                                             {booking.features.includes('hospitality_heroes') && (
                                                 <>
-                                                    <StarPrivilegeIcon size={16} />
+                                                    <StarPrivilegeIcon size={16} color={'var(--dark-grey)'} />
                                                     <span className={css.subText}>Скидка 40%</span>
                                                 </>
                                             )}
