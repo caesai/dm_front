@@ -9,7 +9,7 @@
     gap: 20px;
     align-items: center;
     justify-content: space-between;
-    flex-direction: row!important;
+    flex-direction: row !important;
 }
 
 .separator {
@@ -17,42 +17,42 @@
 }
 
 .headerTitle {
-    font-family: 'Mont', sans-serif!important;
-    text-transform: capitalize!important;
-    font-weight: 400!important;
-    font-size: 14px!important;
-    text-align: center!important;
-    padding: 0!important;
-    margin: 0!important;
+    font-family: 'Mont', sans-serif !important;
+    text-transform: capitalize !important;
+    font-weight: 400 !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 .headerInfo {
-    gap: 4px!important;
-    &>h3 {
-        padding: 0!important;
-        margin: 0!important;
-        height: 20px!important;
-        line-height: 20px!important;
+    gap: 4px !important;
+    & > h3 {
+        padding: 0 !important;
+        margin: 0 !important;
+        height: 20px !important;
+        line-height: 20px !important;
     }
 }
 
 .headerAddress {
-    font-weight: 400!important;
-    font-size: 12px!important;
-    color: var(--grey)!important;
-    text-align: center!important;
+    font-weight: 400 !important;
+    font-size: 12px !important;
+    color: var(--grey) !important;
+    text-align: center !important;
 }
 
 .selectors {
-    gap: 8px!important;
+    gap: 8px !important;
 }
 
 .selectorsRow {
-    flex-direction: row!important;
+    flex-direction: row !important;
     align-items: stretch;
-    gap: 8px!important;
+    gap: 8px !important;
 
-    &>div {
+    & > div {
         flex: 1;
     }
 }
@@ -60,7 +60,7 @@
 .bookingInfo {
     font-size: 14px;
     font-optical-sizing: auto;
-    font-family: "Cormorant", serif;
+    font-family: 'Cormorant', serif;
     font-weight: 400;
     line-height: 150%;
     color: var(--grey);
@@ -134,7 +134,7 @@
     font-weight: 400;
     font-size: 10px;
     text-align: center;
-    color: #E9622C;
+    color: #e9622c;
     padding: 0;
 }
 

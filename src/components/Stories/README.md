@@ -3,8 +3,10 @@
 This document provides an overview of the "Story" feature, which implements a story-viewer functionality similar to popular social media platforms. It is built using React, TypeScript, Jotai for state management, and Swiper for slide-based components.
 
 ### 📁 Feature structure
+
 The story feature is organized within the src/components/Stories directory, with sub-components organized in their own folders.
 src/components/Stories/
+
 ```
 ├── StoriesContainer/
 │   ├── StoriesContainer.module.css
@@ -31,6 +33,7 @@ src/components/Stories/
 ├── useIsMounted.ts
 └── Stories.tsx
 ```
+
 ### 🧱 Component architecture
 
 The feature is composed of several, highly-specialized components that work together to create the full story experience.
@@ -84,6 +87,7 @@ Uses a key based on activeStoryIndex to force the component to re-mount when a n
 **isPaused:** The current playback state.
 
 ### StoriesSlide.tsx
+
 **Purpose:** Renders a single story block within the StoriesSwiper.
 **Functionality:**
 Manages updates to the Jotai atom: Triggers updates to the localStoriesListAtom when a story ends or progresses.
@@ -101,6 +105,7 @@ Renders the StoriesContainer for the specific story block.
 **isPaused:** The current playback state.
 
 ### StoriesContainer.tsx
+
 **Purpose:** Contains and manages the playback for a single sequence of stories.
 
 **Functionality:**
@@ -116,12 +121,14 @@ Renders the ProgressArray and the current Story component.
 
 **isPaused:** Controls the playback state.
 
-### StoriesProgress / ProgressArray.tsx: 
+### StoriesProgress / ProgressArray.tsx:
+
 Renders the progress indicators at the top of the story viewer.
 
 **storiesReducer.ts:** A pure reducer function used by StoriesContainer to manage story navigation state.
 
 ### StoriesComponents/
+
 **Image.tsx:** Renders an image story with a loading state.
 
 **Video.tsx:** Renders a video story, handling loading and playback logic.
@@ -133,4 +140,3 @@ Renders the progress indicators at the top of the story viewer.
 **stories.types.ts:** Defines shared types and enums used across the story components, including the ILocalStory type.
 
 **localStoriesListAtom.ts:** A Jotai atomWithStorage that persists the seen status and last seen index for each story block.
-

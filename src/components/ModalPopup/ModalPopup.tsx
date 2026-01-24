@@ -40,24 +40,22 @@ interface ModalProps {
     reverseButton?: boolean;
 }
 
-export const ModalPopup: React.FC<ModalProps> = (
-    {
-        isOpen,
-        title,
-        subtitle,
-        text,
-        setOpen,
-        button = false,
-        btnAction,
-        btnDisabled,
-        btnText,
-        btnScndrText,
-        btnScndrAction,
-        list,
-        reverseButton,
-        btnsColumn,
-    },
-) => {
+export const ModalPopup: React.FC<ModalProps> = ({
+    isOpen,
+    title,
+    subtitle,
+    text,
+    setOpen,
+    button = false,
+    btnAction,
+    btnDisabled,
+    btnText,
+    btnScndrText,
+    btnScndrAction,
+    list,
+    reverseButton,
+    btnsColumn,
+}) => {
     const handleSecondButton = () => {
         if (btnScndrAction) {
             btnScndrAction();
@@ -66,18 +64,10 @@ export const ModalPopup: React.FC<ModalProps> = (
         setOpen();
     };
     return (
-        <Popup 
-            open={isOpen} 
-            closeOnDocumentClick={false}
-            contentStyle={contentStyle}
-            overlayStyle={overlayStyle}
-        >
+        <Popup open={isOpen} closeOnDocumentClick={false} contentStyle={contentStyle} overlayStyle={overlayStyle}>
             <div className={css.popup}>
                 <div className={css.end}>
-                    <RoundedButton
-                        icon={<CrossIcon size={44} color={'black'} />}
-                        action={setOpen}
-                    />
+                    <RoundedButton icon={<CrossIcon size={44} color={'black'} />} action={setOpen} />
                 </div>
                 <div style={{ paddingTop: 5 }} />
                 {title && <span className={css.title}>{title}</span>}
@@ -89,19 +79,26 @@ export const ModalPopup: React.FC<ModalProps> = (
                 )}
                 {list && list}
                 {button && (
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        flexDirection: reverseButton ? 'row-reverse' : btnsColumn ? 'column' : 'row',
-                    }}>
-                        <button className={classNames(css.button, btnDisabled ? css.button__disabled : '')}
-                                onClick={btnAction} disabled={btnDisabled}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            gap: '10px',
+                            flexDirection: reverseButton ? 'row-reverse' : btnsColumn ? 'column' : 'row',
+                        }}
+                    >
+                        <button
+                            className={classNames(css.button, btnDisabled ? css.button__disabled : '')}
+                            onClick={btnAction}
+                            disabled={btnDisabled}
+                        >
                             {btnText}
                         </button>
                         {btnScndrText !== undefined && (
-                            <button className={classNames(css.button, css.button__disabled)}
-                                    onClick={handleSecondButton}>
+                            <button
+                                className={classNames(css.button, css.button__disabled)}
+                                onClick={handleSecondButton}
+                            >
                                 {btnScndrText}
                             </button>
                         )}

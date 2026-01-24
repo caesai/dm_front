@@ -1,6 +1,6 @@
 .select_timeOfDay {
-    gap: 0!important;
-    flex-direction: row!important;
+    gap: 0 !important;
+    flex-direction: row !important;
 }
 
 .timeslotsError {
@@ -50,7 +50,7 @@
 
 .timeList_button {
     padding: 11px 30px;
-    border: 2px solid var(--secondary-background, #F4F4F4);
+    border: 2px solid var(--secondary-background, #f4f4f4);
     border-radius: 20px;
     width: max-content;
     cursor: pointer;
@@ -81,10 +81,9 @@
 .timeList_button__active {
     border-color: var(--black);
     &.timeList_button__highlighted {
-        border-color: #E9622C;
+        border-color: #e9622c;
         &::before {
             background-image: none;
         }
     }
 }
-

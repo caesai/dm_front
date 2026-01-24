@@ -1,6 +1,9 @@
 import { render, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CertificatesSelector, ICertificatesSelectorProps } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
+import {
+    CertificatesSelector,
+    ICertificatesSelectorProps,
+} from '@/components/CertificatesSelector/CertificatesSelector.tsx';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { certificatesListMock } from '@/__mocks__/certificates.mock.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
@@ -26,7 +29,14 @@ describe('CertificatesSelector', () => {
 
         return render(
             // Используем Provider и передаем наши специальные моки через initialValues
-            <TestProvider initialValues={[[certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>, certificatesListMock]]}>
+            <TestProvider
+                initialValues={[
+                    [
+                        certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>,
+                        certificatesListMock,
+                    ],
+                ]}
+            >
                 <CertificatesSelector {...initialProps} {...props} />
             </TestProvider>
         );
@@ -49,5 +59,5 @@ describe('CertificatesSelector', () => {
         await waitFor(() => {
             expect(mockSetCertificateId).toHaveBeenCalledWith('SUGNS0AG');
         });
-    })
+    });
 });

@@ -1,9 +1,9 @@
 /**
  * @fileoverview Страница бронирования столика для конкретного ресторана.
- * 
+ *
  * Пользователь попадает на эту страницу со страницы ресторана
  * ({@link RestaurantPage}) после нажатия кнопки "Забронировать".
- * 
+ *
  * Страница предоставляет функционал:
  * - Отображение информации о ресторане (название, адрес)
  * - Выбор даты бронирования из доступных дат
@@ -14,34 +14,34 @@
  * - Выбор сертификата для применения
  * - Выбор способа подтверждения бронирования
  * - Создание бронирования через API
- * 
+ *
  * При успешном бронировании пользователь перенаправляется на
  * страницу деталей бронирования `/myBookings/{booking_id}`.
- * 
+ *
  * ## Синхронизация состояния
- * 
+ *
  * {@link BookingsBlock} и данная страница используют общий атом {@link restaurantBookingFormAtom}
  * (formType: 'restaurant'), что обеспечивает автоматическую синхронизацию данных
  * (дата, время, количество гостей) без использования location.state.
- * 
+ *
  * Отличия от {@link BookingPage} (общей страницы бронирования):
  * - Ресторан предвыбран и не может быть изменён
  * - Поддерживает sharedRestaurant для навигации "назад"
  * - Использует общий атом с {@link BookingsBlock}
- * 
+ *
  * Отличия от {@link EventBookingPage}:
  * - Дата не фиксирована, выбирается пользователем
  * - Не передаёт event_id в API
  * - Навигация после бронирования на /myBookings/{id}
  * - Содержит CertificatesSelector
- * 
+ *
  * ## Разделение состояния
- * 
+ *
  * Использует `formType: 'restaurant'` для изолированного атома {@link restaurantBookingFormAtom},
  * что предотвращает конфликты с другими страницами бронирования.
- * 
+ *
  * @module pages/BookingPage/RestaurantBookingPage
- * 
+ *
  * @see {@link RestaurantPage} - страница ресторана (точка входа)
  * @see {@link BookingsBlock} - блок бронирования на странице ресторана
  * @see {@link BookingPage} - общая страница бронирования
@@ -71,27 +71,27 @@ import { CONFIRMATION_OPTIONS } from '@/atoms/bookingFormAtom.ts';
 
 /**
  * Страница бронирования столика для конкретного ресторана.
- * 
+ *
  * Использует хук {@link useBookingForm} для управления состоянием формы,
  * валидации и взаимодействия с API.
- * 
+ *
  * Ресторан предзаполняется из URL параметра `restaurantId` и не может
  * быть изменён пользователем (в отличие от {@link BookingPage}).
- * 
+ *
  * При успешном бронировании выполняется навигация на страницу бронирования:
  * `/myBookings/{booking_id}`
- * 
+ *
  * @component
  * @returns {JSX.Element} Страница бронирования ресторана
- * 
+ *
  * @example
  * // Роут в App.tsx
  * <Route path="/restaurant/:restaurantId/booking" element={<RestaurantBookingPage />} />
- * 
+ *
  * @example
  * // Навигация с RestaurantPage (данные уже в общем restaurantBookingFormAtom)
  * navigate(`/restaurant/${restaurantId}/booking`);
- * 
+ *
  * @example
  * // Навигация по shared-ссылке
  * navigate(`/restaurant/${restaurantId}/booking`, {
@@ -121,15 +121,15 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
 
     /**
      * Хук управления формой бронирования.
-     * 
+     *
      * Конфигурация для бронирования в конкретном ресторане:
      * - preSelectedRestaurant: данные ресторана (нельзя изменить в форме)
      * - initialBookingData: fallback значения (данные уже в общем restaurantBookingFormAtom)
      * - isSharedRestaurant: флаг для особой навигации "назад"
-     * 
+     *
      * Данные из {@link BookingsBlock} уже находятся в {@link restaurantBookingFormAtom},
      * так как оба компонента используют одинаковый formType: 'restaurant'.
-     * 
+     *
      * При успешном бронировании переходит на /myBookings/{booking_id}
      */
     const {
@@ -163,7 +163,7 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
 
     /**
      * Обработчик кнопки "Назад".
-     * 
+     *
      * При переходе по shared-ссылке (state.sharedRestaurant = true)
      * перенаправляет на главную страницу, иначе возвращает на
      * предыдущую страницу (обычно {@link RestaurantPage}).
@@ -183,7 +183,7 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
     const confirmationOptions = useMemo(() => {
         const requiresDeposit = form.date?.attributes?.includes('requires_deposit');
         if (requiresDeposit) {
-            return CONFIRMATION_OPTIONS.filter(opt => opt.id === 'telegram' || opt.id === 'phone');
+            return CONFIRMATION_OPTIONS.filter((opt) => opt.id === 'telegram' || opt.id === 'phone');
         }
         return CONFIRMATION_OPTIONS;
     }, [form.date?.attributes]);
@@ -193,7 +193,7 @@ export const RestaurantBookingPage: React.FC = (): JSX.Element => {
      * Если текущий способ недоступен для депозитных дат, сбрасываем на первый доступный.
      */
     useEffect(() => {
-        const isCurrentOptionValid = confirmationOptions.some(opt => opt.id === form.confirmation.id);
+        const isCurrentOptionValid = confirmationOptions.some((opt) => opt.id === form.confirmation.id);
         if (!isCurrentOptionValid && confirmationOptions.length > 0) {
             handlers.setConfirmation(confirmationOptions[0]);
         }

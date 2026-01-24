@@ -1,17 +1,17 @@
-import BannerImg from "/img/main_page_banner.png"
+import BannerImg from '/img/main_page_banner.png';
 import { IEventBanner } from '@/types/events.types.ts';
 
 export const BannersMock: IEventBanner[] = [
     {
         img_url: BannerImg,
-        link: '/events/512/details'
+        link: '/events/512/details',
     },
     {
         img_url: BannerImg,
-        link: '/events/512/details'
+        link: '/events/512/details',
     },
     {
         img_url: BannerImg,
-        link: '/events/512/details'
-    }
-]
+        link: '/events/512/details',
+    },
+];

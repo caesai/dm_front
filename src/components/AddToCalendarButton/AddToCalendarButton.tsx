@@ -5,13 +5,7 @@ import { openLink } from '@telegram-apps/sdk-react';
 const AddToCalendarButton: React.FC = () => {
     const handleAddToCalendar = () => {
         const event = {
-            start: [2023, 10, 15, 18, 30] as [
-                number,
-                number,
-                number,
-                number,
-                number,
-            ], // Год, Месяц, День, Час, Минута
+            start: [2023, 10, 15, 18, 30] as [number, number, number, number, number], // Год, Месяц, День, Час, Минута
             duration: { hours: 2 }, // Длительность события
             title: 'Бронирование стола в ресторане',
             description: 'Вы забронировали стол в ресторане на 18:30.',
@@ -38,12 +32,9 @@ const AddToCalendarButton: React.FC = () => {
             link.setAttribute('download', 'event.ics');
             document.body.appendChild(link);
             // link.click();
-            openLink(
-                `https://storage.yandexcloud.net/vapehookahstatic/event.ics`,
-                {
-                    tryInstantView: false,
-                }
-            );
+            openLink(`https://storage.yandexcloud.net/vapehookahstatic/event.ics`, {
+                tryInstantView: false,
+            });
 
             // Убираем ссылку из DOM
             document.body.removeChild(link);

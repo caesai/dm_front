@@ -104,19 +104,16 @@ describe('GastronomyBasketPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        
+
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Not implemented: navigation')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Not implemented: navigation')) {
                 return;
             }
             originalConsoleError(...args);
         });
-        
+
         // Подавляем предупреждения о SVG атрибутах
         jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -131,7 +128,7 @@ describe('GastronomyBasketPage', () => {
             }
             originalConsoleWarn(...args);
         });
-        
+
         (APIPostUserOrder as jest.Mock).mockResolvedValue({ data: { order_id: 123 } });
         (APIPostCreateGastronomyPayment as jest.Mock).mockResolvedValue({
             data: { payment_url: 'http://payment.url' },
@@ -266,9 +263,9 @@ describe('GastronomyBasketPage', () => {
 
         const payButton = screen.getByTestId('pay-button');
         expect(payButton).toBeInTheDocument();
-        
+
         fireEvent.click(payButton);
-        
+
         await waitFor(() => {
             expect(APIPostUserOrder).toHaveBeenCalled();
         });
@@ -282,6 +279,6 @@ describe('GastronomyBasketPage', () => {
         // Ожидаем, что заказ не будет создан
         expect(APIPostUserOrder).not.toHaveBeenCalled();
 
-        // Ожидаем перенаправление на онбординг            
+        // Ожидаем перенаправление на онбординг
     });
 });

@@ -34,7 +34,12 @@ import { useAtom, useSetAtom, WritableAtom } from 'jotai/index';
 import moment from 'moment/moment';
 import classnames from 'classnames';
 // APIs
-import { APIGetCertificateById, APIGetCertificates, APIPostCertificateCheckPayment, APIPostEGiftCertificateOffline } from '@/api/certificates.api.ts';
+import {
+    APIGetCertificateById,
+    APIGetCertificates,
+    APIPostCertificateCheckPayment,
+    APIPostEGiftCertificateOffline,
+} from '@/api/certificates.api.ts';
 import { EGIFT_API_TOKEN, EGIFT_CLIENT_ID } from '@/api/base';
 // Types
 import { ICertificate } from '@/types/certificates.types.ts';
@@ -158,7 +163,7 @@ export const CertificatesPaymentPage: React.FC = (): JSX.Element => {
     /**
      * Создает сертификат в eGift после успешной оплаты
      * Вызывается только если сертификат оплачен и у него есть dreamteam_id
-     * 
+     *
      * @param cert - Объект сертификата с dreamteam_id и value
      */
     const createEGiftCertificate = useCallback(async (cert: ICertificate) => {
@@ -254,25 +259,15 @@ export const CertificatesPaymentPage: React.FC = (): JSX.Element => {
                                     theme={'secondary'}
                                     action={() => shareCertificate(certificate, certificateRef.current)}
                                 />
-                                <UniversalButton
-                                    width={'full'}
-                                    title={'Позже'}
-                                    action={backToHome}
-                                />
+                                <UniversalButton width={'full'} title={'Позже'} action={backToHome} />
                             </div>
                         )}
                     </div>
                 </>
             ) : (
                 <>
-                    <h3 className={css.page_title}>
-                        Сертификат не найден
-                    </h3>
-                    <UniversalButton
-                        width={'full'}
-                        title={'Назад'}
-                        action={backToHome}
-                    />
+                    <h3 className={css.page_title}>Сертификат не найден</h3>
+                    <UniversalButton width={'full'} title={'Назад'} action={backToHome} />
                     <UniversalButton
                         width={'full'}
                         title={'Попробовать ещё раз'}

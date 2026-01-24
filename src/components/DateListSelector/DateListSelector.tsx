@@ -92,11 +92,11 @@ export const DateListSelector: React.FC<IDateListSelectorProps> = ({
     const handleDateSave = useCallback(
         (date: PickerValue) => {
             if (isDisabled) return;
-            
+
             // Находим полный объект из списка дат, чтобы получить все атрибуты
             // (WheelPicker может передать объект без attributes)
-            const fullDate = datesList?.find(d => d.value === date.value) ?? date;
-            
+            const fullDate = datesList?.find((d) => d.value === date.value) ?? date;
+
             // Проверяем, требуется ли депозит для этой даты
             if (fullDate.attributes?.includes('requires_deposit')) {
                 setPendingDate(fullDate);

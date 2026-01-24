@@ -24,61 +24,55 @@ export const NewRestaurant: React.FC = () => {
 
     return (
         <Page back={true}>
-            <div
-                className={classNames(
-                    css.header,
-                    headerScrolled ? css.scrolled : null
-                )}
-            >
+            <div className={classNames(css.header, headerScrolled ? css.scrolled : null)}>
                 <div className={css.headerNav}>
                     <div className={css.headerTop}>
                         <div className={css.headerNavBlock}>
                             <RoundedButton
-                                icon={<BackIcon color={'var(--dark-grey)'}/>}
+                                icon={<BackIcon color={'var(--dark-grey)'} />}
                                 action={() => navigate('/')}
                             ></RoundedButton>
                         </div>
-
                     </div>
                 </div>
             </div>
-            <div style={{ padding: '20px 15px', marginTop: 50}}>
+            <div style={{ padding: '20px 15px', marginTop: 50 }}>
                 <RestaurantPreview
                     // @ts-ignore
                     restaurant={{
-                        "id": String(R.SELF_EDGE_SPB_CHINOIS_ID),
-                        "title": "Self Edge Chinois",
-                        "slogan": "Современная Азия с акцентом на Китай и культовый raw bar",
-                        "address": "Санкт-Перербург, ул. Добролюбова, 11",
-                        "logo_url": "",
-                        "thumbnail_photo": newres,
-                        "avg_cheque": 3000,
-                        "about_text": "",
-                        "about_kitchen": "Американская, Европейская",
-                        "about_features": "",
-                        "phone_number": "",
-                        "address_lonlng": "",
-                        "address_station": "",
-                        "address_station_color": "",
-                        "city": {
-                            "id": 2,
-                            "name": "Санкт-Петербург",
-                            "name_english": "spb",
-                            "name_dative": "Санкт-Петербурге"
+                        id: String(R.SELF_EDGE_SPB_CHINOIS_ID),
+                        title: 'Self Edge Chinois',
+                        slogan: 'Современная Азия с акцентом на Китай и культовый raw bar',
+                        address: 'Санкт-Перербург, ул. Добролюбова, 11',
+                        logo_url: '',
+                        thumbnail_photo: newres,
+                        avg_cheque: 3000,
+                        about_text: '',
+                        about_kitchen: 'Американская, Европейская',
+                        about_features: '',
+                        phone_number: '',
+                        address_lonlng: '',
+                        address_station: '',
+                        address_station_color: '',
+                        city: {
+                            id: 2,
+                            name: 'Санкт-Петербург',
+                            name_english: 'spb',
+                            name_dative: 'Санкт-Петербурге',
                         },
-                        "gallery": [],
+                        gallery: [],
                         // @ts-ignore
-                        "brand_chef": {},
-                        "worktime": [],
-                        "menu": [],
-                        "menu_imgs": [],
-                        "socials": [],
-                        "photo_cards": []
+                        brand_chef: {},
+                        worktime: [],
+                        menu: [],
+                        menu_imgs: [],
+                        socials: [],
+                        photo_cards: [],
                     }}
                     key={`rest-12`}
                     clickable
                 />
             </div>
         </Page>
-    )
-}
+    );
+};

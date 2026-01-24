@@ -23,7 +23,7 @@ const StyledPopup = styled(Popup)`
     }
 
     &-content {
-        width: 100vw!important;
+        width: 100vw !important;
         margin: 0 !important;
         padding: 0;
     }
@@ -62,7 +62,18 @@ export interface WheelPickerProps {
     textAlign?: 'left' | 'center' | 'right';
 }
 
-export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, onSave, items, isOpen, setOpen, title, popupHeight = 120, itemHeight = 36, textAlign = 'left' }) => {
+export const WheelPicker: React.FC<WheelPickerProps> = ({
+    value,
+    onChange,
+    onSave,
+    items,
+    isOpen,
+    setOpen,
+    title,
+    popupHeight = 120,
+    itemHeight = 36,
+    textAlign = 'left',
+}) => {
     const onClose = useCallback(() => {
         handleClose();
         setOpen(false);
@@ -71,7 +82,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, onSav
     const handleSave = useCallback(() => {
         if (value && onSave) {
             // Находим полный объект из items по выбранному значению
-            const selectedItem = items.find(item => item.value === value.value);
+            const selectedItem = items.find((item) => item.value === value.value);
             onSave(selectedItem ?? value);
         }
         onClose();
@@ -79,22 +90,34 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, onSav
 
     const picker = useMemo(
         () => (
-            <Picker value={value || { title: '', value: '' }} onChange={onChange} wheelMode="natural" height={popupHeight} itemHeight={itemHeight}>
+            <Picker
+                value={value || { title: '', value: '' }}
+                onChange={onChange}
+                wheelMode="natural"
+                height={popupHeight}
+                itemHeight={itemHeight}
+            >
                 <Picker.Column name={'value'}>
-                    {items.filter(item => item && item.value !== undefined).map((item) => (
-                        <Picker.Item key={String(item.value)} value={item.value}>
-                            {({ selected }) => (
-                                <div className={css.selectorItem}>
-                                    <span className={classNames(css.item, { [css.item__selected]: selected }, css[textAlign])}>
-                                        {String(item.title || '')}
-                                    </span>
-                                    {item.subtitle && (
-                                        <span>{String(item.subtitle)}</span>
-                                    )}
-                                </div>
-                            )}
-                        </Picker.Item>
-                    ))}
+                    {items
+                        .filter((item) => item && item.value !== undefined)
+                        .map((item) => (
+                            <Picker.Item key={String(item.value)} value={item.value}>
+                                {({ selected }) => (
+                                    <div className={css.selectorItem}>
+                                        <span
+                                            className={classNames(
+                                                css.item,
+                                                { [css.item__selected]: selected },
+                                                css[textAlign]
+                                            )}
+                                        >
+                                            {String(item.title || '')}
+                                        </span>
+                                        {item.subtitle && <span>{String(item.subtitle)}</span>}
+                                    </div>
+                                )}
+                            </Picker.Item>
+                        ))}
                 </Picker.Column>
             </Picker>
         ),
@@ -107,12 +130,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange, onSav
                 <div className={css.content}>
                     <h3>{title}</h3>
                     {picker}
-                    <UniversalButton
-                        title={'Сохранить'}
-                        width={'full'}
-                        theme={'secondary'}
-                        action={handleSave}
-                    />
+                    <UniversalButton title={'Сохранить'} width={'full'} theme={'secondary'} action={handleSave} />
                 </div>
             </ContentContainer>
         </StyledPopup>

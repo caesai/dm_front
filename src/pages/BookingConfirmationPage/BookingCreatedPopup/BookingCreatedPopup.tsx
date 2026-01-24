@@ -27,13 +27,7 @@ const StyledPopup = styled(Popup)`
     }
 `;
 
-export const BookingCreatedPopup: FC<Props> = ({
-    isOpen,
-    rest_title,
-    rest_address,
-    booking_date,
-    booking_time,
-}) => {
+export const BookingCreatedPopup: FC<Props> = ({ isOpen, rest_title, rest_address, booking_date, booking_time }) => {
     const navigate = useNavigate();
 
     const onClose = () => navigate('/myBookings');
@@ -42,17 +36,11 @@ export const BookingCreatedPopup: FC<Props> = ({
         <StyledPopup open={isOpen} onClose={onClose}>
             <div className={css.wrapper}>
                 <div className={css.nav}>
-                    <RoundedButton
-                        action={onClose}
-                        icon={
-                            <CrossIcon size={44} color={'var(--dark-grey)'} />
-                        }
-                    />
+                    <RoundedButton action={onClose} icon={<CrossIcon size={44} color={'var(--dark-grey)'} />} />
                 </div>
                 <span className={css.text}>
-                    Будем ждать вас в{' '}
-                    <span className={css.dontBreak}>{rest_title}</span> по
-                    адресу <span className={css.dontBreak}>{rest_address}</span>{' '}
+                    Будем ждать вас в <span className={css.dontBreak}>{rest_title}</span> по адресу{' '}
+                    <span className={css.dontBreak}>{rest_address}</span>{' '}
                     <span className={css.dontBreak}>{booking_date}</span> в{' '}
                     <span className={css.dontBreak}>{booking_time}</span>
                 </span>

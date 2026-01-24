@@ -10,9 +10,7 @@
 .halfBlackWrapper {
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg,
-            rgba(0, 0, 0, 0),
-            rgb(0, 0, 0, 0.8));
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgb(0, 0, 0, 0.8));
     border-radius: 0 0 20px 20px;
 }
 
@@ -41,7 +39,6 @@
     align-items: center;
 }
 
-
 .extraItem {
     display: flex;
     flex-direction: row;
@@ -57,14 +54,14 @@
 }
 
 .extraTop {
-    font-family: "Mont", serif;
+    font-family: 'Mont', serif;
     font-size: 14px;
     font-weight: 400;
     color: var(--primary-background);
 }
 
 .extraBottom {
-    font-family: "Mont", serif;
+    font-family: 'Mont', serif;
     font-size: 12px;
     color: var(--light-grey);
 }
@@ -78,7 +75,7 @@
 .title {
     margin: 0;
     padding: 0;
-    font-family: "Object Sans", serif;
+    font-family: 'Object Sans', serif;
     font-weight: 600;
     font-size: 30px;
     color: var(--primary-background);

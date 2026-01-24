@@ -34,17 +34,14 @@ const STORIES_CACHE_TTL = 3 * 60 * 1000; // 3 минуты
 
 /**
  * Хук для оптимизированной загрузки данных главной страницы.
- * 
+ *
  * Оптимизации:
  * - Параллельная загрузка бронирований/билетов и историй
  * - Кэширование историй по городу в памяти
  * - Мемоизация фильтрации ресторанов
  * - Отмена запросов при размонтировании
  */
-export const useIndexPageData = ({
-    currentCity,
-    cityId,
-}: UseIndexPageDataOptions): UseIndexPageDataReturn => {
+export const useIndexPageData = ({ currentCity, cityId }: UseIndexPageDataOptions): UseIndexPageDataReturn => {
     const auth = useAtomValue(authAtom);
     const restaurants = useAtomValue(restaurantsListAtom);
 
@@ -129,7 +126,7 @@ export const useIndexPageData = ({
 
         // Отменяем предыдущий запрос
         abortControllerRef.current.stories?.abort();
-        
+
         const controller = new AbortController();
         abortControllerRef.current.stories = controller;
 
@@ -137,7 +134,7 @@ export const useIndexPageData = ({
         const cached = getCachedStories(cityId);
         if (cached) {
             setStoriesBlocks(cached);
-            
+
             // Обновляем в фоне если кэш старше 1 минуты
             const cacheEntry = storiesCache.get(cityId);
             if (cacheEntry && Date.now() - cacheEntry.timestamp > 60 * 1000) {
@@ -157,7 +154,7 @@ export const useIndexPageData = ({
 
         try {
             const response = await ApiGetStoriesBlocks(auth.access_token, cityId);
-            
+
             if (controller.signal.aborted) return;
 
             const stories = response.data.filter((s) => s.stories.length > 0);
@@ -220,4 +217,3 @@ export const useIndexPageData = ({
         restaurantsList,
     };
 };
-

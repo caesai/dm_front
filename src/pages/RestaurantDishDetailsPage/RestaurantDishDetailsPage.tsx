@@ -60,22 +60,22 @@ export const RestaurantDishDetailsPage: React.FC = () => {
     // Найти первое блюдо с изображением из меню для использования в коктейлях
     const firstDishImage = useMemo(() => {
         if (!menuData) return '';
-        
+
         for (const category of menuData.item_categories) {
             if (category.is_hidden) continue;
-            
+
             for (const item of category.menu_items) {
                 if (item.is_hidden) continue;
-                
+
                 const defaultSize = getDefaultSize(item.item_sizes);
                 const imageUrl = defaultSize?.button_image_url || '';
-                
+
                 if (imageUrl && imageUrl.trim().length > 0) {
                     return imageUrl;
                 }
             }
         }
-        
+
         return '';
     }, [menuData]);
 
@@ -114,7 +114,9 @@ export const RestaurantDishDetailsPage: React.FC = () => {
         return (
             <div className={css.errorContainer}>
                 <p>Блюдо не найдено</p>
-                <button onClick={() => navigate(`/restaurant/${id}/menu`, { state: { fromDishDetails: true } })}>Назад</button>
+                <button onClick={() => navigate(`/restaurant/${id}/menu`, { state: { fromDishDetails: true } })}>
+                    Назад
+                </button>
             </div>
         );
     }

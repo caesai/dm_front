@@ -1,7 +1,7 @@
 import css from '../OnboardingPage.module.css';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
-import phone from "/img/onboarding/phone.png";
+import phone from '/img/onboarding/phone.png';
 import { FC } from 'react';
 
 export const StageTwo: FC = () => {
@@ -12,19 +12,9 @@ export const StageTwo: FC = () => {
             <div className={css.stage_page_wrapper}>
                 <div className={css.stage_footer}>
                     <div className={css.stage_description}>
-                        <h2 className={css.stage_description_title}>
-                            Всегда рядом
-                        </h2>
-                        <div
-                            className={classNames(
-                                css.stageFive_footer_description
-                            )}
-                        >
-                            <span
-                                className={
-                                    css.stageFive_footer_description_text
-                                }
-                            >
+                        <h2 className={css.stage_description_title}>Всегда рядом</h2>
+                        <div className={classNames(css.stageFive_footer_description)}>
+                            <span className={css.stageFive_footer_description_text}>
                                 1. Нажмите на
                                 <svg
                                     width="20"
@@ -33,14 +23,7 @@ export const StageTwo: FC = () => {
                                     fill="none"
                                     xmlns="http://www.w3.org/2000/svg"
                                 >
-                                    <rect
-                                        x="0.5"
-                                        y="0.5"
-                                        width="19"
-                                        height="19"
-                                        rx="9.5"
-                                        stroke="#A6A6A6"
-                                    />
+                                    <rect x="0.5" y="0.5" width="19" height="19" rx="9.5" stroke="#A6A6A6" />
                                     <path
                                         fillRule="evenodd"
                                         clipRule="evenodd"
@@ -50,30 +33,19 @@ export const StageTwo: FC = () => {
                                 </svg>
                                 верхней панели.
                             </span>
-                            <span
-                                className={
-                                    css.stageFive_footer_description_text
-                                }
-                            >
+                            <span className={css.stageFive_footer_description_text}>
                                 2. Выберите «Добавить на экран «Домой».
                             </span>
                         </div>
                     </div>
                     <div className={css.button_container}>
-                        <div
-                            className={css.redButton}
-                            onClick={() => navigate('/onboarding/3')}
-                        >
+                        <div className={css.redButton} onClick={() => navigate('/onboarding/3')}>
                             <span>Продолжить</span>
                         </div>
                     </div>
                 </div>
                 <div className={css.stageFive_wrapper}>
-                    <img
-                        src={phone}
-                        className={css.stageFive_phone}
-                        alt=""
-                    />
+                    <img src={phone} className={css.stageFive_phone} alt="" />
                 </div>
             </div>
         </div>

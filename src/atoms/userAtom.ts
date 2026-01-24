@@ -16,15 +16,15 @@ export const authAtom = atom<IAuthInfo>();
 
 /**
  * @description Атом для получения нормализованных разрешений пользователя
- * 
+ *
  * Выполняет следующую нормализацию:
  * - Гарантирует возврат массива (защита от `null`/`undefined`)
  * - Фильтрует только строковые значения
  * - Приводит все значения к нижнему регистру
  * - Удаляет лишние пробелы
- * 
+ *
  * @returns {TUserPermissions[]} Массив нормализованных разрешений пользователя
- * 
+ *
  * @example
  * ```tsx
  * const permissions = useAtomValue(permissionsAtom);
@@ -36,16 +36,16 @@ export const authAtom = atom<IAuthInfo>();
 export const permissionsAtom = atom<TUserPermissions[]>((get) => {
     const user = get(userAtom);
     const permissions = user?.permissions;
-    
+
     // Если permissions не массив или null/undefined, возвращаем пустой массив
     if (!Array.isArray(permissions)) {
         return [];
     }
-    
+
     // Нормализуем: убираем пробелы и приводим к нижнему регистру
     return permissions
         .filter((p): p is TUserPermissions => typeof p === 'string')
-        .map(p => p.toLowerCase().trim() as TUserPermissions);
+        .map((p) => p.toLowerCase().trim() as TUserPermissions);
 });
 
 /**

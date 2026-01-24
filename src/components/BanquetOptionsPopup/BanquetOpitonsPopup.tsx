@@ -28,7 +28,7 @@ const StyledPopup = styled(Popup)`
         width: 100vw;
         margin: 0 !important;
         padding: 0;
-        width: 100vw!important;
+        width: 100vw !important;
     }
 `;
 
@@ -63,12 +63,7 @@ export const BanquetOptionsPopup: FC<Props> = ({
 
     const picker = (
         <>
-            <Picker
-                value={guestCount}
-                onChange={onChange}
-                wheelMode="natural"
-                height={120}
-            >
+            <Picker value={guestCount} onChange={onChange} wheelMode="natural" height={120}>
                 <Picker.Column name={'value'}>
                     {guestOptions.map((option) => (
                         <Picker.Item key={option.value as string} value={option.value as string}>

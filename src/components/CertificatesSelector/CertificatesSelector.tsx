@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import classnames from 'classnames';
 import moment from 'moment/moment';
@@ -13,7 +12,6 @@ import { ContentContainer } from '@/components/ContentContainer/ContentContainer
 // Styles
 import css from '@/components/CertificatesSelector/CertificatesSelector.module.css';
 
-
 interface ICertificateOptionProps {
     onClick: () => void;
     isSelected: boolean;
@@ -26,7 +24,12 @@ interface ICertificateOptionProps {
  * @param {ICertificateOptionProps} props
  * @returns {JSX.Element}
  */
-const CertificateOption: React.FC<ICertificateOptionProps> = ({ onClick, value, date, isSelected }: ICertificateOptionProps): JSX.Element => (
+const CertificateOption: React.FC<ICertificateOptionProps> = ({
+    onClick,
+    value,
+    date,
+    isSelected,
+}: ICertificateOptionProps): JSX.Element => (
     <div className={classnames(css.optionRow, { [css.optionSelected]: isSelected })} onClick={onClick}>
         <div className={css.optionColumn}>
             <span>Номинал:</span>
@@ -52,14 +55,15 @@ export interface ICertificateTypeSelectorProps {
  * @param {ICertificateTypeSelectorProps} props
  * @returns {JSX.Element}
  */
-const CertificateTypeSelector: React.FC<ICertificateTypeSelectorProps> = ({ type, currentType, toggleType, label, children }: ICertificateTypeSelectorProps): JSX.Element => (
+const CertificateTypeSelector: React.FC<ICertificateTypeSelectorProps> = ({
+    type,
+    currentType,
+    toggleType,
+    label,
+    children,
+}: ICertificateTypeSelectorProps): JSX.Element => (
     <div className={css.certificateOption} data-testid="certificates-selector">
-        <CheckBoxInput
-            checked={currentType === type}
-            toggle={() => toggleType(type)}
-            label={label}
-            noBackground
-        />
+        <CheckBoxInput checked={currentType === type} toggle={() => toggleType(type)} label={label} noBackground />
         {currentType === type && children}
     </div>
 );
@@ -86,7 +90,11 @@ export interface ICertificatesSelectorProps {
  * @param {ICertificatesSelectorProps} { setCertificateId, isOpened, selectedCertificateId }
  * @returns {JSX.Element} Функциональный компонент React или <></>, если сертификаты отсутствуют.
  */
-export const CertificatesSelector: React.FC<ICertificatesSelectorProps> = ({ setCertificateId, isOpened, selectedCertificateId }: ICertificatesSelectorProps): JSX.Element => {
+export const CertificatesSelector: React.FC<ICertificatesSelectorProps> = ({
+    setCertificateId,
+    isOpened,
+    selectedCertificateId,
+}: ICertificatesSelectorProps): JSX.Element => {
     const [certificates] = useAtom(certificatesListAtom);
     const [selectedType, setSelectedType] = useState<TCertificate | null>(null);
     // const [offlineCertificateId, setOfflineCertificateId] = useState<string>('');
@@ -96,7 +104,7 @@ export const CertificatesSelector: React.FC<ICertificatesSelectorProps> = ({ set
      * @type {ICertificate[]}
      */
     const onlineCertificates: ICertificate[] = useMemo(() => {
-        return certificates.filter(certificate => certificate.certificate_type === CERTIFICATION_TYPES.ONLINE);
+        return certificates.filter((certificate) => certificate.certificate_type === CERTIFICATION_TYPES.ONLINE);
     }, [certificates]);
     /**
      * Переключает выбор опции онлайн-сертификата по индексу.
@@ -104,7 +112,7 @@ export const CertificatesSelector: React.FC<ICertificatesSelectorProps> = ({ set
      * @param {number} index Индекс опции онлайн-сертификата в списке `onlineCertificates`.
      */
     const toggleSelectedOnlineOption = (index: number) => {
-        setSelectedOnlineOptionIndex(prevIndex => prevIndex === index ? null : index);
+        setSelectedOnlineOptionIndex((prevIndex) => (prevIndex === index ? null : index));
     };
 
     /**
@@ -113,8 +121,8 @@ export const CertificatesSelector: React.FC<ICertificatesSelectorProps> = ({ set
      * @param {TCertificate} type Тип сертификата для выбора (например, 'ONLINE', 'OFFLINE').
      */
     const toggleCertificateType = (type: TCertificate) => {
-        setSelectedType(prevType => prevType === type ? null : type);
-        const filteredCertificates = certificates.filter(certificate => certificate.certificate_type === type);
+        setSelectedType((prevType) => (prevType === type ? null : type));
+        const filteredCertificates = certificates.filter((certificate) => certificate.certificate_type === type);
         if (filteredCertificates.length === 1) {
             setCertificateId(filteredCertificates[0].id);
             setSelectedOnlineOptionIndex(0);

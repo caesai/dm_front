@@ -10,16 +10,7 @@ interface ProgressProps {
     bufferAction: boolean;
 }
 
-const Progress: React.FC<ProgressProps> = (
-    {
-        width,
-        active,
-        pause,
-        bufferAction,
-        count,
-    },
-) => {
-
+const Progress: React.FC<ProgressProps> = ({ width, active, pause, bufferAction, count }) => {
     const getProgressStyle = ({ active }: { active: number }) => {
         switch (active) {
             case 2:

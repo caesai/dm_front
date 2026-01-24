@@ -5,13 +5,7 @@ type IconProps = {
 
 export const QRCodeIcon = ({ size = 24, color = '#000000' }: IconProps) => {
     return (
-        <svg
-            width={size}
-            height={size}
-            viewBox={`0 0 ${size} ${size}`}
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M2.8 2C2.58783 2 2.38434 2.08429 2.23431 2.23431C2.08429 2.38434 2 2.58783 2 2.8V6H6V2H2.8ZM5 5H3V3H5V5Z"
                 fill={color}
@@ -33,10 +27,7 @@ export const QRCodeIcon = ({ size = 24, color = '#000000' }: IconProps) => {
             <path d="M7 7H9V8H7V7Z" fill={color} />
             <path d="M10 3V4H11V2H7V4H8V3H10Z" fill={color} />
             <path d="M2 7H3V9H2V7Z" fill={color} />
-            <path
-                d="M6 8V9H5V7H4V9H3V10H2V11H4V10H5V11H6V10H7V8H6Z"
-                fill={color}
-            />
+            <path d="M6 8V9H5V7H4V9H3V10H2V11H4V10H5V11H6V10H7V8H6Z" fill={color} />
             <path d="M10 8H11V9H12V8H13V7H11V5H10V6H9V7H10V8Z" fill={color} />
             <path d="M9 15H7V16H11V15H10V14H9V15Z" fill={color} />
             <path d="M11 10V9H10V8H9V9H8V10H9V11H10V10H11Z" fill={color} />

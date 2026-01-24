@@ -27,17 +27,17 @@ export interface IBanquetFormState {
     timeTo: string;
     guestCount: PickerValue;
     reason: string;
-    
+
     // Ресторан
     currentRestaurant: IRestaurant | undefined;
     restaurantId: string;
     optionId: string;
-    
+
     // Дополнительные услуги
     additionalOptions: { id: number; name: string }[];
     selectedServices: string[];
     withAdditionalPage: boolean;
-    
+
     // Цена
     price: IBanquetPrice | null;
 }
@@ -72,23 +72,17 @@ export const banquetFormAtom = atomWithReset<IBanquetFormState>(getInitialBanque
 /**
  * Атом для обновления отдельных полей формы
  */
-export const updateBanquetFormAtom = atom(
-    null,
-    (get, set, update: Partial<IBanquetFormState>) => {
-        const current = get(banquetFormAtom);
-        set(banquetFormAtom, { ...current, ...update });
-    }
-);
+export const updateBanquetFormAtom = atom(null, (get, set, update: Partial<IBanquetFormState>) => {
+    const current = get(banquetFormAtom);
+    set(banquetFormAtom, { ...current, ...update });
+});
 
 /**
  * Атом для сброса формы к начальному состоянию
  */
-export const resetBanquetFormAtom = atom(
-    null,
-    (_get, set) => {
-        set(banquetFormAtom, RESET);
-    }
-);
+export const resetBanquetFormAtom = atom(null, (_get, set) => {
+    set(banquetFormAtom, RESET);
+});
 
 // ============================================
 // Derived atoms для отдельных полей

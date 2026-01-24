@@ -7,4 +7,3 @@ import { atom } from 'jotai';
  * @constant headerScrolledAtom
  */
 export const headerScrolledAtom = atom<boolean>(false);
-

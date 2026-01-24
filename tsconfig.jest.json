@@ -1,11 +1,11 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "CommonJS", 
-    "esModuleInterop": true,
-    // Так как используется Swiper и он ожидает ESM, 
-    // иногда нужно также установить moduleResolution в node
-    "moduleResolution": "node" 
-  }
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        // Так как используется Swiper и он ожидает ESM,
+        // иногда нужно также установить moduleResolution в node
+        "moduleResolution": "node"
+    }
 }

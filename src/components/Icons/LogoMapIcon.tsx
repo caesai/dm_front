@@ -13,31 +13,11 @@ export const LogoMapIcon = ({ size = 24 }: IconProps) => {
             xmlns="http://www.w3.org/2000/svg"
             xmlnsXlink="http://www.w3.org/1999/xlink"
         >
-            <rect
-                y="0.0856934"
-                width={size}
-                height={size}
-                rx="2"
-                fill="white"
-            />
-            <rect
-                x="2.3999"
-                y="5.68579"
-                width="19.2"
-                height="12.8"
-                fill="url(#pattern0_99_4301)"
-            />
+            <rect y="0.0856934" width={size} height={size} rx="2" fill="white" />
+            <rect x="2.3999" y="5.68579" width="19.2" height="12.8" fill="url(#pattern0_99_4301)" />
             <defs>
-                <pattern
-                    id="pattern0_99_4301"
-                    patternContentUnits="objectBoundingBox"
-                    width="1"
-                    height="1"
-                >
-                    <use
-                        xlinkHref="#image0_99_4301"
-                        transform="scale(0.00766285 0.0114943)"
-                    />
+                <pattern id="pattern0_99_4301" patternContentUnits="objectBoundingBox" width="1" height="1">
+                    <use xlinkHref="#image0_99_4301" transform="scale(0.00766285 0.0114943)" />
                 </pattern>
                 <image
                     id="image0_99_4301"

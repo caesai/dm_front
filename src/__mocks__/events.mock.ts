@@ -81,7 +81,7 @@ export const mockEventsList: IEvent[] = [
  * Список мероприятий с заполненными image_url.
  * Без image_url карточки могут отображаться некорректно.
  */
-export const mockEventsWithImages: IEvent[] = mockEventsList.map(e => ({
+export const mockEventsWithImages: IEvent[] = mockEventsList.map((e) => ({
     ...e,
     image_url: e.image_url || 'https://example.com/default-event-image.jpg',
 }));

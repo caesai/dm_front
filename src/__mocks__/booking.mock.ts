@@ -1,6 +1,6 @@
 /**
  * Моки для тестирования страниц бронирования.
- * 
+ *
  * @module __mocks__/booking.mock
  * @see {@link useBookingForm} - хук, использующий эти моки
  * @see {@link BookingPage.test.tsx} - тесты страницы бронирования

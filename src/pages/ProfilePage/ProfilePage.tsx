@@ -77,7 +77,10 @@ export const ProfilePage: React.FC = () => {
                                 />
                                 {testerMode.enabled && (
                                     <div className={css.testerModeDescription}>
-                                        <span>В режиме тестировщика доступны функции, которые не доступны для обычных пользователей.</span>
+                                        <span>
+                                            В режиме тестировщика доступны функции, которые не доступны для обычных
+                                            пользователей.
+                                        </span>
                                     </div>
                                 )}
                             </>

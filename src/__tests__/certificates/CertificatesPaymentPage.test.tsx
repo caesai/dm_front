@@ -34,7 +34,12 @@ import { CertificatesPaymentPage } from '@/pages/CertificatesCreatePage/stages/C
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
-import { APIGetCertificateById, APIGetCertificates, APIPostCertificateCheckPayment, APIPostEGiftCertificateOffline } from '@/api/certificates.api.ts';
+import {
+    APIGetCertificateById,
+    APIGetCertificates,
+    APIPostCertificateCheckPayment,
+    APIPostEGiftCertificateOffline,
+} from '@/api/certificates.api.ts';
 import { shareCertificate } from '@/pages/CertificatesCreatePage/stages/CertificatesListPage.tsx';
 import { ICertificate } from '@/types/certificates.types.ts';
 import { mockUserData } from '@/__mocks__/user.mock.ts';

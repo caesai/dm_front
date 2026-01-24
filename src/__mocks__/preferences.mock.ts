@@ -1,97 +1,97 @@
 interface IOnboardingOptions {
-    content: string
-    icon: string
+    content: string;
+    icon: string;
 }
 
 export const sixStageOptions: IOnboardingOptions[] = [
     {
         content: 'Обед с друзьями',
-        icon: '🍻'
+        icon: '🍻',
     },
     {
         content: 'Тихий ужин',
-        icon: '🍽'
+        icon: '🍽',
     },
     {
         content: 'Рабочие встречи',
-        icon: '💼'
+        icon: '💼',
     },
     {
         content: 'Вечеринка',
-        icon: '🎉'
+        icon: '🎉',
     },
     {
         content: 'Свидание',
-        icon: '❤️'
+        icon: '❤️',
     },
     {
         content: 'Быстрый перекус',
-        icon: '🥐'
+        icon: '🥐',
     },
     {
         content: 'Семейный бранч',
-        icon: '👨‍👩‍👧‍'
+        icon: '👨‍👩‍👧‍',
     },
-]
+];
 
 export const sevenStageOptions: IOnboardingOptions[] = [
     {
         content: 'Мясо',
-        icon: '🥩'
+        icon: '🥩',
     },
     {
         content: 'Морепродукты',
-        icon: '🐟'
+        icon: '🐟',
     },
     {
         content: 'Вино',
-        icon: '🍾'
+        icon: '🍾',
     },
     {
         content: 'ЗОЖ',
-        icon: '🥗'
+        icon: '🥗',
     },
     {
         content: 'Уникальные продукты',
-        icon: '🥦'
+        icon: '🥦',
     },
     {
         content: 'Коктейли',
-        icon: '🍹'
+        icon: '🍹',
     },
     {
         content: 'Завтраки',
-        icon: '🍳'
+        icon: '🍳',
     },
-]
+];
 
 export const eightStageOptions: IOnboardingOptions[] = [
     {
         content: 'Гастроужины',
-        icon: '👨‍🍳'
+        icon: '👨‍🍳',
     },
     {
         content: 'Фестивали',
-        icon: '🎪'
+        icon: '🎪',
     },
     {
         content: 'Детские события',
-        icon: '🎈'
+        icon: '🎈',
     },
     {
         content: 'Винные ужины',
-        icon: '🍷'
+        icon: '🍷',
     },
     {
         content: 'Вечеринки',
-        icon: '🪩'
+        icon: '🪩',
     },
     {
         content: 'Мастер-классы',
-        icon: '🔪'
+        icon: '🔪',
     },
     {
         content: 'Музыкальные события',
-        icon: '🎷‍'
+        icon: '🎷‍',
     },
-]
+];

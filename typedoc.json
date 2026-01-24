@@ -1,6 +1,6 @@
 {
-  "entryPoints": ["src"],
-  "entryPointStrategy": "expand",
-  "out": "docs",
-  "readme": "none" 
+    "entryPoints": ["src"],
+    "entryPointStrategy": "expand",
+    "out": "docs",
+    "readme": "none"
 }

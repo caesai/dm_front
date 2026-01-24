@@ -13,7 +13,7 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.css';
 import classnames from 'classnames';
 
-const ratings = [ '3 000', '5 000', '10 000' ];
+const ratings = ['3 000', '5 000', '10 000'];
 
 export const CertificatesCreateOfflinePage: React.FC = () => {
     // const navigate = useNavigate();
@@ -160,18 +160,18 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
             <div
                 data-testid="button-container"
                 className={classnames(
-                    css.absoluteBottom,
+                    css.absoluteBottom
                     // { [css.relativeBottom]: isInputFocused }
                 )}
             >
                 <div className={css.bottomWrapper}>
                     {/*{!isReady ?*/}
-                        <UniversalButton
-                            width={'full'}
-                            title={'Далее'}
-                            // theme={!validateCertificate() ? undefined : 'red'}
-                            action={handleNextClick}
-                        />
+                    <UniversalButton
+                        width={'full'}
+                        title={'Далее'}
+                        // theme={!validateCertificate() ? undefined : 'red'}
+                        action={handleNextClick}
+                    />
                     {/*: (*/}
                     {/*        <>*/}
                     {/*            <UniversalButton*/}
@@ -191,7 +191,7 @@ export const CertificatesCreateOfflinePage: React.FC = () => {
             </div>
         </div>
     );
-}
+};
 
 interface RatingComponentProps {
     rating: string;
@@ -202,12 +202,9 @@ interface RatingComponentProps {
 const RatingComponent: React.FC<RatingComponentProps> = ({ rating, selectedRating, onClick }) => {
     return (
         <div
-            className={classnames(
-                css.rating,
-                {
-                    [css.ratingActive]: selectedRating === rating,
-                }
-            )}
+            className={classnames(css.rating, {
+                [css.ratingActive]: selectedRating === rating,
+            })}
             onClick={() => onClick(rating)}
         >
             <span>{rating} ₽</span>

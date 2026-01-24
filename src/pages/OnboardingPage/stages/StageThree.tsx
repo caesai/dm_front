@@ -764,12 +764,8 @@ export const StageThree: React.FC = () => {
                     <p>
                         <b>Памятка Пользователя</b>
                     </p>
-                    <p>
-                        Жалобы и претензии отправлять напрямую Администратору Сервиса: info@dreamteam.fm
-                    </p>
-                    <p>
-                        Остальные вопросы: info@dreamteam.fm
-                    </p>
+                    <p>Жалобы и претензии отправлять напрямую Администратору Сервиса: info@dreamteam.fm</p>
+                    <p>Остальные вопросы: info@dreamteam.fm</p>
                 </div>
             </div>
         </div>

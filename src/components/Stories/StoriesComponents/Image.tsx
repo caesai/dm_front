@@ -14,16 +14,13 @@ interface ImageStoryComponentProps {
     setIsLoading: (loading: boolean) => void;
 }
 
-export const ImageStoryComponent: React.FC<ImageStoryComponentProps> = (
-    {
-        story,
-        action,
-        shouldWait,
-        isLoading,
-        setIsLoading,
-    },
-) => {
-
+export const ImageStoryComponent: React.FC<ImageStoryComponentProps> = ({
+    story,
+    action,
+    shouldWait,
+    isLoading,
+    setIsLoading,
+}) => {
     const handleImageLoad = useCallback(() => {
         if (!shouldWait) {
             setIsLoading(true);

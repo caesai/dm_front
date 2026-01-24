@@ -19,7 +19,7 @@ interface IContentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
     /**
      * Стили.
      */
-    style?: React.CSSProperties;    
+    style?: React.CSSProperties;
 }
 
 /**
@@ -32,7 +32,13 @@ interface IContentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
  * </ContentBlock>
  * @returns {JSX.Element} - Компонент блока контента.
  */
-export const ContentBlock: React.FC<IContentBlockProps> = ({ children, id, className, style, ...rest }): JSX.Element => {
+export const ContentBlock: React.FC<IContentBlockProps> = ({
+    children,
+    id,
+    className,
+    style,
+    ...rest
+}): JSX.Element => {
     return (
         <div className={classNames(css.contentBlock, className)} id={id} style={style} {...rest}>
             {children}

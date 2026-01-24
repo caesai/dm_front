@@ -16,33 +16,33 @@ export const PreferencesThree: React.FC = () => {
 
     const changePreference = (content: string) => {
         if (preferences.includes(content)) {
-            setPreferences(prev => (prev.filter((p) => p !== content)));
-        }
-        else {
+            setPreferences((prev) => prev.filter((p) => p !== content));
+        } else {
             setPreferences([...preferences, content]);
         }
-    }
+    };
 
     const handleContinue = () => {
-        if (!auth?.access_token || preferences.length === 0 ) {
+        if (!auth?.access_token || preferences.length === 0) {
             return;
         }
 
         APIUserPreferences(auth.access_token, {
-            preferences: [{
+            preferences: [
+                {
                     category: 'events',
                     choices: preferences,
-                }]
-
+                },
+            ],
         })
-            .then(() => localStorage.setItem("PREFERENCES_STATUS", JSON.stringify({ visit_number: 3, preferences_sent: true })))
+            .then(() =>
+                localStorage.setItem('PREFERENCES_STATUS', JSON.stringify({ visit_number: 3, preferences_sent: true }))
+            )
             .then(() => navigate('/'))
-            .catch(() => alert
-                (
-                    'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
-                )
+            .catch(() =>
+                alert('При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.')
             );
-    }
+    };
 
     return (
         <div className={css.stage_page}>
@@ -61,7 +61,7 @@ export const PreferencesThree: React.FC = () => {
                 </div>
                 <div className={css.stageSeven_wrapper}>
                     <h2 className={css.stage_description_title}>
-                        Какие форматы <br/> вам интересны?
+                        Какие форматы <br /> вам интересны?
                     </h2>
                     <div className={css.stage_options_container}>
                         {eightStageOptions.map((item) => (

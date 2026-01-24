@@ -26,12 +26,9 @@ jest.mock('react-router-dom', () => ({
  * без реальных компонентов Router.
  */
 const renderHookWithProvider = (initialHistory: string[] = []) => {
-
     const wrapper = ({ children }: { children: React.ReactNode }) => (
         // Используем TestProvider для инициализации атома Jotai
-        <TestProvider initialValues={[[navigationHistoryAtom, initialHistory]]}>
-            {children}
-        </TestProvider>
+        <TestProvider initialValues={[[navigationHistoryAtom, initialHistory]]}>{children}</TestProvider>
     );
 
     return renderHook(() => useNavigationHistory(), { wrapper });

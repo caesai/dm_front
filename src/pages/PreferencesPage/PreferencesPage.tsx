@@ -1,8 +1,8 @@
-import {Page} from '@/components/Page.tsx';
+import { Page } from '@/components/Page.tsx';
 import css from './PreferencesPage.module.css';
-import {Outlet, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
-import React, {useEffect} from 'react';
-import logoNew from "/img/DT_concierge_logo_color1.svg";
+import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import logoNew from '/img/DT_concierge_logo_color1.svg';
 import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
 import classNames from 'classnames';
 
@@ -17,11 +17,8 @@ export const PreferencesPage: React.FC = () => {
         }
     }, [location]);
 
-
     const getCurrentPage = () => {
-        const pg = location.pathname
-            .replace('/preferences', '')
-            .replace('/', '');
+        const pg = location.pathname.replace('/preferences', '').replace('/', '');
         return Number(pg) || 1;
     };
 
@@ -56,14 +53,10 @@ export const PreferencesPage: React.FC = () => {
                         </div>
                     )}
                     <div className={css.logo_container}>
-                        <img
-                            className={css.logo}
-                            src={logoNew}
-                            alt="DreamTeam logo"
-                        />
+                        <img className={css.logo} src={logoNew} alt="DreamTeam logo" />
                     </div>
                     <span className={classNames(css.closeIcon)} onClick={() => navigate('/')}>
-                            <CloseIcon size={46} />
+                        <CloseIcon size={46} />
                     </span>
                 </div>
             </div>

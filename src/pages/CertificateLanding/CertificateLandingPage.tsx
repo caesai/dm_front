@@ -28,7 +28,12 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
 import moment from 'moment';
 // API
-import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim, APIPostEGiftCertificateInfo } from '@/api/certificates.api.ts';
+import {
+    APIGetCertificateById,
+    APIGetCertificates,
+    APIPostCertificateClaim,
+    APIPostEGiftCertificateInfo,
+} from '@/api/certificates.api.ts';
 import { EGIFT_API_TOKEN } from '@/api/base';
 // Types
 import { ICertificate } from '@/types/certificates.types.ts';
@@ -100,7 +105,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
     const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
     // Флаг для предотвращения повторного вызова acceptCertificate
     const hasAcceptedCertificateRef = useRef<boolean>(false);
-    const { isShowing, toggle, setIsShowing } = useModal()
+    const { isShowing, toggle, setIsShowing } = useModal();
     // Необходимо для предотвращения повторного вызова функции acceptCertificate при одновременном монтировании и размонтировании компонента
     const isAcceptingRef = useRef(false);
     // Ref для хранения актуальной версии acceptCertificate без добавления в зависимости useEffect
@@ -235,12 +240,12 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
             // 3. Обновляем сертификат на странице
             const updatedCert = results[1].data;
             setCertificate(updatedCert);
-            
+
             // Если у обновленного сертификата есть dreamteam_id, загружаем баланс
             if (updatedCert?.dreamteam_id && updatedCert.dreamteam_id.trim() !== '') {
                 fetchCertificateBalance(updatedCert.dreamteam_id);
             }
-            
+
             showToast('Сертификат успешно активирован!');
         } catch (err) {
             // Обработка ошибок как первого, так и второго запроса
@@ -331,17 +336,17 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                     // Пользователь — владелец. Ничего не делаем.
                     setLoading(false);
                     return;
-            } else {
-                // Сертификат куплен другим пользователем, но еще не принят этим
-                if (!isAcceptingRef.current && acceptCertificateRef.current) {
-                    isAcceptingRef.current = true;
-                    (async () => {
-                        await acceptCertificateRef.current!();
-                        setLoading(false);
-                    })();
+                } else {
+                    // Сертификат куплен другим пользователем, но еще не принят этим
+                    if (!isAcceptingRef.current && acceptCertificateRef.current) {
+                        isAcceptingRef.current = true;
+                        (async () => {
+                            await acceptCertificateRef.current!();
+                            setLoading(false);
+                        })();
+                    }
+                    return;
                 }
-                return;
-            }
             } else {
                 // Сертификат уже был передан (shared_at существует)
                 if (certificate.recipient_id === user.id) {
@@ -364,7 +369,17 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                 navigate('/onboarding/1');
             }
         }
-    }, [certificate?.id, certificate?.customer_id, certificate?.recipient_id, certificate?.shared_at, user?.id, user?.complete_onboarding, isCertificateDisabled, navigate, id]);
+    }, [
+        certificate?.id,
+        certificate?.customer_id,
+        certificate?.recipient_id,
+        certificate?.shared_at,
+        user?.id,
+        user?.complete_onboarding,
+        isCertificateDisabled,
+        navigate,
+        id,
+    ]);
 
     // Сбрасываем флаг при изменении ID сертификата
     useEffect(() => {
@@ -467,8 +482,8 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                                         {balanceLoading
                                             ? 'Загрузка...'
                                             : balance !== null
-                                            ? `${balance.toFixed()} ₽`
-                                            : Number(certificate?.balance).toFixed() + ' ₽'}
+                                              ? `${balance.toFixed()} ₽`
+                                              : Number(certificate?.balance).toFixed() + ' ₽'}
                                     </b>
                                 </span>
                             </div>

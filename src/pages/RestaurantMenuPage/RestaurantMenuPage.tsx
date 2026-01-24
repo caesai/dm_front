@@ -1,8 +1,8 @@
 /**
  * @fileoverview Страница меню ресторана.
- * 
+ *
  * Отображает полное меню выбранного ресторана с категориями и блюдами.
- * 
+ *
  * Основные функции:
  * - Отображение категорий меню с вкладками для навигации
  * - Поиск по меню с использованием trigram-алгоритма (нечёткий поиск)
@@ -10,9 +10,9 @@
  * - Возрастная верификация для категорий с алкоголем (коктейли)
  * - Сохранение и восстановление позиции скролла при навигации
  * - Блюр изображений коктейлей до подтверждения возраста (18+)
- * 
+ *
  * @module pages/RestaurantMenuPage
- * 
+ *
  * @see {@link useRestaurantMenu} - хук для загрузки данных меню
  * @see {@link trigramMatch} - функция нечёткого поиска
  * @see {@link AgeVerificationPopup} - попап верификации возраста
@@ -42,10 +42,10 @@ import css from '@/pages/RestaurantMenuPage/RestaurantMenuPage.module.css';
 
 /**
  * Страница меню ресторана.
- * 
+ *
  * @component
  * @returns {JSX.Element} Страница меню с категориями, поиском и возрастной верификацией
- * 
+ *
  * @example
  * // Роут в react-router
  * <Route path="/restaurant/:id/menu" element={<RestaurantMenuPage />} />
@@ -54,16 +54,16 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     // ============================================
     // Хуки навигации и роутинга
     // ============================================
-    
+
     /** ID ресторана из URL параметров */
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
-    
+
     // ============================================
     // Состояние компонента
     // ============================================
-    
+
     /** Список ресторанов из атома */
     const [restaurants] = useAtom(restaurantsListAtom);
     /** ID выбранной категории для навигации по вкладкам */
@@ -74,7 +74,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     const [isAgeVerificationOpen, setIsAgeVerificationOpen] = useState<boolean>(false);
     /** Выбранный коктейль для перехода после верификации */
     const [, setSelectedCocktailItem] = useState<IAPIMenuItem | null>(null);
-    
+
     /**
      * Флаг подтверждения возраста (18+).
      * Хранится в sessionStorage для сохранения при навигации,
@@ -83,11 +83,11 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     const [isAgeVerified, setIsAgeVerified] = useState<boolean>(() => {
         return sessionStorage.getItem('ageVerified') === 'true';
     });
-    
+
     // ============================================
     // Рефы
     // ============================================
-    
+
     /** Флаг показа попапа при возврате назад (предотвращает повторный показ) */
     const hasShownPopupOnReturnRef = useRef<boolean>(false);
     /** Рефы на DOM-элементы категорий для скролла */
@@ -122,22 +122,22 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     // Найти первое блюдо с изображением из меню для использования в коктейлях
     const firstDishImage = useMemo(() => {
         if (!menuData) return '';
-        
+
         for (const category of menuData.item_categories) {
             if (category.is_hidden) continue;
-            
+
             for (const item of category.menu_items) {
                 if (item.is_hidden) continue;
-                
+
                 const defaultSize = getDefaultSize(item.item_sizes);
                 const imageUrl = defaultSize?.button_image_url || '';
-                
+
                 if (imageUrl && imageUrl.trim().length > 0) {
                     return imageUrl;
                 }
             }
         }
-        
+
         return '';
     }, [menuData]);
 
@@ -165,7 +165,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
      * - Возрастное ограничение (18+) применяется ТОЛЬКО к категории с точным названием «Коктейли».
      * - Любые другие варианты названия (например, «Б/А коктейли», «Безалкогольные коктейли»)
      *   НЕ считаются алкогольными и не должны блюриться и требовать подтверждения возраста.
-     * 
+     *
      * @param categoryName - Название категории
      * @returns true, если категория — строго «Коктейли»
      */
@@ -179,7 +179,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     useEffect(() => {
         const scrollKey = `menuScroll_${id}`;
         const savedScroll = sessionStorage.getItem(scrollKey);
-        
+
         if (savedScroll && location.state?.fromDishDetails) {
             // Если вернулись со страницы деталей блюда, восстанавливаем скролл
             setTimeout(() => {
@@ -188,12 +188,12 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
             // Помечаем, что попап уже был показан (если был), чтобы не показывать снова
             hasShownPopupOnReturnRef.current = true;
         }
-        
+
         // Сохраняем позицию скролла при скролле
         const handleScroll = () => {
             sessionStorage.setItem(scrollKey, window.scrollY.toString());
         };
-        
+
         // Throttle для оптимизации
         let ticking = false;
         const throttledScroll = () => {
@@ -205,9 +205,9 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
                 ticking = true;
             }
         };
-        
+
         window.addEventListener('scroll', throttledScroll, { passive: true });
-        
+
         return () => {
             window.removeEventListener('scroll', throttledScroll);
         };
@@ -237,10 +237,10 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
 
                     if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
                         setSelectedCategory(category.id);
-                        
+
                         // Проверяем, является ли категория категорией коктейлей
                         const isCocktail = isCocktailCategory(category.name);
-                        
+
                         // Если это категория коктейлей, пользователь не подтвердил возраст,
                         // попап еще не был показан при возврате назад, и мы долистали до этой категории
                         if (isCocktail && !isAgeVerified && !hasShownPopupOnReturnRef.current) {
@@ -248,13 +248,13 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
                             // (элемент виден на экране)
                             const elementRect = element.getBoundingClientRect();
                             const isVisible = elementRect.top < window.innerHeight && elementRect.bottom > 0;
-                            
+
                             if (isVisible) {
                                 setIsAgeVerificationOpen(true);
                                 hasShownPopupOnReturnRef.current = true;
                             }
                         }
-                        
+
                         break;
                     }
                 }
@@ -300,7 +300,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     /**
      * Скролл к выбранной категории.
      * Также проверяет, нужно ли показать попап возрастной верификации.
-     * 
+     *
      * @param categoryId - ID категории для скролла
      */
     const scrollToCategory = (categoryId: string) => {
@@ -310,12 +310,12 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
             const yOffset = -201;
             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({ top: y, behavior: 'smooth' });
-            
+
             // Проверяем, является ли категория категорией коктейлей
             const category = visibleCategories.find((cat) => cat.id === categoryId);
             if (category) {
                 const isCocktail = isCocktailCategory(category.name);
-                
+
                 // Если это категория коктейлей, пользователь не подтвердил возраст,
                 // и попап еще не был показан при возврате назад
                 if (isCocktail && !isAgeVerified && !hasShownPopupOnReturnRef.current) {
@@ -332,7 +332,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     /**
      * Обработчик клика на блюдо.
      * Сохраняет позицию скролла и навигирует на страницу деталей блюда.
-     * 
+     *
      * @param dish - Выбранное блюдо
      */
     const handleDishClick = (dish: IAPIMenuItem) => {
@@ -351,10 +351,10 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
         const isCocktail = isCocktailCategory(
             menuData?.item_categories.find((cat) => cat.id === dish.category_id)?.name || ''
         );
-        
+
         // Для коктейлей используем изображение первого блюда с картинкой из меню
         const cocktailImageUrl = isCocktail ? getCocktailImage() : '';
-        const photoUrl = isCocktail && cocktailImageUrl ? cocktailImageUrl : (defaultSize?.button_image_url || '');
+        const photoUrl = isCocktail && cocktailImageUrl ? cocktailImageUrl : defaultSize?.button_image_url || '';
 
         const dishData: IMenuItem & {
             description?: string;
@@ -410,7 +410,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     /**
      * Проверяет, является ли блюдо напитком (без изображения).
      * Напитки отображаются в табличном формате.
-     * 
+     *
      * @param item - Блюдо для проверки
      * @returns true если у блюда нет изображения
      */
@@ -422,7 +422,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     /**
      * Определяет, должна ли категория отображаться в табличном формате.
      * Таблица используется для категорий, где все блюда - напитки (без изображений).
-     * 
+     *
      * @param category - Категория для проверки
      * @returns true если все видимые блюда без изображений
      */
@@ -435,7 +435,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
      * Получает изображение для коктейля.
      * Используется изображение первого блюда с картинкой из меню,
      * так как у коктейлей обычно нет собственных изображений.
-     * 
+     *
      * @returns URL изображения или пустая строка
      */
     const getCocktailImage = (): string => {
@@ -445,7 +445,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     /**
      * Обработчик верификации возраста.
      * Сохраняет результат в sessionStorage.
-     * 
+     *
      * @param verified - Подтверждён ли возраст (18+)
      */
     const handleVerifyAge = (verified: boolean) => {
@@ -467,7 +467,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
      * Обработчик клика на коктейль.
      * Если возраст не подтверждён - открывает попап верификации.
      * Иначе - переходит на страницу деталей.
-     * 
+     *
      * @param item - Выбранный коктейль
      */
     const handleCocktailClick = (item: IAPIMenuItem) => {
@@ -481,7 +481,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
 
     /**
      * Рендерит категорию в формате карточек (блюда с изображениями).
-     * 
+     *
      * @param category - Категория для рендеринга
      * @returns JSX элемент категории или null если нет видимых блюд
      */
@@ -490,7 +490,8 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
 
         if (searchQuery.trim()) {
             visibleItems = visibleItems.filter((item) => {
-                const searchText = `${item.name} ${item.description || ''} ${item.guest_description || ''}`.toLowerCase();
+                const searchText =
+                    `${item.name} ${item.description || ''} ${item.guest_description || ''}`.toLowerCase();
                 // Используем более строгий порог для более точного поиска
                 // Порог 0.45 обеспечивает лучшее качество результатов
                 return trigramMatch(searchText, searchQuery, 0.45);
@@ -511,7 +512,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
                         const defaultSize = getDefaultSize(item.item_sizes);
                         const isCocktail = isCocktailCategory(category.name);
                         const shouldBlur = isCocktail && !isAgeVerified;
-                        
+
                         // Для коктейлей используем изображение первого блюда с картинкой из меню
                         let imageUrl = '';
                         if (isCocktail) {
@@ -519,19 +520,21 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
                         } else {
                             imageUrl = defaultSize?.button_image_url || '';
                         }
-                        
+
                         // Для коктейлей всегда считаем, что изображение есть (даже если firstDishImage пустое)
-                        const hasImage = isCocktail ? (imageUrl && imageUrl.trim().length > 0) : (imageUrl && imageUrl.trim().length > 0);
+                        const hasImage = isCocktail
+                            ? imageUrl && imageUrl.trim().length > 0
+                            : imageUrl && imageUrl.trim().length > 0;
                         const portionWeight = defaultSize?.portion_weight_grams;
                         const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || '';
                         const weight = portionWeight ? `${portionWeight} ${measureUnit}` : '';
                         const price = extractPrice(defaultSize?.prices);
 
                         return (
-                            <div 
-                                key={item.id} 
-                                className={css.menuItemWrapper} 
-                                onClick={() => isCocktail ? handleCocktailClick(item) : handleDishClick(item)}
+                            <div
+                                key={item.id}
+                                className={css.menuItemWrapper}
+                                onClick={() => (isCocktail ? handleCocktailClick(item) : handleDishClick(item))}
                             >
                                 <div
                                     className={`${css.menuItemImage} ${shouldBlur ? css.blurredImage : ''}`}
@@ -561,7 +564,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
 
     /**
      * Рендерит категорию в табличном формате (напитки без изображений).
-     * 
+     *
      * @param category - Категория для рендеринга
      * @returns JSX элемент категории или null если нет видимых блюд
      */
@@ -570,7 +573,8 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
 
         if (searchQuery.trim()) {
             visibleItems = visibleItems.filter((item) => {
-                const searchText = `${item.name} ${item.description || ''} ${item.guest_description || ''}`.toLowerCase();
+                const searchText =
+                    `${item.name} ${item.description || ''} ${item.guest_description || ''}`.toLowerCase();
                 // Используем более строгий порог для более точного поиска
                 // Порог 0.45 обеспечивает лучшее качество результатов
                 return trigramMatch(searchText, searchQuery, 0.45);
@@ -729,7 +733,7 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
                     })}
                 </div>
             )}
-            
+
             <AgeVerificationPopup
                 isOpen={isAgeVerificationOpen}
                 onConfirm={() => handleVerifyAge(true)}

@@ -49,11 +49,7 @@ export const CommonBookingHeader: React.FC<ICommonBookingHeaderProps> = ({
         <ContentContainer className={css.header}>
             <ContentBlock className={css.nav}>
                 <div className={css.separator} />
-                <HeaderContent
-                    className={css.headerTitle}
-                    title="Бронирование"
-                    fontSize={14}
-                />
+                <HeaderContent className={css.headerTitle} title="Бронирование" fontSize={14} />
                 <RoundedButton icon={<CrossIcon size={44} />} action={handleGoBack} />
             </ContentBlock>
 
@@ -61,9 +57,9 @@ export const CommonBookingHeader: React.FC<ICommonBookingHeaderProps> = ({
             <ContentBlock className={css.selectors}>
                 <RestaurantsListSelector onSelect={selectRestaurant} />
                 <ContentBlock className={css.selectorsRow}>
-                    <DateListSelector 
-                        defaultTitle='Дата'
-                        datesList={availableDates} 
+                    <DateListSelector
+                        defaultTitle="Дата"
+                        datesList={availableDates}
                         onSelect={selectDate}
                         value={selectedDate}
                         disabled={!isRestaurantSelected}

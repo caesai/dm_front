@@ -87,7 +87,7 @@
     height: 128px !important;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    box-shadow: -4px 4px 15px 0 #CACACA59;
+    box-shadow: -4px 4px 15px 0 #cacaca59;
 }
 
 .headerNav {
@@ -209,7 +209,7 @@
     padding: 11px 16px;
     border-radius: 20px;
     width: max-content;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 14px;
     color: var(--grey);
@@ -267,12 +267,10 @@
         flex-direction: column;
         gap: 4px;
 
-
         .title {
             font-family: 'Mont', sans-serif;
             font-weight: 400;
             font-size: 12px;
-
         }
 
         .subtitle {
@@ -282,7 +280,6 @@
             color: var(--dark-grey);
         }
     }
-
 }
 
 .aboutContainer {
@@ -350,7 +347,7 @@
     padding: 0;
     outline: none;
     text-align: left;
-    
+
     .text {
         font-size: 14px;
         font-family: 'Mont', sans-serif;
@@ -381,7 +378,6 @@
         font-size: 12px;
 
         .title {
-
             color: var(--grey);
             padding-right: 4px;
         }
@@ -389,7 +385,6 @@
         .value {
             color: var(--black);
         }
-
     }
 
     .collapse {
@@ -454,7 +449,7 @@
     padding: 11px 16px;
     border-radius: 20px;
     width: max-content;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 14px;
     color: var(--black);

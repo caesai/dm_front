@@ -3,7 +3,7 @@ import { IUser } from '@/types/user.types.ts';
 export const mockUserData: IUser = {
     id: 1,
     telegram_id: 1,
-    first_name: 'D',    
+    first_name: 'D',
     last_name: 'D',
     email: null,
     photo_url: null,

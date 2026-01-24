@@ -505,7 +505,8 @@ export const GastronomyBasketPage: React.FC = () => {
             try {
                 // Используем Geocoder API для поиска адресов
                 // Определяем город
-                const cityName = cityList.find((city) => city.name_english === currentCity.name_english)?.name || 'Москва';
+                const cityName =
+                    cityList.find((city) => city.name_english === currentCity.name_english)?.name || 'Москва';
                 const searchQuery = `${cityName}, ${trimmedQuery}`;
 
                 // Разные bbox для разных городов

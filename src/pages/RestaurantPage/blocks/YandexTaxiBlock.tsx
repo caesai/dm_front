@@ -6,7 +6,6 @@ import { ContentContainer } from '@/components/ContentContainer/ContentContainer
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
-
 /**
  * Пропсы компонента YandexTaxiBlock.
  *

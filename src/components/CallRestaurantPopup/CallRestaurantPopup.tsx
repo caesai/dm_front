@@ -40,11 +40,7 @@ export const CallRestaurantPopup: FC<Props> = (p) => {
                     <span>{p.phone}</span>
                 </div>
                 <div className={css.buttons}>
-                    <UniversalButton
-                        width={'full'}
-                        title={'Позже'}
-                        action={onClose}
-                    ></UniversalButton>
+                    <UniversalButton width={'full'} title={'Позже'} action={onClose}></UniversalButton>
                     <UniversalButton
                         width={'full'}
                         title={'Позвонить'}

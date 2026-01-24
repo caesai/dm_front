@@ -21,7 +21,7 @@ const generateTimeOptions = (start: string, end: string): PickerValueObj[] => {
     ) {
         options.push({
             title: current.format('H:mm'),
-            value: current.format('HH:mm')
+            value: current.format('HH:mm'),
         });
         current.add(1, 'hour');
         if (options.length > 24) break;
@@ -29,7 +29,7 @@ const generateTimeOptions = (start: string, end: string): PickerValueObj[] => {
     if (current.format('HH:mm') === endMoment.format('HH:mm')) {
         options.push({
             title: endMoment.format('H:mm'),
-            value: endMoment.format('HH:mm')
+            value: endMoment.format('HH:mm'),
         });
     }
     return options;
@@ -41,7 +41,7 @@ const getFullDayOptions = (): PickerValue[] => {
     for (let i = 0; i < 24; i++) {
         options.push({
             title: current.format('H:mm'),
-            value: current.format('HH:mm')
+            value: current.format('HH:mm'),
         });
         current.add(1, 'hour');
     }
@@ -69,23 +69,12 @@ const StyledPopup = styled(Popup)`
         width: 100vw;
         margin: 0 !important;
         padding: 0;
-        width: 100vw!important;
+        width: 100vw !important;
     }
 `;
 
-export const TimeSelectorPopup: FC<Props> = (
-    {
-        isOpen,
-        closePopup,
-        time,
-        setTimeOption,
-        minTime,
-        maxTime,
-    },
-) => {
-    const timeOptions = (minTime && maxTime)
-        ? generateTimeOptions(minTime, maxTime)
-        : getFullDayOptions();
+export const TimeSelectorPopup: FC<Props> = ({ isOpen, closePopup, time, setTimeOption, minTime, maxTime }) => {
+    const timeOptions = minTime && maxTime ? generateTimeOptions(minTime, maxTime) : getFullDayOptions();
 
     useEffect(() => {
         if (isOpen && timeOptions.length && time.value === 'unset') {
@@ -102,23 +91,13 @@ export const TimeSelectorPopup: FC<Props> = (
 
     const picker = (
         <>
-            <Picker
-                value={time}
-                onChange={onChange}
-                wheelMode="natural"
-                height={120}
-            >
+            <Picker value={time} onChange={onChange} wheelMode="natural" height={120}>
                 <Picker.Column name={'value'}>
                     {timeOptions.map((option) => (
                         <Picker.Item key={option.value as string} value={option.value}>
                             {({ selected }) => (
                                 <div className={css.selectorItem}>
-                                    <span
-                                        className={classNames(
-                                            css.item,
-                                            selected ? css.item__selected : null,
-                                        )}
-                                    >
+                                    <span className={classNames(css.item, selected ? css.item__selected : null)}>
                                         {option.title as string}
                                     </span>
                                 </div>
@@ -127,12 +106,7 @@ export const TimeSelectorPopup: FC<Props> = (
                     ))}
                 </Picker.Column>
             </Picker>
-            <UniversalButton
-                width={'full'}
-                title={'Сохранить'}
-                theme={'secondary'}
-                action={closePopup}
-            />
+            <UniversalButton width={'full'} title={'Сохранить'} theme={'secondary'} action={closePopup} />
         </>
     );
 

@@ -23,7 +23,7 @@ export const restaurantByIdAtom = atomFamily((restaurantId: string) =>
 /**
  * Получает ресторан по его ID
  * @param {string} restaurantId - ID ресторана
- * @returns {IRestaurant | undefined} Ресторан или undefined если не найден 
+ * @returns {IRestaurant | undefined} Ресторан или undefined если не найден
  */
 export const useGetRestaurantById = (restaurantId: string): IRestaurant | undefined => {
     return useAtomValue(restaurantByIdAtom(restaurantId));

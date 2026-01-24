@@ -8,12 +8,9 @@ import React from 'react';
 describe('useGastronomyCart', () => {
     // Вспомогательная функция для рендера хука с провайдером
     const renderHookWithProvider = (initialHistory: IGastronomyCart = { items: [], totalAmount: 0, totalItems: 0 }) => {
-
         const wrapper = ({ children }: { children: React.ReactNode }) => (
             // Используем TestProvider для инициализации атома Jotai
-            <TestProvider initialValues={[[gastronomyCartAtom, initialHistory]]}>
-                {children}
-            </TestProvider>
+            <TestProvider initialValues={[[gastronomyCartAtom, initialHistory]]}>{children}</TestProvider>
         );
 
         return renderHook(() => useGastronomyCart(), { wrapper });

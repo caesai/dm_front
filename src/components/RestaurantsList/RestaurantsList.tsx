@@ -49,12 +49,14 @@ interface IRestaurantsListProps {
  * @param {IRestaurantsListProps} props - Пропсы компонента
  * @returns {JSX.Element} Список карточек ресторанов или skeleton при загрузке
  */
-export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ clickable = false }: IRestaurantsListProps): JSX.Element => {
+export const RestaurantsList: React.FC<IRestaurantsListProps> = ({
+    clickable = false,
+}: IRestaurantsListProps): JSX.Element => {
     const cityList = useAtomValue(cityListAtom);
     const currentCity = useAtomValue(getCurrentCity);
     const restaurants = useAtomValue(restaurantsListAtom);
     const [restaurantsList, setRestaurantsList] = useState<IRestaurant[]>([]);
-    
+
     // Отслеживаем, были ли данные загружены хотя бы раз
     const hasInitializedRef = useRef(false);
 

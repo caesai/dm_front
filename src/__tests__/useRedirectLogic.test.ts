@@ -21,7 +21,6 @@ jest.mock('react-router-dom', () => ({
     useSearchParams: jest.fn(),
 }));
 
-
 describe('useRedirectLogic', () => {
     // --- Setup for each test ---
     beforeEach(() => {
@@ -30,7 +29,8 @@ describe('useRedirectLogic', () => {
         // Reset and provide default mock values for Jotai and router hooks
         (useAtom as jest.Mock).mockImplementation((atom) => {
             if (atom === authAtom) return [{ access_token: 'valid_token' }];
-            if (atom === userAtom) return [{ ...defaultMockUser, complete_onboarding: true, phone_number: '123456789' }];
+            if (atom === userAtom)
+                return [{ ...defaultMockUser, complete_onboarding: true, phone_number: '123456789' }];
             return [null];
         });
         (useAtomValue as jest.Mock).mockImplementation((atom) => {
@@ -44,13 +44,13 @@ describe('useRedirectLogic', () => {
 
     // --- Helper function for test setup ---
     const setup = ({
-                       auth = { access_token: 'valid_token' },
-                       user = { ...defaultMockUser, complete_onboarding: true, phone_number: '123456789' },
-                       pathname = '/',
-                       search = '',
-                       state = undefined,
-                       params = {},
-                   }: {
+        auth = { access_token: 'valid_token' },
+        user = { ...defaultMockUser, complete_onboarding: true, phone_number: '123456789' },
+        pathname = '/',
+        search = '',
+        state = undefined,
+        params = {},
+    }: {
         auth?: { access_token: string } | null;
         user?: IUser;
         pathname?: string;
@@ -103,31 +103,31 @@ describe('useRedirectLogic', () => {
     });
 
     it('должно быть перенаправление на страницу деталей мероприятия, если параметр tgWebAppStartParam равен eventId_111', () => {
-        setup({ params: { tgWebAppStartParam : 'eventId_111' } });
+        setup({ params: { tgWebAppStartParam: 'eventId_111' } });
         renderHook(() => useRedirectLogic());
         expect(mockNavigate).toHaveBeenCalledWith('/events/111/details', { replace: true, state: { shared: true } });
     });
 
     it('должно быть перенаправление на страницу ресторана, если параметр tgWebAppStartParam равен restaurantId_222', () => {
-        setup({ params: { tgWebAppStartParam : 'restaurantId_222' } });
+        setup({ params: { tgWebAppStartParam: 'restaurantId_222' } });
         renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/restaurant/222', { replace: true, state: { shared: true} });
+        expect(mockNavigate).toHaveBeenCalledWith('/restaurant/222', { replace: true, state: { shared: true } });
     });
 
     it('должно быть перенаправление на страницу ресторана при комбинированном параметре с UTM-метками', () => {
-        setup({ params: { tgWebAppStartParam : 'restaurantId_333-utmSource_instagram-utmMedium_social' } });
+        setup({ params: { tgWebAppStartParam: 'restaurantId_333-utmSource_instagram-utmMedium_social' } });
         renderHook(() => useRedirectLogic());
-        expect(mockNavigate).toHaveBeenCalledWith('/restaurant/333', { replace: true, state: { shared: true} });
+        expect(mockNavigate).toHaveBeenCalledWith('/restaurant/333', { replace: true, state: { shared: true } });
     });
 
     it('должно быть перенаправление на страницу мероприятия при комбинированном параметре с UTM-метками', () => {
-        setup({ params: { tgWebAppStartParam : 'eventId_444-utmSource_telegram-utmCampaign_summer' } });
+        setup({ params: { tgWebAppStartParam: 'eventId_444-utmSource_telegram-utmCampaign_summer' } });
         renderHook(() => useRedirectLogic());
         expect(mockNavigate).toHaveBeenCalledWith('/events/444/details', { replace: true, state: { shared: true } });
     });
 
     it('должно быть перенаправление на главную страницу если переданы только UTM-метки', () => {
-        setup({ params: { tgWebAppStartParam : 'utmSource_instagram-utmMedium_social' } });
+        setup({ params: { tgWebAppStartParam: 'utmSource_instagram-utmMedium_social' } });
         renderHook(() => useRedirectLogic());
         expect(mockNavigate).toHaveBeenCalledWith('/', { replace: true });
     });

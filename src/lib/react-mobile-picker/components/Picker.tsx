@@ -17,15 +17,12 @@ const DEFAULT_WHEEL_MODE = 'off';
  * Базовые данные для picker-элемента (примитивы или объект)
  * Используется как внутренний тип для значений в колонках пикера
  */
-export type PickerValueData =
-    | string
-    | number
-    | PickerValue;
+export type PickerValueData = string | number | PickerValue;
 
 /**
  * Базовый интерфейс для элементов picker-селектора.
  * Содержит обязательные поля для отображения и опциональные дополнительные данные.
- * 
+ *
  * @property {string} title - Отображаемый текст элемента
  * @property {string} value - Уникальное значение элемента (ID, дата и т.д.)
  * @property {string} [subtitle] - Дополнительный текст под заголовком
@@ -53,8 +50,10 @@ interface Option {
     element: MutableRefObject<HTMLElement | null>;
 }
 
-export interface PickerRootProps<TType extends PickerValue>
-    extends Omit<HTMLProps<HTMLDivElement>, 'value' | 'onChange'> {
+export interface PickerRootProps<TType extends PickerValue> extends Omit<
+    HTMLProps<HTMLDivElement>,
+    'value' | 'onChange'
+> {
     value: TType;
     onChange: (value: TType, key: string) => void;
     height?: number;
@@ -74,9 +73,7 @@ PickerDataContext.displayName = 'PickerDataContext';
 export function usePickerData(componentName: string) {
     const context = useContext(PickerDataContext);
     if (context === null) {
-        const error = new Error(
-            `<${componentName} /> is missing a parent <Picker /> component.`
-        );
+        const error = new Error(`<${componentName} /> is missing a parent <Picker /> component.`);
         if (Error.captureStackTrace) {
             Error.captureStackTrace(error, usePickerData);
         }
@@ -94,9 +91,7 @@ PickerActionsContext.displayName = 'PickerActionsContext';
 export function usePickerActions(componentName: string) {
     const context = useContext(PickerActionsContext);
     if (context === null) {
-        const error = new Error(
-            `<${componentName} /> is missing a parent <Picker /> component.`
-        );
+        const error = new Error(`<${componentName} /> is missing a parent <Picker /> component.`);
         if (Error.captureStackTrace) {
             Error.captureStackTrace(error, usePickerActions);
         }
@@ -107,8 +102,7 @@ export function usePickerActions(componentName: string) {
 
 function sortByDomNode<T>(
     nodes: T[],
-    resolveKey: (item: T) => HTMLElement | null = (i) =>
-        i as unknown as HTMLElement | null
+    resolveKey: (item: T) => HTMLElement | null = (i) => i as unknown as HTMLElement | null
 ): T[] {
     return nodes.slice().sort((aItem, zItem) => {
         const a = resolveKey(aItem);
@@ -136,10 +130,7 @@ function pickerReducer(
         case 'REGISTER_OPTION': {
             const { key, option } = action;
             let nextOptionsForKey = [...(optionGroups[key] || []), option];
-            nextOptionsForKey = sortByDomNode(
-                nextOptionsForKey,
-                (o) => o.element.current
-            );
+            nextOptionsForKey = sortByDomNode(nextOptionsForKey, (o) => o.element.current);
             return {
                 ...optionGroups,
                 [key]: nextOptionsForKey,
@@ -220,10 +211,7 @@ function PickerRoot<TType extends PickerValue>(props: PickerRootProps<TType>) {
         dispatch({ type: 'REGISTER_OPTION', key, option });
         return () => dispatch({ type: 'UNREGISTER_OPTION', key, option });
     }, []);
-    const pickerActions = useMemo(
-        () => ({ registerOption, change: triggerChange }),
-        [registerOption, triggerChange]
-    );
+    const pickerActions = useMemo(() => ({ registerOption, change: triggerChange }), [registerOption, triggerChange]);
 
     return (
         <div
@@ -234,9 +222,7 @@ function PickerRoot<TType extends PickerValue>(props: PickerRootProps<TType>) {
             {...restProps}
         >
             <PickerActionsContext.Provider value={pickerActions}>
-                <PickerDataContext.Provider value={pickerData}>
-                    {children}
-                </PickerDataContext.Provider>
+                <PickerDataContext.Provider value={pickerData}>{children}</PickerDataContext.Provider>
             </PickerActionsContext.Provider>
             <div style={highlightStyle}></div>
         </div>

@@ -44,10 +44,9 @@ import css from '@/pages/BookingInfoPage/BookingInfoPage.module.css';
 import { R } from '@/__mocks__/restaurant.mock.ts';
 import { BOOKINGCOMMENTMOCK } from '@/mockData.ts';
 
-
 /**
- * 
- * @returns 
+ *
+ * @returns
  */
 export const BookingInfoPage: React.FC = (): JSX.Element => {
     const { id } = useParams();
@@ -121,7 +120,7 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`;
         }
     };
-    console.log('booking.tags: ', booking)
+    console.log('booking.tags: ', booking);
     return (
         <Page back={true}>
             <DepositCancelModal
@@ -323,7 +322,9 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
                                             <UniversalButton
                                                 width={'full'}
                                                 title={'Смотреть меню'}
-                                                action={() => navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)}
+                                                action={() =>
+                                                    navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)
+                                                }
                                                 theme={'secondary'}
                                             />
                                         )}

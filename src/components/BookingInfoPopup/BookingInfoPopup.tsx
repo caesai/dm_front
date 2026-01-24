@@ -43,21 +43,14 @@ export const BookingInfoPopup: React.FC<BookingInfoPopupProps> = (props) => {
     }, [props]);
 
     return (
-        <StyledPopup
-            open={props.isOpen}
-            onClose={close}
-            closeOnDocumentClick={true}
-            className={'popup'}
-
-        >
-
+        <StyledPopup open={props.isOpen} onClose={close} closeOnDocumentClick={true} className={'popup'}>
             <div
                 className={classNames(
-                    css.popup,
+                    css.popup
                     // isClosing ? css.popup__closing : null,
                 )}
             >
-                <div style={{position: 'absolute', top: 10, right: 10}}>
+                <div style={{ position: 'absolute', top: 10, right: 10 }}>
                     <RoundedButton
                         icon={<CrossIcon size={44} color={'black'} />}
                         bgColor={'var(--primary-background) !important'}
@@ -65,8 +58,11 @@ export const BookingInfoPopup: React.FC<BookingInfoPopupProps> = (props) => {
                     />
                 </div>
                 <span className={css.title}>Обращаем ваше внимание. </span>
-                <span className={css.tags_title}>У вас есть возможность оформить предзаказ к вашему бронированию. Просто нажмите галочку и в течение 30 минут мы свяжемся с вами для уточнения деталей. Если вы оформляете бронь вне рабочего времени ресторана, мы обязательно свяжемся с вами сразу после открытия ресторана.</span>
-
+                <span className={css.tags_title}>
+                    У вас есть возможность оформить предзаказ к вашему бронированию. Просто нажмите галочку и в течение
+                    30 минут мы свяжемся с вами для уточнения деталей. Если вы оформляете бронь вне рабочего времени
+                    ресторана, мы обязательно свяжемся с вами сразу после открытия ресторана.
+                </span>
             </div>
         </StyledPopup>
     );

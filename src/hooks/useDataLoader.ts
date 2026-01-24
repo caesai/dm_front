@@ -41,7 +41,9 @@ export const useDataLoader = () => {
     const user = useAtomValue(userAtom);
     const setCitiesList = useSetAtom(cityListAtom as WritableAtom<TCityList, [TCityList], void>);
     const setRestaurantsList = useSetAtom(restaurantsListAtom as WritableAtom<IRestaurant[], [IRestaurant[]], void>);
-    const setCertificatesList = useSetAtom(certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>);
+    const setCertificatesList = useSetAtom(
+        certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>
+    );
     // const setAllGastronomyDishesList = useSetAtom(allGastronomyDishesListAtom as WritableAtom<IDish[], [IDish[]], void>);
     const setEventsList = useSetAtom(eventsListAtom as WritableAtom<IEvent[] | null, [IEvent[] | null], void>);
 
@@ -142,7 +144,7 @@ export const useDataLoader = () => {
 
     /**
      * Загружает блюда гастрономии (ленивая загрузка)
-     * TODO: Выключаем кулинарию 
+     * TODO: Выключаем кулинарию
      */
     // const loadGastronomyDishes = useCallback(async (): Promise<void> => {
     //     if (!auth?.access_token || loadedRef.current.gastronomy) {
@@ -194,27 +196,27 @@ export const useDataLoader = () => {
     /**
      * Проверяет наличие кэшированных критичных данных.
      * Используется для мгновенного показа UI при наличии кэша.
-     * 
+     *
      * @returns true если есть кэш городов И ресторанов
      */
     const hasCachedCriticalData = useCallback((): boolean => {
         const cachedCities = getCachedData<ICity[]>(CACHE_KEYS.cities);
         const cachedRestaurants = getCachedData<IRestaurant[]>(CACHE_KEYS.restaurants);
-        
+
         // Проверяем что кэш не пустой
         const hasValidCache = !!(
-            cachedCities && 
-            cachedCities.length > 0 && 
-            cachedRestaurants && 
+            cachedCities &&
+            cachedCities.length > 0 &&
+            cachedRestaurants &&
             cachedRestaurants.length > 0
         );
-        
+
         // Если есть валидный кэш — сразу устанавливаем данные в атомы
         if (hasValidCache) {
             setCitiesList(cachedCities);
             setRestaurantsList(cachedRestaurants);
         }
-        
+
         return hasValidCache;
     }, [setCitiesList, setRestaurantsList]);
 

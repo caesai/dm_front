@@ -15,7 +15,7 @@
 
 .text {
     text-align: center;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 600;
     font-size: 20px;
 }
@@ -38,13 +38,13 @@
     border: 1px solid transparent;
     border-radius: 12px;
     text-align: left;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     line-height: 90%;
     font-size: 14px;
     color: var(--dark-grey);
-    background-color: #F4F4F4;
+    background-color: #f4f4f4;
 
     &.active {
-        border-color: #5B5B5B;
+        border-color: #5b5b5b;
     }
 }

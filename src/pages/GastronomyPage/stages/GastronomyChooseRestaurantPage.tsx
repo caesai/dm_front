@@ -115,7 +115,7 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
         }
         if (currentRestaurant.value !== 'unset') {
             navigate('/gastronomy/' + currentRestaurant.value);
-        } 
+        }
     };
 
     return (
@@ -146,8 +146,8 @@ export const GastronomyChooseRestaurantPage: React.FC = () => {
                             <li>Оформите заказ до 29 декабря.</li>
                             <li>Оплатите заказ (100% предоплата).</li>
                             <li>
-                                Заберите блюда из ресторана или оформим для вас доставку {currentCity.name_english !== 'moscow' ? 'в период \n с 25 по' : ''} 31
-                                декабря.
+                                Заберите блюда из ресторана или оформим для вас доставку{' '}
+                                {currentCity.name_english !== 'moscow' ? 'в период \n с 25 по' : ''} 31 декабря.
                             </li>
                         </ul>
                     </div>

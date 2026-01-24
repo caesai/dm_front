@@ -1,4 +1,4 @@
-import css from "./Banner.module.css";
+import css from './Banner.module.css';
 import { Zoom } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useEffect, useState } from 'react';
@@ -33,13 +33,10 @@ export const Banner = () => {
                         style={{ width: 'max-content' }}
                         onClick={() => navigate(banner.link)}
                     >
-                        <div
-                            className={css.photo}
-                            style={{ backgroundImage: `url(${banner.img_url})` }}
-                        />
+                        <div className={css.photo} style={{ backgroundImage: `url(${banner.img_url})` }} />
                     </SwiperSlide>
                 ))}
             </Swiper>
         </section>
-    )
-}
+    );
+};

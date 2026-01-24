@@ -21,7 +21,7 @@ const StyledPopup = styled(Popup)`
     // use your custom style for ".popup-content"
 
     &-content {
-        width: 100vw!important;
+        width: 100vw !important;
         margin: 0 !important;
         padding: 0;
     }
@@ -121,12 +121,7 @@ const GuestCountPopup: React.FC<IGuestCountPopupProps> = ({
                     </div>
                 </div>
                 <div>
-                    <UniversalButton
-                        width={'full'}
-                        title={'Сохранить'}
-                        action={onClose}
-                        theme={'secondary'}
-                    />
+                    <UniversalButton width={'full'} title={'Сохранить'} action={onClose} theme={'secondary'} />
                 </div>
             </ContentContainer>
         </StyledPopup>

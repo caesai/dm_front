@@ -1,19 +1,19 @@
 /**
  * @fileoverview Тесты для страницы информации о бронировании BookingInfoPage.
- * 
+ *
  * Страница отображает детали существующего бронирования и позволяет:
  * - Просмотреть информацию о бронировании (ресторан, дата, время, гости)
  * - Изменить бронирование (через Telegram бота)
  * - Отменить бронирование
  * - Посмотреть меню ресторана
  * - Построить маршрут до ресторана
- * 
+ *
  * Особенности для депозитных бронирований:
  * - При отмене показывается специальный попап с условиями возврата депозита
  * - Попап содержит кнопки "Нет, оставить" и "Всё равно отменить"
- * 
+ *
  * @module __tests__/booking/BookingInfoPage
- * 
+ *
  * @see {@link BookingInfoPage} - тестируемый компонент
  * @see {@link DepositCancelModal} - попап отмены депозитного бронирования
  * @see {@link CancelBookingPopup} - стандартный попап отмены бронирования
@@ -25,11 +25,11 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { BookingInfoPage } from '@/pages/BookingInfoPage/BookingInfoPage';
 import { authAtom } from '@/atoms/userAtom';
 import { TestProvider } from '@/__mocks__/atom.mock';
-import { 
-    mockBookingInfo, 
-    mockDepositBookingInfo, 
+import {
+    mockBookingInfo,
+    mockDepositBookingInfo,
     mockWaitingBookingInfo,
-    mockCanceledBookingInfo 
+    mockCanceledBookingInfo,
 } from '@/__mocks__/booking.mock';
 
 // ============================================
@@ -119,20 +119,15 @@ describe('BookingInfoPage', () => {
 
     /**
      * Рендерит компонент BookingInfoPage.
-     * 
+     *
      * @param bookingId - ID бронирования
      * @param bookingData - Данные бронирования для мока API
      */
-    const renderComponent = (
-        bookingId: string = '123',
-        bookingData = mockBookingInfo
-    ) => {
+    const renderComponent = (bookingId: string = '123', bookingData = mockBookingInfo) => {
         mockUseParams.mockReturnValue({ id: bookingId });
         mockAPIGetBooking.mockResolvedValue({ data: bookingData });
 
-        const initialValues: Array<readonly [any, unknown]> = [
-            [authAtom, { access_token: 'test-token' }],
-        ];
+        const initialValues: Array<readonly [any, unknown]> = [[authAtom, { access_token: 'test-token' }]];
 
         return render(
             <TestProvider initialValues={initialValues}>
@@ -167,10 +162,7 @@ describe('BookingInfoPage', () => {
         // Подавляем ожидаемые логи и ошибки
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Warning:')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Warning:')) {
                 return;
             }
             originalConsoleError(...args);
@@ -431,9 +423,7 @@ describe('BookingInfoPage', () => {
         test('должен редиректить на главную при отсутствии токена', async () => {
             mockUseParams.mockReturnValue({ id: '123' });
 
-            const initialValues: Array<readonly [any, unknown]> = [
-                [authAtom, null],
-            ];
+            const initialValues: Array<readonly [any, unknown]> = [[authAtom, null]];
 
             render(
                 <TestProvider initialValues={initialValues}>
@@ -480,9 +470,9 @@ describe('BookingInfoPage', () => {
 
             // Находим и кликаем кнопку подтверждения отмены в CancelBookingPopup
             const confirmButtons = screen.getAllByRole('button');
-            const confirmButton = confirmButtons.find(btn => 
-                btn.textContent?.toLowerCase().includes('да') || 
-                btn.textContent?.toLowerCase().includes('отменить')
+            const confirmButton = confirmButtons.find(
+                (btn) =>
+                    btn.textContent?.toLowerCase().includes('да') || btn.textContent?.toLowerCase().includes('отменить')
             );
 
             if (confirmButton) {

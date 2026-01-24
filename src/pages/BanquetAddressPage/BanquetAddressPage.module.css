@@ -1,11 +1,11 @@
 .page {
-    background-color: var(--third-background)!important;
-    height: 100vh!important;
+    background-color: var(--third-background) !important;
+    height: 100vh !important;
 }
 
 .pageWrapper {
     padding: 20px 0;
-    background-color: var(--third-background)!important;
+    background-color: var(--third-background) !important;
 }
 
 .header {
@@ -42,13 +42,13 @@
 
 .content_title {
     margin: 0;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 600;
     font-size: 16px;
 }
 
 .banquet_title {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 1.25rem;
     text-align: center;

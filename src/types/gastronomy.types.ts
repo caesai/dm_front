@@ -14,7 +14,7 @@ export interface IDish {
     allergens: string[];
     prices: number[];
     weights: string[];
-    weight_value?: string;  // единица измерения: "г", "кг", "л"
+    weight_value?: string; // единица измерения: "г", "кг", "л"
     calories?: number;
     proteins?: number;
     fats?: number;
@@ -24,7 +24,7 @@ export interface IDish {
     is_active?: boolean;
 }
 
-export type TDeliveryMethod = "pickup" | "delivery";
+export type TDeliveryMethod = 'pickup' | 'delivery';
 
 export interface ITimeWindow {
     date: string; // "25 декабря"
@@ -51,6 +51,6 @@ export interface ISendOrder {
 
 export interface IOrder extends ISendOrder {
     order_id: string;
-    status: "paid" | "pending" | "canceled";
+    status: 'paid' | 'pending' | 'canceled';
     createdAt: string;
 }

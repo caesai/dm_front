@@ -12,7 +12,6 @@ import css from '@/components/RestaurantNavigation/RestaurantNavigation.module.c
 // Hooks
 import { useRestaurantPageData } from '@/hooks/useRestaurantPageData.ts';
 
-
 interface IRestaurantNavigationProps {
     restaurantId: string;
 }

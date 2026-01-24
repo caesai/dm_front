@@ -13,16 +13,14 @@ import html2canvas from 'html2canvas';
 import { useNavigate } from 'react-router-dom';
 
 export const shareCertificate = async (certificate: ICertificate, certificateRef: React.Ref<HTMLDivElement | null>) => {
-    const url = encodeURI(
-        `https://t.me/${BASE_BOT}?startapp=certificateId_${certificate.id}`
-    );
+    const url = encodeURI(`https://t.me/${BASE_BOT}?startapp=certificateId_${certificate.id}`);
     // The message includes the full context needed
     // const message = `${certificate.recipient_name}, вы получили подарочный сертификат. Перейдите по ссылке ${decodeURI(url)}, чтобы посмотреть его и воспользоваться`;
     const message = decodeURI(url);
 
     try {
         const canvas = await html2canvas(certificateRef as unknown as HTMLElement);
-        const imageDataURL = canvas.toDataURL("image/png");
+        const imageDataURL = canvas.toDataURL('image/png');
         const byteString = atob(imageDataURL.split(',')[1]);
         const mimeString = imageDataURL.split(',')[0].split(':')[1].split(';')[0];
         const ab = new ArrayBuffer(byteString.length);
@@ -53,8 +51,7 @@ export const shareCertificate = async (certificate: ICertificate, certificateRef
         }
         // 3. Fallback: Use the Telegram specific URL scheme
         // This is the most reliable way to ensure both message and url are present if the native API fails
-        window.open(`https://t.me/share/url?text=${encodeURI(message)}`, "_blank");
-
+        window.open(`https://t.me/share/url?text=${encodeURI(message)}`, '_blank');
     } catch (error) {
         console.error('Error handling image fetch or initial share attempt:', error);
         // If image fetching fails, try sharing text/url as a last resort native share or fallback URL
@@ -62,30 +59,30 @@ export const shareCertificate = async (certificate: ICertificate, certificateRef
             await navigator.share({ text: message });
             return;
         }
-        window.open(`https://t.me/share/url?url=${url}&text=${encodeURI(message)}`, "_blank");
+        window.open(`https://t.me/share/url?url=${url}&text=${encodeURI(message)}`, '_blank');
     }
 };
 
 export const CertificatesListPage: React.FC = () => {
-
-    const [certificates, setCertificates] = useAtom(certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>);
+    const [certificates, setCertificates] = useAtom(
+        certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>
+    );
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
 
     useEffect(() => {
         if (auth?.access_token) {
-            APIGetCertificates(auth?.access_token, Number(user?.id))
-                .then(response => setCertificates(response.data));
+            APIGetCertificates(auth?.access_token, Number(user?.id)).then((response) => setCertificates(response.data));
         }
     }, [auth?.access_token, user?.id, setCertificates]);
 
     return (
         <div className={css.content}>
             {certificates.length > 0 ? (
-                certificates.map((certificate) => (
-                    <CertificateOption certificate={certificate} key={certificate.id} />
-                ))
-            ) : (<h2 className={css.empty_list}>Список пуст</h2>)}
+                certificates.map((certificate) => <CertificateOption certificate={certificate} key={certificate.id} />)
+            ) : (
+                <h2 className={css.empty_list}>Список пуст</h2>
+            )}
         </div>
     );
 };
@@ -98,8 +95,8 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) =>
     const navigate = useNavigate();
     const certificateRef = useRef(null);
     const useCertificate = () => {
-        navigate('/booking', { state: { certificate: true, certificateId: certificate.id } })
-    }
+        navigate('/booking', { state: { certificate: true, certificateId: certificate.id } });
+    };
     return (
         <div className={css.certificateOption}>
             <Certificate
@@ -110,8 +107,17 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) =>
                 dreamteam_id={certificate.dreamteam_id}
                 forwardRef={certificateRef}
             />
-            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} theme={'secondary'} action={() => shareCertificate(certificate, certificateRef.current)} />}
-            {certificate.status === 'shared' && <UniversalButton width={'full'} title={'Воспользоваться'} theme={'secondary'} action={useCertificate} />}
+            {certificate.status === 'paid' && (
+                <UniversalButton
+                    width={'full'}
+                    title={'Поделиться'}
+                    theme={'secondary'}
+                    action={() => shareCertificate(certificate, certificateRef.current)}
+                />
+            )}
+            {certificate.status === 'shared' && (
+                <UniversalButton width={'full'} title={'Воспользоваться'} theme={'secondary'} action={useCertificate} />
+            )}
         </div>
-    )
-}
+    );
+};

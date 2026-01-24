@@ -7,11 +7,7 @@ interface IOSPickerProps {
     onChange: (index: number) => void;
 }
 
-export const IOSPicker = ({
-    items,
-    selectedIndex,
-    onChange,
-}: IOSPickerProps) => {
+export const IOSPicker = ({ items, selectedIndex, onChange }: IOSPickerProps) => {
     const [isDragging, setIsDragging] = useState(false);
     const [offset, setOffset] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -108,8 +104,7 @@ export const IOSPicker = ({
     const handleMouseMove = (e: MouseEvent) => handleMove(e.clientY);
     const handleMouseUp = () => handleEnd();
 
-    const handleTouchStart = (e: TouchEvent) =>
-        handleStart(e.touches[0].clientY);
+    const handleTouchStart = (e: TouchEvent) => handleStart(e.touches[0].clientY);
     const handleTouchMove = (e: TouchEvent) => handleMove(e.touches[0].clientY);
     const handleTouchEnd = () => handleEnd();
 
@@ -120,10 +115,7 @@ export const IOSPicker = ({
     };
 
     return (
-        <div
-            className="ios-picker-container"
-            style={{ height: ITEM_HEIGHT * VISIBLE_ITEMS }}
-        >
+        <div className="ios-picker-container" style={{ height: ITEM_HEIGHT * VISIBLE_ITEMS }}>
             <div
                 ref={containerRef}
                 className="ios-picker-wrapper"
@@ -136,19 +128,13 @@ export const IOSPicker = ({
                 onMouseLeave={handleEnd}
                 style={{
                     transform: `translateY(${offset}px)`,
-                    transition: isDragging
-                        ? 'none'
-                        : 'transform 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
+                    transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
                 }}
             >
                 {items.map((item, index) => (
                     <div
                         key={index}
-                        className={`ios-picker-item ${
-                            Math.round(-offset / ITEM_HEIGHT) === index
-                                ? 'selected'
-                                : ''
-                        }`}
+                        className={`ios-picker-item ${Math.round(-offset / ITEM_HEIGHT) === index ? 'selected' : ''}`}
                         onClick={() => handleItemClick(index)}
                     >
                         {item}

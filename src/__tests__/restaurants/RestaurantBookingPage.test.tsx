@@ -1,9 +1,9 @@
 /**
  * @fileoverview Тесты для страницы бронирования ресторана RestaurantBookingPage.
- * 
+ *
  * Страница предназначена для бронирования столика в конкретном ресторане.
  * Пользователь попадает сюда со страницы ресторана ({@link RestaurantPage}).
- * 
+ *
  * Основные функции страницы:
  * - Отображение информации о ресторане (название, адрес)
  * - Выбор даты бронирования из доступных дат
@@ -14,7 +14,7 @@
  * - Дополнительные пожелания к бронированию
  * - Выбор сертификата
  * - Создание бронирования через API
- * 
+ *
  * Отличия от {@link EventBookingPage}:
  * - Использует {@link restaurantsListAtom} вместо {@link eventsListAtom}
  * - Имеет выбор даты (в EventBookingPage дата фиксирована)
@@ -22,9 +22,9 @@
  * - После успешного бронирования навигация на /myBookings/{id}
  * - Поддерживает sharedRestaurant для навигации "назад"
  * - Начальные данные (дата, время) из {@link restaurantBookingFormAtom}
- * 
+ *
  * @module __tests__/restaurants/RestaurantBookingPage
- * 
+ *
  * @see {@link RestaurantBookingPage} - тестируемый компонент
  * @see {@link RestaurantPage} - страница, с которой пользователь переходит на бронирование
  * @see {@link useBookingForm} - хук управления формой бронирования
@@ -159,7 +159,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 /**
  * Тесты страницы бронирования ресторана.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Отображение информации о ресторане
  * - Выбор даты бронирования
@@ -172,7 +172,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
  * - Навигация после успешного бронирования
  * - Обработка sharedRestaurant
  * - Обработка initialBookingData
- * 
+ *
  * Тесты построены по тому же шаблону, что и {@link EventBookingPage.test.tsx}
  * для обеспечения согласованности тестирования.
  */
@@ -198,18 +198,18 @@ describe('RestaurantBookingPage', () => {
 
     /**
      * Рендерит компонент RestaurantBookingPage с необходимыми провайдерами.
-     * 
+     *
      * @param user - Данные пользователя (по умолчанию mockUserData)
      * @param restaurants - Список ресторанов (по умолчанию [mockRestaurant])
      * @param restaurantId - ID ресторана для бронирования
      * @param previewFormData - Данные из restaurantBookingFormAtom (дата, время, гости)
      * @param isSharedRestaurant - Флаг shared-ссылки (передаётся через location.state)
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @example
      * // Рендер с дефолтными параметрами
      * renderComponent();
-     * 
+     *
      * @example
      * // Рендер с начальной датой и временем
      * renderComponent(mockUserData, [mockRestaurant], '1', {
@@ -217,7 +217,7 @@ describe('RestaurantBookingPage', () => {
      *     selectedTimeSlot: mockTimeSlots[0],
      *     guestCount: 2,
      * });
-     * 
+     *
      * @example
      * // Рендер для shared-ссылки
      * renderComponent(mockUserData, [mockRestaurant], '1', undefined, true);
@@ -284,7 +284,7 @@ describe('RestaurantBookingPage', () => {
             pathname: '/restaurant/1/booking',
             state: null,
         });
-        
+
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -300,7 +300,7 @@ describe('RestaurantBookingPage', () => {
             }
             originalConsoleError(...args);
         });
-        
+
         // Подавляем предупреждения о SVG атрибутах
         jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -316,12 +316,12 @@ describe('RestaurantBookingPage', () => {
             }
             originalConsoleWarn(...args);
         });
-        
+
         // Настройка моков API
         mockAPIGetAvailableDays.mockResolvedValue({ data: mockAvailableDates });
         mockAPIGetAvailableTimeSlots.mockResolvedValue({ data: mockTimeSlots });
-        mockAPICreateBooking.mockResolvedValue({ 
-            data: { id: 123 } 
+        mockAPICreateBooking.mockResolvedValue({
+            data: { id: 123 },
         });
     });
 
@@ -378,11 +378,7 @@ describe('RestaurantBookingPage', () => {
             renderComponent();
 
             await waitFor(() => {
-                expect(mockAPIGetAvailableDays).toHaveBeenCalledWith(
-                    'test-token',
-                    '1',
-                    1
-                );
+                expect(mockAPIGetAvailableDays).toHaveBeenCalledWith('test-token', '1', 1);
             });
         });
 
@@ -607,7 +603,7 @@ describe('RestaurantBookingPage', () => {
     describe('Создание бронирования', () => {
         /**
          * Проверяет вызов API без event_id при создании бронирования.
-         * 
+         *
          * Начальные данные берутся из restaurantBookingFormAtom.
          * guestCount по умолчанию = 1 если не указан в previewFormData.
          */
@@ -630,7 +626,7 @@ describe('RestaurantBookingPage', () => {
 
             // Нажимаем кнопку бронирования
             const bookButton = screen.getByRole('button', { name: /забронировать/i });
-            
+
             await act(async () => {
                 fireEvent.click(bookButton);
             });
@@ -663,7 +659,7 @@ describe('RestaurantBookingPage', () => {
          */
         test('должен перенаправлять на страницу бронирования после успешного создания', async () => {
             mockAPICreateBooking.mockResolvedValue({
-                data: { id: 123 }
+                data: { id: 123 },
             });
 
             const initialDate = { title: '23 авг', value: '2025-08-23' };
@@ -683,7 +679,7 @@ describe('RestaurantBookingPage', () => {
             });
 
             const bookButton = screen.getByRole('button', { name: /забронировать/i });
-            
+
             await act(async () => {
                 fireEvent.click(bookButton);
             });
@@ -730,7 +726,7 @@ describe('RestaurantBookingPage', () => {
             });
 
             const bookButton = screen.getByRole('button', { name: /забронировать/i });
-            
+
             await act(async () => {
                 fireEvent.click(bookButton);
             });
@@ -858,7 +854,7 @@ describe('RestaurantBookingPage', () => {
             });
 
             const bookButton = screen.getByRole('button', { name: /забронировать/i });
-            
+
             await act(async () => {
                 fireEvent.click(bookButton);
             });
@@ -929,7 +925,7 @@ describe('RestaurantBookingPage', () => {
         test('должен использовать временной слот из restaurantBookingFormAtom', async () => {
             const initialDate = { title: '23 авг', value: '2025-08-23' };
             const initialTime = mockTimeSlots[0];
-            
+
             renderComponent(mockUserData, [mockRestaurant], '1', {
                 date: initialDate,
                 selectedTimeSlot: initialTime,

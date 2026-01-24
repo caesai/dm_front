@@ -59,24 +59,17 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
 
     const showMenuPopup = () => {
         props.setMenuPopupOpen(true);
-    }
+    };
 
     return (
-        <StyledPopup
-            open={props.isOpen}
-            onClose={close}
-            closeOnDocumentClick={true}
-            className={'popup'}
-
-        >
-
+        <StyledPopup open={props.isOpen} onClose={close} closeOnDocumentClick={true} className={'popup'}>
             <div
                 className={classNames(
-                    css.popup,
+                    css.popup
                     // isClosing ? css.popup__closing : null,
                 )}
             >
-                <div style={{position: 'absolute', top: 10, right: 10}}>
+                <div style={{ position: 'absolute', top: 10, right: 10 }}>
                     <RoundedButton
                         icon={<CrossIcon size={44} color={'black'} />}
                         bgColor={'var(--primary-background) !important'}
@@ -84,22 +77,14 @@ export const BookingSpecialPopup: React.FC<BookingSpecialPopupProps> = (props) =
                     />
                 </div>
                 <span className={css.title}>Обращаем ваше внимание. </span>
-                <span className={css.tags_title}>В это время будет действовать специальное меню, посвящённое Blackchops Steak Club.</span>
+                <span className={css.tags_title}>
+                    В это время будет действовать специальное меню, посвящённое Blackchops Steak Club.
+                </span>
 
-                <button
-                    className={classNames(
-                        css.button, css.button__disabled,
-                    )}
-                    onClick={showMenuPopup}
-                >
+                <button className={classNames(css.button, css.button__disabled)} onClick={showMenuPopup}>
                     Посмотреть меню
                 </button>
-                <button
-                    className={classNames(
-                        css.button,
-                    )}
-                    onClick={props.createBooking}
-                >
+                <button className={classNames(css.button)} onClick={props.createBooking}>
                     Забронировать
                 </button>
             </div>

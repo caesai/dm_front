@@ -11,10 +11,7 @@ import { IDish } from '@/types/gastronomy.types.ts';
  * @returns Объект, содержащий новый список товаров, общую сумму и общее количество.
  */
 const calculateCartTotals = (items: ICartItem[]) => {
-    const totalAmount = items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-    );
+    const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
     return { items, totalAmount, totalItems };
 };
@@ -38,9 +35,7 @@ const handleAddToCartLogic = (prevCart: IGastronomyCart, dish: IDish, selectedWe
 
     if (existingItem) {
         newItems = prevCart.items.map((item) =>
-            item.id === dish.id
-                ? { ...item, quantity: item.quantity + 1 }
-                : item
+            item.id === dish.id ? { ...item, quantity: item.quantity + 1 } : item
         );
     } else {
         const newItem: ICartItem = {
@@ -79,16 +74,11 @@ const handleRemoveFromCartLogic = (prevCart: IGastronomyCart, dishId: number): I
     if (existingItem.quantity === 1) {
         newItems = prevCart.items.filter((item) => item.id !== dishId);
     } else {
-        newItems = prevCart.items.map((item) =>
-            item.id === dishId
-                ? { ...item, quantity: item.quantity - 1 }
-                : item
-        );
+        newItems = prevCart.items.map((item) => (item.id === dishId ? { ...item, quantity: item.quantity - 1 } : item));
     }
 
     return calculateCartTotals(newItems);
 };
-
 
 /**
  * Хук для управления корзиной гастрономии.
@@ -112,9 +102,12 @@ export const useGastronomyCart = () => {
      * @param dish - Объект блюда, которое нужно добавить.
      * @param [selectedWeightIndex=0] - Индекс выбранного веса/цены блюда.
      */
-    const addToCart = useCallback((dish: IDish, selectedWeightIndex: number = 0) => {
-        setCart(prevCart => handleAddToCartLogic(prevCart, dish, selectedWeightIndex));
-    }, [setCart]);
+    const addToCart = useCallback(
+        (dish: IDish, selectedWeightIndex: number = 0) => {
+            setCart((prevCart) => handleAddToCartLogic(prevCart, dish, selectedWeightIndex));
+        },
+        [setCart]
+    );
 
     /**
      * Удаляет одну единицу блюда из корзины.
@@ -122,9 +115,12 @@ export const useGastronomyCart = () => {
      *
      * @param dishId - Уникальный идентификатор блюда для удаления.
      */
-    const removeFromCart = useCallback((dishId: number) => {
-        setCart(prevCart => handleRemoveFromCartLogic(prevCart, dishId));
-    }, [setCart]);
+    const removeFromCart = useCallback(
+        (dishId: number) => {
+            setCart((prevCart) => handleRemoveFromCartLogic(prevCart, dishId));
+        },
+        [setCart]
+    );
 
     /**
      * Полностью очищает корзину, сбрасывая все товары, общую сумму и количество в ноль.
@@ -143,9 +139,12 @@ export const useGastronomyCart = () => {
      * @param dishId - Уникальный идентификатор блюда.
      * @returns Количество блюда в корзине (0, если блюдо отсутствует).
      */
-    const getItemQuantity = useCallback((dishId: number): number => {
-        return cart.items.find((item) => item.id === dishId)?.quantity ?? 0;
-    }, [cart.items]);
+    const getItemQuantity = useCallback(
+        (dishId: number): number => {
+            return cart.items.find((item) => item.id === dishId)?.quantity ?? 0;
+        },
+        [cart.items]
+    );
 
     return {
         cart,

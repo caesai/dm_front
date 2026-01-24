@@ -7,4 +7,3 @@ import { IMenu } from '@/types/menu.types.ts';
  * Ключ - ID ресторана, значение - меню
  */
 export const restaurantMenusAtom = atom<Record<string, IMenu>>({});
-

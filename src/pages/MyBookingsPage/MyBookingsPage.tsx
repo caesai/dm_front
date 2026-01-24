@@ -19,7 +19,7 @@ import css from './MyBookingsPage.module.css';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 
 export const MyBookingsPage: React.FC = () => {
-    const { goBack, getPreviousPath } = useNavigationHistory()
+    const { goBack, getPreviousPath } = useNavigationHistory();
     const navigate = useNavigate();
 
     const [auth] = useAtom(authAtom);
@@ -32,9 +32,8 @@ export const MyBookingsPage: React.FC = () => {
 
     const handleGoBack = () => {
         const prevPath = getPreviousPath();
-        prevPath?.includes('/myBookings/') ?
-            navigate('/') : goBack();
-    }
+        prevPath?.includes('/myBookings/') ? navigate('/') : goBack();
+    };
 
     useEffect(() => {
         if (!auth?.access_token) {

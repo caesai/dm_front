@@ -176,10 +176,7 @@ describe('HospitalityHeroesApplicationFormPage', () => {
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Error')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Error')) {
                 return;
             }
             originalConsoleError(...args);
@@ -513,9 +510,7 @@ describe('HospitalityHeroesApplicationFormPage', () => {
                 target: { value: '5 лет в сфере гостеприимства. Работал в нескольких ресторанах.' },
             });
 
-            expect(experienceTextarea).toHaveValue(
-                '5 лет в сфере гостеприимства. Работал в нескольких ресторанах.'
-            );
+            expect(experienceTextarea).toHaveValue('5 лет в сфере гостеприимства. Работал в нескольких ресторанах.');
         });
     });
 
@@ -561,17 +556,14 @@ describe('HospitalityHeroesApplicationFormPage', () => {
             });
 
             await waitFor(() => {
-                expect(mockAPIPostSuperEventCreateApplication).toHaveBeenCalledWith(
-                    'test-token',
-                    {
-                        name: mockUserData.first_name,
-                        surname: mockUserData.last_name,
-                        phone: mockUserData.phone_number,
-                        work_place: 'Ресторан "Тест"',
-                        job_title: 'Официант',
-                        experience: '5 лет опыта',
-                    }
-                );
+                expect(mockAPIPostSuperEventCreateApplication).toHaveBeenCalledWith('test-token', {
+                    name: mockUserData.first_name,
+                    surname: mockUserData.last_name,
+                    phone: mockUserData.phone_number,
+                    work_place: 'Ресторан "Тест"',
+                    job_title: 'Официант',
+                    experience: '5 лет опыта',
+                });
             });
         });
 

@@ -1,21 +1,21 @@
 /**
  * @fileoverview Тесты для страницы подтверждения бронирования банкета BanquetReservationPage.
- * 
+ *
  * Страница является финальным шагом в процессе бронирования банкета:
  * - Отображение сводки всех введённых данных
  * - Ввод комментария к бронированию
  * - Выбор способа связи (Telegram/телефон)
  * - Отображение предварительной стоимости
  * - Отправка запроса на бронирование
- * 
+ *
  * Особенности логики:
  * - Данные загружаются из banquetFormAtom через useBanquetForm hook
  * - Навигация назад зависит от withAdditionalPage флага
  * - При успешном бронировании происходит редирект на главную
  * - Форма сбрасывается после успешного бронирования
- * 
+ *
  * @module __tests__/banquets/BanquetReservationPage
- * 
+ *
  * @see {@link BanquetReservationPage} - тестируемый компонент
  * @see {@link BanquetAdditionalServicesPage} - предыдущий шаг (опционально)
  * @see {@link BanquetOptionPage} - предыдущий шаг (если нет доп. услуг)
@@ -126,21 +126,25 @@ jest.mock('@/components/RoundedButton/RoundedButton.tsx', () => ({
  * Мок иконки BackIcon.
  */
 jest.mock('@/components/Icons/BackIcon.tsx', () => ({
-    BackIcon: ({ color }: { color?: string }) => <span data-testid="back-icon" data-color={color}>←</span>,
+    BackIcon: ({ color }: { color?: string }) => (
+        <span data-testid="back-icon" data-color={color}>
+            ←
+        </span>
+    ),
 }));
 
 /**
  * Мок компонента TextInput.
  */
 jest.mock('@/components/TextInput/TextInput.tsx', () => ({
-    TextInput: ({ 
-        value, 
-        onChange, 
-        placeholder 
-    }: { 
-        value: string; 
-        onChange: (value: string) => void; 
-        placeholder?: string 
+    TextInput: ({
+        value,
+        onChange,
+        placeholder,
+    }: {
+        value: string;
+        onChange: (value: string) => void;
+        placeholder?: string;
     }) => (
         <input
             data-testid="commentary-input"
@@ -156,12 +160,12 @@ jest.mock('@/components/TextInput/TextInput.tsx', () => ({
  * Мок компонента ConfirmationSelect.
  */
 jest.mock('@/components/ConfirmationSelect/ConfirmationSelect.tsx', () => ({
-    ConfirmationSelect: ({ 
-        options, 
-        currentValue, 
-        onChange, 
-        title 
-    }: { 
+    ConfirmationSelect: ({
+        options,
+        currentValue,
+        onChange,
+        title,
+    }: {
         options: { id: string; text: string }[];
         currentValue: { id: string; text: string };
         onChange: (value: { id: string; text: string }) => void;
@@ -169,16 +173,18 @@ jest.mock('@/components/ConfirmationSelect/ConfirmationSelect.tsx', () => ({
     }) => (
         <div data-testid="confirmation-select">
             {title}
-            <select 
+            <select
                 data-testid="confirmation-select-dropdown"
                 value={currentValue.id}
                 onChange={(e) => {
-                    const option = options.find(o => o.id === e.target.value);
+                    const option = options.find((o) => o.id === e.target.value);
                     if (option) onChange(option);
                 }}
             >
-                {options.map(opt => (
-                    <option key={opt.id} value={opt.id}>{opt.text}</option>
+                {options.map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                        {opt.text}
+                    </option>
                 ))}
             </select>
         </div>
@@ -189,23 +195,18 @@ jest.mock('@/components/ConfirmationSelect/ConfirmationSelect.tsx', () => ({
  * Мок компонента UniversalButton.
  */
 jest.mock('@/components/Buttons/UniversalButton/UniversalButton.tsx', () => ({
-    UniversalButton: ({ 
-        title, 
-        action, 
-        theme, 
-        width 
-    }: { 
-        title: string; 
-        action?: () => void; 
-        theme?: string; 
-        width?: string 
+    UniversalButton: ({
+        title,
+        action,
+        theme,
+        width,
+    }: {
+        title: string;
+        action?: () => void;
+        theme?: string;
+        width?: string;
     }) => (
-        <button 
-            onClick={action} 
-            data-testid="submit-button"
-            data-theme={theme}
-            data-width={width}
-        >
+        <button onClick={action} data-testid="submit-button" data-theme={theme} data-width={width}>
             {title}
         </button>
     ),
@@ -217,7 +218,7 @@ jest.mock('@/components/Buttons/UniversalButton/UniversalButton.tsx', () => ({
 
 /**
  * Тесты страницы подтверждения бронирования банкета.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Рендеринг компонентов страницы
  * - Отображение данных бронирования
@@ -237,21 +238,21 @@ describe('BanquetReservationPage', () => {
 
     /**
      * Рендерит компонент BanquetReservationPage с необходимыми провайдерами.
-     * 
+     *
      * @param options - Опции рендеринга
      * @param options.restaurantId - ID ресторана в URL
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @remarks
      * URL имеет формат /banquets/:restaurantId/reservation (без optionId).
      * optionId берётся из formData через useBanquetForm, а не из URL.
      */
-    const renderComponent = (options: {
-        restaurantId?: string;
-    } = {}) => {
-        const {
-            restaurantId = '1',
-        } = options;
+    const renderComponent = (
+        options: {
+            restaurantId?: string;
+        } = {}
+    ) => {
+        const { restaurantId = '1' } = options;
 
         return render(
             <TestProvider initialValues={[]}>
@@ -265,7 +266,10 @@ describe('BanquetReservationPage', () => {
                     <Routes>
                         <Route path="/banquets/:restaurantId/reservation" element={<BanquetReservationPage />} />
                         <Route path="/banquets/:restaurantId/option/:optionId" element={<div>Option Page</div>} />
-                        <Route path="/banquets/:restaurantId/additional-services/:optionId" element={<div>Additional Services Page</div>} />
+                        <Route
+                            path="/banquets/:restaurantId/additional-services/:optionId"
+                            element={<div>Additional Services Page</div>}
+                        />
                         <Route path="/" element={<div>Home Page</div>} />
                     </Routes>
                 </MemoryRouter>
@@ -287,10 +291,7 @@ describe('BanquetReservationPage', () => {
 
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Not implemented: navigation')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Not implemented: navigation')) {
                 return;
             }
             originalConsoleError(...args);
@@ -462,7 +463,7 @@ describe('BanquetReservationPage', () => {
          */
         it('должен отображать "Не выбраны" при пустом списке услуг', () => {
             mockForm = { ...mockBanquetFormData, selectedServices: [] };
-            
+
             renderComponent();
 
             expect(screen.getByText('Не выбраны')).toBeInTheDocument();
@@ -537,7 +538,7 @@ describe('BanquetReservationPage', () => {
          */
         it('не должен отображать блок стоимости при отсутствии price', () => {
             mockForm = { ...mockBanquetFormData, price: null };
-            
+
             renderComponent();
 
             expect(screen.queryByText('Предварительная стоимость*:')).not.toBeInTheDocument();
@@ -547,11 +548,11 @@ describe('BanquetReservationPage', () => {
          * Проверяет скрытие блока стоимости при deposit = null.
          */
         it('не должен отображать блок стоимости при deposit = null', () => {
-            mockForm = { 
-                ...mockBanquetFormData, 
-                price: { ...mockBanquetFormData.price!, deposit: null } 
+            mockForm = {
+                ...mockBanquetFormData,
+                price: { ...mockBanquetFormData.price!, deposit: null },
             };
-            
+
             renderComponent();
 
             expect(screen.queryByText('Предварительная стоимость*:')).not.toBeInTheDocument();
@@ -656,7 +657,7 @@ describe('BanquetReservationPage', () => {
          */
         it('должен навигировать на страницу дополнительных услуг при withAdditionalPage=true', async () => {
             mockForm = { ...mockBanquetFormData, withAdditionalPage: true };
-            
+
             renderComponent();
 
             const backButton = screen.getByTestId('back-button');
@@ -672,7 +673,7 @@ describe('BanquetReservationPage', () => {
          */
         it('должен навигировать на страницу опции при withAdditionalPage=false', async () => {
             mockForm = { ...mockBanquetFormData, withAdditionalPage: false };
-            
+
             renderComponent();
 
             const backButton = screen.getByTestId('back-button');
@@ -748,7 +749,7 @@ describe('BanquetReservationPage', () => {
          */
         it('должен корректно работать при undefined currentRestaurant', () => {
             mockForm = { ...mockBanquetFormData, currentRestaurant: undefined };
-            
+
             renderComponent();
 
             // Страница должна рендериться без ошибок
@@ -765,7 +766,7 @@ describe('BanquetReservationPage', () => {
                 ...mockUser,
                 phone_number: '89001234567',
             });
-            
+
             renderComponent();
 
             expect(screen.getByText('89001234567')).toBeInTheDocument();
@@ -776,7 +777,7 @@ describe('BanquetReservationPage', () => {
          */
         it('должен корректно форматировать одну услугу', () => {
             mockForm = { ...mockBanquetFormData, selectedServices: ['Фотограф'] };
-            
+
             renderComponent();
 
             expect(screen.getByText('Фотограф')).toBeInTheDocument();
@@ -786,11 +787,11 @@ describe('BanquetReservationPage', () => {
          * Проверяет работу с тремя и более услугами.
          */
         it('должен корректно форматировать несколько услуг', () => {
-            mockForm = { 
-                ...mockBanquetFormData, 
-                selectedServices: ['Цветочное оформление', 'Фотограф', 'DJ'] 
+            mockForm = {
+                ...mockBanquetFormData,
+                selectedServices: ['Цветочное оформление', 'Фотограф', 'DJ'],
             };
-            
+
             renderComponent();
 
             expect(screen.getByText('Цветочное оформление, фотограф, dj')).toBeInTheDocument();
@@ -801,7 +802,7 @@ describe('BanquetReservationPage', () => {
          */
         it('должен отображать пустую дату при null', () => {
             mockForm = { ...mockBanquetFormData, date: null };
-            
+
             renderComponent();
 
             // Проверяем что страница рендерится
@@ -853,7 +854,7 @@ describe('BanquetReservationPage', () => {
          */
         it('должен использовать restaurantId из URL и optionId из формы', async () => {
             mockForm = { ...mockBanquetFormData, optionId: '15', withAdditionalPage: true };
-            
+
             renderComponent({ restaurantId: '42' });
 
             const backButton = screen.getByTestId('back-button');
@@ -869,7 +870,7 @@ describe('BanquetReservationPage', () => {
          */
         it('должен использовать optionId из формы для навигации', async () => {
             mockForm = { ...mockBanquetFormData, optionId: '99', withAdditionalPage: false };
-            
+
             renderComponent({ restaurantId: '1' });
 
             const backButton = screen.getByTestId('back-button');

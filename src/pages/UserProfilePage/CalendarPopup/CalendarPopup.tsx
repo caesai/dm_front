@@ -19,13 +19,12 @@ const StyledPopup = styled(Popup)`
     }
 
     &-content {
-        width: max-content!important;
+        width: max-content !important;
         background-color: transparent;
         border: none;
         padding: 0;
     }
 `;
-
 
 export const CalendarPopup: FC<ICalendarPopup> = (p) => {
     const onClose = () => p.setIsOpen(false);
@@ -41,10 +40,7 @@ export const CalendarPopup: FC<ICalendarPopup> = (p) => {
                         banquet={p.banquet}
                     />
                 ) : (
-                    <DatePicker
-                        initialDate={p.initialDate}
-                        onSelectDate={p.setDate}
-                    />
+                    <DatePicker initialDate={p.initialDate} onSelectDate={p.setDate} />
                 )}
             </div>
         </StyledPopup>

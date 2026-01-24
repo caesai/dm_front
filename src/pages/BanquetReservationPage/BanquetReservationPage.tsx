@@ -1,13 +1,13 @@
 /**
  * @fileoverview Страница подтверждения бронирования банкета.
- * 
+ *
  * Пятый (финальный) шаг в процессе бронирования банкета:
  * 1. BanquetAddressPage (выбор ресторана)
  * 2. ChooseBanquetOptionsPage (выбор опции банкета)
  * 3. BanquetOptionPage (настройка банкета)
  * 4. BanquetAdditionalServicesPage (дополнительные услуги) - опционально
  * 5. BanquetReservationPage (подтверждение) <- текущая страница
- * 
+ *
  * Функциональность страницы:
  * - Отображение сводки всех введённых данных о бронировании
  * - Информация о пользователе (имя, телефон)
@@ -15,15 +15,15 @@
  * - Выбор способа связи (Telegram/телефон)
  * - Отображение предварительной стоимости
  * - Отправка запроса на бронирование
- * 
+ *
  * Особенности логики:
  * - Данные загружаются из banquetFormAtom через useBanquetForm hook
  * - Навигация назад зависит от withAdditionalPage флага
  * - При успешном бронировании: показ toast, сброс формы, редирект на главную
  * - Блок стоимости скрывается при отсутствии price или deposit
- * 
+ *
  * @module pages/BanquetReservationPage
- * 
+ *
  * @see {@link BanquetAdditionalServicesPage} - предыдущий шаг (опционально)
  * @see {@link BanquetOptionPage} - предыдущий шаг (если нет доп. услуг)
  * @see {@link useBanquetForm} - хук управления данными банкета
@@ -51,17 +51,17 @@ import css from '@/pages/BanquetReservationPage/BanquetReservation.module.css';
 
 /**
  * Страница подтверждения бронирования банкета.
- * 
+ *
  * Отображает полную сводку данных бронирования и позволяет
  * пользователю добавить комментарий, выбрать способ связи
  * и отправить запрос на бронирование.
- * 
+ *
  * @returns {JSX.Element} - Компонент страницы подтверждения бронирования
- * 
+ *
  * @example
  * // URL: /banquets/:restaurantId/reservation
  * // Данные (включая optionId) загружаются из banquetFormAtom через useBanquetForm
- * 
+ *
  * @remarks
  * optionId не передаётся через URL, а берётся из формы (banquetFormAtom),
  * куда он был сохранён на этапе BanquetOptionPage. Это обеспечивает
@@ -85,7 +85,7 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
         },
     ];
 
-    /** 
+    /**
      * Деструктуризация данных формы бронирования.
      * optionId берётся из формы, а не из useParams(),
      * так как URL /banquets/:restaurantId/reservation не содержит optionId.
@@ -102,7 +102,7 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
         withAdditionalPage,
         optionId,
     } = form;
-    
+
     /** Комментарий пользователя к бронированию */
     const [commentary, setCommentary] = useState<string>('');
     /** Выбранный способ связи */
@@ -113,7 +113,7 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
 
     /**
      * Навигация назад.
-     * 
+     *
      * Логика:
      * - При withAdditionalPage=true -> на страницу дополнительных услуг
      * - При withAdditionalPage=false -> на страницу настройки банкета
@@ -125,14 +125,14 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
             navigate(`/banquets/${restaurantId}/option/${optionId}`);
         }
     };
-    
+
     /** Форматированная дата в формате DD.MM.YYYY */
     const formattedDate = date ? new Date(date).toLocaleDateString('ru-RU') : '';
-    
+
     /**
      * Форматирует номер телефона для отображения.
      * Добавляет "+ " перед номерами, начинающимися с 7.
-     * 
+     *
      * @param number - Номер телефона
      * @returns Отформатированный номер
      */
@@ -145,17 +145,20 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
      * Первая услуга с заглавной буквы, остальные - строчными.
      * При отсутствии услуг - "Не выбраны".
      */
-    const services = selectedServices.length > 0
-        ? selectedServices.map((service: string, index: number) => index !== 0 ? service.toLowerCase() : service).join(', ')
-        : 'Не выбраны';
+    const services =
+        selectedServices.length > 0
+            ? selectedServices
+                  .map((service: string, index: number) => (index !== 0 ? service.toLowerCase() : service))
+                  .join(', ')
+            : 'Не выбраны';
 
     /**
      * Создаёт запрос на бронирование банкета.
-     * 
+     *
      * Вызывает createBanquetRequest из useBanquetForm с:
      * - Комментарием пользователя
      * - Выбранным способом связи
-     * 
+     *
      * При успехе: toast с подтверждением, сброс формы, редирект на главную.
      */
     const createBooking = () => {
@@ -166,10 +169,7 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
         <Page back={true}>
             <div className={css.page}>
                 <div className={css.header}>
-                    <RoundedButton
-                        icon={<BackIcon color={'var(--dark-grey)'} />}
-                        action={goBack}
-                    ></RoundedButton>
+                    <RoundedButton icon={<BackIcon color={'var(--dark-grey)'} />} action={goBack}></RoundedButton>
                     <span className={css.header_title}>{currentRestaurant?.title}</span>
                     <div />
                 </div>
@@ -194,13 +194,13 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
                                 <div className={css.info__right}>
                                     <div>
                                         <span>Номер телефона</span>
-                                        {user && user.phone_number && (
-                                            <span>{formatNumber(user.phone_number)}</span>
-                                        )}
+                                        {user && user.phone_number && <span>{formatNumber(user.phone_number)}</span>}
                                     </div>
                                     <div>
                                         <span>Время</span>
-                                        <span>с {timeFrom} по {timeTo}</span>
+                                        <span>
+                                            с {timeFrom} по {timeTo}
+                                        </span>
                                     </div>
                                     <div>
                                         <span>Повод</span>
@@ -211,9 +211,7 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
 
                             <div className={css.additionalServices}>
                                 <span>Дополнительные услуги</span>
-                                <span>
-                                        {services}
-                                    </span>
+                                <span>{services}</span>
                             </div>
                         </div>
                     </ContentBlock>
@@ -260,9 +258,8 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
                                     <span>{price?.total} ₽</span>
                                 </div>
                                 <p>
-                                    *Окончательная стоимость банкета будет
-                                    определена после того, как вы сформируете запрос,
-                                    и мы свяжемся с вами для уточнения всех деталей мероприятия.
+                                    *Окончательная стоимость банкета будет определена после того, как вы сформируете
+                                    запрос, и мы свяжемся с вами для уточнения всех деталей мероприятия.
                                 </p>
                             </div>
                         </ContentBlock>
@@ -276,8 +273,7 @@ export const BanquetReservationPage: React.FC = (): JSX.Element => {
                         />
                     </div>
                 </ContentContainer>
-
             </div>
         </Page>
-    )
-}
+    );
+};

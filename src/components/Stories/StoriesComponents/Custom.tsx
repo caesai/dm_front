@@ -12,26 +12,15 @@ interface CustomStoryComponentProps {
     shouldWait: boolean;
 }
 
-export const CustomStoryComponent: React.FC<CustomStoryComponentProps> = (
-    {
-        story,
-        action,
-        shouldWait,
-        // config,
-    }
-    ,
-) => {
+export const CustomStoryComponent: React.FC<CustomStoryComponentProps> = ({
+    story,
+    action,
+    shouldWait,
+    // config,
+}) => {
     const navigate = useNavigate();
 
-    const {
-        title,
-        description,
-        url,
-        button_url,
-        button_text,
-        button_color,
-        component_type,
-    } = story;
+    const { title, description, url, button_url, button_text, button_color, component_type } = story;
     useEffect(() => {
         if (!shouldWait) {
             action('play');
@@ -58,21 +47,20 @@ export const CustomStoryComponent: React.FC<CustomStoryComponentProps> = (
     };
 
     return (
-        <div className={classNames(css.storyComponent)} style={{
-            backgroundImage: component_type && component_type == 2 ? `url(${url})` : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center center',
-            backgroundRepeat: 'no-repeat',
-        }}>
+        <div
+            className={classNames(css.storyComponent)}
+            style={{
+                backgroundImage: component_type && component_type == 2 ? `url(${url})` : undefined,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center center',
+                backgroundRepeat: 'no-repeat',
+            }}
+        >
             <div className={css.storyWrapper}>
                 <div className={css.storyFooter}>
                     <div className={css.storyDescription}>
-                        <h2 className={classNames(css.storyDescriptionTitle)}>
-                            {title}
-                        </h2>
-                        <span className={classNames(css.storyDescriptionSubtitle)}>
-                            {description}
-                        </span>
+                        <h2 className={classNames(css.storyDescriptionTitle)}>{title}</h2>
+                        <span className={classNames(css.storyDescriptionSubtitle)}>{description}</span>
                     </div>
                     {button_url && (
                         <div className={css.button_container}>
@@ -97,4 +85,3 @@ export const CustomStoryComponent: React.FC<CustomStoryComponentProps> = (
         </div>
     );
 };
-

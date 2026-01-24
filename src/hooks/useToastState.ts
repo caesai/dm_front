@@ -16,9 +16,12 @@ const useToast = () => {
      * @param {string} message Сообщение для отображения.
      * @param type TToast Тип уведомления (success, error, warning, info).
      */
-    const showToast = useCallback((message: string, type?: TToast) => {
-        setShowToast({ message, type });
-    }, [setShowToast]);
+    const showToast = useCallback(
+        (message: string, type?: TToast) => {
+            setShowToast({ message, type });
+        },
+        [setShowToast]
+    );
 
     return { showToast };
 };

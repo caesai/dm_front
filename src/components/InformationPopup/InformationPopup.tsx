@@ -35,10 +35,7 @@ export const InformationPopup = ({ isOpen, text, close }: Props) => {
         <StyledPopup open={isOpen} onClose={onClose}>
             <div className={css.popup}>
                 <div className={css.end}>
-                    <RoundedButton
-                        icon={<CrossIcon size={44} color={'black'} />}
-                        action={close}
-                    />
+                    <RoundedButton icon={<CrossIcon size={44} color={'black'} />} action={close} />
                 </div>
                 <div className={css.center}>
                     <span className={css.text}>{text}</span>

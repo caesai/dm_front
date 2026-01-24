@@ -65,22 +65,25 @@ describe('User', () => {
         };
         (useLocation as jest.Mock).mockReturnValue({
             state: {
-                allergies: null
+                allergies: null,
             },
         });
 
         (APIUpdateUserInfo as jest.Mock).mockResolvedValue({ data: mockUserData });
 
         render(
-            <MemoryRouter initialEntries={['/me']} future={{
-                v7_startTransition: true,
-                v7_relativeSplatPath: true,
-            }}>
+            <MemoryRouter
+                initialEntries={['/me']}
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true,
+                }}
+            >
                 <TestProvider initialValues={[[authAtom, mockAuthInfo]]}>
                     <Toast />
                     <UserProfilePage />
                 </TestProvider>
-            </MemoryRouter>,
+            </MemoryRouter>
         );
 
         // Act

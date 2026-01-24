@@ -1,19 +1,19 @@
 /**
  * @fileoverview Тесты для страницы выбора дополнительных услуг BanquetAdditionalServicesPage.
- * 
+ *
  * Страница позволяет выбрать дополнительные услуги для банкета:
  * - Отображение списка доступных услуг в виде чекбоксов
  * - Выбор/отмена услуг через toggle
  * - Переход на страницу бронирования
- * 
+ *
  * Особенности логики:
  * - Данные загружаются из banquetFormAtom через useBanquetForm hook
  * - При отсутствии дополнительных услуг автоматический редирект на резервацию
  * - Выбранные услуги сохраняются в form.selectedServices
  * - При переходе далее устанавливается withAdditionalPage: true
- * 
+ *
  * @module __tests__/banquets/BanquetAdditionalServicesPage
- * 
+ *
  * @see {@link BanquetAdditionalServicesPage} - тестируемый компонент
  * @see {@link BanquetOptionPage} - предыдущий шаг (настройка банкета)
  * @see {@link BanquetReservationPage} - следующий шаг (подтверждение)
@@ -109,26 +109,22 @@ jest.mock('@/components/RoundedButton/RoundedButton.tsx', () => ({
  * Мок иконки BackIcon.
  */
 jest.mock('@/components/Icons/BackIcon.tsx', () => ({
-    BackIcon: ({ color }: { color?: string }) => <span data-testid="back-icon" data-color={color}>←</span>,
+    BackIcon: ({ color }: { color?: string }) => (
+        <span data-testid="back-icon" data-color={color}>
+            ←
+        </span>
+    ),
 }));
 
 /**
  * Мок компонента BanquetCheckbox.
  */
 jest.mock('@/components/BanquetCheckbox/BanquetCheckbox.tsx', () => ({
-    BanquetCheckbox: ({ 
-        checked, 
-        toggle, 
-        label 
-    }: { 
-        checked: boolean; 
-        toggle: () => void; 
-        label: string 
-    }) => (
+    BanquetCheckbox: ({ checked, toggle, label }: { checked: boolean; toggle: () => void; label: string }) => (
         <div data-testid="banquet-checkbox" data-checked={checked} onClick={toggle}>
-            <input 
-                type="checkbox" 
-                checked={checked} 
+            <input
+                type="checkbox"
+                checked={checked}
                 onChange={toggle}
                 data-testid={`checkbox-${label.replace(/\s+/g, '-').toLowerCase()}`}
             />
@@ -141,23 +137,18 @@ jest.mock('@/components/BanquetCheckbox/BanquetCheckbox.tsx', () => ({
  * Мок компонента UniversalButton.
  */
 jest.mock('@/components/Buttons/UniversalButton/UniversalButton.tsx', () => ({
-    UniversalButton: ({ 
-        title, 
-        action, 
-        theme, 
-        width 
-    }: { 
-        title: string; 
-        action?: () => void; 
-        theme?: string; 
-        width?: string 
+    UniversalButton: ({
+        title,
+        action,
+        theme,
+        width,
+    }: {
+        title: string;
+        action?: () => void;
+        theme?: string;
+        width?: string;
     }) => (
-        <button 
-            onClick={action} 
-            data-testid="continue-button"
-            data-theme={theme}
-            data-width={width}
-        >
+        <button onClick={action} data-testid="continue-button" data-theme={theme} data-width={width}>
             {title}
         </button>
     ),
@@ -169,7 +160,7 @@ jest.mock('@/components/Buttons/UniversalButton/UniversalButton.tsx', () => ({
 
 /**
  * Тесты страницы выбора дополнительных услуг.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Рендеринг компонентов страницы
  * - Отображение списка услуг
@@ -185,20 +176,19 @@ describe('BanquetAdditionalServicesPage', () => {
 
     /**
      * Рендерит компонент BanquetAdditionalServicesPage с необходимыми провайдерами.
-     * 
+     *
      * @param options - Опции рендеринга
      * @param options.restaurantId - ID ресторана в URL
      * @param options.optionId - ID банкетной опции в URL
      * @returns Результат render() из @testing-library/react
      */
-    const renderComponent = (options: {
-        restaurantId?: string;
-        optionId?: string;
-    } = {}) => {
-        const {
-            restaurantId = '1',
-            optionId = '14',
-        } = options;
+    const renderComponent = (
+        options: {
+            restaurantId?: string;
+            optionId?: string;
+        } = {}
+    ) => {
+        const { restaurantId = '1', optionId = '14' } = options;
 
         return render(
             <TestProvider initialValues={[]}>
@@ -210,7 +200,10 @@ describe('BanquetAdditionalServicesPage', () => {
                     }}
                 >
                     <Routes>
-                        <Route path="/banquets/:restaurantId/additional-services/:optionId" element={<BanquetAdditionalServicesPage />} />
+                        <Route
+                            path="/banquets/:restaurantId/additional-services/:optionId"
+                            element={<BanquetAdditionalServicesPage />}
+                        />
                         <Route path="/banquets/:restaurantId/option/:optionId" element={<div>Option Page</div>} />
                         <Route path="/banquets/:restaurantId/reservation" element={<div>Reservation Page</div>} />
                     </Routes>
@@ -233,10 +226,7 @@ describe('BanquetAdditionalServicesPage', () => {
 
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Not implemented: navigation')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Not implemented: navigation')) {
                 return;
             }
             originalConsoleError(...args);
@@ -352,7 +342,7 @@ describe('BanquetAdditionalServicesPage', () => {
             renderComponent();
 
             const checkboxes = screen.getAllByTestId('banquet-checkbox');
-            checkboxes.forEach(checkbox => {
+            checkboxes.forEach((checkbox) => {
                 expect(checkbox).toHaveAttribute('data-checked', 'false');
             });
         });
@@ -361,11 +351,11 @@ describe('BanquetAdditionalServicesPage', () => {
          * Проверяет отображение выбранных услуг.
          */
         it('должен показывать выбранные услуги как отмеченные', () => {
-            mockForm = { 
-                ...mockBanquetFormWithOptions, 
-                selectedServices: ['Цветочное оформление', 'Фотограф'] 
+            mockForm = {
+                ...mockBanquetFormWithOptions,
+                selectedServices: ['Цветочное оформление', 'Фотограф'],
             };
-            
+
             renderComponent();
 
             const checkboxes = screen.getAllByTestId('banquet-checkbox');
@@ -405,7 +395,7 @@ describe('BanquetAdditionalServicesPage', () => {
             renderComponent();
 
             const checkboxes = screen.getAllByTestId('banquet-checkbox');
-            
+
             fireEvent.click(checkboxes[2]);
 
             await waitFor(() => {
@@ -420,7 +410,7 @@ describe('BanquetAdditionalServicesPage', () => {
             renderComponent();
 
             const checkboxes = screen.getAllByTestId('banquet-checkbox');
-            
+
             fireEvent.click(checkboxes[0]);
             fireEvent.click(checkboxes[1]);
             fireEvent.click(checkboxes[4]);
@@ -492,12 +482,12 @@ describe('BanquetAdditionalServicesPage', () => {
          * Проверяет редирект при отсутствии дополнительных услуг.
          */
         it('должен редиректить на резервацию при пустом списке услуг', async () => {
-            mockForm = { 
-                ...mockBanquetFormWithOptions, 
+            mockForm = {
+                ...mockBanquetFormWithOptions,
                 additionalOptions: [],
-                selectedServices: [] 
+                selectedServices: [],
             };
-            
+
             renderComponent();
 
             await waitFor(() => {
@@ -509,12 +499,12 @@ describe('BanquetAdditionalServicesPage', () => {
          * Проверяет редирект при undefined additionalOptions.
          */
         it('должен редиректить при undefined additionalOptions', async () => {
-            mockForm = { 
-                ...mockBanquetFormWithOptions, 
+            mockForm = {
+                ...mockBanquetFormWithOptions,
                 additionalOptions: undefined as any,
-                selectedServices: [] 
+                selectedServices: [],
             };
-            
+
             renderComponent();
 
             await waitFor(() => {
@@ -563,11 +553,11 @@ describe('BanquetAdditionalServicesPage', () => {
          * Проверяет использование form.selectedServices.
          */
         it('должен использовать form.selectedServices для отметки выбранных', () => {
-            mockForm = { 
-                ...mockBanquetFormWithOptions, 
-                selectedServices: ['Фотограф'] 
+            mockForm = {
+                ...mockBanquetFormWithOptions,
+                selectedServices: ['Фотограф'],
             };
-            
+
             renderComponent();
 
             const checkboxes = screen.getAllByTestId('banquet-checkbox');
@@ -613,12 +603,12 @@ describe('BanquetAdditionalServicesPage', () => {
          * Проверяет работу с одной услугой.
          */
         it('должен корректно работать с одной услугой', () => {
-            mockForm = { 
-                ...mockBanquetFormWithOptions, 
+            mockForm = {
+                ...mockBanquetFormWithOptions,
                 additionalOptions: [{ id: 1, name: 'Единственная услуга' }],
-                selectedServices: [] 
+                selectedServices: [],
             };
-            
+
             renderComponent();
 
             const checkboxes = screen.getAllByTestId('banquet-checkbox');
@@ -630,21 +620,21 @@ describe('BanquetAdditionalServicesPage', () => {
          * Проверяет работу со всеми выбранными услугами.
          */
         it('должен корректно отображать когда все услуги выбраны', () => {
-            mockForm = { 
-                ...mockBanquetFormWithOptions, 
+            mockForm = {
+                ...mockBanquetFormWithOptions,
                 selectedServices: [
                     'Цветочное оформление',
                     'Разработка персонального меню',
                     'Торт по индивидуальному заказу',
                     'Медиаоборудование (проектор / плазма)',
                     'Фотограф',
-                ] 
+                ],
             };
-            
+
             renderComponent();
 
             const checkboxes = screen.getAllByTestId('banquet-checkbox');
-            checkboxes.forEach(checkbox => {
+            checkboxes.forEach((checkbox) => {
                 expect(checkbox).toHaveAttribute('data-checked', 'true');
             });
         });

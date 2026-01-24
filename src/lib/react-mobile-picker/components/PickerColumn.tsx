@@ -23,9 +23,7 @@ PickerColumnDataContext.displayName = 'PickerColumnDataContext';
 export function useColumnData(componentName: string) {
     const context = useContext(PickerColumnDataContext);
     if (context === null) {
-        const error = new Error(
-            `<${componentName} /> is missing a parent <Picker.Column /> component.`
-        );
+        const error = new Error(`<${componentName} /> is missing a parent <Picker.Column /> component.`);
         if (Error.captureStackTrace) {
             Error.captureStackTrace(error, useColumnData);
         }
@@ -34,19 +32,8 @@ export function useColumnData(componentName: string) {
     return context;
 }
 
-function PickerColumn({
-    style,
-    children,
-    name: key,
-    ...restProps
-}: PickerColumnProps) {
-    const {
-        height,
-        itemHeight,
-        wheelMode,
-        value: groupValue,
-        optionGroups,
-    } = usePickerData('Picker.Column');
+function PickerColumn({ style, children, name: key, ...restProps }: PickerColumnProps) {
+    const { height, itemHeight, wheelMode, value: groupValue, optionGroups } = usePickerData('Picker.Column');
 
     // Caculate the selected index
     const value = useMemo(() => groupValue[key], [groupValue, key]);
@@ -64,15 +51,10 @@ function PickerColumn({
         () => height / 2 - itemHeight * options.length + itemHeight / 2,
         [height, itemHeight, options]
     );
-    const maxTranslate = useMemo(
-        () => height / 2 - itemHeight / 2,
-        [height, itemHeight]
-    );
+    const maxTranslate = useMemo(() => height / 2 - itemHeight / 2, [height, itemHeight]);
     const [scrollerTranslate, setScrollerTranslate] = useState<number>(0);
     useEffect(() => {
-        setScrollerTranslate(
-            height / 2 - itemHeight / 2 - selectedIndex * itemHeight
-        );
+        setScrollerTranslate(height / 2 - itemHeight / 2 - selectedIndex * itemHeight);
     }, [height, itemHeight, selectedIndex]);
 
     // A handler to trigger the value change
@@ -87,46 +69,26 @@ function PickerColumn({
         } else if (currentTrans <= minTranslate) {
             nextActiveIndex = options.length - 1;
         } else {
-            nextActiveIndex = -Math.round(
-                (currentTrans - maxTranslate) / itemHeight
-            );
+            nextActiveIndex = -Math.round((currentTrans - maxTranslate) / itemHeight);
         }
 
-        const changed = pickerActions.change(
-            key,
-            options[nextActiveIndex].value
-        );
+        const changed = pickerActions.change(key, options[nextActiveIndex].value);
         if (!changed) {
-            setScrollerTranslate(
-                height / 2 - itemHeight / 2 - nextActiveIndex * itemHeight
-            );
+            setScrollerTranslate(height / 2 - itemHeight / 2 - nextActiveIndex * itemHeight);
         }
-    }, [
-        pickerActions,
-        height,
-        itemHeight,
-        key,
-        maxTranslate,
-        minTranslate,
-        options,
-    ]);
+    }, [pickerActions, height, itemHeight, key, maxTranslate, minTranslate, options]);
 
     // Handle touch events
-    const [startScrollerTranslate, setStartScrollerTranslate] =
-        useState<number>(0);
+    const [startScrollerTranslate, setStartScrollerTranslate] = useState<number>(0);
     const [isMoving, setIsMoving] = useState<boolean>(false);
     const [startTouchY, setStartTouchY] = useState<number>(0);
 
     const updateScrollerWhileMoving = useCallback(
         (nextScrollerTranslate: number) => {
             if (nextScrollerTranslate < minTranslate) {
-                nextScrollerTranslate =
-                    minTranslate -
-                    Math.pow(minTranslate - nextScrollerTranslate, 0.8);
+                nextScrollerTranslate = minTranslate - Math.pow(minTranslate - nextScrollerTranslate, 0.8);
             } else if (nextScrollerTranslate > maxTranslate) {
-                nextScrollerTranslate =
-                    maxTranslate +
-                    Math.pow(nextScrollerTranslate - maxTranslate, 0.8);
+                nextScrollerTranslate = maxTranslate + Math.pow(nextScrollerTranslate - maxTranslate, 0.8);
             }
             setScrollerTranslate(nextScrollerTranslate);
         },
@@ -151,18 +113,10 @@ function PickerColumn({
                 setIsMoving(true);
             }
 
-            const nextScrollerTranslate =
-                startScrollerTranslate +
-                event.targetTouches[0].pageY -
-                startTouchY;
+            const nextScrollerTranslate = startScrollerTranslate + event.targetTouches[0].pageY - startTouchY;
             updateScrollerWhileMoving(nextScrollerTranslate);
         },
-        [
-            isMoving,
-            startScrollerTranslate,
-            startTouchY,
-            updateScrollerWhileMoving,
-        ]
+        [isMoving, startScrollerTranslate, startTouchY, updateScrollerWhileMoving]
     );
 
     const handleTouchEnd = useCallback(() => {
@@ -281,9 +235,7 @@ function PickerColumn({
             onTouchCancel={handleTouchCancel}
             {...restProps}
         >
-            <PickerColumnDataContext.Provider value={columnData}>
-                {children}
-            </PickerColumnDataContext.Provider>
+            <PickerColumnDataContext.Provider value={columnData}>{children}</PickerColumnDataContext.Provider>
         </div>
     );
 }

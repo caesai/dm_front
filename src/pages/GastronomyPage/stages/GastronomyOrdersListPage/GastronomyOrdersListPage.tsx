@@ -45,25 +45,25 @@ export const GastronomyOrdersListPage: React.FC = () => {
     return (
         <div className={css.order_page}>
             <div className={css.container}>
-                {ordersList.length > 0 ?
+                {ordersList.length > 0 ? (
                     ordersList.map((order) => (
                         <div className={css.order_content} key={order.order_id}>
                             <div className={css.order}>
                                 <span className={css.order_title}>Заказ {order.order_id}</span>
                                 <span className={css.order_text}>
-                                    {order.delivery_address ? order.delivery_address : getRestaurantAddressById(String(order.restaurant_id), restaurantsList)}
+                                    {order.delivery_address
+                                        ? order.delivery_address
+                                        : getRestaurantAddressById(String(order.restaurant_id), restaurantsList)}
                                 </span>
                             </div>
-                            <button
-                                className={css.order_button}
-                                onClick={() => showOrderPage(order)}
-                            >
+                            <button className={css.order_button} onClick={() => showOrderPage(order)}>
                                 Подробнее
                             </button>
                         </div>
                     ))
-                    : <span className={css.no_orders}>У вас нет заказов</span>
-                }
+                ) : (
+                    <span className={css.no_orders}>У вас нет заказов</span>
+                )}
             </div>
         </div>
     );

@@ -66,8 +66,8 @@ export const RestaurantBookingHeader: React.FC<IRestaurantBookingHeaderProps> = 
             {/* Дата и количество гостей */}
             <ContentBlock className={css.selectorsRow}>
                 {/* Селекторы даты и гостей (скрытые popup) */}
-                <DateListSelector 
-                    datesList={availableDates} 
+                <DateListSelector
+                    datesList={availableDates}
                     onSelect={selectDate}
                     value={selectedDate}
                     defaultTitle={'Дата'}

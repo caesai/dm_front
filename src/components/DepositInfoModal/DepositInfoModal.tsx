@@ -33,8 +33,8 @@ export const DepositInfoModal: React.FC<IDepositInfoModalProps> = ({
             list={
                 <div className={css.content}>
                     <p className={css.description}>
-                        В этот день бронирование возможно при условии оплаты депозита
-                        в размере <span className={css.depositAmount}>{depositPerPerson}</span> ₽ за 1 гостя.
+                        В этот день бронирование возможно при условии оплаты депозита в размере{' '}
+                        <span className={css.depositAmount}>{depositPerPerson}</span> ₽ за 1 гостя.
                     </p>
                     <p className={css.conditionsTitle}>Условия отмены бронирования:</p>
                     <ul className={css.conditionsList}>

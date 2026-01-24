@@ -1,11 +1,11 @@
-import {useEffect} from "react";
+import { useEffect } from 'react';
 import { IStory } from '@/types/stories.types.ts';
 
 // Caches given Story[] using HTMLImageElement and HTMLVideoElement
 const cacheContent = async (contents: IStory[]) => {
     const promises = contents.map((content) => {
         return new Promise(function (resolve, reject) {
-            if (!content.url) return
+            if (!content.url) return;
 
             if (content.type === 'video') {
                 const video = document.createElement('video');
@@ -19,12 +19,11 @@ const cacheContent = async (contents: IStory[]) => {
             img.src = content.url;
             img.onload = resolve;
             img.onerror = reject;
-
-        })
-    })
+        });
+    });
 
     await Promise.all(promises);
-}
+};
 
 // Keeps track of urls that have been loaded
 const urlsLoaded = new Set<string>();
@@ -32,16 +31,16 @@ const urlsLoaded = new Set<string>();
 // Pushes urls to urlsLoaded
 const markUrlsLoaded = (contents: IStory[]) => {
     contents.forEach((content) => {
-        urlsLoaded.add(String(content.url))
-    })
-}
+        urlsLoaded.add(String(content.url));
+    });
+};
 
 // Returns true if given Story should be preloaded
 const shouldPreload = (content: IStory) => {
     if (!content.url) return false;
     if (urlsLoaded.has(content.url)) return false;
     return content.type !== 'video';
-}
+};
 
 // Preloads images and videos from given Story[] using a cursor and preloadCount
 // Preload count is the number of images/videos to preload after the cursor
@@ -51,11 +50,9 @@ export const usePreLoader = (contents: IStory[], cursor: number, preloadCount: n
         const start = cursor + 1;
         const end = cursor + preloadCount + 1;
 
-        const toPreload = contents
-            .slice(start, end)
-            .filter(shouldPreload);
+        const toPreload = contents.slice(start, end).filter(shouldPreload);
 
-        markUrlsLoaded(toPreload)
-        cacheContent(toPreload).then()
-    }, [cursor, preloadCount, contents])
-}
+        markUrlsLoaded(toPreload);
+        cacheContent(toPreload).then();
+    }, [cursor, preloadCount, contents]);
+};

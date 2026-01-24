@@ -32,19 +32,17 @@ const storyComponentMap: StoryComponentMap = {
     video: VideoStoryComponent,
 };
 
-const Story: React.FC<StoryProps> = (
-    {
-        story,
-        action,
-        shouldWait,
-        isPaused,
-        getVideoDuration,
-        playState,
-        bufferAction,
-        isLoading,
-        setIsLoading,
-    },
-) => {
+const Story: React.FC<StoryProps> = ({
+    story,
+    action,
+    shouldWait,
+    isPaused,
+    getVideoDuration,
+    playState,
+    bufferAction,
+    isLoading,
+    setIsLoading,
+}) => {
     // Dynamically retrieve the component based on the story type.
     const StoryComponent = storyComponentMap[story.type];
 

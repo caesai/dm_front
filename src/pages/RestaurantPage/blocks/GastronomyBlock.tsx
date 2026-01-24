@@ -10,8 +10,8 @@ import { IRestaurant } from '@/types/restaurant.types.ts';
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
 interface GastronomyBlockProps {
-    image: string
-    description: string
+    image: string;
+    description: string;
     currentRestaurant: IRestaurant;
 }
 
@@ -38,10 +38,10 @@ export const GastronomyBlock: React.FC<GastronomyBlockProps> = ({ image, descrip
                         width={'full'}
                         title={'Оформить предзаказ'}
                         theme={'secondary'}
-                        action={() => navigate('/gastronomy/choose', { state: { restaurant: currentRestaurant }})}
+                        action={() => navigate('/gastronomy/choose', { state: { restaurant: currentRestaurant } })}
                     />
                 </div>
             </ContentBlock>
         </ContentContainer>
-    )
-}
+    );
+};

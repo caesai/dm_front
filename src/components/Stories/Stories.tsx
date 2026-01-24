@@ -15,7 +15,7 @@ export const Stories: React.FC<IStoriesProps> = ({ storiesBlocks }) => {
     const [isPaused, setIsPaused] = useState(false);
     // Мемоизируем отсортированные блоки историй
     const sortedStoriesBlocks = useMemo(() => {
-        return [...storiesBlocks ?? [...Array(10)]].sort((a, b) => {
+        return [...(storiesBlocks ?? [...Array(10)])].sort((a, b) => {
             const aRef = localStories.find((item: ILocalStory) => item.id === a.id);
             const bRef = localStories.find((item: ILocalStory) => item.id === b.id);
             if (aRef?.isSeen && !bRef?.isSeen) {
@@ -62,7 +62,11 @@ export const Stories: React.FC<IStoriesProps> = ({ storiesBlocks }) => {
         <>
             {storiesBlocks && renderStoriesSwiper}
             <div>
-                <StoriesBlocksSwiper storiesBlocks={sortedStoriesBlocks} isLoading={!storiesBlocks} openStory={openStory} />
+                <StoriesBlocksSwiper
+                    storiesBlocks={sortedStoriesBlocks}
+                    isLoading={!storiesBlocks}
+                    openStory={openStory}
+                />
             </div>
         </>
     );

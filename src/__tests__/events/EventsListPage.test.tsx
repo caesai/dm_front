@@ -1,17 +1,17 @@
 /**
  * @fileoverview Тесты для страницы списка мероприятий EventsListPage.
- * 
+ *
  * Страница отображает список мероприятий с возможностью фильтрации:
  * - По городу (CitySelect)
  * - По ресторану (RestaurantsListSelector)
- * 
+ *
  * Особенности логики:
  * - Показываются только мероприятия с tickets_left > 0
  * - При смене города сбрасывается выбранный ресторан
  * - URL-параметры city и restaurant позволяют предустановить фильтры
- * 
+ *
  * @module __tests__/events/EventsListPage
- * 
+ *
  * @see {@link EventsListPage} - тестируемый компонент
  * @see {@link EventDetailsPage} - страница деталей мероприятия (навигация по клику)
  * @see {@link EventCard} - карточка мероприятия
@@ -175,7 +175,7 @@ const mockRestaurants: IRestaurant[] = [
 
 /**
  * Тесты страницы списка мероприятий.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Отображение списка мероприятий
  * - Фильтрация по городу
@@ -192,7 +192,7 @@ describe('EventsListPage', () => {
 
     /**
      * Рендерит компонент EventsListPage с необходимыми провайдерами.
-     * 
+     *
      * @param user - Данные пользователя (по умолчанию mockUserData)
      * @param events - Список мероприятий (null = загрузка, [] = пусто)
      * @param cities - Список городов
@@ -200,11 +200,11 @@ describe('EventsListPage', () => {
      * @param restaurants - Список ресторанов
      * @param initialUrl - Начальный URL (для тестирования параметров)
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @example
      * // Базовый рендер
      * renderComponent();
-     * 
+     *
      * @example
      * // Рендер с URL-параметрами
      * renderComponent(mockUserData, mockEventsWithImages, mockCityList, 'spb', mockRestaurants, '/events?city=moscow');
@@ -253,20 +253,17 @@ describe('EventsListPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        
+
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
             // Игнорируем ожидаемые ошибки
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Not implemented: navigation')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Not implemented: navigation')) {
                 return;
             }
             originalConsoleError(...args);
         });
-        
+
         // Подавляем предупреждения о SVG атрибутах
         jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -443,10 +440,9 @@ describe('EventsListPage', () => {
             fireEvent.click(firstEventCard);
 
             await waitFor(() => {
-                expect(mockedNavigate).toHaveBeenCalledWith(
-                    expect.stringMatching(/^\/events\/\d+\/details$/),
-                    { replace: true }
-                );
+                expect(mockedNavigate).toHaveBeenCalledWith(expect.stringMatching(/^\/events\/\d+\/details$/), {
+                    replace: true,
+                });
             });
         });
     });
@@ -483,7 +479,7 @@ describe('EventsListPage', () => {
         /**
          * Проверяет установку ресторана из URL-параметра ?restaurant=.
          * URL параметр фильтрует мероприятия по ресторану.
-         * 
+         *
          * Примечание: RestaurantsListSelector имеет собственный внутренний state
          * и не синхронизируется с URL параметром (ограничение компонента).
          * Поэтому проверяем только фильтрацию мероприятий.
@@ -504,7 +500,7 @@ describe('EventsListPage', () => {
                 expect(eventCards.length).toBeGreaterThan(0);
                 // Все отображаемые мероприятия должны быть от ресторана с id=4
                 const restaurantTitles = screen.getAllByTestId('event-restaurant-title');
-                restaurantTitles.forEach(title => {
+                restaurantTitles.forEach((title) => {
                     expect(title).toHaveTextContent('Self Edge Japanese');
                 });
             });

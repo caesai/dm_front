@@ -28,11 +28,7 @@ export const StoriesBlock: React.FC<StoriesBlockProps> = ({ onClick, thumbnail, 
                     </div>
                 </div>
             </div>
-            {isLoading ? (
-                <PlaceholderBlock width="60px" height="12px" rounded="4px" />
-            ) : (
-                <span>{name}</span>
-            )}
+            {isLoading ? <PlaceholderBlock width="60px" height="12px" rounded="4px" /> : <span>{name}</span>}
         </section>
     );
 };

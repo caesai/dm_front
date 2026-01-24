@@ -44,20 +44,17 @@ interface CancelBookingPopupProps {
     skipStep?: boolean;
 }
 
-export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
-    {
-        isOpen,
-        setOpen,
-        onCancel,
-        onSuccess,
-        onSendReason,
-        popupText,
-        successMessage,
-        skipStep,
-    },
-) => {
+export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = ({
+    isOpen,
+    setOpen,
+    onCancel,
+    onSuccess,
+    onSendReason,
+    popupText,
+    successMessage,
+    skipStep,
+}) => {
     const [currentStep, setCurrentStep] = useState<PopupStep>(PopupStep.Confirmation);
-
 
     // Use useCallback for handler functions to prevent unnecessary re-renders.
     const closePopup = useCallback(() => {
@@ -87,16 +84,19 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
         }
     }, [onCancel, skipStep]);
 
-    const handleSendReason = useCallback(async (reason: string) => {
-        if (!onSendReason) return;
-        try {
-            await onSendReason(reason);
-            setCurrentStep(PopupStep.Success);
-        } catch (error) {
-            console.error('Error sending reason:', error);
-            setCurrentStep(PopupStep.Error);
-        }
-    }, [onSendReason]);
+    const handleSendReason = useCallback(
+        async (reason: string) => {
+            if (!onSendReason) return;
+            try {
+                await onSendReason(reason);
+                setCurrentStep(PopupStep.Success);
+            } catch (error) {
+                console.error('Error sending reason:', error);
+                setCurrentStep(PopupStep.Error);
+            }
+        },
+        [onSendReason]
+    );
 
     const handleRetry = useCallback(() => {
         setCurrentStep(PopupStep.Confirmation);
@@ -107,18 +107,10 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
         switch (currentStep) {
             case PopupStep.Confirmation:
                 return (
-                    <StepOne
-                        popupText={popupText}
-                        onCancelConfirm={handleCancelBooking}
-                        onCancelClose={closePopup}
-                    />
+                    <StepOne popupText={popupText} onCancelConfirm={handleCancelBooking} onCancelClose={closePopup} />
                 );
             case PopupStep.Reason:
-                return (
-                    <StepTwo
-                        onSendReason={handleSendReason}
-                    />
-                );
+                return <StepTwo onSendReason={handleSendReason} />;
             case PopupStep.Success:
                 return <StepThree successMessage={successMessage} />;
             case PopupStep.Error:
@@ -126,24 +118,13 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
             default:
                 return null;
         }
-    }, [
-        currentStep,
-        popupText,
-        handleCancelBooking,
-        closePopup,
-        handleSendReason,
-        successMessage,
-        handleRetry,
-    ]);
+    }, [currentStep, popupText, handleCancelBooking, closePopup, handleSendReason, successMessage, handleRetry]);
 
     return (
         <StyledPopup open={isOpen} onClose={closePopup}>
             <div className={css.popup}>
                 <div className={css.end}>
-                    <RoundedButton
-                        icon={<CrossIcon size={44} color={'black'} />}
-                        action={closePopup}
-                    />
+                    <RoundedButton icon={<CrossIcon size={44} color={'black'} />} action={closePopup} />
                 </div>
                 {renderStepContent}
             </div>
@@ -167,12 +148,7 @@ const StepOne: React.FC<StepOneProps> = ({ popupText, onCancelConfirm, onCancelC
             <span className={css.text}>{popupText}</span>
             <div className={css.buttons}>
                 <UniversalButton width={'full'} title={'Нет'} action={onCancelClose} />
-                <UniversalButton
-                    width={'full'}
-                    title={'Да'}
-                    theme={'secondary'}
-                    action={onCancelConfirm}
-                />
+                <UniversalButton width={'full'} title={'Да'} theme={'secondary'} action={onCancelConfirm} />
             </div>
         </>
     );
@@ -184,11 +160,7 @@ interface StepTwoProps {
 
 const StepTwo: React.FC<StepTwoProps> = ({ onSendReason }) => {
     const [selectedReason, setSelectedReason] = useState<string | null>(null);
-    const reasons = [
-        'Поменялись планы',
-        'Решили пойти в другое место',
-        'Забронировал(а) по ошибке',
-    ];
+    const reasons = ['Поменялись планы', 'Решили пойти в другое место', 'Забронировал(а) по ошибке'];
 
     return (
         <>
@@ -236,10 +208,7 @@ const ErrorStep: React.FC<ErrorStepProps> = ({ onRetry }) => (
     <>
         <span className={css.text}>{'Произошла ошибка'}</span>
         <div className={css.buttons}>
-            <UniversalButton
-                width={'full'}
-                title={'Попробовать снова'}
-                action={onRetry} />
+            <UniversalButton width={'full'} title={'Попробовать снова'} action={onRetry} />
         </div>
     </>
 );

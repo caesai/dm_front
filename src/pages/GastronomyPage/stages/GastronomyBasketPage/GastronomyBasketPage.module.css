@@ -60,7 +60,7 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #F4F4F4;
+    background-color: #f4f4f4;
     padding-bottom: 100px;
 }
 
@@ -87,7 +87,7 @@
 }
 
 .sectionTitle {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 600;
     font-size: 14px;
     color: var(--dark-grey);
@@ -109,7 +109,7 @@
     align-items: center;
     gap: 16px;
     padding-top: 16px;
-    border-top: 1px solid #E5E5E5;
+    border-top: 1px solid #e5e5e5;
 }
 
 .deliveryTitle,
@@ -132,7 +132,7 @@
 /* Полоска над "Итого" только если нет блока "Доставка" перед ним */
 .itemsList + .total {
     padding-top: 16px;
-    border-top: 1px solid #E5E5E5;
+    border-top: 1px solid #e5e5e5;
 }
 
 .totalLabel,
@@ -184,7 +184,7 @@
 .radioButton {
     width: 24px;
     height: 24px;
-    border: 1px solid #A6A6A6;
+    border: 1px solid #a6a6a6;
     border-radius: 56px;
     flex-shrink: 0;
 }
@@ -243,7 +243,7 @@
     align-items: center;
     gap: 10px;
     padding: 10px 20px;
-    background: #F4F4F4;
+    background: #f4f4f4;
     border-radius: 12px;
     border: none;
     width: 100%;
@@ -289,7 +289,7 @@
     line-height: 18px;
     color: #000000;
     cursor: pointer;
-    border-bottom: 1px solid #F4F4F4;
+    border-bottom: 1px solid #f4f4f4;
 }
 
 .suggestion:last-child {
@@ -297,7 +297,7 @@
 }
 
 .suggestion:hover {
-    background: #F4F4F4;
+    background: #f4f4f4;
 }
 
 /* Выбор даты и времени */
@@ -314,7 +314,7 @@
     align-items: center;
     gap: 32px;
     padding: 8px 16px;
-    background: #F4F4F4;
+    background: #f4f4f4;
     border-radius: 8px;
     cursor: pointer;
     min-height: 50px;
@@ -390,13 +390,13 @@
 
 .calendarWrapper :global(.react-calendar__navigation button:enabled:hover),
 .calendarWrapper :global(.react-calendar__navigation button:enabled:focus) {
-    background: #F4F4F4;
+    background: #f4f4f4;
     border-radius: 8px;
 }
 
 .calendarWrapper :global(.react-calendar__navigation button:disabled) {
     background: transparent;
-    color: #CCCCCC;
+    color: #cccccc;
 }
 
 .calendarWrapper :global(.react-calendar__month-view__weekdays) {
@@ -430,17 +430,17 @@
 
 .calendarWrapper :global(.react-calendar__tile:enabled:hover),
 .calendarWrapper :global(.react-calendar__tile:enabled:focus) {
-    background: #F4F4F4;
+    background: #f4f4f4;
 }
 
 .calendarWrapper :global(.react-calendar__tile--active) {
-    background: #CA0E11 !important;
-    color: #FFFFFF !important;
+    background: #ca0e11 !important;
+    color: #ffffff !important;
 }
 
 .calendarWrapper :global(.react-calendar__tile--active:enabled:hover),
 .calendarWrapper :global(.react-calendar__tile--active:enabled:focus) {
-    background: #B00D10 !important;
+    background: #b00d10 !important;
 }
 
 .calendarWrapper :global(.react-calendar__tile--now) {
@@ -449,17 +449,17 @@
 
 .calendarWrapper :global(.react-calendar__tile--now:enabled:hover),
 .calendarWrapper :global(.react-calendar__tile--now:enabled:focus) {
-    background: #F4F4F4;
+    background: #f4f4f4;
 }
 
 .calendarWrapper :global(.react-calendar__tile:disabled) {
     background: transparent;
-    color: #CCCCCC;
+    color: #cccccc;
     cursor: not-allowed;
 }
 
 .calendarWrapper :global(.react-calendar__month-view__days__day--neighboringMonth) {
-    color: #CCCCCC;
+    color: #cccccc;
 }
 
 /* Time slots */
@@ -496,7 +496,7 @@
 }
 
 .timeSlot {
-    border: 1.5px solid #F4F4F4;
+    border: 1.5px solid #f4f4f4;
     color: #000000;
 }
 
@@ -534,7 +534,7 @@
     font-weight: 600;
     font-size: 14px;
     line-height: 16px;
-    color: #FF0000;
+    color: #ff0000;
     margin: 0;
     text-align: center;
 }
@@ -546,7 +546,7 @@
     align-items: center;
     gap: 10px;
     padding: 10px;
-    background: #CA0E11;
+    background: #ca0e11;
     border-radius: 15px;
     border: none;
     cursor: pointer;
@@ -569,7 +569,7 @@
     align-items: center;
     gap: 10px;
     padding: 10px;
-    background: #EEEEEE;
+    background: #eeeeee;
     border-radius: 15px;
     border: none;
     cursor: pointer;
@@ -609,7 +609,7 @@
 .popupIcon {
     width: 44px;
     height: 44px;
-    background: #F4F4F4;
+    background: #f4f4f4;
     border-radius: 1000px;
     display: flex;
     align-items: center;

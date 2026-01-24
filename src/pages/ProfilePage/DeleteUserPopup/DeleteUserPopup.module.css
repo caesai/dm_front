@@ -41,7 +41,6 @@
     position: absolute;
     top: 6px;
     right: 16px;
-
 }
 
 .button {
@@ -50,7 +49,7 @@
     outline: none;
     border-radius: 15px;
     padding: 15px;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 16px;
     color: white;
@@ -70,7 +69,6 @@
     /*text-transform: uppercase;*/
     text-align: center;
 }
-
 
 .info {
     display: flex;
@@ -99,7 +97,6 @@
     }
 }
 
-
 .tags {
     display: flex;
     flex-direction: row;
@@ -117,7 +114,7 @@
 }
 
 .tags_title {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 14px;
     color: var(--grey);
@@ -128,7 +125,7 @@
     background-color: var(--secondary-background);
     padding: 11px 16px;
     border-radius: 20px;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 14px;
     width: max-content;
@@ -147,7 +144,7 @@
 
 .feedback_text {
     padding-bottom: 8px;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 14px;
     border: none;

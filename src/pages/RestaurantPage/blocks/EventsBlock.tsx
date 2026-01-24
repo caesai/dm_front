@@ -75,7 +75,9 @@ export const EventsBlock: React.FC<IEventsBlockProps> = ({ restaurantId }): JSX.
             <HeaderContainer>
                 <HeaderContent title="Мероприятия" />
             </HeaderContainer>
-            {filteredEvents?.map((event) => <EventCard key={event.id} onClick={handleEventClick} {...event} />)}
+            {filteredEvents?.map((event) => (
+                <EventCard key={event.id} onClick={handleEventClick} {...event} />
+            ))}
         </ContentContainer>
     );
 };

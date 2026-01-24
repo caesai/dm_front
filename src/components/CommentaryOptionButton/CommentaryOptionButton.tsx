@@ -17,7 +17,7 @@ interface ICommentaryOptionButton {
     onClick?: () => void;
     active?: boolean;
     style?: CSSProperties;
-    newDesign?: boolean
+    newDesign?: boolean;
 }
 
 /**
@@ -32,16 +32,16 @@ export const CommentaryOptionButton: FC<ICommentaryOptionButton> = ({
     onClick,
     active,
     style,
-    newDesign
+    newDesign,
 }: ICommentaryOptionButton): JSX.Element => {
     const [getAtom, setAtom] = useAtom(commAtom);
     const handleClick = () => {
         if (!disabled && !onClick) {
-            setAtom(text)
+            setAtom(text);
         } else {
             onClick && onClick();
         }
-    }
+    };
     return (
         <div
             className={classNames(
@@ -54,7 +54,9 @@ export const CommentaryOptionButton: FC<ICommentaryOptionButton> = ({
             style={style}
             onClick={handleClick}
         >
-            <span>{icon} {text}</span>
+            <span>
+                {icon} {text}
+            </span>
         </div>
     );
 };

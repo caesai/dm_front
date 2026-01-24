@@ -5,10 +5,10 @@ import { PrivelegiesPopup } from '@/components/PrivelegiesPopup/PrivelegiesPopup
 // Styles
 import css from '@/components/OptionsNavigation/OptionsNavigation.module.css';
 // Mocks
-import BookingsIcon from "/img/nav-btn1.png"
-import EventsIcon from "/img/nav-btn2.png"
-import CertificatesIcon from "/img/nav-btn3.png"
-import BanquetsIcon from "/img/nav-btn4.png"
+import BookingsIcon from '/img/nav-btn1.png';
+import EventsIcon from '/img/nav-btn2.png';
+import CertificatesIcon from '/img/nav-btn3.png';
+import BanquetsIcon from '/img/nav-btn4.png';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 
 interface IOptionsNavigationProps {}

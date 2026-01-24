@@ -10,14 +10,9 @@ interface DatePickerProps {
     banquet: IBanquetOptions;
 }
 
-const WEEKDAYS_ONLY_MESSAGE = "Только будни";
+const WEEKDAYS_ONLY_MESSAGE = 'Только будни';
 
-export const BanquetDatepicker: React.FC<DatePickerProps> = ({
-                                                                 onSelectDate,
-                                                                 initialDate,
-                                                                 currentDate,
-                                                                 banquet
-                                                             }) => {
+export const BanquetDatepicker: React.FC<DatePickerProps> = ({ onSelectDate, initialDate, currentDate, banquet }) => {
     const now = initialDate || new Date();
     const [currentYear, setCurrentYear] = useState(now.getUTCFullYear());
     const [currentMonth, setCurrentMonth] = useState(now.getUTCMonth());
@@ -96,17 +91,13 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
                 css.active,
                 isSelected ? css.current : '',
                 isPast ? css.disabled : '',
-                (isWeekend(fullDate) && isDisabledWeekend) ? css.disabled : '',
+                isWeekend(fullDate) && isDisabledWeekend ? css.disabled : '',
             ]
                 .filter(Boolean)
                 .join(' ');
 
             return (
-                <div
-                    key={idx}
-                    className={classNames}
-                    onClick={() => handleDayClick(fullDate)}
-                >
+                <div key={idx} className={classNames} onClick={() => handleDayClick(fullDate)}>
                     {dayNumber}
                 </div>
             );
@@ -135,12 +126,12 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
     const monthName = months[currentMonth];
 
     useEffect(() => {
-        if (!currentDate) return
+        if (!currentDate) return;
         setSelectedDate(currentDate);
     }, [currentDate]);
 
     useEffect(() => {
-        if (banquet.deposit_message === WEEKDAYS_ONLY_MESSAGE) setDisabledWeekend(true)
+        if (banquet.deposit_message === WEEKDAYS_ONLY_MESSAGE) setDisabledWeekend(true);
     }, [banquet]);
 
     return (
@@ -148,11 +139,7 @@ export const BanquetDatepicker: React.FC<DatePickerProps> = ({
             <div className={css.datepickerHeader}>
                 <div className={css.monthYearSelect}>
                     <span className={css.monthName}>{monthName}</span>
-                    <select
-                        className={css.yearSelect}
-                        value={currentYear}
-                        onChange={handleYearChange}
-                    >
+                    <select className={css.yearSelect} value={currentYear} onChange={handleYearChange}>
                         {yearsRange.map((y) => (
                             <option key={y} value={y}>
                                 {y}

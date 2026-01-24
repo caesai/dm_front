@@ -65,7 +65,7 @@ import { YandexTaxiBlock } from '@/pages/RestaurantPage/blocks/YandexTaxiBlock.t
  * Навигация на страницу бронирования происходит с учётом статуса онбординга пользователя:
  * - Если онбординг не завершён — переход на `/onboarding/3` с передачей данных ресторана
  * - Если онбординг завершён — переход на `/restaurant/:id/booking`
- * 
+ *
  * Данные формы бронирования (дата, время) синхронизируются через {@link restaurantBookingFormAtom},
  * который используется как в {@link BookingsBlock}, так и в {@link RestaurantBookingPage}.
  *
@@ -108,7 +108,7 @@ export const RestaurantPage: React.FC = (): JSX.Element => {
      *
      * Если онбординг завершён — переход на страницу бронирования
      * `/restaurant/:restaurantId/booking`.
-     * 
+     *
      * Данные формы (дата, время) синхронизируются через общий атом {@link restaurantBookingFormAtom}.
      */
     const handleNextButtonClick = () => {

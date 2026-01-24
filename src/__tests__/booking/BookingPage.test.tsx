@@ -1,9 +1,9 @@
 /**
  * @fileoverview Тесты для страницы общего бронирования BookingPage.
- * 
+ *
  * Страница предназначена для бронирования столика в любом ресторане.
  * Пользователь попадает сюда с главной страницы ({@link IndexPage}).
- * 
+ *
  * Основные функции страницы:
  * - Выбор ресторана из списка всех доступных
  * - Выбор даты бронирования из доступных дат
@@ -14,22 +14,22 @@
  * - Дополнительные пожелания к бронированию
  * - Выбор/активация сертификата
  * - Создание бронирования через API
- * 
+ *
  * Отличия от {@link RestaurantBookingPage}:
  * - Ресторан выбирается пользователем (не предзадан)
  * - Использует CommonBookingHeader вместо RestaurantBookingHeader
  * - Нет restaurantId в URL-параметрах
  * - Поддерживает передачу certificate и certificateId через state
  * - Использует `shared` вместо `sharedRestaurant` для навигации
- * 
+ *
  * Отличия от {@link EventBookingPage}:
  * - Не привязан к мероприятию (нет eventData)
  * - Дата не фиксирована
  * - Не передаёт event_id в API
  * - Навигация после бронирования на /myBookings/{id}
- * 
+ *
  * @module __tests__/booking/BookingPage
- * 
+ *
  * @see {@link BookingPage} - тестируемый компонент
  * @see {@link IndexPage} - главная страница (точка входа)
  * @see {@link RestaurantBookingPage} - страница бронирования конкретного ресторана
@@ -162,7 +162,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 /**
  * Тесты страницы общего бронирования.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Отображение заголовка бронирования
  * - Выбор ресторана из списка
@@ -176,7 +176,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
  * - Навигация после успешного бронирования
  * - Обработка shared-ссылок
  * - Работа с сертификатами
- * 
+ *
  * Тесты построены по тому же шаблону, что и {@link RestaurantBookingPage.test.tsx}
  * и {@link EventBookingPage.test.tsx} для обеспечения согласованности.
  */
@@ -187,23 +187,23 @@ describe('BookingPage', () => {
 
     /**
      * Рендерит компонент BookingPage с необходимыми провайдерами.
-     * 
+     *
      * @param user - Данные пользователя (по умолчанию mockUserData)
      * @param restaurants - Список ресторанов (по умолчанию mockRestaurantsList)
      * @param locationState - State из location (для передачи certificate, certificateId, shared)
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @example
      * // Рендер с дефолтными параметрами
      * renderComponent();
-     * 
+     *
      * @example
      * // Рендер с сертификатом
      * renderComponent(mockUserData, mockRestaurantsList, {
      *     certificate: { recipient_name: 'Test Name' },
      *     certificateId: 'cert-123',
      * });
-     * 
+     *
      * @example
      * // Рендер для shared-ссылки
      * renderComponent(mockUserData, mockRestaurantsList, { shared: true });
@@ -256,7 +256,7 @@ describe('BookingPage', () => {
             pathname: '/booking',
             state: null,
         });
-        
+
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -272,7 +272,7 @@ describe('BookingPage', () => {
             }
             originalConsoleError(...args);
         });
-        
+
         // Подавляем предупреждения о SVG атрибутах
         jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -288,12 +288,12 @@ describe('BookingPage', () => {
             }
             originalConsoleWarn(...args);
         });
-        
+
         // Настройка моков API
         mockAPIGetAvailableDays.mockResolvedValue({ data: mockAvailableDates });
         mockAPIGetAvailableTimeSlots.mockResolvedValue({ data: mockTimeSlots });
-        mockAPICreateBooking.mockResolvedValue({ 
-            data: { id: 123 } 
+        mockAPICreateBooking.mockResolvedValue({
+            data: { id: 123 },
         });
         mockAPIGetCertificates.mockResolvedValue({ data: [] });
         mockAPIPostCertificateClaim.mockResolvedValue({});
@@ -752,12 +752,12 @@ describe('BookingPage', () => {
 
     /**
      * Тесты функциональности депозитных дат.
-     * 
+     *
      * При выборе депозитной даты (attributes.includes('requires_deposit')):
      * - Показывается попап с информацией о депозите
      * - Фильтруются способы подтверждения (только "По телефону" и "В Telegram")
      * - Опция "Без подтверждения" скрывается
-     * 
+     *
      * @see {@link DepositInfoModal} - попап информации о депозите
      * @see {@link CONFIRMATION_OPTIONS} - опции подтверждения
      */
@@ -777,9 +777,7 @@ describe('BookingPage', () => {
          * Проверяет корректную загрузку депозитных дат из API.
          */
         test('должен корректно загружать депозитные даты из API', async () => {
-            const depositDates = [
-                { date: '2025-08-24', attributes: ['requires_deposit'], deposit_per_person: 1500 },
-            ];
+            const depositDates = [{ date: '2025-08-24', attributes: ['requires_deposit'], deposit_per_person: 1500 }];
             mockAPIGetAvailableDays.mockResolvedValue({ data: depositDates });
 
             renderComponent();

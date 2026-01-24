@@ -3,10 +3,7 @@ type IconlyIconProps = {
     color?: string;
 };
 
-export const IconlyProfile = ({
-    size = 24,
-    color = '#000000',
-}: IconlyIconProps) => {
+export const IconlyProfile = ({ size = 24, color = '#000000' }: IconlyIconProps) => {
     return (
         <svg
             width={size}
@@ -24,11 +21,7 @@ export const IconlyProfile = ({
                 strokeLinecap="round"
                 strokeLinejoin="round"
             >
-                <g
-                    id="Profile"
-                    transform="translate(4.814286, 2.814476)"
-                    stroke={color}
-                >
+                <g id="Profile" transform="translate(4.814286, 2.814476)" stroke={color}>
                     <path
                         d="M7.17047619,12.531714 C3.30285714,12.531714 -4.08562073e-14,13.1164759 -4.08562073e-14,15.4583807 C-4.08562073e-14,17.8002854 3.28190476,18.4059997 7.17047619,18.4059997 C11.0380952,18.4059997 14.34,17.8202854 14.34,15.479333 C14.34,13.1383807 11.0590476,12.531714 7.17047619,12.531714 Z"
                         id="Stroke-1"

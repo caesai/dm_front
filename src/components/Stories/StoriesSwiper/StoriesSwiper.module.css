@@ -8,7 +8,7 @@
 }
 
 .storiesSlider {
-    position: fixed!important;
+    position: fixed !important;
     width: 100%;
     top: 0;
     left: 0;
@@ -24,7 +24,7 @@
     /*left: 0;*/
     text-align: center;
     font-size: 18px;
-    background: #fff!important;
+    background: #fff !important;
     /*width: 400px !important;*/
     /*height: 400px !important;*/
     display: flex !important;
@@ -34,7 +34,7 @@
 }
 
 .progressBar {
-    background-color: rgba(245, 42, 45, 0.8)!important;
+    background-color: rgba(245, 42, 45, 0.8) !important;
 }
 
 .closeIcon {
@@ -43,7 +43,7 @@
     right: 5px;
     z-index: 10001;
 
-    >svg {
+    > svg {
         transform: scale(0.6);
     }
 }

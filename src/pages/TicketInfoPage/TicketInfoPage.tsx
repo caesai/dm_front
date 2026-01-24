@@ -48,22 +48,23 @@ export const TicketInfoPage: React.FC = () => {
     }, [id]);
 
     const shareTicket = () => {
-        const url = encodeURI(
-            `https://t.me/${BASE_BOT}?startapp=ticketId_${id}`
-        );
+        const url = encodeURI(`https://t.me/${BASE_BOT}?startapp=ticketId_${id}`);
         const title = encodeURI(String(ticket?.event_title));
         const shareData = {
             title,
             url,
-        }
+        };
         try {
             if (navigator && navigator.canShare(shareData)) {
-                navigator.share(shareData).then().catch((err) => {
-                    console.error(JSON.stringify(err));
-                });
+                navigator
+                    .share(shareData)
+                    .then()
+                    .catch((err) => {
+                        console.error(JSON.stringify(err));
+                    });
             }
         } catch (e) {
-            window.open(`https://t.me/share/url?url=${url}&text=${title}`, "_blank");
+            window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
         }
     };
 
@@ -84,7 +85,7 @@ export const TicketInfoPage: React.FC = () => {
         } else {
             navigate('/tickets');
         }
-    }
+    };
 
     return (
         <Page back={!state?.shared}>
@@ -95,7 +96,7 @@ export const TicketInfoPage: React.FC = () => {
                 onCancel={onCancel}
                 onSuccess={() => {
                     setDataToLocalStorage('ticket_refund', { id });
-                    navigate('/tickets')
+                    navigate('/tickets');
                 }}
                 successMessage={'Успешный возврат'}
                 skipStep={true}
@@ -104,23 +105,14 @@ export const TicketInfoPage: React.FC = () => {
                 <div className={css.header}>
                     <div className={css.header_group}>
                         <RoundedButton
-                            icon={
-                                <BackIcon
-                                    size={24}
-                                    color={'var(--dark-grey)'}
-                                />
-                            }
+                            icon={<BackIcon size={24} color={'var(--dark-grey)'} />}
                             action={goBack}
                             bgColor={'var(--primary-background)'}
                         />
                     </div>
                     <span className={css.header_title}>Мои билеты</span>
                     <div className={css.header_group}>
-                        <RoundedButton
-                            icon={<Share />}
-                            action={shareTicket}
-                            bgColor={'var(--primary-background)'}
-                        />
+                        <RoundedButton icon={<Share />} action={shareTicket} bgColor={'var(--primary-background)'} />
                         {/*<RoundedButton*/}
                         {/*    icon={<DownloadIcon />}*/}
                         {/*    action={sharePdf}*/}
@@ -133,240 +125,116 @@ export const TicketInfoPage: React.FC = () => {
                     <div className={css.ticket_header}>
                         {ticket?.event_img || ticket?.restaurant.thumbnail_photo ? (
                             <div
-                                className={classNames(
-                                    css.ticket_header_img,
-                                    css.bgImage,
-                                )}
+                                className={classNames(css.ticket_header_img, css.bgImage)}
                                 style={{
                                     backgroundImage: `url(${ticket?.event_img !== '' ? ticket?.event_img : ticket.restaurant.thumbnail_photo})`,
                                 }}
                             />
                         ) : (
-                            <PlaceholderBlock
-                                width={'100%'}
-                                aspectRatio={'3/2'}
-                            />
+                            <PlaceholderBlock width={'100%'} aspectRatio={'3/2'} />
                         )}
                         <div className={css.ticket_header_details}>
-                            <span
-                                className={classNames(
-                                    css.mont,
-                                    css.ticket_header_details__title,
-                                )}
-                            >
-                                {ticket?.event_title || (
-                                    <PlaceholderBlock
-                                        width={'170px'}
-                                        height={'19px'}
-                                    />
-                                )}
+                            <span className={classNames(css.mont, css.ticket_header_details__title)}>
+                                {ticket?.event_title || <PlaceholderBlock width={'170px'} height={'19px'} />}
                             </span>
-                            <span
-                                className={classNames(
-                                    css.mont,
-                                    css.ticket_header_details__res,
-                                )}
-                            >
-                                {ticket?.restaurant.title || (
-                                    <PlaceholderBlock
-                                        width={'170px'}
-                                        height={'19px'}
-                                    />
-                                )}
+                            <span className={classNames(css.mont, css.ticket_header_details__res)}>
+                                {ticket?.restaurant.title || <PlaceholderBlock width={'170px'} height={'19px'} />}
                             </span>
                         </div>
                     </div>
                     <div className={css.ticket_details}>
                         <div className={css.ticket_details_row}>
                             <div className={css.ticket_details_row_obj}>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj__title,
-                                    )}
-                                >
-                                    Адрес
-                                </span>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj_cont_small,
-                                    )}
-                                >
-                                    {ticket?.restaurant.address || (
-                                        <PlaceholderBlock
-                                            width={'170px'}
-                                            height={'19px'}
-                                        />
-                                    )}
+                                <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>Адрес</span>
+                                <span className={classNames(css.mont, css.ticket_details_row_obj_cont_small)}>
+                                    {ticket?.restaurant.address || <PlaceholderBlock width={'170px'} height={'19px'} />}
                                 </span>
                             </div>
                         </div>
                         <div className={css.ticket_details_row}>
                             <div className={css.ticket_details_row_obj}>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj__title,
-                                    )}
-                                >
+                                <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
                                     Код билета
                                 </span>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj_cont_small,
-                                    )}
-                                >
-                                    {ticket?.ticket_identifier !== undefined ? ticket.ticket_identifier : (
-                                        <PlaceholderBlock
-                                            width={'170px'}
-                                            height={'19px'}
-                                        />
+                                <span className={classNames(css.mont, css.ticket_details_row_obj_cont_small)}>
+                                    {ticket?.ticket_identifier !== undefined ? (
+                                        ticket.ticket_identifier
+                                    ) : (
+                                        <PlaceholderBlock width={'170px'} height={'19px'} />
                                     )}
                                 </span>
                             </div>
                         </div>
                         <div className={css.ticket_details_row}>
                             <div className={css.ticket_details_row_obj}>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj__title,
-                                    )}
-                                >
-                                    Дата
-                                </span>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj_cont,
-                                    )}
-                                >
+                                <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>Дата</span>
+                                <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
                                     {ticket ? (
                                         moment(ticket?.date_start).format('DD.MM.YYYY')
                                     ) : (
-                                        <PlaceholderBlock
-                                            width={'50px'}
-                                            height={'19px'}
-                                        />
+                                        <PlaceholderBlock width={'50px'} height={'19px'} />
                                     )}
                                 </span>
                             </div>
                             <div className={css.ticket_details_row_obj}>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj__title,
-                                    )}
-                                >
-                                    Время
-                                </span>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj_cont,
-                                    )}
-                                >
+                                <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>Время</span>
+                                <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
                                     {ticket ? (
                                         `${moment(ticket?.date_start).format('HH:mm')} - ${moment(ticket?.date_end).format('HH:mm')}`
                                     ) : (
-                                        <PlaceholderBlock
-                                            width={'50px'}
-                                            height={'19px'}
-                                        />
+                                        <PlaceholderBlock width={'50px'} height={'19px'} />
                                     )}
                                 </span>
                             </div>
                         </div>
                         <div className={css.ticket_details_row}>
                             <div className={css.ticket_details_row_obj}>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj__title,
-                                    )}
-                                >
+                                <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
                                     Количество гостей
                                 </span>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj_cont,
-                                    )}
-                                >
-                                    {ticket?.guest_count || (
-                                        <PlaceholderBlock
-                                            width={'50px'}
-                                            height={'19px'}
-                                        />
-                                    )}
+                                <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
+                                    {ticket?.guest_count || <PlaceholderBlock width={'50px'} height={'19px'} />}
                                 </span>
                             </div>
                             {ticket?.total !== 0 && (
                                 <div className={css.ticket_details_row_obj}>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj__title,
-                                    )}
-                                >
-                                    Стоимость
-                                </span>
-                                    <span
-                                        className={classNames(
-                                            css.mont,
-                                            css.ticket_details_row_obj_cont,
+                                    <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
+                                        Стоимость
+                                    </span>
+                                    <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
+                                        {ticket ? (
+                                            `${ticket?.total} ₽`
+                                        ) : (
+                                            <PlaceholderBlock width={'70px'} height={'19px'} />
                                         )}
-                                    >
-                                    {ticket ? (
-                                        `${ticket?.total} ₽`
-                                    ) : (
-                                        <PlaceholderBlock
-                                            width={'70px'}
-                                            height={'19px'}
-                                        />
-                                    )}
-                                </span>
+                                    </span>
                                 </div>
                             )}
                         </div>
                     </div>
                     <div className={css.ticket_details_row}>
                         <div className={css.ticket_details_row_obj}>
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.ticket_details_row_obj__title,
-                                    )}
-                                >
-                                    Номер телефона
-                                </span>
-                            <span
-                                className={classNames(
-                                    css.mont,
-                                    css.ticket_details_row_obj_cont,
-                                )}
-                            >
-                                    {ticket ? (
-                                        `${ticket?.phone} `
-                                    ) : (
-                                        <PlaceholderBlock
-                                            width={'70px'}
-                                            height={'19px'}
-                                        />
-                                    )}
+                            <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
+                                Номер телефона
+                            </span>
+                            <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
+                                {ticket ? `${ticket?.phone} ` : <PlaceholderBlock width={'70px'} height={'19px'} />}
                             </span>
                         </div>
                     </div>
                     <div className={css.ticket_details_row}>
-                        <span className={css.cancelText}>Если вы захотите сдать билет менее чем за 3 дня до мероприятия, мы вернем 50% его стоимости.</span>
+                        <span className={css.cancelText}>
+                            Если вы захотите сдать билет менее чем за 3 дня до мероприятия, мы вернем 50% его стоимости.
+                        </span>
                     </div>
                     <UniversalButton
                         width={'full'}
                         action={refund}
-                        title={ticket_refund && JSON.parse(ticket_refund).id === id ?
-                            'Запрос на возврат оформлен' : 'Оформить возврат'}
+                        title={
+                            ticket_refund && JSON.parse(ticket_refund).id === id
+                                ? 'Запрос на возврат оформлен'
+                                : 'Оформить возврат'
+                        }
                         style={{ fontSize: '12px' }}
                     />
                     {/*<div*/}

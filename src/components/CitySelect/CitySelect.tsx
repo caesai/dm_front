@@ -48,7 +48,10 @@ interface ICitySelectProps {
  * @param {ICitySelectProps} props - Пропсы компонента
  * @returns {JSX.Element} Выпадающий список выбора города
  */
-export const CitySelect: React.FC<ICitySelectProps> = ({ titleStyle, filteredCitiesList }: ICitySelectProps): JSX.Element => {
+export const CitySelect: React.FC<ICitySelectProps> = ({
+    titleStyle,
+    filteredCitiesList,
+}: ICitySelectProps): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
 
     // Атомы: чтение списка городов и текущего города
@@ -61,7 +64,10 @@ export const CitySelect: React.FC<ICitySelectProps> = ({ titleStyle, filteredCit
      * Исключает текущий выбранный город.
      */
     const availableCities = useMemo(
-        () => filteredCitiesList ? filteredCitiesList : cityList.filter((city) => city.name_english !== currentCity.name_english),
+        () =>
+            filteredCitiesList
+                ? filteredCitiesList
+                : cityList.filter((city) => city.name_english !== currentCity.name_english),
         [cityList, currentCity.name_english, filteredCitiesList]
     );
 
@@ -78,10 +84,13 @@ export const CitySelect: React.FC<ICitySelectProps> = ({ titleStyle, filteredCit
      *
      * @param {ICity} city - Выбранный город
      */
-    const handleCitySelect = useCallback((city: ICity) => {
-        setCurrentCity(city.name_english);
-        setIsOpen(false);
-    }, [setCurrentCity]);
+    const handleCitySelect = useCallback(
+        (city: ICity) => {
+            setCurrentCity(city.name_english);
+            setIsOpen(false);
+        },
+        [setCurrentCity]
+    );
 
     return (
         <div className={css.selectWrapper}>
@@ -98,17 +107,9 @@ export const CitySelect: React.FC<ICitySelectProps> = ({ titleStyle, filteredCit
             <Collapse isOpened={isOpen}>
                 <div className={css.optionWrapper}>
                     {availableCities.map((city) => (
-                        <div
-                            key={city.name_english}
-                            className={css.option}
-                            onClick={() => handleCitySelect(city)}
-                        >
+                        <div key={city.name_english} className={css.option} onClick={() => handleCitySelect(city)}>
                             <span className={css.option_title}>{city.name}</span>
-                            <div
-                                className={classNames(
-                                    css.option_checkbox,
-                                )}
-                            ></div>
+                            <div className={classNames(css.option_checkbox)}></div>
                         </div>
                     ))}
                 </div>

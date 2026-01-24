@@ -7,10 +7,7 @@ interface DatePickerProps {
     initialDate?: Date;
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({
-    onSelectDate,
-    initialDate,
-}) => {
+export const DatePicker: React.FC<DatePickerProps> = ({ onSelectDate, initialDate }) => {
     // Считаем, что initialDate — уже «UTC-полночь» или пусть любая
     // Либо зададим просто текущий момент
     const now = initialDate || new Date();
@@ -77,11 +74,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 .join(' ');
 
             return (
-                <div
-                    key={idx}
-                    className={classes}
-                    onClick={() => handleDayClick(fullDate, isCurrentMonth)}
-                >
+                <div key={idx} className={classes} onClick={() => handleDayClick(fullDate, isCurrentMonth)}>
                     {dayNumber}
                 </div>
             );
@@ -115,11 +108,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             <div className="datepicker-header">
                 <div className="month-year-select">
                     <span className="month-name">{monthName}</span>
-                    <select
-                        className="year-select"
-                        value={currentYear}
-                        onChange={handleYearChange}
-                    >
+                    <select className="year-select" value={currentYear} onChange={handleYearChange}>
                         {yearsRange.map((y) => (
                             <option key={y} value={y}>
                                 {y}
@@ -128,12 +117,16 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     </select>
                 </div>
                 <div>
-                    <button className="nav-button" onClick={handlePrevMonth} dangerouslySetInnerHTML={{ __html: '&#10094;'}}>
-
-                    </button>
-                    <button className="nav-button" onClick={handleNextMonth} dangerouslySetInnerHTML={{ __html: '&#10095;'}} >
-
-                    </button>
+                    <button
+                        className="nav-button"
+                        onClick={handlePrevMonth}
+                        dangerouslySetInnerHTML={{ __html: '&#10094;' }}
+                    ></button>
+                    <button
+                        className="nav-button"
+                        onClick={handleNextMonth}
+                        dangerouslySetInnerHTML={{ __html: '&#10095;' }}
+                    ></button>
                 </div>
             </div>
 

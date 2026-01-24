@@ -1,20 +1,20 @@
 /**
  * @fileoverview Тесты для страницы выбора опций банкета ChooseBanquetOptionsPage.
- * 
+ *
  * Страница отображает список доступных банкетных опций ресторана:
  * - Карусель изображений для каждой опции (Swiper)
  * - Информация о вместимости и депозите
  * - Описание опции с возможностью раскрытия
  * - Кнопка выбора опции для перехода к настройке
- * 
+ *
  * Особенности логики:
  * - Опции загружаются из restaurant.banquets.banquet_options
  * - Длинные описания (> 60 символов) обрезаются с кнопкой "Читать больше"
  * - При клике на изображение открывается галерея
  * - При отсутствии опций показывается сообщение "Нет доступных опций"
- * 
+ *
  * @module __tests__/banquets/ChooseBanquetOptionsPage
- * 
+ *
  * @see {@link ChooseBanquetOptionsPage} - тестируемый компонент
  * @see {@link BanquetAddressPage} - предыдущий шаг (навигация назад)
  * @see {@link BanquetOptionPage} - следующий шаг (настройка опции)
@@ -27,12 +27,12 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ChooseBanquetOptionsPage } from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.tsx';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
-import { 
-    banquetData, 
-    mockBanquetOptionLongDescription, 
-    mockBanquetOptionShortDescription, 
-    mockBanquetOptionNoDeposit, 
-    mockBanquetOptionFreeDeposit 
+import {
+    banquetData,
+    mockBanquetOptionLongDescription,
+    mockBanquetOptionShortDescription,
+    mockBanquetOptionNoDeposit,
+    mockBanquetOptionFreeDeposit,
 } from '@/__mocks__/banquets.mock.ts';
 import { mockRestaurantWithoutBanquets } from '@/__mocks__/restaurant.mock.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
@@ -111,30 +111,29 @@ jest.mock('@/components/RoundedButton/RoundedButton.tsx', () => ({
  * Мок иконки BackIcon.
  */
 jest.mock('@/components/Icons/BackIcon.tsx', () => ({
-    BackIcon: ({ color }: { color?: string }) => <span data-testid="back-icon" data-color={color}>←</span>,
+    BackIcon: ({ color }: { color?: string }) => (
+        <span data-testid="back-icon" data-color={color}>
+            ←
+        </span>
+    ),
 }));
 
 /**
  * Мок компонента UniversalButton.
  */
 jest.mock('@/components/Buttons/UniversalButton/UniversalButton.tsx', () => ({
-    UniversalButton: ({ 
-        title, 
-        action, 
-        theme, 
-        width 
-    }: { 
-        title: string; 
-        action?: () => void; 
-        theme?: string; 
-        width?: string 
+    UniversalButton: ({
+        title,
+        action,
+        theme,
+        width,
+    }: {
+        title: string;
+        action?: () => void;
+        theme?: string;
+        width?: string;
     }) => (
-        <button 
-            onClick={action} 
-            data-testid="select-option-button"
-            data-theme={theme}
-            data-width={width}
-        >
+        <button onClick={action} data-testid="select-option-button" data-theme={theme} data-width={width}>
             {title}
         </button>
     ),
@@ -146,16 +145,16 @@ jest.mock('@/components/Buttons/UniversalButton/UniversalButton.tsx', () => ({
  */
 jest.mock('@/components/BanquetGallery/BanquetGallery.tsx', () => ({
     __esModule: true,
-    default: ({ 
-        isOpen, 
-        setOpen, 
-        images, 
-        currentIndex 
-    }: { 
-        isOpen: boolean; 
-        setOpen: (v: boolean) => void; 
-        images: string[]; 
-        currentIndex: number 
+    default: ({
+        isOpen,
+        setOpen,
+        images,
+        currentIndex,
+    }: {
+        isOpen: boolean;
+        setOpen: (v: boolean) => void;
+        images: string[];
+        currentIndex: number;
     }) => {
         if (!isOpen) return null;
         return (
@@ -230,7 +229,7 @@ const mockRestaurantWithBanquets: IRestaurant = {
 
 /**
  * Тесты страницы выбора опций банкета.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Рендеринг компонентов страницы
  * - Отображение списка банкетных опций
@@ -247,32 +246,29 @@ describe('ChooseBanquetOptionsPage', () => {
 
     /**
      * Рендерит компонент ChooseBanquetOptionsPage с необходимыми провайдерами.
-     * 
+     *
      * @param options - Опции рендеринга
      * @param options.restaurants - Список ресторанов
      * @param options.restaurantId - ID ресторана в URL
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @example
      * // Базовый рендер с рестораном с банкетами
      * renderComponent();
-     * 
+     *
      * @example
      * // Рендер с пустым списком опций
      * renderComponent({ restaurants: [mockRestaurantWithoutBanquets], restaurantId: '2' });
      */
-    const renderComponent = (options: {
-        restaurants?: IRestaurant[];
-        restaurantId?: string;
-    } = {}) => {
-        const {
-            restaurants = [mockRestaurantWithBanquets],
-            restaurantId = '1',
-        } = options;
+    const renderComponent = (
+        options: {
+            restaurants?: IRestaurant[];
+            restaurantId?: string;
+        } = {}
+    ) => {
+        const { restaurants = [mockRestaurantWithBanquets], restaurantId = '1' } = options;
 
-        const initialValues: Array<readonly [any, unknown]> = [
-            [restaurantsListAtom, restaurants],
-        ];
+        const initialValues: Array<readonly [any, unknown]> = [[restaurantsListAtom, restaurants]];
 
         return render(
             <TestProvider initialValues={initialValues}>
@@ -308,10 +304,7 @@ describe('ChooseBanquetOptionsPage', () => {
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Not implemented: navigation')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Not implemented: navigation')) {
                 return;
             }
             originalConsoleError(...args);
@@ -428,7 +421,7 @@ describe('ChooseBanquetOptionsPage', () => {
 
             const selectButtons = screen.getAllByTestId('select-option-button');
             expect(selectButtons).toHaveLength(4);
-            selectButtons.forEach(button => {
+            selectButtons.forEach((button) => {
                 expect(button).toHaveTextContent('Выбрать');
             });
         });
@@ -672,7 +665,7 @@ describe('ChooseBanquetOptionsPage', () => {
             renderComponent();
 
             const selectButtons = screen.getAllByTestId('select-option-button');
-            
+
             // Клик на вторую опцию
             fireEvent.click(selectButtons[1]);
 
@@ -691,9 +684,9 @@ describe('ChooseBanquetOptionsPage', () => {
          * Проверяет отображение сообщения при отсутствии опций.
          */
         it('должен отображать сообщение "Нет доступных опций для банкета"', () => {
-            renderComponent({ 
-                restaurants: [mockRestaurantWithoutBanquets], 
-                restaurantId: '2' 
+            renderComponent({
+                restaurants: [mockRestaurantWithoutBanquets],
+                restaurantId: '2',
             });
 
             expect(screen.getByText('Нет доступных опций для банкета')).toBeInTheDocument();
@@ -703,9 +696,9 @@ describe('ChooseBanquetOptionsPage', () => {
          * Проверяет отсутствие карусели при пустом списке.
          */
         it('не должен отображать карусели при отсутствии опций', () => {
-            renderComponent({ 
-                restaurants: [mockRestaurantWithoutBanquets], 
-                restaurantId: '2' 
+            renderComponent({
+                restaurants: [mockRestaurantWithoutBanquets],
+                restaurantId: '2',
             });
 
             expect(screen.queryByTestId('swiper')).not.toBeInTheDocument();
@@ -715,9 +708,9 @@ describe('ChooseBanquetOptionsPage', () => {
          * Проверяет отсутствие кнопок "Выбрать" при пустом списке.
          */
         it('не должен отображать кнопки "Выбрать" при отсутствии опций', () => {
-            renderComponent({ 
-                restaurants: [mockRestaurantWithoutBanquets], 
-                restaurantId: '2' 
+            renderComponent({
+                restaurants: [mockRestaurantWithoutBanquets],
+                restaurantId: '2',
             });
 
             expect(screen.queryByTestId('select-option-button')).not.toBeInTheDocument();
@@ -733,9 +726,9 @@ describe('ChooseBanquetOptionsPage', () => {
          * Проверяет корректную работу при несуществующем ресторане.
          */
         it('должен показывать пустое состояние при несуществующем ресторане', () => {
-            renderComponent({ 
-                restaurants: [mockRestaurantWithBanquets], 
-                restaurantId: '999' 
+            renderComponent({
+                restaurants: [mockRestaurantWithBanquets],
+                restaurantId: '999',
             });
 
             expect(screen.getByText('Нет доступных опций для банкета')).toBeInTheDocument();
@@ -751,9 +744,9 @@ describe('ChooseBanquetOptionsPage', () => {
                 banquets: undefined as any,
             };
 
-            renderComponent({ 
-                restaurants: [restaurantWithoutBanquetsField], 
-                restaurantId: '3' 
+            renderComponent({
+                restaurants: [restaurantWithoutBanquetsField],
+                restaurantId: '3',
             });
 
             expect(screen.getByText('Нет доступных опций для банкета')).toBeInTheDocument();

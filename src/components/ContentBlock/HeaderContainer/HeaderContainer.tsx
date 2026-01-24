@@ -18,7 +18,11 @@ export interface IHeaderContainerProps {
  * @param {IHeaderContainerProps} props
  * @returns {JSX.Element}
  */
-export const HeaderContainer: React.FC<IHeaderContainerProps> = ({ children, id, className }: IHeaderContainerProps): JSX.Element => {
+export const HeaderContainer: React.FC<IHeaderContainerProps> = ({
+    children,
+    id,
+    className,
+}: IHeaderContainerProps): JSX.Element => {
     return (
         <header className={classNames(css.headerContainer, className)} id={id}>
             {children}

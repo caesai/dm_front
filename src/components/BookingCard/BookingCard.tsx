@@ -30,7 +30,9 @@ export const BookingCard: FC<BookingCardProps> = ({
             className={classNames(
                 css.card,
                 css.bgImage,
-                !active || new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() > new Date(date).getTime() ? css.notActive : null
+                !active || new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() > new Date(date).getTime()
+                    ? css.notActive
+                    : null
             )}
             style={{ backgroundImage: `url(${image ? image : bookingCard})` }}
             onClick={() => click_callback(booking_id)}
@@ -38,7 +40,9 @@ export const BookingCard: FC<BookingCardProps> = ({
             <span
                 className={classNames(
                     css.card_date,
-                    !active || new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() > new Date(date).getTime() ? css.card_date__notActive : null
+                    !active || new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() > new Date(date).getTime()
+                        ? css.card_date__notActive
+                        : null
                 )}
             >
                 {new Date(date).toLocaleDateString('ru-RU')}, {weekdaysMap[new Date(date).getDay()]} в {time}

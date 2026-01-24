@@ -9,29 +9,15 @@ export const RestaurantOnMapSelectedIcon = () => {
             xmlnsXlink="http://www.w3.org/1999/xlink"
         >
             <rect width="36" height="34.136" rx="8" fill="black" />
-            <rect
-                x="8"
-                y="12"
-                width="20.3103"
-                height="14.136"
-                fill="url(#pattern0_376_7018)"
-            />
+            <rect x="8" y="12" width="20.3103" height="14.136" fill="url(#pattern0_376_7018)" />
             <circle cx="18" cy="48" r="3" fill="black" />
             <path
                 d="M0 26H36C36 29.3768 34.1113 32.4699 31.1074 34.0124L17.5 41L5.84457 34.2893C2.77205 32.5203 0.63422 29.4882 0 26Z"
                 fill="black"
             />
             <defs>
-                <pattern
-                    id="pattern0_376_7018"
-                    patternContentUnits="objectBoundingBox"
-                    width="1"
-                    height="1"
-                >
-                    <use
-                        xlinkHref="#image0_376_7018"
-                        transform="scale(0.008 0.0114943)"
-                    />
+                <pattern id="pattern0_376_7018" patternContentUnits="objectBoundingBox" width="1" height="1">
+                    <use xlinkHref="#image0_376_7018" transform="scale(0.008 0.0114943)" />
                 </pattern>
                 <image
                     id="image0_376_7018"

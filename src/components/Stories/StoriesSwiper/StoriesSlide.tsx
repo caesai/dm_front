@@ -24,39 +24,43 @@ interface StorySlideProps {
     isPaused: boolean;
 }
 
-export const StorySlide: React.FC<StorySlideProps> = (
-    {
-        onAllStoriesEnd,
-        storyId,
-        stories,
-        onClose,
-        shouldWait,
-        isPaused,
-    },
-) => {
+export const StorySlide: React.FC<StorySlideProps> = ({
+    onAllStoriesEnd,
+    storyId,
+    stories,
+    onClose,
+    shouldWait,
+    isPaused,
+}) => {
     const [localStories, setLocalStories] = useAtom(localStoriesListAtom);
     const [localStory, setLocalStory] = useState<LocalStoryMeta | undefined>(undefined);
 
     // Use a useEffect to react to changes in the Jotai atom or storyId.
     useEffect(() => {
-        const foundStory = localStories.find(item => item.id === storyId);
+        const foundStory = localStories.find((item) => item.id === storyId);
         setLocalStory(foundStory);
     }, [localStories, storyId]);
 
-    const updateLocalStories = useCallback((updater: (prevItems: LocalStoryMeta[]) => LocalStoryMeta[]) => {
-        setLocalStories(updater);
-    }, [setLocalStories]);
+    const updateLocalStories = useCallback(
+        (updater: (prevItems: LocalStoryMeta[]) => LocalStoryMeta[]) => {
+            setLocalStories(updater);
+        },
+        [setLocalStories]
+    );
 
     const handleStoryEnd = useCallback(() => {
-        updateLocalStories(prevItems => {
-            const localIndex = prevItems.findIndex(item => item.id === storyId);
+        updateLocalStories((prevItems) => {
+            const localIndex = prevItems.findIndex((item) => item.id === storyId);
             if (localIndex === -1) {
-                return [...prevItems, {
-                    id: storyId,
-                    index: 0,
-                    isSeen: true,
-                    lastSeenDate: moment().format('YYYY-MM-DD'),
-                }];
+                return [
+                    ...prevItems,
+                    {
+                        id: storyId,
+                        index: 0,
+                        isSeen: true,
+                        lastSeenDate: moment().format('YYYY-MM-DD'),
+                    },
+                ];
             }
 
             const existingItem = prevItems[localIndex];
@@ -67,41 +71,36 @@ export const StorySlide: React.FC<StorySlideProps> = (
                 lastSeenDate: moment().format('YYYY-MM-DD'),
             };
 
-            return [
-                ...prevItems.slice(0, localIndex),
-                updatedItem,
-                ...prevItems.slice(localIndex + 1),
-            ];
+            return [...prevItems.slice(0, localIndex), updatedItem, ...prevItems.slice(localIndex + 1)];
         });
         onAllStoriesEnd();
     }, [storyId, updateLocalStories, onAllStoriesEnd]);
 
-    const handleStoryChange = useCallback((index: number) => {
-        updateLocalStories(prevItems => {
-            const localIndex = prevItems.findIndex(item => item.id === storyId);
+    const handleStoryChange = useCallback(
+        (index: number) => {
+            updateLocalStories((prevItems) => {
+                const localIndex = prevItems.findIndex((item) => item.id === storyId);
 
-            if (localIndex !== -1) {
-                const existingItem = prevItems[localIndex];
-                if (index > existingItem.index && index <= stories.length - 1) {
-                    const updatedItem = { ...existingItem, index };
-                    return [
-                        ...prevItems.slice(0, localIndex),
-                        updatedItem,
-                        ...prevItems.slice(localIndex + 1),
-                    ];
+                if (localIndex !== -1) {
+                    const existingItem = prevItems[localIndex];
+                    if (index > existingItem.index && index <= stories.length - 1) {
+                        const updatedItem = { ...existingItem, index };
+                        return [...prevItems.slice(0, localIndex), updatedItem, ...prevItems.slice(localIndex + 1)];
+                    }
+                    return prevItems;
+                } else {
+                    const newStoryLocalMeta: LocalStoryMeta = {
+                        id: storyId,
+                        index,
+                        isSeen: false,
+                        lastSeenDate: moment().format('YYYY-MM-DD'),
+                    };
+                    return [...prevItems, newStoryLocalMeta];
                 }
-                return prevItems;
-            } else {
-                const newStoryLocalMeta: LocalStoryMeta = {
-                    id: storyId,
-                    index,
-                    isSeen: false,
-                    lastSeenDate: moment().format('YYYY-MM-DD'),
-                };
-                return [...prevItems, newStoryLocalMeta];
-            }
-        });
-    }, [storyId, stories.length, updateLocalStories]);
+            });
+        },
+        [storyId, stories.length, updateLocalStories]
+    );
 
     let initialStoryIndex = 0;
     if (localStory) {

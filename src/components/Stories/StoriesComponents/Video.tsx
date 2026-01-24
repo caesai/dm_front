@@ -16,17 +16,15 @@ interface VideoStoryComponentProps {
     setIsLoading: (loading: boolean) => void;
 }
 
-export const VideoStoryComponent: React.FC<VideoStoryComponentProps> = (
-    {
-        story,
-        action,
-        isPaused,
-        shouldWait,
-        getVideoDuration,
-        setIsLoading,
-        isLoading,
-    },
-) => {
+export const VideoStoryComponent: React.FC<VideoStoryComponentProps> = ({
+    story,
+    action,
+    isPaused,
+    shouldWait,
+    getVideoDuration,
+    setIsLoading,
+    isLoading,
+}) => {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     const handleWaiting = useCallback(() => {
@@ -43,7 +41,7 @@ export const VideoStoryComponent: React.FC<VideoStoryComponentProps> = (
         if (videoRef.current) {
             getVideoDuration(videoRef.current.duration * 1000); // Pass duration to parent
             if (!shouldWait) {
-                videoRef.current.play().catch(error => {
+                videoRef.current.play().catch((error) => {
                     console.error('Video play failed:', error);
                 });
             }
@@ -58,7 +56,7 @@ export const VideoStoryComponent: React.FC<VideoStoryComponentProps> = (
         if (isPaused || shouldWait) {
             videoElement.pause();
         } else {
-            videoElement.play().catch(error => {
+            videoElement.play().catch((error) => {
                 console.error('Video auto-play failed:', error);
             });
         }

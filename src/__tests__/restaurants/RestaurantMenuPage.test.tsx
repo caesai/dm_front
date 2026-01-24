@@ -1,22 +1,22 @@
 /**
  * @fileoverview Тесты для страницы меню ресторана RestaurantMenuPage.
- * 
+ *
  * Страница отображает меню выбранного ресторана с возможностью:
  * - Просмотра категорий и блюд
  * - Поиска по меню с использованием trigram-алгоритма
  * - Навигации по категориям через вкладки
  * - Верификации возраста для категорий с алкоголем (коктейли)
  * - Перехода на детальную страницу блюда
- * 
+ *
  * Основные тестируемые сценарии:
  * - Состояния загрузки, ошибки, отсутствия ресторана
  * - Отображение и фильтрация категорий/блюд
  * - Поиск с очисткой и состоянием "ничего не найдено"
  * - Возрастная верификация для алкогольных напитков
  * - Навигация и скроллинг
- * 
+ *
  * @module __tests__/restaurants/RestaurantMenuPage
- * 
+ *
  * @see {@link RestaurantMenuPage} - тестируемый компонент
  * @see {@link useRestaurantMenu} - хук загрузки данных меню
  * @see {@link trigramMatch} - функция нечёткого поиска
@@ -84,7 +84,7 @@ global.scrollTo = jest.fn();
 
 /**
  * Тесты страницы меню ресторана.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Состояния загрузки и ошибки
  * - Отображение категорий и блюд
@@ -117,7 +117,7 @@ describe('RestaurantMenuPage', () => {
 
     /**
      * Создаёт моковый размер блюда.
-     * 
+     *
      * @param id - Идентификатор размера
      * @param price - Цена размера
      * @param weight - Вес порции в граммах (по умолчанию 250)
@@ -147,7 +147,7 @@ describe('RestaurantMenuPage', () => {
 
     /**
      * Создаёт моковое блюдо меню.
-     * 
+     *
      * @param id - Идентификатор блюда
      * @param name - Название блюда
      * @param categoryId - ID категории
@@ -179,7 +179,7 @@ describe('RestaurantMenuPage', () => {
 
     /**
      * Создаёт моковую категорию меню.
-     * 
+     *
      * @param id - Идентификатор категории
      * @param name - Название категории
      * @param items - Массив блюд в категории
@@ -237,17 +237,17 @@ describe('RestaurantMenuPage', () => {
 
     /**
      * Рендерит компонент RestaurantMenuPage с необходимыми провайдерами.
-     * 
+     *
      * @param menuData - Данные меню (null = загрузка, menuDataFixture = данные)
      * @param loading - Состояние загрузки
      * @param error - Состояние ошибки
      * @param restaurantId - ID ресторана в URL
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @example
      * // Рендер с загрузкой
      * renderComponent(null, true, false);
-     * 
+     *
      * @example
      * // Рендер с ошибкой
      * renderComponent(null, false, true);
@@ -301,19 +301,16 @@ describe('RestaurantMenuPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         sessionStorage.clear();
-        
+
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Not implemented: navigation')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Not implemented: navigation')) {
                 return;
             }
             originalConsoleError(...args);
         });
-        
+
         // Подавляем предупреждения о SVG атрибутах
         jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -328,7 +325,7 @@ describe('RestaurantMenuPage', () => {
             }
             originalConsoleWarn(...args);
         });
-        
+
         // Сбрасываем мок trigramMatch на дефолтное поведение
         (trigramMatch as jest.Mock).mockImplementation((text: string, query: string) => {
             return text.toLowerCase().includes(query.toLowerCase());
@@ -372,10 +369,13 @@ describe('RestaurantMenuPage', () => {
 
         render(
             <TestProvider initialValues={initialValues}>
-                <MemoryRouter initialEntries={['/restaurant/1/menu']} future={{
-                    v7_startTransition: true,
-                    v7_relativeSplatPath: true,
-                }}>
+                <MemoryRouter
+                    initialEntries={['/restaurant/1/menu']}
+                    future={{
+                        v7_startTransition: true,
+                        v7_relativeSplatPath: true,
+                    }}
+                >
                     <Routes>
                         <Route path="/restaurant/:id/menu" element={<RestaurantMenuPage />} />
                     </Routes>
@@ -453,16 +453,16 @@ describe('RestaurantMenuPage', () => {
      * Проверяет, что категории и блюда с is_hidden=true не отображаются.
      */
     it('не должен отображать скрытые категории и блюда', () => {
-        const hiddenCategory = createMockCategory('cat-hidden', 'Скрытая категория', [
-            createMockDish('dish-hidden', 'Скрытое блюдо', 'cat-hidden'),
-        ], true);
+        const hiddenCategory = createMockCategory(
+            'cat-hidden',
+            'Скрытая категория',
+            [createMockDish('dish-hidden', 'Скрытое блюдо', 'cat-hidden')],
+            true
+        );
 
         const menuWithHidden = {
             ...menuDataFixture,
-            item_categories: [
-                ...menuDataFixture.item_categories,
-                hiddenCategory,
-            ],
+            item_categories: [...menuDataFixture.item_categories, hiddenCategory],
         };
 
         renderComponent(menuWithHidden);
@@ -718,9 +718,10 @@ describe('RestaurantMenuPage', () => {
 
         // Находим кнопку "Назад" через поиск по aria-label или через структуру компонента
         // RoundedButton может не иметь текста, поэтому ищем через структуру DOM
-        const backButton = document.querySelector('button[class*="roundedButton"]') ||
-                          document.querySelector('button[aria-label*="назад" i]') ||
-                          screen.queryByRole('button', { name: /назад/i });
+        const backButton =
+            document.querySelector('button[class*="roundedButton"]') ||
+            document.querySelector('button[aria-label*="назад" i]') ||
+            screen.queryByRole('button', { name: /назад/i });
 
         if (backButton) {
             fireEvent.click(backButton);
@@ -739,7 +740,7 @@ describe('RestaurantMenuPage', () => {
 
     /**
      * Проверяет отображение цены блюд.
-     * Проверяем через наличие блюд и их названий, 
+     * Проверяем через наличие блюд и их названий,
      * так как цены зависят от extractPrice, который работает с API данными.
      */
     it('должен отображать цену и вес блюд', () => {
@@ -748,10 +749,9 @@ describe('RestaurantMenuPage', () => {
         // Проверяем, что блюда из категории "Еда" отображаются
         expect(screen.getByText('Паста')).toBeInTheDocument();
         expect(screen.getByText('Пицца')).toBeInTheDocument();
-        
+
         // Проверяем наличие веса (250 г для всех блюд в моках)
         const weights = screen.getAllByText(/250\s*г/);
         expect(weights.length).toBeGreaterThan(0);
     });
 });
-

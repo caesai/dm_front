@@ -56,21 +56,21 @@ export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
 
     const sendToTelegram = () => {
         if (window.Telegram.WebApp) {
-            window.location.href = `https://t.me/${BASE_BOT}?start=error_booking-${Number(props.resId)}`
+            window.location.href = `https://t.me/${BASE_BOT}?start=error_booking-${Number(props.resId)}`;
             // window.Telegram.WebApp.close();
         } else {
-            window.location.href = `https://t.me/${BASE_BOT}?start=error_booking-${Number(props.resId)}`
+            window.location.href = `https://t.me/${BASE_BOT}?start=error_booking-${Number(props.resId)}`;
         }
-    }
+    };
 
     const goToTelegram = () => {
         if (window.Telegram.WebApp) {
-            window.location.href = `https://t.me/${BASE_BOT}?start`
+            window.location.href = `https://t.me/${BASE_BOT}?start`;
             // window.Telegram.WebApp.close();
         } else {
-            window.location.href = `https://t.me/${BASE_BOT}?start`
+            window.location.href = `https://t.me/${BASE_BOT}?start`;
         }
-    }
+    };
 
     return (
         <StyledPopup
@@ -79,53 +79,35 @@ export const BookingErrorPopup: React.FC<BookingErrorPopupProps> = (props) => {
             closeOnDocumentClick={true}
             className={isClosing ? 'popupClose' : 'popup'}
         >
-            <div
-                className={classNames(
-                    css.popup,
-                    isClosing ? css.popup__closing : null,
-                )}
-            >
+            <div className={classNames(css.popup, isClosing ? css.popup__closing : null)}>
                 <span className={css.title}>Произошла ошибка бронирования</span>
-                {!props.botError ? <span className={css.tags_title}>Попробуйте еще раз или свяжитесь с нами</span> : (<span className={css.tags_title}>Для успешного бронирования, пожалуйста, разблокируйте Telegram-бот</span>)}
-                {!props.botError ? Number(props.count) == 1 ? (
-                    <button
-                        className={classNames(
-                            css.button, css.button__disabled
-                        )}
-                        onClick={close}
-                    >
-                        Повторить попытку
-                    </button>
+                {!props.botError ? (
+                    <span className={css.tags_title}>Попробуйте еще раз или свяжитесь с нами</span>
                 ) : (
-                    <>
-                        <button
-                            className={classNames(
-                                css.button, css.button__disabled,
-                            )}
-                            onClick={close}
-                        >
+                    <span className={css.tags_title}>
+                        Для успешного бронирования, пожалуйста, разблокируйте Telegram-бот
+                    </span>
+                )}
+                {!props.botError ? (
+                    Number(props.count) == 1 ? (
+                        <button className={classNames(css.button, css.button__disabled)} onClick={close}>
                             Повторить попытку
                         </button>
-                        <button
-                            className={classNames(
-                                css.button,
-                            )}
-                            onClick={sendToTelegram}
-                        >
-                            Связаться с рестораном
-                        </button>
-                    </>
+                    ) : (
+                        <>
+                            <button className={classNames(css.button, css.button__disabled)} onClick={close}>
+                                Повторить попытку
+                            </button>
+                            <button className={classNames(css.button)} onClick={sendToTelegram}>
+                                Связаться с рестораном
+                            </button>
+                        </>
+                    )
                 ) : (
-                    <button
-                        className={classNames(
-                            css.button,
-                        )}
-                        onClick={goToTelegram}
-                    >
+                    <button className={classNames(css.button)} onClick={goToTelegram}>
                         Перейти в Telegram-bot
                     </button>
                 )}
-
             </div>
         </StyledPopup>
     );

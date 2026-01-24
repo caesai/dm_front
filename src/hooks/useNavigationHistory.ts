@@ -29,7 +29,7 @@ export const useNavigationHistory = (): {
      * @param {string} path Новый путь для добавления в историю.
      */
     const updateHistory = (path: string) => {
-        setNavigationHistory(prev => {
+        setNavigationHistory((prev) => {
             // Предотвращаем добавление одного и того же пути последовательно
             if (prev[prev.length - 1] === path) return prev;
 
@@ -94,7 +94,7 @@ export const useNavigationHistory = (): {
         const restrictedPaths = ['/auth', '/login', '/phoneConfirmation'];
 
         // Если предыдущая страница была ограниченной страницей, переходим домой вместо возврата
-        if (previousPath && restrictedPaths.some(path => previousPath.includes(path))) {
+        if (previousPath && restrictedPaths.some((path) => previousPath.includes(path))) {
             navigate('/');
         } else {
             // Используем нативный `navigate(-1)` для стандартной функции "назад"

@@ -43,7 +43,8 @@ export const BookingTimeSlotsBlock: React.FC<IBookingTimeSlotsBlockProps> = ({
 }: IBookingTimeSlotsBlockProps): JSX.Element => {
     const permissions = useAtomValue(permissionsAtom);
     /** Флаг наличия скидки для Hospitality Heroes */
-    const isHospitalityHeroesDiscount = permissions.includes('hospitality_heroes') && availableTimeslots.some(slot => slot.is_hh_slot);
+    const isHospitalityHeroesDiscount =
+        permissions.includes('hospitality_heroes') && availableTimeslots.some((slot) => slot.is_hh_slot);
     return (
         <ContentContainer>
             {!canShowTimeSlots ? (

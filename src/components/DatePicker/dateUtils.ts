@@ -28,13 +28,7 @@ export const getCalendarDaysUTC = (year: number, month: number) => {
     // 1. Добавляем «хвост» предыдущего месяца
     for (let i = 0; i < startIndex; i++) {
         const dayNumber = daysInPrevMonth - startIndex + i + 1;
-        const date = new Date(
-            Date.UTC(
-                prevMonthLastDay.getUTCFullYear(),
-                prevMonthLastDay.getUTCMonth(),
-                dayNumber
-            )
-        );
+        const date = new Date(Date.UTC(prevMonthLastDay.getUTCFullYear(), prevMonthLastDay.getUTCMonth(), dayNumber));
         result.push({
             fullDate: date,
             isCurrentMonth: false,
@@ -43,9 +37,7 @@ export const getCalendarDaysUTC = (year: number, month: number) => {
     }
 
     // 2. Добавляем текущий месяц
-    const daysInCurrentMonth = new Date(
-        Date.UTC(year, month + 1, 0)
-    ).getUTCDate();
+    const daysInCurrentMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
     for (let day = 1; day <= daysInCurrentMonth; day++) {
         const date = new Date(Date.UTC(year, month, day));
         result.push({

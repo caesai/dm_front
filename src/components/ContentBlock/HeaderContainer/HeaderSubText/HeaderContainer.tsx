@@ -16,6 +16,14 @@ export interface IHeaderSubTextProps {
  * @param {IHeaderSubTextProps} props
  * @returns {JSX.Element}
  */
-export const HeaderSubText: React.FC<IHeaderSubTextProps> = ({ text, id, className }: IHeaderSubTextProps): JSX.Element => {
-    return <span className={classNames(css.headerSubText, className)} id={id}>{text}</span>;
+export const HeaderSubText: React.FC<IHeaderSubTextProps> = ({
+    text,
+    id,
+    className,
+}: IHeaderSubTextProps): JSX.Element => {
+    return (
+        <span className={classNames(css.headerSubText, className)} id={id}>
+            {text}
+        </span>
+    );
 };

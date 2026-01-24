@@ -68,7 +68,7 @@ export const MenuBlock: React.FC<IMenuBlockProps> = ({ restaurantId }: IMenuBloc
             .slice(0, 10);
     }, [menuData]);
 
-    // Сортируем блюда по id (старая версия меню) 
+    // Сортируем блюда по id (старая версия меню)
     // slice() - создаем копию массива, чтобы не изменять исходный массив
     const sortedMenuItems = restaurantMenu?.slice().sort((a, b) => a.id - b.id) || [];
     // Получаем URL изображений блюд из menu_imgs (старая версия меню)
@@ -89,7 +89,9 @@ export const MenuBlock: React.FC<IMenuBlockProps> = ({ restaurantId }: IMenuBloc
     return (
         <ContentContainer id="menu">
             {/* Открываем popup с меню (старая версия меню) */}
-            {restaurantMenuImgs && <MenuPopup isOpen={isMenuPopupOpen} setOpen={setIsMenuPopupOpen} menuItems={menuImageUrls} />}
+            {restaurantMenuImgs && (
+                <MenuPopup isOpen={isMenuPopupOpen} setOpen={setIsMenuPopupOpen} menuItems={menuImageUrls} />
+            )}
             {/* Блок контента */}
             <ContentBlock>
                 <HeaderContainer>

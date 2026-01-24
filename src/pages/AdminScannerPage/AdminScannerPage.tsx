@@ -24,17 +24,14 @@ export const AdminScannerPage = () => {
 
     const captureQR = async (qr: string) => {
         if (auth?.access_token) {
-            const req = await axios.get<IEventTicketScanner>(
-                `${BASE_URL}/events/tickets/scanner`,
-                {
-                    params: {
-                        id: Number(qr),
-                    },
-                    headers: {
-                        Authorization: `Bearer ${auth.access_token}`,
-                    },
-                }
-            );
+            const req = await axios.get<IEventTicketScanner>(`${BASE_URL}/events/tickets/scanner`, {
+                params: {
+                    id: Number(qr),
+                },
+                headers: {
+                    Authorization: `Bearer ${auth.access_token}`,
+                },
+            });
             if (req.status === 200) {
                 setTicket(req.data);
             }
@@ -113,15 +110,7 @@ export const AdminScannerPage = () => {
             <div className={css.page}>
                 <div className={css.pageWrapper}>
                     <div className={css.header}>
-                        <RoundedButton
-                            icon={
-                                <BackIcon
-                                    size={24}
-                                    color={'var(--dark-grey)'}
-                                />
-                            }
-                            action={goBack}
-                        />
+                        <RoundedButton icon={<BackIcon size={24} color={'var(--dark-grey)'} />} action={goBack} />
                         <span className={css.headerTitle}>Сканер билетов</span>
                         <div className={css.spacer}></div>
                     </div>
@@ -136,39 +125,18 @@ export const AdminScannerPage = () => {
                             ) : null}
                             <div className={css.ticket_header}>
                                 <div
-                                    className={classNames(
-                                        css.ticket_header_img,
-                                        css.bgImage
-                                    )}
+                                    className={classNames(css.ticket_header_img, css.bgImage)}
                                     style={{
                                         backgroundImage: `url(${ticket?.event_img || 'https://storage.yandexcloud.net/bottec-dreamteam/707bf240bfd44aefa3117dd5d4352d53.jpg'})`,
                                     }}
                                 />
                                 <div className={css.ticket_header_details}>
-                                    <span
-                                        className={classNames(
-                                            css.mont,
-                                            css.ticket_header_details__title
-                                        )}
-                                    >
-                                        {ticket?.event_title || (
-                                            <PlaceholderBlock
-                                                width={'170px'}
-                                                height={'19px'}
-                                            />
-                                        )}
+                                    <span className={classNames(css.mont, css.ticket_header_details__title)}>
+                                        {ticket?.event_title || <PlaceholderBlock width={'170px'} height={'19px'} />}
                                     </span>
-                                    <span
-                                        className={classNames(
-                                            css.mont,
-                                            css.ticket_header_details__res
-                                        )}
-                                    >
+                                    <span className={classNames(css.mont, css.ticket_header_details__res)}>
                                         {ticket?.restaurant.title || (
-                                            <PlaceholderBlock
-                                                width={'170px'}
-                                                height={'19px'}
-                                            />
+                                            <PlaceholderBlock width={'170px'} height={'19px'} />
                                         )}
                                     </span>
                                 </div>
@@ -176,210 +144,100 @@ export const AdminScannerPage = () => {
                             <div className={css.ticket_details}>
                                 <div className={css.ticket_details_row}>
                                     <div className={css.ticket_details_row_obj}>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj__title
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
                                             Адрес
                                         </span>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj_cont
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
                                             {ticket?.restaurant.address || (
-                                                <PlaceholderBlock
-                                                    width={'170px'}
-                                                    height={'19px'}
-                                                />
+                                                <PlaceholderBlock width={'170px'} height={'19px'} />
                                             )}
                                         </span>
                                     </div>
                                 </div>
                                 <div className={css.ticket_details_row}>
                                     <div className={css.ticket_details_row_obj}>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj__title
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
                                             Имя
                                         </span>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj_cont
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
                                             {ticket ? (
                                                 ticket.user.first_name
                                             ) : (
-                                                <PlaceholderBlock
-                                                    width={'50px'}
-                                                    height={'19px'}
-                                                />
+                                                <PlaceholderBlock width={'50px'} height={'19px'} />
                                             )}
                                         </span>
                                     </div>
                                     <div className={css.ticket_details_row_obj}>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj__title
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
                                             Номер телефона
                                         </span>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj_cont
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
                                             {ticket ? (
                                                 ticket.user.phone_number
                                             ) : (
-                                                <PlaceholderBlock
-                                                    width={'50px'}
-                                                    height={'19px'}
-                                                />
+                                                <PlaceholderBlock width={'50px'} height={'19px'} />
                                             )}
                                         </span>
                                     </div>
                                 </div>
                                 <div className={css.ticket_details_row}>
                                     <div className={css.ticket_details_row_obj}>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj__title
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
                                             Дата рождения
                                         </span>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj_cont
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
                                             {ticket ? (
                                                 ticket.user.date_of_birth
                                             ) : (
-                                                <PlaceholderBlock
-                                                    width={'50px'}
-                                                    height={'19px'}
-                                                />
+                                                <PlaceholderBlock width={'50px'} height={'19px'} />
                                             )}
                                         </span>
                                     </div>
                                 </div>
                                 <div className={css.ticket_details_row}>
                                     <div className={css.ticket_details_row_obj}>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj__title
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
                                             Дата
                                         </span>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj_cont
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
                                             {ticket ? (
-                                                formatDateDT(
-                                                    new Date(ticket?.date_start)
-                                                )
+                                                formatDateDT(new Date(ticket?.date_start))
                                             ) : (
-                                                <PlaceholderBlock
-                                                    width={'50px'}
-                                                    height={'19px'}
-                                                />
+                                                <PlaceholderBlock width={'50px'} height={'19px'} />
                                             )}
                                         </span>
                                     </div>
                                     <div className={css.ticket_details_row_obj}>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj__title
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
                                             Время
                                         </span>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj_cont
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
                                             {ticket ? (
-                                                moment(
-                                                    ticket?.date_start
-                                                ).format('HH:mm')
+                                                moment(ticket?.date_start).format('HH:mm')
                                             ) : (
-                                                <PlaceholderBlock
-                                                    width={'50px'}
-                                                    height={'19px'}
-                                                />
+                                                <PlaceholderBlock width={'50px'} height={'19px'} />
                                             )}
                                         </span>
                                     </div>
                                 </div>
                                 <div className={css.ticket_details_row}>
                                     <div className={css.ticket_details_row_obj}>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj__title
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
                                             Количество гостей
                                         </span>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj_cont
-                                            )}
-                                        >
-                                            {ticket?.guest_count || (
-                                                <PlaceholderBlock
-                                                    width={'50px'}
-                                                    height={'19px'}
-                                                />
-                                            )}
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
+                                            {ticket?.guest_count || <PlaceholderBlock width={'50px'} height={'19px'} />}
                                         </span>
                                     </div>
                                     <div className={css.ticket_details_row_obj}>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj__title
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj__title)}>
                                             Стоимость
                                         </span>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.ticket_details_row_obj_cont
-                                            )}
-                                        >
+                                        <span className={classNames(css.mont, css.ticket_details_row_obj_cont)}>
                                             {ticket ? (
                                                 `${ticket?.total} ₽`
                                             ) : (
-                                                <PlaceholderBlock
-                                                    width={'70px'}
-                                                    height={'19px'}
-                                                />
+                                                <PlaceholderBlock width={'70px'} height={'19px'} />
                                             )}
                                         </span>
                                     </div>

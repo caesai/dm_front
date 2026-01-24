@@ -1,39 +1,39 @@
 /**
  * @fileoverview Атомы для управления состоянием формы бронирования.
- * 
+ *
  * ## Разделение состояния
- * 
+ *
  * Для предотвращения конфликтов состояния между разными страницами бронирования,
  * используются отдельные атомы для каждого типа:
- * 
+ *
  * - {@link eventBookingFormAtom} - бронирование на мероприятие (EventBookingPage)
  * - {@link restaurantBookingFormAtom} - бронирование конкретного ресторана (RestaurantBookingPage, BookingsBlock)
  * - {@link commonBookingFormAtom} - общее бронирование с выбором ресторана (BookingPage)
- * 
+ *
  * Каждый атом содержит полное состояние формы ({@link IBookingFormState}),
  * что обеспечивает изоляцию и предотвращает перезапись данных при навигации.
- * 
+ *
  * ## Синхронизация данных между страницами
- * 
+ *
  * {@link restaurantBookingFormAtom} используется для синхронизации данных между
  * {@link BookingsBlock} на {@link RestaurantPage} и {@link RestaurantBookingPage}:
- * 
+ *
  * 1. Пользователь выбирает дату и время в {@link BookingsBlock} на странице ресторана
  * 2. Данные сохраняются в {@link restaurantBookingFormAtom}
  * 3. При переходе на {@link RestaurantBookingPage}, данные уже находятся в том же атоме
- * 
+ *
  * Это обеспечивает согласованность данных без использования location.state.
- * 
+ *
  * ## Использование
- * 
+ *
  * В компонентах используйте хук {@link useBookingForm} с параметром `formType`:
- * 
+ *
  * ```typescript
  * const { form, handlers } = useBookingForm({ formType: 'event' });
  * ```
- * 
+ *
  * @module atoms/bookingFormAtom
- * 
+ *
  * @see {@link useBookingForm} - хук для работы с формой бронирования
  * @see {@link BookingFormType} - типы форм бронирования
  */
@@ -64,7 +64,7 @@ export const CONFIRMATION_OPTIONS: IConfirmationType[] = [
 /**
  * Типы форм бронирования для разделения состояния.
  * Каждый тип использует отдельный атом для предотвращения конфликтов состояния.
- * 
+ *
  * @type {'event'} - Бронирование на мероприятие (EventBookingPage)
  * @type {'restaurant'} - Бронирование конкретного ресторана (RestaurantBookingPage, BookingsBlock)
  * @type {'common'} - Общее бронирование с выбором ресторана (BookingPage)
@@ -79,16 +79,16 @@ export interface IBookingFormState {
     restaurant: PickerValue;
     date: PickerValue;
     selectedTimeSlot: ITimeSlot | null;
-    
+
     // Гости
     guestCount: number;
     childrenCount: number;
-    
+
     // Контактные данные
     userName: string;
     userPhone: string;
     userEmail: string;
-    
+
     // Дополнительные опции
     commentary: string;
     confirmation: IConfirmationType;
@@ -99,10 +99,10 @@ export interface IBookingFormState {
 /**
  * Начальное состояние формы бронирования
  */
-export const getInitialBookingFormState = (user?: { 
-    first_name?: string; 
-    phone_number?: string; 
-    email?: string | null; 
+export const getInitialBookingFormState = (user?: {
+    first_name?: string;
+    phone_number?: string;
+    email?: string | null;
 }): IBookingFormState => ({
     restaurant: INITIAL_PICKER_VALUE,
     date: INITIAL_PICKER_VALUE,
@@ -140,7 +140,6 @@ export const restaurantBookingFormAtom = atomWithReset<IBookingFormState>(getIni
  */
 export const commonBookingFormAtom = atomWithReset<IBookingFormState>(getInitialBookingFormState());
 
-
 /**
  * @deprecated Используйте типизированные атомы: eventBookingFormAtom, restaurantBookingFormAtom, commonBookingFormAtom
  * Основной атом формы бронирования с возможностью сброса (для обратной совместимости)
@@ -149,10 +148,10 @@ export const bookingFormAtom = atomWithReset<IBookingFormState>(getInitialBookin
 
 /**
  * Получает атом формы бронирования по типу.
- * 
+ *
  * @param formType - Тип формы бронирования
  * @returns Атом формы для указанного типа
- * 
+ *
  * @example
  * const formAtom = getBookingFormAtomByType('event');
  * const [form, setForm] = useAtom(formAtom);
@@ -174,24 +173,18 @@ export const getBookingFormAtomByType = (formType: BookingFormType) => {
  * @deprecated Используйте getBookingFormAtomByType для получения правильного атома
  * Атом для обновления отдельных полей формы
  */
-export const updateBookingFormAtom = atom(
-    null,
-    (get, set, update: Partial<IBookingFormState>) => {
-        const current = get(bookingFormAtom);
-        set(bookingFormAtom, { ...current, ...update });
-    }
-);
+export const updateBookingFormAtom = atom(null, (get, set, update: Partial<IBookingFormState>) => {
+    const current = get(bookingFormAtom);
+    set(bookingFormAtom, { ...current, ...update });
+});
 
 /**
  * @deprecated Используйте getBookingFormAtomByType для получения правильного атома
  * Атом для сброса формы к начальному состоянию
  */
-export const resetBookingFormAtom = atom(
-    null,
-    (_get, set) => {
-        set(bookingFormAtom, RESET);
-    }
-);
+export const resetBookingFormAtom = atom(null, (_get, set) => {
+    set(bookingFormAtom, RESET);
+});
 
 // ============================================
 // Derived atoms для отдельных полей
@@ -287,14 +280,10 @@ export const totalGuestsAtom = atom((get) => {
 });
 
 /** Проверка, выбран ли ресторан */
-export const isRestaurantSelectedAtom = atom(
-    (get) => get(bookingFormAtom).restaurant.value !== 'unset'
-);
+export const isRestaurantSelectedAtom = atom((get) => get(bookingFormAtom).restaurant.value !== 'unset');
 
 /** Проверка, выбрана ли дата */
-export const isDateSelectedAtom = atom(
-    (get) => get(bookingFormAtom).date.value !== 'unset'
-);
+export const isDateSelectedAtom = atom((get) => get(bookingFormAtom).date.value !== 'unset');
 
 /** Проверка, можно ли показывать слоты времени */
 export const canShowTimeSlotsAtom = atom((get) => {

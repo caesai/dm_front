@@ -27,13 +27,9 @@
     left: 0;
     width: 100%;
     height: 100%;
-    content: "";
+    content: '';
     z-index: 0;
-    background-image: linear-gradient(
-            180deg,
-            rgba(0, 0, 0, 0),
-            rgb(0, 0, 0, 0.8)
-    );
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgb(0, 0, 0, 0.8));
     border-radius: 16px;
 }
 
@@ -88,7 +84,6 @@
 .chefInfo {
     display: flex;
     flex-direction: column;
-
 }
 
 .chefTitle {
@@ -161,7 +156,7 @@
     background-color: red;
     border-radius: 16px;
     width: fit-content;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 14px;
     color: var(--secondary-background);
@@ -170,7 +165,8 @@
     left: 15px;
 }
 
-.success_animation { }
+.success_animation {
+}
 
 .checkmark {
     width: 40px;
@@ -181,8 +177,10 @@
     stroke: #4bb71b;
     stroke-miterlimit: 10;
     box-shadow: inset 0px 0px 0px #4bb71b;
-    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
-    position:relative;
+    animation:
+        fill 0.4s ease-in-out 0.4s forwards,
+        scale 0.3s ease-in-out 0.9s both;
+    position: relative;
     top: 5px;
     right: 5px;
     margin: 0 auto;
@@ -206,7 +204,7 @@
 }
 
 .list {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 16px;
     margin: 0;
@@ -219,10 +217,8 @@
             color: var(--black);
             font-weight: 600;
         }
-
     }
 }
-
 
 @keyframes stroke {
     100% {
@@ -231,7 +227,8 @@
 }
 
 @keyframes scale {
-    0%, 100% {
+    0%,
+    100% {
         transform: none;
     }
 

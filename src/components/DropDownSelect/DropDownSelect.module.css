@@ -17,7 +17,8 @@
 }
 
 .disabled {
-    span, svg {
+    span,
+    svg {
         opacity: 0.2;
     }
 }

@@ -71,7 +71,7 @@
 .stage_description_title {
     padding: 0;
     margin: 0;
-    font-family: "Heading Pro Ultracompressed", sans-serif;
+    font-family: 'Heading Pro Ultracompressed', sans-serif;
     font-weight: 800;
     font-size: 30px;
     text-align: center;
@@ -79,7 +79,7 @@
 }
 
 .stage_description_subtitle {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 14px;
     color: var(--grey);
@@ -101,7 +101,7 @@
     font-family: 'Mont', sans-serif;
     font-size: 16px;
     font-weight: 700;
-    background-color: #CA0E11;
+    background-color: #ca0e11;
     width: 239px;
     height: 50px;
 }

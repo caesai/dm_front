@@ -4,34 +4,15 @@ type IconProps = {
 
 export const RestaurantOnMapIcon = ({ size = 24 }: IconProps) => {
     return (
-        <svg
-            width={size}
-            height={size}
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg width={size} height={size} fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M0 0H20C22.2091 0 24 1.79086 24 4V20C24 22.2091 22.2091 24 20 24H4C1.79086 24 0 22.2091 0 20V0Z"
                 fill="black"
             />
-            <rect
-                x="4"
-                y="6"
-                width="15"
-                height="11"
-                fill="url(#pattern0_287_300)"
-            />
+            <rect x="4" y="6" width="15" height="11" fill="url(#pattern0_287_300)" />
             <defs>
-                <pattern
-                    id="pattern0_287_300"
-                    patternContentUnits="objectBoundingBox"
-                    width="1"
-                    height="1"
-                >
-                    <use
-                        xlinkHref="#image0_287_300"
-                        transform="scale(0.00806451 0.0114943)"
-                    />
+                <pattern id="pattern0_287_300" patternContentUnits="objectBoundingBox" width="1" height="1">
+                    <use xlinkHref="#image0_287_300" transform="scale(0.00806451 0.0114943)" />
                 </pattern>
                 <image
                     id="image0_287_300"

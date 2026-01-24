@@ -26,7 +26,7 @@ export const toastAtom = atom<ToastState>({
  * Он управляет логикой показа, автоматического скрытия через 6 секунд и установкой типа.
  * @type {import('jotai').SetStateAction<{ message: string, type?: ToastState['type'] }>}
  */
-export const showToastAtom = atom(null, (_get, set, updates: { message: string, type?: TToast }) => {
+export const showToastAtom = atom(null, (_get, set, updates: { message: string; type?: TToast }) => {
     const type = updates.type || 'info';
     set(toastAtom, { message: updates.message, type, isVisible: true });
 

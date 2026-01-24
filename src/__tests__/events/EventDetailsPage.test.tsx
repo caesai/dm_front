@@ -1,15 +1,15 @@
 /**
  * @fileoverview Тесты для страницы деталей мероприятия EventDetailsPage.
- * 
+ *
  * Страница отображает подробную информацию о мероприятии:
  * - Название, описание, дата и время
  * - Цена билета (для платных мероприятий)
  * - Количество оставшихся мест
  * - Счётчик выбора количества гостей
  * - Кнопка перехода к бронированию/покупке
- * 
+ *
  * @module __tests__/events/EventDetailsPage
- * 
+ *
  * @see {@link EventDetailsPage} - тестируемый компонент
  * @see {@link EventBookingPage} - страница бронирования бесплатного мероприятия
  * @see {@link EventPurchasePage} - страница покупки билета на платное мероприятие
@@ -23,7 +23,11 @@ import { userAtom } from '@/atoms/userAtom.ts';
 import { eventsListAtom, guestCountAtom } from '@/atoms/eventListAtom.ts';
 import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { mockUserData } from '@/__mocks__/user.mock.ts';
-import { mockEventsWithImages, freeEvent as baseFreeEvent, paidEvent as basePaidEvent } from '@/__mocks__/events.mock.ts';
+import {
+    mockEventsWithImages,
+    freeEvent as baseFreeEvent,
+    paidEvent as basePaidEvent,
+} from '@/__mocks__/events.mock.ts';
 import { IUser } from '@/types/user.types.ts';
 import { IEvent } from '@/types/events.types.ts';
 
@@ -98,7 +102,7 @@ Object.defineProperty(window, 'Telegram', {
 
 /**
  * Тесты страницы деталей мероприятия.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Состояние загрузки (skeleton)
  * - Отображение информации о платных мероприятиях
@@ -137,21 +141,21 @@ describe('EventDetailsPage', () => {
 
     /**
      * Рендерит компонент EventDetailsPage с необходимыми провайдерами.
-     * 
+     *
      * @param user - Данные пользователя (по умолчанию mockUserData)
      * @param events - Список мероприятий (по умолчанию mockEventsWithImages)
      * @param eventId - ID мероприятия для отображения
      * @param initialGuestCount - Начальное количество гостей в атоме
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @example
      * // Рендер с платным мероприятием
      * renderComponent(mockUserData, mockEventsWithImages, String(paidEvent.id), 1);
-     * 
+     *
      * @example
      * // Рендер с бесплатным мероприятием
      * renderComponent(mockUserData, mockEventsWithImages, String(freeEvent.id), 2);
-     * 
+     *
      * @example
      * // Рендер без onboarding
      * renderComponent({ ...mockUserData, complete_onboarding: false });
@@ -199,20 +203,17 @@ describe('EventDetailsPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockUseParams.mockReturnValue({ eventId: String(paidEvent.id) });
-        
+
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
             // Игнорируем ожидаемые ошибки
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Not implemented: navigation')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Not implemented: navigation')) {
                 return;
             }
             originalConsoleError(...args);
         });
-        
+
         // Подавляем предупреждения о SVG атрибутах
         jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -259,11 +260,13 @@ describe('EventDetailsPage', () => {
          * Кнопка "Купить билет" не должна отображаться, если места закончились.
          */
         test('не должен показывать кнопку покупки при tickets_left = 0', async () => {
-            const eventWithoutTickets: IEvent[] = [{
-                ...paidEvent,
-                tickets_left: 0,
-                image_url: 'https://example.com/event-image.jpg',
-            }];
+            const eventWithoutTickets: IEvent[] = [
+                {
+                    ...paidEvent,
+                    tickets_left: 0,
+                    image_url: 'https://example.com/event-image.jpg',
+                },
+            ];
 
             renderComponent(mockUserData, eventWithoutTickets, String(paidEvent.id));
 
@@ -391,7 +394,7 @@ describe('EventDetailsPage', () => {
 
     /**
      * Тесты работы счётчика количества гостей.
-     * 
+     *
      * Логика счётчика:
      * - Минимальное значение: 0
      * - Максимальное значение: tickets_left
@@ -459,11 +462,13 @@ describe('EventDetailsPage', () => {
          * Ограничение на максимум предотвращает бронирование больше доступных мест.
          */
         test('не должен увеличивать количество гостей выше tickets_left', async () => {
-            const limitedEvent: IEvent[] = [{
-                ...paidEvent,
-                tickets_left: 2,
-                image_url: 'https://example.com/event-image.jpg',
-            }];
+            const limitedEvent: IEvent[] = [
+                {
+                    ...paidEvent,
+                    tickets_left: 2,
+                    image_url: 'https://example.com/event-image.jpg',
+                },
+            ];
 
             renderComponent(mockUserData, limitedEvent, String(paidEvent.id), 2);
 
@@ -530,7 +535,7 @@ describe('EventDetailsPage', () => {
 
     /**
      * Тесты навигации на страницы бронирования и покупки.
-     * 
+     *
      * Логика навигации:
      * - Платное мероприятие + onboarding пройден → /events/{id}/purchase
      * - Бесплатное мероприятие + onboarding пройден → /events/{id}/booking
@@ -640,16 +645,18 @@ describe('EventDetailsPage', () => {
          * Если мест нет, кнопка бронирования/покупки не должна отображаться.
          */
         test('не должен показывать кнопку бронирования, если tickets_left = 0', async () => {
-            const soldOutEvent: IEvent[] = [{
-                ...paidEvent,
-                tickets_left: 0,
-                image_url: 'https://example.com/event-image.jpg',
-            }];
+            const soldOutEvent: IEvent[] = [
+                {
+                    ...paidEvent,
+                    tickets_left: 0,
+                    image_url: 'https://example.com/event-image.jpg',
+                },
+            ];
 
             renderComponent(mockUserData, soldOutEvent, String(paidEvent.id));
 
             await act(async () => {
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise((resolve) => setTimeout(resolve, 100));
             });
 
             expect(screen.queryByText('Купить билет')).not.toBeInTheDocument();

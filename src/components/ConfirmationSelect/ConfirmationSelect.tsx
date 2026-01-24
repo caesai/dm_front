@@ -68,10 +68,9 @@ export const ConfirmationSelect: React.FC<IConfirmationSelectProps> = ({
                                 <div key={v.id} className={css.option} onClick={() => selectOnChange(v.id, v.text)}>
                                     <span className={css.option_title}>{v.text}</span>
                                     <div
-                                        className={classNames(
-                                            css.option_checkbox,
-                                            { [css.option_checkbox__checked]: currentValue.id == v.id },
-                                        )}
+                                        className={classNames(css.option_checkbox, {
+                                            [css.option_checkbox__checked]: currentValue.id == v.id,
+                                        })}
                                     ></div>
                                 </div>
                             ))}

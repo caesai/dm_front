@@ -29,16 +29,16 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
     const [currentImage, setCurrentImage] = useState(p.currentIndex);
 
     const onClose = () => {
-        p.setOpen(false)
+        p.setOpen(false);
         setCurrentImage(0);
     };
 
     const nextImage = () => {
         setCurrentImage((prev) => {
             if (prev === p.images.length - 1) {
-                return 0
+                return 0;
             } else {
-                return prev + 1
+                return prev + 1;
             }
         });
     };
@@ -46,9 +46,9 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
     const prevImage = () => {
         setCurrentImage((prev) => {
             if (prev === 0) {
-                return p.images.length - 1
+                return p.images.length - 1;
             } else {
-                return prev - 1
+                return prev - 1;
             }
         });
     };
@@ -58,11 +58,7 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
     }, [p.currentIndex, p.isOpen]);
 
     return (
-        <StyledPopup
-            open={p.isOpen}
-            onClose={onClose}
-            closeOnDocumentClick={false}
-        >
+        <StyledPopup open={p.isOpen} onClose={onClose} closeOnDocumentClick={false}>
             <div className={css.content}>
                 {p.images.length > 1 && (
                     <button
@@ -73,20 +69,19 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
                         <DownArrow size={16} color={'var(--primary-background)'} />
                     </button>
                 )}
-                <div
-                    className={css.imageContainer}>
-                   <div className={css.closeButton}>
-                       <RoundedButton
-                           icon={<MiniCrossIcon color={'black'} />}
-                           bgColor={'var(--primary-background)'}
-                           action={() => onClose()}
-                           style={{
-                               width: '24px',
-                               height: '24px',
-                               minWidth: '24px',
-                           }}
-                       />
-                   </div>
+                <div className={css.imageContainer}>
+                    <div className={css.closeButton}>
+                        <RoundedButton
+                            icon={<MiniCrossIcon color={'black'} />}
+                            bgColor={'var(--primary-background)'}
+                            action={() => onClose()}
+                            style={{
+                                width: '24px',
+                                height: '24px',
+                                minWidth: '24px',
+                            }}
+                        />
+                    </div>
                     <img src={p.images[currentImage]} alt={''} className={css.image} />
                 </div>
                 {p.images.length > 1 && (
@@ -101,6 +96,6 @@ const BanquetGallery: FC<IBanquetGalleryProps> = (p) => {
             </div>
         </StyledPopup>
     );
-}
+};
 
 export default BanquetGallery;

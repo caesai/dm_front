@@ -2,7 +2,7 @@ import Popup from 'reactjs-popup';
 import { FC, useEffect, useState } from 'react';
 import css from './ImageViewerPopup.module.css';
 import 'reactjs-popup/dist/index.css';
-import "swiper/css/zoom";
+import 'swiper/css/zoom';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 // import classNames from 'classnames';
@@ -83,7 +83,7 @@ export const ImageViewerPopup: FC<IFullScreenPopup> = (p) => {
                             {menuItems.map((slide, index) => (
                                 <SwiperSlide key={index}>
                                     <div className="swiper-zoom-container">
-                                        <img src={slide} alt={'slide'} className={css.currentImage}/>
+                                        <img src={slide} alt={'slide'} className={css.currentImage} />
                                     </div>
                                     {/*<div*/}
                                     {/*    className={classNames(*/}

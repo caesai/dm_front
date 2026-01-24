@@ -1,4 +1,4 @@
-import {CSSProperties, FC} from 'react';
+import { CSSProperties, FC } from 'react';
 import css from './UniversalButton.module.css';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
@@ -21,12 +21,11 @@ export const UniversalButton: FC<UniversalButtonProps> = (p) => {
                 <Link
                     target={p.target}
                     to={p.link}
-                    className={classNames(
-                        p.theme ? css[p.theme] : null,
-                        p.width == 'full' ? css.fullWidth : null
-                    )}
+                    className={classNames(p.theme ? css[p.theme] : null, p.width == 'full' ? css.fullWidth : null)}
                 >
-                    <span className={css.text} style={p.style}>{p.title}</span>
+                    <span className={css.text} style={p.style}>
+                        {p.title}
+                    </span>
                 </Link>
             ) : (
                 <div
@@ -38,7 +37,9 @@ export const UniversalButton: FC<UniversalButtonProps> = (p) => {
                     )}
                     onClick={() => (p.action !== undefined ? p.action() : null)}
                 >
-                    <span className={css.text} style={{ ...p.style }}>{p.title}</span>
+                    <span className={css.text} style={{ ...p.style }}>
+                        {p.title}
+                    </span>
                 </div>
             )}
         </>

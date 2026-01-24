@@ -8,7 +8,7 @@ interface AuthParams {
 }
 
 export const APIUserAuth = async (data: string | undefined, start: string | undefined) => {
-    console.log(start)
+    console.log(start);
     const params = <AuthParams>{
         data: data,
     };

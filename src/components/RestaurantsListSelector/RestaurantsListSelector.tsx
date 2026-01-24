@@ -35,7 +35,9 @@ export const RestaurantsListSelector: React.FC<IRestaurantsListSelectorProps> = 
     selectedRestaurant,
 }: IRestaurantsListSelectorProps): JSX.Element => {
     const restaurants = useAtomValue(restaurantsListAtom);
-    const [selectedRestaurantState, setSelectedRestaurantState] = useState<PickerValue | null>(selectedRestaurant || null);
+    const [selectedRestaurantState, setSelectedRestaurantState] = useState<PickerValue | null>(
+        selectedRestaurant || null
+    );
     const [isPickerOpen, setIsPickerOpen] = useState(false);
 
     // Синхронизация пропса selectedRestaurant с состоянием
@@ -45,16 +47,17 @@ export const RestaurantsListSelector: React.FC<IRestaurantsListSelectorProps> = 
         }
     }, [selectedRestaurant]);
     const restaurantList = useMemo(() => {
-        return filteredRestaurants ? filteredRestaurants.map((r) => ({
-            title: r.title,
-                value: r.id,
-                subtitle: r.address,
-            }))
-          : restaurants.map((r) => ({
-                title: r.title,
-                value: r.id,
-                subtitle: r.address,
-            }));
+        return filteredRestaurants
+            ? filteredRestaurants.map((r) => ({
+                  title: r.title,
+                  value: r.id,
+                  subtitle: r.address,
+              }))
+            : restaurants.map((r) => ({
+                  title: r.title,
+                  value: r.id,
+                  subtitle: r.address,
+              }));
     }, [restaurants, filteredRestaurants]);
     // Открытие/закрытие пикера
     const togglePicker = useCallback(() => {
@@ -75,7 +78,7 @@ export const RestaurantsListSelector: React.FC<IRestaurantsListSelectorProps> = 
                     value: fullRestaurantOption.id,
                     subtitle: fullRestaurantOption.address,
                 };
-                
+
                 setSelectedRestaurantState(restaurantPickerValue);
                 // Передаём полный объект, а не исходный value из WheelPicker,
                 // который может не содержать title
@@ -90,7 +93,7 @@ export const RestaurantsListSelector: React.FC<IRestaurantsListSelectorProps> = 
 
     return (
         <ContentBlock>
-            <WheelPicker 
+            <WheelPicker
                 value={selectedRestaurantState}
                 onChange={handlePickerChange}
                 items={restaurantList}
@@ -101,7 +104,10 @@ export const RestaurantsListSelector: React.FC<IRestaurantsListSelectorProps> = 
                 itemHeight={66}
             />
             <DropDownSelect
-                title={selectedRestaurantState?.title !== 'unset' && selectedRestaurantState?.title?.toString() || 'Ресторан'}
+                title={
+                    (selectedRestaurantState?.title !== 'unset' && selectedRestaurantState?.title?.toString()) ||
+                    'Ресторан'
+                }
                 isValid={true}
                 icon={<KitchenIcon size={24} />}
                 onClick={togglePicker}

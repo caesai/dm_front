@@ -22,9 +22,7 @@ export const useRestaurantMenu = (restaurantId: string) => {
         if (!menu) return null;
 
         // Проверяем, есть ли уже категория "Замоканные коктейли" в меню
-        const hasMockCocktailCategory = menu.item_categories.some(
-            cat => cat.name === 'Замоканные коктейли'
-        );
+        const hasMockCocktailCategory = menu.item_categories.some((cat) => cat.name === 'Замоканные коктейли');
 
         // Добавляем категорию "Замоканные коктейли" для демонстрации, если её ещё нет
         if (!hasMockCocktailCategory) {

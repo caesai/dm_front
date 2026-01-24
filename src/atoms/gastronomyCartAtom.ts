@@ -21,4 +21,3 @@ export const gastronomyCartAtom = atom<IGastronomyCart>({
     totalAmount: 0,
     totalItems: 0,
 });
-

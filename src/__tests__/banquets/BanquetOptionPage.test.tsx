@@ -1,22 +1,22 @@
 /**
  * @fileoverview Тесты для страницы настройки банкета BanquetOptionPage.
- * 
+ *
  * Страница позволяет настроить параметры выбранной банкетной опции:
  * - Выбор даты (CalendarPopup)
  * - Выбор времени начала и окончания (TimeSelectorPopup)
  * - Выбор количества гостей (BanquetOptionsPopup)
  * - Выбор повода банкета (День рождения, Свадьба, Корпоратив, Другое)
  * - Отображение предварительной стоимости
- * 
+ *
  * Особенности логики:
  * - Форма валидна только при заполнении всех полей
  * - Время окончания должно быть минимум на 1 час больше времени начала
  * - При выборе "Другое" появляется текстовое поле для ввода повода
  * - Блок стоимости показывается только при валидной форме и наличии депозита
  * - Данные сохраняются в banquetFormAtom через useBanquetForm hook
- * 
+ *
  * @module __tests__/banquets/BanquetOptionPage
- * 
+ *
  * @see {@link BanquetOptionPage} - тестируемый компонент
  * @see {@link ChooseBanquetOptionsPage} - предыдущий шаг (выбор опции)
  * @see {@link BanquetAdditionalServicesPage} - следующий шаг (дополнительные услуги)
@@ -110,27 +110,31 @@ jest.mock('@/components/RoundedButton/RoundedButton.tsx', () => ({
  * Мок иконки BackIcon.
  */
 jest.mock('@/components/Icons/BackIcon.tsx', () => ({
-    BackIcon: ({ color }: { color?: string }) => <span data-testid="back-icon" data-color={color}>←</span>,
+    BackIcon: ({ color }: { color?: string }) => (
+        <span data-testid="back-icon" data-color={color}>
+            ←
+        </span>
+    ),
 }));
 
 /**
  * Мок компонента CalendarPopup.
  */
 jest.mock('@/pages/UserProfilePage/CalendarPopup/CalendarPopup.tsx', () => ({
-    CalendarPopup: ({ 
-        isOpen, 
-        setIsOpen, 
-        setDate 
-    }: { 
-        isOpen: boolean; 
-        setIsOpen: (v: boolean) => void; 
+    CalendarPopup: ({
+        isOpen,
+        setIsOpen,
+        setDate,
+    }: {
+        isOpen: boolean;
+        setIsOpen: (v: boolean) => void;
         setDate: (date: Date) => void;
     }) => {
         if (!isOpen) return null;
         return (
             <div data-testid="calendar-popup">
-                <button 
-                    data-testid="select-date" 
+                <button
+                    data-testid="select-date"
                     onClick={() => {
                         // Выбираем дату через неделю
                         const futureDate = new Date();
@@ -152,27 +156,27 @@ jest.mock('@/pages/UserProfilePage/CalendarPopup/CalendarPopup.tsx', () => ({
  * Мок компонента TimeSelectorPopup.
  */
 jest.mock('@/components/TimeSelectorPopup/TimeSelectorPopup.tsx', () => ({
-    TimeSelectorPopup: ({ 
-        isOpen, 
-        closePopup, 
+    TimeSelectorPopup: ({
+        isOpen,
+        closePopup,
         time,
-        setTimeOption 
-    }: { 
-        isOpen: boolean; 
-        closePopup: () => void; 
+        setTimeOption,
+    }: {
+        isOpen: boolean;
+        closePopup: () => void;
         time: { value: string };
         setTimeOption: (v: { value: string; title: string }) => void;
     }) => {
         if (!isOpen) return null;
         const isFromPopup = time.value === 'с' || (time.value !== 'до' && parseInt(time.value) < 20);
         return (
-            <div data-testid={isFromPopup ? "time-from-popup" : "time-to-popup"}>
-                <button 
-                    data-testid={isFromPopup ? "select-time-from" : "select-time-to"} 
+            <div data-testid={isFromPopup ? 'time-from-popup' : 'time-to-popup'}>
+                <button
+                    data-testid={isFromPopup ? 'select-time-from' : 'select-time-to'}
                     onClick={() => {
-                        setTimeOption({ 
-                            value: isFromPopup ? '18:00' : '22:00', 
-                            title: isFromPopup ? '18:00' : '22:00' 
+                        setTimeOption({
+                            value: isFromPopup ? '18:00' : '22:00',
+                            title: isFromPopup ? '18:00' : '22:00',
                         });
                         closePopup();
                     }}
@@ -191,15 +195,15 @@ jest.mock('@/components/TimeSelectorPopup/TimeSelectorPopup.tsx', () => ({
  * Мок компонента BanquetOptionsPopup.
  */
 jest.mock('@/components/BanquetOptionsPopup/BanquetOpitonsPopup.tsx', () => ({
-    BanquetOptionsPopup: ({ 
-        isOpen, 
-        closePopup, 
+    BanquetOptionsPopup: ({
+        isOpen,
+        closePopup,
         setGuestCount,
         minGuests,
-        maxGuests 
-    }: { 
-        isOpen: boolean; 
-        closePopup: () => void; 
+        maxGuests,
+    }: {
+        isOpen: boolean;
+        closePopup: () => void;
         setGuestCount: (v: { value: string; title: string }) => void;
         minGuests: number;
         maxGuests: number;
@@ -209,8 +213,8 @@ jest.mock('@/components/BanquetOptionsPopup/BanquetOpitonsPopup.tsx', () => ({
             <div data-testid="guest-count-popup">
                 <span data-testid="min-guests">{minGuests}</span>
                 <span data-testid="max-guests">{maxGuests}</span>
-                <button 
-                    data-testid="select-guest-count" 
+                <button
+                    data-testid="select-guest-count"
                     onClick={() => {
                         setGuestCount({ value: '10', title: '10 гостей' });
                         closePopup();
@@ -230,24 +234,18 @@ jest.mock('@/components/BanquetOptionsPopup/BanquetOpitonsPopup.tsx', () => ({
  * Мок компонента UniversalButton.
  */
 jest.mock('@/components/Buttons/UniversalButton/UniversalButton.tsx', () => ({
-    UniversalButton: ({ 
-        title, 
-        action, 
-        theme, 
-        width 
-    }: { 
-        title: string; 
-        action?: () => void; 
-        theme?: string; 
-        width?: string 
+    UniversalButton: ({
+        title,
+        action,
+        theme,
+        width,
+    }: {
+        title: string;
+        action?: () => void;
+        theme?: string;
+        width?: string;
     }) => (
-        <button 
-            onClick={action} 
-            data-testid="continue-button"
-            data-theme={theme}
-            data-width={width}
-            disabled={!action}
-        >
+        <button onClick={action} data-testid="continue-button" data-theme={theme} data-width={width} disabled={!action}>
             {title}
         </button>
     ),
@@ -257,15 +255,7 @@ jest.mock('@/components/Buttons/UniversalButton/UniversalButton.tsx', () => ({
  * Мок компонента DropDownSelect.
  */
 jest.mock('@/components/DropDownSelect/DropDownSelect.tsx', () => ({
-    DropDownSelect: ({ 
-        title, 
-        onClick, 
-        icon 
-    }: { 
-        title: string; 
-        onClick: () => void; 
-        icon?: React.ReactNode 
-    }) => (
+    DropDownSelect: ({ title, onClick, icon }: { title: string; onClick: () => void; icon?: React.ReactNode }) => (
         <div data-testid="dropdown-select" onClick={onClick}>
             {icon}
             <span data-testid="dropdown-title">{title}</span>
@@ -277,14 +267,14 @@ jest.mock('@/components/DropDownSelect/DropDownSelect.tsx', () => ({
  * Мок компонента TextInput.
  */
 jest.mock('@/components/TextInput/TextInput.tsx', () => ({
-    TextInput: ({ 
-        value, 
-        onChange, 
-        placeholder 
-    }: { 
-        value: string; 
-        onChange: (v: string) => void; 
-        placeholder: string 
+    TextInput: ({
+        value,
+        onChange,
+        placeholder,
+    }: {
+        value: string;
+        onChange: (v: string) => void;
+        placeholder: string;
     }) => (
         <input
             data-testid="custom-reason-input"
@@ -299,16 +289,13 @@ jest.mock('@/components/TextInput/TextInput.tsx', () => ({
  * Мок компонента TimeInput.
  */
 jest.mock('@/components/TimeInput/TimeInput.tsx', () => ({
-    TimeInput: ({ 
-        value, 
-        onClick, 
-        icon 
-    }: { 
-        value: string; 
-        onClick: () => void; 
-        icon?: React.ReactNode 
-    }) => (
-        <div data-testid={value === 'с' || (value !== 'до' && parseInt(value) < 20) ? "time-from-input" : "time-to-input"} onClick={onClick}>
+    TimeInput: ({ value, onClick, icon }: { value: string; onClick: () => void; icon?: React.ReactNode }) => (
+        <div
+            data-testid={
+                value === 'с' || (value !== 'до' && parseInt(value) < 20) ? 'time-from-input' : 'time-to-input'
+            }
+            onClick={onClick}
+        >
             {icon}
             <span>{value}</span>
         </div>
@@ -344,7 +331,7 @@ jest.mock('@/components/Icons/CakeIcon.tsx', () => ({
 
 /**
  * Тесты страницы настройки банкета.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Рендеринг компонентов страницы
  * - Работа с формой (поля, валидация)
@@ -361,27 +348,27 @@ describe('BanquetOptionPage', () => {
 
     /**
      * Рендерит компонент BanquetOptionPage с необходимыми провайдерами.
-     * 
+     *
      * @param options - Опции рендеринга
      * @param options.restaurants - Список ресторанов
      * @param options.restaurantId - ID ресторана в URL
      * @param options.optionId - ID банкетной опции в URL
      * @returns Результат render() из @testing-library/react
      */
-    const renderComponent = (options: {
-        restaurants?: IRestaurant[];
-        restaurantId?: string;
-        optionId?: string;
-    } = {}) => {
+    const renderComponent = (
+        options: {
+            restaurants?: IRestaurant[];
+            restaurantId?: string;
+            optionId?: string;
+        } = {}
+    ) => {
         const {
             restaurants = [mockRestaurantWithBanquets],
             restaurantId = '1',
             optionId = '14', // ID первой опции из banquetData
         } = options;
 
-        const initialValues: Array<readonly [any, unknown]> = [
-            [restaurantsListAtom, restaurants],
-        ];
+        const initialValues: Array<readonly [any, unknown]> = [[restaurantsListAtom, restaurants]];
 
         return render(
             <TestProvider initialValues={initialValues}>
@@ -395,7 +382,10 @@ describe('BanquetOptionPage', () => {
                     <Routes>
                         <Route path="/banquets/:restaurantId/option/:optionId" element={<BanquetOptionPage />} />
                         <Route path="/banquets/:restaurantId/choose" element={<div>Choose Page</div>} />
-                        <Route path="/banquets/:restaurantId/additional-services/:optionId" element={<div>Additional Services</div>} />
+                        <Route
+                            path="/banquets/:restaurantId/additional-services/:optionId"
+                            element={<div>Additional Services</div>}
+                        />
                         <Route path="/banquets/:restaurantId/reservation" element={<div>Reservation Page</div>} />
                         <Route path="/" element={<div>Index Page</div>} />
                     </Routes>
@@ -416,10 +406,7 @@ describe('BanquetOptionPage', () => {
 
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Not implemented: navigation')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Not implemented: navigation')) {
                 return;
             }
             originalConsoleError(...args);
@@ -684,7 +671,7 @@ describe('BanquetOptionPage', () => {
 
             await waitFor(() => {
                 // Проверяем, что типы банкета отображаются
-                banquetTypes.forEach(type => {
+                banquetTypes.forEach((type) => {
                     expect(screen.getByText(type)).toBeInTheDocument();
                 });
             });
@@ -797,10 +784,7 @@ describe('BanquetOptionPage', () => {
             fireEvent.click(backButton);
 
             await waitFor(() => {
-                expect(mockedNavigate).toHaveBeenCalledWith(
-                    '/banquets/1/choose',
-                    expect.any(Object)
-                );
+                expect(mockedNavigate).toHaveBeenCalledWith('/banquets/1/choose', expect.any(Object));
             });
         });
 

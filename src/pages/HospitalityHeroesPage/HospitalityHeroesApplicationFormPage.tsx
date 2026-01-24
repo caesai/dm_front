@@ -185,7 +185,13 @@ export const HospitalityHeroesApplicationFormPage: React.FC = (): JSX.Element =>
             <form className={css.form} onSubmit={handleSubmit}>
                 <TextInput placeholder={'Ваше имя'} value={name} onChange={setName} required />
                 <TextInput placeholder={'Ваша фамилия'} value={surname} onChange={setSurname} required />
-                <TextInput placeholder={'Ваш контактный номер'} value={phone} onChange={setPhone} type={'tel'} required />
+                <TextInput
+                    placeholder={'Ваш контактный номер'}
+                    value={phone}
+                    onChange={setPhone}
+                    type={'tel'}
+                    required
+                />
                 <TextInput placeholder={'Ваше место работы'} value={workPlace} onChange={setWorkPlace} required />
                 <TextInput placeholder={'Ваша должность'} value={jobTitle} onChange={setJobTitle} required />
                 <TextInput

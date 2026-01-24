@@ -9,21 +9,20 @@ interface ProgressWrapperProps {
 }
 
 const ProgressWrapper: React.FC<ProgressWrapperProps> = (props) => {
-
     return (
         <div
             className={css.progress}
             style={{
-                ...getProgressWrapperStyle(props)
+                ...getProgressWrapperStyle(props),
             }}
         >
             {props.children}
         </div>
-    )
-}
+    );
+};
 
 const getProgressWrapperStyle = ({ width }: { width: number }) => ({
     width: `${width * 100}%`,
-})
+});
 
-export default ProgressWrapper
+export default ProgressWrapper;

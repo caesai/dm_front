@@ -1,19 +1,19 @@
 /**
  * @fileoverview Тесты для страницы покупки билета на платное мероприятие EventPurchasePage.
- * 
+ *
  * Страница предназначена для оформления покупки билета на платное мероприятие.
  * Пользователь попадает сюда со страницы деталей мероприятия (EventDetailsPage)
  * после нажатия кнопки "Купить билет".
- * 
+ *
  * Основные функции страницы:
  * - Отображение деталей заказа (название мероприятия, дата, время, место)
  * - Отображение количества билетов и общей стоимости
  * - Ввод контактных данных (имя, телефон)
  * - Создание счёта на оплату через API
  * - Редирект на страницу оплаты или страницу билета
- * 
+ *
  * @module __tests__/events/EventPurchasePage
- * 
+ *
  * @see {@link EventPurchasePage} - тестируемый компонент
  * @see {@link EventDetailsPage} - страница, с которой пользователь переходит на покупку
  * @see {@link APICreateInvoice} - API для создания счёта на оплату
@@ -138,7 +138,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 /**
  * Тесты страницы покупки билета на платное мероприятие.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Отображение информации о мероприятии
  * - Отображение количества билетов и стоимости
@@ -159,7 +159,7 @@ describe('EventPurchasePage', () => {
      * Платное мероприятие для тестов (ticket_price > 0).
      * id: 168, ticket_price: 3000
      */
-    const paidEvent: IEvent = mockEventsList.find(e => e.ticket_price > 0)!;
+    const paidEvent: IEvent = mockEventsList.find((e) => e.ticket_price > 0)!;
 
     // ============================================
     // Вспомогательные функции
@@ -167,13 +167,13 @@ describe('EventPurchasePage', () => {
 
     /**
      * Рендерит компонент EventPurchasePage с необходимыми провайдерами.
-     * 
+     *
      * @param user - Данные пользователя (по умолчанию mockUserData)
      * @param events - Список мероприятий (по умолчанию mockEventsList)
      * @param eventId - ID мероприятия для покупки
      * @param guestCount - Количество билетов
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @example
      * // Рендер с 2 билетами
      * renderComponent(mockUserData, mockEventsList, String(paidEvent.id), 2);
@@ -222,10 +222,10 @@ describe('EventPurchasePage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockUseParams.mockReturnValue({ eventId: String(paidEvent.id) });
-        
+
         // Сбрасываем мок location.replace
         mockLocationReplace.mockClear();
-        
+
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -240,7 +240,7 @@ describe('EventPurchasePage', () => {
             }
             originalConsoleError(...args);
         });
-        
+
         // Подавляем предупреждения о SVG атрибутах
         jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -256,7 +256,7 @@ describe('EventPurchasePage', () => {
             }
             originalConsoleWarn(...args);
         });
-        
+
         // Настройка мока API - успешный ответ с payment_url
         mockAPICreateInvoice.mockResolvedValue({
             data: {
@@ -577,23 +577,24 @@ describe('EventPurchasePage', () => {
 
         /**
          * Проверяет что при наличии payment_url вызывается window.location.replace.
-         * 
+         *
          * Примечание: Из-за особенностей JSDOM мокирование window.location.replace
          * может работать нестабильно. Этот тест проверяет что API вызван с payment_url
          * и что компонент переходит в состояние загрузки после клика.
          */
         test('должен вызывать API и показывать загрузку при клике на Оплатить', async () => {
-            mockAPICreateInvoice.mockImplementation(() => 
-                new Promise(resolve => {
-                    setTimeout(() => {
-                        resolve({
-                            data: {
-                                payment_url: 'https://payment.example.com/pay',
-                                booking_id: '12345',
-                            },
-                        });
-                    }, 50);
-                })
+            mockAPICreateInvoice.mockImplementation(
+                () =>
+                    new Promise((resolve) => {
+                        setTimeout(() => {
+                            resolve({
+                                data: {
+                                    payment_url: 'https://payment.example.com/pay',
+                                    booking_id: '12345',
+                                },
+                            });
+                        }, 50);
+                    })
             );
 
             renderComponent();
@@ -636,9 +637,12 @@ describe('EventPurchasePage', () => {
                 expect(mockAPICreateInvoice).toHaveBeenCalled();
             });
 
-            await waitFor(() => {
-                expect(mockedNavigate).toHaveBeenCalledWith('/tickets/12345');
-            }, { timeout: 3000 });
+            await waitFor(
+                () => {
+                    expect(mockedNavigate).toHaveBeenCalledWith('/tickets/12345');
+                },
+                { timeout: 3000 }
+            );
         });
     });
 
@@ -669,7 +673,7 @@ describe('EventPurchasePage', () => {
 
     /**
      * Тесты навигации.
-     * 
+     *
      * Примечание: RoundedButton рендерит div с onClick, а не button element.
      */
     describe('Навигация', () => {

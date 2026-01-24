@@ -41,11 +41,7 @@ export const TimeInput: FC<ITextInput> = (p) => {
 
     return (
         <section className={css.input_container}>
-            {p.icon && (
-                <div className={css.icon}>
-                    {p.icon}
-                </div>
-            )}
+            {p.icon && <div className={css.icon}>{p.icon}</div>}
             <div
                 onClick={p.onClick}
                 onChange={(e) => e.preventDefault()}

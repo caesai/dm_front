@@ -20,7 +20,6 @@ import { R } from '@/__mocks__/restaurant.mock.ts';
 // Styles
 import css from '@/pages/BookingConfirmationPage/BookingConfirmationPage.module.css';
 
-
 export const BookingConfirmationPage = () => {
     const [bookingInfo] = useAtom(bookingAtom);
 

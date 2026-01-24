@@ -1,22 +1,22 @@
 /**
  * @fileoverview Страница выбора опций для банкета.
- * 
+ *
  * Второй шаг в процессе бронирования банкета:
  * 1. BanquetAddressPage (выбор ресторана)
  * 2. ChooseBanquetOptionsPage (выбор опции банкета) <- текущая страница
  * 3. BanquetOptionPage (настройка банкета)
  * 4. BanquetAdditionalServicesPage (дополнительные услуги) - опционально
  * 5. BanquetReservationPage (подтверждение)
- * 
+ *
  * Функциональность страницы:
  * - Отображение списка доступных банкетных опций ресторана
  * - Карусель изображений для каждой опции (Swiper)
  * - Информация о вместимости и депозите
  * - Описание опции с возможностью раскрытия (> 60 символов)
  * - Галерея изображений при клике на слайд
- * 
+ *
  * @module pages/ChooseBanquetOptionsPage
- * 
+ *
  * @see {@link BanquetAddressPage} - предыдущий шаг (выбор ресторана)
  * @see {@link BanquetOptionPage} - следующий шаг (настройка опции)
  * @see {@link BanquetGallery} - компонент галереи изображений
@@ -47,13 +47,13 @@ import css from '@/pages/ChooseBanquetOptionsPage/ChooseBanquetOptionsPage.modul
 
 /**
  * Страница выбора опций для банкета.
- * 
+ *
  * Отображает список доступных банкетных опций выбранного ресторана.
  * Каждая опция представлена карточкой с каруселью изображений,
  * информацией о вместимости, депозите и описанием.
- * 
+ *
  * @returns {JSX.Element} - Компонент страницы выбора опций для банкета
- * 
+ *
  * @example
  * // URL: /banquets/:restaurantId/choose
  * // Загружает опции из restaurant.banquets.banquet_options
@@ -62,7 +62,7 @@ export const ChooseBanquetOptionsPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const { restaurantId } = useParams();
     const restaurant = useGetRestaurantById(restaurantId || '');
-    
+
     /**
      * Список банкетных опций текущего ресторана.
      * Загружается из restaurant.banquets.banquet_options.
@@ -89,7 +89,7 @@ export const ChooseBanquetOptionsPage: React.FC = (): JSX.Element => {
 
     /**
      * Открывает галерею изображений для выбранной опции.
-     * 
+     *
      * @param banquet - Банкетная опция с изображениями
      * @param index - Индекс выбранного изображения в карусели
      */
@@ -101,7 +101,7 @@ export const ChooseBanquetOptionsPage: React.FC = (): JSX.Element => {
 
     /**
      * Форматирует информацию о депозите для отображения.
-     * 
+     *
      * @param banquet - Банкетная опция
      * @returns Строка с информацией о депозите:
      *   - "от X₽ на гостя" если есть сумма депозита
@@ -117,7 +117,7 @@ export const ChooseBanquetOptionsPage: React.FC = (): JSX.Element => {
 
     /**
      * Переключает раскрытие/сворачивание описания опции.
-     * 
+     *
      * @param id - ID банкетной опции
      * @remarks
      * Только одно описание может быть раскрыто одновременно.

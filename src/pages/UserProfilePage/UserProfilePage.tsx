@@ -9,9 +9,9 @@ import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 import { CalendarPopup } from '@/pages/UserProfilePage/CalendarPopup/CalendarPopup.tsx';
 import { useAtom } from 'jotai';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { APIUpdateUserInfo} from '@/api/user.api.ts';
+import { APIUpdateUserInfo } from '@/api/user.api.ts';
 import { mainButton } from '@telegram-apps/sdk-react';
-import { DeleteUserPopup } from "@/pages/ProfilePage/DeleteUserPopup/DeleteUserPopup.tsx";
+import { DeleteUserPopup } from '@/pages/ProfilePage/DeleteUserPopup/DeleteUserPopup.tsx';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import { allergiesOptions } from '@/__mocks__/allergies.mock.ts';
 import { findOtherAllergies } from '@/utils.ts';
@@ -32,7 +32,7 @@ export const UserProfilePage: React.FC = () => {
         last_name: user?.last_name ?? '',
         phone_number: user?.phone_number,
         email: user?.email ?? '',
-        allergies: user?.allergies ?? null
+        allergies: user?.allergies ?? null,
     });
 
     const setDobFromAPI = (dob: string | null | undefined) => {
@@ -40,9 +40,7 @@ export const UserProfilePage: React.FC = () => {
     };
 
     const [calendarOpen, setCalendarOpen] = useState(false);
-    const [dob, setDob] = useState<Date | undefined>(
-        setDobFromAPI(user?.date_of_birth)
-    );
+    const [dob, setDob] = useState<Date | undefined>(setDobFromAPI(user?.date_of_birth));
 
     const allergies: string[] = location.state?.allergies ?? [];
 
@@ -74,7 +72,7 @@ export const UserProfilePage: React.FC = () => {
 
     useEffect(() => {
         if (allergies && allergies.length > 0) {
-            setUserInfo((prev) => ({ ...prev, allergies }))
+            setUserInfo((prev) => ({ ...prev, allergies }));
         }
     }, [allergies]);
 
@@ -104,32 +102,28 @@ export const UserProfilePage: React.FC = () => {
             })
             .catch((err) => {
                 if (err.response) {
-                    showToast('Возникла ошибка: ' + err.response.data)
+                    showToast('Возникла ошибка: ' + err.response.data);
                 }
             });
     };
 
     const openDeletePopup = () => {
         setDeletePopup(true);
-    }
+    };
 
     const navigateToAllergies = () => {
-        navigate('/me/allergies', { state: {
+        navigate('/me/allergies', {
+            state: {
                 allergies: userInfo.allergies && userInfo.allergies.length > 0 ? userInfo.allergies : null,
-            }
+            },
         });
-    }
+    };
 
     return (
         <Page back={true}>
             <div className={css.page}>
                 <DeleteUserPopup isOpen={deletePopup} setOpen={setDeletePopup} />
-                <CalendarPopup
-                    isOpen={calendarOpen}
-                    setIsOpen={setCalendarOpen}
-                    setDate={setDob}
-                    initialDate={dob}
-                />
+                <CalendarPopup isOpen={calendarOpen} setIsOpen={setCalendarOpen} setDate={setDob} initialDate={dob} />
                 <div className={css.header}>
                     <RoundedButton
                         icon={<BackIcon size={24} color={'var(--dark-grey)'} />}
@@ -141,16 +135,12 @@ export const UserProfilePage: React.FC = () => {
                 <div className={css.fields}>
                     <TextInput
                         value={userInfo.first_name}
-                        onChange={(v) =>
-                            setUserInfo((prev) => ({ ...prev, first_name: v }))
-                        }
+                        onChange={(v) => setUserInfo((prev) => ({ ...prev, first_name: v }))}
                         placeholder={'Имя'}
                     />
                     <TextInput
                         value={userInfo.last_name}
-                        onChange={(v) =>
-                            setUserInfo((prev) => ({ ...prev, last_name: v }))
-                        }
+                        onChange={(v) => setUserInfo((prev) => ({ ...prev, last_name: v }))}
                         placeholder={'Фамилия'}
                     />
                     <TextInput
@@ -165,32 +155,24 @@ export const UserProfilePage: React.FC = () => {
                     />
                     <TextInput
                         value={String(userInfo.email)}
-                        onChange={(v) =>
-                            setUserInfo((prev) => ({ ...prev, email: v }))
-                        }
+                        onChange={(v) => setUserInfo((prev) => ({ ...prev, email: v }))}
                         placeholder={'Email'}
                     />
-                    <div
-                        className={css.datePicker}
-                        onClick={() => setCalendarOpen(true)}
-                    >
-                        {!dob && (
-                            <span className={css.datePicker__placeholder}>
-                                Дата рождения
-                            </span>
-                        )}
+                    <div className={css.datePicker} onClick={() => setCalendarOpen(true)}>
+                        {!dob && <span className={css.datePicker__placeholder}>Дата рождения</span>}
                         <span>{dob?.toLocaleDateString()}</span>
 
                         <CalendarIcon size={20} color={'var(--grey)'} />
                     </div>
                     <div onClick={navigateToAllergies} className={css.allergy}>
                         <span>Аллергия</span>
-                        {userInfo.allergies && userInfo.allergies.length > 0 &&
-                            (
-                                <div className={css.allergyOptions} >
-                                    {allergiesOptions.filter(option =>
-                                        userInfo.allergies && userInfo.allergies.includes(option.content),
-                                    ).map((item, index) => (
+                        {userInfo.allergies && userInfo.allergies.length > 0 && (
+                            <div className={css.allergyOptions}>
+                                {allergiesOptions
+                                    .filter(
+                                        (option) => userInfo.allergies && userInfo.allergies.includes(option.content)
+                                    )
+                                    .map((item, index) => (
                                         <CommentaryOptionButton
                                             newDesign
                                             text={item.content}
@@ -205,33 +187,27 @@ export const UserProfilePage: React.FC = () => {
                                             key={index}
                                         />
                                     ))}
-                                    {findOtherAllergies(userInfo.allergies).length > 0 &&
-                                        findOtherAllergies(userInfo.allergies)
-                                            .map((allergy, index) => (
-                                                <CommentaryOptionButton
-                                                    newDesign
-                                                    text={allergy}
-                                                    icon={'❌'}
-                                                    active={true}
-                                                    style={{
-                                                        fontSize: 10,
-                                                        padding: '5px 8px',
-                                                        backgroundColor: '#fff',
-                                                        borderColor: '#fff',
-                                                    }}
-                                                    key={index}
-                                                />
-                                            ))}
-                                </div>
-                            )}
+                                {findOtherAllergies(userInfo.allergies).length > 0 &&
+                                    findOtherAllergies(userInfo.allergies).map((allergy, index) => (
+                                        <CommentaryOptionButton
+                                            newDesign
+                                            text={allergy}
+                                            icon={'❌'}
+                                            active={true}
+                                            style={{
+                                                fontSize: 10,
+                                                padding: '5px 8px',
+                                                backgroundColor: '#fff',
+                                                borderColor: '#fff',
+                                            }}
+                                            key={index}
+                                        />
+                                    ))}
+                            </div>
+                        )}
                     </div>
-                    <div
-                        className={css.delete}
-                        onClick={openDeletePopup}
-                    >
-                        <span className={css.delete}>
-                            Удалить учетную запись
-                        </span>
+                    <div className={css.delete} onClick={openDeletePopup}>
+                        <span className={css.delete}>Удалить учетную запись</span>
                     </div>
                 </div>
             </div>

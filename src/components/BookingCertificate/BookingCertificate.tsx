@@ -1,9 +1,9 @@
-import css from "./BookingCertificate.module.css";
+import css from './BookingCertificate.module.css';
 import moment from 'moment';
 
 interface IBookingCertificate {
-    value: number
-    expired_at: string
+    value: number;
+    expired_at: string;
 }
 
 const BookingCertificate: React.FC<IBookingCertificate> = ({ value, expired_at }) => {
@@ -21,7 +21,7 @@ const BookingCertificate: React.FC<IBookingCertificate> = ({ value, expired_at }
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default BookingCertificate
+export default BookingCertificate;

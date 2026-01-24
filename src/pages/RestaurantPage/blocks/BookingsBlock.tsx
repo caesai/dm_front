@@ -24,7 +24,7 @@
  *
  * @example
  * <BookingBlock restaurantId="123" />
- * 
+ *
  * @see {@link useBookingForm} - хук для управления формой бронирования
  * @see {@link restaurantBookingFormAtom} - изолированный атом состояния формы
  * @see {@link DepositInfoModal} - модальное окно информации о депозите
@@ -78,7 +78,7 @@ interface IBookingBlockProps {
  *
  * @example
  * <BookingBlock restaurantId="123" />
- * 
+ *
  * @see {@link useBookingForm} - хук для управления формой бронирования
  */
 export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBookingBlockProps): JSX.Element => {
@@ -92,18 +92,11 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
      * Данные бронирования из хука useBookingForm.
      * Используем preSelectedRestaurant для загрузки дат и таймслотов.
      * Устанавливаем начальное количество гостей = 1 для загрузки таймслотов.
-     * 
+     *
      * restaurantId передаётся явно для надежного сброса формы при смене ресторана,
      * даже если currentRestaurant ещё не загружен.
      */
-    const {
-        form,
-        availableDates,
-        availableTimeslots,
-        loading,
-        errors,
-        handlers,
-    } = useBookingForm({
+    const { form, availableDates, availableTimeslots, loading, errors, handlers } = useBookingForm({
         formType: 'restaurant',
         restaurantId, // Явно передаём для надежного сброса при смене ресторана
         preSelectedRestaurant: currentRestaurant
@@ -143,8 +136,8 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
     const handleDateSave = useCallback(
         (date: PickerValue) => {
             // Находим полный объект из списка дат, чтобы получить все атрибуты
-            const fullDate = availableDates?.find(d => d.value === date.value) ?? date;
-            
+            const fullDate = availableDates?.find((d) => d.value === date.value) ?? date;
+
             if (fullDate.attributes?.includes('requires_deposit')) {
                 setPendingDate(fullDate);
                 setIsDepositModalOpen(true);

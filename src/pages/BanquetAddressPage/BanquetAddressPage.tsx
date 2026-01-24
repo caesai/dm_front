@@ -1,21 +1,21 @@
 /**
  * @fileoverview Страница выбора ресторана для банкета.
- * 
+ *
  * Первый шаг в процессе бронирования банкета:
  * 1. BanquetAddressPage (выбор ресторана) <- текущая страница
  * 2. ChooseBanquetOptionsPage (выбор опции банкета)
  * 3. BanquetOptionPage (настройка банкета)
  * 4. BanquetAdditionalServicesPage (дополнительные услуги) - опционально
  * 5. BanquetReservationPage (подтверждение)
- * 
+ *
  * Особенности логики:
  * - Показываются только рестораны с banquet_options.length > 0
  * - При переходе со страницы ресторана ресторан предвыбирается из URL
  * - Навигация назад зависит от статуса онбординга пользователя
  * - Не прошедшие онбординг пользователи перенаправляются на /onboarding/3
- * 
+ *
  * @module pages/BanquetAddressPage
- * 
+ *
  * @see {@link ChooseBanquetOptionsPage} - следующий шаг в процессе
  * @see {@link RestaurantsListSelector} - компонент выбора ресторана
  */
@@ -51,12 +51,12 @@ const initialRestaurant: PickerValue = {
 
 /**
  * Страница выбора ресторана для банкета.
- * 
+ *
  * Отображает информационный блок о банкетах и селектор ресторанов.
  * Фильтрует рестораны, показывая только те, у которых есть банкетные опции.
- * 
+ *
  * @returns {JSX.Element} - Компонент страницы выбора ресторана для банкета
- * 
+ *
  * @example
  * // URL: /banquets/:restaurantId
  * // Если restaurantId - конкретный ID, ресторан будет предвыбран
@@ -69,7 +69,7 @@ export const BanquetAddressPage: React.FC = (): JSX.Element => {
     const restaurants = useAtomValue(restaurantsListAtom);
     const [currentRestaurant, setCurrentRestaurant] = useState<PickerValue>(initialRestaurant);
     const restaurant = useGetRestaurantById(restaurantId || '');
-    
+
     /**
      * Отфильтрованный список ресторанов с банкетными опциями.
      * Рестораны без banquet_options не отображаются в селекторе.
@@ -77,13 +77,13 @@ export const BanquetAddressPage: React.FC = (): JSX.Element => {
     const restaurantsList = useMemo(() => {
         return restaurants.filter((item) => item.banquets?.banquet_options?.length > 0);
     }, [restaurants]);
-    
+
     /** Флаг, указывающий что кнопка "Продолжить" заблокирована */
     const isDisabled = currentRestaurant.value === 'unset';
 
     /**
      * Обрабатывает нажатие кнопки "Назад".
-     * 
+     *
      * Логика навигации:
      * - Если пользователь прошёл онбординг:
      *   - При :restaurantId (placeholder) -> главная страница
@@ -104,11 +104,11 @@ export const BanquetAddressPage: React.FC = (): JSX.Element => {
 
     /**
      * Обрабатывает нажатие кнопки "Продолжить".
-     * 
+     *
      * Логика навигации:
      * - Если пользователь прошёл онбординг -> страница выбора опций банкета
      * - Если пользователь не прошёл онбординг -> /onboarding/3 с данными банкета
-     * 
+     *
      * @remarks
      * Функция не выполняется если ресторан не выбран (isDisabled = true)
      */
@@ -129,7 +129,7 @@ export const BanquetAddressPage: React.FC = (): JSX.Element => {
 
     /**
      * Эффект для предвыбора ресторана из URL параметров.
-     * 
+     *
      * Если restaurantId в URL соответствует существующему ресторану,
      * автоматически устанавливает его как выбранный.
      */
@@ -148,11 +148,7 @@ export const BanquetAddressPage: React.FC = (): JSX.Element => {
             <ContentContainer className={css.pageWrapper}>
                 <ContentBlock className={css.header}>
                     <RoundedButton icon={<BackIcon color={'var(--dark-grey)'} />} action={handleGoBack}></RoundedButton>
-                    <HeaderContent
-                        title="Банкеты"
-                        className={css.header_title}
-                        fontSize={14}
-                    />
+                    <HeaderContent title="Банкеты" className={css.header_title} fontSize={14} />
                     <div style={{ width: 40 }} />
                 </ContentBlock>
                 <ContentBlock className={css.container}>

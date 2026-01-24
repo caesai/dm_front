@@ -3,12 +3,12 @@ import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 // import classNames from 'classnames';
 import css from './BannerPopup.module.css';
-import banner from '/img/banner.jpg'
+import banner from '/img/banner.jpg';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import {
     // getCookie,
-    setCookie
+    setCookie,
 } from '@/utils.ts';
 
 const StyledPopup = styled(Popup)`
@@ -24,7 +24,7 @@ const StyledPopup = styled(Popup)`
     &-content {
         padding: 0;
         border-radius: 12px;
-        margin: 0!important;
+        margin: 0 !important;
         width: 100%;
         height: 100vh;
         border: none;
@@ -37,8 +37,8 @@ export const BannerPopup: React.FC = () => {
     // const bannerCookie = getCookie('banner');
     const closeBanner = () => {
         setOpen(false);
-        setCookie('banner','show');
-    }
+        setCookie('banner', 'show');
+    };
     useEffect(() => {
         if (closeBtnRef.current) {
             setTimeout(() => {
@@ -54,28 +54,25 @@ export const BannerPopup: React.FC = () => {
     // }, []);
     if (!open) return null;
     return (
-        <StyledPopup
-            open={open}
-            onClose={closeBanner}
-            closeOnDocumentClick={true}
-            className={css.popup}
-        >
-            <div ref={closeBtnRef} style={{position: 'absolute', top: 10, right: 10, visibility: 'hidden'}}>
+        <StyledPopup open={open} onClose={closeBanner} closeOnDocumentClick={true} className={css.popup}>
+            <div ref={closeBtnRef} style={{ position: 'absolute', top: 10, right: 10, visibility: 'hidden' }}>
                 <RoundedButton
                     icon={<CrossIcon size={44} color={'black'} />}
                     bgColor={'var(--primary-background) !important'}
                     action={closeBanner}
                 />
             </div>
-            <div style={{
-                backgroundImage: 'url(' + banner + ')',
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                height: '100%',
-                width: '100%',
-                display: 'flex',
-            }} />
+            <div
+                style={{
+                    backgroundImage: 'url(' + banner + ')',
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    height: '100%',
+                    width: '100%',
+                    display: 'flex',
+                }}
+            />
         </StyledPopup>
-    )
-}
+    );
+};

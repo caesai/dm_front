@@ -5,13 +5,7 @@ type IconProps = {
 
 export const InstagramIcon = ({ size = 24, color = '#000000' }: IconProps) => {
     return (
-        <svg
-            width={size}
-            height={size}
-            viewBox={`0 0 ${size} ${size}`}
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M2.0835 10.0857C2.0835 6.35407 2.0835 4.4874 3.24266 3.32823C4.40183 2.16907 6.26766 2.16907 10.0002 2.16907C13.7318 2.16907 15.5985 2.16907 16.7577 3.32823C17.9168 4.4874 17.9168 6.35323 17.9168 10.0857C17.9168 13.8174 17.9168 15.6841 16.7577 16.8432C15.5985 18.0024 13.7327 18.0024 10.0002 18.0024C6.2685 18.0024 4.40183 18.0024 3.24266 16.8432C2.0835 15.6841 2.0835 13.8182 2.0835 10.0857Z"
                 stroke={color}

@@ -14,9 +14,7 @@ export const BanquetCheckbox: React.FC<CheckBoxInputProps> = ({ checked, toggle,
             <div className={`${css.checkbox} ${checked ? css.checked : ''}`}>
                 {checked && <CheckboxIcon size={14} />}
             </div>
-            <span className={css.agreeCheckbox_label}>
-                {label}
-            </span>
+            <span className={css.agreeCheckbox_label}>{label}</span>
         </label>
     );
 };

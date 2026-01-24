@@ -18,11 +18,7 @@ interface IDepositCancelModalProps {
  * Модальное окно подтверждения отмены бронирования с депозитом.
  * Показывает условия возврата депозита.
  */
-export const DepositCancelModal: React.FC<IDepositCancelModalProps> = ({
-    isOpen,
-    onConfirm,
-    onCancel,
-}) => {
+export const DepositCancelModal: React.FC<IDepositCancelModalProps> = ({ isOpen, onConfirm, onCancel }) => {
     return (
         <ModalPopup
             isOpen={isOpen}
@@ -30,9 +26,7 @@ export const DepositCancelModal: React.FC<IDepositCancelModalProps> = ({
             title="Отмена бронирования"
             list={
                 <div className={css.content}>
-                    <p className={css.description}>
-                        Вы отменяете бронь с депозитом.
-                    </p>
+                    <p className={css.description}>Вы отменяете бронь с депозитом.</p>
                     <p className={css.conditionsTitle}>Условия возврата:</p>
                     <ul className={css.conditionsList}>
                         <li>За 3+ дня — 100%</li>

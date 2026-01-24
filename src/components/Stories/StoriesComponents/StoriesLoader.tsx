@@ -14,5 +14,5 @@ export const StoriesLoader: React.FC<StoriesLoaderProps> = ({ isLoading }) => {
         <div className={css.loaderOverlay}>
             <Loader />
         </div>
-    )
-}
+    );
+};

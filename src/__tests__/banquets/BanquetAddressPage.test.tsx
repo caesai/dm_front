@@ -1,19 +1,19 @@
 /**
  * @fileoverview Тесты для страницы выбора ресторана для банкета BanquetAddressPage.
- * 
+ *
  * Страница отображает информацию о банкетах и позволяет выбрать ресторан:
  * - Информационный блок с описанием банкетов
  * - Селектор ресторанов (только рестораны с банкетными опциями)
  * - Кнопка "Продолжить" для навигации на страницу выбора опций
- * 
+ *
  * Особенности логики:
  * - Показываются только рестораны с banquet_options.length > 0
  * - При переходе со страницы ресторана ресторан предвыбирается
  * - Навигация назад зависит от статуса онбординга пользователя
  * - Не прошедшие онбординг пользователи перенаправляются на /onboarding/3
- * 
+ *
  * @module __tests__/banquets/BanquetAddressPage
- * 
+ *
  * @see {@link BanquetAddressPage} - тестируемый компонент
  * @see {@link ChooseBanquetOptionsPage} - страница выбора опций банкета (следующий шаг)
  * @see {@link RestaurantsListSelector} - компонент выбора ресторана
@@ -27,7 +27,11 @@ import { TestProvider } from '@/__mocks__/atom.mock.tsx';
 import { userAtom } from '@/atoms/userAtom.ts';
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { mockUserData, mockUserNotOnboarded } from '@/__mocks__/user.mock.ts';
-import { mockRestaurantWithBanquets, mockRestaurantWithoutBanquets, mockRestaurantWithBanquets2 } from '@/__mocks__/restaurant.mock.ts';
+import {
+    mockRestaurantWithBanquets,
+    mockRestaurantWithoutBanquets,
+    mockRestaurantWithBanquets2,
+} from '@/__mocks__/restaurant.mock.ts';
 import { IUser } from '@/types/user.types.ts';
 import { IRestaurant } from '@/types/restaurant.types.ts';
 
@@ -95,27 +99,27 @@ jest.mock('@/components/RoundedButton/RoundedButton.tsx', () => ({
  * Мок иконки BackIcon.
  */
 jest.mock('@/components/Icons/BackIcon.tsx', () => ({
-    BackIcon: ({ color }: { color?: string }) => <span data-testid="back-icon" data-color={color}>←</span>,
+    BackIcon: ({ color }: { color?: string }) => (
+        <span data-testid="back-icon" data-color={color}>
+            ←
+        </span>
+    ),
 }));
 
 /**
  * Мок компонента BottomButtonWrapper.
  */
 jest.mock('@/components/BottomButtonWrapper/BottomButtonWrapper.tsx', () => ({
-    BottomButtonWrapper: ({ 
-        content, 
-        onClick, 
-        isDisabled 
-    }: { 
-        content: string; 
-        onClick: () => void; 
-        isDisabled?: boolean 
+    BottomButtonWrapper: ({
+        content,
+        onClick,
+        isDisabled,
+    }: {
+        content: string;
+        onClick: () => void;
+        isDisabled?: boolean;
     }) => (
-        <button 
-            onClick={onClick} 
-            disabled={isDisabled} 
-            data-testid="continue-button"
-        >
+        <button onClick={onClick} disabled={isDisabled} data-testid="continue-button">
             {content}
         </button>
     ),
@@ -126,13 +130,13 @@ jest.mock('@/components/BottomButtonWrapper/BottomButtonWrapper.tsx', () => ({
  * Предоставляет упрощённый интерфейс для выбора ресторана.
  */
 jest.mock('@/components/RestaurantsListSelector/RestaurantsListSelector.tsx', () => ({
-    RestaurantsListSelector: ({ 
-        onSelect, 
-        filteredRestaurants, 
-        selectedRestaurant 
-    }: { 
-        onSelect: (value: any) => void; 
-        filteredRestaurants: any[]; 
+    RestaurantsListSelector: ({
+        onSelect,
+        filteredRestaurants,
+        selectedRestaurant,
+    }: {
+        onSelect: (value: any) => void;
+        filteredRestaurants: any[];
         selectedRestaurant: any;
     }) => (
         <div data-testid="restaurants-list-selector">
@@ -141,14 +145,16 @@ jest.mock('@/components/RestaurantsListSelector/RestaurantsListSelector.tsx', ()
             </span>
             <ul data-testid="restaurants-list">
                 {filteredRestaurants.map((r: any) => (
-                    <li 
-                        key={r.id} 
+                    <li
+                        key={r.id}
                         data-testid={`restaurant-option-${r.id}`}
-                        onClick={() => onSelect({ 
-                            value: String(r.id), 
-                            title: r.title, 
-                            subtitle: r.address 
-                        })}
+                        onClick={() =>
+                            onSelect({
+                                value: String(r.id),
+                                title: r.title,
+                                subtitle: r.address,
+                            })
+                        }
                     >
                         {r.title}
                     </li>
@@ -164,7 +170,7 @@ jest.mock('@/components/RestaurantsListSelector/RestaurantsListSelector.tsx', ()
 
 /**
  * Тесты страницы выбора ресторана для банкета.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Рендеринг компонентов страницы
  * - Фильтрация ресторанов по наличию банкетных опций
@@ -181,30 +187,32 @@ describe('BanquetAddressPage', () => {
 
     /**
      * Рендерит компонент BanquetAddressPage с необходимыми провайдерами.
-     * 
+     *
      * @param options - Опции рендеринга
      * @param options.user - Данные пользователя (по умолчанию mockUserData)
      * @param options.restaurants - Список ресторанов
      * @param options.restaurantId - ID ресторана в URL (по умолчанию ':restaurantId')
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @example
      * // Базовый рендер
      * renderComponent();
-     * 
+     *
      * @example
      * // Рендер с предвыбранным рестораном
      * renderComponent({ restaurantId: '1' });
-     * 
+     *
      * @example
      * // Рендер с пользователем без онбординга
      * renderComponent({ user: mockUserNotOnboarded });
      */
-    const renderComponent = (options: {
-        user?: IUser | null;
-        restaurants?: IRestaurant[];
-        restaurantId?: string;
-    } = {}) => {
+    const renderComponent = (
+        options: {
+            user?: IUser | null;
+            restaurants?: IRestaurant[];
+            restaurantId?: string;
+        } = {}
+    ) => {
         const {
             user = mockUserData,
             restaurants = [mockRestaurantWithBanquets, mockRestaurantWithoutBanquets, mockRestaurantWithBanquets2],
@@ -252,10 +260,7 @@ describe('BanquetAddressPage', () => {
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
-            if (
-                message.includes('not wrapped in act') ||
-                message.includes('Not implemented: navigation')
-            ) {
+            if (message.includes('not wrapped in act') || message.includes('Not implemented: navigation')) {
                 return;
             }
             originalConsoleError(...args);
@@ -371,7 +376,7 @@ describe('BanquetAddressPage', () => {
             // Ресторан с банкетами должен быть виден
             expect(screen.getByTestId('restaurant-option-1')).toBeInTheDocument();
             expect(screen.getByTestId('restaurant-option-3')).toBeInTheDocument();
-            
+
             // Ресторан без банкетов не должен быть виден
             expect(screen.queryByTestId('restaurant-option-2')).not.toBeInTheDocument();
         });
@@ -384,7 +389,7 @@ describe('BanquetAddressPage', () => {
 
             const restaurantsList = screen.getByTestId('restaurants-list');
             const restaurants = restaurantsList.querySelectorAll('li');
-            
+
             // Только 2 ресторана с банкетными опциями
             expect(restaurants).toHaveLength(2);
         });
@@ -591,7 +596,7 @@ describe('BanquetAddressPage', () => {
 
             const restaurantsList = screen.getByTestId('restaurants-list');
             const restaurants = restaurantsList.querySelectorAll('li');
-            
+
             expect(restaurants).toHaveLength(0);
         });
 
@@ -603,7 +608,7 @@ describe('BanquetAddressPage', () => {
 
             const restaurantsList = screen.getByTestId('restaurants-list');
             const restaurants = restaurantsList.querySelectorAll('li');
-            
+
             expect(restaurants).toHaveLength(0);
         });
 

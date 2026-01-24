@@ -21,7 +21,7 @@
     background-color: var(--red);
     border-radius: 16px;
     width: fit-content;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 14px;
     color: var(--secondary-background);
@@ -30,19 +30,20 @@
 .card_price {
     /*margin: 15px 0 0 15px;*/
     padding: 5px 10px;
-    background-color: rgba(0,0,0,0.555);
+    background-color: rgba(0, 0, 0, 0.555);
     border-radius: 16px;
     width: fit-content;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 14px;
     color: var(--secondary-background);
 }
 
 .card_date__notActive {
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-    linear-gradient(0deg, rgba(85, 85, 85, 0.18), rgba(85, 85, 85, 0.18));
-    backdrop-filter: blur(18px)
+    background:
+        linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        linear-gradient(0deg, rgba(85, 85, 85, 0.18), rgba(85, 85, 85, 0.18));
+    backdrop-filter: blur(18px);
 }
 
 .footer {
@@ -58,14 +59,14 @@
 }
 
 .footer__title {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 18px;
     color: white;
 }
 
 .footer__address {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 12px;
     line-height: 100%;

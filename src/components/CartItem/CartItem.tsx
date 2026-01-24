@@ -30,18 +30,13 @@ export const CartItem: React.FC<CartItemProps> = ({
     return (
         <div className={css.item}>
             <div className={css.content}>
-                <div
-                    className={css.image}
-                    style={{ backgroundImage: `url(${image})` }}
-                />
+                <div className={css.image} style={{ backgroundImage: `url(${image})` }} />
                 <div className={css.info}>
                     <div className={css.details}>
                         <span className={css.title}>{title}</span>
                         <div className={css.priceRow}>
                             <span className={css.price}>{price} ₽</span>
-                            {formattedWeight && (
-                                <span className={css.weight}>{formattedWeight}</span>
-                            )}
+                            {formattedWeight && <span className={css.weight}>{formattedWeight}</span>}
                         </div>
                     </div>
                     <div className={css.controls}>
@@ -58,4 +53,3 @@ export const CartItem: React.FC<CartItemProps> = ({
         </div>
     );
 };
-

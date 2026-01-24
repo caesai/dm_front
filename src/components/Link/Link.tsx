@@ -5,12 +5,7 @@ import { Link as RouterLink, type LinkProps } from 'react-router-dom';
 
 import './Link.css';
 
-export const Link: FC<LinkProps> = ({
-    className,
-    onClick: propsOnClick,
-    to,
-    ...rest
-}) => {
+export const Link: FC<LinkProps> = ({ className, onClick: propsOnClick, to, ...rest }) => {
     const onClick = useCallback<MouseEventHandler<HTMLAnchorElement>>(
         (e) => {
             propsOnClick?.(e);
@@ -27,9 +22,7 @@ export const Link: FC<LinkProps> = ({
 
             const targetUrl = new URL(path, window.location.toString());
             const currentUrl = new URL(window.location.toString());
-            const isExternal =
-                targetUrl.protocol !== currentUrl.protocol ||
-                targetUrl.host !== currentUrl.host;
+            const isExternal = targetUrl.protocol !== currentUrl.protocol || targetUrl.host !== currentUrl.host;
 
             if (isExternal) {
                 e.preventDefault();
@@ -39,12 +32,5 @@ export const Link: FC<LinkProps> = ({
         [to, propsOnClick]
     );
 
-    return (
-        <RouterLink
-            {...rest}
-            to={to}
-            onClick={onClick}
-            className={classNames(className, 'link')}
-        />
-    );
+    return <RouterLink {...rest} to={to} onClick={onClick} className={classNames(className, 'link')} />;
 };

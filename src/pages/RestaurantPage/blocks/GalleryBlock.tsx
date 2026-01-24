@@ -162,7 +162,7 @@ export const GalleryBlock: React.FC<IGalleryBlockProps> = ({ restaurantId }): JS
         setCurrentGalleryPhotos(getGalleryPhotos());
     }, [currentGalleryCategory, gallery]);
 
-    if (!restaurantGallery) return <></> as JSX.Element;
+    if (!restaurantGallery) return (<></>) as JSX.Element;
 
     return (
         <ContentContainer>

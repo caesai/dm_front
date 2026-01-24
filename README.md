@@ -10,8 +10,8 @@
 ## Фичи
 
 - Сертификаты
-- - [CertificateLandingPage](./src/pages/CertificateLanding/CertificateLandingPage.tsx) - Страница сертификата, которой делятся между собой пользователи
-- - [CertificatesSelector](./src/components/CertificatesSelector/README.md) - селектор сертификатов на странице бронирований
+-   - [CertificateLandingPage](./src/pages/CertificateLanding/CertificateLandingPage.tsx) - Страница сертификата, которой делятся между собой пользователи
+-   - [CertificatesSelector](./src/components/CertificatesSelector/README.md) - селектор сертификатов на странице бронирований
 
 ## Install Dependencies
 
@@ -26,6 +26,7 @@ npm install
 
 Install [mkcert](https://github.com/FiloSottile/mkcert) for making locally-trusted development certificates.
 After install one should to create certificates for dt-mini-app.local domain
+
 ```
 mkdir -p .cert && mkcert -key-file ./.cert/localhost-key.pem -cert-file ./.cert/localhost.pem 'dt-mini-app.local'
 <!-- mkdir -p .cert && mkcert -key-file ./.cert/caesai-key.pem -cert-file ./.cert/caesai.pem 'caesai.github.io' -->
@@ -38,6 +39,7 @@ sudo nano /etc/hosts
 ```
 
 Add line in the end of the file
+
 ```
 127.0.0.1 dt-mini-app.local
 ```
@@ -62,7 +64,6 @@ npm run {script}
 
 ## Run
 
-
 To run the application in the development mode, use the `dev` script:
 
 ```bash
@@ -78,7 +79,6 @@ npm run dev:https
 > As long as we use [vite-plugin-mkcert](https://www.npmjs.com/package/vite-plugin-mkcert),
 > launching the dev mode for the first time, you may see sudo password request.
 > The plugin requires it to properly configure SSL-certificates. To disable the plugin, use the `npm run dev` command.
-
 
 ## Deploy
 

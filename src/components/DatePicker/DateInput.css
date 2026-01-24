@@ -81,7 +81,7 @@
     user-select: none;
     border-radius: 6px;
     font-size: 12px;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 700;
 }
 
@@ -110,5 +110,5 @@
 /* Ховер по ячейке */
 .datepicker-day.in-month:hover {
     background-color: var(--red);
-    color: #ffffff
+    color: #ffffff;
 }

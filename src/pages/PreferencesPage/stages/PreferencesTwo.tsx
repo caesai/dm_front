@@ -17,33 +17,30 @@ export const PreferencesTwo: React.FC = () => {
 
     const changePreference = (content: string) => {
         if (preferences.includes(content)) {
-            setPreferences(prev => (prev.filter((p) => p !== content)));
-        }
-        else {
+            setPreferences((prev) => prev.filter((p) => p !== content));
+        } else {
             setPreferences([...preferences, content]);
         }
-    }
+    };
 
     const handleContinue = () => {
-        if (!auth?.access_token || preferences.length === 0 ) {
+        if (!auth?.access_token || preferences.length === 0) {
             return;
         }
 
-
         APIUserPreferences(auth.access_token, {
-            preferences: [{
+            preferences: [
+                {
                     category: 'menu',
                     choices: preferences,
-                }]
-
+                },
+            ],
         })
             .then(() => navigate('/preferences/3'))
-            .catch(() => alert
-                (
-                    'При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.'
-                )
+            .catch(() =>
+                alert('При сохранении данных произошла ошибка, пожалуйста, попробуйте перезапустить приложение.')
             );
-    }
+    };
 
     return (
         <div className={css.stage_page}>
@@ -62,7 +59,7 @@ export const PreferencesTwo: React.FC = () => {
                 </div>
                 <div className={css.stageSeven_wrapper}>
                     <h2 className={css.stage_description_title}>
-                        Что вас особенно <br/>
+                        Что вас особенно <br />
                         привлекает в меню?
                     </h2>
                     <div className={css.stage_options_container}>

@@ -56,5 +56,5 @@ export interface IHospitalityHeroesApplication {
 
 export interface IEventBanner {
     img_url: string;
-    link: string
+    link: string;
 }

@@ -35,9 +35,7 @@ export const CertificatesCreatePage: React.FC = () => {
                         icon={<BackIcon color={'var(--dark-grey)'} />}
                         action={goPreviousPage}
                     />
-                    <span className={css.header_title}>
-                        {state?.title ? state?.title : 'Сертификат'}
-                    </span>
+                    <span className={css.header_title}>{state?.title ? state?.title : 'Сертификат'}</span>
                     <div className={css.spacer} />
                 </div>
                 <Outlet />

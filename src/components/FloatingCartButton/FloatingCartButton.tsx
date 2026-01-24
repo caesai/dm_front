@@ -7,10 +7,7 @@ interface FloatingCartButtonProps {
     onClick: () => void;
 }
 
-export const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({
-    totalAmount,
-    onClick,
-}) => {
+export const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({ totalAmount, onClick }) => {
     return (
         <div className={css.floatingButton} onClick={onClick}>
             <img src={basketIcon} alt="Корзина" width={28} height={28} />
@@ -18,4 +15,3 @@ export const FloatingCartButton: React.FC<FloatingCartButtonProps> = ({
         </div>
     );
 };
-

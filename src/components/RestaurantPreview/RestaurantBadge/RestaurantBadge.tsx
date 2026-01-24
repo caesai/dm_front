@@ -7,10 +7,7 @@ interface RestaurantBadgeProps {
 export const RestaurantBadge = ({ logo }: RestaurantBadgeProps) => {
     return (
         <div className={css.badge}>
-            <div
-                style={{ backgroundImage: `url(${logo})` }}
-                className={css.img}
-            ></div>
+            <div style={{ backgroundImage: `url(${logo})` }} className={css.img}></div>
         </div>
     );
 };

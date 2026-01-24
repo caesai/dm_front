@@ -50,24 +50,12 @@ const RestaurantDetails: React.FC<IRestaurantDetails> = ({ selectedRest }) => {
     return (
         <div className={css.restInfoContainer}>
             <div className={css.restInfo}>
-                <span className={classNames(css.p15, css.restInfo__title)}>
-                    {selectedRest?.title}
-                </span>
+                <span className={classNames(css.p15, css.restInfo__title)}>{selectedRest?.title}</span>
                 <div className={classNames(css.p15, css.restInfo)}>
                     <div className={css.restInfo_block}>
-                        <IconlyLocation
-                            size={18}
-                            color={'var(--dark-grey)'}
-                        ></IconlyLocation>
+                        <IconlyLocation size={18} color={'var(--dark-grey)'}></IconlyLocation>
                         <div className={css.restInfo_block__payload}>
-                            <span
-                                className={classNames(
-                                    css.mont,
-                                    css.restInfo__address
-                                )}
-                            >
-                                {selectedRest?.address}
-                            </span>
+                            <span className={classNames(css.mont, css.restInfo__address)}>{selectedRest?.address}</span>
                             <div className={css.restInfo__metro_block}>
                                 <div
                                     className={css.restInfo__metro}
@@ -75,12 +63,7 @@ const RestaurantDetails: React.FC<IRestaurantDetails> = ({ selectedRest }) => {
                                         backgroundColor: `${selectedRest?.address_station_color}`,
                                     }}
                                 />
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.restInfo__address
-                                    )}
-                                >
+                                <span className={classNames(css.mont, css.restInfo__address)}>
                                     {selectedRest?.address_station}
                                 </span>
                             </div>
@@ -90,19 +73,11 @@ const RestaurantDetails: React.FC<IRestaurantDetails> = ({ selectedRest }) => {
                         <TimeCircle size={18} color={'var(--dark-grey)'} />
                         <div className={css.restInfo_block__payload}>
                             {selectedRest?.worktime
-                                ? formatWorkTime(selectedRest?.worktime).map(
-                                      (v, index) => (
-                                          <span
-                                              className={classNames(
-                                                  css.mont,
-                                                  css.restInfo__address
-                                              )}
-                                              key={index}
-                                          >
-                                              {v}
-                                          </span>
-                                      )
-                                  )
+                                ? formatWorkTime(selectedRest?.worktime).map((v, index) => (
+                                      <span className={classNames(css.mont, css.restInfo__address)} key={index}>
+                                          {v}
+                                      </span>
+                                  ))
                                 : null}
                         </div>
                     </div>
@@ -126,12 +101,7 @@ const RestaurantDetails: React.FC<IRestaurantDetails> = ({ selectedRest }) => {
                         spaceBetween={8}
                     >
                         <SwiperSlide style={{ width: 'max-content' }}>
-                            <span
-                                className={classNames(
-                                    css.mont,
-                                    css.swiper_slide
-                                )}
-                            >
+                            <span className={classNames(css.mont, css.swiper_slide)}>
                                 {getRestaurantStatus(
                                     selectedRest?.worktime,
                                     getCurrentWeekdayShort(),
@@ -140,43 +110,22 @@ const RestaurantDetails: React.FC<IRestaurantDetails> = ({ selectedRest }) => {
                             </span>
                         </SwiperSlide>
                         {selectedRest?.about_kitchen.split(',').map((v) => (
-                            <SwiperSlide
-                                key={v}
-                                style={{ width: 'max-content' }}
-                            >
-                                <span
-                                    className={classNames(
-                                        css.mont,
-                                        css.swiper_slide
-                                    )}
-                                >
-                                    {v} кухня
-                                </span>
+                            <SwiperSlide key={v} style={{ width: 'max-content' }}>
+                                <span className={classNames(css.mont, css.swiper_slide)}>{v} кухня</span>
                             </SwiperSlide>
                         ))}
                         <SwiperSlide style={{ width: 'max-content' }}>
-                            <span
-                                className={classNames(
-                                    css.mont,
-                                    css.swiper_slide
-                                )}
-                            >
+                            <span className={classNames(css.mont, css.swiper_slide)}>
                                 Средний чек {selectedRest?.avg_cheque} ₽
                             </span>
                         </SwiperSlide>
                     </Swiper>
                 </div>
                 <div className={css.p15}>
-                    <Taxi
-                        lonlng={selectedRest.address_lonlng}
-                        address={selectedRest.address}
-                    />
+                    <Taxi lonlng={selectedRest.address_lonlng} address={selectedRest.address} />
                 </div>
                 <div className={classNames(css.p15, css.buttons)}>
-                    <div
-                        className={css.redButton}
-                        onClick={() => navigate(`/booking/${selectedRest.id}`)}
-                    >
+                    <div className={css.redButton} onClick={() => navigate(`/booking/${selectedRest.id}`)}>
                         <span className={css.mont}>Забронировать</span>
                     </div>
 
@@ -189,15 +138,9 @@ const RestaurantDetails: React.FC<IRestaurantDetails> = ({ selectedRest }) => {
                             )
                         }
                     >
-                        <Discovery
-                            size={24}
-                            primaryColor={'var(--dark-grey)'}
-                        />
+                        <Discovery size={24} primaryColor={'var(--dark-grey)'} />
                     </div>
-                    <div
-                        className={css.roundButton}
-                        onClick={() => callPhone(selectedRest.phone_number)}
-                    >
+                    <div className={css.roundButton} onClick={() => callPhone(selectedRest.phone_number)}>
                         <PhoneCallIcon size={24} color={'var(--dark-grey)'} />
                     </div>
                 </div>
@@ -259,10 +202,7 @@ export const RestaurantMapPage = () => {
                 },
                 geometry: {
                     type: 'Point',
-                    coordinates: [
-                        Number(v.address_lonlng.split(',')[0]),
-                        Number(v.address_lonlng.split(',')[1]),
-                    ],
+                    coordinates: [Number(v.address_lonlng.split(',')[0]), Number(v.address_lonlng.split(',')[1])],
                 },
             }))
         );
@@ -351,10 +291,7 @@ export const RestaurantMapPage = () => {
     );
     const marker = useCallback(
         (feature: Feature) => (
-            <YMapMarker
-                coordinates={feature.geometry.coordinates}
-                onClick={() => updateSelectedPoint(feature.id)}
-            >
+            <YMapMarker coordinates={feature.geometry.coordinates} onClick={() => updateSelectedPoint(feature.id)}>
                 {selectedPoint == feature.id ? (
                     <div className={css.mapPoint__selected}>
                         <RestaurantOnMapSelectedIcon />
@@ -372,40 +309,43 @@ export const RestaurantMapPage = () => {
 
     const openCityList = () => {
         setIsCityListOpen(true);
-    }
+    };
 
     const closeCityList = () => {
         setIsCityListOpen(false);
-    }
+    };
 
     const changeCity = (id: string) => {
         setCurrentCity(id);
         closeCityList();
-    }
+    };
     return (
         <Page back={true}>
             <div className={css.page}>
-                {selectedRest ? (
-                    <RestaurantDetails selectedRest={selectedRest} />
-                ) : null}
+                {selectedRest ? <RestaurantDetails selectedRest={selectedRest} /> : null}
                 <div className={classNames(css.fixedHeader)}>
                     <div className={css.header}>
                         <RoundedButton
-                            icon={
-                                <BackIcon
-                                    size={24}
-                                    color={'var(--dark-grey)'}
-                                />
-                            }
+                            icon={<BackIcon size={24} color={'var(--dark-grey)'} />}
                             action={goBack}
                             bgColor={'var(--primary-background)'}
                         />
                         <span className={css.header_title}>
                             Рестораны в{' '}
-                            <span className={css.red} onClick={openCityList}> {city?.name_dative} <DownArrow size={16} /></span>
-                            <div className={classNames(css.dropdown_content, isCityListOpen ? css.dropdown_active : null)}>
+                            <span className={css.red} onClick={openCityList}>
+                                {' '}
+                                {city?.name_dative} <DownArrow size={16} />
+                            </span>
+                            <div
+                                className={classNames(
+                                    css.dropdown_content,
+                                    isCityListOpen ? css.dropdown_active : null
+                                )}
+                            >
                                 {cityList.map((v: ICity, i: number) => (
-                                    <span key={i} onClick={() => changeCity(String(v.name_english))}>{v.name_dative}</span>
+                                    <span key={i} onClick={() => changeCity(String(v.name_english))}>
+                                        {v.name_dative}
+                                    </span>
                                 ))}
                             </div>
                         </span>
@@ -426,11 +366,7 @@ export const RestaurantMapPage = () => {
                             apiKey={String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}
                             lang={String(import.meta.env.VITE_YANDEX_MAPS_API_LANG)}
                         >
-                            <YMap
-                                location={location}
-                                mode="vector"
-                                ref={(ymap: YMaps.YMap) => setYmap(ymap)}
-                            >
+                            <YMap location={location} mode="vector" ref={(ymap: YMaps.YMap) => setYmap(ymap)}>
                                 <YMapDefaultSchemeLayer />
                                 <YMapDefaultFeaturesLayer />
                                 <YMapCustomClusterer
@@ -446,30 +382,15 @@ export const RestaurantMapPage = () => {
                     <div className={css.bottomEl}>
                         <div className={css.restListContainer}>
                             {restaurants
-                                .filter(
-                                    (v) =>
-                                        v.city.name_english ===
-                                        city?.name_english
-                                )
+                                .filter((v) => v.city.name_english === city?.name_english)
                                 .map((v) => (
                                     <div
                                         className={css.restList_item}
                                         key={v.title}
-                                        onClick={() =>
-                                            navigateToRestaurant(v.id)
-                                        }
+                                        onClick={() => navigateToRestaurant(v.id)}
                                     >
-                                        <span
-                                            className={css.restList_item_title}
-                                        >
-                                            {v.title}
-                                        </span>
-                                        <span
-                                            className={classNames(
-                                                css.mont,
-                                                css.restList_item_subtitle
-                                            )}
-                                        >
+                                        <span className={css.restList_item_title}>{v.title}</span>
+                                        <span className={classNames(css.mont, css.restList_item_subtitle)}>
                                             {v.address}
                                         </span>
                                     </div>

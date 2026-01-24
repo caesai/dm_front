@@ -47,20 +47,7 @@ export const getGuestsString = (num: string | number): string => {
     }
 };
 
-const MONTHS = [
-    'янв',
-    'фев',
-    'мар',
-    'апр',
-    'май',
-    'июн',
-    'июл',
-    'авг',
-    'сен',
-    'окт',
-    'ноя',
-    'дек',
-];
+const MONTHS = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
 const MONTHS_LONG = [
     'январь',
     'февраль',
@@ -224,10 +211,7 @@ export function formatWorkTime(worktime: IWorkTime[]): string[] {
         const last = currentRange[currentRange.length - 1];
         const current = worktime[i];
 
-        if (
-            last.time_start === current.time_start &&
-            last.time_end === current.time_end
-        ) {
+        if (last.time_start === current.time_start && last.time_end === current.time_end) {
             currentRange.push(current);
         } else {
             addToResult(currentRange, result);
@@ -244,15 +228,11 @@ export function formatWorkTime(worktime: IWorkTime[]): string[] {
 
 function addToResult(range: IWorkTime[], result: string[]): void {
     if (range.length === 1) {
-        result.push(
-            `${range[0].weekday}: ${range[0].time_start} - ${range[0].time_end}`
-        );
+        result.push(`${range[0].weekday}: ${range[0].time_start} - ${range[0].time_end}`);
     } else {
         const first = range[0].weekday;
         const last = range[range.length - 1].weekday;
-        result.push(
-            `${first}-${last}: ${range[0].time_start} - ${range[0].time_end}`
-        );
+        result.push(`${first}-${last}: ${range[0].time_start} - ${range[0].time_end}`);
     }
 }
 
@@ -308,14 +288,10 @@ function formatMinutesToTime(totalMins: number): string {
  * @param currentTimeStr - текущее время в формате 'HH:mm'
  * @returns Строка вида "Открыто до 02:00" или "Откроется в 10:00"
  */
-export const getRestaurantStatus = (
-    worktime: IWorkTime[],
-    currentWeekday: string,
-    currentTimeStr: string,
-): string => {
+export const getRestaurantStatus = (worktime: IWorkTime[], currentWeekday: string, currentTimeStr: string): string => {
     const currentDayIndex = dayIndexMap[currentWeekday];
     const currentMins = parseTimeToMinutes(currentTimeStr);
-    
+
     // Разделим расписание по дням для удобства
     const scheduleByDay: Record<number, { start: number; end: number }[]> = {};
     for (const wt of worktime) {
@@ -327,13 +303,13 @@ export const getRestaurantStatus = (
         if (end <= start) {
             end += 24 * 60; // +1440
         }
-        
+
         if (!scheduleByDay[dIndex]) {
             scheduleByDay[dIndex] = [];
         }
         scheduleByDay[dIndex].push({ start, end });
     }
-   
+
     // Упорядочим интервалы для каждого дня по времени старта
     for (const day in scheduleByDay) {
         scheduleByDay[day].sort((a, b) => a.start - b.start);
@@ -504,16 +480,14 @@ export const getRestaurantStatusTyped = (
 //     });
 // };
 
-
 // Callback function for asynchronous call to HTML5 geolocation
 export function UserLocation(latitude: number, longitude: number) {
     return NearestCity(latitude, longitude);
 }
 
-
 // Convert Degress to Radians
 function Deg2Rad(deg: number) {
-    return deg * Math.PI / 180;
+    return (deg * Math.PI) / 180;
 }
 
 function PythagorasEquirectangular(lat1: number, lon1: number, lat2: number, lon2: number) {
@@ -523,16 +497,16 @@ function PythagorasEquirectangular(lat1: number, lon1: number, lat2: number, lon
     lon2 = Deg2Rad(lon2);
     const R = 6371; // km
     const x = (lon2 - lon1) * Math.cos((lat1 + lat2) / 2);
-    const y = (lat2 - lat1);
+    const y = lat2 - lat1;
     const d = Math.sqrt(x * x + y * y) * R;
     return d;
 }
 
 const cities = [
-    ["Москва", 55.76293912619414, 37.59123129965203, "blah"],
-    ["Санкт-Петербург", 59.95940058217715, 30.308801930651814, "blah"],
-    ["Екатеринбург", 56.85459740069718, 60.60638624410648, "blah"],
-    ["Ростов-на-Дону", 47.24551013674296, 39.66094881139558, "blah"]
+    ['Москва', 55.76293912619414, 37.59123129965203, 'blah'],
+    ['Санкт-Петербург', 59.95940058217715, 30.308801930651814, 'blah'],
+    ['Екатеринбург', 56.85459740069718, 60.60638624410648, 'blah'],
+    ['Ростов-на-Дону', 47.24551013674296, 39.66094881139558, 'blah'],
 ];
 
 export function NearestCity(latitude: number, longitude: number) {
@@ -557,15 +531,15 @@ export const setDataToLocalStorage = (itemKey: string, data: object) => {
     } catch (e) {
         console.error(e);
     }
-}
+};
 
 export const getDataFromLocalStorage = (itemKey: string) => {
     return localStorage.getItem(itemKey);
-}
+};
 
 export const removeDataFromLocalStorage = (itemKey: string) => {
     localStorage.removeItem(itemKey);
-}
+};
 
 export const getBlobFromUrl = async (blobUrl: string) => {
     // const response = await axios.get(blobUrl, {
@@ -574,47 +548,44 @@ export const getBlobFromUrl = async (blobUrl: string) => {
     // return response.data;
     const response = await fetch(blobUrl);
     return await response.blob();
-}
+};
 
 export const getCookie = (name: string) => {
     const nameExpression = `${name}=`;
     const cookies = document.cookie.split(';');
-    const cookie = cookies.find(currentCookie => currentCookie.includes(nameExpression));
+    const cookie = cookies.find((currentCookie) => currentCookie.includes(nameExpression));
     return cookie ? cookie.trim().substring(nameExpression.length, cookie.length) : null;
-}
+};
 
 export const setCookie = (name: string, value: string, expire = 365, path = '/') => {
     const date = new Date();
-    date.setTime(date.getTime() + (expire * 24 * 3600 * 1000));
+    date.setTime(date.getTime() + expire * 24 * 3600 * 1000);
     const expires = date.toUTCString();
     document.cookie = `${name}=${value}; expires=${expires}; path=${path}`;
 };
 
 export const setShortCookie = (name: string, value: string, seconds: number, path = '/') => {
     const date = new Date();
-    date.setTime(date.getTime() + (seconds * 1000));
+    date.setTime(date.getTime() + seconds * 1000);
     const expires = date.toUTCString();
     document.cookie = `${name}=${value}; expires=${expires}; path=${path}`;
 };
 export const findOtherAllergies = (allergies: string[]) => {
     // Создаем Set для быстрого поиска по названиям аллергенов
-    const validAllergies = new Set(allergiesOptions.map(option => option.content));
+    const validAllergies = new Set(allergiesOptions.map((option) => option.content));
 
     // Фильтруем userAllergies, оставляя только те, которых нет в Set
-    return allergies.filter(allergy => !validAllergies.has(allergy));
-}
+    return allergies.filter((allergy) => !validAllergies.has(allergy));
+};
 
-export const getRestaurantAddressById = (
-    res_id: string,
-    restaurantsList: IRestaurant[]
-): string | undefined => {
-    const restaurant = restaurantsList.find(restaurant => String(restaurant.id) === String(res_id));
+export const getRestaurantAddressById = (res_id: string, restaurantsList: IRestaurant[]): string | undefined => {
+    const restaurant = restaurantsList.find((restaurant) => String(restaurant.id) === String(res_id));
 
     return restaurant?.address;
 };
 // Telegram Id из объекта window.Telegram.WebApp.initDataUnsafe.user.id
 const tg_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-/** 
+/**
  * Проверяет, принадлежит ли пользователь тестовой группе
  * @param tg_id - Telegram Id из объекта window.Telegram.WebApp.initDataUnsafe.user.id
  * @returns true, если пользователь принадлежит тестовой группе, false в противном случае

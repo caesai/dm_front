@@ -33,8 +33,8 @@ export const BottomButtonWrapper: React.FC<IBottomButtonWrapperProps> = ({
                     className={classnames(
                         css.button,
                         css[theme],
-                        {[css.disabled]: isDisabled},
-                        {[css.loading]: isLoading},
+                        { [css.disabled]: isDisabled },
+                        { [css.loading]: isLoading }
                     )}
                     disabled={isDisabled}
                     onClick={onClick}

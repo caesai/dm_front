@@ -172,7 +172,7 @@ export const BookingPage: React.FC = (): JSX.Element => {
     const confirmationOptions = useMemo(() => {
         const requiresDeposit = form.date?.attributes?.includes('requires_deposit');
         if (requiresDeposit) {
-            return CONFIRMATION_OPTIONS.filter(opt => opt.id === 'telegram' || opt.id === 'phone');
+            return CONFIRMATION_OPTIONS.filter((opt) => opt.id === 'telegram' || opt.id === 'phone');
         }
         return CONFIRMATION_OPTIONS;
     }, [form.date?.attributes]);
@@ -182,7 +182,7 @@ export const BookingPage: React.FC = (): JSX.Element => {
      * Если текущий способ недоступен для депозитных дат, сбрасываем на первый доступный.
      */
     useEffect(() => {
-        const isCurrentOptionValid = confirmationOptions.some(opt => opt.id === form.confirmation.id);
+        const isCurrentOptionValid = confirmationOptions.some((opt) => opt.id === form.confirmation.id);
         if (!isCurrentOptionValid && confirmationOptions.length > 0) {
             handlers.setConfirmation(confirmationOptions[0]);
         }

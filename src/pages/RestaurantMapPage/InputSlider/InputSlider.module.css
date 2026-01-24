@@ -3,7 +3,7 @@
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -29,7 +29,7 @@
     width: 50%;
     float: left;
     text-align: center;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-size: 14px;
     font-weight: 700;
     line-height: 40px;
@@ -37,12 +37,12 @@
     position: relative;
     z-index: 500;
     cursor: pointer;
-    transition: all .2s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 .planSwitch input:checked + label {
     color: #fff;
-    text-shadow: rgba(0, 0, 0, .1) 0 -1px 2px;
+    text-shadow: rgba(0, 0, 0, 0.1) 0 -1px 2px;
 }
 
 .indicator {
@@ -54,7 +54,7 @@
     position: absolute;
     top: 3px;
     z-index: 250;
-    transition: left .2s ease-in-out;
+    transition: left 0.2s ease-in-out;
 }
 
 .planSwitch input:first-of-type:checked ~ .indicator {

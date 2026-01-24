@@ -5,13 +5,7 @@ type IconProps = {
 
 export const TimeCircle = ({ size = 24, color = '#000000' }: IconProps) => {
     return (
-        <svg
-            width={size}
-            height={size}
-            viewBox={`0 0 ${size} ${size}`}
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 fillRule="evenodd"
                 clipRule="evenodd"

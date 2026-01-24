@@ -10,7 +10,6 @@ export const useModal = () => {
     return {
         isShowing,
         toggle,
-        setIsShowing
+        setIsShowing,
     };
 };
-

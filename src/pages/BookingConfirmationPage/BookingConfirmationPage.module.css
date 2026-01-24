@@ -32,7 +32,6 @@
     border-bottom-right-radius: 20px;
 }
 
-
 .main {
     display: flex;
     flex-direction: column;
@@ -61,11 +60,9 @@
     text-decoration-thickness: 0%;
     text-decoration-skip-ink: auto;
     color: var(--grey);
-
 }
 
 .about {
-
 }
 
 .wh44 {
@@ -124,7 +121,7 @@
 .calendar__month {
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
-    border: 1px solid var(--light-grey, #D0D0D0);
+    border: 1px solid var(--light-grey, #d0d0d0);
     border-bottom: none;
 
     span {
@@ -138,7 +135,7 @@
 .calendar__day {
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
-    border: 1px solid var(--light-grey, #D0D0D0);
+    border: 1px solid var(--light-grey, #d0d0d0);
 
     span {
         height: 23px;
@@ -159,7 +156,7 @@
 .bookingInfo_restaurant__title {
     padding: 0;
     margin: 0;
-    font-family: "Heading Pro Ultracompressed", sans-serif;
+    font-family: 'Heading Pro Ultracompressed', sans-serif;
     font-weight: 800;
     font-size: 42px;
     text-transform: uppercase;
@@ -170,7 +167,7 @@
 .bookingInfo_restaurant__subtitle {
     padding: 0;
     margin: 0;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 12px;
     color: var(--dark-grey);

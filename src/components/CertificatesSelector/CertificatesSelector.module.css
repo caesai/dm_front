@@ -37,7 +37,8 @@
     flex-direction: column;
 }
 
-.rating, .date {
+.rating,
+.date {
     font-weight: bold;
-    color: black!important;
+    color: black !important;
 }

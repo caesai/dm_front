@@ -1,8 +1,8 @@
-import {FC} from 'react';
+import { FC } from 'react';
 import Popup from 'reactjs-popup';
 import css from './PrivelegiesPopup.module.css';
 import styled from 'styled-components';
-import {CloseIcon} from "@/components/Icons/CloseIcon.tsx";
+import { CloseIcon } from '@/components/Icons/CloseIcon.tsx';
 
 interface Props {
     isOpen: boolean;
@@ -31,20 +31,25 @@ export const PrivelegiesPopup: FC<Props> = (p) => {
             open={p.isOpen}
             onClose={onClose}
             position={'top center'}
-            contentStyle={{width: 'calc(100vw-30px)'}}
+            contentStyle={{ width: 'calc(100vw-30px)' }}
             modal
         >
             <div className={css.popup}>
                 <span className={css.closeIcon} onClick={onClose}>
-                    <CloseIcon size={44}/>
+                    <CloseIcon size={44} />
                 </span>
                 <div className={css.info}>
-                    <span>Ваш уровень<br/> лояльности: Партнер</span>
+                    <span>
+                        Ваш уровень
+                        <br /> лояльности: Партнер
+                    </span>
                 </div>
                 <div className={css.discount}>
-                    <span>Скидка 10% во всех ресторанах<br/> Self Edge Japanese.</span>
+                    <span>
+                        Скидка 10% во всех ресторанах
+                        <br /> Self Edge Japanese.
+                    </span>
                 </div>
-
             </div>
         </StyledPopup>
     );

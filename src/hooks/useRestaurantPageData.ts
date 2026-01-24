@@ -1,12 +1,12 @@
 /**
  * @fileoverview Хук для загрузки данных страницы ресторана.
- * 
+ *
  * Загружает только события (мероприятия) ресторана.
- * 
+ *
  * Для работы с датами бронирования и таймслотами используйте {@link useBookingForm}.
- * 
+ *
  * @module hooks/useRestaurantPageData
- * 
+ *
  * @see {@link useBookingForm} - хук для работы с формой бронирования (даты, таймслоты)
  * @see {@link EventsBlock} - компонент, использующий этот хук для отображения мероприятий
  */
@@ -49,27 +49,27 @@ let globalInitializedRestaurantId: string | null = null;
 
 /**
  * Хук для загрузки данных страницы ресторана.
- * 
+ *
  * Загружает только события (мероприятия) ресторана.
  * Для работы с бронированием (даты, таймслоты) используйте {@link useBookingForm}.
- * 
+ *
  * Оптимизации:
  * - Предотвращение дублирующих запросов
  * - Отмена запросов при размонтировании
  * - Умная инвалидация при смене ресторана
- * 
+ *
  * @param options - Опции хука
  * @param options.restaurantId - ID ресторана
  * @param options.onError - Callback при ошибке
- * 
+ *
  * @returns Состояние событий и загрузки
- * 
+ *
  * @example
  * // Загрузка событий для EventsBlock
- * const { events, eventsLoading } = useRestaurantPageData({ 
- *     restaurantId: '123' 
+ * const { events, eventsLoading } = useRestaurantPageData({
+ *     restaurantId: '123'
  * });
- * 
+ *
  * @example
  * // Для работы с бронированием используйте useBookingForm
  * const { form, availableDates, availableTimeslots, handlers } = useBookingForm({

@@ -28,13 +28,13 @@
 }
 
 .order_title {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-size: 1rem;
     font-weight: 700;
 }
 
 .order_text {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-size: 0.875rem;
     font-weight: 600;
 }
@@ -46,7 +46,7 @@
     outline: none;
     border: none;
     border-radius: 8px;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-size: 1rem;
     font-weight: 700;
 }

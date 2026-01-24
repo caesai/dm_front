@@ -1,7 +1,7 @@
 import { Placeholder, AppRoot } from '@telegram-apps/telegram-ui';
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 import { useMemo } from 'react';
-import telegramGif from "/icons/telegram.gif";
+import telegramGif from '/icons/telegram.gif';
 
 export function EnvUnsupported() {
     const [platform, isDark] = useMemo(() => {
@@ -18,10 +18,7 @@ export function EnvUnsupported() {
     }, []);
 
     return (
-        <AppRoot
-            appearance={isDark ? 'dark' : 'light'}
-            platform={['macos', 'ios'].includes(platform) ? 'ios' : 'base'}
-        >
+        <AppRoot appearance={isDark ? 'dark' : 'light'} platform={['macos', 'ios'].includes(platform) ? 'ios' : 'base'}>
             <Placeholder
                 header="Неподдерживаемая платформа"
                 description="Приложение было запущено из неподдерживаемой платформы, попробуйте обновить приложение Telegram"

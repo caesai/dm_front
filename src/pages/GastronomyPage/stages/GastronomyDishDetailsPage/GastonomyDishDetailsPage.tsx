@@ -97,9 +97,7 @@ export const GastonomyDishDetailsPage: React.FC = () => {
 
                     <div className={css.section}>
                         <span className={css.sectionTitle}>Описание</span>
-                        <p className={css.sectionText}>
-                            {dishFromState.description || dishFromState.guest_title}
-                        </p>
+                        <p className={css.sectionText}>{dishFromState.description || dishFromState.guest_title}</p>
                     </div>
 
                     {(() => {

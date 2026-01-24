@@ -43,7 +43,10 @@ export const AddressBlock: React.FC<IAddressBlockProps> = ({ restaurantId }): JS
 
     const logoUrl = useMemo(() => restaurant?.logo_url || '', [restaurant?.logo_url]);
     const address = useMemo(() => restaurant?.address || '', [restaurant?.address]);
-    const addressStationColor = useMemo(() => restaurant?.address_station_color || '', [restaurant?.address_station_color]);
+    const addressStationColor = useMemo(
+        () => restaurant?.address_station_color || '',
+        [restaurant?.address_station_color]
+    );
     /**
      * Извлекает координаты из строки адреса
      * @returns {{longitude: number, latitude: number}} Объект с координатами
@@ -92,30 +95,30 @@ export const AddressBlock: React.FC<IAddressBlockProps> = ({ restaurantId }): JS
 
             <ContentBlock className={css.mapContainer}>
                 <div className={css.map}>
-                        <YMapComponentsProvider
-                            apiKey={String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}
-                            lang={String(import.meta.env.VITE_YANDEX_MAPS_API_LANG)}
-                        >
-                            <YMap location={mapLocation}>
-                                <YMapDefaultSchemeLayer />
-                                <YMapDefaultFeaturesLayer />
-                                <YMapMarker coordinates={[coordinates.longitude, coordinates.latitude]} draggable={false}>
-                                    <div className={css.mapPoint}>
-                                        {/** Логотип ресторана */}
-                                        <img width={50} src={logoUrl} alt={restaurant?.title || ''} />
-                                    </div>
-                                </YMapMarker>
-                            </YMap>
-
-                            <section className={css.infoContainer}>
-                                <div className={css.RestInfo}>
-                                    <div className={css.mapInfo}>
-                                        {renderMetroInfo()}
-                                        <address className={css.mapInfoAddress}>{address}</address>
-                                    </div>
+                    <YMapComponentsProvider
+                        apiKey={String(import.meta.env.VITE_YANDEX_MAPS_API_KEY)}
+                        lang={String(import.meta.env.VITE_YANDEX_MAPS_API_LANG)}
+                    >
+                        <YMap location={mapLocation}>
+                            <YMapDefaultSchemeLayer />
+                            <YMapDefaultFeaturesLayer />
+                            <YMapMarker coordinates={[coordinates.longitude, coordinates.latitude]} draggable={false}>
+                                <div className={css.mapPoint}>
+                                    {/** Логотип ресторана */}
+                                    <img width={50} src={logoUrl} alt={restaurant?.title || ''} />
                                 </div>
-                            </section>
-                        </YMapComponentsProvider>
+                            </YMapMarker>
+                        </YMap>
+
+                        <section className={css.infoContainer}>
+                            <div className={css.RestInfo}>
+                                <div className={css.mapInfo}>
+                                    {renderMetroInfo()}
+                                    <address className={css.mapInfoAddress}>{address}</address>
+                                </div>
+                            </div>
+                        </section>
+                    </YMapComponentsProvider>
                 </div>
             </ContentBlock>
         </ContentContainer>

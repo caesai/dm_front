@@ -1,11 +1,4 @@
-import {
-    HTMLProps,
-    ReactNode,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-} from 'react';
+import { HTMLProps, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { PickerValueData, usePickerActions, usePickerData } from './Picker';
 import { useColumnData } from './PickerColumn';
 
@@ -13,8 +6,7 @@ interface PickerItemRenderProps {
     selected: boolean;
 }
 
-export interface PickerItemProps
-    extends Omit<HTMLProps<HTMLDivElement>, 'value' | 'children'> {
+export interface PickerItemProps extends Omit<HTMLProps<HTMLDivElement>, 'value' | 'children'> {
     children: ReactNode | ((renderProps: PickerItemRenderProps) => ReactNode);
     value: PickerValueData;
 }
@@ -49,9 +41,7 @@ function PickerItem({ style, children, value, ...restProps }: PickerItemProps) {
     );
 
     const handleClick = useCallback(() => {
-        isSimple
-            ? pickerActions.change(key, value)
-            : pickerActions.change(key, value.value);
+        isSimple ? pickerActions.change(key, value) : pickerActions.change(key, value.value);
     }, [pickerActions, key, value]);
 
     return (
@@ -68,8 +58,7 @@ function PickerItem({ style, children, value, ...restProps }: PickerItemProps) {
                 ? children({
                       selected: isSimple
                           ? pickerValue[key] === value
-                          : pickerValue[key] === value.title ||
-                            pickerValue[key] === value.value,
+                          : pickerValue[key] === value.title || pickerValue[key] === value.value,
                   })
                 : children}
         </div>

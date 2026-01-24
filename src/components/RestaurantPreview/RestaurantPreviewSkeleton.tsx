@@ -16,7 +16,7 @@ export const RestaurantPreviewSkeleton: React.FC = () => {
             {/* Фоновое изображение с aspect-ratio 1:1 как у реальной карточки */}
             <div className={classNames(css.bgImage, css.imaged)} style={{ overflow: 'hidden' }}>
                 <PlaceholderBlock width="100%" aspectRatio="1/1" rounded="16px" />
-                
+
                 {/* Badges skeleton - соответствует структуре floatingBadges */}
                 <div className={css.floatingBadges} style={{ position: 'absolute', bottom: -6, left: 0, right: 0 }}>
                     <div style={{ display: 'flex', gap: 8, padding: '0 15px' }}>
@@ -24,7 +24,7 @@ export const RestaurantPreviewSkeleton: React.FC = () => {
                         <PlaceholderBlock width="130px" height="130px" rounded="12px" />
                     </div>
                 </div>
-                
+
                 {/* Chef section skeleton - соответствует imagedBottom */}
                 <div className={css.imagedBottom} style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
                     <PlaceholderBlock width="54px" height="54px" rounded="50%" />
@@ -34,7 +34,7 @@ export const RestaurantPreviewSkeleton: React.FC = () => {
                     </div>
                 </div>
             </div>
-            
+
             {/* Info section skeleton */}
             <div className={css.resInfo}>
                 <div className={css.resTitleWrapper}>
@@ -61,12 +61,10 @@ interface RestaurantPreviewSkeletonListProps {
 
 /**
  * Список skeleton компонентов для ресторанов.
- * 
+ *
  * @param count - Количество skeleton элементов (по умолчанию 3)
  */
-export const RestaurantPreviewSkeletonList: React.FC<RestaurantPreviewSkeletonListProps> = ({ 
-    count = 3 
-}) => {
+export const RestaurantPreviewSkeletonList: React.FC<RestaurantPreviewSkeletonListProps> = ({ count = 3 }) => {
     return (
         <>
             {[...Array(count)].map((_, index) => (
@@ -75,4 +73,3 @@ export const RestaurantPreviewSkeletonList: React.FC<RestaurantPreviewSkeletonLi
         </>
     );
 };
-

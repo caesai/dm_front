@@ -21,11 +21,7 @@ export const OptionsNavigationElement: React.FC<OptionsNavigationElementProps> =
     className,
 }) => {
     return (
-        <Link
-            to={link}
-            className={classNames(css.wrapper, className)}
-            state={locationState}
-        >
+        <Link to={link} className={classNames(css.wrapper, className)} state={locationState}>
             <ContentBlock className={css.icon}>
                 <img src={img} alt="" />
             </ContentBlock>

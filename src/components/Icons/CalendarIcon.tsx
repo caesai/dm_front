@@ -5,67 +5,16 @@ type IconProps = {
 
 export const CalendarIcon = ({ size = 24, color = '#000000' }: IconProps) => {
     return (
-        <svg
-            width={size}
-            height={size}
-            viewBox="0 0 17 15"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <path
-                d="M2.56177 6.2698H14.4444"
-                stroke={color}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M11.4612 8.87331H11.4674"
-                stroke={color}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M8.50322 8.87331H8.5094"
-                stroke={color}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M5.53862 8.87331H5.5448"
-                stroke={color}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M11.4612 11.4641H11.4674"
-                stroke={color}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M8.50322 11.4641H8.5094"
-                stroke={color}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M5.53862 11.4641H5.5448"
-                stroke={color}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M11.1958 1.3335V3.52735"
-                stroke={color}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M5.81027 1.3335V3.52735"
-                stroke={color}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
+        <svg width={size} height={size} viewBox="0 0 17 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.56177 6.2698H14.4444" stroke={color} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M11.4612 8.87331H11.4674" stroke={color} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M8.50322 8.87331H8.5094" stroke={color} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M5.53862 8.87331H5.5448" stroke={color} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M11.4612 11.4641H11.4674" stroke={color} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M8.50322 11.4641H8.5094" stroke={color} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M5.53862 11.4641H5.5448" stroke={color} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M11.1958 1.3335V3.52735" stroke={color} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M5.81027 1.3335V3.52735" stroke={color} strokeLinecap="round" strokeLinejoin="round" />
             <path
                 fillRule="evenodd"
                 clipRule="evenodd"

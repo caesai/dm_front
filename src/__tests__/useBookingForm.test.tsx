@@ -1,12 +1,12 @@
 /**
  * @fileoverview Тесты для хука useBookingForm.
- * 
+ *
  * Хук useBookingForm - центральный хук для управления формой бронирования столиков.
  * Используется в трёх основных страницах:
  * - {@link BookingPage} - общая страница бронирования
  * - {@link RestaurantBookingPage} - бронирование конкретного ресторана
  * - {@link EventBookingPage} - бронирование на мероприятие
- * 
+ *
  * Тесты покрывают:
  * - Инициализация формы с данными пользователя
  * - Валидация полей (имя, телефон, дата, время, гости)
@@ -14,9 +14,9 @@
  * - Обработчики изменений полей формы
  * - Создание бронирования и навигация
  * - Различные сценарии использования
- * 
+ *
  * @module __tests__/useBookingForm
- * 
+ *
  * @see {@link useBookingForm} - тестируемый хук
  * @see {@link BookingPage.test.tsx} - тесты страницы общего бронирования
  * @see {@link RestaurantBookingPage.test.tsx} - тесты страницы бронирования ресторана
@@ -102,26 +102,18 @@ interface InitialValues {
 /**
  * Компонент для гидрации атомов в тестах.
  */
-const HydrateAtoms: React.FC<PropsWithChildren<{ initialValues: any[] }>> = ({ 
-    initialValues, 
-    children 
-}) => {
+const HydrateAtoms: React.FC<PropsWithChildren<{ initialValues: any[] }>> = ({ initialValues, children }) => {
     useHydrateAtoms(initialValues as any);
     return <>{children}</>;
 };
 
 /**
  * Создаёт провайдер с Jotai атомами для тестирования хука.
- * 
+ *
  * @param initialValues - Начальные значения атомов
  */
 const createWrapper = (initialValues: InitialValues = {}) => {
-    const {
-        user = mockUserData,
-        auth = { access_token: 'test-token' },
-        certificates = [],
-        comms = [],
-    } = initialValues;
+    const { user = mockUserData, auth = { access_token: 'test-token' }, certificates = [], comms = [] } = initialValues;
 
     const atomValues = [
         [userAtom, user],
@@ -152,7 +144,7 @@ describe('useBookingForm', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        
+
         // Подавляем ожидаемые ошибки
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -857,11 +849,7 @@ describe('useBookingForm', () => {
             });
 
             await waitFor(() => {
-                expect(mockAPIGetAvailableDays).toHaveBeenCalledWith(
-                    'test-token',
-                    '1',
-                    1
-                );
+                expect(mockAPIGetAvailableDays).toHaveBeenCalledWith('test-token', '1', 1);
             });
         });
 
@@ -897,12 +885,7 @@ describe('useBookingForm', () => {
             });
 
             await waitFor(() => {
-                expect(mockAPIGetAvailableTimeSlots).toHaveBeenCalledWith(
-                    'test-token',
-                    '1',
-                    '2025-08-23',
-                    2
-                );
+                expect(mockAPIGetAvailableTimeSlots).toHaveBeenCalledWith('test-token', '1', '2025-08-23', 2);
             });
         });
 
@@ -932,7 +915,10 @@ describe('useBookingForm', () => {
             // Создаём промис, который не резолвится сразу
             let resolvePromise: (value: any) => void;
             mockAPIGetAvailableDays.mockImplementation(
-                () => new Promise((resolve) => { resolvePromise = resolve; })
+                () =>
+                    new Promise((resolve) => {
+                        resolvePromise = resolve;
+                    })
             );
 
             const { result } = renderHook(() => useBookingForm(), {
@@ -1169,7 +1155,10 @@ describe('useBookingForm', () => {
         test('должен устанавливать loading.submit во время создания', async () => {
             let resolvePromise: (value: any) => void;
             mockAPICreateBooking.mockImplementation(
-                () => new Promise((resolve) => { resolvePromise = resolve; })
+                () =>
+                    new Promise((resolve) => {
+                        resolvePromise = resolve;
+                    })
             );
 
             const result = await setupValidBooking();
@@ -1304,10 +1293,9 @@ describe('useBookingForm', () => {
          * Проверяет что sharedRestaurant передаётся в state.
          */
         test('должен передавать sharedRestaurant в state при редиректе', async () => {
-            const { result } = renderHook(
-                () => useBookingForm({ isShared: true }),
-                { wrapper: createWrapper({ user: mockUserNotOnboarded }) }
-            );
+            const { result } = renderHook(() => useBookingForm({ isShared: true }), {
+                wrapper: createWrapper({ user: mockUserNotOnboarded }),
+            });
 
             act(() => {
                 result.current.handlers.selectRestaurant({ title: 'Test', value: '1' });
@@ -1384,10 +1372,7 @@ describe('useBookingForm', () => {
          * Проверяет что isSharedRestaurant возвращает переданное значение.
          */
         test('должен возвращать переданное значение', async () => {
-            const { result } = renderHook(
-                () => useBookingForm({ isShared: true }),
-                { wrapper: createWrapper() }
-            );
+            const { result } = renderHook(() => useBookingForm({ isShared: true }), { wrapper: createWrapper() });
 
             expect(result.current.isShared).toBe(true);
         });
@@ -1495,12 +1480,12 @@ describe('useBookingForm', () => {
 
     /**
      * Тесты функциональности депозитных дат.
-     * 
+     *
      * Депозитные даты имеют атрибут 'requires_deposit' и требуют:
      * - Показ попапа с условиями депозита при выборе даты
      * - Фильтрацию способов подтверждения (только телефон и Telegram)
      * - Хранение deposit_per_person для отображения суммы
-     * 
+     *
      * @see {@link DepositInfoModal} - попап информации о депозите
      * @see {@link DateListSelector} - компонент выбора даты
      */
@@ -1528,7 +1513,7 @@ describe('useBookingForm', () => {
             });
 
             // Проверяем что даты содержат attributes
-            const depositDate = result.current.availableDates.find(d => d.value === '2025-08-24');
+            const depositDate = result.current.availableDates.find((d) => d.value === '2025-08-24');
             expect(depositDate?.attributes).toContain('requires_deposit');
             expect(depositDate?.deposit_per_person).toBe(1500);
         });
@@ -1537,9 +1522,7 @@ describe('useBookingForm', () => {
          * Проверяет что обычная дата не имеет атрибута requires_deposit.
          */
         test('должен корректно обрабатывать обычные даты без депозита', async () => {
-            const depositDates = [
-                { date: '2025-08-23', attributes: [], deposit_per_person: 0 },
-            ];
+            const depositDates = [{ date: '2025-08-23', attributes: [], deposit_per_person: 0 }];
             mockAPIGetAvailableDays.mockResolvedValue({ data: depositDates });
 
             const { result } = renderHook(() => useBookingForm(), {
@@ -1554,7 +1537,7 @@ describe('useBookingForm', () => {
                 expect(result.current.availableDates.length).toBeGreaterThan(0);
             });
 
-            const normalDate = result.current.availableDates.find(d => d.value === '2025-08-23');
+            const normalDate = result.current.availableDates.find((d) => d.value === '2025-08-23');
             expect(normalDate?.attributes).not.toContain('requires_deposit');
             expect(normalDate?.deposit_per_person).toBe(0);
         });

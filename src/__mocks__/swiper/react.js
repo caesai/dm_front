@@ -115,7 +115,7 @@ const SWIPER_PROPS = [
 const filterSwiperProps = (props) => {
     const filtered = {};
     Object.keys(props).forEach((key) => {
-        if (!SWIPER_PROPS.includes(key) && !key.startsWith('on') || key === 'onClick' || key === 'onKeyDown') {
+        if ((!SWIPER_PROPS.includes(key) && !key.startsWith('on')) || key === 'onClick' || key === 'onKeyDown') {
             filtered[key] = props[key];
         }
     });

@@ -27,7 +27,8 @@
     gap: 8px;
 }
 
-.detailsPage, .eventPurchasePage {
+.detailsPage,
+.eventPurchasePage {
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -54,14 +55,14 @@
 .detailsPageDescriptionTitle {
     margin: 0;
     padding: 0;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 16px;
     text-transform: none;
 }
 
 .detailsPageDescriptionText {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 150%;
@@ -82,7 +83,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-size: 14px;
 }
 
@@ -93,7 +94,7 @@
 
 .detailsPageDataColData {
     color: var(--black);
-    font-weight: 800
+    font-weight: 800;
 }
 
 .detailsPageRoundedText {
@@ -107,7 +108,7 @@
 
     span {
         color: var(--grey);
-        font-family: "Mont", sans-serif;
+        font-family: 'Mont', sans-serif;
         font-weight: 400;
         font-size: 12px;
         letter-spacing: 0;
@@ -124,10 +125,10 @@
 }
 
 .detailsPageGuestCounterTitle {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-size: 14px;
     color: var(--black);
-    font-weight: 400
+    font-weight: 400;
 }
 
 .detailsPageGuestCounter {
@@ -140,7 +141,7 @@
     height: min-content;
 
     span {
-        font-family: "Mont", sans-serif;
+        font-family: 'Mont', sans-serif;
         font-weight: 400;
         font-size: 12px;
         letter-spacing: 0;
@@ -168,7 +169,7 @@
 }
 
 .eventPurchasePageTitle {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 600;
     font-size: 30px;
     padding: 0;
@@ -176,7 +177,7 @@
 }
 
 .eventPurchasePageSubtitle {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 20px;
     vertical-align: bottom;
@@ -191,14 +192,15 @@
 
 .eventPurchasePageDataRow {
     flex-direction: row;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 700;
     font-size: 14px;
     display: inline-flex;
     align-items: center;
     gap: 5px;
     color: var(--black);
-    span, time {
+    span,
+    time {
         color: #989898;
     }
 }
@@ -216,21 +218,21 @@
 
 .eventPurchasePageDataRowSmall {
     max-width: 70%;
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 600;
     font-size: 12px;
     color: var(--grey);
 }
 
 .eventPurchasePageDataRowBold {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 600;
     font-size: 16px;
-    color: var(--black)!important;
+    color: var(--black) !important;
 }
 
 .eventPurchaseCancellationPolicy {
-    font-family: "Mont", sans-serif;
+    font-family: 'Mont', sans-serif;
     font-weight: 400;
     font-size: 10px;
     color: var(--grey);

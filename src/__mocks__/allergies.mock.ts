@@ -1,38 +1,38 @@
 export const allergiesOptions = [
     {
         content: 'Молоко',
-        icon: '🥛'
+        icon: '🥛',
     },
     {
         content: 'Арахис',
-        icon: '🥜'
+        icon: '🥜',
     },
     {
         content: 'Соя',
-        icon: '🫘'
+        icon: '🫘',
     },
     {
         content: 'Орехи',
-        icon: '🌰'
+        icon: '🌰',
     },
     {
         content: 'Мед',
-        icon: '🍯'
+        icon: '🍯',
     },
     {
         content: 'Глютен',
-        icon: '🌾'
+        icon: '🌾',
     },
     {
         content: 'Рыба',
-        icon: '🐟'
+        icon: '🐟',
     },
     {
         content: 'Морепродукты',
-        icon: '🦪'
+        icon: '🦪',
     },
     {
         content: 'Цитрусовые',
-        icon: '🍋'
+        icon: '🍋',
     },
-]
+];

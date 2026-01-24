@@ -1,21 +1,21 @@
 /**
  * @fileoverview Тесты для страницы ресторана RestaurantPage.
- * 
+ *
  * Страница отображает информацию о ресторане с возможностью:
  * - Просмотра галереи, меню, событий, банкетов
  * - Бронирования столика
  * - Открытия местоположения в Яндекс Картах
  * - Звонка в ресторан
- * 
+ *
  * Основные тестируемые сценарии:
  * - Рендеринг всех блоков страницы
  * - Навигация на страницу бронирования (с учётом онбординга)
  * - Открытие Яндекс Карт
  * - Открытие попапа звонка
  * - Передача данных о выбранной дате и времени
- * 
+ *
  * @module __tests__/restaurants/RestaurantPage
- * 
+ *
  * @see {@link RestaurantPage} - тестируемый компонент
  * @see {@link useRestaurantPageData} - хук загрузки данных страницы
  * @see {@link useGetRestaurantById} - хук получения ресторана по ID
@@ -81,7 +81,15 @@ Object.defineProperty(window, 'open', {
  * Упрощённая версия для тестирования функциональности звонка.
  */
 jest.mock('@/components/CallRestaurantPopup/CallRestaurantPopup.tsx', () => ({
-    CallRestaurantPopup: ({ isOpen, setOpen, phone }: { isOpen: boolean; setOpen: (v: boolean) => void; phone: string }) => {
+    CallRestaurantPopup: ({
+        isOpen,
+        setOpen,
+        phone,
+    }: {
+        isOpen: boolean;
+        setOpen: (v: boolean) => void;
+        phone: string;
+    }) => {
         if (!isOpen) return null;
         return (
             <div data-testid="call-popup">
@@ -118,9 +126,7 @@ jest.mock('@/components/Page.tsx', () => ({
  * Мок компонента PageContainer.
  */
 jest.mock('@/components/PageContainer/PageContainer.tsx', () => ({
-    PageContainer: ({ children }: { children: React.ReactNode }) => (
-        <div data-testid="page-container">{children}</div>
-    ),
+    PageContainer: ({ children }: { children: React.ReactNode }) => <div data-testid="page-container">{children}</div>,
 }));
 
 /**
@@ -171,9 +177,7 @@ jest.mock('@/pages/RestaurantPage/blocks/GalleryBlock.tsx', () => ({
 }));
 
 jest.mock('@/pages/RestaurantPage/blocks/MenuBlock.tsx', () => ({
-    MenuBlock: ({ restaurantId }: { restaurantId: string }) => (
-        <div data-testid="menu-block">Menu: {restaurantId}</div>
-    ),
+    MenuBlock: ({ restaurantId }: { restaurantId: string }) => <div data-testid="menu-block">Menu: {restaurantId}</div>,
 }));
 
 jest.mock('@/pages/RestaurantPage/blocks/BanquetsBlock.tsx', () => ({
@@ -199,9 +203,7 @@ jest.mock('@/pages/RestaurantPage/blocks/AboutBlock.tsx', () => ({
 }));
 
 jest.mock('@/pages/RestaurantPage/blocks/ChefBlock.tsx', () => ({
-    ChefBlock: ({ restaurantId }: { restaurantId: string }) => (
-        <div data-testid="chef-block">Chef: {restaurantId}</div>
-    ),
+    ChefBlock: ({ restaurantId }: { restaurantId: string }) => <div data-testid="chef-block">Chef: {restaurantId}</div>,
 }));
 
 jest.mock('@/pages/RestaurantPage/blocks/AddressBlock.tsx', () => ({
@@ -232,7 +234,7 @@ global.scrollTo = jest.fn();
 
 /**
  * Тесты страницы ресторана.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Рендеринг всех блоков страницы
  * - Навигация на бронирование с онбордингом и без
@@ -259,7 +261,7 @@ describe('RestaurantPage', () => {
     /**
      * Создаёт моковые данные для useRestaurantPageData.
      * Хук теперь возвращает только события (даты и слоты управляются через useBookingForm).
-     * 
+     *
      * @param overrides - Переопределения полей по умолчанию
      * @returns Объект данных страницы
      */
@@ -272,34 +274,31 @@ describe('RestaurantPage', () => {
 
     /**
      * Рендерит компонент RestaurantPage с необходимыми провайдерами.
-     * 
+     *
      * @param options - Опции рендеринга
      * @param options.user - Данные пользователя
      * @param options.restaurant - Данные ресторана
      * @param options.pageData - Данные страницы
      * @param options.restaurantId - ID ресторана в URL
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @example
      * // Рендер с онбордингом
      * renderComponent({ user: mockUserOnboarded });
-     * 
+     *
      * @example
      * // Рендер без онбординга
      * renderComponent({ user: mockUserNotOnboarded });
      */
-    const renderComponent = (options: {
-        user?: typeof mockUserOnboarded | typeof mockUserNotOnboarded | null;
-        restaurant?: IRestaurant | null;
-        pageData?: Partial<ReturnType<typeof useRestaurantPageData>>;
-        restaurantId?: string;
-    } = {}) => {
-        const {
-            user = mockUserOnboarded,
-            restaurant = mockRestaurant,
-            pageData = {},
-            restaurantId = '1',
-        } = options;
+    const renderComponent = (
+        options: {
+            user?: typeof mockUserOnboarded | typeof mockUserNotOnboarded | null;
+            restaurant?: IRestaurant | null;
+            pageData?: Partial<ReturnType<typeof useRestaurantPageData>>;
+            restaurantId?: string;
+        } = {}
+    ) => {
+        const { user = mockUserOnboarded, restaurant = mockRestaurant, pageData = {}, restaurantId = '1' } = options;
 
         mockUseRestaurantPageData.mockReturnValue(createMockPageData(pageData));
 

@@ -30,10 +30,13 @@ interface StoriesContainerProps {
 }
 
 // Reducer for managing play/pause and buffering state.
-const playerStateReducer = (state: { pause: boolean; bufferAction: boolean }, action: {
-    type: string;
-    buffer?: boolean
-}) => {
+const playerStateReducer = (
+    state: { pause: boolean; bufferAction: boolean },
+    action: {
+        type: string;
+        buffer?: boolean;
+    }
+) => {
     switch (action.type) {
         case 'toggle_pause':
             return { ...state, pause: !state.pause };
@@ -48,25 +51,23 @@ const playerStateReducer = (state: { pause: boolean; bufferAction: boolean }, ac
     }
 };
 
-const StoriesContainer: React.FC<StoriesContainerProps> = (
-    {
-        shouldWait,
-        width,
-        height,
-        loop,
-        currentIndex,
-        isPaused,
-        keyboardNavigation,
-        preventDefault,
-        onAllStoriesEnd,
-        onPrevious,
-        onNext,
-        preloadCount = 3,
-        stories,
-        onStoryEnd,
-        onStoryStart,
-    },
-) => {
+const StoriesContainer: React.FC<StoriesContainerProps> = ({
+    shouldWait,
+    width,
+    height,
+    loop,
+    currentIndex,
+    isPaused,
+    keyboardNavigation,
+    preventDefault,
+    onAllStoriesEnd,
+    onPrevious,
+    onNext,
+    preloadCount = 3,
+    stories,
+    onStoryEnd,
+    onStoryStart,
+}) => {
     const [{ currentId }, dispatch] = useReducer(storiesReducer, { currentId: 0 });
     const [{ pause, bufferAction }, playerStateDispatch] = useReducer(playerStateReducer, {
         pause: true,
@@ -87,7 +88,7 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
             playerStateDispatch({ type: 'set_pause', buffer: true });
         } else if (typeof currentIndex === 'number') {
             console.error(
-                `Index out of bounds. Current index (${currentIndex}) was set to a value outside the range of stories array.`,
+                `Index out of bounds. Current index (${currentIndex}) was set to a value outside the range of stories array.`
             );
         }
     }, [currentIndex, stories.length]);
@@ -118,19 +119,22 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
         playerStateDispatch({ type: 'set_pause', buffer: true });
     }, [onPrevious]);
 
-    const next = useCallback(({ isSkippedByUser }: { isSkippedByUser?: boolean } = {}) => {
-        if (isSkippedByUser && !shouldWait) {
-            onNext?.();
-        }
-        if (!isMounted()) return;
+    const next = useCallback(
+        ({ isSkippedByUser }: { isSkippedByUser?: boolean } = {}) => {
+            if (isSkippedByUser && !shouldWait) {
+                onNext?.();
+            }
+            if (!isMounted()) return;
 
-        dispatch({ type: StoriesAction.Next, payload: { loop, storiesLength: stories.length } });
-        playerStateDispatch({ type: 'set_pause', buffer: true });
+            dispatch({ type: StoriesAction.Next, payload: { loop, storiesLength: stories.length } });
+            playerStateDispatch({ type: 'set_pause', buffer: true });
 
-        if (currentId >= stories.length - 1 && !loop) {
-            onAllStoriesEnd?.(currentId, stories);
-        }
-    }, [isMounted, loop, stories, onAllStoriesEnd, shouldWait, onNext, currentId]);
+            if (currentId >= stories.length - 1 && !loop) {
+                onAllStoriesEnd?.(currentId, stories);
+            }
+        },
+        [isMounted, loop, stories, onAllStoriesEnd, shouldWait, onNext, currentId]
+    );
 
     const debouncePause = useCallback((e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault();
@@ -149,29 +153,32 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
                 type === 'next' ? next({ isSkippedByUser: true }) : previous();
             }
         },
-        [pause, next, previous],
+        [pause, next, previous]
     );
 
     const getVideoDuration = useCallback((duration: number) => {
         setVideoDuration(duration);
     }, []);
 
-    const overlayHandlers = useMemo(() => ({
-        onPrevious: {
-            onTouchStart: debouncePause,
-            onTouchEnd: mouseUp('previous'),
-            onMouseDownCapture: debouncePause,
-            onMouseUpCapture: mouseUp('previous'),
-            onMouseUp: mouseUp('previous'),
-        },
-        onNext: {
-            onTouchStart: debouncePause,
-            onTouchEnd: mouseUp('next'),
-            onMouseDownCapture: debouncePause,
-            onMouseUpCapture: mouseUp('next'),
-            onMouseUp: mouseUp('next'),
-        },
-    }), [debouncePause, mouseUp]);
+    const overlayHandlers = useMemo(
+        () => ({
+            onPrevious: {
+                onTouchStart: debouncePause,
+                onTouchEnd: mouseUp('previous'),
+                onMouseDownCapture: debouncePause,
+                onMouseUpCapture: mouseUp('previous'),
+                onMouseUp: mouseUp('previous'),
+            },
+            onNext: {
+                onTouchStart: debouncePause,
+                onTouchEnd: mouseUp('next'),
+                onMouseDownCapture: debouncePause,
+                onMouseUpCapture: mouseUp('next'),
+                onMouseUp: mouseUp('next'),
+            },
+        }),
+        [debouncePause, mouseUp]
+    );
 
     // Keyboard navigation effect.
     useEffect(() => {
@@ -186,10 +193,7 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
     }, [keyboardNavigation, previous, next]);
 
     return (
-        <div
-            className={css.container}
-            style={{ width, height }}
-        >
+        <div className={css.container} style={{ width, height }}>
             <ProgressArray
                 bufferAction={bufferAction}
                 videoDuration={videoDuration}
@@ -225,4 +229,3 @@ const StoriesContainer: React.FC<StoriesContainerProps> = (
 };
 
 export default StoriesContainer;
-

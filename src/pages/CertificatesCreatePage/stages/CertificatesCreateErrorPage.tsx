@@ -22,8 +22,9 @@ export const CertificatesCreateErrorPage: React.FC = () => {
     useEffect(() => {
         if (auth?.access_token) {
             if (paramsObject.certificate_id) {
-                APIGetCertificateById(auth.access_token, paramsObject.certificate_id)
-                    .then(response => setCertificate(response.data));
+                APIGetCertificateById(auth.access_token, paramsObject.certificate_id).then((response) =>
+                    setCertificate(response.data)
+                );
             }
         }
     }, []);
@@ -37,12 +38,12 @@ export const CertificatesCreateErrorPage: React.FC = () => {
                 CERTIFICATION_TYPES.ONLINE,
                 Number(certificate?.value.replace(/\s/g, '')),
                 certificate.recipient_name,
-                certificate.message,
+                certificate.message
             )
-                .then(response => {
+                .then((response) => {
                     window.location.href = response.data.form_url;
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error);
                     setLoading(false);
                 });
@@ -50,7 +51,11 @@ export const CertificatesCreateErrorPage: React.FC = () => {
     };
 
     if (loading) {
-        return <div className={css.loader}><Loader /></div>;
+        return (
+            <div className={css.loader}>
+                <Loader />
+            </div>
+        );
     }
 
     return (
@@ -66,14 +71,14 @@ export const CertificatesCreateErrorPage: React.FC = () => {
                         cardholder={certificate.recipient_name}
                     />
                     <h3 className={css.page_title}>Попробуйте ещё раз или выберите другой способ оплаты.</h3>
-                    <div
-                        data-testid="button-container"
-                        className={classnames(
-                            css.absoluteBottom,
-                        )}
-                    >
+                    <div data-testid="button-container" className={classnames(css.absoluteBottom)}>
                         <div className={css.bottomWrapper}>
-                            <UniversalButton width={'full'} title={'Оплатить'} theme={'secondary'} action={repeatPayment} />
+                            <UniversalButton
+                                width={'full'}
+                                title={'Оплатить'}
+                                theme={'secondary'}
+                                action={repeatPayment}
+                            />
                         </div>
                     </div>
                 </>

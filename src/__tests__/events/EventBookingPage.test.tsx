@@ -1,9 +1,9 @@
 /**
  * @fileoverview Тесты для страницы бронирования бесплатного мероприятия EventBookingPage.
- * 
+ *
  * Страница предназначена для бронирования столика на бесплатное мероприятие.
  * Пользователь попадает сюда со страницы деталей мероприятия (EventDetailsPage).
- * 
+ *
  * Основные функции страницы:
  * - Отображение информации о мероприятии (название, дата)
  * - Выбор количества гостей и детей
@@ -12,9 +12,9 @@
  * - Выбор способа подтверждения
  * - Дополнительные пожелания к бронированию
  * - Создание бронирования через API
- * 
+ *
  * @module __tests__/events/EventBookingPage
- * 
+ *
  * @see {@link EventBookingPage} - тестируемый компонент
  * @see {@link EventDetailsPage} - страница, с которой пользователь переходит на бронирование
  * @see {@link useBookingForm} - хук управления формой бронирования
@@ -139,7 +139,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 /**
  * Тесты страницы бронирования бесплатного мероприятия.
- * 
+ *
  * Покрывает следующие сценарии:
  * - Отображение информации о мероприятии
  * - Начальное количество гостей из атомов
@@ -159,7 +159,7 @@ describe('EventBookingPage', () => {
     /**
      * Бесплатное мероприятие для тестов (ticket_price === 0).
      */
-    const freeEvent: IEvent = mockEventsList.find(e => e.ticket_price === 0)!;
+    const freeEvent: IEvent = mockEventsList.find((e) => e.ticket_price === 0)!;
 
     /**
      * Моковые временные слоты для бронирования.
@@ -181,18 +181,18 @@ describe('EventBookingPage', () => {
 
     /**
      * Рендерит компонент EventBookingPage с необходимыми провайдерами.
-     * 
+     *
      * @param user - Данные пользователя (по умолчанию mockUserData)
      * @param events - Список мероприятий (по умолчанию mockEventsList)
      * @param eventId - ID мероприятия для бронирования
      * @param initialGuestCount - Начальное количество гостей в атоме
      * @param initialChildrenCount - Начальное количество детей в атоме
      * @returns Результат render() из @testing-library/react
-     * 
+     *
      * @example
      * // Рендер с начальным количеством гостей
      * renderComponent(mockUserData, mockEventsList, String(freeEvent.id), 2, 1);
-     * 
+     *
      * @example
      * // Рендер с пользователем без onboarding
      * renderComponent({ ...mockUserData, complete_onboarding: false });
@@ -243,7 +243,7 @@ describe('EventBookingPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockUseParams.mockReturnValue({ eventId: String(freeEvent.id) });
-        
+
         // Подавляем ожидаемые ошибки в консоли
         jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -259,7 +259,7 @@ describe('EventBookingPage', () => {
             }
             originalConsoleError(...args);
         });
-        
+
         // Подавляем предупреждения о SVG атрибутах
         jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
             const message = String(args[0] || '');
@@ -275,12 +275,12 @@ describe('EventBookingPage', () => {
             }
             originalConsoleWarn(...args);
         });
-        
+
         // Настройка моков API
         mockAPIGetAvailableDays.mockResolvedValue({ data: mockAvailableDates });
         mockAPIGetAvailableTimeSlots.mockResolvedValue({ data: mockTimeSlots });
-        mockAPICreateBooking.mockResolvedValue({ 
-            data: { id: 123, ticket_id: 456 } 
+        mockAPICreateBooking.mockResolvedValue({
+            data: { id: 123, ticket_id: 456 },
         });
     });
 
@@ -328,7 +328,7 @@ describe('EventBookingPage', () => {
     /**
      * Тесты инициализации количества гостей из атомов.
      * Количество гостей передаётся с EventDetailsPage через Jotai атомы.
-     * 
+     *
      * Компонент GuestCountSelector отображает общее количество гостей
      * в формате "N гост(ь/я/ей)" через функцию getGuestsString.
      */
@@ -566,12 +566,12 @@ describe('EventBookingPage', () => {
 
             // Даём время на автоматический выбор слота
             await act(async () => {
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise((resolve) => setTimeout(resolve, 100));
             });
 
             // Нажимаем кнопку бронирования
             const bookButton = screen.getByText('Забронировать стол');
-            
+
             await act(async () => {
                 fireEvent.click(bookButton);
             });
@@ -605,7 +605,7 @@ describe('EventBookingPage', () => {
          */
         test('должен перенаправлять на страницу билета после успешного бронирования', async () => {
             mockAPICreateBooking.mockResolvedValue({
-                data: { id: 123, ticket_id: 456 }
+                data: { id: 123, ticket_id: 456 },
             });
 
             renderComponent(mockUserData, mockEventsList, String(freeEvent.id), 2, 0);
@@ -617,11 +617,11 @@ describe('EventBookingPage', () => {
 
             // Даём время на автоматический выбор слота
             await act(async () => {
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise((resolve) => setTimeout(resolve, 100));
             });
 
             const bookButton = screen.getByText('Забронировать стол');
-            
+
             await act(async () => {
                 fireEvent.click(bookButton);
             });
@@ -659,11 +659,11 @@ describe('EventBookingPage', () => {
 
             // Даём время на автоматический выбор слота
             await act(async () => {
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise((resolve) => setTimeout(resolve, 100));
             });
 
             const bookButton = screen.getByText('Забронировать стол');
-            
+
             await act(async () => {
                 fireEvent.click(bookButton);
             });
@@ -750,11 +750,11 @@ describe('EventBookingPage', () => {
 
             // Даём время на автоматический выбор слота
             await act(async () => {
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise((resolve) => setTimeout(resolve, 100));
             });
 
             const bookButton = screen.getByText('Забронировать стол');
-            
+
             await act(async () => {
                 fireEvent.click(bookButton);
             });

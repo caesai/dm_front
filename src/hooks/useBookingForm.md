@@ -5,6 +5,7 @@
 ## Обзор
 
 Хук `useBookingForm` инкапсулирует всю логику формы бронирования:
+
 - Управление состоянием формы через Jotai atoms
 - Валидация полей формы
 - API-запросы для загрузки доступных дат и временных слотов
@@ -27,7 +28,7 @@ const BookingPage = () => {
             certificateId: state?.certificateId,
         },
     });
-    
+
     return (
         // ...
     );
@@ -54,7 +55,7 @@ const RestaurantBookingPage = () => {
         },
         isSharedRestaurant: state?.sharedRestaurant,
     });
-    
+
     return (
         // ...
     );
@@ -78,7 +79,7 @@ const EventBookingPage = () => {
             restaurantAddress: selectedEvent.restaurant.address,
         },
     });
-    
+
     return (
         // ...
     );
@@ -89,83 +90,84 @@ const EventBookingPage = () => {
 
 ### Параметры (options)
 
-| Параметр | Тип | Описание |
-|----------|-----|----------|
-| `certificateParams` | `ICertificateClaimParams` | Параметры для активации сертификата |
-| `preSelectedRestaurant` | `IPreSelectedRestaurant` | Предвыбранный ресторан |
-| `initialBookingData` | `IInitialBookingData` | Начальные данные бронирования |
-| `isSharedRestaurant` | `boolean` | Флаг перехода по shared-ссылке |
-| `eventData` | `IEventData` | Данные мероприятия |
+| Параметр                | Тип                       | Описание                            |
+| ----------------------- | ------------------------- | ----------------------------------- |
+| `certificateParams`     | `ICertificateClaimParams` | Параметры для активации сертификата |
+| `preSelectedRestaurant` | `IPreSelectedRestaurant`  | Предвыбранный ресторан              |
+| `initialBookingData`    | `IInitialBookingData`     | Начальные данные бронирования       |
+| `isSharedRestaurant`    | `boolean`                 | Флаг перехода по shared-ссылке      |
+| `eventData`             | `IEventData`              | Данные мероприятия                  |
 
 ### Возвращаемые значения
 
 #### Состояние формы
 
-| Свойство | Тип | Описание |
-|----------|-----|----------|
-| `form` | `IBookingFormState` | Текущее состояние всех полей формы |
-| `isFormValid` | `boolean` | Форма полностью валидна |
-| `validationDisplay` | `IValidationDisplay` | Состояние валидации для UI |
-| `triggerValidation` | `() => boolean` | Функция запуска валидации |
+| Свойство            | Тип                  | Описание                           |
+| ------------------- | -------------------- | ---------------------------------- |
+| `form`              | `IBookingFormState`  | Текущее состояние всех полей формы |
+| `isFormValid`       | `boolean`            | Форма полностью валидна            |
+| `validationDisplay` | `IValidationDisplay` | Состояние валидации для UI         |
+| `triggerValidation` | `() => boolean`      | Функция запуска валидации          |
 
 #### Данные из API
 
-| Свойство | Тип | Описание |
-|----------|-----|----------|
-| `availableDates` | `PickerValue[]` | Доступные даты для бронирования |
-| `availableTimeslots` | `ITimeSlot[]` | Доступные временные слоты |
-| `canShowTimeSlots` | `boolean` | Можно показывать слоты |
+| Свойство             | Тип             | Описание                        |
+| -------------------- | --------------- | ------------------------------- |
+| `availableDates`     | `PickerValue[]` | Доступные даты для бронирования |
+| `availableTimeslots` | `ITimeSlot[]`   | Доступные временные слоты       |
+| `canShowTimeSlots`   | `boolean`       | Можно показывать слоты          |
 
 #### Состояния загрузки и ошибок
 
-| Свойство | Тип | Описание |
-|----------|-----|----------|
-| `loading` | `ILoadingState` | Состояния загрузки (dates, timeslots, submit) |
-| `errors` | `IErrorState` | Состояния ошибок |
-| `setErrorPopup` | `(popup: boolean) => void` | Управление popup ошибки |
+| Свойство        | Тип                        | Описание                                      |
+| --------------- | -------------------------- | --------------------------------------------- |
+| `loading`       | `ILoadingState`            | Состояния загрузки (dates, timeslots, submit) |
+| `errors`        | `IErrorState`              | Состояния ошибок                              |
+| `setErrorPopup` | `(popup: boolean) => void` | Управление popup ошибки                       |
 
 #### Обработчики (handlers)
 
-| Метод | Описание |
-|-------|----------|
-| `selectRestaurant(restaurant: PickerValue)` | Выбор ресторана |
-| `selectDate(date: PickerValue)` | Выбор даты |
-| `setGuestCount(value: number | (prev) => number)` | Изменение количества гостей |
-| `setChildrenCount(value: number | (prev) => number)` | Изменение количества детей |
-| `selectTimeSlot(slot: ITimeSlot | null)` | Выбор временного слота |
-| `setConfirmation(value: IConfirmationType)` | Выбор способа подтверждения |
-| `updateField(update: Partial<IBookingFormState>)` | Обновление любого поля |
+| Метод                                             | Описание                    |
+| ------------------------------------------------- | --------------------------- | --------------------------- |
+| `selectRestaurant(restaurant: PickerValue)`       | Выбор ресторана             |
+| `selectDate(date: PickerValue)`                   | Выбор даты                  |
+| `setGuestCount(value: number                      | (prev) => number)`          | Изменение количества гостей |
+| `setChildrenCount(value: number                   | (prev) => number)`          | Изменение количества детей  |
+| `selectTimeSlot(slot: ITimeSlot                   | null)`                      | Выбор временного слота      |
+| `setConfirmation(value: IConfirmationType)`       | Выбор способа подтверждения |
+| `updateField(update: Partial<IBookingFormState>)` | Обновление любого поля      |
 
 #### Действия
 
-| Метод | Описание |
-|-------|----------|
+| Метод             | Описание              |
+| ----------------- | --------------------- |
 | `createBooking()` | Создание бронирования |
 
 #### Информация о контексте
 
-| Свойство | Тип | Описание |
-|----------|-----|----------|
-| `preSelectedRestaurant` | `IPreSelectedRestaurant | undefined` | Предвыбранный ресторан |
-| `isSharedRestaurant` | `boolean` | Флаг shared-ссылки |
-| `isEventBooking` | `boolean` | Это бронирование на мероприятие |
-| `eventData` | `IEventData | undefined` | Данные мероприятия |
+| Свойство                | Тип                     | Описание                        |
+| ----------------------- | ----------------------- | ------------------------------- | ---------------------- |
+| `preSelectedRestaurant` | `IPreSelectedRestaurant | undefined`                      | Предвыбранный ресторан |
+| `isSharedRestaurant`    | `boolean`               | Флаг shared-ссылки              |
+| `isEventBooking`        | `boolean`               | Это бронирование на мероприятие |
+| `eventData`             | `IEventData             | undefined`                      | Данные мероприятия     |
 
 ## Валидация
 
 Хук валидирует следующие поля:
 
-| Поле | Правило валидации |
-|------|-------------------|
-| `userName` | Не пустое |
-| `userPhone` | Соответствует формату российского телефона |
-| `date` | Выбрана (не "unset") |
-| `selectedTimeSlot` | Выбран |
-| `guestCount` | Больше 0 |
+| Поле               | Правило валидации                          |
+| ------------------ | ------------------------------------------ |
+| `userName`         | Не пустое                                  |
+| `userPhone`        | Соответствует формату российского телефона |
+| `date`             | Выбрана (не "unset")                       |
+| `selectedTimeSlot` | Выбран                                     |
+| `guestCount`       | Больше 0                                   |
 
 ### Формат телефона
 
 Поддерживаются форматы:
+
 - `+7XXXXXXXXXX`
 - `8XXXXXXXXXX`
 - `+7 XXX XXX XX XX`
@@ -176,13 +178,14 @@ const EventBookingPage = () => {
 
 1. **Доступные даты** загружаются при выборе ресторана
 2. **Временные слоты** загружаются при:
-   - Выбранном ресторане
-   - Выбранной дате
-   - Количестве гостей > 0
+    - Выбранном ресторане
+    - Выбранной дате
+    - Количестве гостей > 0
 
 ### Сброс временного слота
 
 Временной слот сбрасывается при:
+
 - Смене ресторана
 - Смене даты
 
@@ -191,14 +194,12 @@ const EventBookingPage = () => {
 При вызове `createBooking()`:
 
 1. Проверка onboarding:
-   - Если `user.complete_onboarding === false`, редирект на `/onboarding/3`
-   
+    - Если `user.complete_onboarding === false`, редирект на `/onboarding/3`
 2. Валидация формы:
-   - Если невалидна, показываются ошибки на 5 секунд
-   
+    - Если невалидна, показываются ошибки на 5 секунд
 3. Отправка API-запроса:
-   - При успехе: навигация на `/myBookings/{id}` или `/tickets/{ticket_id}` (для events)
-   - При ошибке: показывается popup
+    - При успехе: навигация на `/myBookings/{id}` или `/tickets/{ticket_id}` (для events)
+    - При ошибке: показывается popup
 
 ## Интерфейсы
 
@@ -259,6 +260,7 @@ interface IErrorState {
 Тесты находятся в `src/__tests__/useBookingForm.test.tsx`.
 
 Покрытие:
+
 - ✅ Инициализация формы с данными пользователя
 - ✅ Инициализация с preSelectedRestaurant
 - ✅ Инициализация с eventData

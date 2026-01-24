@@ -1,9 +1,9 @@
 /**
  * @fileoverview Страница бронирования столика для бесплатного мероприятия.
- * 
+ *
  * Пользователь попадает на эту страницу со страницы деталей мероприятия
  * ({@link EventDetailsPage}) после нажатия кнопки "Забронировать".
- * 
+ *
  * Страница предоставляет функционал:
  * - Отображение информации о мероприятии (название, дата)
  * - Выбор количества гостей и детей (предзаполнено из {@link guestCountAtom})
@@ -12,17 +12,17 @@
  * - Дополнительные пожелания к бронированию
  * - Выбор способа подтверждения бронирования
  * - Создание бронирования через API с event_id
- * 
+ *
  * При успешном бронировании бэкенд возвращает ticket_id,
  * и пользователь перенаправляется на страницу билета `/tickets/{ticket_id}`.
- * 
+ *
  * ## Разделение состояния
- * 
+ *
  * Использует `formType: 'event'` для изолированного атома {@link eventBookingFormAtom},
  * что предотвращает конфликты с другими страницами бронирования.
- * 
+ *
  * @module pages/BookingPage/EventBookingPage
- * 
+ *
  * @see {@link EventDetailsPage} - страница деталей мероприятия (точка входа)
  * @see {@link useBookingForm} - хук управления формой бронирования
  * @see {@link EventBookingHeader} - компонент заголовка страницы
@@ -52,24 +52,24 @@ import { getServiceFeeData } from '@/mockData.ts';
 
 /**
  * Страница бронирования столика для бесплатного мероприятия.
- * 
+ *
  * Использует хук {@link useBookingForm} для управления состоянием формы,
  * валидации и взаимодействия с API.
- * 
+ *
  * Количество гостей предзаполняется из атомов {@link guestCountAtom} и
  * {@link childrenCountAtom}, которые устанавливаются на странице
  * {@link EventDetailsPage}.
- * 
+ *
  * При успешном бронировании выполняется навигация на страницу билета:
  * `/tickets/{ticket_id}`
- * 
+ *
  * @component
  * @returns {JSX.Element} Страница бронирования мероприятия
- * 
+ *
  * @example
  * // Роут в App.tsx
  * <Route path="/events/:eventId/booking" element={<EventBookingPage />} />
- * 
+ *
  * @example
  * // Навигация с EventDetailsPage
  * navigate(`/events/${event.id}/booking`);
@@ -91,7 +91,7 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
      * Устанавливается на странице {@link EventDetailsPage}.
      */
     const initialGuestCount = useAtomValue(guestCountAtom);
-    
+
     /**
      * Начальное количество детей из атома.
      * Устанавливается на странице {@link EventDetailsPage}.
@@ -117,12 +117,12 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
 
     /**
      * Хук управления формой бронирования.
-     * 
+     *
      * Конфигурация для бронирования на мероприятие:
      * - eventData: данные мероприятия (ресторан и дата автоматически устанавливаются)
      * - initialBookingData: начальное количество гостей из атомов
      * - resetOnMount: true для сброса формы при каждом посещении страницы
-     * 
+     *
      * При успешном бронировании переходит на /tickets/{ticket_id}
      */
     const {
@@ -175,7 +175,7 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
     const confirmationOptions = useMemo(() => {
         const requiresDeposit = form.date?.attributes?.includes('requires_deposit');
         if (requiresDeposit) {
-            return CONFIRMATION_OPTIONS.filter(opt => opt.id === 'telegram' || opt.id === 'phone');
+            return CONFIRMATION_OPTIONS.filter((opt) => opt.id === 'telegram' || opt.id === 'phone');
         }
         return CONFIRMATION_OPTIONS;
     }, [form.date?.attributes]);
@@ -185,7 +185,7 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
      * Если текущий способ недоступен для депозитных дат, сбрасываем на первый доступный.
      */
     useEffect(() => {
-        const isCurrentOptionValid = confirmationOptions.some(opt => opt.id === form.confirmation.id);
+        const isCurrentOptionValid = confirmationOptions.some((opt) => opt.id === form.confirmation.id);
         if (!isCurrentOptionValid && confirmationOptions.length > 0) {
             handlers.setConfirmation(confirmationOptions[0]);
         }

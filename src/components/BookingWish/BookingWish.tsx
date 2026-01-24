@@ -78,7 +78,13 @@ export const BookingWish: React.FC<BookingWishProps> = ({
             )}
             <TextInput value={commentary} onChange={(e) => setCommentary(e)} placeholder={'Комментарий к брони'} />
             <ContentBlock className={css.commentary_options}>
-                <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8} slidesOffsetAfter={15}>
+                <Swiper
+                    slidesPerView="auto"
+                    modules={[FreeMode]}
+                    freeMode={true}
+                    spaceBetween={8}
+                    slidesOffsetAfter={15}
+                >
                     {restaurant !== 'unset' &&
                         getBookingCommentMock(String(restaurant))
                             .filter((obj) => {

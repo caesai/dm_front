@@ -50,7 +50,9 @@ export const EventsPage: React.FC = (): JSX.Element => {
             // Если это страница списка мероприятий: ссылка на мероприятия в выбранном городе и ресторан не выбран,
             // то шэрим все мероприятия в выбранном городе, иначе шэрим мероприятие в выбранном ресторане
             if (eventBookingInfo?.restaurantId !== 'unset') {
-                url = encodeURI(`https://t.me/${BASE_BOT}?startapp=event_restaurantId_${eventBookingInfo?.restaurantId}`);
+                url = encodeURI(
+                    `https://t.me/${BASE_BOT}?startapp=event_restaurantId_${eventBookingInfo?.restaurantId}`
+                );
                 // title = encodeURI(String(eventBookingInfo?.restaurantId));
             } else {
                 url = encodeURI(`https://t.me/${BASE_BOT}?startapp=event_cityId_${currentCity.id}`);
@@ -74,7 +76,6 @@ export const EventsPage: React.FC = (): JSX.Element => {
             window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
         }
     }, [eventBookingInfo?.id, eventBookingInfo?.name, eventBookingInfo?.restaurantId, currentCity.id]);
-
 
     const goToPreviousPage = useCallback(() => {
         // Если это страница деталей мероприятия, то сбрасываем гостей и информацию о мероприятии и переходим на страницу списка мероприятий
