@@ -101,8 +101,7 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                 spaceBetween={8}
                 centeredSlides={true}
                 centeredSlidesBounds={true}
-                slidesOffsetBefore={2}
-                slidesOffsetAfter={8}
+                slidesOffsetBefore={15}
             >
                 {bookings
                     .filter((book) => {
