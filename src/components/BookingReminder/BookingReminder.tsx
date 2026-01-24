@@ -5,15 +5,12 @@ import { IBookingInfo } from '@/types/restaurant.types.ts';
 // Components
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 // Icons
-import { TimeCircle } from '@/components/Icons/TimeCircle.tsx';
-import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
 import { TicketIcon } from '@/components/Icons/TicketIcon.tsx';
-import { StarPrivilegeIcon } from '@/components/Icons/StarPrivilege.tsx';
 // Styles
 import css from '@/components/BookingReminder/BookingReminder.module.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Zoom } from 'swiper/modules';
+import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 
 /**
  * Пропсы компонента BookingReminder.
@@ -65,7 +62,7 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
         },
         [navigate]
     );
-    
+
     /**
      * Если список бронирований не найден, то возвращаем плейсхолдер загрузки.
      * Skeleton соответствует размерам и стилям реальной карточки бронирования.
@@ -85,7 +82,7 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                         <PlaceholderBlock width="30px" height="14px" rounded="6px" />
                     </div>
                 </div>
-            </div>
+            </div>,
         ] as JSX.Element[];
     }
 
@@ -105,51 +102,40 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
             >
                 {bookings
                     .filter((book) => {
-                        return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime();
+                        return (
+                            new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <=
+                            new Date(book.booking_date).getTime()
+                        );
                     })
                     .map((booking) => (
-                        <SwiperSlide
-                            key={booking.id}
-                            style={{ width: 'max-content' }}
-                        >
+                        <SwiperSlide key={booking.id} style={{ width: 'max-content' }}>
                             <div
                                 className={css.bookingReminder}
                                 onClick={() => navigateToBooking(booking.id, booking.booking_type ?? '')}
                             >
                                 <div className={css.inner}>
-                                <span className={css.title}>
-                                    {booking.booking_type === 'event' ? booking.event_title : `${booking.restaurant.title}`}
-                                </span>
-                                    {booking.booking_type === 'event' ?
-                                        <span className={css.subText}>{booking.restaurant.title}</span> : null}
-                                    <span className={css.subText}>{booking.restaurant.address}</span>
-                                    <div className={css.sub}>
-                                        <div className={css.subItem}>
-                                            <TimeCircle size={16} color={'var(--dark-grey)'}></TimeCircle>
-                                            <span className={css.subText}>
-                                                {formatDate(booking.booking_date)},
-                                            </span>
-                                            <span className={css.subText}>{booking.time}</span>
+                                    <div className={css.date}>
+                                        <div>
+                                            <CalendarIcon size={16} color={'var(--dark-grey)'}></CalendarIcon>
                                         </div>
-                                        <div className={css.subItem}>
-                                            {booking.booking_type === 'event' ? (
+                                        <span>{formatDate(booking.booking_date)},</span>
+                                        <span>{booking.time}</span>
+                                    </div>
+                                    <div className={css.sub}>
+                                        {booking.booking_type === 'event' && (
+                                            <div className={css.subItem}>
                                                 <TicketIcon size={16} />
-                                            ) : (
-                                                <UsersIcon size={16} color={'var(--dark-grey)'} />
-                                            )}
-                                            <span className={css.subText}>{booking.guests_count}</span>
-                                            {!!booking.children_count && (
-                                                <>
-                                                    <ChildrenIcon size={16} />
-                                                    <span className={css.subText}>{booking.children_count}</span>
-                                                </>
-                                            )}
-                                            {booking.features.includes('hospitality_heroes') && (
-                                                <>
-                                                    <StarPrivilegeIcon size={16} color={'var(--dark-grey)'} />
-                                                    <span className={css.subText}>Скидка 40%</span>
-                                                </>
-                                            )}
+                                            </div>
+                                        )}
+                                        <div className={css.subItem}>
+                                            <span className={css.subText}>
+                                                {booking.booking_type === 'event'
+                                                    ? booking.event_title
+                                                    : `${booking.restaurant.title}, ${booking.restaurant.address}`}
+                                            </span>
+                                            {booking.booking_type === 'event' ? (
+                                                <span className={css.subText}>{booking.restaurant.title}</span>
+                                            ) : null}
                                         </div>
                                     </div>
                                 </div>
@@ -157,6 +143,6 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                         </SwiperSlide>
                     ))}
             </Swiper>
-        </div>
-    ]
+        </div>,
+    ];
 };
