@@ -25,8 +25,7 @@ export const Banner = () => {
                 spaceBetween={8}
                 centeredSlides={true}
                 centeredSlidesBounds={true}
-                slidesOffsetBefore={2}
-                slidesOffsetAfter={8}
+                slidesOffsetBefore={15}
             >
                 {banners.map((banner, index) => (
                     <SwiperSlide
