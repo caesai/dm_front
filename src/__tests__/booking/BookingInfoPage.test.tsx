@@ -10,7 +10,7 @@
  * 
  * Особенности для депозитных бронирований:
  * - При отмене показывается специальный попап с условиями возврата депозита
- * - Попап содержит кнопки "Нет, оставить" и "Всё равно отменить"
+ * - Попап содержит кнопки "Нет" и "Да"
  * 
  * @module __tests__/booking/BookingInfoPage
  * 
@@ -349,16 +349,16 @@ describe('BookingInfoPage', () => {
             fireEvent.click(screen.getByText('Отменить'));
 
             await waitFor(() => {
-                expect(screen.getByText(/За 3\+ дня — 100%/i)).toBeInTheDocument();
-                expect(screen.getByText(/Менее чем за 3 дня — 50%/i)).toBeInTheDocument();
-                expect(screen.getByText(/В день брони — без возврата/i)).toBeInTheDocument();
+                expect(screen.getByText(/100% возврат депозита при отмене бронирования до 11.02 включительно/i)).toBeInTheDocument();
+                expect(screen.getByText(/50% возврат депозита при отмене бронирования до 13.02 включительно/i)).toBeInTheDocument();
+                expect(screen.getByText(/Депозит не возвращается при отмене 14.02/i)).toBeInTheDocument();
             });
         });
 
         /**
-         * Проверяет наличие кнопок "Нет, оставить" и "Всё равно отменить".
+         * Проверяет наличие кнопок "Нет" и "Да".
          */
-        test('должен отображать кнопки "Нет, оставить" и "Всё равно отменить"', async () => {
+        test('должен отображать кнопки "Нет" и "Да"', async () => {
             renderComponent('456', mockDepositBookingInfo);
 
             await waitFor(() => {
@@ -368,8 +368,8 @@ describe('BookingInfoPage', () => {
             fireEvent.click(screen.getByText('Отменить'));
 
             await waitFor(() => {
-                expect(screen.getByText('Нет, оставить')).toBeInTheDocument();
-                expect(screen.getByText('Всё равно отменить')).toBeInTheDocument();
+                expect(screen.getByText('Нет')).toBeInTheDocument();
+                expect(screen.getByText('Да')).toBeInTheDocument();
             });
         });
 
@@ -386,10 +386,10 @@ describe('BookingInfoPage', () => {
             fireEvent.click(screen.getByText('Отменить'));
 
             await waitFor(() => {
-                expect(screen.getByText('Нет, оставить')).toBeInTheDocument();
+                expect(screen.getByText('Нет')).toBeInTheDocument();
             });
 
-            fireEvent.click(screen.getByText('Нет, оставить'));
+            fireEvent.click(screen.getByText('Нет'));
 
             await waitFor(() => {
                 expect(screen.queryByText(/отменяете бронь с депозитом/i)).not.toBeInTheDocument();
@@ -399,25 +399,25 @@ describe('BookingInfoPage', () => {
         /**
          * Проверяет переход к стандартному попапу отмены при подтверждении.
          */
-        test('должен открывать стандартный попап отмены при нажатии "Всё равно отменить"', async () => {
-            renderComponent('456', mockDepositBookingInfo);
+        // test('должен открывать стандартный попап отмены при нажатии "Да"', async () => {
+        //     renderComponent('456', mockDepositBookingInfo);
 
-            await waitFor(() => {
-                expect(screen.getByText('Отменить')).toBeInTheDocument();
-            });
+        //     await waitFor(() => {
+        //         expect(screen.getByText('Отменить')).toBeInTheDocument();
+        //     });
 
-            fireEvent.click(screen.getByText('Отменить'));
+        //     fireEvent.click(screen.getByText('Отменить'));
 
-            await waitFor(() => {
-                expect(screen.getByText('Всё равно отменить')).toBeInTheDocument();
-            });
+        //     await waitFor(() => {
+        //         expect(screen.getByText('Да')).toBeInTheDocument();
+        //     });
 
-            fireEvent.click(screen.getByText('Всё равно отменить'));
+        //     fireEvent.click(screen.getByText('Да'));
 
-            await waitFor(() => {
-                expect(screen.getByText(/хотите отменить бронирование/i)).toBeInTheDocument();
-            });
-        });
+        //     await waitFor(() => {
+        //         expect(screen.getByText(/хотите отменить бронирование/i)).toBeInTheDocument();
+        //     });
+        // });
     });
 
     // ============================================

@@ -323,33 +323,43 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
             setLoading(false);
             return;
         }
-        // 2. Логика для зарегистрированного и прошедшего онбординг пользователя (user.complete_onboarding === true)
+        /**
+         * 2. Логика для зарегистрированного пользователя (user.complete_onboarding === true)
+         * 
+         * Матрица решений:
+         * | shared_at | customer_id === user.id | recipient_id === user.id | Действие |
+         * |-----------|-------------------------|--------------------------|----------|
+         * | null      | true                    | -                        | Отображение (владелец) |
+         * | null      | false                   | -                        | Автоматическая активация |
+         * | not null  | -                       | true                     | Отображение (получатель) |
+         * | not null  | -                       | false                    | Редирект на /certificates/1 |
+         */
         if (user?.complete_onboarding) {
             if (!certificate?.shared_at) {
-                // Сертификат куплен пользователем (не подарен/не принят ранее)
+                // Сертификат ещё не был передан (shared_at === null)
                 if (certificate?.customer_id === user.id) {
-                    // Пользователь — владелец. Ничего не делаем.
-                    setLoading(false);
-                    return;
-            } else {
-                // Сертификат куплен другим пользователем, но еще не принят этим
-                if (!isAcceptingRef.current && acceptCertificateRef.current) {
-                    isAcceptingRef.current = true;
-                    (async () => {
-                        await acceptCertificateRef.current!();
-                        setLoading(false);
-                    })();
-                }
-                return;
-            }
-            } else {
-                // Сертификат уже был передан (shared_at существует)
-                if (certificate.recipient_id === user.id) {
-                    // Пользователь — получатель. Ничего не делаем.
+                    // Пользователь — владелец сертификата. Отображаем страницу.
                     setLoading(false);
                     return;
                 } else {
-                    // Пользователь не имеет отношения к этому сертификату после передачи. Перенаправляем.
+                    // Сертификат куплен другим пользователем — автоматически активируем для текущего
+                    if (!isAcceptingRef.current && acceptCertificateRef.current) {
+                        isAcceptingRef.current = true;
+                        (async () => {
+                            await acceptCertificateRef.current!();
+                            setLoading(false);
+                        })();
+                    }
+                    return;
+                }
+            } else {
+                // Сертификат уже был передан (shared_at !== null)
+                if (certificate.recipient_id === user.id) {
+                    // Пользователь — получатель сертификата. Отображаем страницу.
+                    setLoading(false);
+                    return;
+                } else {
+                    // Пользователь не связан с этим сертификатом. Перенаправляем на список.
                     navigate('/certificates/1');
                 }
             }

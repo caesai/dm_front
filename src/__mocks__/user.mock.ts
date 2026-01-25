@@ -1,4 +1,4 @@
-import { IUser } from '@/types/user.types.ts';
+import { ISubscription, IUser } from '@/types/user.types.ts';
 
 export const mockUserData: IUser = {
     id: 1,
@@ -36,3 +36,28 @@ export const testUsersList = [
     956696074, // Cerchant
     244983015,
 ];
+
+/**
+ * Моковые данные подписок пользователя на рассылки ресторанов.
+ * Ключ — ID ресторана, значение — статус подписки (true/false).
+ */
+export const mockSubscriptions: ISubscription = {
+    '1': true,
+    '2': false,
+};
+
+/**
+ * Моковые данные подписок — все подписки отключены.
+ */
+export const mockSubscriptionsAllDisabled: ISubscription = {
+    '1': false,
+    '2': false,
+};
+
+/**
+ * Моковые данные подписок — все подписки включены.
+ */
+export const mockSubscriptionsAllEnabled: ISubscription = {
+    '1': true,
+    '2': true,
+};

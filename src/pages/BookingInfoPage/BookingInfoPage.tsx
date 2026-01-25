@@ -43,6 +43,8 @@ import css from '@/pages/BookingInfoPage/BookingInfoPage.module.css';
 // Mocks
 import { R } from '@/__mocks__/restaurant.mock.ts';
 import { BOOKINGCOMMENTMOCK } from '@/mockData.ts';
+// Hooks
+import useToastState from '@/hooks/useToastState.ts';
 
 
 /**
@@ -56,7 +58,7 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
     const [depositCancelPopup, setDepositCancelPopup] = useState(false);
     const [booking, setBooking] = useState<IBookingInfo>();
     const [auth] = useAtom(authAtom);
-
+    const { showToast } = useToastState();
     /** Проверка, является ли бронирование депозитным */
     const isDepositBooking = booking?.attributes?.includes('requires_deposit') ?? false;
 
@@ -98,8 +100,11 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
     /** Подтверждение отмены депозитного бронирования */
     const handleDepositCancelConfirm = useCallback(() => {
         setDepositCancelPopup(false);
-        setCancelPopup(true);
-    }, []);
+        onCancelBooking().then(() => {
+            showToast('Бронирование отменено');
+            navigate('/myBookings');
+        });
+    }, [onCancelBooking]);
 
     useScript('https://yastatic.net/taxi-widget/ya-taxi-widget.js', {
         removeOnUnmount: true,

@@ -30,6 +30,7 @@ import { IndexPage } from '@/pages/IndexPage/IndexPage.tsx';
 const ProfilePage = lazy(() => import('@/pages/ProfilePage/ProfilePage.tsx').then(m => ({ default: m.ProfilePage })));
 const UserProfilePage = lazy(() => import('@/pages/UserProfilePage/UserProfilePage.tsx').then(m => ({ default: m.UserProfilePage })));
 const AllergiesPage = lazy(() => import('@/pages/AllergiesPage/AllergiesPage.tsx').then(m => ({ default: m.AllergiesPage })));
+const NotificationsPage = lazy(() => import('@/pages/NotificationsPage/NotificationsPage.tsx').then(m => ({ default: m.NotificationsPage })));
 
 // Билеты и бронирования
 const UserTicketsPage = lazy(() => import('@/pages/UserTicketsPage/UserTicketsPage.tsx').then(m => ({ default: m.UserTicketsPage })));
@@ -217,6 +218,8 @@ const AppRouter: React.FC = (): JSX.Element => {
                             <Route path={'/tickets/:id'} element={<TicketInfoPage />} />
                             {/* Мои бронирования */}
                             <Route path={'/myBookings'} element={<MyBookingsPage />} />
+                            {/* Мои уведомления */}
+                            <Route path={'/notifications'} element={<NotificationsPage />} />
                             {/* Информация о бронировании */}
                             <Route path={'/myBookings/:id'} element={<BookingInfoPage />} />
 

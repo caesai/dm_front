@@ -37,3 +37,7 @@ export interface IAuthInfo {
     access_token: string;
     expires_in: number;
 }
+
+export interface ISubscription {
+    [key: string]: boolean; // key это restaurant id, value true если подписан, false если нет
+}

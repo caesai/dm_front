@@ -1,6 +1,8 @@
 import React from 'react';
-import { ModalPopup } from '../ModalPopup/ModalPopup';
-import css from './DepositCancelModal.module.css';
+// Components
+import { ModalPopup } from '@/components/ModalPopup/ModalPopup.tsx';
+// Styles
+import css from '@/components/DepositCancelModal/DepositCancelModal.module.css';
 
 /**
  * Пропсы компонента DepositCancelModal
@@ -17,12 +19,13 @@ interface IDepositCancelModalProps {
 /**
  * Модальное окно подтверждения отмены бронирования с депозитом.
  * Показывает условия возврата депозита.
+ * return {JSX.Element}
  */
 export const DepositCancelModal: React.FC<IDepositCancelModalProps> = ({
     isOpen,
     onConfirm,
     onCancel,
-}) => {
+}): JSX.Element => {
     return (
         <ModalPopup
             isOpen={isOpen}
@@ -35,17 +38,17 @@ export const DepositCancelModal: React.FC<IDepositCancelModalProps> = ({
                     </p>
                     <p className={css.conditionsTitle}>Условия возврата:</p>
                     <ul className={css.conditionsList}>
-                        <li>За 3+ дня — 100%</li>
-                        <li>Менее чем за 3 дня — 50%</li>
-                        <li>В день брони — без возврата</li>
+                        <li>100% возврат депозита при отмене бронирования до 11.02 включительно</li>
+                        <li>50% возврат депозита при отмене бронирования до 13.02 включительно</li>
+                        <li>Депозит не возвращается при отмене 14.02</li>
                     </ul>
-                    <p className={css.question}>Продолжить?</p>
+                    <p className={css.question}>Вы уверены, что хотите отменить бронирование?</p>
                 </div>
             }
             button={true}
-            btnText="Всё равно отменить"
+            btnText="Да"
             btnAction={onConfirm}
-            btnScndrText="Нет, оставить"
+            btnScndrText="Нет"
             btnScndrAction={onCancel}
             btnsColumn={true}
             reverseButton={true}
