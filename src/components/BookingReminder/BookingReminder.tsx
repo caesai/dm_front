@@ -123,12 +123,17 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                                             <span className={css.subText}>
                                                 {booking.booking_type === 'event'
                                                     ? booking.event_title
-                                                    : `${booking.restaurant.title}, ${booking.restaurant.address}`}
+                                                    : booking.restaurant.title}
                                             </span>
                                             {booking.booking_type === 'event' ? (
                                                 <span className={css.subText}>{booking.restaurant.title}</span>
                                             ) : null}
                                         </div>
+                                        {booking.booking_type !== 'event' && (
+                                            <div className={css.subItem}>
+                                                <span className={css.subText}>{booking.restaurant.address}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
