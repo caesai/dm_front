@@ -29,7 +29,7 @@ import { useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
 import moment from 'moment';
 // API
 import { APIGetCertificateById, APIGetCertificates, APIPostCertificateClaim, APIPostEGiftCertificateInfo } from '@/api/certificates.api.ts';
-import { EGIFT_API_TOKEN } from '@/api/base';
+import { BASE_BOT, EGIFT_API_TOKEN } from '@/api/base.ts';
 // Types
 import { ICertificate } from '@/types/certificates.types.ts';
 // Atoms
@@ -417,6 +417,47 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
         navigate('/booking', { state: { certificate: true, certificateId: id } });
     };
 
+    const shareCertificate = async () => {
+        const url = encodeURI(
+            `https://t.me/${BASE_BOT}?startapp=certificateId_${certificate?.id}`
+        );
+        // The message includes the full context needed
+        // const message = `${certificate.recipient_name}, вы получили подарочный сертификат. Перейдите по ссылке ${decodeURI(url)}, чтобы посмотреть его и воспользоваться`;
+        const message = decodeURI(url);
+    
+        try {
+    
+            const shareData: ShareData = {
+                title: message, // Some platforms might use this as a caption
+                // url: decodeURI(url) // Use the URL field for better handling by share targets
+            };
+    
+            // 1. Check if the platform can share files
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                    console.log('Attempted to share both text/url and image (platform dependent).');
+                    // return;
+                } catch (error) {
+                    // If sharing with files fails for some reason, maybe permission issues or API issues
+                    console.error('Sharing with files failed:', error);
+                }
+            }
+            // 3. Fallback: Use the Telegram specific URL scheme
+            // This is the most reliable way to ensure both message and url are present if the native API fails
+            window.open(`https://t.me/share/url?text=${encodeURI(message)}`, "_blank");
+    
+        } catch (error) {
+            console.error('Error handling image fetch or initial share attempt:', error);
+            // If image fetching fails, try sharing text/url as a last resort native share or fallback URL
+            if (navigator.share) {
+                await navigator.share({ text: message });
+                return;
+            }
+            window.open(`https://t.me/share/url?url=${url}&text=${encodeURI(message)}`, "_blank");
+        }
+    };
+
     if (loading) {
         return (
             <div className={css.loader}>
@@ -550,8 +591,10 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                         <span className={css.pageTitle}>Доступно в ресторанах</span>
                         <RestaurantsList />
                     </div>
-                    {!isCertificateDisabled && (
+                    {!isCertificateDisabled || certificate?.customer_id !== user?.id ? (
                         <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />
+                    ) : (
+                        <BottomButtonWrapper onClick={shareCertificate} content={'Поделиться'} />
                     )}
                 </div>
             </section>

@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
+import useToast from '@/hooks/useToastState';
 
 // Reusable styled component for the popup.
 const StyledPopup = styled(Popup)`
@@ -62,6 +63,7 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
     const [currentStep, setCurrentStep] = useState<PopupStep>(
         skipConfirmation ? PopupStep.Reason : PopupStep.Confirmation
     );
+    const { showToast } = useToast();
 
     // Reset step when popup opens/closes or skipConfirmation changes
     React.useEffect(() => {
@@ -103,7 +105,12 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
         if (!onSendReason) return;
         try {
             await onSendReason(reason);
-            setCurrentStep(PopupStep.Success);
+            if (!skipConfirmation) {
+                setCurrentStep(PopupStep.Success);
+            } else {
+                showToast('Ваше бронирование было отменено.');
+                onSuccess();
+            }
         } catch (error) {
             console.error('Error sending reason:', error);
             setCurrentStep(PopupStep.Error);
