@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import css from './Custom.module.css';
 import classNames from 'classnames';
-import { BASE_BOT } from '@/api/base.ts';
 import { useNavigate } from 'react-router-dom';
 import { IStory } from '@/types/stories.types.ts';
+import { parseStartParam } from '@/utils/startParam.utils.ts';
 
 interface CustomStoryComponentProps {
     story: IStory;
@@ -39,21 +39,74 @@ export const CustomStoryComponent: React.FC<CustomStoryComponentProps> = (
     }, [story, shouldWait]);
 
     const openButtonUrl = () => {
-        if (button_url) {
-            if (button_url.includes(BASE_BOT)) {
-                const url = button_url.split('?')[1];
-                const slicedUrl = url.slice(url.lastIndexOf('=') + 1);
-                if (slicedUrl.includes('restaurantId')) {
-                    navigate('/restaurant/' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1));
-                }
-                if (slicedUrl.includes('eventId')) {
-                    navigate('/events/' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1) + '/details');
-                }
-                if (slicedUrl.includes('bookingId')) {
-                    navigate('/restaurant/' + slicedUrl.slice(slicedUrl.lastIndexOf('_') + 1) + '/booking');
-                }
+        if (!button_url) return;
+
+        try {
+            // Парсим URL вида https://t.me/dmdev1bot?startapp=restaurantId_4
+            const url = new URL(button_url);
+            const startappParam = url.searchParams.get('startapp');
+
+            if (!startappParam) {
+                // Если нет параметра startapp, открываем URL в новой вкладке
+                window.open(button_url, '_blank');
+                return;
             }
-            // window.open(button_url);
+
+            // Парсим параметр для извлечения сущностей и специальных ключевых слов
+            // Логика точно соответствует useRedirectLogic.ts
+            const parsedParam = parseStartParam(startappParam);
+
+            // Приоритет: специальное ключевое слово > сущность > главная страница
+            if (parsedParam.specialKeyword) {
+                // Обрабатываем специальные ключевые слова (логика из handleSpecialKeywordNavigation)
+                switch (parsedParam.specialKeyword) {
+                    case 'hospitality_heroes':
+                        navigate('/hospitality-heroes', { replace: true });
+                        return;
+                    case 'banquet':
+                        navigate('/banquets/:restaurantId/address', { replace: true });
+                        return;
+                    case 'gastronomy':
+                        navigate('/gastronomy/choose', { replace: true });
+                        return;
+                    case 'certificates':
+                        navigate('/certificates/1', { replace: true });
+                        return;
+                    case 'booking':
+                        navigate('/booking', { replace: true, state: { shared: true } });
+                        return;
+                }
+            } else if (parsedParam.entityType && parsedParam.entityId) {
+                // Обрабатываем сущности (логика из handleEntityNavigation)
+                switch (parsedParam.entityType) {
+                    case 'restaurant':
+                        navigate(`/restaurant/${parsedParam.entityId}`, { replace: true, state: { shared: true } });
+                        return;
+                    case 'event':
+                        navigate(`/events/${parsedParam.entityId}/details`, { replace: true, state: { shared: true } });
+                        return;
+                    case 'ticket':
+                        navigate(`/tickets/${parsedParam.entityId}`, { replace: true, state: { shared: true } });
+                        return;
+                    case 'certificate':
+                        navigate(`/certificates/landing/${parsedParam.entityId}`, { replace: true, state: { shared: true } });
+                        return;
+                    case 'event_city':
+                        navigate('/events', { replace: true, state: { shared: true, cityId: parsedParam.entityId } });
+                        return;
+                    case 'event_restaurant':
+                        navigate('/events', { replace: true, state: { shared: true, restaurantId: parsedParam.entityId } });
+                        return;
+                }
+            } else {
+                // Если не найдено ни ключевое слово, ни сущность — переход на главную
+                navigate('/', { replace: true });
+                return;
+            }
+        } catch (error) {
+            // Если не удалось распарсить URL (не валидный URL), открываем его в новой вкладке
+            console.error('Error parsing button_url:', error);
+            window.open(button_url, '_blank');
         }
     };
 
