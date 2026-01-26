@@ -19,6 +19,7 @@ import { useIndexPageData } from '@/hooks/useIndexPageData.ts';
 // Styles
 import css from '@/pages/IndexPage/IndexPage.module.css';
 import { Banner } from '@/components/Banners/Banner.tsx';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 
 /**
  * Главная страница приложения.
@@ -76,18 +77,20 @@ export const IndexPage: React.FC = (): JSX.Element => {
     return (
         <Page back={false}>
             <PageContainer className={css.indexPageContainer}>
-                <Header />
-                <Stories storiesBlocks={storiesBlocks} />
-                <Banner />
-                <BookingReminder bookings={currentBookings} />
-                <OptionsNavigation />
-                <CitySelect />
-                <RestaurantsList clickable />
-                {currentCity.name_english !== 'ekb' &&
-                    <BottomButtonWrapper
-                        onClick={goToBooking}
-                    />
-                }
+                <ContentBlock className={css.indexSection}>
+                    <Header />
+                    <Stories storiesBlocks={storiesBlocks} />
+                </ContentBlock>
+                <ContentBlock className={css.bannersSection}>
+                    <Banner />
+                    <BookingReminder bookings={currentBookings} />
+                </ContentBlock>
+                <ContentBlock className={css.indexSection}>
+                    <OptionsNavigation />
+                    <CitySelect />
+                    <RestaurantsList clickable />
+                    {currentCity.name_english !== 'ekb' && <BottomButtonWrapper onClick={goToBooking} />}
+                </ContentBlock>
             </PageContainer>
         </Page>
     );

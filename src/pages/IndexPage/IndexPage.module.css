@@ -1,8 +1,21 @@
 .indexPageContainer {
     display: flex;
     flex-direction: column;
+    gap: 10px;
     background-color: var(--primary-background);
+}
+
+.indexSection {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     padding-top: 20px;
     padding-left: 15px;
+    padding-right: 15px;
+}
+
+.bannersSection {
+    display: flex;
+    flex-direction: column;
     gap: 10px;
 }

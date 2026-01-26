@@ -90,16 +90,8 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
      * Возвращаем список бронирований.
      */
     return [
-        <div className={css.swiper}>
-            <Swiper
-                slidesPerView="auto"
-                modules={[Zoom]}
-                freeMode={true}
-                spaceBetween={8}
-                centeredSlides={true}
-                centeredSlidesBounds={true}
-                slidesOffsetBefore={15}
-            >
+        <div className={css.swiperContainer}>
+            <Swiper zoom slidesPerView="auto" modules={[Zoom]} centeredSlides spaceBetween={8} className={css.swiper}>
                 {bookings
                     .filter((book) => {
                         return (

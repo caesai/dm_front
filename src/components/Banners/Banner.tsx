@@ -1,4 +1,4 @@
-import css from "./Banner.module.css";
+import css from './Banner.module.css';
 import { Zoom } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useEffect, useState } from 'react';
@@ -17,29 +17,17 @@ export const Banner = () => {
 
     return (
         <section className={css.banner}>
-            <Swiper
-                zoom
-                slidesPerView="auto"
-                modules={[Zoom]}
-                freeMode={true}
-                spaceBetween={8}
-                centeredSlides={true}
-                centeredSlidesBounds={true}
-                slidesOffsetBefore={15}
-            >
+            <Swiper zoom slidesPerView="auto" modules={[Zoom]} centeredSlides spaceBetween={8} className={css.swiper}>
                 {banners.map((banner, index) => (
                     <SwiperSlide
                         key={`${index}-${banner}`}
                         style={{ width: 'max-content' }}
                         onClick={() => navigate(banner.link)}
                     >
-                        <div
-                            className={css.photo}
-                            style={{ backgroundImage: `url(${banner.img_url})` }}
-                        />
+                        <div className={css.photo} style={{ backgroundImage: `url(${banner.img_url})` }} />
                     </SwiperSlide>
                 ))}
             </Swiper>
         </section>
-    )
-}
+    );
+};
