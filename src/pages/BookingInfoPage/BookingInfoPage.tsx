@@ -56,6 +56,7 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const [cancelPopup, setCancelPopup] = useState(false);
     const [depositCancelPopup, setDepositCancelPopup] = useState(false);
+    const [skipConfirmationStep, setSkipConfirmationStep] = useState(false);
     const [booking, setBooking] = useState<IBookingInfo>();
     const [auth] = useAtom(authAtom);
     const { showToast } = useToastState();
@@ -98,13 +99,18 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
     }, [isDepositBooking]);
 
     /** Подтверждение отмены депозитного бронирования */
-    const handleDepositCancelConfirm = useCallback(() => {
+    const handleDepositCancelConfirm = useCallback(async () => {
         setDepositCancelPopup(false);
-        onCancelBooking().then(() => {
-            showToast('Бронирование отменено');
-            navigate('/myBookings');
-        });
-    }, [onCancelBooking]);
+        try {
+            await onCancelBooking();
+            // Открываем CancelBookingPopup, пропуская первый шаг (подтверждение)
+            setSkipConfirmationStep(true);
+            setCancelPopup(true);
+        } catch (error) {
+            console.error('Error canceling booking:', error);
+            showToast('Ошибка при отмене бронирования');
+        }
+    }, [onCancelBooking, showToast]);
 
     useScript('https://yastatic.net/taxi-widget/ya-taxi-widget.js', {
         removeOnUnmount: true,
@@ -136,12 +142,16 @@ export const BookingInfoPage: React.FC = (): JSX.Element => {
             />
             <CancelBookingPopup
                 isOpen={cancelPopup}
-                setOpen={setCancelPopup}
+                setOpen={(open) => {
+                    setCancelPopup(open);
+                    if (!open) setSkipConfirmationStep(false);
+                }}
                 onCancel={onCancelBooking}
                 onSuccess={() => navigate('/myBookings')}
                 onSendReason={onSendReason}
                 popupText={'Вы уверены, что хотите отменить бронирование?'}
                 successMessage={'Ваше бронирование отменено'}
+                skipConfirmation={skipConfirmationStep}
             />
             <PageContainer className={classNames(css.fc, css.page)}>
                 <div className={classNames(css.main, css.border__bottom)}>

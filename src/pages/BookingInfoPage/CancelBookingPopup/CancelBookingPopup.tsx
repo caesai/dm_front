@@ -42,6 +42,8 @@ interface CancelBookingPopupProps {
     popupText: string;
     successMessage: string;
     skipStep?: boolean;
+    /** Пропустить первый шаг (подтверждение) и начать сразу с выбора причины */
+    skipConfirmation?: boolean;
 }
 
 export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
@@ -54,9 +56,19 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
         popupText,
         successMessage,
         skipStep,
+        skipConfirmation,
     },
 ) => {
-    const [currentStep, setCurrentStep] = useState<PopupStep>(PopupStep.Confirmation);
+    const [currentStep, setCurrentStep] = useState<PopupStep>(
+        skipConfirmation ? PopupStep.Reason : PopupStep.Confirmation
+    );
+
+    // Reset step when popup opens/closes or skipConfirmation changes
+    React.useEffect(() => {
+        if (isOpen) {
+            setCurrentStep(skipConfirmation ? PopupStep.Reason : PopupStep.Confirmation);
+        }
+    }, [isOpen, skipConfirmation]);
 
 
     // Use useCallback for handler functions to prevent unnecessary re-renders.

@@ -12,10 +12,12 @@ import { UserProfileIcon } from '@/components/Icons/UserProfileIcon.tsx';
 import { PlainGiftIcon } from '@/components/Icons/PlaingGiftIcon.tsx';
 import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
 import { StarPrivilegeIcon } from '@/components/Icons/StarPrivilege.tsx';
+import { PageHeader } from '@/components/PageHeader/PageHeader.tsx';
+import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
+import { BellIcon } from '@/components/Icons/BellIcon.tsx';
 // Styles
 import css from '@/pages/ProfilePage/ProfilePage.module.css';
-import { ContentContainer } from '@/components/ContentContainer/ContentContainer';
-import { PageHeader } from '@/components/PageHeader/PageHeader.tsx';
+
 
 /**
  * Страница профиля.
@@ -65,7 +67,7 @@ export const ProfilePage: React.FC = (): JSX.Element => {
                     <span className={css.navLinkTitle}>Личные данные</span>
                 </Link>
                 <Link to={'/notifications'} className={css.navLink}>
-                    <UserProfileIcon size={24} color={'black'} />
+                    <BellIcon size={24} color={'black'} />
                     <span className={css.navLinkTitle}>Мои уведомления</span>
                 </Link>
                 {permissions.includes('tester') && (
