@@ -504,7 +504,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                     </div>
                     <div className={css.certificateFields}>
                         <div className={css.row}>
-                            <span>Номинал:</span>
+                            <span>Баланс:</span>
                             <span>
                                 <b>{Number(certificate?.value).toFixed()}</b>
                             </span>
