@@ -290,7 +290,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
      */
     const isCertificateDisabled = useMemo(() => {
         if (!certificate?.status) return true;
-        return !((certificate.status === 'paid' || certificate.status === 'shared') && !certificateExpired);
+        return !((certificate.status === 'paid' || certificate.status === 'shared') && !certificateExpired && certificate?.customer_id === user?.id);
     }, [certificate?.status, certificateExpired]);
     /**
      * Эффект для управления логикой работы с сертификатом в зависимости от статуса пользователя и сертификата.
@@ -551,7 +551,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                         <div className={css.row}>
                             <span>Код:</span>
                             <span>
-                                <b>{certificate?.dreamteam_id}</b>
+                                <b>{certificate?.id}</b>
                             </span>
                         </div>
                     </div>
@@ -591,9 +591,10 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
                         <span className={css.pageTitle}>Доступно в ресторанах</span>
                         <RestaurantsList />
                     </div>
-                    {!isCertificateDisabled || certificate?.customer_id !== user?.id ? (
+                    {!isCertificateDisabled && (
                         <BottomButtonWrapper onClick={goToBooking} content={'Воспользоваться'} />
-                    ) : (
+                    )}
+                    {certificate?.customer_id === user?.id && (
                         <BottomButtonWrapper onClick={shareCertificate} content={'Поделиться'} />
                     )}
                 </div>
