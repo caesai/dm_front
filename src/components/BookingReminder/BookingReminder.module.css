@@ -1,6 +1,5 @@
 .swiper {
-    width: 100%;
-    margin-left: -15px;
+    padding: 0 15px;
 }
 
 .bookingReminder {
@@ -39,8 +38,9 @@
 
 .sub {
     display: flex;
-    justify-content: center;
-    gap: 8px;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
 }
 
 .subItem {

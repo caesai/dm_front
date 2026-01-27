@@ -90,16 +90,8 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
      * Возвращаем список бронирований.
      */
     return [
-        <div className={css.swiper}>
-            <Swiper
-                slidesPerView="auto"
-                modules={[Zoom]}
-                freeMode={true}
-                spaceBetween={8}
-                centeredSlides={true}
-                centeredSlidesBounds={true}
-                slidesOffsetBefore={15}
-            >
+        <div className={css.swiperContainer}>
+            <Swiper zoom slidesPerView="auto" modules={[Zoom]} centeredSlides spaceBetween={8} className={css.swiper}>
                 {bookings
                     .filter((book) => {
                         return (
@@ -131,12 +123,17 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                                             <span className={css.subText}>
                                                 {booking.booking_type === 'event'
                                                     ? booking.event_title
-                                                    : `${booking.restaurant.title}, ${booking.restaurant.address}`}
+                                                    : booking.restaurant.title}
                                             </span>
                                             {booking.booking_type === 'event' ? (
                                                 <span className={css.subText}>{booking.restaurant.title}</span>
                                             ) : null}
                                         </div>
+                                        {booking.booking_type !== 'event' && (
+                                            <div className={css.subItem}>
+                                                <span className={css.subText}>{booking.restaurant.address}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

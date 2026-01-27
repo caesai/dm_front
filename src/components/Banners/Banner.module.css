@@ -1,6 +1,9 @@
 .banner {
     width: 100%;
-    margin-left: -15px;
+}
+
+.swiper {
+    padding: 0 15px;
 }
 
 .photo {
