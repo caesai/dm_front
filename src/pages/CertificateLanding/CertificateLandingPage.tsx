@@ -290,7 +290,7 @@ export const CertificateLandingPage: React.FC = (): JSX.Element => {
      */
     const isCertificateDisabled = useMemo(() => {
         if (!certificate?.status) return true;
-        return !((certificate.status === 'paid' || certificate.status === 'shared') && !certificateExpired && certificate?.customer_id === user?.id);
+        return !(((certificate.status === 'paid' || certificate.status === 'shared') && !certificateExpired) || certificate?.customer_id === user?.id);
     }, [certificate?.status, certificateExpired]);
     /**
      * Эффект для управления логикой работы с сертификатом в зависимости от статуса пользователя и сертификата.
