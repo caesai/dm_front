@@ -12,7 +12,7 @@
     background-position: center center;
     border-radius: 20px;
 
-    width: 345px;
+    min-width: 345px;
     height: 105px;
 
     cursor: pointer;

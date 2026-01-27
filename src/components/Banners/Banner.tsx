@@ -19,11 +19,7 @@ export const Banner = () => {
         <section className={css.banner}>
             <Swiper zoom slidesPerView="auto" modules={[Zoom]} centeredSlides spaceBetween={8} className={css.swiper}>
                 {banners.map((banner, index) => (
-                    <SwiperSlide
-                        key={`${index}-${banner}`}
-                        style={{ width: 'max-content' }}
-                        onClick={() => navigate(banner.link)}
-                    >
+                    <SwiperSlide key={`${index}-${banner}`} onClick={() => navigate(banner.link)}>
                         <div className={css.photo} style={{ backgroundImage: `url(${banner.img_url})` }} />
                     </SwiperSlide>
                 ))}

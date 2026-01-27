@@ -3,7 +3,7 @@
 }
 
 .bookingReminder {
-    width: 345px;
+    min-width: 345px;
     min-height: 75px;
     padding: 16px;
     background-color: var(--secondary-background);
