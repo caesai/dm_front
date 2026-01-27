@@ -29,7 +29,7 @@ interface ICertificateOptionProps {
 const CertificateOption: React.FC<ICertificateOptionProps> = ({ onClick, value, date, isSelected }: ICertificateOptionProps): JSX.Element => (
     <div className={classnames(css.optionRow, { [css.optionSelected]: isSelected })} onClick={onClick}>
         <div className={css.optionColumn}>
-            <span>Номинал:</span>
+            <span>Баланс:</span>
             <span className={css.rating}>{value} ₽</span>
         </div>
         <div className={css.optionColumn}>
