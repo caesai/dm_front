@@ -100,7 +100,7 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                         );
                     })
                     .map((booking) => (
-                        <SwiperSlide key={booking.id} style={{ width: 'max-content' }}>
+                        <SwiperSlide key={booking.id}>
                             <div
                                 className={css.bookingReminder}
                                 onClick={() => navigateToBooking(booking.id, booking.booking_type ?? '')}
