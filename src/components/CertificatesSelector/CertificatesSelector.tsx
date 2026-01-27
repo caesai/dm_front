@@ -178,7 +178,7 @@ export const CertificatesSelector: React.FC<ICertificatesSelectorProps> = ({ set
                         onClick={() => toggleSelectedOnlineOption(index)}
                         isSelected={index === selectedOnlineOptionIndex}
                         // Ensure value is formatted correctly as string
-                        value={Number(certificate.value).toFixed().toString()}
+                        value={Number(certificate.balance).toFixed().toString()}
                         date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
                     />
                 ))}
