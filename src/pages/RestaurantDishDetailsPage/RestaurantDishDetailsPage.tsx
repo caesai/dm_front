@@ -8,7 +8,7 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 // Styles
 import css from '@/pages/RestaurantDishDetailsPage/RestaurantDishDetailsPage.module.css';
 // Utils
-import { extractPrice, getDefaultSize } from '@/utils/menu.utils.ts';
+import { extractPrice, getDefaultSize, formatMeasureUnitType } from '@/utils/menu.utils.ts';
 // Hooks
 import { useRestaurantMenu } from '@/hooks/useRestaurantMenu';
 
@@ -98,7 +98,9 @@ export const RestaurantDishDetailsPage: React.FC = () => {
     }, [currentSize, dishFromState]);
 
     const currentWeight = useMemo(() => {
-        const unit = dishFromState?.weight_value || '';
+        // Единицу измерения форматуем через formatMeasureUnitType на случай,
+        // если в state прилетел сырой код из API (GRAM, LITER и т.п.)
+        const unit = formatMeasureUnitType(dishFromState?.weight_value || '');
 
         if (currentSize) {
             return `${currentSize.portion_weight_grams} ${unit}`.trim();

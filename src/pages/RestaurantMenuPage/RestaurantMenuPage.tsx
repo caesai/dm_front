@@ -30,7 +30,7 @@ import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 // Utils
-import { extractPrice, getDefaultSize } from '@/utils/menu.utils';
+import { extractPrice, getDefaultSize, formatMeasureUnitType } from '@/utils/menu.utils';
 import { trigramMatch } from '@/utils/trigram.utils';
 // Hooks
 import { useRestaurantMenu } from '@/hooks/useRestaurantMenu';
@@ -397,7 +397,9 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
                 })
                 .filter(Boolean) as string[],
             weights: dish.item_sizes.filter((s) => !s.is_hidden).map((s) => s.portion_weight_grams.toString()),
-            weight_value: dish.measure_unit || defaultSize?.measure_unit_type || '',
+            // Единицу измерения всегда берём из measure_unit_type (г/кг/мл/л),
+            // поле measure_unit (порц./шт.) намеренно игнорируем
+            weight_value: formatMeasureUnitType(defaultSize?.measure_unit_type),
             item_sizes: dish.item_sizes.filter((s) => !s.is_hidden),
             isCocktail: isCocktail,
         };
@@ -523,7 +525,8 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
                         // Для коктейлей всегда считаем, что изображение есть (даже если firstDishImage пустое)
                         const hasImage = isCocktail ? (imageUrl && imageUrl.trim().length > 0) : (imageUrl && imageUrl.trim().length > 0);
                         const portionWeight = defaultSize?.portion_weight_grams;
-                        const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || '';
+                        // Всегда используем measure_unit_type (г/кг/мл/л), поле measure_unit (порц./шт.) игнорируем
+                        const measureUnit = formatMeasureUnitType(defaultSize?.measure_unit_type);
                         const weight = portionWeight ? `${portionWeight} ${measureUnit}` : '';
                         const price = extractPrice(defaultSize?.prices);
 
@@ -591,7 +594,8 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
                         {visibleItems.map((item) => {
                             const defaultSize = getDefaultSize(item.item_sizes);
                             const portionWeight = defaultSize?.portion_weight_grams;
-                            const measureUnit = item.measure_unit || defaultSize?.measure_unit_type || '';
+                            // Всегда используем measure_unit_type (г/кг/мл/л), поле measure_unit (порц./шт.) игнорируем
+                            const measureUnit = formatMeasureUnitType(defaultSize?.measure_unit_type);
                             const volume = portionWeight ? `${portionWeight} ${measureUnit}` : '';
                             const price = extractPrice(defaultSize?.prices);
 
