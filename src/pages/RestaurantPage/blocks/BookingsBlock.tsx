@@ -143,7 +143,7 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
     const handleDateSave = useCallback(
         (date: PickerValue) => {
             // Находим полный объект из списка дат, чтобы получить все атрибуты
-            const fullDate = availableDates?.find(d => d.value === date.value) ?? date;
+            const fullDate = availableDates?.find(d => d?.value === date?.value) ?? date;
             
             if (fullDate.attributes?.includes('requires_deposit')) {
                 setPendingDate(fullDate);
@@ -187,7 +187,7 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
         return (
             <div className={css.timeItem} onClick={openDatePopup}>
                 <Calendar size={18} />
-                {formatDateAlt(form.date.value.toString())}
+                {form.date?.value && formatDateAlt(form.date?.value.toString())}
                 <FaAngleRight size={16} />
             </div>
         );
