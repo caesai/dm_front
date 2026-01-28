@@ -20,6 +20,7 @@ import { useIndexPageData } from '@/hooks/useIndexPageData.ts';
 import css from '@/pages/IndexPage/IndexPage.module.css';
 import { Banner } from '@/components/Banners/Banner.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
+import { DEV_MODE } from '@/api/base';
 
 /**
  * Главная страница приложения.
@@ -82,7 +83,7 @@ export const IndexPage: React.FC = (): JSX.Element => {
                     <Stories storiesBlocks={storiesBlocks} />
                 </ContentBlock>
                 <ContentBlock className={css.bannersSection}>
-                    <Banner />
+                    {DEV_MODE && <Banner />}
                     <BookingReminder bookings={currentBookings} />
                 </ContentBlock>
                 <ContentBlock className={css.indexSection}>
