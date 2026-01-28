@@ -172,7 +172,7 @@ const AppRouter: React.FC = (): JSX.Element => {
     }, [auth?.access_token, loadingComplete, loadCriticalData, loadBackgroundData, hasCachedCriticalData]);
 
     return (
-        <BrowserRouter basename={!DEV_MODE ? undefined : '/dm_front/'}>
+        <BrowserRouter basename={!DEV_MODE ? '/' : '/dm_front/'}>
             <ScrollToTop />
             <BannerPopup />
             <Toast />
