@@ -174,12 +174,14 @@ export const BookingBlock: React.FC<IBookingBlockProps> = ({ restaurantId }: IBo
         setIsDepositModalOpen(false);
     }, []);
 
-    /** Флаг загрузки даты */
-    const isDateLoading = form.date?.value === 'unset' || !availableDates.length;
+    /** Флаг загрузки даты (только когда дата не установлена, не зависит от наличия слотов) */
+    const isDateLoading = form.date?.value === 'unset';
     /** Открывает popup выбора даты */
     const openDatePopup = useCallback(() => setIsPickerOpen(true), []);
 
-    /** Элемент селектора даты для отображения в начале списка (мемоизирован) */
+    /** Элемент селектора даты для отображения в начале списка (мемоизирован)
+     * Всегда отображается, даже если нет доступных слотов, чтобы пользователь мог выбрать дату
+     */
     const dateElement = useMemo(() => {
         if (isDateLoading) {
             return <PlaceholderBlock width="150px" height="41px" rounded="20px" />;

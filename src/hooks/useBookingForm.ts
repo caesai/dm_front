@@ -841,12 +841,17 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
     // ============================================
 
     useEffect(() => {
+        // Используем formState напрямую для более надежного отслеживания изменений
+        const currentDate = formState?.date?.value ?? form.date?.value;
+        const currentRestaurant = formState?.restaurant?.value ?? form.restaurant?.value;
+        const currentGuestCount = formState?.guestCount ?? form.guestCount;
+        
         if (
-            form.restaurant?.value === 'unset' ||
+            currentRestaurant === 'unset' ||
             !auth?.access_token ||
-            form.date?.value === 'unset' ||
-            !form.date?.value ||
-            !form.guestCount
+            currentDate === 'unset' ||
+            !currentDate ||
+            !currentGuestCount
         ) {
             return;
         }
@@ -859,9 +864,9 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
 
         APIGetAvailableTimeSlots(
             auth.access_token,
-            String(form.restaurant.value),
-            String(form.date.value),
-            form.guestCount
+            String(currentRestaurant),
+            String(currentDate),
+            currentGuestCount
         )
             .then((res) => {
                 // Предотвращаем обновление состояния после размонтирования
@@ -922,8 +927,7 @@ export const useBookingForm = (options: IUseBookingFormOptions = {}) => {
         return () => {
             isCancelled = true;
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [auth?.access_token, form.date?.value, form.guestCount, form.restaurant?.value, isEventBooking, eventData?.dateStart]);
+    }, [auth?.access_token, formState?.date, formState?.guestCount, formState?.restaurant, isEventBooking, eventData?.dateStart]);
 
     // ============================================
     // Certificate Claim (after onboarding)

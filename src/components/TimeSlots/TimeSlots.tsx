@@ -237,10 +237,10 @@ const DAY_PARTS_CONFIG: {
     part: PartOfDay;
     countKey: keyof Pick<IDayPartSelectorProps, 'morningCount' | 'dayCount' | 'eveningCount'>;
 }[] = [
-    { part: 'morning', countKey: 'morningCount' },
-    { part: 'day', countKey: 'dayCount' },
-    { part: 'evening', countKey: 'eveningCount' },
-];
+        { part: 'morning', countKey: 'morningCount' },
+        { part: 'day', countKey: 'dayCount' },
+        { part: 'evening', countKey: 'eveningCount' },
+    ];
 
 /**
  * Селектор части дня (утро/день/вечер).
@@ -445,7 +445,10 @@ export const TimeSlots: React.FC<ITimeSlotsProps> = React.memo(
         return (
             <ContentBlock className={classNames(css.timeOfDayContainer, className)} style={style}>
                 {!hasAnyTimeSlots ? (
-                    <span className={css.noTimeSlotsText}>К сожалению, свободных столов не осталось</span>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                        {startElement && startElement}
+                        <span className={css.noTimeSlotsText}>К сожалению, свободных столов не осталось</span>
+                    </div>
                 ) : (
                     showDayPartSelector && (
                         <DayPartSelector
@@ -485,9 +488,12 @@ export const TimeSlots: React.FC<ITimeSlotsProps> = React.memo(
                                 ))}
                             </Swiper>
                         ) : (
-                            <span className={css.noTimeSlotsText}>
-                                К сожалению, доступных столов на выбранную часть дня не осталось
-                            </span>
+                            <>
+                                {startElement && startElement}
+                                <span className={css.noTimeSlotsText}>
+                                    К сожалению, доступных столов на выбранную часть дня не осталось
+                                </span>
+                            </>
                         )}
                     </ContentBlock>
                 )}
