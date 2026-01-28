@@ -66,11 +66,11 @@ export const RestaurantsList: React.FC<IRestaurantsListProps> = ({ clickable = f
 
         let result: IRestaurant[] = [];
         let movableValue = null;
-        // Помещаем ресторан Self Edge SPB Chinois (id: 13) в начало списка
+        // Помещаем ресторан Poly SPB Belinskogo  (id: 2) в начало списка
         restaurants.map((e) => {
-            if (e.id !== R.SELF_EDGE_SPB_CHINOIS_ID) {
+            if (e.id !== R.POLY_SPB_BELINSKOGO_ID) {
                 result.push(e);
-            } else if (e.id === R.SELF_EDGE_SPB_CHINOIS_ID) {
+            } else if (e.id === R.POLY_SPB_BELINSKOGO_ID) {
                 movableValue = e;
             }
         });
