@@ -48,7 +48,7 @@ export const Certificate: React.FC<CertificateProps> = ({
                     <span>до {date}</span>
                 </div>
                 <div>
-                    <span>Номинал</span>
+                    <span>Баланс:</span>
                     <span>{rating + ' ₽'}</span>
                 </div>
             </div>

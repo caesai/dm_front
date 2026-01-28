@@ -34,7 +34,7 @@
 .card_date {
     margin: 15px 0 0 15px;
     padding: 5px 10px;
-    background-color: var(--red);
+    background-color: var(--button-grey);
     border-radius: 16px;
     width: fit-content;
     font-family: "Mont", sans-serif;

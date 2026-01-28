@@ -1,4 +1,4 @@
-import { ICertificate, ICertificateBlockProps } from '@/types/certificates.types.ts';
+import { ICertificate } from '@/types/certificates.types.ts';
 import certificateImage from '/img/certificate_new.png';
 
 export const certificatesListMock: ICertificate[] = [
@@ -19,6 +19,7 @@ export const certificatesListMock: ICertificate[] = [
         updated_at: '2025-11-10T14:15:53.614590Z',
         shared_at: null,
         dreamteam_id: '',
+        balance: 0
     },
     {
         certificate_type: 'online',
@@ -37,6 +38,7 @@ export const certificatesListMock: ICertificate[] = [
         updated_at: '2025-11-10T14:10:20.485914Z',
         shared_at: null,
         dreamteam_id: '',
+        balance: 0
     },
     {
         certificate_type: 'online',
@@ -55,12 +57,37 @@ export const certificatesListMock: ICertificate[] = [
         updated_at: '2025-11-10T13:42:47.125285Z',
         shared_at: null,
         dreamteam_id: '',
+        balance: 0
     },
 ];
 
 export const mockCertificate: ICertificate = certificatesListMock[0];
 
-export const certificateBlock: ICertificateBlockProps = {
+/**
+ * Полный мок сертификата для тестов оплаты.
+ * Содержит все обязательные поля.
+ */
+export const mockCertificateWithDreamteamId: ICertificate = {
+    id: '123',
+    customer_id: 1,
+    payment_id: 1,
+    recipient_id: 1,
+    certificate_type: 'online',
+    status: 'new',
+    value: '1000',
+    recipient_name: 'Test User',
+    dreamteam_id: '1234567890',
+    receipt_point: 1,
+    receipt_date: '2025-01-01',
+    created_at: '2025-01-01',
+    updated_at: '2025-01-01',
+    shared_at: null,
+    expired_at: '2026-01-01',
+    message: 'Test Message',
+    balance: 0
+};
+
+export const certificateBlock = {
     image: certificateImage,
     description: 'Приятный подарок на любые праздники',
 };

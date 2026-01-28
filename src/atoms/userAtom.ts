@@ -7,15 +7,51 @@ import { getDataFromLocalStorage, setDataToLocalStorage } from '@/utils.ts';
  * @returns {IUser} - Пользователь
  */
 export const userAtom = atom<IUser>();
+
 /**
  * @description Атом для получения авторизации
  * @returns {IAuthInfo} - Авторизация
  */
 export const authAtom = atom<IAuthInfo>();
 
-// Атом для получения разрешений пользователя
-export const permissionsAtom = atom<TUserPermissions[]>((get) => get(userAtom)?.permissions || []);
-// Атом для проверки, является ли пользователь тестером
+/**
+ * @description Атом для получения нормализованных разрешений пользователя
+ * 
+ * Выполняет следующую нормализацию:
+ * - Гарантирует возврат массива (защита от `null`/`undefined`)
+ * - Фильтрует только строковые значения
+ * - Приводит все значения к нижнему регистру
+ * - Удаляет лишние пробелы
+ * 
+ * @returns {TUserPermissions[]} Массив нормализованных разрешений пользователя
+ * 
+ * @example
+ * ```tsx
+ * const permissions = useAtomValue(permissionsAtom);
+ * if (permissions.includes('hospitality_heroes')) {
+ *   // Показать привилегии
+ * }
+ * ```
+ */
+export const permissionsAtom = atom<TUserPermissions[]>((get) => {
+    const user = get(userAtom);
+    const permissions = user?.permissions;
+    
+    // Если permissions не массив или null/undefined, возвращаем пустой массив
+    if (!Array.isArray(permissions)) {
+        return [];
+    }
+    
+    // Нормализуем: убираем пробелы и приводим к нижнему регистру
+    return permissions
+        .filter((p): p is TUserPermissions => typeof p === 'string')
+        .map(p => p.toLowerCase().trim() as TUserPermissions);
+});
+
+/**
+ * @description Атом для проверки, является ли пользователь тестером
+ * @returns {boolean} `true` если у пользователя есть разрешение `tester`, иначе `false`
+ */
 export const isUserTesterAtom = atom<boolean>((get) => get(permissionsAtom).includes('tester'));
 
 /**

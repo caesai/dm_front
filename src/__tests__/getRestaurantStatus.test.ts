@@ -1,4 +1,4 @@
-import { getRestaurantStatus } from '../utils';
+import { getRestaurantStatus } from '@/utils.ts';
 
 const worktime = [
   { id: 1, weekday: 'пн', time_start: '17:00', time_end: '23:00' },

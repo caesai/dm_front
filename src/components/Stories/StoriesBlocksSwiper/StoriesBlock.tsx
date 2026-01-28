@@ -18,7 +18,7 @@ export const StoriesBlock: React.FC<StoriesBlockProps> = ({ onClick, thumbnail, 
     return (
         <section className={css.storyContainer}>
             <div className={css.storyBorder}>
-                <div className={css.storyBlock} onClick={handleClick}>
+                <div className={css.storyBlock} onClick={isLoading ? undefined : handleClick}>
                     <div className={css.storyBlockImage}>
                         {isLoading ? (
                             <PlaceholderBlock width={'100%'} height={'100%'} />
@@ -28,7 +28,11 @@ export const StoriesBlock: React.FC<StoriesBlockProps> = ({ onClick, thumbnail, 
                     </div>
                 </div>
             </div>
-            <span>{name}</span>
+            {isLoading ? (
+                <PlaceholderBlock width="60px" height="12px" rounded="4px" />
+            ) : (
+                <span>{name}</span>
+            )}
         </section>
     );
 };

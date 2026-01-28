@@ -11,7 +11,7 @@ interface IBottomButtonWrapperProps {
     additionalBtns?: ReactNode;
     content?: ReactNode;
     isFixed?: boolean;
-    theme?: 'red' | 'primary';
+    theme?: 'red' | 'primary' | 'secondary';
     type?: 'button' | 'submit' | 'reset';
 }
 
@@ -21,9 +21,9 @@ export const BottomButtonWrapper: React.FC<IBottomButtonWrapperProps> = ({
     onClick,
     forwardedRef,
     additionalBtns,
-    content = 'Забронировать стол',
+    content = 'Забронировать',
     isFixed = true,
-    theme = 'red',
+    theme = 'secondary',
     type = 'button',
 }) => {
     return (
@@ -32,10 +32,9 @@ export const BottomButtonWrapper: React.FC<IBottomButtonWrapperProps> = ({
                 <button
                     className={classnames(
                         css.button,
+                        css[theme],
                         {[css.disabled]: isDisabled},
                         {[css.loading]: isLoading},
-                        {[css.red]: theme === 'red'},
-                        {[css.primary]: theme === 'primary'}
                     )}
                     disabled={isDisabled}
                     onClick={onClick}

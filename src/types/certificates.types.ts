@@ -6,6 +6,7 @@ export interface ICertificate {
     certificate_type: TCertificate;
     status: TCertificateStatus;
     value: string;
+    balance: number;
     recipient_name: string;
     dreamteam_id: string;
     receipt_point: number | null;
@@ -15,11 +16,6 @@ export interface ICertificate {
     shared_at: string | null;
     expired_at: string | null;
     message: string;
-}
-
-export interface ICertificateBlockProps {
-    image: string;
-    description: string;
 }
 
 export type TCertificate = 'online' | 'offline';

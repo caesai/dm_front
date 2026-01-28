@@ -134,7 +134,7 @@ export const CertificatesCreateOnlinePage: React.FC = () => {
                     <UniversalButton
                         width={'full'}
                         title={'Оплатить'}
-                        theme={isValid ? 'red' : undefined}
+                        theme={isValid ? 'secondary' : undefined}
                         action={handleNextClick}
                     />
                 </div>

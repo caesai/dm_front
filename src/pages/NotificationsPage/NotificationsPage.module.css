@@ -1,0 +1,33 @@
+.page {
+    height: 100vh;
+    background-color: var(--primary-background);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding: 20px 15px;
+    font-family: 'Mont', sans-serif;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    p {
+        margin: 10px 0;
+        font-size: 14px;
+    }
+}
+.restaurant {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.restaurantTitle {
+    font-family: 'Mont', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-flex;
+    flex-basis: 80%;
+    color: var(--dark-grey);
+}

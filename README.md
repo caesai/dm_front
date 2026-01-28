@@ -28,6 +28,7 @@ Install [mkcert](https://github.com/FiloSottile/mkcert) for making locally-trust
 After install one should to create certificates for dt-mini-app.local domain
 ```
 mkdir -p .cert && mkcert -key-file ./.cert/localhost-key.pem -cert-file ./.cert/localhost.pem 'dt-mini-app.local'
+<!-- mkdir -p .cert && mkcert -key-file ./.cert/caesai-key.pem -cert-file ./.cert/caesai.pem 'caesai.github.io' -->
 ```
 
 Now in /etc/hosts

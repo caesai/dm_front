@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import classNames from 'classnames';
+// Atoms
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom.ts';
 // Components
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
@@ -8,13 +10,36 @@ import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderC
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
 
-interface ChefBlockProps {
-    about: string;
-    photo_url: string;
-    chef_names: string[];
+/**
+ * Пропсы компонента ChefBlock.
+ *
+ * @    interface IChefBlockProps
+ */
+interface IChefBlockProps {
+    /**
+     * ID ресторана.
+     */
+    restaurantId: string;
 }
 
-export const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_names }) => {
+/**
+ * Компонент для отображения информации о шефе.
+ *
+ * @component
+ * @example
+ * <ChefBlock restaurantId="1" />
+ */
+export const ChefBlock: React.FC<IChefBlockProps> = ({ restaurantId }): JSX.Element => {
+    /**
+     * Ресторан.
+     */
+    const restaurant = useGetRestaurantById(restaurantId);
+    /**
+     * Имена шефов.
+     */
+    const chefNames = useMemo(() => restaurant?.brand_chef?.names || [], [restaurant?.brand_chef?.names]);
+    const chefPhotoUrl = useMemo(() => restaurant?.brand_chef?.photo_url || '', [restaurant?.brand_chef?.photo_url]);
+    const chefAbout = useMemo(() => restaurant?.brand_chef?.about || '', [restaurant?.brand_chef?.about]);
     const [isChefAboutCollapsed, setIsChefAboutCollapsed] = useState(true);
 
     /**
@@ -28,12 +53,15 @@ export const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_nam
         <ContentContainer>
             <ContentBlock>
                 <HeaderContainer>
-                    <HeaderContent id="chef" title={`О шеф${chef_names?.length > 1 ? 'ах' : 'е'}`} />
+                    <HeaderContent id="chef" title={`О шеф${chefNames?.length > 1 ? 'ах' : 'е'}`} />
                 </HeaderContainer>
 
                 {/* Блок с текстом о шефе */}
                 <div className={css.aboutContainer}>
-                    <span className={classNames(css.aboutText, isChefAboutCollapsed && css.trimLines)} dangerouslySetInnerHTML={{ __html: about.replace(/\\n/g, '\n') }}></span>
+                    <span
+                        className={classNames(css.aboutText, isChefAboutCollapsed && css.trimLines)}
+                        dangerouslySetInnerHTML={{ __html: chefAbout.replace(/\\n/g, '\n') }}
+                    ></span>
                     <div
                         className={css.trimLinesButton}
                         onClick={toggleChefInfo}
@@ -49,10 +77,10 @@ export const ChefBlock: React.FC<ChefBlockProps> = ({ about, photo_url, chef_nam
                 <div className={css.chefInfoContainer}>
                     <div
                         className={classNames(css.chefImage, css.bgImage)}
-                        style={{ backgroundImage: `url(${photo_url})` }}
+                        style={{ backgroundImage: `url(${chefPhotoUrl})` }}
                     />
                     <div className={css.chefInfoList}>
-                        {chef_names?.map((name) => (
+                        {chefNames?.map((name) => (
                             <div className={css.chefInfo} key={name}>
                                 <span className={css.title}>{name}</span>
                                 <span className={css.subTitle}>Бренд-шеф</span>

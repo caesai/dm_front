@@ -1,378 +1,274 @@
-import React, { useEffect, useRef, useState } from 'react';
+/**
+ * @fileoverview Страница общего бронирования столика для любого ресторана.
+ *
+ * Пользователь попадает на эту страницу с главной страницы приложения
+ * ({@link IndexPage}) после нажатия кнопки "Забронировать".
+ *
+ * Страница предоставляет функционал:
+ * - Выбор ресторана из полного списка (RestaurantsListSelector)
+ * - Выбор даты бронирования из доступных дат
+ * - Выбор количества гостей и детей
+ * - Выбор времени бронирования из доступных слотов
+ * - Ввод контактных данных (предзаполнено из данных пользователя)
+ * - Дополнительные пожелания к бронированию
+ * - Выбор/активация подарочного сертификата
+ * - Выбор способа подтверждения бронирования
+ * - Создание бронирования через API
+ *
+ * При успешном бронировании пользователь перенаправляется на
+ * страницу деталей бронирования `/myBookings/{booking_id}`.
+ *
+ * Отличия от {@link RestaurantBookingPage}:
+ * - Ресторан выбирается пользователем (не предзадан в URL)
+ * - Использует CommonBookingHeader вместо RestaurantBookingHeader
+ * - Поддерживает передачу certificate и certificateId через state
+ * - Использует `shared` вместо `sharedRestaurant` для навигации
+ *
+ * Отличия от {@link EventBookingPage}:
+ * - Не привязан к мероприятию (нет eventData)
+ * - Дата не фиксирована, выбирается пользователем
+ * - Не передаёт event_id в API
+ * - Навигация после бронирования на /myBookings/{id}
+ *
+ * ## Разделение состояния
+ *
+ * Использует `formType: 'common'` для изолированного атома {@link commonBookingFormAtom},
+ * что предотвращает конфликты с другими страницами бронирования.
+ *
+ * @module pages/BookingPage/BookingPage
+ *
+ * @see {@link IndexPage} - главная страница (точка входа)
+ * @see {@link RestaurantBookingPage} - страница бронирования конкретного ресторана
+ * @see {@link EventBookingPage} - страница бронирования мероприятия
+ * @see {@link useBookingForm} - хук управления формой бронирования
+ * @see {@link commonBookingFormAtom} - изолированный атом состояния формы
+ */
+
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAtom } from 'jotai';
-import classNames from 'classnames';
-// API's
-import { APICreateBooking, APIGetAvailableDays, APIGetAvailableTimeSlots } from '@/api/restaurants.api.ts';
-import { APIGetCertificates, APIPostCertificateClaim } from '@/api/certificates.api.ts';
-// Types
-import { ITimeSlot } from '@/pages/BookingPage/BookingPage.types.ts';
-// Atoms
-import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
-import { authAtom, userAtom } from '@/atoms/userAtom.ts';
-import { commAtom } from '@/atoms/bookingCommAtom.ts';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
-import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
-import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
-import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
-import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-import { GuestCountSelector } from '@/components/GuestCountSelector/GuestCountSelector.tsx';
-import { HeaderContainer } from '@/components/ContentBlock/HeaderContainer/HeaderContainer.tsx';
-import { HeaderContent } from '@/components/ContentBlock/HeaderContainer/HeaderContent/HeaderContainer.tsx';
-import { TextInput } from '@/components/TextInput/TextInput.tsx';
-import { IConfirmationType } from '@/components/ConfirmationSelect/ConfirmationSelect.types.ts';
+import { CommonBookingHeader } from '@/pages/BookingPage/blocks/CommonBookingHeader.tsx';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
-import { DateListSelector } from '@/components/DateListSelector/DateListSelector.tsx';
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
-import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
-import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
-import { RestaurantsListSelector } from '@/components/RestaurantsListSelector/RestaurantsListSelector.tsx';
-import { TimeSlots } from '@/components/TimeSlots/TimeSlots.tsx';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
 import { CertificatesSelector } from '@/components/CertificatesSelector/CertificatesSelector.tsx';
+import { BookingContactsBlock } from '@/pages/BookingPage/blocks/BookingContactsBlock.tsx';
+import { BookingTimeSlotsBlock } from '@/pages/BookingPage/blocks/BookingTimeSlotsBlock.tsx';
 // Hooks
-import useToastState from '@/hooks/useToastState.ts';
-import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
-import { useBookingFormValidation } from '@/hooks/useBookingFormValidation.ts';
-// Utils
-import { formatDate, formatDateShort, getGuestsString, getTimeShort } from '@/utils.ts';
-// Styles
-import css from '@/pages/BookingPage/BookingPage.module.css';
+import { useBookingForm } from '@/hooks/useBookingForm.ts';
+// Atoms
+import { CONFIRMATION_OPTIONS } from '@/atoms/bookingFormAtom.ts';
 // Mocks
-import { getGuestMaxNumber, getServiceFeeData } from '@/mockData.ts';
+import { getServiceFeeData } from '@/mockData.ts';
 
-const confirmationList: IConfirmationType[] = [
-    {
-        id: 'telegram',
-        text: 'В Telegram',
-    },
-    {
-        id: 'phone',
-        text: 'По телефону',
-    },
-    {
-        id: 'none',
-        text: 'Без подтверждения',
-    },
-];
-
-export const BookingPage: React.FC = () => {
+/**
+ * Страница общего бронирования столика для любого ресторана.
+ *
+ * Использует хук {@link useBookingForm} для управления состоянием формы,
+ * валидации и взаимодействия с API.
+ *
+ * Ресторан выбирается пользователем из списка (в отличие от
+ * {@link RestaurantBookingPage}, где ресторан предзадан).
+ *
+ * При успешном бронировании выполняется навигация на страницу бронирования:
+ * `/myBookings/{booking_id}`
+ *
+ * @component
+ * @returns {JSX.Element} Страница общего бронирования
+ *
+ * @example
+ * // Роут в App.tsx
+ * <Route path="/booking" element={<BookingPage />} />
+ *
+ * @example
+ * // Навигация с главной страницы
+ * navigate('/booking');
+ *
+ * @example
+ * // Навигация с сертификатом
+ * navigate('/booking', {
+ *     state: {
+ *         certificate: { recipient_name: 'Имя получателя' },
+ *         certificateId: 'cert-123',
+ *     }
+ * });
+ *
+ * @example
+ * // Навигация по shared-ссылке
+ * navigate('/booking', { state: { shared: true } });
+ */
+export const BookingPage: React.FC = (): JSX.Element => {
+    /** Хук навигации для перехода после бронирования */
     const navigate = useNavigate();
+    /** Получение location.state с данными сертификата и shared */
     const location = useLocation();
-    const { showToast } = useToastState();
-
-    const { goBack } = useNavigationHistory();
-
-    const [auth] = useAtom(authAtom);
-    const [user] = useAtom(userAtom);
-    const [comms] = useAtom(commAtom);
-
-    const [guestCount, setGuestCount] = useState(0);
-    const [childrenCount, setChildrenCount] = useState(0);
-    const [date, setDate] = useState<PickerValueObj>({
-        title: 'unset',
-        value: 'unset',
-    });
-
-    const [currentSelectedTime, setCurrentSelectedTime] = useState<ITimeSlot | null>(null);
-    const [restaurant, setRestaurant] = useState<PickerValueObj>({
-        title: 'unset',
-        value: 'unset',
-    });
-    const [certificates, setCertificates] = useAtom(certificatesListAtom);
-
-    const [userName, setUserName] = useState<string>(user?.first_name ? user.first_name : '');
-    const [userPhone, setUserPhone] = useState<string>(user?.phone_number ? user.phone_number : '');
-    const [userEmail] = useState<string>(user?.email ? user.email : '');
-    const [commentary, setCommentary] = useState('');
-    const [confirmation, setConfirmation] = useState<IConfirmationType>(confirmationList[0]);
-    const [availableTimeslots, setAvailableTimeslots] = useState<ITimeSlot[]>([]);
-    const [availableDates, setAvailableDates] = useState<PickerValueObj[]>([]);
-    const [guestCountPopup, setGuestCountPopup] = useState(false);
-    const [bookingDatePopup, setBookingDatePopup] = useState(false);
-    const [bookingRestaurantPopup, setBookingRestaurantPopup] = useState(false);
-    const [timeslotsLoading, setTimeslotsLoading] = useState(true);
-    const [requestLoading, setRequestLoading] = useState(false);
-    const [errorPopup, setErrorPopup] = useState(false);
-    const [botError, setBotError] = useState(false);
-    const [timeslotsError, setTimeslotsError] = useState(false);
-    const [errorPopupCount, setErrorPopupCount] = useState(0);
-    const [preOrder, setPreOrder] = useState(false);
-    const [certificate_id, setCertificateId] = useState<string | null>(null);
+    /**
+     * State из navigation.
+     * Может содержать:
+     * - certificate: данные сертификата для активации
+     * - certificateId: ID сертификата для активации
+     * - shared: флаг перехода по shared-ссылке
+     */
+    const state = location.state;
+    /** Ref для кнопки бронирования (используется BottomButtonWrapper) */
     const bookingBtn = useRef<HTMLDivElement>(null);
 
-    const state = location.state;
+    /**
+     * Хук управления формой бронирования.
+     *
+     * Конфигурация для общего бронирования:
+     * - certificateParams: данные сертификата из state для активации
+     * - resetOnMount: true для сброса формы при каждом посещении страницы
+     *
+     * Ресторан и дата выбираются пользователем в форме.
+     * При успешном бронировании переходит на /myBookings/{booking_id}
+     */
+    const {
+        form,
+        isFormValid,
+        validationDisplay,
+        availableDates,
+        availableTimeslots,
+        canShowTimeSlots,
+        loading,
+        errors,
+        setErrorPopup,
+        handlers,
+        createBooking,
+    } = useBookingForm({
+        formType: 'common',
+        certificateParams: {
+            certificate: state?.certificate,
+            certificateId: state?.certificateId,
+        },
+        isShared: state?.shared,
+        resetOnMount: true,
+    });
 
-    useEffect(() => {
-        auth?.access_token && restaurant.value !== 'unset'
-            ? APIGetAvailableDays(auth?.access_token, parseInt(String(restaurant.value)), 1)
-                  .then((res) =>
-                      setAvailableDates(
-                          res.data.map((v: string) => ({
-                              title: formatDate(v),
-                              value: v,
-                          }))
-                      )
-                  )
-                  .catch((err) => {
-                      console.error('err: ', err);
-                      // setErrorPopup(true); // TODO: Добавить ошибку в UI
-                  })
-            : null;
-    }, [guestCount, restaurant]);
-
-    // 2. States specifically for controlling the temporary *error display* in the UI (start as true/validated)
-    const [nameValidatedDisplay, setNameValidated] = useState(true);
-    const [phoneValidatedDisplay, setPhoneValidated] = useState(true);
-    const [dateValidatedDisplay, setDateValidated] = useState(true);
-    const [, setSelectedTimeValidated] = useState(true);
-    const [guestsValidatedDisplay, setGuestsValidated] = useState(true);
-    const { isFormValid, validateForm } = useBookingFormValidation(
-        // Pass the raw values
-        { userName, userPhone, currentSelectedTime, guestCount, date },
-        // Pass the setters for the *display* states
-        { setNameValidated, setPhoneValidated, setDateValidated, setGuestsValidated, setSelectedTimeValidated }
-    );
-
-    const createBooking = () => {
-        if (!user?.complete_onboarding) {
-            navigate('/onboarding/3', {
-                state: { id: Number(restaurant.value), date, time: currentSelectedTime, sharedRestaurant: true },
-            });
-            return;
-        }
-        if (validateForm() && auth?.access_token && currentSelectedTime) {
-            setRequestLoading(true);
-            APICreateBooking(
-                auth.access_token,
-                Number(restaurant.value),
-                date.value,
-                getTimeShort(currentSelectedTime.start_datetime),
-                guestCount,
-                childrenCount,
-                userName,
-                userPhone,
-                userEmail,
-                commentary,
-                comms,
-                confirmation.text,
-                guestCount + childrenCount < 8 ? false : preOrder,
-                null,
-                certificate_id
-            )
-                .then((res) => {
-                    if (res.data?.error) {
-                        setErrorPopup(true);
-                        setBotError(true);
-                        return;
-                    }
-                    navigate(`/myBookings/${res.data.id}`);
-                })
-                .catch((err) => {
-                    console.error('err: ', err);
-                    setErrorPopup(true);
-                    setErrorPopupCount((prev) => prev + 1);
-                })
-                .finally(() => setRequestLoading(false));
-        }
+    /**
+     * Обработчик кнопки "Назад".
+     *
+     * При переходе по shared-ссылке (state.shared = true)
+     * перенаправляет на главную страницу, иначе возвращает на
+     * предыдущую страницу (обычно {@link IndexPage}).
+     */
+    const handleGoBack = () => {
+        navigate('/');
     };
 
-    useEffect(() => {
-        if (restaurant.value === 'unset' || !auth?.access_token || date.value === 'unset' || !guestCount) return;
-        setTimeslotsLoading(true);
-        setTimeslotsError(false);
-        APIGetAvailableTimeSlots(auth.access_token, parseInt(String(restaurant.value)), date.value, guestCount)
-            .then((res) => {
-                setAvailableTimeslots(res.data);
-            })
-            .catch((err) => {
-                console.error('err: ', err);
-                setTimeslotsError(true);
-            })
-            .finally(() => setTimeslotsLoading(false));
-    }, [date, guestCount, restaurant]);
+    /**
+     * Сообщение о сервисном сборе выбранного ресторана.
+     * Зависит от ID ресторана в форме.
+     */
+    const serviceFeeMessage = getServiceFeeData(String(form.restaurant.value));
 
-    useEffect(() => {
-        // Если certificates.length === 0, но у нас есть state?.certificate && state?.certificateId
-        // предполагаем, что юзер прошел онбординг и попал сразу на страницу бронирования
-        // нужно сделать claim сертификата и обновить список
-        if (auth?.access_token && state?.certificate && state?.certificateId && certificates.length === 0) {
-            APIPostCertificateClaim(
-                String(auth?.access_token),
-                Number(user?.id),
-                state?.certificateId,
-                state?.certificate.recipient_name
-            )
-                .then(() => {
-                    // Обновляем список сертификатов в приложении
-                    APIGetCertificates(auth?.access_token, Number(user?.id))
-                        .then((response) => setCertificates(response.data))
-                        .catch((err) => {
-                            console.error('err: ', err);
-                            // setErrorPopup(true); // TODO: Добавить ошибку в UI
-                        });
-                })
-                .catch((err) => {
-                    console.log(err);
-                    showToast('Произошла ошибка. Не удалось получить сертификат.');
-                });
+    /**
+     * Фильтрация опций подтверждения для депозитных дат.
+     * Для дат с депозитом оставляем только "По телефону" и "В Telegram".
+     */
+    const confirmationOptions = useMemo(() => {
+        const requiresDeposit = form.date?.attributes?.includes('requires_deposit');
+        if (requiresDeposit) {
+            return CONFIRMATION_OPTIONS.filter(opt => opt.id === 'telegram' || opt.id === 'phone');
         }
-    }, [
-        state?.certificate,
-        state?.certificateId,
-        auth?.access_token,
-        certificates.length,
-        user?.id,
-        showToast,
-        setCertificates,
-    ]);
+        return CONFIRMATION_OPTIONS;
+    }, [form.date?.attributes]);
+
+    /**
+     * Сброс способа подтверждения при выборе депозитной даты.
+     * Если текущий способ недоступен для депозитных дат, сбрасываем на первый доступный.
+     */
+    useEffect(() => {
+        const isCurrentOptionValid = confirmationOptions.some(opt => opt.id === form.confirmation.id);
+        if (!isCurrentOptionValid && confirmationOptions.length > 0) {
+            handlers.setConfirmation(confirmationOptions[0]);
+        }
+    }, [confirmationOptions, form.confirmation.id, handlers]);
 
     return (
-        <Page back={true}>
-            <BookingErrorPopup
-                isOpen={errorPopup}
-                setOpen={setErrorPopup}
-                resId={Number(restaurant.value)}
-                count={errorPopupCount}
-                botError={botError}
-            />
-            <GuestCountSelector
-                guestCount={guestCount}
-                childrenCount={childrenCount}
-                setGuestCount={setGuestCount}
-                setChildrenCount={setChildrenCount}
-                isOpen={guestCountPopup}
-                setOpen={setGuestCountPopup}
-                maxGuestsNumber={getGuestMaxNumber(String(restaurant.value))}
-                serviceFeeMessage={getServiceFeeData(String(restaurant.value))}
-            />
-            <DateListSelector
-                isOpen={bookingDatePopup}
-                setOpen={setBookingDatePopup}
-                date={date}
-                setDate={setDate}
-                values={availableDates}
-            />
-            <RestaurantsListSelector
-                isOpen={bookingRestaurantPopup}
-                setOpen={setBookingRestaurantPopup}
-                restaurant={restaurant}
-                selectRestaurant={setRestaurant}
-            />
-            <div className={css.page}>
-                <PageContainer>
-                    <ContentContainer>
-                        <div className={css.headerContainer}>
-                            <div className={css.headerNav}>
-                                <div style={{ width: '44px' }}></div>
-                                <div className={css.headerInfo}>
-                                    <h3 className={css.headerInfo__title}>{'Бронирование'}</h3>
-                                </div>
-                                <div>
-                                    <RoundedButton icon={<CrossIcon size={44} />} action={goBack} />
-                                </div>
-                            </div>
-                            <div className={css.header_bottom}>
-                                <DropDownSelect
-                                    title={restaurant.value !== 'unset' ? restaurant?.title : 'Ресторан'}
-                                    isValid={dateValidatedDisplay}
-                                    icon={<KitchenIcon size={24} />}
-                                    onClick={() => setBookingRestaurantPopup(true)}
-                                />
-                                <div className={classNames(css.header__selector)}>
-                                    <DropDownSelect
-                                        title={date.value !== 'unset' ? formatDateShort(date.value) : 'Дата'}
-                                        isValid={dateValidatedDisplay}
-                                        icon={<CalendarIcon size={24} />}
-                                        onClick={() => setBookingDatePopup(true)}
-                                    />
-                                    <DropDownSelect
-                                        title={guestCount ? getGuestsString(guestCount + childrenCount) : 'Гости'}
-                                        isValid={guestsValidatedDisplay}
-                                        icon={<UsersIcon size={24} />}
-                                        onClick={() => setGuestCountPopup(!guestCountPopup)}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </ContentContainer>
-                    {!guestCount || date.value === 'unset' ? (
-                        <ContentContainer>
-                            <div className={css.timeOfDayContainer}>
-                                <span className={css.noTimeSlotsText}>Выберите дату и количество гостей</span>
-                            </div>
-                        </ContentContainer>
-                    ) : !timeslotsError ? (
-                        <TimeSlots
-                            restaurantId={Number(restaurant.value)}
-                            loading={timeslotsLoading}
-                            availableTimeslots={availableTimeslots}
-                            currentSelectedTime={currentSelectedTime}
-                            setCurrentSelectedTime={setCurrentSelectedTime}
-                        />
-                    ) : (
-                        <p className={css.timeslotsError}>
-                            Не удалось загрузить доступное время. Попробуйте обновить страницу или выбрать другую дату.
-                        </p>
-                    )}
-                    <CertificatesSelector
-                        setCertificateId={setCertificateId}
-                        isOpened={state?.certificate}
-                        selectedCertificateId={state?.certificateId}
-                    />
-                    <BookingWish
-                        restaurantId={Number(restaurant.value)}
-                        guestCount={guestCount}
-                        childrenCount={childrenCount}
-                        preOrder={preOrder}
-                        setPreOrder={setPreOrder}
-                        restaurant={restaurant.value}
-                        commentary={commentary}
-                        setCommentary={setCommentary}
-                    />
-                    <ContentContainer>
-                        <HeaderContainer>
-                            <HeaderContent title={'Контакты'} />
-                        </HeaderContainer>
-                        <div className={css.form}>
-                            <TextInput
-                                value={userName}
-                                onChange={setUserName}
-                                placeholder={'Имя'}
-                                validation_failed={!nameValidatedDisplay}
-                            />
-                            <TextInput
-                                value={userPhone}
-                                onChange={setUserPhone}
-                                placeholder={'Телефон'}
-                                validation_failed={!phoneValidatedDisplay}
-                                type='tel'
-                            />
-                        </div>
-                    </ContentContainer>
-                    <ContentContainer>
-                        <HeaderContainer>
-                            <HeaderContent title={'Способ подтверждения'} />
-                        </HeaderContainer>
-                        <ConfirmationSelect
-                            options={confirmationList}
-                            currentValue={confirmation}
-                            onChange={setConfirmation}
-                        />
-                    </ContentContainer>
-                </PageContainer>
-            </div>
-            <BottomButtonWrapper
-                forwardedRef={bookingBtn}
-                isDisabled={!isFormValid}
-                isLoading={requestLoading}
-                onClick={createBooking}
-            />
+        <Page back={!state?.shared}>
+            <PageContainer>
+                <BookingErrorPopup
+                    isOpen={errors.popup}
+                    setOpen={setErrorPopup}
+                    resId={Number(form.restaurant.value)}
+                    count={errors.popupCount}
+                    botError={errors.botError}
+                />
+
+                {/* Заголовок */}
+                <CommonBookingHeader
+                    handleGoBack={handleGoBack}
+                    selectRestaurant={handlers.selectRestaurant}
+                    selectDate={handlers.selectDate}
+                    selectedDate={form.date}
+                    setGuestCount={handlers.setGuestCount}
+                    setChildrenCount={handlers.setChildrenCount}
+                    serviceFeeMessage={serviceFeeMessage}
+                    guestCount={form.guestCount}
+                    childrenCount={form.childrenCount}
+                    availableDates={availableDates}
+                    isRestaurantSelected={form.restaurant.value !== 'unset'}
+                />
+
+                {/* Время бронирования */}
+                <BookingTimeSlotsBlock
+                    canShowTimeSlots={canShowTimeSlots}
+                    loading={loading.timeslots}
+                    availableTimeslots={availableTimeslots}
+                    selectedTimeSlot={form.selectedTimeSlot}
+                    selectTimeSlot={handlers.selectTimeSlot}
+                    isError={errors.timeslots}
+                />
+
+                {/* Сертификаты */}
+                <CertificatesSelector
+                    setCertificateId={(id) => handlers.updateField({ certificateId: id })}
+                    isOpened={state?.certificate}
+                    selectedCertificateId={state?.certificateId}
+                />
+
+                {/* Пожелания при бронировании */}
+                <BookingWish
+                    restaurantId={Number(form.restaurant.value)}
+                    guestCount={form.guestCount}
+                    childrenCount={form.childrenCount}
+                    preOrder={form.preOrder}
+                    setPreOrder={(preOrder) => handlers.updateField({ preOrder })}
+                    restaurant={String(form.restaurant.value)}
+                    commentary={form.commentary}
+                    setCommentary={(commentary) => handlers.updateField({ commentary })}
+                />
+
+                {/* Контактная информация */}
+                <BookingContactsBlock
+                    userName={form.userName}
+                    userPhone={form.userPhone}
+                    updateFieldName={handlers.updateField}
+                    updateFieldPhone={handlers.updateField}
+                    validationNameValid={validationDisplay.nameValid}
+                    validationPhoneValid={validationDisplay.phoneValid}
+                />
+
+                {/* Способ подтверждения */}
+
+                <ConfirmationSelect
+                    options={confirmationOptions}
+                    currentValue={form.confirmation}
+                    onChange={handlers.setConfirmation}
+                />
+
+                {/* Кнопка бронирования */}
+                <BottomButtonWrapper
+                    forwardedRef={bookingBtn}
+                    isDisabled={!isFormValid}
+                    isLoading={loading.submit}
+                    onClick={createBooking}
+                />
+            </PageContainer>
         </Page>
     );
 };

@@ -1,0 +1,56 @@
+.switchButton {
+    position: relative;
+    display: inline-block;
+    width: 51px;
+    height: 31px;
+    cursor: pointer;
+    background-color: var(--button-grey);
+    border-radius: 1000px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.switchButton.checked {
+    background-color: var(--certificate-background);
+}
+
+.switchButton_input {
+    display: none;
+}
+
+.switchButton_track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--light-grey);
+    border-radius: 1000px;
+    transition: left 0.2s ease-in-out;
+}
+
+.switchButton_track::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 26px;
+    height: 26px;
+    background-color: var(--primary-background);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.switchButton.checked .switchButton_track {
+    background-color: var(--button-grey);
+}
+
+.switchButton.checked .switchButton_track::before {
+    right: 2px;
+    left: auto;
+}
+
+.switchButton.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}

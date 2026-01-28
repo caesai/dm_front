@@ -12,6 +12,7 @@
     --black: #000;
     --popup-background: #58585869;
     --certificate-background: #F8C831;
+    --button-grey: #BBB3A0;
 }
 
 *,
@@ -34,6 +35,17 @@ body::-webkit-scrollbar {
 * {
     color: var(--black);
     text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: 'Mont', sans-serif;
+    outline: none;
+    text-align: left;
 }
 
 .ReactCollapse--collapse {
@@ -291,8 +303,46 @@ body::-webkit-scrollbar {
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Object Sans';
+    src: url('/fonts/ObjectSans/ObjectSans-Slanted.otf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Object Sans';
+    src: url('/fonts/ObjectSans/ObjectSans-Regular.otf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Object Sans';
+    src: url('/fonts/ObjectSans/ObjectSans-HeavySlanted.otf') format('truetype');
+    font-weight: 900;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Object Sans';
+    src: url('/fonts/ObjectSans/ObjectSans-Heavy.otf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+/* ============================================================================
+   Критические стили для reactjs-popup (загружаются сразу, без задержки)
+   Это решает проблему "мигания" при lazy loading компонентов с popup
+   ============================================================================ */
 .popup-overlay {
     z-index: 100000 !important;
+    background: var(--popup-background);
+}
+
+/* Базовые стили для стандартных модальных окон */
+.popup-content {
+    background-color: var(--primary-background);
 }
 
 @keyframes slideUp {

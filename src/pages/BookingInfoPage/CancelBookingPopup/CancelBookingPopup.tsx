@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
+import useToast from '@/hooks/useToastState';
 
 // Reusable styled component for the popup.
 const StyledPopup = styled(Popup)`
@@ -42,6 +43,8 @@ interface CancelBookingPopupProps {
     popupText: string;
     successMessage: string;
     skipStep?: boolean;
+    /** Пропустить первый шаг (подтверждение) и начать сразу с выбора причины */
+    skipConfirmation?: boolean;
 }
 
 export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
@@ -54,9 +57,20 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
         popupText,
         successMessage,
         skipStep,
+        skipConfirmation,
     },
 ) => {
-    const [currentStep, setCurrentStep] = useState<PopupStep>(PopupStep.Confirmation);
+    const [currentStep, setCurrentStep] = useState<PopupStep>(
+        skipConfirmation ? PopupStep.Reason : PopupStep.Confirmation
+    );
+    const { showToast } = useToast();
+
+    // Reset step when popup opens/closes or skipConfirmation changes
+    React.useEffect(() => {
+        if (isOpen) {
+            setCurrentStep(skipConfirmation ? PopupStep.Reason : PopupStep.Confirmation);
+        }
+    }, [isOpen, skipConfirmation]);
 
 
     // Use useCallback for handler functions to prevent unnecessary re-renders.
@@ -91,7 +105,12 @@ export const CancelBookingPopup: React.FC<CancelBookingPopupProps> = (
         if (!onSendReason) return;
         try {
             await onSendReason(reason);
-            setCurrentStep(PopupStep.Success);
+            if (!skipConfirmation) {
+                setCurrentStep(PopupStep.Success);
+            } else {
+                showToast('Ваше бронирование было отменено.');
+                onSuccess();
+            }
         } catch (error) {
             console.error('Error sending reason:', error);
             setCurrentStep(PopupStep.Error);
@@ -170,7 +189,7 @@ const StepOne: React.FC<StepOneProps> = ({ popupText, onCancelConfirm, onCancelC
                 <UniversalButton
                     width={'full'}
                     title={'Да'}
-                    theme={'red'}
+                    theme={'secondary'}
                     action={onCancelConfirm}
                 />
             </div>
@@ -209,7 +228,7 @@ const StepTwo: React.FC<StepTwoProps> = ({ onSendReason }) => {
             <UniversalButton
                 width={'full'}
                 title={'Подтвердить'}
-                theme={selectedReason ? 'red' : undefined}
+                theme={selectedReason ? 'secondary' : undefined}
                 action={() => selectedReason && onSendReason(selectedReason)}
             />
         </>
@@ -236,7 +255,10 @@ const ErrorStep: React.FC<ErrorStepProps> = ({ onRetry }) => (
     <>
         <span className={css.text}>{'Произошла ошибка'}</span>
         <div className={css.buttons}>
-            <UniversalButton width={'full'} title={'Попробовать снова'} action={onRetry} />
+            <UniversalButton
+                width={'full'}
+                title={'Попробовать снова'}
+                action={onRetry} />
         </div>
     </>
 );

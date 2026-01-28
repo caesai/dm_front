@@ -8,8 +8,16 @@
     cursor: pointer;
 }
 
-.redTheme {
+.red {
     background-color: #CA0E11;
+
+    span {
+        color: var(--primary-background);
+    }
+}
+
+.secondary {
+    background-color: var(--button-grey);
 
     span {
         color: var(--primary-background);

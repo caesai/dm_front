@@ -20,7 +20,8 @@
 .header_title {
     font-family: 'Mont', sans-serif;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 18px;
+    text-transform: none;
 }
 
 .header_spacer {
@@ -37,6 +38,10 @@
     gap: 16px;
 }
 
+.content_block {
+    gap: 8px;
+}
+
 .content_title {
     font-family: 'Mont', sans-serif;
     font-weight: 700;
@@ -47,10 +52,12 @@
     text-align: center;
     margin: 0;
     padding: 0;
+    height: 18px;
 }
 
 .content_img {
     width: 100%;
+    max-height: 185px;
     aspect-ratio: 3/2;
     background-color: var(--secondary-background);
     border-radius: 16px;

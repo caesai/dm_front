@@ -1,13 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { useAtom } from 'jotai/index';
+import { useAtomValue, useSetAtom, WritableAtom } from 'jotai/index';
 // Types
 import { IEventBooking } from '@/types/events.types.ts';
 // APIs
 import { BASE_BOT } from '@/api/base.ts';
 // Atoms
 import { guestCountAtom } from '@/atoms/eventListAtom.ts';
-import { currentCityAtom } from '@/atoms/currentCityAtom.ts';
 // Components
 import { Page } from '@/components/Page.tsx';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
@@ -17,14 +16,23 @@ import { Share } from '@/components/Icons/Share.tsx';
 import { useNavigationHistory } from '@/hooks/useNavigationHistory.ts';
 // Styles
 import css from '@/pages/EventsPage/EventsPage.module.css';
-
-export const EventsPage: React.FC = () => {
+import { getCurrentCity } from '@/atoms/cityListAtom.ts';
+/**
+ * Страница мероприятий.
+ *
+ * Позволяет просматривать список мероприятий и детали конкретного мероприятия.
+ * Также предоставляет возможность шэринга мероприятия.
+ *
+ * @component
+ * @returns {JSX.Element} Компонент страницы мероприятий
+ */
+export const EventsPage: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const location = useLocation();
     const [params] = useSearchParams();
 
-    const [, setGuestCount] = useAtom(guestCountAtom);
-    const [currentCityA] = useAtom(currentCityAtom);
+    const setGuestCount = useSetAtom(guestCountAtom as WritableAtom<number, [number], void>);
+    const currentCity = useAtomValue(getCurrentCity);
 
     const [eventBookingInfo, setEventBookingInfo] = useState<IEventBooking | null>(null);
 
@@ -45,7 +53,7 @@ export const EventsPage: React.FC = () => {
                 url = encodeURI(`https://t.me/${BASE_BOT}?startapp=event_restaurantId_${eventBookingInfo?.restaurantId}`);
                 // title = encodeURI(String(eventBookingInfo?.restaurantId));
             } else {
-                url = encodeURI(`https://t.me/${BASE_BOT}?startapp=event_cityId_${currentCityA}`);
+                url = encodeURI(`https://t.me/${BASE_BOT}?startapp=event_cityId_${currentCity.id}`);
                 // title = encodeURI(String(currentCityA));
             }
         }
@@ -65,7 +73,7 @@ export const EventsPage: React.FC = () => {
         } catch (e) {
             window.open(`https://t.me/share/url?url=${url}&text=${title}`, '_blank');
         }
-    }, [eventBookingInfo?.id, eventBookingInfo?.name, eventBookingInfo?.restaurantId, currentCityA]);
+    }, [eventBookingInfo?.id, eventBookingInfo?.name, eventBookingInfo?.restaurantId, currentCity.id]);
 
 
     const goToPreviousPage = useCallback(() => {

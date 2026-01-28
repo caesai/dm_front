@@ -13,20 +13,44 @@ const DEFAULT_HEIGHT = 216;
 const DEFAULT_ITEM_HEIGHT = 36;
 const DEFAULT_WHEEL_MODE = 'off';
 
+/**
+ * Базовые данные для picker-элемента (примитивы или объект)
+ * Используется как внутренний тип для значений в колонках пикера
+ */
 export type PickerValueData =
     | string
     | number
-    | { title: string; value: string };
+    | PickerValue;
 
-export type PickerValueObj = { address?: string; title: string; value: string };
+/**
+ * Базовый интерфейс для элементов picker-селектора.
+ * Содержит обязательные поля для отображения и опциональные дополнительные данные.
+ * 
+ * @property {string} title - Отображаемый текст элемента
+ * @property {string} value - Уникальное значение элемента (ID, дата и т.д.)
+ * @property {string} [subtitle] - Дополнительный текст под заголовком
+ * @property {string} [address] - Адрес (для ресторанов)
+ * @property {string[]} [attributes] - Атрибуты даты (например, 'requires_deposit')
+ * @property {number} [deposit_per_person] - Сумма депозита на человека
+ */
+export interface PickerValue {
+    title: string;
+    value: string;
+    subtitle?: string;
+    address?: string;
+    attributes?: string[];
+    deposit_per_person?: number;
+    [key: string]: string | number | string[] | undefined;
+}
+
+/**
+ * @deprecated Используйте PickerValue вместо этого типа
+ */
+export type PickerValueObj = PickerValue;
 
 interface Option {
     value: PickerValueData;
     element: MutableRefObject<HTMLElement | null>;
-}
-
-export interface PickerValue {
-    [key: string]: PickerValueData;
 }
 
 export interface PickerRootProps<TType extends PickerValue>

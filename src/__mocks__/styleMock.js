@@ -1,2 +1,2 @@
-require('swiper/css');
+// Мок для CSS файлов в тестах
 module.exports = {};

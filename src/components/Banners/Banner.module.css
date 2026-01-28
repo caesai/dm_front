@@ -1,0 +1,19 @@
+.banner {
+    width: 100%;
+}
+
+.swiper {
+    padding: 0 15px;
+}
+
+.photo {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-radius: 20px;
+
+    min-width: 345px;
+    height: 105px;
+
+    cursor: pointer;
+}

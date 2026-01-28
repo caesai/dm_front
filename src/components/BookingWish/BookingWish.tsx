@@ -10,23 +10,43 @@ import { TextInput } from '@/components/TextInput/TextInput.tsx';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
 import { BookingInfoPopup } from '@/components/BookingInfoPopup/BookingInfoPopup.tsx';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
 // Mocks
 import { getBookingCommentMock } from '@/mockData.ts';
 // Styles
+import 'swiper/css';
+import 'swiper/css/free-mode';
 import css from '@/pages/BookingPage/BookingPage.module.css';
-import { R } from '@/__mocks__/restaurant.mock';
+import { R } from '@/__mocks__/restaurant.mock.ts';
 
+/**
+ * Пропсы компонента BookingWish
+ * @interface BookingWishProps
+ */
 interface BookingWishProps {
+    /** Количество гостей */
     guestCount: number;
+    /** Количество детей */
     childrenCount: number;
+    /** Флаг предварительного заказа */
     preOrder: boolean;
+    /** Функция установки флага предварительного заказа */
     setPreOrder: (preOrder: boolean) => void;
+    /** Название ресторана */
     restaurant: string;
+    /** ID ресторана */
     restaurantId: number;
+    /** Комментарий к бронированию */
     commentary: string;
+    /** Функция установки комментария к бронированию */
     setCommentary: (commentary: string) => void;
 }
 
+/**
+ * Компонент пожеланий к бронированию
+ * @param {BookingWishProps} props - свойства компонента
+ * @returns {JSX.Element} компонент пожеланий к бронированию
+ */
 export const BookingWish: React.FC<BookingWishProps> = ({
     guestCount,
     childrenCount,
@@ -36,16 +56,16 @@ export const BookingWish: React.FC<BookingWishProps> = ({
     restaurantId,
     commentary,
     setCommentary,
-}) => {
+}: BookingWishProps): JSX.Element => {
     const [infoPopup, setInfoPopup] = useState(false);
     return (
-        <ContentContainer>
+        <ContentContainer className={css.bookingSection}>
             <BookingInfoPopup isOpen={infoPopup} setOpen={setInfoPopup} />
             <HeaderContainer>
-                <HeaderContent title={'Пожелания к брони'} />
+                <HeaderContent title={'Пожелания к брони'} fontSize={16} />
             </HeaderContainer>
             {guestCount + childrenCount >= 8 && (
-                <div className={css.preorder}>
+                <ContentBlock className={css.preorder}>
                     <CheckBoxInput
                         checked={preOrder}
                         toggle={() => setPreOrder(!preOrder)}
@@ -54,11 +74,11 @@ export const BookingWish: React.FC<BookingWishProps> = ({
                     <span onClick={() => setInfoPopup(true)}>
                         <InfoIcon size={14} />
                     </span>
-                </div>
+                </ContentBlock>
             )}
             <TextInput value={commentary} onChange={(e) => setCommentary(e)} placeholder={'Комментарий к брони'} />
-            <div className={css.commentary_options}>
-                <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8}>
+            <ContentBlock className={css.commentary_options}>
+                <Swiper slidesPerView="auto" modules={[FreeMode]} freeMode={true} spaceBetween={8} slidesOffsetAfter={15}>
                     {restaurant !== 'unset' &&
                         getBookingCommentMock(String(restaurant))
                             .filter((obj) => {
@@ -74,7 +94,7 @@ export const BookingWish: React.FC<BookingWishProps> = ({
                                 </SwiperSlide>
                             ))}
                 </Swiper>
-            </div>
+            </ContentBlock>
         </ContentContainer>
     );
 };

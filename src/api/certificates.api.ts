@@ -20,7 +20,6 @@ export const APIGetCertificateById = async (token: string, certificate_id: strin
             Authorization: `Bearer ${token}`,
         },
         params: {
-            // user_id,
             certificate_id,
         },
     });
@@ -106,5 +105,44 @@ export const APIPostCreateAlfaPayment = async (token: string, user_id: number, a
         headers: {
             Authorization: `Bearer ${token}`,
         }
+    });
+};
+
+/**
+ * Создает сертификат в eGift после успешной оплаты
+ * @param api_token - API токен для eGift
+ * @param client_id - ID клиента в eGift
+ * @param promo_code - Промокод сертификата (dreamteam_id)
+ * @param amount - Номинал сертификата
+ * @param source - Источник создания (tma для Telegram Mini App)
+ */
+export const APIPostEGiftCertificateOffline = async (
+    api_token: string,
+    client_id: string,
+    promo_code: string,
+    amount: number,
+    source: string = 'tma'
+) => {
+    return axios.post(`${BASE_URL}/Certificate:Offline`, {
+        api_token,
+        client_id,
+        promo_code,
+        amount,
+        source,
+    });
+};
+
+/**
+ * Получает информацию о сертификате из eGift, включая баланс
+ * @param api_token - API токен для eGift
+ * @param promo_code - Промокод сертификата (dreamteam_id)
+ */
+export const APIPostEGiftCertificateInfo = async (
+    api_token: string,
+    promo_code: string
+) => {
+    return axios.post(`${BASE_URL}/Certificate:Info`, {
+        api_token,
+        promo_code,
     });
 };

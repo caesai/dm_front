@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import moment from 'moment';
-import { useAtom } from 'jotai/index';
+import { useAtom, WritableAtom } from 'jotai/index';
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
 import { certificatesListAtom } from '@/atoms/certificatesListAtom.ts';
 import { BASE_BOT } from '@/api/base.ts';
@@ -67,7 +67,8 @@ export const shareCertificate = async (certificate: ICertificate, certificateRef
 };
 
 export const CertificatesListPage: React.FC = () => {
-    const [certificates, setCertificates] = useAtom(certificatesListAtom);
+
+    const [certificates, setCertificates] = useAtom(certificatesListAtom as WritableAtom<ICertificate[], [ICertificate[]], void>);
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
 
@@ -104,13 +105,13 @@ const CertificateOption: React.FC<CertificateOptionProps> = ({ certificate }) =>
             <Certificate
                 placeholder={certificate.message}
                 date={moment(certificate.created_at).add(1, 'year').format('DD.MM.YYYY')}
-                rating={Number(certificate.value).toFixed().toString()}
+                rating={Number(certificate.balance).toFixed().toString()}
                 cardholder={certificate.recipient_name}
-                dreamteam_id={certificate.dreamteam_id}
+                dreamteam_id={certificate.id}
                 forwardRef={certificateRef}
             />
-            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} theme={'red'} action={() => shareCertificate(certificate, certificateRef.current)} />}
-            {certificate.status === 'shared' && <UniversalButton width={'full'} title={'Воспользоваться'} theme={'red'} action={useCertificate} />}
+            {certificate.status === 'paid' && <UniversalButton width={'full'} title={'Поделиться'} theme={'secondary'} action={() => shareCertificate(certificate, certificateRef.current)} />}
+            {certificate.status === 'shared' && <UniversalButton width={'full'} title={'Воспользоваться'} theme={'secondary'} action={useCertificate} />}
         </div>
     )
 }

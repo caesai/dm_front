@@ -1,4 +1,3 @@
-
 .contentBlock {
     display: flex;
     flex-direction: column;
@@ -14,12 +13,11 @@
 .contentHeader {
     margin: 0;
     padding: 0;
-    font-size: 30px;
-    font-family: "Heading Pro Ultracompressed", sans-serif;
-    font-weight: 400;
+    font-size: 20px;
+    font-family: "Mont", sans-serif;
+    font-weight: 600;
     height: 36px;
     line-height: 36px;
-    text-transform: uppercase;
 }
 
 .headerSubText {

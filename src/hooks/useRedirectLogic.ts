@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 // Atoms
 import { authAtom, userAtom } from '@/atoms/userAtom.ts';
+// Utils
+import { parseStartParam, type EntityType, type SpecialKeyword } from '@/utils/startParam.utils.ts';
 
 /**
  * URL-адреса, исключённые из проверки редиректа на подтверждение телефона.
@@ -88,8 +90,8 @@ interface UseRedirectLogicResult {
 export const useRedirectLogic = (): UseRedirectLogicResult => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [user] = useAtom(userAtom);
-    const [auth] = useAtom(authAtom);
+    const user = useAtomValue(userAtom);
+    const auth = useAtomValue(authAtom);
     const [params] = useSearchParams();
     const state = location?.state;
     const tgWebAppStartParam = params.get('tgWebAppStartParam');
@@ -101,44 +103,78 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
     const initialCheckDoneRef = useRef(false);
 
     /**
-     * Обрабатывает навигацию на основе параметра `tgWebAppStartParam`.
+     * Обрабатывает навигацию на основе типа сущности и её ID.
      *
-     * @param param - Параметр запуска из Telegram Web App в формате `{type}Id_{id}`
+     * @param entityType - Тип сущности (restaurant, event, ticket, certificate, event_city, event_restaurant)
+     * @param entityId - ID сущности
      *
      * @example
      * ```ts
-     * handleNavigation('restaurantId_123'); // → /restaurant/123?shared=true
-     * handleNavigation('eventId_456');      // → /events/456/details?shared=true
+     * handleEntityNavigation('restaurant', '123'); // → /restaurant/123
+     * handleEntityNavigation('event', '456');      // → /events/456/details
      * ```
      */
-    const handleNavigation = useCallback(
-        (param: string) => {
-            const paths = ['restaurant', 'event', 'ticket', 'certificate', 'event_city', 'event_restaurant'];
-            const path = param.substring(0, param.indexOf('Id_'));
-            if (paths.includes(path)) {
-                const id = param.replace(`${path}Id_`, '');
-                switch (path) {
-                    case 'restaurant':
-                        navigate(`/${path}/${id}?shared=true`, { replace: true });
-                        break;
-                    case 'event':
-                        navigate(`/events/${id}/details?shared=true`, { replace: true });
-                        break;
-                    case 'ticket':
-                        navigate(`/tickets/${id}?shared=true`, { replace: true });
-                        break;
-                    case 'certificate':
-                        navigate(`/certificates/landing/${id}?shared=true`, { replace: true });
-                        break;
-                    case 'event_city':
-                        navigate(`/events/?city=${id}&shared=true`, { replace: true });
-                        break;
-                    case 'event_restaurant':
-                        navigate(`/events/?restaurant=${id}&shared=true`, { replace: true });
-                        break;
-                }
-            } else {
-                navigate('/', { replace: true });
+    const handleEntityNavigation = useCallback(
+        (entityType: EntityType, entityId: string) => {
+            switch (entityType) {
+                case 'restaurant':
+                    // переход на страницу ресторана
+                    navigate(`/restaurant/${entityId}`, { replace: true, state: { shared: true } });
+                    break;
+                case 'event':
+                    // переход на страницу деталей мероприятия
+                    navigate(`/events/${entityId}/details`, { replace: true, state: { shared: true } });
+                    break;
+                case 'ticket':
+                    // переход на страницу билета
+                    navigate(`/tickets/${entityId}`, { replace: true, state: { shared: true } });
+                    break;
+                case 'certificate':
+                    // переход на страницу сертификата
+                    navigate(`/certificates/landing/${entityId}`, { replace: true, state: { shared: true } });
+                    break;
+                case 'event_city':
+                    // переход на страницу списка мероприятий в выбранном городе
+                    navigate(`/events`, { replace: true, state: { shared: true, cityId: entityId } });
+                    break;
+                case 'event_restaurant':
+                    // переход на страницу списка мероприятий в выбранном ресторане
+                    navigate(`/events`, { replace: true, state: { shared: true, restaurantId: entityId } });
+                    break;
+            }
+        },
+        [navigate]
+    );
+
+    /**
+     * Обрабатывает навигацию на основе специального ключевого слова.
+     *
+     * @param keyword - Специальное ключевое слово
+     *
+     * @example
+     * ```ts
+     * handleSpecialKeywordNavigation('hospitality_heroes'); // → /hospitality-heroes
+     * handleSpecialKeywordNavigation('gastronomy');         // → /gastronomy/choose
+     * ```
+     */
+    const handleSpecialKeywordNavigation = useCallback(
+        (keyword: SpecialKeyword) => {
+            switch (keyword) {
+                case 'hospitality_heroes':
+                    navigate(`/hospitality-heroes`, { replace: true });
+                    break;
+                case 'banquet':
+                    navigate('/banquets/:restaurantId/address', { replace: true });
+                    break;
+                case 'gastronomy':
+                    navigate('/gastronomy/choose', { replace: true });
+                    break;
+                case 'certificates':
+                    navigate('/certificates/1', { replace: true });
+                    break;
+                case 'booking':
+                    navigate('/booking', { replace: true, state: { shared: true } });
+                    break;
             }
         },
         [navigate]
@@ -175,23 +211,20 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
         const { pathname } = location;
         if (tgWebAppStartParam && !initialCheckDoneRef.current) {
             initialCheckDoneRef.current = true;
-            switch (tgWebAppStartParam) {
-                case 'hospitality_heroes':
-                    navigate(`/hospitality-heroes?shared=true`, { replace: true });
-                    break;
-                case 'banquet':
-                    navigate('/banquets/:id/address', { replace: true });
-                    break;
-                case 'gastronomy':
-                    navigate('/gastronomy/choose?shared=true', { replace: true });
-                    break;
-                case 'certificates':
-                    navigate('/certificates/1?shared=true', { replace: true });
-                    break;
-                default:
-                    handleNavigation(tgWebAppStartParam);
-                    break;
+
+            // Парсим параметр для извлечения сущностей и UTM-меток
+            const parsedParam = parseStartParam(tgWebAppStartParam);
+
+            // Приоритет: специальное ключевое слово > сущность > главная страница
+            if (parsedParam.specialKeyword) {
+                handleSpecialKeywordNavigation(parsedParam.specialKeyword);
+            } else if (parsedParam.entityType && parsedParam.entityId) {
+                handleEntityNavigation(parsedParam.entityType, parsedParam.entityId);
+            } else {
+                // Если не найдено ни ключевое слово, ни сущность — переход на главную
+                navigate('/', { replace: true });
             }
+
             setIsInitialRedirectComplete(true);
             return;
         }
@@ -203,6 +236,8 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
                 if (!initialCheckDoneRef.current) {
                     initialCheckDoneRef.current = true;
                 }
+                // переход на страницу подтверждения телефона
+                // передаем state в параметры перехода
                 navigate('/phoneConfirmation', { state });
                 setIsInitialRedirectComplete(true);
                 return;
@@ -217,6 +252,7 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
                     initialCheckDoneRef.current = true;
                 }
                 // Перенаправляем на страницу онбординга
+                // переход на страницу онбординга
                 navigate('/onboarding/1', { replace: true });
                 setIsInitialRedirectComplete(true);
                 return;
@@ -236,7 +272,8 @@ export const useRedirectLogic = (): UseRedirectLogicResult => {
         navigate,
         state,
         tgWebAppStartParam,
-        handleNavigation,
+        handleEntityNavigation,
+        handleSpecialKeywordNavigation,
         isPathAllowedWithoutOnboarding,
     ]);
 

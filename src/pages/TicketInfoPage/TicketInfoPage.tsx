@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import moment from 'moment';
 import classNames from 'classnames';
 import { useAtom } from 'jotai';
@@ -26,18 +26,17 @@ import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalB
 
 export const TicketInfoPage: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location?.state;
     const { id } = useParams();
-    const [searchParams] = useSearchParams();
     const [auth] = useAtom(authAtom);
     const [user] = useAtom(userAtom);
     const [ticket, setTicket] = useState<IEventTicket>();
     const [cancelPopup, setCancelPopup] = useState(false);
-
-    const shared = Boolean(searchParams.get('shared'));
     const ticket_refund = getDataFromLocalStorage('ticket_refund');
 
     useEffect(() => {
-        if (!auth?.access_token || shared) {
+        if (!auth?.access_token || state?.shared) {
             APIGetSharedTicket(Number(id)).then((res) => {
                 setTicket(res.data);
             });
@@ -88,7 +87,7 @@ export const TicketInfoPage: React.FC = () => {
     }
 
     return (
-        <Page back={true}>
+        <Page back={!state?.shared}>
             <CancelBookingPopup
                 isOpen={cancelPopup}
                 popupText={'Оформить возврат?'}

@@ -19,7 +19,7 @@ const StyledPopup = styled(Popup)`
     }
 
     &-content {
-        width: auto;
+        width: max-content!important;
         background-color: transparent;
         border: none;
         padding: 0;

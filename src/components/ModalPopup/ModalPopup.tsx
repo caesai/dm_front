@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import React from 'react';
 import Popup from 'reactjs-popup';
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
@@ -6,23 +5,23 @@ import { CrossIcon } from '@/components/Icons/CrossIcon.tsx';
 import classNames from 'classnames';
 import css from '@/components/ModalPopup/ModalPopup.module.css';
 
-const StyledPopup = styled(Popup)`
-    &-overlay {
-        background: #58585869;
-        padding: 0 15px;
-    }
+// Стили overlay в глобальном index.css для мгновенной загрузки
+// Стили content передаём через props для избежания styled-components
 
-    // use your custom style for ".popup-content"
+const contentStyle = {
+    margin: 0,
+    padding: 0,
+    borderRadius: '15px',
+    width: 'calc(100vw - 30px)',
+    maxWidth: '340px',
+    height: 'max-content',
+};
 
-    &-content {
-        //background-color: transparent;
-        margin: 0;
-        padding: 0;
-        border-radius: 15px;
-        width: calc(100vw - 30px);
-        max-width: 340px;
-    }
-`;
+const overlayStyle = {
+    padding: '0 15px',
+    alignItems: 'center',
+    justifyContent: 'center',
+};
 
 interface ModalProps {
     isOpen: boolean;
@@ -67,7 +66,12 @@ export const ModalPopup: React.FC<ModalProps> = (
         setOpen();
     };
     return (
-        <StyledPopup open={isOpen} closeOnDocumentClick={false}>
+        <Popup 
+            open={isOpen} 
+            closeOnDocumentClick={false}
+            contentStyle={contentStyle}
+            overlayStyle={overlayStyle}
+        >
             <div className={css.popup}>
                 <div className={css.end}>
                     <RoundedButton
@@ -104,6 +108,6 @@ export const ModalPopup: React.FC<ModalProps> = (
                     </div>
                 )}
             </div>
-        </StyledPopup>
+        </Popup>
     );
 };

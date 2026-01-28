@@ -1,3 +1,6 @@
+/**
+ * @fileoverview
+ */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useScript } from 'usehooks-ts';
@@ -23,6 +26,7 @@ import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
 import { GoToPathIcon } from '@/components/Icons/GoToPathIcon.tsx';
 import { UniversalButton } from '@/components/Buttons/UniversalButton/UniversalButton.tsx';
 import { CancelBookingPopup } from '@/pages/BookingInfoPage/CancelBookingPopup/CancelBookingPopup.tsx';
+import { DepositCancelModal } from '@/components/DepositCancelModal/DepositCancelModal.tsx';
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 import { Taxi } from '@/components/YandexTaxi/Taxi.tsx';
 import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
@@ -30,6 +34,8 @@ import { DoubleCheckIcon } from '@/components/Icons/DoubleCheckIcon.tsx';
 import { PhoneCallIcon } from '@/components/Icons/PhoneCallIcon.tsx';
 import { CommentaryOptionButton } from '@/components/CommentaryOptionButton/CommentaryOptionButton.tsx';
 import BookingCertificate from '@/components/BookingCertificate/BookingCertificate.tsx';
+import { StarPrivilegeIcon } from '@/components/Icons/StarPrivilege.tsx';
+import { PageContainer } from '@/components/PageContainer/PageContainer.tsx';
 // Utils
 import { formatDateDayMonthLong, formatDateDayShort, formatDateMonthShort, weekdaysMap } from '@/utils.ts';
 // Styles
@@ -37,14 +43,25 @@ import css from '@/pages/BookingInfoPage/BookingInfoPage.module.css';
 // Mocks
 import { R } from '@/__mocks__/restaurant.mock.ts';
 import { BOOKINGCOMMENTMOCK } from '@/mockData.ts';
-import { StarPrivilegeIcon } from '@/components/Icons/StarPrivilege';
+// Hooks
+import useToastState from '@/hooks/useToastState.ts';
 
-export const BookingInfoPage: React.FC = () => {
+
+/**
+ * 
+ * @returns 
+ */
+export const BookingInfoPage: React.FC = (): JSX.Element => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [cancelPopup, setCancelPopup] = useState(false);
+    const [depositCancelPopup, setDepositCancelPopup] = useState(false);
+    const [skipConfirmationStep, setSkipConfirmationStep] = useState(false);
     const [booking, setBooking] = useState<IBookingInfo>();
     const [auth] = useAtom(authAtom);
+    const { showToast } = useToastState();
+    /** Проверка, является ли бронирование депозитным */
+    const isDepositBooking = booking?.attributes?.includes('requires_deposit') ?? false;
 
     // Возвращает конечное время бронирования на основе начального времени и продолжительности
     // start имеет формат 'HH:mm'
@@ -72,6 +89,29 @@ export const BookingInfoPage: React.FC = () => {
         await APIPOSTCancelReason(String(auth?.access_token), Number(booking?.id), reason);
     };
 
+    /** Обработчик нажатия кнопки "Отменить" */
+    const handleCancelClick = useCallback(() => {
+        if (isDepositBooking) {
+            setDepositCancelPopup(true);
+        } else {
+            setCancelPopup(true);
+        }
+    }, [isDepositBooking]);
+
+    /** Подтверждение отмены депозитного бронирования */
+    const handleDepositCancelConfirm = useCallback(async () => {
+        setDepositCancelPopup(false);
+        try {
+            await onCancelBooking();
+            // Открываем CancelBookingPopup, пропуская первый шаг (подтверждение)
+            setSkipConfirmationStep(true);
+            setCancelPopup(true);
+        } catch (error) {
+            console.error('Error canceling booking:', error);
+            showToast('Ошибка при отмене бронирования');
+        }
+    }, [onCancelBooking, showToast]);
+
     useScript('https://yastatic.net/taxi-widget/ya-taxi-widget.js', {
         removeOnUnmount: true,
     });
@@ -92,19 +132,28 @@ export const BookingInfoPage: React.FC = () => {
             window.location.href = `https://t.me/${BASE_BOT}?start=reserve_id-${Number(booking?.id)}`;
         }
     };
-
+    console.log('booking.tags: ', booking)
     return (
         <Page back={true}>
+            <DepositCancelModal
+                isOpen={depositCancelPopup}
+                onConfirm={handleDepositCancelConfirm}
+                onCancel={() => setDepositCancelPopup(false)}
+            />
             <CancelBookingPopup
                 isOpen={cancelPopup}
-                setOpen={setCancelPopup}
+                setOpen={(open) => {
+                    setCancelPopup(open);
+                    if (!open) setSkipConfirmationStep(false);
+                }}
                 onCancel={onCancelBooking}
                 onSuccess={() => navigate('/myBookings')}
                 onSendReason={onSendReason}
                 popupText={'Вы уверены, что хотите отменить бронирование?'}
                 successMessage={'Ваше бронирование отменено'}
+                skipConfirmation={skipConfirmationStep}
             />
-            <div className={classNames(css.fc, css.page)}>
+            <PageContainer className={classNames(css.fc, css.page)}>
                 <div className={classNames(css.main, css.border__bottom)}>
                     <div className={css.header}>
                         <div className={css.wh44} />
@@ -158,7 +207,7 @@ export const BookingInfoPage: React.FC = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <DoubleCheckIcon />
+                                        <DoubleCheckIcon color={'var(--dark-grey)'} />
                                         <h3>
                                             Ваше бронирование{' '}
                                             {booking?.booking_status == 'canceled' ? 'отменено' : 'подтверждено'}
@@ -170,7 +219,7 @@ export const BookingInfoPage: React.FC = () => {
                         <div className={classNames(css.fc, css.bookingInfoDetails)}>
                             <div className={classNames(css.fr, css.bookingInfoDetails_container)}>
                                 <div className={classNames(css.fr, css.bookingInfoDetails_item)}>
-                                    <TimeCircle size={16} color={'var(--dark-grey)'} />
+                                    <TimeCircle size={16} />
                                     {booking ? (
                                         <span className={css.bookingInfoDetails_item__text}>
                                             {`${booking.time}-${getEndTime(booking.time, booking.duration)}`}
@@ -180,7 +229,7 @@ export const BookingInfoPage: React.FC = () => {
                                     )}
                                 </div>
                                 <div className={classNames(css.fr, css.bookingInfoDetails_item)}>
-                                    <CalendarIcon size={16} color={'var(--dark-grey)'} />
+                                    <CalendarIcon size={16} />
                                     {booking ? (
                                         <span className={css.bookingInfoDetails_item__text}>
                                             {formatDateDayMonthLong(booking.booking_date)},{' '}
@@ -191,7 +240,7 @@ export const BookingInfoPage: React.FC = () => {
                                     )}
                                 </div>
                                 <div className={classNames(css.fr, css.bookingInfoDetails_item)}>
-                                    <UsersIcon size={16} color={'var(--dark-grey)'} />
+                                    <UsersIcon size={16} />
                                     {booking ? (
                                         <>
                                             <span className={css.bookingInfoDetails_item__text}>
@@ -269,7 +318,7 @@ export const BookingInfoPage: React.FC = () => {
                                             <UniversalButton
                                                 width={'full'}
                                                 title={'Отменить'}
-                                                action={() => setCancelPopup(true)}
+                                                action={handleCancelClick}
                                             />
                                         </>
                                     ) : null
@@ -285,15 +334,13 @@ export const BookingInfoPage: React.FC = () => {
                                     <>
                                         {/** TODO: Убрать условие после 21.12.2025 */}
                                         {/* Если ресторан не SELF_EDGE_SPB_CHINOIS_ID, то показываем кнопку "Смотреть меню" */}
-                                        {booking.restaurant.id !== Number(R.SELF_EDGE_SPB_CHINOIS_ID) && (
-                                            <div
-                                                className={css.redButton}
-                                                onClick={() =>
-                                                    navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)
-                                                }
-                                            >
-                                                <span className={css.text}>Смотреть меню</span>
-                                            </div>
+                                        {String(booking.restaurant.id) !== String(R.SELF_EDGE_SPB_CHINOIS_ID) && (
+                                            <UniversalButton
+                                                width={'full'}
+                                                title={'Смотреть меню'}
+                                                action={() => navigate(`/restaurant/${booking?.restaurant.id}?menuOpen=true`)}
+                                                theme={'secondary'}
+                                            />
                                         )}
                                         <RoundedButton
                                             radius={'50px'}
@@ -321,7 +368,7 @@ export const BookingInfoPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </PageContainer>
         </Page>
     );
 };

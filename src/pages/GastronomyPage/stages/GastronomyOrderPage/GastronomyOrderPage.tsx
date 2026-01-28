@@ -241,7 +241,7 @@ export const GastronomyOrderPage: React.FC = () => {
                     <UniversalButton
                         width={'full'}
                         title={'Задать вопрос по заказу'}
-                        theme={'red'}
+                        theme={'secondary'}
                         action={redirectToOrderQuestionBot}
                     />
                 </div>

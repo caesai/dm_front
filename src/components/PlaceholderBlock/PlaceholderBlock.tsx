@@ -1,22 +1,39 @@
-import css from './PlaceholderBlock.module.css';
+import React from 'react';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
+// Styles
+import css from '@/components/PlaceholderBlock/PlaceholderBlock.module.css';
 
+/**
+ * Свойства (Props) компонента PlaceholderBlock.
+ * @interface
+ */
 interface IPlaceholderBlock {
+    /** Ширина блока */
     width: string;
+    /** Высота блока */
     height?: string;
+    /** Радиус скругления */
     rounded?: string;
+    /** Минимальная ширина */
     minWidth?: string;
+    /** Соотношение сторон */
     aspectRatio?: string;
 }
 
-export const PlaceholderBlock = ({
+/**
+ * Компонент PlaceholderBlock.
+ * @param {IPlaceholderBlock} props
+ * @returns {JSX.Element}
+ */
+export const PlaceholderBlock: React.FC<IPlaceholderBlock> = ({
     width,
     height,
     rounded,
     minWidth,
     aspectRatio,
-}: IPlaceholderBlock) => {
+}: IPlaceholderBlock): JSX.Element => {
     return (
-        <div
+        <ContentBlock
             className={css.loadWrapper}
             data-testid="placeholder-block"
             style={{
@@ -27,7 +44,7 @@ export const PlaceholderBlock = ({
                 aspectRatio,
             }}
         >
-            <div className={css.activity}></div>
-        </div>
+            <div className={css.activity} />
+        </ContentBlock>
     );
 };

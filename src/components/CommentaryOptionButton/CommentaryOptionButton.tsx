@@ -1,9 +1,15 @@
 import { CSSProperties, FC } from 'react';
-import css from './CommentaryOptionButton.module.css';
-import { useAtom } from 'jotai';
-import { commAtom } from '@/atoms/bookingCommAtom.ts';
 import classNames from 'classnames';
+import { useAtom } from 'jotai';
+// Atoms
+import { commAtom } from '@/atoms/bookingCommAtom.ts';
+// Styles
+import css from '@/components/CommentaryOptionButton/CommentaryOptionButton.module.css';
 
+/**
+ * Свойства (Props) компонента CommentaryOptionButton.
+ * @interface
+ */
 interface ICommentaryOptionButton {
     text: string;
     icon: string;
@@ -14,6 +20,11 @@ interface ICommentaryOptionButton {
     newDesign?: boolean
 }
 
+/**
+ * Компонент кнопки комментария
+ * @param {ICommentaryOptionButton} props
+ * @returns {JSX.Element}
+ */
 export const CommentaryOptionButton: FC<ICommentaryOptionButton> = ({
     text,
     icon,
@@ -22,7 +33,7 @@ export const CommentaryOptionButton: FC<ICommentaryOptionButton> = ({
     active,
     style,
     newDesign
-}) => {
+}: ICommentaryOptionButton): JSX.Element => {
     const [getAtom, setAtom] = useAtom(commAtom);
     const handleClick = () => {
         if (!disabled && !onClick) {

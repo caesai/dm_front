@@ -5,16 +5,12 @@ import { IBookingInfo } from '@/types/restaurant.types.ts';
 // Components
 import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 // Icons
-import { TimeCircle } from '@/components/Icons/TimeCircle.tsx';
-import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
-import { UsersIcon } from '@/components/Icons/UsersIcon.tsx';
-import { ChildrenIcon } from '@/components/Icons/ChildrenIcon.tsx';
 import { TicketIcon } from '@/components/Icons/TicketIcon.tsx';
-// Utils
-import { weekdaysMap } from '@/utils.ts';
 // Styles
 import css from '@/components/BookingReminder/BookingReminder.module.css';
-import { StarPrivilegeIcon } from '../Icons/StarPrivilege';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Zoom } from 'swiper/modules';
+import { CalendarIcon } from '@/components/Icons/CalendarIcon.tsx';
 
 /**
  * Пропсы компонента BookingReminder.
@@ -54,10 +50,10 @@ const formatDate = (dateStr: string): string => {
  * @example
  * <BookingReminder bookings={userBookings} />
  */
-export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }) => {
+export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): JSX.Element[] => {
     const navigate = useNavigate();
     const navigateToBooking = useCallback(
-        (id: number, booking_type: string) => {
+        (id: string, booking_type: string) => {
             if (booking_type === 'event') {
                 navigate(`/tickets/${id}`);
             } else {
@@ -66,64 +62,84 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }) =
         },
         [navigate]
     );
-    
+
+    /**
+     * Если список бронирований не найден, то возвращаем плейсхолдер загрузки.
+     * Skeleton соответствует размерам и стилям реальной карточки бронирования.
+     */
     if (!bookings) {
-        return (
-            <div style={{ marginRight: '15px' }}>
-                <PlaceholderBlock width={'100%'} height={'108px'} rounded={'16px'} />
-            </div>
-        );
-    }
-    return bookings
-        .filter((book) => {
-            return new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <= new Date(book.booking_date).getTime();
-        })
-        .map((booking) => (
-            <div
-                key={booking.id}
-                className={css.bookingReminder}
-                onClick={() => navigateToBooking(booking.id, booking.booking_type ?? '')}
-            >
+        return [
+            <div key="booking-skeleton" className={css.bookingReminder} style={{ pointerEvents: 'none' }}>
                 <div className={css.inner}>
-                    <span className={css.title}>
-                        {booking.booking_type === 'event' ? booking.event_title : booking.restaurant.title}
-                    </span>
-                    {booking.booking_type === 'event' ? <span className={css.subText}>{booking.restaurant.title}</span> : null}
-                    <span className={css.subText}>{booking.restaurant.address}</span>
+                    {/* Название ресторана */}
+                    <PlaceholderBlock width="160px" height="20px" rounded="8px" />
+                    {/* Адрес */}
+                    <PlaceholderBlock width="200px" height="14px" rounded="6px" />
+                    {/* Время, дата, гости */}
                     <div className={css.sub}>
-                        <div className={css.subItem}>
-                            <TimeCircle size={16} color={'var(--dark-grey)'}></TimeCircle>
-                            <span className={css.subText}>{booking.time}</span>
-                        </div>
-                        <div className={css.subItem}>
-                            <CalendarIcon size={16} color={'var(--dark-grey)'}></CalendarIcon>
-                            <span className={css.subText}>
-                                {formatDate(booking.booking_date)},{' '}
-                                {weekdaysMap[new Date(booking.booking_date).getDay()]}
-                            </span>
-                        </div>
-                        <div className={css.subItem}>
-                            {booking.booking_type === 'event' ? (
-                                <TicketIcon size={16} />
-                            ) : (
-                                <UsersIcon size={16} color={'var(--dark-grey)'} />
-                            )}
-                            <span className={css.subText}>{booking.guests_count}</span>
-                            {!!booking.children_count && (
-                                <>
-                                    <ChildrenIcon size={16} />
-                                    <span className={css.subText}>{booking.children_count}</span>
-                                </>
-                            )}
-                            {booking.features.includes('hospitality_heroes') && (
-                                <>
-                                    <StarPrivilegeIcon size={16} />
-                                    <span className={css.subText}>Скидка 40%</span>
-                                </>
-                            )}
-                        </div>
+                        <PlaceholderBlock width="50px" height="14px" rounded="6px" />
+                        <PlaceholderBlock width="100px" height="14px" rounded="6px" />
+                        <PlaceholderBlock width="30px" height="14px" rounded="6px" />
                     </div>
                 </div>
-            </div>
-        ));
+            </div>,
+        ] as JSX.Element[];
+    }
+
+    /**
+     * Возвращаем список бронирований.
+     */
+    return [
+        <div className={css.swiperContainer}>
+            <Swiper zoom slidesPerView="auto" modules={[Zoom]} centeredSlides spaceBetween={8} className={css.swiper}>
+                {bookings
+                    .filter((book) => {
+                        return (
+                            new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() <=
+                            new Date(book.booking_date).getTime()
+                        );
+                    })
+                    .map((booking) => (
+                        <SwiperSlide key={booking.id}>
+                            <div
+                                className={css.bookingReminder}
+                                onClick={() => navigateToBooking(booking.id, booking.booking_type ?? '')}
+                            >
+                                <div className={css.inner}>
+                                    <div className={css.date}>
+                                        <div>
+                                            <CalendarIcon size={16} color={'var(--dark-grey)'}></CalendarIcon>
+                                        </div>
+                                        <span>{formatDate(booking.booking_date)},</span>
+                                        <span>{booking.time}</span>
+                                    </div>
+                                    <div className={css.sub}>
+                                        {booking.booking_type === 'event' && (
+                                            <div className={css.subItem}>
+                                                <TicketIcon size={16} />
+                                            </div>
+                                        )}
+                                        <div className={css.subItem}>
+                                            <span className={css.subText}>
+                                                {booking.booking_type === 'event'
+                                                    ? booking.event_title
+                                                    : booking.restaurant.title}
+                                            </span>
+                                            {booking.booking_type === 'event' ? (
+                                                <span className={css.subText}>{booking.restaurant.title}</span>
+                                            ) : null}
+                                        </div>
+                                        {booking.booking_type !== 'event' && (
+                                            <div className={css.subItem}>
+                                                <span className={css.subText}>{booking.restaurant.address}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </SwiperSlide>
+                    ))}
+            </Swiper>
+        </div>,
+    ];
 };

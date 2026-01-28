@@ -1,147 +1,111 @@
-import React, { SetStateAction, useCallback, useMemo } from 'react';
-import Popup from 'reactjs-popup';
-import Picker from '@/lib/react-mobile-picker';
-import styled from 'styled-components';
-import classNames from 'classnames';
-import { useAtom } from 'jotai/index';
-// Types
-import { IRestaurant } from '@/types/restaurant.types.ts';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useAtomValue } from 'jotai/index';
 // Atoms
 import { restaurantsListAtom } from '@/atoms/restaurantsListAtom.ts';
 // Components
-import { ContentContainer } from '@/components/ContentContainer/ContentContainer.tsx';
-import { PickerValueObj } from '@/lib/react-mobile-picker/components/Picker.tsx';
+import { ContentBlock } from '@/components/ContentBlock/ContentBlock.tsx';
+import { KitchenIcon } from '@/components/Icons/KitchenIcon.tsx';
+import { DropDownSelect } from '@/components/DropDownSelect/DropDownSelect.tsx';
+import { WheelPicker } from '@/components/WheelPicker/WheelPicker.tsx';
 // Styles
-import css from '@/components/RestaurantsListSelector/RestaurantsListSelector.module.css';
-
-type SetAtom<Args extends unknown[], Result> = <A extends Args>(...args: A) => Result;
+import { PickerValue } from '@/lib/react-mobile-picker/components/Picker';
+import { IRestaurant } from '@/types/restaurant.types';
 
 interface IRestaurantsListSelectorProps {
-    isOpen: boolean;
-    setOpen: (x: boolean) => void;
-    restaurant: PickerValueObj;
-    selectRestaurant: SetAtom<[SetStateAction<PickerValueObj>], void>; // Use the specific type here
+    onSelect: (value: PickerValue) => void;
     filteredRestaurants?: IRestaurant[];
+    selectedRestaurant?: PickerValue;
 }
-
-const StyledPopup = styled(Popup)`
-    &-overlay {
-        background: #58585869;
-        display: flex;
-        flex-direction: column-reverse;
-        overscroll-behavior: contain;
-    }
-
-    &-content {
-        width: 100vw;
-        margin: 0 !important;
-        padding: 0;
-    }
-`;
-
-const handleOpen = () => {
-    document.body.style.overflow = 'hidden';
-};
-
-const handleClose = () => {
-    document.body.style.overflow = ''; // Or '' to remove the style
-};
-
-// Extracted SaveButton for better readability and separation of concerns
-const SaveButton: React.FC<{ onClose: () => void }> = ({ onClose }) => (
-    <div>
-        <div className={css.redButton} onClick={onClose}>
-            <span className={css.text}>Сохранить</span>
-        </div>
-    </div>
-);
-
+/**
+ * Компонент выбора ресторана из списка
+ * @param {function} onSelect - Функция выбора ресторана
+ * @param {IRestaurant[]} filteredRestaurants - Список ресторанов для фильтрации
+ * @param {PickerValue} selectedRestaurant - Выбранный ресторан
+ * @example
+ * <RestaurantsListSelector
+ *     onSelect={(value: PickerValue) => setSelectedRestaurant(value)}
+ *     filteredRestaurants={restaurantsList}
+ *     selectedRestaurant={selectedRestaurant}
+ * />
+ * @returns {JSX.Element} - Компонент выбора ресторана из списка
+ */
 export const RestaurantsListSelector: React.FC<IRestaurantsListSelectorProps> = ({
-    isOpen,
-    setOpen,
-    restaurant,
-    selectRestaurant,
+    onSelect,
     filteredRestaurants,
-}) => {
-    const onClose = useCallback(() => {
-        handleClose();
-        setOpen(false);
-    }, [setOpen]);
+    selectedRestaurant,
+}: IRestaurantsListSelectorProps): JSX.Element => {
+    const restaurants = useAtomValue(restaurantsListAtom);
+    const [selectedRestaurantState, setSelectedRestaurantState] = useState<PickerValue | null>(selectedRestaurant || null);
+    const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-    const [allRestaurants] = useAtom(restaurantsListAtom);
+    // Синхронизация пропса selectedRestaurant с состоянием
+    useEffect(() => {
+        if (selectedRestaurant) {
+            setSelectedRestaurantState(selectedRestaurant);
+        }
+    }, [selectedRestaurant]);
+    const restaurantList = useMemo(() => {
+        return filteredRestaurants ? filteredRestaurants.map((r) => ({
+            title: r.title,
+                value: r.id,
+                subtitle: r.address,
+            }))
+          : restaurants.map((r) => ({
+                title: r.title,
+                value: r.id,
+                subtitle: r.address,
+            }));
+    }, [restaurants, filteredRestaurants]);
+    // Открытие/закрытие пикера
+    const togglePicker = useCallback(() => {
+        setIsPickerOpen(!isPickerOpen);
+    }, [setIsPickerOpen]);
 
-    const restaurants = useMemo(() => {
-        return filteredRestaurants ? filteredRestaurants : allRestaurants;
-    }, [filteredRestaurants, allRestaurants]);
-
-    // Memoize the mapping process to create the Picker-compatible list
-    const restaurantList: PickerValueObj[] = useMemo(
-        () =>
-            restaurants.map(({ title, address, id }) => ({
-                title,
-                address,
-                value: String(id),
-            })),
-        [restaurants]
-    );
-    // Ensure the handler used in Picker is stable
+    // Выбор ресторана из списка
     const handlePickerChange = useCallback(
-        (valueObj: PickerValueObj) => {
-            const selectedValue = valueObj.value;
-            // Find the complete object from the list using the value provided by the picker
-            const fullRestaurantOption = restaurantList.find((r) => r.value === selectedValue);
+        (value: PickerValue) => {
+            const selectedValue = value.value;
+            // Поиск ресторана по id
+            const fullRestaurantOption = restaurants.find((r) => r.id === selectedValue);
 
             if (fullRestaurantOption) {
-                selectRestaurant(fullRestaurantOption);
+                // Создаём полный объект с названием ресторана
+                const restaurantPickerValue: PickerValue = {
+                    title: fullRestaurantOption.title,
+                    value: fullRestaurantOption.id,
+                    subtitle: fullRestaurantOption.address,
+                };
+                
+                setSelectedRestaurantState(restaurantPickerValue);
+                // Передаём полный объект, а не исходный value из WheelPicker,
+                // который может не содержать title
+                onSelect(restaurantPickerValue);
             } else {
-                // Optional: Handle case where lookup fails (e.g., set to unset or log error)
-                console.error('Could not find full restaurant object for value:', selectedValue);
+                // Обработка случая, когда ресторан не найден
+                console.error('Не найден ресторан по id:', selectedValue);
             }
         },
-        [selectRestaurant, restaurantList]
-    );
-
-    const picker = useMemo(
-        () => (
-            <>
-                <Picker
-                    value={restaurant}
-                    onChange={handlePickerChange}
-                    wheelMode="natural"
-                    height={200}
-                    itemHeight={66}
-                >
-                    <Picker.Column name={'value'}>
-                        {restaurantList.map((option) => (
-                            // Key off option.value which should be unique
-                            <Picker.Item key={option.value} value={option}>
-                                {({ selected }) => (
-                                    <div className={css.selectorItem}>
-                                        <span className={classNames(css.item, selected ? css.item__selected : null)}>
-                                            {option.title}
-                                        </span>
-                                        {/* Use optional chaining safely */}
-                                        <span>{option.address || ''}</span>
-                                    </div>
-                                )}
-                            </Picker.Item>
-                        ))}
-                    </Picker.Column>
-                </Picker>
-                <SaveButton onClose={onClose} />
-            </>
-        ),
-        [restaurant, restaurantList, handlePickerChange, onClose]
+        [setSelectedRestaurantState, restaurants, onSelect]
     );
 
     return (
-        <StyledPopup open={isOpen} onClose={onClose} modal onOpen={handleOpen}>
-            <ContentContainer>
-                <div className={css.content}>
-                    <h3>Выберите ресторан</h3>
-                    {picker}
-                </div>
-            </ContentContainer>
-        </StyledPopup>
+        <ContentBlock>
+            <WheelPicker 
+                value={selectedRestaurantState}
+                onChange={handlePickerChange}
+                items={restaurantList}
+                isOpen={isPickerOpen}
+                setOpen={setIsPickerOpen}
+                title={'Выберите ресторан'}
+                popupHeight={200}
+                itemHeight={66}
+            />
+            <DropDownSelect
+                title={selectedRestaurantState?.title !== 'unset' && selectedRestaurantState?.title?.toString() || 'Ресторан'}
+                isValid={true}
+                icon={<KitchenIcon size={24} />}
+                onClick={togglePicker}
+            />
+        </ContentBlock>
     );
 };

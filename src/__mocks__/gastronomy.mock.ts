@@ -41,7 +41,7 @@ export const mockGastronomyListData: IDish[] = [
 export const mockOrdersListData: IOrder[] = [
     {
         order_id: '1239233320',
-        restaurant_id: 10,
+        restaurant_id: String(10),
         status: 'paid',
         items: [
             { id: 1, title: 'Крем - суп из пастернака', quantity: 1, price: 1300 },
@@ -58,7 +58,7 @@ export const mockOrdersListData: IOrder[] = [
     },
     {
         order_id: '1239233321',
-        restaurant_id: 10,
+        restaurant_id: String(10),
         status: 'paid',
         items: [
             { id: 1, title: 'Крем - суп из пастернака', quantity: 2, price: 1300 },
@@ -77,14 +77,14 @@ export const mockOrdersListData: IOrder[] = [
 ];
 
 export const mockDish: IDish = {
-    id: 1,
+    id: Number(1),
     title: 'Крем-суп из пастернака',
     prices: [1300, 2600],
     weights: ['200 г', '600 г'],
     image_url: 'https://shuba.life/static/content/thumbs/1824x912/6/85/rtajoy---c2x1x50px50p-up--2ed4310a341a5cc5f36dfd79e5ed0856.jpg',
     description: 'Крем-суп из пастернака с нежной, слегка сладковатой нотой корнеплодов. Бархатная текстура, деликатный аромат и мягкий сливочный вкус. Отлично согревает и подойдёт как лёгкое, утончённое блюдо.',
     allergens: [],
-    restaurant_id: 0
+    restaurant_id: Number(0),
 };
 
 // МКАД coordinates for Moscow delivery zone

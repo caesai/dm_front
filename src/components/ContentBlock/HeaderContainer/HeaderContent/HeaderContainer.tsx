@@ -1,15 +1,28 @@
-import { FC } from 'react';
-import css from '../../ContentBlock.module.css';
+import React from 'react';
+import classNames from 'classnames';
+import css from '@/components/ContentBlock/ContentBlock.module.css';
 
-interface IProps {
+interface IHeaderContentProps {
     title: React.ReactNode;
     id?: string;
+    className?: string;
+    fontSize?: number;
 }
 
-export const HeaderContent: FC<IProps> = (p) => {
+export const HeaderContent: React.FC<IHeaderContentProps> = (
+    {
+        title,
+        id,
+        className,
+        fontSize = 20
+    }): JSX.Element => {
     return (
-        <h3 className={css.contentHeader} id={p.id}>
-            {p.title}
+        <h3
+            className={classNames(css.contentHeader, className)}
+            id={id}
+            style={{fontSize: `${fontSize}px`}}
+        >
+            {title}
         </h3>
     );
 };

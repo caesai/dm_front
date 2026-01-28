@@ -26,11 +26,28 @@ import css from '@/components/RestaurantPreview/RestrauntPreview.module.css';
 // Mocks
 import { mockNewSelfEdgeChinoisRestaurant, R } from '@/__mocks__/restaurant.mock.ts';
 
+/**
+ * Пропсы компонента RestaurantPreview.
+ *
+ * @interface IRestaurantPreviewProps
+ */
 interface IRestaurantPreviewProps {
+    /**
+     * Ресторан.
+     */
     restaurant: IRestaurant;
+    /**
+     * Флаг, определяющий, являются ли карточки ресторанов кликабельными.
+     * При `true` карточки становятся ссылками на страницы ресторанов.
+     *
+     * @default false
+     */
     clickable?: boolean;
 }
 
+/**
+ * ID ресторанов с popup.
+ */
 const RESTAURANT_IDS_WITH_POPUP: string[] = [
     R.SELF_EDGE_SPB_RADISHEVA_ID,
     R.SMOKE_BBQ_SPB_RUBINSHTEINA_ID,
@@ -40,13 +57,20 @@ const RESTAURANT_IDS_WITH_POPUP: string[] = [
     R.SMOKE_BBQ_SPB_LODEYNOPOLSKAYA_ID,
 ];
 
-export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restaurant, clickable }) => {
+/**
+ * Компонент для отображения карточки ресторана.
+ *
+ * @component
+ * @example
+ * <RestaurantPreview restaurant={restaurant} clickable={true} />
+ */
+export const RestaurantPreview: React.FC<IRestaurantPreviewProps> = ({ restaurant, clickable }): JSX.Element => {
     const navigate = useNavigate();
     // Atoms
     const [restaurants] = useAtom(restaurantsListAtom);
     // States
     const [changeRes, setChangeRes] = useState(false);
-    const [selectedCity, setSelectedCity] = useState<number | null>(null);
+    const [selectedCity, setSelectedCity] = useState<string | null>(null);
     // Hooks
     const { isShowing, toggle } = useModal();
 

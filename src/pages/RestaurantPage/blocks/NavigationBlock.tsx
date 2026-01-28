@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAtom } from 'jotai/index';
+import { useAtom, useAtomValue } from 'jotai/index';
 import classNames from 'classnames';
 // APIs
 import { BASE_BOT } from '@/api/base.ts';
 // Atoms
-import { backButtonAtom } from '@/atoms/backButtonAtom.ts';
 import { userAtom } from '@/atoms/userAtom.ts';
+import { headerScrolledAtom } from '@/atoms/restaurantPageAtom.ts';
 // Components
 import { RoundedButton } from '@/components/RoundedButton/RoundedButton.tsx';
 import { BackIcon } from '@/components/Icons/BackIcon.tsx';
@@ -15,33 +15,33 @@ import { IconlyProfile } from '@/components/Icons/Profile.tsx';
 import { RestaurantNavigation } from '@/components/RestaurantNavigation/RestaurantNavigation.tsx';
 // Styles
 import css from '@/pages/RestaurantPage/RestaurantPage.module.css';
+// import { useNavigationHistory } from '@/hooks/useNavigationHistory';
+import { useGetRestaurantById } from '@/atoms/restaurantsListAtom';
 
 interface INavigationBlockProps {
-    restaurant_id: number;
-    title?: string;
-    isLoading: boolean;
-    isEvents: boolean;
-    isBanquets: boolean;
-    isGastronomy: boolean;
-    isMenu: boolean;
+    restaurantId: string;
 }
 
+/**
+ * Компонент блока навигации на странице ресторана.
+ *
+ * Отображает навигацию по ресторану и управляет её состоянием.
+ *
+ * @component
+ * @param {INavigationBlockProps} props - Пропсы компонента
+ * @returns {JSX.Element} Компонент блока навигации на странице ресторана
+ */
 export const NavigationBlock: React.FC<INavigationBlockProps> = ({
-    restaurant_id,
-    isBanquets,
-    isLoading,
-    isEvents,
-    isGastronomy,
-    title,
-    isMenu,
-}) => {
-    const [headerScrolled, setHeaderScrolled] = useState(false);
-
-    const [, setBackUrlAtom] = useAtom(backButtonAtom);
-    const [user] = useAtom(userAtom);
+    restaurantId,
+}: INavigationBlockProps): JSX.Element => {
+    const restaurant = useGetRestaurantById(restaurantId);
+    const user = useAtomValue(userAtom);
     const navigate = useNavigate();
+    // const { goBack } = useNavigationHistory();
+    /** Состояние скролла страницы и его установка */
+    const [headerScrolled, setHeaderScrolled] = useAtom(headerScrolledAtom);
 
-    const goBack = () => {
+    const handleGoBack = () => {
         if (!user?.complete_onboarding) {
             navigate('/onboarding');
         } else {
@@ -49,14 +49,27 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
         }
     };
 
-    const goToProfile = () => {
-        setBackUrlAtom(`/restaurant/${restaurant_id}`);
+    /**
+     * Функция для перехода на страницу профиля.
+     *
+     * Переходит на страницу профиля.
+     *
+     * @returns {void}
+     */
+    const goToProfile = (): void => {
         navigate('/profile');
     };
 
-    const shareRestaurant = () => {
-        const url = encodeURI(`https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurant_id}`);
-        const sharedTitle = encodeURI(String(title));
+    /**
+     * Функция для отправки ресторана в друзья.
+     *
+     * Отправляет ресторан в друзья через Telegram.
+     *
+     * @returns {void}
+     */
+    const shareRestaurant = (): void => {
+        const url = encodeURI(`https://t.me/${BASE_BOT}?startapp=restaurantId_${restaurantId}`);
+        const sharedTitle = encodeURI(restaurant?.title || '');
         const shareData = {
             title: sharedTitle,
             url,
@@ -76,42 +89,36 @@ export const NavigationBlock: React.FC<INavigationBlockProps> = ({
     };
 
     useEffect(() => {
-        // TODO: Refactor two Navigation Blocks on Restaurant Page
         const handleScroll = () => {
             setHeaderScrolled(window.scrollY > 190); // Если прокрутка больше 190px – меняем состояние
         };
         window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            setHeaderScrolled(false); // Сброс при размонтировании
+        };
+    }, [setHeaderScrolled]);
 
     return (
-        <div className={classNames(css.header, headerScrolled ? css.scrolled : null)}>
+        <header className={classNames(css.header, headerScrolled ? css.scrolled : null)}>
             <div className={css.headerNav}>
                 <div className={css.headerTop}>
                     <div className={css.headerNavBlock}>
-                        <RoundedButton icon={<BackIcon color={'var(--dark-grey)'} />} action={goBack}></RoundedButton>
+                        <RoundedButton
+                            icon={<BackIcon color={'var(--dark-grey)'} />}
+                            action={handleGoBack}
+                        ></RoundedButton>
                     </div>
-                    {headerScrolled ? <span className={css.headerTitle}>{title}</span> : null}
+                    {headerScrolled ? <span className={css.headerTitle}>{restaurant?.title || ''}</span> : null}
                     <div className={css.headerNavBlock}>
-                        <RoundedButton icon={<Share color={'var(--dark-grey)'} />} action={() => shareRestaurant()} />
+                        <RoundedButton icon={<Share color={'var(--dark-grey)'} />} action={shareRestaurant} />
                         {user && user.complete_onboarding && (
-                            <RoundedButton
-                                icon={<IconlyProfile color={'var(--dark-grey)'} />}
-                                action={() => goToProfile()}
-                            />
+                            <RoundedButton icon={<IconlyProfile color={'var(--dark-grey)'} />} action={goToProfile} />
                         )}
                     </div>
                 </div>
-                {headerScrolled ? (
-                    <RestaurantNavigation
-                        isLoading={isLoading}
-                        isBanquets={isBanquets}
-                        isGastronomy={isGastronomy}
-                        isEvents={isEvents}
-                        isMenu={isMenu}
-                    />
-                ) : null}
+                {headerScrolled ? <RestaurantNavigation restaurantId={restaurantId} /> : null}
             </div>
-        </div>
+        </header>
     );
 };

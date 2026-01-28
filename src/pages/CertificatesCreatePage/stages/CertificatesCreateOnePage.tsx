@@ -1,8 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAtom } from 'jotai';
+// import { useNavigate } from 'react-router-dom';
+// import { useAtomValue } from 'jotai';
 // Atoms
-import { userAtom } from '@/atoms/userAtom';
+// import { userAtom } from '@/atoms/userAtom';
 // Components
 import { BottomButtonWrapper } from '@/components/BottomButtonWrapper/BottomButtonWrapper.tsx';
 import { RestaurantsList } from '@/components/RestaurantsList/RestaurantsList.tsx';
@@ -11,19 +11,19 @@ import css from '@/pages/CertificatesCreatePage/CertificatesCreatePage.module.cs
 // Mocks
 import CertificateImage from '/img/certificate_new.png';
 
-export const CertificatesCreateOnePage: React.FC = () => {
-    const navigate = useNavigate();
-    const [user] = useAtom(userAtom);
+export const CertificatesCreateOnePage: React.FC = (): JSX.Element => {
+    // const navigate = useNavigate();
+    // const user = useAtomValue(userAtom);
 
-    const next = () => {
-        if (!user?.complete_onboarding) {
-            navigate('/onboarding/3', {
-                state: { sharedCertificateCreate: true },
-            });
-            return;
-        }
-        navigate('/certificates/online', { state: { title: 'Электронный подарочный сертификат' } });
-    }
+    // const next = () => {
+    //     if (!user?.complete_onboarding) {
+    //         navigate('/onboarding/3', {
+    //             state: { sharedCertificateCreate: true },
+    //         });
+    //         return;
+    //     }
+    //     navigate('/certificates/online', { state: { title: 'Электронный подарочный сертификат' } });
+    // }
 
     return (
         <div className={css.content} style={{ paddingBottom: '90px' }}>
@@ -45,13 +45,13 @@ export const CertificatesCreateOnePage: React.FC = () => {
                 </ul>
             </div>
             <div className={css.restaurantList}>
-                <RestaurantsList titleStyle={{ fontSize: '1rem', fontWeight: '600' }} />
+                <RestaurantsList />
             </div>
             <BottomButtonWrapper
                 isFixed={true}
-                content={'Оформить'}
-                onClick={next}
+                content={'Временно недоступно'}
+                isDisabled={true}
             />
-        </div>
+        </div >
     );
-}
+};

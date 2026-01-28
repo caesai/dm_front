@@ -64,4 +64,8 @@
             color: var(--black);
         }
     }
+
+    &.secondary {
+        background-color: var(--button-grey);
+    }
 }

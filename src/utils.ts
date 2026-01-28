@@ -605,10 +605,10 @@ export const findOtherAllergies = (allergies: string[]) => {
 }
 
 export const getRestaurantAddressById = (
-    res_id: number,
+    res_id: string,
     restaurantsList: IRestaurant[]
 ): string | undefined => {
-    const restaurant = restaurantsList.find(restaurant => restaurant.id === res_id);
+    const restaurant = restaurantsList.find(restaurant => String(restaurant.id) === String(res_id));
 
     return restaurant?.address;
 };
