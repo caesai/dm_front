@@ -291,7 +291,7 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
                 {/* Кнопка бронирования */}
                 <BottomButtonWrapper
                     forwardedRef={bookingBtn}
-                    content="Забронировать стол"
+                    content="Забронировать"
                     isDisabled={!isFormValid}
                     isLoading={loading.submit}
                     onClick={createBooking}
