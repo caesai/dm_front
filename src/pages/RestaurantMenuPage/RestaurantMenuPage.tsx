@@ -119,28 +119,6 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
         );
     }, [menuData]);
 
-    // Найти первое блюдо с изображением из меню для использования в коктейлях
-    const firstDishImage = useMemo(() => {
-        if (!menuData) return '';
-        
-        for (const category of menuData.item_categories) {
-            if (category.is_hidden) continue;
-            
-            for (const item of category.menu_items) {
-                if (item.is_hidden) continue;
-                
-                const defaultSize = getDefaultSize(item.item_sizes);
-                const imageUrl = defaultSize?.button_image_url || '';
-                
-                if (imageUrl && imageUrl.trim().length > 0) {
-                    return imageUrl;
-                }
-            }
-        }
-        
-        return '';
-    }, [menuData]);
-
     const searchResultsCount = useMemo(() => {
         if (!searchQuery.trim()) return 0;
 
@@ -352,9 +330,8 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
             menuData?.item_categories.find((cat) => cat.id === dish.category_id)?.name || ''
         );
         
-        // Для коктейлей используем изображение первого блюда с картинкой из меню
-        const cocktailImageUrl = isCocktail ? getCocktailImage() : '';
-        const photoUrl = isCocktail && cocktailImageUrl ? cocktailImageUrl : (defaultSize?.button_image_url || '');
+        // Используем только собственное изображение блюда из API
+        const photoUrl = defaultSize?.button_image_url || '';
 
         const dishData: IMenuItem & {
             description?: string;
@@ -434,17 +411,6 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
     };
 
     /**
-     * Получает изображение для коктейля.
-     * Используется изображение первого блюда с картинкой из меню,
-     * так как у коктейлей обычно нет собственных изображений.
-     * 
-     * @returns URL изображения или пустая строка
-     */
-    const getCocktailImage = (): string => {
-        return firstDishImage || '';
-    };
-
-    /**
      * Обработчик верификации возраста.
      * Сохраняет результат в sessionStorage.
      * 
@@ -514,16 +480,9 @@ export const RestaurantMenuPage: React.FC = (): JSX.Element => {
                         const isCocktail = isCocktailCategory(category.name);
                         const shouldBlur = isCocktail && !isAgeVerified;
                         
-                        // Для коктейлей используем изображение первого блюда с картинкой из меню
-                        let imageUrl = '';
-                        if (isCocktail) {
-                            imageUrl = getCocktailImage();
-                        } else {
-                            imageUrl = defaultSize?.button_image_url || '';
-                        }
-                        
-                        // Для коктейлей всегда считаем, что изображение есть (даже если firstDishImage пустое)
-                        const hasImage = isCocktail ? (imageUrl && imageUrl.trim().length > 0) : (imageUrl && imageUrl.trim().length > 0);
+                        // Используем только собственное изображение блюда из API
+                        const imageUrl = defaultSize?.button_image_url || '';
+                        const hasImage = imageUrl && imageUrl.trim().length > 0;
                         const portionWeight = defaultSize?.portion_weight_grams;
                         // Всегда используем measure_unit_type (г/кг/мл/л), поле measure_unit (порц./шт.) игнорируем
                         const measureUnit = formatMeasureUnitType(defaultSize?.measure_unit_type);

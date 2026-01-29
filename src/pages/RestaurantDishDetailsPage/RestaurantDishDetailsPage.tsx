@@ -57,37 +57,10 @@ export const RestaurantDishDetailsPage: React.FC = () => {
     const { menuData } = useRestaurantMenu(String(id));
     const [selectedWeightIndex, setSelectedWeightIndex] = useState(0);
 
-    // Найти первое блюдо с изображением из меню для использования в коктейлях
-    const firstDishImage = useMemo(() => {
-        if (!menuData) return '';
-        
-        for (const category of menuData.item_categories) {
-            if (category.is_hidden) continue;
-            
-            for (const item of category.menu_items) {
-                if (item.is_hidden) continue;
-                
-                const defaultSize = getDefaultSize(item.item_sizes);
-                const imageUrl = defaultSize?.button_image_url || '';
-                
-                if (imageUrl && imageUrl.trim().length > 0) {
-                    return imageUrl;
-                }
-            }
-        }
-        
-        return '';
-    }, [menuData]);
-
-    // Определить изображение для отображения
+    // Используем только собственное изображение блюда из state
     const displayImageUrl = useMemo(() => {
-        // Если это коктейль и есть изображение первого блюда, используем его
-        if (dishFromState?.isCocktail && firstDishImage) {
-            return firstDishImage;
-        }
-        // Иначе используем обычное изображение блюда
         return dishFromState?.photo_url || '';
-    }, [dishFromState, firstDishImage]);
+    }, [dishFromState]);
 
     const currentSize = useMemo(() => {
         return dishFromState?.item_sizes?.[selectedWeightIndex] || dishFromState?.item_sizes?.[0] || null;
