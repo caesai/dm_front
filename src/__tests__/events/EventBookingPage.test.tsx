@@ -527,17 +527,17 @@ describe('EventBookingPage', () => {
     // ============================================
 
     /**
-     * Тесты кнопки "Забронировать стол".
+     * Тесты кнопки "Забронировать".
      */
     describe('Кнопка бронирования', () => {
         /**
          * Проверяет наличие кнопки бронирования.
          */
-        test('должен отображать кнопку "Забронировать стол"', async () => {
+        test('должен отображать кнопку "Забронировать"', async () => {
             renderComponent();
 
             await waitFor(() => {
-                expect(screen.getByText('Забронировать стол')).toBeInTheDocument();
+                expect(screen.getByText('Забронировать')).toBeInTheDocument();
             });
         });
 
@@ -549,7 +549,7 @@ describe('EventBookingPage', () => {
             renderComponent(mockUserData, mockEventsList, String(freeEvent.id), 0, 0);
 
             await waitFor(() => {
-                const button = screen.getByText('Забронировать стол').closest('button');
+                const button = screen.getByText('Забронировать').closest('button');
                 expect(button).toBeDisabled();
             });
         });
@@ -581,7 +581,7 @@ describe('EventBookingPage', () => {
             });
 
             // Нажимаем кнопку бронирования
-            const bookButton = screen.getByText('Забронировать стол');
+            const bookButton = screen.getByText('Забронировать');
             
             await act(async () => {
                 fireEvent.click(bookButton);
@@ -631,7 +631,7 @@ describe('EventBookingPage', () => {
                 await new Promise(resolve => setTimeout(resolve, 100));
             });
 
-            const bookButton = screen.getByText('Забронировать стол');
+            const bookButton = screen.getByText('Забронировать');
             
             await act(async () => {
                 fireEvent.click(bookButton);
@@ -673,7 +673,7 @@ describe('EventBookingPage', () => {
                 await new Promise(resolve => setTimeout(resolve, 100));
             });
 
-            const bookButton = screen.getByText('Забронировать стол');
+            const bookButton = screen.getByText('Забронировать');
             
             await act(async () => {
                 fireEvent.click(bookButton);
@@ -711,7 +711,7 @@ describe('EventBookingPage', () => {
 
             await waitFor(() => {
                 expect(screen.getByTestId('events-list-page')).toBeInTheDocument();
-                expect(screen.queryByText('Забронировать стол')).not.toBeInTheDocument();
+                expect(screen.queryByText('Забронировать')).not.toBeInTheDocument();
             });
         });
 
@@ -724,7 +724,7 @@ describe('EventBookingPage', () => {
 
             await waitFor(() => {
                 expect(screen.getByTestId('events-list-page')).toBeInTheDocument();
-                expect(screen.queryByText('Забронировать стол')).not.toBeInTheDocument();
+                expect(screen.queryByText('Забронировать')).not.toBeInTheDocument();
             });
         });
 
@@ -737,7 +737,7 @@ describe('EventBookingPage', () => {
 
             await waitFor(() => {
                 expect(screen.getAllByTestId('placeholder-block').length).toBeGreaterThan(0);
-                expect(screen.queryByText('Забронировать стол')).not.toBeInTheDocument();
+                expect(screen.queryByText('Забронировать')).not.toBeInTheDocument();
             });
             expect(mockLoadEvents).toHaveBeenCalled();
         });
@@ -783,7 +783,7 @@ describe('EventBookingPage', () => {
                 await new Promise(resolve => setTimeout(resolve, 100));
             });
 
-            const bookButton = screen.getByText('Забронировать стол');
+            const bookButton = screen.getByText('Забронировать');
             
             await act(async () => {
                 fireEvent.click(bookButton);
