@@ -22,6 +22,6 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    min-height: 115px;
+    /* min-height: 115px; */
     contain: layout;
 }
