@@ -49,9 +49,9 @@ export const StageThree: React.FC = () => {
                     </div>
                 </div>
                 <div className={css.stageSix_wrapper}>
-                    <h2 className={css.stage_description_title}>
+                    <h3 className={css.stage_three_description_title}>
                         Пользовательское соглашение сервиса «Dreamteam concierge»
-                    </h2>
+                    </h3>
                     <p>
                         Приветствуем Вас, Пользователь, и добро пожаловать. Мы рады Вам и благодарим Вас за Выбор нашего
                         Сервиса «Dreamteam concierge», для начала его использования Вам необходимо ознакомиться с нашим

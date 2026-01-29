@@ -30,7 +30,7 @@
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, Navigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
 // Atoms
 import { eventsListAtom, guestCountAtom, childrenCountAtom } from '@/atoms/eventListAtom.ts';
@@ -45,10 +45,14 @@ import { EventBookingHeader } from './blocks/EventBookingHeader.tsx';
 import { BookingWish } from '@/components/BookingWish/BookingWish.tsx';
 import { ConfirmationSelect } from '@/components/ConfirmationSelect/ConfirmationSelect.tsx';
 import { BookingErrorPopup } from '@/components/BookingErrorPopup/BookingErrorPopup.tsx';
+import { PlaceholderBlock } from '@/components/PlaceholderBlock/PlaceholderBlock.tsx';
 // Hooks
 import { useBookingForm } from '@/hooks/useBookingForm.ts';
+import { useDataLoader } from '@/hooks/useDataLoader.ts';
 // Utils
 import { getServiceFeeData } from '@/mockData.ts';
+// Styles
+import css from '@/pages/EventsPage/EventsPage.module.css';
 
 /**
  * Страница бронирования столика для бесплатного мероприятия.
@@ -86,6 +90,8 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
     const events = useAtomValue(eventsListAtom);
     /** Ref для кнопки бронирования (используется BottomButtonWrapper) */
     const bookingBtn = useRef<HTMLDivElement>(null);
+    /** Загрузка событий (при перезагрузке страницы events пустой) */
+    const { loadEvents } = useDataLoader();
     /**
      * Начальное количество гостей из атома.
      * Устанавливается на странице {@link EventDetailsPage}.
@@ -105,6 +111,16 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
     const selectedEvent = useMemo(() => {
         return events?.find((event) => event.id === Number(eventId));
     }, [events, eventId]);
+
+    /**
+     * При перезагрузке страницы eventsListAtom пуст.
+     * Запрашиваем события, чтобы восстановить данные мероприятия.
+     */
+    useEffect(() => {
+        if (eventId && !selectedEvent) {
+            loadEvents();
+        }
+    }, [eventId, selectedEvent, loadEvents]);
 
     /**
      * Сообщение о сервисном сборе ресторана.
@@ -190,6 +206,25 @@ export const EventBookingPage: React.FC = (): JSX.Element => {
             handlers.setConfirmation(confirmationOptions[0]);
         }
     }, [confirmationOptions, form.confirmation.id, handlers]);
+
+    /** События загружены, но мероприятие не найдено (неверный eventId) → редирект */
+    if (eventId && events !== null && !selectedEvent) {
+        return <Navigate to="/events" replace />;
+    }
+
+    /** Загрузка данных мероприятия (перезагрузка страницы) → скелетон */
+    if (eventId && events === null) {
+        return (
+            <Page back={true}>
+                <PageContainer className={css.detailsPage}>
+                    <PlaceholderBlock width="100%" rounded="20px" height="56px" />
+                    <PlaceholderBlock width="100%" rounded="20px" aspectRatio="3/1" />
+                    <PlaceholderBlock width="100%" height="40px" rounded="20px" />
+                    <PlaceholderBlock width="100%" height="40px" rounded="20px" />
+                </PageContainer>
+            </Page>
+        );
+    }
 
     return (
         <Page back={!state?.sharedFreeEvent}>

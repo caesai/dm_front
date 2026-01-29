@@ -38,7 +38,7 @@ export const ProfilePage: React.FC = (): JSX.Element => {
     };
     return (
         <Page back={true} className={css.page}>
-            <PageHeader title="Профиль" goBack={goBack} />
+            <PageHeader title="Профиль" goBack={goBack} className={css.pageHeader} />
             <ContentContainer className={css.pageWrapper}>
                 <Link to={'/myBookings'} className={css.navLink}>
                     <BookIcon size={24} color={'black'} />

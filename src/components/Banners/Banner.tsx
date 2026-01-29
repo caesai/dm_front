@@ -17,9 +17,9 @@ export const Banner = () => {
 
     return (
         <section className={css.banner}>
-            <Swiper zoom slidesPerView="auto" modules={[Zoom]} centeredSlides spaceBetween={8} className={css.swiper}>
+            <Swiper zoom slidesPerView="auto" modules={[Zoom]} centeredSlides className={css.swiper}>
                 {banners.map((banner, index) => (
-                    <SwiperSlide key={`${index}-${banner}`} onClick={() => navigate(banner.link)}>
+                    <SwiperSlide key={`${index}-${banner}`} onClick={() => navigate(banner.link)} style={{ display: 'flex', justifyContent: 'center' }}>
                         <div className={css.photo} style={{ backgroundImage: `url(${banner.img_url})` }} />
                     </SwiperSlide>
                 ))}

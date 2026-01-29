@@ -76,7 +76,7 @@ export const AboutBlock: React.FC<IAboutBlockProps> = ({ restaurantId }): JSX.El
                 <HeaderContent title="О месте" />
             </HeaderContainer>
             <ContentBlock className={css.aboutContainer}>
-                <span
+                <div
                     className={classNames(css.aboutText, isAboutCollapsed && css.trimLines)}
                     dangerouslySetInnerHTML={{ __html: aboutText.replace(/\\n/g, '\n') }}
                 />

@@ -88,12 +88,12 @@
 }
 
 .datepickerDay.current {
-    border: 1px solid var(--red);
+    border: 1px solid var(--button-grey);
     border-radius: 6px;
 }
 
 .datepickerDay.active:hover {
-    background-color: var(--red);
+    background-color: var(--button-grey);
     color: #ffffff;
 }
 
