@@ -1,10 +1,23 @@
 /**
+ * Нормализует строку: приводит к нижнему регистру и удаляет диакритические знаки
+ * @param str - Входная строка
+ * @returns Нормализованная строка
+ */
+const normalizeString = (str: string): string => {
+    return str
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Удаляем диакритические знаки
+        .trim();
+};
+
+/**
  * Создает набор триграмм из строки
  * @param str - Входная строка
  * @returns Set триграмм
  */
 const getTrigrams = (str: string): Set<string> => {
-    const normalized = str.toLowerCase().trim();
+    const normalized = normalizeString(str);
     const trigrams = new Set<string>();
     
     if (normalized.length < 3) {
@@ -60,8 +73,8 @@ export const trigramMatch = (text: string, query: string, threshold: number = 0.
     if (!query.trim()) return true;
     if (!text) return false;
     
-    const normalizedText = text.toLowerCase().trim();
-    const normalizedQuery = query.toLowerCase().trim();
+    const normalizedText = normalizeString(text);
+    const normalizedQuery = normalizeString(query);
     
     // Для очень коротких запросов (1-2 символа) используем только точное совпадение
     if (normalizedQuery.length <= 2) {
