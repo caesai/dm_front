@@ -445,7 +445,7 @@ export const TimeSlots: React.FC<ITimeSlotsProps> = React.memo(
         return (
             <ContentBlock className={classNames(css.timeOfDayContainer, className)} style={style}>
                 {!hasAnyTimeSlots ? (
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 5 }}>
                         {startElement && startElement}
                         <span className={css.noTimeSlotsText}>К сожалению, свободных столов не осталось</span>
                     </div>

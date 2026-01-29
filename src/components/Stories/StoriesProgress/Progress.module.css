@@ -23,7 +23,7 @@
 }
 
 .inner {
-    background: rgba(245, 42, 45, 0.8);
+    background: var(--button-grey);
     height: 100%;
     max-width: 100%;
     border-radius: 2px;
