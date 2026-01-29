@@ -232,7 +232,7 @@
 .bookButton {
     width: 100%;
     height: 50px;
-    background-color: var(--red);
+    background-color: var(--button-grey);
     border: none;
     border-radius: 15px;
     font-family: 'Mont', sans-serif;
@@ -272,7 +272,7 @@
 
 .errorContainer button {
     padding: 12px 24px;
-    background-color: var(--red);
+    background-color: var(--button-grey);
     color: white;
     border: none;
     border-radius: 10px;
