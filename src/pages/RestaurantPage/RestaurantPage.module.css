@@ -33,7 +33,7 @@
 .RestInfo {
     /*display: block;*/
     position: absolute;
-    z-index: 999;
+    z-index: 10;
     bottom: 0;
     width: 100%;
     padding: 8px;
