@@ -108,6 +108,16 @@ jest.mock('@/api/certificates.api.ts', () => ({
 }));
 
 /**
+ * Мок useDataLoader. EventBookingPage вызывает loadEvents при перезагрузке
+ * (когда events пуст). В тестах данные задаются через атомы, мок предотвращает
+ * вызов APIGetEventsList.
+ */
+const mockLoadEvents = jest.fn();
+jest.mock('@/hooks/useDataLoader.ts', () => ({
+    useDataLoader: () => ({ loadEvents: mockLoadEvents }),
+}));
+
+/**
  * Мок Telegram WebApp объекта.
  * Необходим для работы компонентов, использующих Telegram API.
  */
@@ -225,6 +235,7 @@ describe('EventBookingPage', () => {
                 >
                     <Routes>
                         <Route path="/events/:eventId/booking" element={<EventBookingPage />} />
+                        <Route path="/events" element={<div data-testid="events-list-page">Events List</div>} />
                     </Routes>
                 </MemoryRouter>
             </TestProvider>
@@ -516,17 +527,17 @@ describe('EventBookingPage', () => {
     // ============================================
 
     /**
-     * Тесты кнопки "Забронировать стол".
+     * Тесты кнопки "Забронировать".
      */
     describe('Кнопка бронирования', () => {
         /**
          * Проверяет наличие кнопки бронирования.
          */
-        test('должен отображать кнопку "Забронировать стол"', async () => {
+        test('должен отображать кнопку "Забронировать"', async () => {
             renderComponent();
 
             await waitFor(() => {
-                expect(screen.getByText('Забронировать стол')).toBeInTheDocument();
+                expect(screen.getByText('Забронировать')).toBeInTheDocument();
             });
         });
 
@@ -538,7 +549,7 @@ describe('EventBookingPage', () => {
             renderComponent(mockUserData, mockEventsList, String(freeEvent.id), 0, 0);
 
             await waitFor(() => {
-                const button = screen.getByText('Забронировать стол').closest('button');
+                const button = screen.getByText('Забронировать').closest('button');
                 expect(button).toBeDisabled();
             });
         });
@@ -570,7 +581,7 @@ describe('EventBookingPage', () => {
             });
 
             // Нажимаем кнопку бронирования
-            const bookButton = screen.getByText('Забронировать стол');
+            const bookButton = screen.getByText('Забронировать');
             
             await act(async () => {
                 fireEvent.click(bookButton);
@@ -620,7 +631,7 @@ describe('EventBookingPage', () => {
                 await new Promise(resolve => setTimeout(resolve, 100));
             });
 
-            const bookButton = screen.getByText('Забронировать стол');
+            const bookButton = screen.getByText('Забронировать');
             
             await act(async () => {
                 fireEvent.click(bookButton);
@@ -662,7 +673,7 @@ describe('EventBookingPage', () => {
                 await new Promise(resolve => setTimeout(resolve, 100));
             });
 
-            const bookButton = screen.getByText('Забронировать стол');
+            const bookButton = screen.getByText('Забронировать');
             
             await act(async () => {
                 fireEvent.click(bookButton);
@@ -687,29 +698,48 @@ describe('EventBookingPage', () => {
 
     /**
      * Тесты поведения при отсутствии данных мероприятия.
+     * При перезагрузке страницы или неверном eventId данные восстанавливаются через API.
+     * Если мероприятие не найдено после загрузки — редирект на /events.
      */
     describe('Отсутствие мероприятия', () => {
         /**
-         * Проверяет что страница не падает при отсутствии мероприятия в списке.
+         * Проверяет редирект на /events при несуществующем eventId.
+         * Мероприятие не найдено в списке → редирект на список мероприятий.
          */
-        test('должен корректно обрабатывать отсутствие мероприятия', async () => {
+        test('должен перенаправлять на /events при отсутствии мероприятия в списке', async () => {
             renderComponent(mockUserData, mockEventsList, '99999', 0, 0);
 
-            // Страница должна отрендериться без ошибок
             await waitFor(() => {
-                expect(screen.getByText('Забронировать стол')).toBeInTheDocument();
+                expect(screen.getByTestId('events-list-page')).toBeInTheDocument();
+                expect(screen.queryByText('Забронировать')).not.toBeInTheDocument();
             });
         });
 
         /**
-         * Проверяет что страница корректно обрабатывает пустой список мероприятий.
+         * Проверяет редирект на /events при пустом списке мероприятий.
+         * События загружены ([]), но мероприятие не найдено → редирект.
          */
-        test('должен корректно обрабатывать пустой список мероприятий', async () => {
+        test('должен перенаправлять на /events при пустом списке мероприятий', async () => {
             renderComponent(mockUserData, [], String(freeEvent.id), 0, 0);
 
             await waitFor(() => {
-                expect(screen.getByText('Забронировать стол')).toBeInTheDocument();
+                expect(screen.getByTestId('events-list-page')).toBeInTheDocument();
+                expect(screen.queryByText('Забронировать')).not.toBeInTheDocument();
             });
+        });
+
+        /**
+         * Проверяет отображение скелетона при events === null (перезагрузка страницы).
+         * Вызывается loadEvents; пока данные не загружены — скелетон.
+         */
+        test('должен показывать скелетон при загрузке данных (events === null)', async () => {
+            renderComponent(mockUserData, null, String(freeEvent.id), 0, 0);
+
+            await waitFor(() => {
+                expect(screen.getAllByTestId('placeholder-block').length).toBeGreaterThan(0);
+                expect(screen.queryByText('Забронировать')).not.toBeInTheDocument();
+            });
+            expect(mockLoadEvents).toHaveBeenCalled();
         });
     });
 
@@ -753,7 +783,7 @@ describe('EventBookingPage', () => {
                 await new Promise(resolve => setTimeout(resolve, 100));
             });
 
-            const bookButton = screen.getByText('Забронировать стол');
+            const bookButton = screen.getByText('Забронировать');
             
             await act(async () => {
                 fireEvent.click(bookButton);

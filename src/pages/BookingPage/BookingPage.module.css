@@ -24,6 +24,8 @@
     text-align: center!important;
     padding: 0!important;
     margin: 0!important;
+    height: auto!important;
+    line-height: 18px!important;
 }
 
 .headerInfo {

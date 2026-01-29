@@ -21,8 +21,8 @@
     transition: all 0.2s ease;
 
     &.checked {
-        background-color: var(--red);
-        border-color: var(--red);
+        background-color: var(--button-grey);
+        border-color: var(--button-grey);
     }
 }
 

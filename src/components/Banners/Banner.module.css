@@ -1,9 +1,13 @@
 .banner {
     width: 100%;
+    min-height: 105px;
+    contain: layout;
 }
 
 .swiper {
-    padding: 0 15px;
+    padding: 0 8px!important;
+    display: flex!important;
+    justify-content: center!important;
 }
 
 .photo {
@@ -12,8 +16,11 @@
     background-position: center center;
     border-radius: 20px;
 
-    min-width: 345px;
+    width: 370px;
+    min-width: 370px;
+    max-width: 370px;
     height: 105px;
-
+    flex-shrink: 0;
+    
     cursor: pointer;
 }

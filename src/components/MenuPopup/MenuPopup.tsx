@@ -24,7 +24,7 @@ const StyledPopup = styled(Popup)`
     }
 
     &-content {
-        width: 100vw;
+        width: 100vw!important;
         height: 100vh;
         padding: 0;
     }

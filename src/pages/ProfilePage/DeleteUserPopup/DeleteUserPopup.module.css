@@ -45,7 +45,7 @@
 }
 
 .button {
-    background-color: var(--red);
+    background-color: var(--button-grey);
     border: none;
     outline: none;
     border-radius: 15px;
@@ -55,6 +55,7 @@
     font-size: 16px;
     color: white;
     cursor: pointer;
+    text-align: center;
 }
 
 .button__disabled {
@@ -141,7 +142,7 @@
 }
 
 .tag__selected {
-    background-color: var(--red);
+    background-color: var(--button-grey);
     color: white;
 }
 

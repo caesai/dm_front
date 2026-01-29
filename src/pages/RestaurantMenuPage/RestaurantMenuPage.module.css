@@ -181,7 +181,7 @@
     padding: 10px;
     width: 198px;
     height: 40px;
-    background: #CA0E11;
+    background: var(--button-grey);
     border-radius: 12px;
     border: none;
     font-family: 'Mont', sans-serif;

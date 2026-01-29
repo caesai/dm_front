@@ -76,7 +76,7 @@
 }
 
 .tag__selected {
-    background-color: var(--red);
+    background-color: var(--button-grey);
     color: white;
 }
 
@@ -91,7 +91,7 @@
 }
 
 .button {
-    background-color: var(--red);
+    background-color: var(--button-grey);
     border: none;
     outline: none;
     border-radius: 15px;

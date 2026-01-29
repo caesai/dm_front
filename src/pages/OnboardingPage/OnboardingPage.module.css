@@ -32,7 +32,7 @@
 }
 
 .stage__active {
-    background-color: var(--red);
+    background-color: var(--button-grey);
 }
 
 .logo {
@@ -85,16 +85,23 @@
 .stage_description_title {
     padding: 0;
     margin: 0;
-    font-family: "Heading Pro Ultracompressed", sans-serif;
+    font-family: 'Object Sans', sans-serif;
     font-weight: 800;
-    font-size: 30px;
+    font-size: 22px;
     text-align: center;
     text-transform: uppercase;
 }
 
+.stage_three_description_title {
+    font-family: "Mont", sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+}
+
 .stage_description_subtitle {
     font-family: "Mont", sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 14px;
     color: var(--grey);
     text-align: center;
@@ -115,7 +122,7 @@
     font-family: 'Mont', sans-serif;
     font-size: 16px;
     font-weight: 700;
-    background-color: #CA0E11;
+    background-color: var(--button-grey);
     width: 239px;
     height: 50px;
 
@@ -144,7 +151,6 @@
     background-position: center 130px;
 
 }
-
 
 .stageThree_wrapper {
     display: flex;
@@ -277,7 +283,7 @@
     display: flex;
     color: var(--grey);
     font-family: "Mont", sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 14px;
     flex-direction: row;
     flex-wrap: wrap;
@@ -298,7 +304,7 @@
 }
 
 .redUnderline {
-    color: var(--red);
+    color: var(--button-grey);
 }
 
 .redButton__disabled {
@@ -312,6 +318,15 @@
     height: 100%;
     overflow: scroll;
     padding: 0 15px 24px;
+
+    p {
+        font-family: "Mont", sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--black);
+        margin: 0;
+        margin-bottom: 10px;
+    }
 }
 
 .stageSeven_wrapper {

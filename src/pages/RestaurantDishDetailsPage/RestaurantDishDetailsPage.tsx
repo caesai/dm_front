@@ -8,9 +8,9 @@ import { BackIcon } from '@/components/Icons/BackIcon.tsx';
 // Styles
 import css from '@/pages/RestaurantDishDetailsPage/RestaurantDishDetailsPage.module.css';
 // Utils
-import { extractPrice, getDefaultSize, formatMeasureUnitType } from '@/utils/menu.utils.ts';
+import { extractPrice, formatMeasureUnitType } from '@/utils/menu.utils.ts';
 // Hooks
-import { useRestaurantMenu } from '@/hooks/useRestaurantMenu';
+// import { useRestaurantMenu } from '@/hooks/useRestaurantMenu';
 
 const formatWeight = (weight: string | undefined, weight_unit?: string): string | undefined => {
     if (!weight) return undefined;
@@ -54,7 +54,7 @@ export const RestaurantDishDetailsPage: React.FC = () => {
         isCocktail?: boolean;
     };
 
-    const { menuData } = useRestaurantMenu(String(id));
+    // const { menuData } = useRestaurantMenu(String(id));
     const [selectedWeightIndex, setSelectedWeightIndex] = useState(0);
 
     // Используем только собственное изображение блюда из state
@@ -213,7 +213,7 @@ export const RestaurantDishDetailsPage: React.FC = () => {
             {/* Кнопка бронирования */}
             <div className={css.buttonContainer}>
                 <button className={css.bookButton} onClick={handleBookTable}>
-                    Забронировать стол
+                    Забронировать
                 </button>
             </div>
         </div>

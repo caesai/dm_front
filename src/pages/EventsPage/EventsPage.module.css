@@ -56,7 +56,9 @@
     padding: 0;
     font-family: "Mont", sans-serif;
     font-weight: 400;
-    font-size: 16px;
+    font-size: 16px!important;
+    line-height: 16px!important;
+    height: auto!important;
     text-transform: none;
 }
 
@@ -65,9 +67,12 @@
     font-weight: 400;
     font-size: 14px;
     line-height: 150%;
+    gap: 0;
 
     p {
         color: var(--grey);
+        margin: 0;
+        margin-bottom: 5px
     }
 }
 
@@ -164,7 +169,7 @@
     font-size: 14px;
     font-family: 'Mont', sans-serif;
     font-weight: 400;
-    color: var(--red);
+    color: var(--button-grey);
 }
 
 .eventPurchasePageTitle {
