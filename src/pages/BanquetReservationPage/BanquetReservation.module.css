@@ -115,6 +115,7 @@
     gap: 4px;
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--light-grey);
+    margin-left: -15px;
 
     .connect_title {
         font-family: 'Mont', sans-serif;
