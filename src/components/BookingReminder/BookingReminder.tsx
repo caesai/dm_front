@@ -90,8 +90,8 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
      * Возвращаем список бронирований.
      */
     return [
-        <div className={css.swiperContainer}>
-            <Swiper zoom slidesPerView="auto" modules={[Zoom]} centeredSlides spaceBetween={8} className={css.swiper}>
+        <section className={css.bookingReminderSection} >
+            <Swiper zoom slidesPerView="auto" modules={[Zoom]} centeredSlides className={css.swiper}>
                 {bookings
                     .filter((book) => {
                         return (
@@ -100,7 +100,7 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                         );
                     })
                     .map((booking) => (
-                        <SwiperSlide key={booking.id}>
+                        <SwiperSlide key={booking.id} style={{ display: 'flex', justifyContent: 'center' }}>
                             <div
                                 className={css.bookingReminder}
                                 onClick={() => navigateToBooking(booking.id, booking.booking_type ?? '')}
@@ -140,6 +140,6 @@ export const BookingReminder: React.FC<IBookingReminderProps> = ({ bookings }): 
                         </SwiperSlide>
                     ))}
             </Swiper>
-        </div>,
+        </section>,
     ];
 };

@@ -13,7 +13,7 @@ export const StageOne: React.FC = () => {
             <div className={css.stage_page_wrapper}>
                 <div className={css.stage_footer}>
                     <div className={css.stage_description}>
-                        <h2 className={css.stage_description_title}>Выберите подходящий ресторан</h2>
+                        <h2 className={css.stage_description_title}>Выберите ресторан</h2>
                         <span className={css.stage_description_subtitle}>
                             Забронируйте стол, делитесь впечатлениями, участвуйте в мероприятиях
                         </span>

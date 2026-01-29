@@ -1,15 +1,27 @@
 .swiper {
-    padding: 0 15px;
+    padding: 0 10px!important;
+    display: flex!important;
+    justify-content: center!important;
+}
+
+.bookingReminderSection {
+    width: 100%;
+    contain: layout;
 }
 
 .bookingReminder {
-    min-width: 345px;
-    min-height: 75px;
     padding: 16px;
     background-color: var(--secondary-background);
-    box-sizing: border-box;
-    border-radius: 16px;
-    cursor: pointer;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-radius: 20px;
+
+    width: 375px;
+    min-width: 375px;
+    min-height: 105px;
+    /* height: 105px; */
+    flex-shrink: 0;
 }
 
 .inner {

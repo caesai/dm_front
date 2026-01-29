@@ -79,7 +79,7 @@ export const AddressBlock: React.FC<IAddressBlockProps> = ({ restaurantId }): JS
         return (
             <div className={css.mapInfoMetro}>
                 <div className={css.mapInfoMetroCircle} style={{ backgroundColor: addressStationColor }} />
-                <span className={css.mapInfoMetroText}>{address}</span>
+                <address className={css.mapInfoMetroText}>{address}</address>
             </div>
         );
     };
@@ -111,7 +111,6 @@ export const AddressBlock: React.FC<IAddressBlockProps> = ({ restaurantId }): JS
                                 <div className={css.RestInfo}>
                                     <div className={css.mapInfo}>
                                         {renderMetroInfo()}
-                                        <address className={css.mapInfoAddress}>{address}</address>
                                     </div>
                                 </div>
                             </section>
