@@ -62,7 +62,7 @@
 }
 
 .primaryButton {
-    background: #CA0E11;
+    background: var(--button-grey);
     color: #FFFFFF;
 }
 
