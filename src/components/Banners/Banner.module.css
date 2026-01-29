@@ -16,8 +16,9 @@
     background-position: center center;
     border-radius: 20px;
 
-    width: 375px;
-    min-width: 375px;
+    width: 370px;
+    min-width: 370px;
+    max-width: 370px;
     height: 105px;
     flex-shrink: 0;
     
