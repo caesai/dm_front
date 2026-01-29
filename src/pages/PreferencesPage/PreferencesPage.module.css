@@ -30,7 +30,7 @@
 }
 
 .stage__active {
-    background-color: var(--red);
+    background-color: var(--button-grey);
 }
 
 .logo {
@@ -101,7 +101,7 @@
     font-family: 'Mont', sans-serif;
     font-size: 16px;
     font-weight: 700;
-    background-color: #CA0E11;
+    background-color: var(--button-grey);
     width: 239px;
     height: 50px;
 }
